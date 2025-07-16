@@ -1,13 +1,16 @@
 [versions]
+maxAndroidVersion = "36"
+minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
-adaptive = "1.2.0-alpha06"
+adaptive = "1.2.0-alpha08"
 animation = "1.7.0-beta06" # 1.7.0-beta06
 animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
 benchmarkMacroJunit4 = "1.3.4"
 biometric = "1.1.0"
 bsdiffLib = "1.0.2"
+#composeMultiplatform = "1.8.1"
 cameraCamera2 = "1.4.2"
 glideCompose = "1.0.0-alpha.1"
 composeBom = "2023.03.00"  # 别动版本
@@ -21,15 +24,15 @@ espressoCore = "3.4.0"
 haze = "1.6.2"
 jsoup = "1.16.2"
 junit = "4.13.2"
-junitVersion = "1.1.3"
+junitVersion = "1.2.1"
 konfettiCompose = "2.0.5"
 kotlinBom = "1.8.0"
 lifecycleExtensions = "2.2.0"
 lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
-material3 = "1.4.0-alpha12" # 1.4.0-alpha12
-navigationCompose = "2.9.0"
+material3 = "1.4.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
+navigationCompose = "2.9.1" # 2.9.0 2.7.5
 okhttp = "4.9.0"
 profileinstaller = "1.4.1"
 roomRuntime = "2.6.1"
@@ -41,7 +44,8 @@ kotlinStdlib = "2.1.20"
 kotlinTest = "2.1.20"
 runner = "1.5.2"
 core = "1.5.0"
-window = "1.4.0"
+ksp = "2.1.20-1.0.32"
+test = "8.9.2"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -83,7 +87,6 @@ androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
-androidx-window = { module = "androidx.window:window", version.ref = "window" }
 bsdiff-lib = { module = "com.github.Chiu-xaH:Bsdiff-Lib", version.ref = "bsdiffLib" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
@@ -105,7 +108,14 @@ androidx-runner = { group = "androidx.test", name = "runner", version.ref = "run
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
 
 [plugins]
-kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
+kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+googleKsp = { id = "com.google.devtools.ksp" ,version.ref = "ksp" }
+testAndroid = {id = "com.android.test", version.ref = "test"}
+#composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
+#androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+#kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 

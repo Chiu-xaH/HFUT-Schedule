@@ -3,6 +3,10 @@ package com.hfut.schedule.ui.screen
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,8 +29,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.queryCalendars
+import com.hfut.schedule.ui.AppNavRoute
 import com.hfut.schedule.ui.screen.home.MainScreen
-import com.hfut.schedule.ui.screen.login.MainNav
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -34,10 +39,12 @@ import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.style.transitionBackground
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("NewApi")
 @Composable
 fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIViewModel, login : Boolean) {
@@ -46,7 +53,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
         value = DataStoreManager.firstStart.first()
     }
     val navController = rememberNavController()
-    val first by remember { mutableStateOf(if(prefs.getBoolean("canUse",false)) MainNav.HOME.name else MainNav.USE_AGREEMENT.name) }
+    val first by remember { mutableStateOf(if(prefs.getBoolean("canUse",false)) AppNavRoute.Home.route else AppNavRoute.UseAgreement.route) }
     var value by remember { mutableIntStateOf(0) }
 
     // 初始化网络请求
@@ -66,23 +73,6 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
                 if(status) {
                     loginVm.getKeyWebVpn()
                 }
-//                launch {
-//                    Handler(Looper.getMainLooper()).post{
-//                        loginVm.webVpnTicket.observeForever { result ->
-//                            if (result != null) {
-//                                if (result.contains("wengine_vpn_ticketwebvpn_hfut_edu_cn")) {
-//                                    val ticket = result.substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=").substringBefore(";")
-//                                    loginVm.putKey(ticket)
-//                                }
-//                            }
-//                        }
-//                        loginVm.status.observeForever { result ->
-//                            if (result == 200) {
-//                                loginVm.getKeyWebVpn()
-//                            }
-//                        }
-//                    }
-//                }
             }
         } else { // 否则进入的是主界面
             //上传用户统计数据
@@ -95,43 +85,63 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
         }
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = first,
-        enterTransition = { AppAnimationManager.fadeAnimation.enter },
-        exitTransition = { AppAnimationManager.fadeAnimation.exit }
+    SharedTransitionLayout(
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface)
     ) {
-        // 主UI
-        composable(MainNav.HOME.name) {
-            val mainUI = @Composable { celebrationText : String? ->
-                if(startActivity && login) {
-                    MainScreen(networkVm,loginVm,uiVm,celebrationText,false,false,navHostTopController = navController)
-                } else LoginScreen(loginVm,navController)
-            }
-            // 如果庆祝为true则庆祝
-            getCelebration().let {
-                Party(show = it.use, timeSecond = it.time) {
-                    mainUI(it.str)
+        NavHost(
+            navController = navController,
+            startDestination = first,
+            enterTransition = { AppAnimationManager.fadeAnimation.enter },
+            exitTransition = { AppAnimationManager.fadeAnimation.exit },
+        ) {
+            // 主UI
+            composable(AppNavRoute.Home.route) {
+                val mainUI = @Composable { celebrationText : String? ->
+                    if(startActivity && login) {
+                        MainScreen(
+                            networkVm,
+                            loginVm,
+                            uiVm,
+                            celebrationText,
+                            false,
+                            false,
+                            navHostTopController = navController,
+                            this@SharedTransitionLayout,
+                            this@composable,
+                        )
+                    } else LoginScreen(loginVm,navController)
+                }
+                // 如果庆祝为true则庆祝
+                getCelebration().let {
+                    Party(show = it.use, timeSecond = it.time) {
+                        mainUI(it.str)
+                    }
                 }
             }
-        }
-        // 用户协议
-        composable(MainNav.USE_AGREEMENT.name) {
-            Party(timeSecond = 3L) {
-                UseAgreementScreen(navController)
-            }
-        }
-        // 成绩
-        composable(
-            route = "${MainNav.GRADE.name}?ifSaved={ifSaved}",
-            arguments = listOf(
-                navArgument("ifSaved") {
-                    type = NavType.BoolType
+            // 用户协议
+            composable(AppNavRoute.UseAgreement.route) {
+                Party(timeSecond = 3L) {
+                    UseAgreementScreen(navController)
                 }
-            )
-        ) { backStackEntry ->
-            val ifSaved = backStackEntry.arguments?.getBoolean("ifSaved") ?: true
-            GradeScreen(ifSaved,networkVm,navController)
+            }
+            // 成绩
+            composable(
+                route = AppNavRoute.Grade.receiveRoute(),
+                arguments = listOf(
+                    navArgument("ifSaved") {
+                        type = NavType.BoolType
+                    }
+                )
+            ) { backStackEntry ->
+                val ifSaved = backStackEntry.arguments?.getBoolean("ifSaved") ?: true
+                GradeScreen(
+                    ifSaved,
+                    networkVm,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
         }
     }
 }

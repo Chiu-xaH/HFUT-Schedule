@@ -5,7 +5,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -99,6 +101,7 @@ import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.StyleCardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.AppNavRoute
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
@@ -118,19 +121,20 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.Notifica
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
-import com.hfut.schedule.ui.screen.login.MainNav
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.transitionBackground
+import com.hfut.schedule.ui.style.transitionBackgroundF
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.style.transitionBackground
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -149,9 +153,11 @@ fun MainScreen(
     webVpn : Boolean,
     isLogin : Boolean,
     navHostTopController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
-    var isEnabled by rememberSaveable(MainNav.HOME.name) { mutableStateOf(!isLogin) }
+    var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
     val switch = prefs.getBoolean("SWITCH",true)
     var showlable by remember { mutableStateOf(switch) }
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
@@ -169,7 +175,7 @@ fun MainScreen(
     ) }
 
     // 按下底栏按钮后，要准备去的导航
-    var targetPage by rememberSaveable(MainNav.HOME.name) { mutableStateOf(
+    var targetPage by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(
         if(isLogin) COURSES
         else when (prefs.getBoolean("SWITCHFOCUS",true)) {
             true -> FOCUS
@@ -189,18 +195,6 @@ fun MainScreen(
     var isFriend by remember { mutableStateOf(false) }
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
-
-//    val examObserver = Observer<Int> { result ->
-//        ifSaved = when(result) {
-//            200 -> {
-//                false
-//                //登录Token未过期
-//            }
-//            else -> {
-//                true
-//            }
-//        }
-//    }
 
     if (showBottomSheet) {
         saveString("Notifications", getNotifications().size.toString())
@@ -459,7 +453,7 @@ fun MainScreen(
     }
 
 
-    Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
+    Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface).transitionBackgroundF(navHostTopController, AppNavRoute.Home.route)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
         Box(modifier = Modifier
@@ -518,7 +512,7 @@ fun MainScreen(
                                         if(isFriend) {
                                             ApiForTermInfo(swapUI.toString(),hazeState)
                                         } else {
-                                            CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState)
+                                            CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState, ifSaved = ifSaved)
                                         }
 
                                         IconButton(onClick = {
@@ -670,7 +664,17 @@ fun MainScreen(
                 }
                 composable(SEARCH.name) {
                     Scaffold {
-                        SearchScreen(vm,ifSaved,innerPadding,vmUI,searchText, hazeState = hazeState, navController = navHostTopController)
+                        SearchScreen(
+                            vm,
+                            ifSaved,
+                            innerPadding,
+                            vmUI,
+                            searchText,
+                            navController = navHostTopController,
+                            hazeState = hazeState,
+                            sharedTransitionScope,
+                            animatedContentScope
+                        )
                     }
                 }
                 composable(SETTINGS.name) {

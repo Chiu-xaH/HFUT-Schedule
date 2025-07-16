@@ -43,7 +43,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPA
@@ -52,24 +51,23 @@ import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.AnimationCardListItem
 import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.component.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.LargeCard
-import com.hfut.schedule.ui.component.custom.LittleDialog
 import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.custom.RefreshIndicator
-import com.hfut.schedule.ui.component.custom.ScrollText
+import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.cardNormalColor
 import com.hfut.schedule.ui.component.chart.RadarChart
 import com.hfut.schedule.ui.component.chart.RadarData
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.custom.LittleDialog
+import com.hfut.schedule.ui.component.custom.RefreshIndicator
+import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -78,7 +76,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -156,7 +153,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ){
-                    GradeInfo(num,vm)
+                    GradeInfo(num)
                     Spacer(modifier = Modifier.height(30.dp))
                 }
             }
@@ -174,6 +171,32 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val gradeList = (uiState as UiState.Success).data
             var searchList = mutableListOf<GradeResponseJXGLSTU>()
+
+            val Item = @Composable { grade : GradeResponseJXGLSTU ->
+                val needSurvey = grade.grade.contains("评教")
+                StyleCardListItem(
+                    headlineContent = {  Text(grade.title) },
+                    overlineContent = { Text(
+                        if(!needSurvey)
+                            "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
+                        else grade.code
+                    ) },
+                    leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+                    supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
+                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else null,
+                    modifier = Modifier.clickable {
+                        if(needSurvey) {
+                            surveyCode = grade.code
+                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+                            showBottomSheet_Survey = true
+                        } else {
+                            title = grade.title
+                            num = grade
+                            showBottomSheet = true
+                        }
+                    },
+                )
+            }
             Column {
                 if(showSearch) {
                     Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
@@ -205,53 +228,67 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                             colors = textFiledTransplant(),
                         )
                     }
-                    gradeList.forEach { item ->
+                    gradeList.flatMap { it.list }.forEach { item ->
                         if (item.title.contains(input) || item.title.contains(input)) {
                             searchList.add(item)
                         }
                     }
 
                     Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                } else {
-                    searchList = gradeList.toMutableList()
                 }
-
                 if(gradeList.isEmpty()) EmptyUI()
                 else {
-                    LazyColumn{
-                        if(!showSearch) {
-                            item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
-                            item { Spacer(modifier = Modifier.height(5.dp)) }
-                        }
+                    if(showSearch) {
+                        LazyColumn{
+//                            if(!showSearch) {
+//                                item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+//                                item { Spacer(modifier = Modifier.height(5.dp)) }
+//                            }
 
-                        items(searchList.size) { item ->
-                            val grade = searchList[item]
-                            val needSurvey = grade.grade.contains("评教")
-                            AnimationCardListItem(
-                                headlineContent = {  Text(grade.title) },
-                                overlineContent = { Text(
-                                    if(!needSurvey)
-                                        "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
-                                    else grade.code
-                                ) },
-                                leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                                supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
-                                color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else null,
-                                modifier = Modifier.clickable {
-                                    if(needSurvey) {
-                                        surveyCode = grade.code
-                                        showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
-                                        showBottomSheet_Survey = true
-                                    } else {
-                                        title = grade.title
-                                        num = grade
-                                        showBottomSheet = true
-                                    }
-                                },
-                                index = item
-                            )
+                            items(searchList.size) { item ->
+                                Item(searchList[item])
+//                                val grade = searchList[item]
+//                                val needSurvey = grade.grade.contains("评教")
+//                                AnimationCardListItem(
+//                                    headlineContent = {  Text(grade.title) },
+//                                    overlineContent = { Text(
+//                                        if(!needSurvey)
+//                                            "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
+//                                        else grade.code
+//                                    ) },
+//                                    leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+//                                    supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
+//                                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else null,
+//                                    modifier = Modifier.clickable {
+//                                        if(needSurvey) {
+//                                            surveyCode = grade.code
+//                                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+//                                            showBottomSheet_Survey = true
+//                                        } else {
+//                                            title = grade.title
+//                                            num = grade
+//                                            showBottomSheet = true
+//                                        }
+//                                    },
+//                                    index = item
+//                                )
+                            }
+                            item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
                         }
-                        item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                    } else {
+                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                            Spacer(modifier = Modifier.height(5.dp))
+                            for(i in gradeList) {
+                                DividerTextExpandedWith(i.term) {
+                                    for(j in i.list) {
+                                        Item(j)
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+                        }
                     }
                 }
             }
@@ -261,7 +298,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
 
 
 @Composable
-fun GradeInfo(num : GradeResponseJXGLSTU,vm: NetWorkViewModel) {
+fun GradeInfo(num : GradeResponseJXGLSTU) {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val list = num.grade.split(" ")

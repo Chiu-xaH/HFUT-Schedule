@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -33,8 +32,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -78,39 +75,29 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.CommonNetworkScreen
+import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.URLImageWithOCR
 import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
 import com.hfut.schedule.ui.component.custom.LoadingUI
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.ShareTwoContainer2D
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.URLImageWithOCR
- 
-import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.CommonNetworkScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 //登录方法，auto代表前台调用
@@ -255,12 +242,6 @@ fun isAnonymity() : Boolean {
     val json = prefs.getString("json", "")
     return json?.contains("result") != true
 }
-
-
-enum class MainNav {
-    HOME,USE_AGREEMENT,GUEST,GRADE
-}
-
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation")

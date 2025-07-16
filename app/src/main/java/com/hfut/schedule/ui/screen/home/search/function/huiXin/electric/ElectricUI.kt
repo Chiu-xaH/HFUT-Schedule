@@ -56,6 +56,7 @@ import androidx.compose.ui.window.Dialog
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.jxglstu.survey
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -498,7 +499,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                         } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
 
 
-                        DividerTextExpandedWith(text = "查询结果") {
+                        DividerTextExpandedWith(text = "查询结果",openBlurAnimation = false) {
                             Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                                 Spacer(modifier = Modifier.height(100.dp))
                                 LoadingLargeCard(
@@ -518,34 +519,29 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                         headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
                                         leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                                     )
-                                }
-//                Card(
-//                    elevation = CardDefaults.cardElevation(defaultElevation = APP_HORIZONTAL_DP),
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .scale(scale2.value)
-//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
-//                    shape = MaterialTheme.shapes.medium,
-//                    colors = CardForListColor()
-//                ) {
-//                    Column(modifier = Modifier
-//                        .blur(blurSize)
-//                        .scale(scale.value)) {
-//                        ListItem(
-//                            headlineContent = { Text(
-//                                text =
-//
-//                                , fontSize = 28.sp) },
-//                            trailingContent = {
-//                                 }
-//                        )
-//
-//                    }
-//                }
-                            }
-                            Spacer(modifier = Modifier.height(10.dp))
-                            BottomTip(str = "月末补贴 照明空调各￥15")
-                            BottomTip(str = "寝室缴费实测存在一定延迟")
+                                } }
+                            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP/2))
+                        }
+                        DividerTextExpandedWith("使用说明", defaultIsExpanded = false) {
+                            TransplantListItem(
+                                headlineContent = { Text("夜间透支") },
+                                supportingContent = { Text("每日23:00之前缴费，最迟23:00到账，23:00之后缴费，次日6点到账，在23:01-6:00时间段，账户如果欠费不会断电")},
+                                leadingContent = { Icon(painterResource(R.drawable.dark_mode),null)}
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text("最大功率") },
+                                supportingContent = { Text("超出800W将自动断电，5分钟后自动恢复")},
+                                leadingContent = { Icon(painterResource(R.drawable.hvac_max_defrost),null)}
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text("月末补贴") },
+                                supportingContent = { Text("照明空调各￥15，约下旬初到账")},
+                                leadingContent = { Icon(painterResource(R.drawable.paid),null)}
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text("寝室缴费实测存在一定延迟") },
+                                leadingContent = { Icon(painterResource(R.drawable.schedule),null)}
+                            )
                         }
                     }
                 }

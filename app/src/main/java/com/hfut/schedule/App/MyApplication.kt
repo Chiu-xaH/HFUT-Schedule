@@ -3,11 +3,13 @@ package com.hfut.schedule.App
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.ui.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
+import com.xah.transition.state.TransitionState
 
 class MyApplication : Application() {
     companion object {
@@ -121,6 +123,8 @@ class MyApplication : Application() {
         const val EMAIL = "@mail.hfut.edu.cn"
         // WEBVPN COOKIE前缀
         const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
+        // PC UA
+        const val PC_UA = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17"
         // 预置作息
         val XC_TXL1: List<CourseUnitBean> = listOf(
             CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
@@ -179,5 +183,10 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        // 暂时削弱动效
+//        TransitionState.transitionBackgroundStyle.backgroundColor = Color.Black.copy(.25f)
+//        TransitionState.transitionBackgroundStyle.scaleValue = 0.825f
+//        TransitionState.transitionBackgroundStyle.forceTransition = false
+//        TransitionState.firstStartRoute = AppNavRoute.Home.route
     }
 }

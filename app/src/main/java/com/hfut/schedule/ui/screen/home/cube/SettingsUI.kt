@@ -31,7 +31,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.isCurrentRoute
+import com.xah.transition.util.isCurrentRoute
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -53,7 +53,7 @@ fun SettingsScreen(vm : NetWorkViewModel
 
             floatingActionButton = {
                 navController.let {
-                    if(it.isCurrentRoute(Screen.HomeScreen.route)) {
+                    if(!it.isCurrentRoute(Screen.HomeScreen.route)) {
                         FloatingActionButton (
                             modifier = Modifier.padding(innerPaddings),
                             onClick = { it.popBackStack() },

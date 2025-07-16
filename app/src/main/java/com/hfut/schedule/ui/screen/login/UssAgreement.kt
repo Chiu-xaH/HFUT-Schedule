@@ -42,8 +42,9 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.AppNavRoute
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.util.navigateAndClear
+import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import dev.chrisbanes.haze.HazeState
@@ -114,7 +115,7 @@ fun UseAgreementScreen(navController : NavHostController) {
                 Button(
                     onClick = {
                         SharedPrefs.saveBoolean("canUse", default = false, save = true)
-                        navController.navigateAndClear(MainNav.HOME.name)
+                        navController.navigateAndClear(AppNavRoute.Home.route)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

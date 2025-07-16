@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -32,10 +33,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
@@ -47,6 +52,7 @@ import com.hfut.schedule.ui.component.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.custom.CustomTextField
 import com.hfut.schedule.ui.component.EmptyUI
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.custom.ScrollText
 import com.hfut.schedule.ui.component.DepartmentIcons
@@ -54,9 +60,11 @@ import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.TransplantListItem
 import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.flow.first
 import kotlin.text.contains
 
 enum class TotalCourseDataSource {
@@ -66,7 +74,21 @@ enum class TotalCourseDataSource {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState) {
+fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState,ifSaved : Boolean) {
+    val courseBookJson by DataStoreManager.courseBookJson.collectAsState(initial = "")
+    if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
+        LaunchedEffect(Unit) {
+            if(vm.courseBookResponse.state.first() is UiState.Success) return@LaunchedEffect
+            val term = SemseterParser.getSemseter()
+            val cookie = getJxglstuCookie(vm) ?: return@LaunchedEffect
+            when(dataSource) {
+                TotalCourseDataSource.MINE -> vm.getCourseBook(cookie,term)
+                TotalCourseDataSource.MINE_NEXT -> vm.getCourseBook(cookie, SemseterParser.plusSemseter(term))
+                else -> return@LaunchedEffect
+            }
+        }
+    }
+    var courseBookData: Map<Long, CourseBookBean> by remember { mutableStateOf(emptyMap()) }
 
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
@@ -84,6 +106,14 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
         }
     }
 
+    LaunchedEffect(courseBookJson) {
+//         是JSON
+        if(courseBookJson.contains("{")) {
+            val data = vm.parseCourseBook(courseBookJson)
+            courseBookData = data
+        }
+    }
+
     val isSearch = dataSource == TotalCourseDataSource.SEARCH
 
     var input by remember { mutableStateOf("") }
@@ -98,12 +128,6 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
                 filtered.sortedBy { it.course.credits }
             }
         }
-
-//        if(sortType) {
-//        list.sortedBy { it.scheduleWeeksInfo?.substringBefore("~")?.toIntOrNull() }
-//    } else {
-//        list.sortedBy { it.course.credits }
-//    }
 
 
     var numItem by remember { mutableIntStateOf(0) }
@@ -127,7 +151,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(sortList[numItem],vm,hazeState)
+                    DetailItems(sortList[numItem],vm,hazeState,courseBookData)
                 }
             }
         }
@@ -194,9 +218,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
-
-    val lists = lessons
+fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,courseBookData : Map<Long, CourseBookBean>) {
 
     val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
@@ -263,9 +285,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                     Row {
                         TransplantListItem(
                             overlineContent = { Text("类型") },
-                            headlineContent = { lists.courseType.nameZh.let { Text(it) } },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            headlineContent = { lessons.courseType.nameZh.let { Text(it) } },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.hotel_class),
@@ -276,12 +296,10 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                 .clickable {}
                                 .weight(.5f),
                         )
-                        if(lists.scheduleWeeksInfo != null)
+                        lessons.scheduleWeeksInfo?.let {
                             TransplantListItem(
                                 overlineContent = { Text("周数") },
-                                headlineContent = { ScrollText(lists.scheduleWeeksInfo) },
-
-                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                                headlineContent = { ScrollText(it) },
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.calendar),
@@ -292,31 +310,29 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                     .clickable {}
                                     .weight(.5f),
                             )
+                        }
                     }
 
                     Row {
-                        if(lists.stdCount != null)
+                        lessons.stdCount?.let {
                             TransplantListItem(
-                            overlineContent = { Text("人数" ) },
-                            headlineContent = { Text(lists.stdCount.toString()) },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                            leadingContent = {
-                                Icon(
-                                    painterResource(R.drawable.group),
-                                    contentDescription = "Localized description",
-                                )
-                            },
-                            modifier = Modifier
-                                .clickable {}
-                                .weight(.5f),
-                        )
-                        if(lists.course.credits != null)
+                                overlineContent = { Text("人数" ) },
+                                headlineContent = { Text(it.toString()) },
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.group),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier
+                                    .clickable {}
+                                    .weight(.5f),
+                            )
+                        }
+                        lessons.course.credits?.let {
                             TransplantListItem(
                                 overlineContent = { Text("学分") },
-                                headlineContent = { Text(lists.course.credits.toString()) },
-
-                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                                headlineContent = { Text(it.toString()) },
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.filter_vintage),
@@ -327,10 +343,12 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                     .clickable {}
                                     .weight(.5f),
                             )
+                        }
+
                     }
-                    val teacherNum = lists.teacherAssignmentList?.size ?: 0
+                    val teacherNum = lessons.teacherAssignmentList?.size ?: 0
                     for (i in 0 until teacherNum) {
-                        val teacherList = lists.teacherAssignmentList?.get(i)
+                        val teacherList = lessons.teacherAssignmentList?.get(i)
                         Row(modifier = Modifier.clickable {
                             if (teacherList != null) {
                                 permit = 1
@@ -358,7 +376,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                 headlineContent = {
                                     if (teacherList != null) {
                                         val t = teacherList.teacher.title?.nameZh ?: "未知"
-                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
+                                        ScrollText( t  +" " + (teacherList.teacher.type?.nameZh ?: ""))
                                     }
                                 },
                                 overlineContent = {
@@ -366,8 +384,6 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                         Text(text =  if(teacherList.age  != null)  "年龄 " + teacherList.age else "年龄未知")
                                     }
                                 },
-
-                                //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                                 leadingContent = {
                                     Icon(
                                         painterResource(R.drawable.info),
@@ -381,13 +397,11 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                     }
 
                     Row {
-                        var department = lists.openDepartment.nameZh
+                        var department = lessons.openDepartment.nameZh
                         if(department.contains("（")) department = department.substringBefore("（")
                         TransplantListItem(
                             overlineContent = { Text("开设学院") },
                             headlineContent = { Text(department) },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
                                 DepartmentIcons(name = department)
                             },
@@ -396,10 +410,8 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                 .weight(.5f),
                         )
                         TransplantListItem(
-                            overlineContent = { Text("考察方式 ${lists.examMode.nameZh.toString() }") },
-                            headlineContent = { ScrollText(if(lists.planExamWeek != null)"预计第${lists.planExamWeek.toString()}周" else "无时间") },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            overlineContent = { Text("考察方式 ${lessons.examMode.nameZh.toString() }") },
+                            headlineContent = { ScrollText(if(lessons.planExamWeek != null)"预计第${lessons.planExamWeek.toString()}周" else "无时间") },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.draw),
@@ -412,9 +424,8 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                         )
                     }
                     Row {
-                        val code = lists.code
+                        val code = lessons.code
                         val classes = if(code.contains("--")) code.substringAfter("--") else null
-                        val classCode = if(code.contains("--")) code.substringBefore("--") else null
                         TransplantListItem(
                             overlineContent = { Text("课程代码--教学班") },
                             headlineContent = { Text(code) },
@@ -468,7 +479,6 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                             headlineContent = { Text("同班同学") },
                             trailingContent = {
                             },
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
                             leadingContent = {
                                 Icon(
                                     Icons.Filled.ArrowForward,
@@ -479,28 +489,11 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                                 .clickable { showToast("请前往 合工大教务 微信公众号") }
                                 .weight(.5f),
                         )
-//                        ListItem(
-//                            headlineContent = { Text("添加到收藏") },
-//                            trailingContent = {
-//                            },
-//                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-//                            leadingContent = {
-//                                Icon(
-//                                    painterResource(id = R.drawable.star),
-//                                    contentDescription = "Localized description",
-//                                )
-//                            },
-//                            modifier = Modifier
-//                                .clickable { MyToast("正在开发") }
-//                                .weight(.5f),
-//                        )
                     }
-                    if(lists.nameZh != null)
+                    lessons.nameZh?.let {
                         TransplantListItem(
                             overlineContent = { Text("班级") },
-                            headlineContent = { Text(lists.nameZh.toString()) },
-
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            headlineContent = { Text(it) },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.sensor_door),
@@ -509,29 +502,61 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                             },
                             modifier = Modifier.clickable {},
                         )
-
-                    if(lists.scheduleText.dateTimePlacePersonText.textZh != null)
-                        TransplantListItem(
-                        overlineContent = { Text("上课安排") },
-                        headlineContent = { Text(lists.scheduleText.dateTimePlacePersonText.textZh ) },
-
-                        //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.schedule),
-                                contentDescription = "Localized description",
+                    }
+                    courseBookData[lessons.course.id]?.let {
+                        var t1 : String? = if(it.textbook.isEmpty() || it.textbook.isBlank()) {
+                            null
+                        } else {
+                            "基本教材: " + it.textbook.replace("<br/>"," ").replace("<br>"," ")
+                        }
+                        var t2 : String? = if(it.specialTextbook.isEmpty() || it.specialTextbook.isBlank()) {
+                            null
+                        } else {
+                            "辅助教材: " + it.specialTextbook.replace("<br/>"," ").replace("<br>"," ")
+                        }
+                        if(!(t1 == null && t2 == null)) {
+                            TransplantListItem(
+                                overlineContent = { Text("教材") },
+                                headlineContent = {
+                                    Text(
+                                        if(t1 != null && t2 == null) {
+                                            t1
+                                        } else if(t2 != null && t1 == null) {
+                                            t2
+                                        } else if(t2 != null && t1 != null) {
+                                            t1 + "\n" + t2
+                                        } else {
+                                            ""
+                                        }
+                                    )
+                                },
+                                leadingContent = {
+                                    Icon(
+                                        painterResource(R.drawable.book),
+                                        contentDescription = "Localized description",
+                                    )
+                                },
+                                modifier = Modifier.clickable {},
                             )
-                        },
-                        modifier = Modifier.clickable {}
-                    )
-
-                    if(lists.remark != null)
+                        }
+                    }
+                    lessons.scheduleText.dateTimePlacePersonText.textZh?.let {
+                        TransplantListItem(
+                            overlineContent = { Text("上课安排") },
+                            headlineContent = { Text(it) },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.schedule),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier.clickable {}
+                        )
+                    }
+                    lessons.remark?.let {
                         TransplantListItem(
                             overlineContent = { Text("备注") },
-                            headlineContent = { Text(lists.remark) },
-                            trailingContent = {
-                            },
-                            //supportingContent = { Text(text = "班级 " + getCourse()[item].className)},
+                            headlineContent = { Text(it) },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.info),
@@ -540,9 +565,11 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState) {
                             },
                             modifier = Modifier.clickable {},
                         )
+                    }
                 }
             }
         }
+        item { Spacer(Modifier.height(APP_HORIZONTAL_DP/2)) }
     }
 }
 

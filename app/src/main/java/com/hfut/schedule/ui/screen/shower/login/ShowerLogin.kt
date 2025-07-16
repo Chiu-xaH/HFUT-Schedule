@@ -60,7 +60,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.onListenStateHolder
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.util.navigateAndClear
+import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope

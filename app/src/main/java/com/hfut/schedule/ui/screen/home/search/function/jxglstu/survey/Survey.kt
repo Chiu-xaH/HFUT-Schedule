@@ -28,7 +28,6 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Survey(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState){
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -44,8 +43,6 @@ fun Survey(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState){
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

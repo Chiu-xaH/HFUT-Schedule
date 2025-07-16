@@ -44,7 +44,7 @@ import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
+fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState,ifSaved : Boolean) {
     var showBottomSheet_Total by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -103,7 +103,8 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState) {
                         if(next) TotalCourseDataSource.MINE_NEXT else TotalCourseDataSource.MINE,
                         sortType,
                         vm,
-                        hazeState
+                        hazeState,
+                        ifSaved
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 }
@@ -161,7 +162,15 @@ private fun parseDatumCourse(result: String) : List<lessons> = try {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIconOrText : Boolean = false, next : Boolean = false, hazeState: HazeState, onNextChange : (() -> Unit)? = null) {
+fun CourseTotalForApi(
+    modifier: Modifier = Modifier,
+    vm: NetWorkViewModel,
+    isIconOrText : Boolean = false,
+    next : Boolean = false,
+    hazeState: HazeState,
+    ifSaved : Boolean,
+    onNextChange : (() -> Unit)? = null
+) {
     var showBottomSheet_Total by remember { mutableStateOf(false) }
 
     var next2 by remember { mutableStateOf(false) }
@@ -236,7 +245,8 @@ fun CourseTotalForApi(modifier: Modifier = Modifier, vm: NetWorkViewModel, isIco
                         ,
                         sortType,
                         vm,
-                        hazeState
+                        hazeState,
+                        ifSaved
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 }

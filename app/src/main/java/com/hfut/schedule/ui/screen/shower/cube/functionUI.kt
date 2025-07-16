@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.util.navigateAndClear
+import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.textFiledTransplant
 

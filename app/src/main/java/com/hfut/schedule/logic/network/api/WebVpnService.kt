@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.App.MyApplication
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -20,7 +21,7 @@ interface WebVpnService {
     fun getKeyWebVpn(@Header("Cookie") cookie : String) : Call<ResponseBody>
     @FormUrlEncoded
     @POST("http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/cas/login?service=http://jxglstu.hfut.edu.cn/eams5-student/neusoft-sso/login")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    @Headers(MyApplication.PC_UA)
     fun loginWebVpn(@Header("Cookie") cookie : String,
                     @Field("username") username: String,
                     @Field("password") password: String,
@@ -30,6 +31,6 @@ interface WebVpnService {
     ): Call<ResponseBody>
     //登录WEBVPN
     @GET("http/77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/neusoft-sso/login")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    @Headers(MyApplication.PC_UA)
     fun loginJxglstu(@Header("Cookie") cookie : String): Call<ResponseBody>
 }

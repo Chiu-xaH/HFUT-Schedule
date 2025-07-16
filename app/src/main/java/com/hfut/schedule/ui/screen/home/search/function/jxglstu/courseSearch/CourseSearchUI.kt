@@ -267,7 +267,7 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
 
                 CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                    CourseTotalUI(dataSource = TotalCourseDataSource.SEARCH, sortType = true,vm, hazeState = hazeState)
+                    CourseTotalUI(dataSource = TotalCourseDataSource.SEARCH, sortType = true,vm, hazeState = hazeState, false)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }
@@ -324,10 +324,6 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, hazeState: HazeState, onDismissRequest :  () -> Unit) {
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-//    val cookie = if (!vm.webVpn) prefs.getString("redirect", "")
-//    else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     if(showBottomSheet) {
         var semester by remember { mutableStateOf<Int?>(null) }
         LaunchedEffect(Unit) {
@@ -369,7 +365,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                 ) {
                     Column {
                         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                            CourseTotalUI(dataSource = TotalCourseDataSource.SEARCH, sortType = true,vm, hazeState = hazeState)
+                            CourseTotalUI(dataSource = TotalCourseDataSource.SEARCH, sortType = true,vm, hazeState = hazeState,false)
                         }
                         Spacer(modifier = Modifier.height(20.dp))
                     }

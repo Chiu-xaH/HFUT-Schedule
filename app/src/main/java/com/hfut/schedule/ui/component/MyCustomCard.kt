@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -49,6 +50,13 @@ fun MyCustomCard(
     ) {
         content()
     }
+}
+
+@Composable
+fun mixedCardNormalColor(): Color {
+    val overlay = cardNormalColor()
+    val base = MaterialTheme.colorScheme.surface
+    return overlay.compositeOver(base)
 }
 // 小卡片
 @Composable

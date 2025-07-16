@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.style
 
+import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
@@ -29,6 +31,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -38,6 +41,10 @@ import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.largeCardColor
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.transition.state.TransitionState
+import com.xah.transition.style.transitionBackground
+import com.xah.transition.util.currentRoute
+import com.xah.transition.util.isCurrentRoute
 import dev.chrisbanes.haze.HazeDefaults.blurEnabled
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -48,6 +55,7 @@ import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 
 @Composable
 fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
@@ -212,6 +220,50 @@ fun transitionBackground(isExpanded : Boolean) : Modifier {
 
     val transitionModifier = if(transition) Modifier.blur(blurSize).scale(scale.value) else Modifier
     return transitionModifier
+}
+
+@Composable
+fun Modifier.transitionBackgroundF(
+    navHostController: NavHostController,
+    route : String,
+) : Modifier = with(TransitionState.transitionBackgroundStyle) {
+    val blur by produceState(initialValue = true) {
+        value = DataStoreManager.hazeBlurFlow.first()
+    }
+    if(TransitionState.firstStartRoute == route && !TransitionState.started) {
+        TransitionState.started = true
+        return this@transitionBackgroundF
+    }
+    val transplantBackground = TransitionState.transplantBackground
+    val isExpanded = !navHostController.isCurrentRoute(route)
+    val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
+    // 稍微晚于运动结束
+    val blurSize by animateDpAsState(
+        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp, label = ""
+        ,animationSpec = tween(speed, easing = FastOutSlowInEasing),
+    )
+    val scale = animateFloatAsState( //.875f
+        targetValue = if (isExpanded) scaleValue else 1f,
+        animationSpec = tween(speed , easing = FastOutSlowInEasing)
+    )
+    val backgroundColor by animateColorAsState(
+        targetValue = if(isExpanded) backgroundColor else Color.Transparent,
+        animationSpec = tween(TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
+    )
+    LaunchedEffect(isExpanded) {
+        if(blur && TransitionState.transitionBackgroundStyle.forceTransition) {
+            DataStoreManager.saveHazeBlur(false)
+            delay(speed*1L)
+            DataStoreManager.saveHazeBlur(true)
+        }
+    }
+    // 蒙版 遮罩
+    if(!transplantBackground)
+        Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
+
+    val transitionModifier = if(forceTransition) this@transitionBackgroundF.scale(scale.value).blur(blurSize) else this@transitionBackgroundF
+
+    transitionModifier
 }
 
 @Composable

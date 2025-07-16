@@ -1,7 +1,10 @@
 package com.hfut.schedule.ui.screen.grade
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.LocalActivity
+import android.util.Log
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -24,12 +27,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,36 +44,43 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.enumeration.GradeBarItems
+import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.AppNavRoute
+import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.StyleCardListItem
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
 import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.containerShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel,navTopController : NavHostController) {
+fun GradeScreen(
+    ifSaved : Boolean,
+    vm : NetWorkViewModel,
+    navTopController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
-//    val context = LocalActivity.current
 
     var showSearch by remember { mutableStateOf(false) }
 
@@ -110,111 +118,112 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel,navTopController : NavH
             }
         }
     }
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Column {
-                TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,),
-                    colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
+    val items = listOf(
+        NavigationBarItemData(
+            GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
+                R.drawable.article_filled)
         ),
-                    title = { Text("成绩") },
-                    actions = {
-                        Row {
-                            if(!ifSaved) {
-                                IconButton(onClick = {
-                                    showSearch = !showSearch
-                                }) {
-                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
-                                }
-                            }
-                            IconButton(onClick = {
-                                showBottomSheet = true
-                            }) {
-                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
-                            }
-                            IconButton(onClick = {
-                                navTopController.popBackStack()
-                            }) {
-                                Icon(Icons.Filled.Close, contentDescription = "")
-                            }
-                        }
-                    }
-                )
-            }
-        },
-        bottomBar = {
-            Column {
-                NavigationBar(containerColor = Color.Transparent ,
-                    modifier = Modifier.bottomBarBlur(hazeState,)
-                ) {
-                    val items = listOf(
-                        NavigationBarItemData(
-                            GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
-                                R.drawable.article_filled)
+        NavigationBarItemData(
+            GradeBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
+            painterResource(R.drawable.leaderboard_filled)
+        )
+    )
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = targetRoute,
+            animatedContentScope = animatedContentScope,
+            navHostController = navTopController,
+            modifier = containerShare(Modifier.fillMaxSize(), animatedContentScope, targetRoute, resize = false),
+            topBar = {
+                Column {
+                    TopAppBar(
+                        modifier = Modifier.topBarBlur(hazeState,),
+                        colors = topAppBarColors(
+                            containerColor = Color.Transparent,
+                            titleContentColor = MaterialTheme.colorScheme.primary
                         ),
-                        NavigationBarItemData(
-                            GradeBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
-                            painterResource(R.drawable.leaderboard_filled)
-                        )
-                    )
-                    items.forEach { item ->
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-                        val scale = animateFloatAsState(
-                            targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                            label = "" // 使用弹簧动画
-                        )
-                        val route = item.route
-                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                        NavigationBarItem(
-                            selected = selected,
-                            modifier = Modifier.scale(scale.value),
-                            interactionSource = interactionSource,
-                            onClick = {
-                                if(currentAnimationIndex == 2) {
-                                    when(item) {
-                                        items[0] -> targetPage = GradeBarItems.GRADE
-                                        items[1] -> targetPage = GradeBarItems.COUNT
+                        title = { Text("成绩") },
+                        actions = {
+                            Row {
+                                if(!ifSaved) {
+                                    IconButton(onClick = {
+                                        showSearch = !showSearch
+                                    }) {
+                                        Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
                                     }
                                 }
-
-                                if (!selected) {
-                                    navController.navigateAndSave(route)
+                                IconButton(onClick = {
+                                    showBottomSheet = true
+                                }) {
+                                    Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
                                 }
-                            },
-                            label = { Text(text = item.label) },
-                            icon = {
-                                 Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
-                            },
-                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+                                IconButton(onClick = {
+                                    navTopController.popBackStack()
+                                }) {
+                                    Icon(Icons.Filled.Close, contentDescription = "")
+                                }
+                            }
+                        }
+                    )
+                }
+            },
+            bottomBar = {
+                Column {
+                    NavigationBar(containerColor = Color.Transparent ,
+                        modifier = Modifier.bottomBarBlur(hazeState,)
+                    ) {
+                        items.forEach { item ->
+                            val interactionSource = remember { MutableInteractionSource() }
+                            val isPressed by interactionSource.collectIsPressedAsState()
+                            val scale = animateFloatAsState(
+                                targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
+                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                                label = "" // 使用弹簧动画
+                            )
+                            val route = item.route
+                            val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
+                            NavigationBarItem(
+                                selected = selected,
+                                modifier = Modifier.scale(scale.value),
+                                interactionSource = interactionSource,
+                                onClick = {
+                                    if(currentAnimationIndex == 2) {
+                                        when(item) {
+                                            items[0] -> targetPage = GradeBarItems.GRADE
+                                            items[1] -> targetPage = GradeBarItems.COUNT
+                                        }
+                                    }
 
-                        )
+                                    if (!selected) {
+                                        navController.navigateAndSave(route)
+                                    }
+                                },
+                                label = { Text(text = item.label) },
+                                icon = {
+                                    Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
+                                },
+                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+
+                            )
+                        }
                     }
                 }
             }
-        }
         ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
-        NavHost(navController = navController,
+            NavHost(navController = navController,
                 startDestination = GradeBarItems.GRADE.name,
                 enterTransition = { animation.enter },
                 exitTransition = { animation.exit },
                 modifier = Modifier.hazeSource(state = hazeState)
             ) {
                 composable(GradeBarItems.GRADE.name) {
-
                     Scaffold(
                     ) {
                         if (ifSaved) GradeItemUI(vm,innerPadding)
                         else GradeItemUIJXGLSTU(innerPadding,vm,showSearch,hazeState)
                     }
-
                 }
                 composable(GradeBarItems.COUNT.name) {
                     Scaffold(
@@ -223,7 +232,9 @@ fun GradeScreen(ifSaved : Boolean, vm : NetWorkViewModel,navTopController : NavH
                     }
                 }
             }
+        }
     }
+
 }
 
 @Composable

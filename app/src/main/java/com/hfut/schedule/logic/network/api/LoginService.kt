@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.App.MyApplication
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -21,7 +22,7 @@ interface LoginService {
 
     //教务系统附加AES登录
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    @Headers(MyApplication.PC_UA)
     @POST("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
     fun login(
         @Header("Cookie") cookie : String,
@@ -34,13 +35,13 @@ interface LoginService {
 
    //信息门户登录
     @GET("cas/oauth2.0/authorize?response_type=code&client_id=BsHfutEduPortal&redirect_uri=https%3A//one.hfut.edu.cn/home/index")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    @Headers(MyApplication.PC_UA)
     fun OneGoto(
         @Header("Cookie") Cookie : String
     ) : Call<ResponseBody>
     //慧新易校
     @GET("cas/oauth2.0/authorize?response_type=code&client_id=Hfut2023Ydfwpt&redirect_uri=http%3A%2F%2F121.251.19.62%2Fberserker-auth%2Fcas%2Foauth2url%3Foauth2url%3Dhttp%3A%2F%2F121.251.19.62%2Fberserker-base%2Fredirect%3FappId%3D24%26type%3Dapp")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+    @Headers(MyApplication.PC_UA)
     fun OneGotoCard(
         @Header("Cookie") Cookie : String
     ) : Call<ResponseBody>
@@ -63,6 +64,6 @@ interface LoginService {
 
     //社区登录
 //    @GET("cas/login?service=https%3A%2F%2Fcommunity.hfut.edu.cn%2F")
-//    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17")
+//    @Headers(MyApplication.PC_UA)
 //    fun loginCommunity(@Header("Cookie") Cookie : String) : Call<ResponseBody>
 }

@@ -18,7 +18,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -29,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
@@ -136,27 +141,22 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
 @Composable
 fun CourseDetailApi(isNext : Boolean = false, courseName : String, vm : NetWorkViewModel, hazeState: HazeState) {
     //用法
-//    val sheetState_totalCourse = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-//    var showBottomSheet_totalCourse by remember { mutableStateOf(false) }
-//    var courseName by remember { mutableStateOf("") }
-//    if (showBottomSheet_totalCourse) {
-//        ModalBottomSheet(
-//            onDismissRequest = {
-//                showBottomSheet_totalCourse = false
-//            },
-//            sheetState = sheetState_totalCourse,
-//            shape = Round(sheetState_totalCourse)
-//        ) {
-//            CourseDetailApi(courseName = courseName, vm = vm)
-//        }
-//    }
     val json = SharedPrefs.prefs.getString(if(!isNext)"courses" else "coursesNext","")
     val list = getTotalCourse(json)
-    var numItem by remember { mutableStateOf(0) }
+    var numItem by remember { mutableIntStateOf(0) }
     for(i in list.indices) {
         if(list[i].course.nameZh == courseName) {
             numItem = i
             break
+        }
+    }
+    val courseBookJson by DataStoreManager.courseBookJson.collectAsState(initial = "")
+    var courseBookData: Map<Long, CourseBookBean> by remember { mutableStateOf(emptyMap()) }
+    LaunchedEffect(courseBookJson) {
+//         是JSON
+        if(courseBookJson.contains("{")) {
+            val data = vm.parseCourseBook(courseBookJson)
+            courseBookData = data
         }
     }
 
@@ -173,7 +173,7 @@ fun CourseDetailApi(isNext : Boolean = false, courseName : String, vm : NetWorkV
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState )
+            DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState,courseBookData )
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

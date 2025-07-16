@@ -204,7 +204,7 @@ fun MultiScheduleSettings(
                 topBar = {
                     BottomSheetTopBar("下学期课程表") {
                         Row {
-                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState)
+                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState, ifSaved = ifSaved)
                             TextButton(onClick = { showAll = !showAll }) {
                                 Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                             }

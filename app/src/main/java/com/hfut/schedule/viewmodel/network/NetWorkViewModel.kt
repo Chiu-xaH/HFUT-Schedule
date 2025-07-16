@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.model.community.FailRateResponse
 import com.hfut.schedule.logic.model.community.GradeAllResponse
 import com.hfut.schedule.logic.model.community.GradeAllResult
 import com.hfut.schedule.logic.model.community.GradeAvgResponse
+import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeResponse
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.community.GradeResult
@@ -68,6 +69,8 @@ import com.hfut.schedule.logic.model.community.StuAppBean
 import com.hfut.schedule.logic.model.community.StuAppsResponse
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
+import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
+import com.hfut.schedule.logic.model.jxglstu.CourseBookResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
@@ -753,7 +756,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    val jxglstuGradeData = StateHolder<List<GradeResponseJXGLSTU>>()
+    val jxglstuGradeData = StateHolder<List<GradeJxglstuDTO>>()
     suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolderForNetwork(studentId,jxglstuGradeData) { sId ->
         launchRequestSimple(
             holder = jxglstuGradeData,
@@ -761,24 +764,40 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             transformSuccess = { _, html -> parseJxglstuGrade(html) }
         )
     }
-    private fun parseJxglstuGrade(html : String) : List<GradeResponseJXGLSTU> = try {
+    private fun parseJxglstuGrade(html: String): List<GradeJxglstuDTO> = try {
         val doc = Jsoup.parse(html)
-        val rows = doc.select("tr")
-        val list = mutableListOf<GradeResponseJXGLSTU>()
-        for(row in rows) {
-            val tds = row.select("td") // 选择tr标签下的所有td标签
-            if(!tds.isEmpty()) {
-                val titles = tds[0].text()
-                val codes = tds[2].text()
-                val scores =tds[3].text()
-                val gpa = tds[4].text()
-                val totalGrade = tds[5].text()
-                val grades = tds[6].text()
-                list.add(GradeResponseJXGLSTU(titles,scores,gpa,grades,totalGrade,codes))
+        val termElements = doc.select("h3")
+        val tableElements = doc.select("table.student-grade-table")
+
+        val result = mutableListOf<GradeJxglstuDTO>()
+
+        for ((index, termElement) in termElements.withIndex()) {
+            val term = termElement.text()
+            val table = tableElements.getOrNull(index) ?: continue
+            val rows = table.select("tr")
+            val list = mutableListOf<GradeResponseJXGLSTU>()
+
+            for(row in rows) {
+                val tds = row.select("td") // 选择tr标签下的所有td标签
+                if(!tds.isEmpty()) {
+                    val titles = tds[0].text()
+                    val codes = tds[2].text()
+                    val scores =tds[3].text()
+                    val gpa = tds[4].text()
+                    val totalGrade = tds[5].text()
+                    val grades = tds[6].text()
+                    list.add(GradeResponseJXGLSTU(titles,scores,gpa,grades,totalGrade,codes))
+                }
             }
+
+            result.add(GradeJxglstuDTO(term, list))
         }
-        list
-    } catch (e : Exception) { throw e }
+
+        result
+    } catch (e: Exception) {
+        throw e
+    }
+
 
     fun jxglstuLogin(cookie : String) {
 
@@ -830,7 +849,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         try {
             if (headers["Location"].toString().contains(i)) {
                 return headers["Location"].toString().substringAfter(i).toInt()
-//            saveInt("STUDENTID",sId ?: 0)
             } else if(headers["Location"].toString().contains("/login")){
                 throw Exception("登陆状态失效")
             } else {
@@ -841,22 +859,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw e
         }
     }
-//    {
-//
-//        val call = jxglstuJSON.getStudentId(cookie)
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                if (response.headers()["Location"].toString().contains("/eams5-student/for-std/course-table/info/")) {
-//                    sId = response.headers()["Location"].toString()
-//                        .substringAfter("/eams5-student/for-std/course-table/info/").toInt()
-//                    saveInt("STUDENTID",sId ?: 0)
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-//        })
-//    }
 
     //bizTypeId不是年级数！  //dataId为学生ID  //semesterId为学期Id，例如23-24第一学期为234
     suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int) = launchRequestSimple(
@@ -871,30 +873,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         },
         transformSuccess = { _, json -> parseLessonIds(json) }
     )
-//    {
-//        val call =  jxglstuJSON.getLessonIds(
-//            cookie,
-//            bizTypeId.toString(),
-//            SemseterParser.getSemseter().toString(),
-//            studentid
-//        )
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                val json = response.body()?.string()
-//                if (json != null) {
-//                    try {
-//                        val id = Gson().fromJson(json, lessonResponse::class.java)
-//                        val timeCampusId = id.timeTableLayoutId
-//                        lessonIds.value = id.lessonIds
-//                    } catch (_ : Exception) { }
-//                    saveString("courses",json)
-//                }
-//            }
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-//        })
-//    }
-//
+
     private fun parseLessonIds(json : String) : lessonResponse {
         saveString("courses",json)
         try {
@@ -922,7 +901,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             saveString("json", json)
             try {
                 return json
-//                Gson().fromJson(json, datumResponse::class.java)
             } catch (e : Exception) {
                 throw e
             }
@@ -930,25 +908,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
         }
     }
-//    {
-//        val lessonIdsArray = JsonArray()
-//        this@NetWorkViewModel.lessonIds.value?.forEach {lessonIdsArray.add(JsonPrimitive(it))}
 
-//        val call = jxglstuJSON.getDatum(cookie,lessonIds)
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                val body = response.body()?.string()
-//                datumData.value = body
-//                if (body != null && body.contains("result")) {
-//                    saveString("json", body)
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-//        })
-//    }
-//
     suspend fun getInfo(cookie : String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             val call = jxglstuHTML.getInfo(cookie,sId.toString())
@@ -1153,6 +1113,39 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             })
         }
     }
+
+
+    val courseBookResponse = StateHolder<Map<Long,CourseBookBean>>()
+    suspend fun getCourseBook(cookie: String,semester: Int) = onListenStateHolderForNetwork(studentId,courseBookResponse) { sId ->
+        onListenStateHolderForNetwork(bizTypeIdResponse,courseBookResponse) { bizTypeId ->
+            launchRequestSimple(
+                holder = courseBookResponse,
+                request = { jxglstuJSON.getCourseBook(cookie, bizTypeId = bizTypeId, semesterId = semester, studentId = sId).awaitResponse() },
+                transformSuccess = { _, json -> parseCourseBookNetwork(json) }
+            )
+        }
+    }
+    private suspend fun parseCourseBookNetwork(json : String) : Map<Long,CourseBookBean> = try {
+        val gson = Gson()
+        val data = gson.fromJson(json, CourseBookResponse::class.java).textbookAssignMap
+        // 将JSON以String只保存data部分
+        val dataJson = gson.toJson(data)
+        DataStoreManager.saveCourseBook(dataJson)
+
+        parseCourseBook(json)
+    } catch (e : Exception) { throw e }
+
+    fun parseCourseBook(json: String) : Map<Long,CourseBookBean> = try {
+        val type = object : TypeToken<Map<String, CourseBookBean>>() {}.type
+        val data: Map<String, CourseBookBean> = Gson().fromJson(json, type)
+        // 键为id，与课程汇总对接
+        // 将键转换为Long
+        data.mapNotNull { (key, value) ->
+            key.toLongOrNull()?.let { longKey ->
+                longKey to value
+            }
+        }.toMap()
+    } catch (e : Exception) { emptyMap() }
 
     fun goToOne(cookie : String)  {// 创建一个Call对象，用于发送异步请求
 

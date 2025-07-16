@@ -8,20 +8,49 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.util.network.ParseJsons.useCaptcha
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.util.AppAnimationManager
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 object DataStoreManager {
+    /* 用法
+    val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
+     */
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
     private val dataStore = MyApplication.context.dataStore
+    enum class ColorMode(val code : Int) {
+        LIGHT(1),DARK(2),AUTO(0)
+    }
+    private const val EMPTY_STRING = ""
+
+    private suspend fun <T> saveValue(key: Preferences.Key<T>, value: T) = dataStore.edit { it[key] = value }
+    private fun <T> getFlow(key: Preferences.Key<T>, default: T): Flow<T> = dataStore.data.map { it[key] ?: default }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun <T> getFlowSuspend(
+        key: Preferences.Key<T>,
+        defaultProvider: suspend () -> T
+    ): Flow<T> {
+        return dataStore.data.flatMapLatest { preferences ->
+            val value = preferences[key]
+            if (value != null) {
+                flowOf(value)
+            } else {
+                flow {
+                    defaultProvider()?.let { emit(it) }
+                }
+            }
+        }
+    }
+
 
     private val ANIMATION_TYPE = intPreferencesKey("animation_types")
     private val STU_COOKIE = stringPreferencesKey("stu_cookie")
@@ -37,11 +66,8 @@ object DataStoreManager {
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
     private val SUPABASE_AUTO_CHECK = booleanPreferencesKey("supabase_auto_check")
-    private val USE_CAPTCHA = booleanPreferencesKey("use_captcha")
-    private val USE_CAPTCHA_AUTO = booleanPreferencesKey("use_captcha_auto")
     private val FOCUS_SHOW_SHOWER = booleanPreferencesKey("focus_show_shower")
     private val FOCUS_SHOW_WEATHER_WARN = booleanPreferencesKey("focus_show_weather_warn")
-    private val FOCUS_SHOW_SPECIAL = booleanPreferencesKey("focus_show_special")
     private val CARD_PASSWORD = stringPreferencesKey("card_password")
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
     private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
@@ -52,303 +78,61 @@ object DataStoreManager {
     private val AUTO_TERM = booleanPreferencesKey("auto_term")
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
     private val TODAY_CAMPUS_TIP = booleanPreferencesKey("today_campus_tip")
+    private val COURSE_BOOK = stringPreferencesKey("course_book")
 
 
-    enum class ColorMode(val code : Int) {
-        LIGHT(1),DARK(2),AUTO(0)
-    }
+    suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
+    suspend fun saveStuCookie(value: String) = saveValue(STU_COOKIE,value)
+    suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
+    suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
+    suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
+    suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR,value)
+    suspend fun saveMotionAnimation(value: Boolean) = saveValue(MOTION_ANIMATION_TYPE,value)
+    suspend fun saveTransition(value: Boolean) = saveValue(TRANSITION,value)
+    suspend fun saveShowCloudFocus(value: Boolean) = saveValue(SHOW_CLOUD_FOCUS,value)
+    suspend fun saveShowFocus(value: Boolean) = saveValue(SHOW_FOCUS,value)
+    suspend fun saveSupabaseJwt(value: String) = saveValue(SUPABASE_JWT,value)
+    suspend fun saveSupabaseRefreshToken(value: String) = saveValue(SUPABASE_REFRESH_TOKEN,value)
+    suspend fun saveSupabaseFilterEvent(value: Boolean) = saveValue(SUPABASE_FILTER_EVENT,value)
+    suspend fun saveSupabaseAutoCheck(value: Boolean) = saveValue(SUPABASE_AUTO_CHECK,value)
+    suspend fun saveFocusShowShower(value: Boolean) = saveValue(FOCUS_SHOW_SHOWER,value)
+    suspend fun saveFocusShowWeatherWarn(value: Boolean) = saveValue(FOCUS_SHOW_WEATHER_WARN,value)
+    suspend fun saveCardPassword(value: String) = saveValue(CARD_PASSWORD,value)
+    suspend fun saveUseDefaultCardPassword(value: Boolean) = saveValue(USE_DEFAULT_CARD_PASSWORD,value)
+    suspend fun saveDefaultCalendarAccount(value: Long) = saveValue(DEFAULT_CALENDAR_ACCOUNT,value)
+    suspend fun saveCourseTable(value: String) = saveValue(COURSE_TABLE_TIME,value)
+    suspend fun saveWebVpnCookie(value: String) = saveValue(WEBVPN_COOKIE,value)
+    suspend fun saveFastStart(value: Boolean) = saveValue(FIRST_USE,value)
+    suspend fun saveAutoTerm(value: Boolean) = saveValue(AUTO_TERM,value)
+    suspend fun saveAutoTermValue(value: Int) = saveValue(AUTO_TERM_VALUE,value)
+    suspend fun saveTodayCampusTip(value: Boolean) = saveValue(TODAY_CAMPUS_TIP,value)
+    suspend fun saveCourseBook(value: String) = saveValue(COURSE_BOOK,value)
 
-    suspend fun saveAnimationType(type: Int) {
-        dataStore.edit { preferences ->
-            preferences[ANIMATION_TYPE] = type
-        }
-    }
-    suspend fun saveStuCookie(cookie: String) {
-        dataStore.edit { preferences ->
-            preferences[STU_COOKIE] = cookie
-        }
-    }
-    suspend fun savePureDark(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[PURE_DARK] = switch
-        }
-    }
-    suspend fun saveColorMode(switch: ColorMode) {
-        dataStore.edit { preferences ->
-            preferences[COLOR_MODE] = switch.code
-        }
-    }
-    suspend fun saveMotionBlur(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[MOTION_BLUR] = switch
-        }
-    }
-    suspend fun saveHazeBlur(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[HAZE_BLUR] = switch
-        }
-    }
-    suspend fun saveMotionAnimation(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[MOTION_ANIMATION_TYPE] = switch
-        }
-    }
-    suspend fun saveTransition(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[TRANSITION] = switch
-        }
-    }
-    suspend fun saveShowCloudFocus(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SHOW_CLOUD_FOCUS] = switch
-        }
-    }
-    suspend fun saveShowFocus(switch: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SHOW_FOCUS] = switch
-        }
-    }
-    suspend fun saveSupabaseJwt(value: String) {
-        dataStore.edit { preferences ->
-            preferences[SUPABASE_JWT] = value
-        }
-    }
-    suspend fun saveSupabaseRefreshToken(value: String) {
-        dataStore.edit { preferences ->
-            preferences[SUPABASE_REFRESH_TOKEN] = value
-        }
-    }
-    suspend fun saveSupabaseFilterEvent(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SUPABASE_FILTER_EVENT] = value
-        }
-    }
-    suspend fun saveSupabaseAutoCheck(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[SUPABASE_AUTO_CHECK] = value
-        }
-    }
-    suspend fun saveUseCaptcha(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[USE_CAPTCHA] = value
-        }
-    }
-    suspend fun saveUseCaptchaAuto(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[USE_CAPTCHA_AUTO] = value
-        }
-    }
-    suspend fun saveFocusShowShower(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[FOCUS_SHOW_SHOWER] = value
-        }
-    }
-    suspend fun saveFocusShowWeatherWarn(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[FOCUS_SHOW_WEATHER_WARN] = value
-        }
-    }
-    suspend fun saveFocusShowSpecial(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[FOCUS_SHOW_SPECIAL] = value
-        }
-    }
-    suspend fun saveCardPassword(value: String) {
-        dataStore.edit { preferences ->
-            preferences[CARD_PASSWORD] = value
-        }
-    }
-    suspend fun saveUseDefaultCardPassword(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[USE_DEFAULT_CARD_PASSWORD] = value
-        }
-    }
-    suspend fun saveDefaultCalendarAccount(value: Long) {
-        dataStore.edit { preferences ->
-            preferences[DEFAULT_CALENDAR_ACCOUNT] = value
-        }
-    }
-    suspend fun saveCourseTable(value: String) {
-        dataStore.edit { preferences ->
-            preferences[COURSE_TABLE_TIME] = value
-        }
-    }
-    suspend fun saveCourseTableNext(value: String) {
-        dataStore.edit { preferences ->
-            preferences[COURSE_TABLE_TIME_NEXT] = value
-        }
-    }
-    suspend fun saveWebVpnCookie(value: String) {
-        dataStore.edit { preferences ->
-            preferences[WEBVPN_COOKIE] = value
-        }
-    }
-    suspend fun saveFastStart(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[FIRST_USE] = value
-        }
-    }
-    suspend fun saveAutoTerm(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[AUTO_TERM] = value
-        }
-    }
-    suspend fun saveAutoTermValue(value: Int) {
-        dataStore.edit { preferences ->
-            preferences[AUTO_TERM_VALUE] = value
-        }
-    }
-    suspend fun saveTodayCampusTip(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[TODAY_CAMPUS_TIP] = value
-        }
-    }
-
-
-
-
-
-    val animationTypeFlow: Flow<Int> = dataStore.data
-        .map { preferences ->
-            preferences[ANIMATION_TYPE] ?: AppAnimationManager.AnimationTypes.CenterAnimation.code
-        }
-    val stuCookieFlow: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[STU_COOKIE] ?: ""
-        }
-    val pureDarkFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[PURE_DARK] ?: false
-        }
-    val colorModeFlow: Flow<Int> = dataStore.data
-        .map { preferences ->
-            preferences[COLOR_MODE] ?: ColorMode.AUTO.code
-        }
-    val motionBlurFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[MOTION_BLUR] ?: AppVersion.CAN_MOTION_BLUR
-        }
-    val hazeBlurFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[HAZE_BLUR] ?: true
-        }
-    val motionAnimationTypeFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[MOTION_ANIMATION_TYPE] ?: false
-        }
-    val transitionFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[TRANSITION] ?: false
-        }
-    val showCloudFocusFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[SHOW_CLOUD_FOCUS] ?: true
-        }
-    val showFocusFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[SHOW_FOCUS] ?: true
-        }
-    val supabaseJwtFlow: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[SUPABASE_JWT] ?: ""
-        }
-    val supabaseRefreshTokenFlow: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[SUPABASE_REFRESH_TOKEN] ?: ""
-        }
-    val supabaseFilterEventFlow: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[SUPABASE_FILTER_EVENT] ?: true
-        }
-    val supabaseAutoCheck: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[SUPABASE_AUTO_CHECK] ?: true
-        }
-    val useCaptcha: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[USE_CAPTCHA] ?: useCaptcha()
-        }
-    val useCaptchaAuto: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[USE_CAPTCHA_AUTO] ?: true
-        }
-    val showFocusShower: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[FOCUS_SHOW_SHOWER] ?: true
-        }
-    val showFocusWeatherWarn: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[FOCUS_SHOW_WEATHER_WARN] ?: true
-        }
-//    val showFocusSpecial: Flow<Boolean> = dataStore.data
-//        .map { preferences ->
-//            preferences[FOCUS_SHOW_SPECIAL] ?: true
-//        }
-    val cardPassword: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[CARD_PASSWORD] ?: ""
-        }
-    val useDefaultCardPassword: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[USE_DEFAULT_CARD_PASSWORD] ?: true
-        }
-    val defaultCalendarAccount: Flow<Long> = dataStore.data
-        .map { preferences ->
-            preferences[DEFAULT_CALENDAR_ACCOUNT] ?: 1
-        }
-    val courseTableTime: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[COURSE_TABLE_TIME] ?: ""
-        }
-    val courseTableTimeNext: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[COURSE_TABLE_TIME_NEXT] ?: ""
-        }
-    val webVpnCookie: Flow<String> = dataStore.data
-        .map { preferences ->
-            preferences[WEBVPN_COOKIE] ?: ""
-        }
-    val autoTerm: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[AUTO_TERM] ?: true
-        }
-    val autoTermValue: Flow<Int> = dataStore.data
-        .map { preferences ->
-            preferences[AUTO_TERM_VALUE] ?: getSemseter()
-        }
-    val firstStart: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[FIRST_USE] ?: prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)
-        }
-    val todayCampusTip: Flow<Boolean> = dataStore.data
-        .map { preferences ->
-            preferences[TODAY_CAMPUS_TIP] ?: true
-        }
-    /* 用法
-    val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
-     */
+    val animationTypeFlow = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
+    val stuCookieFlow = getFlow(STU_COOKIE,EMPTY_STRING)
+    val pureDarkFlow = getFlow(PURE_DARK,false)
+    val colorModeFlow = getFlow(COLOR_MODE,ColorMode.AUTO.code)
+    val motionBlurFlow = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
+    val hazeBlurFlow = getFlow(HAZE_BLUR,true)
+    val motionAnimationTypeFlow = getFlow(MOTION_ANIMATION_TYPE,false)
+    val transitionFlow = getFlow(TRANSITION,false)
+    val showCloudFocusFlow = getFlow(SHOW_CLOUD_FOCUS,true)
+    val showFocusFlow = getFlow(SHOW_FOCUS,true)
+    val supabaseJwtFlow = getFlow(SUPABASE_JWT,EMPTY_STRING)
+    val supabaseRefreshTokenFlow = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
+    val supabaseFilterEventFlow = getFlow(SUPABASE_FILTER_EVENT,true)
+    val supabaseAutoCheck = getFlow(SUPABASE_AUTO_CHECK,true)
+    val showFocusShower = getFlow(FOCUS_SHOW_SHOWER,true)
+    val showFocusWeatherWarn = getFlow(FOCUS_SHOW_WEATHER_WARN,true)
+    val cardPassword = getFlow(CARD_PASSWORD,EMPTY_STRING)
+    val useDefaultCardPassword = getFlow(USE_DEFAULT_CARD_PASSWORD,true)
+    val defaultCalendarAccount = getFlow(DEFAULT_CALENDAR_ACCOUNT,1)
+    val courseTableTime = getFlow(COURSE_TABLE_TIME,EMPTY_STRING)
+    val courseTableTimeNext = getFlow(COURSE_TABLE_TIME_NEXT,EMPTY_STRING)
+    val webVpnCookie = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
+    val autoTerm = getFlow(AUTO_TERM,true)
+    val todayCampusTip = getFlow(TODAY_CAMPUS_TIP,true)
+    val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
+    val autoTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
+    val firstStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
 }
-
-
-
-
-//
-//fun main() {
-//    val dataStore = DataStoreManager().dataStore
-//
-//    suspend fun incrementCounter() {
-//        dataStore.edit { settings ->
-//            val currentCounterValue = settings[EXAMPLE_COUNTER] ?: 0
-//            settings[EXAMPLE_COUNTER] = currentCounterValue + 1
-//        }
-//    }
-//    CoroutineScope(Job()).launch {
-//        async { incrementCounter() }
-//    }
-//
-//    val exampleCounterFlow: Flow<Int> = dataStore.data.map { preferences ->
-//        // 无类型安全
-//        preferences[EXAMPLE_COUNTER] ?: 0
-//    }
-//    println(exampleCounterFlow)
-//}
