@@ -41,7 +41,8 @@ import kotlinx.coroutines.launch
 // DataStore 用法
 @Composable
 //@Preview
-fun AnimationSetting() {
+fun AnimationSetting(speed : Int) {
+    if(speed == 0) return
     val lists = listOf(
         AppAnimationManager.upDownAnimation,
         AppAnimationManager.centerAnimation,
@@ -55,7 +56,7 @@ fun AnimationSetting() {
         item { Spacer(Modifier.width(10.dp)) }
         items(lists.size) { index ->
             Spacer(Modifier.width(5.dp))
-            AnimationCard(lists[index],currentAnimationIndex,index)
+            AnimationCard(lists[index],currentAnimationIndex,index,speed)
         }
         item {
             Spacer(Modifier.width(APP_HORIZONTAL_DP))
@@ -64,7 +65,7 @@ fun AnimationSetting() {
 }
 
 @Composable
-fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int) {
+fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int,speed : Int) {
     val isSelected = currentAnimationIndex == index
 
     val cor = rememberCoroutineScope()
@@ -88,7 +89,7 @@ fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAn
                 LaunchedEffect(Unit) {
                     while (true) {
                         visible = !visible
-                        delay((ANIMATION_SPEED * 2).toLong()) // 延迟时间可以根据需要调整
+                        delay((speed * 2).toLong()) // 延迟时间可以根据需要调整
                     }
                 }
 

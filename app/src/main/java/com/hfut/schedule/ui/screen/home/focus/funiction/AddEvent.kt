@@ -139,18 +139,14 @@ fun AddEventFloatButton(
 
     var showAddUI by remember { mutableStateOf(false) }
     // 容器转换动画
-    val isCenterAnimation by DataStoreManager.motionAnimationTypeFlow.collectAsState(initial = false)
+//    val isCenterAnimation by DataStoreManager.motionAnimationTypeFlow.collectAsState(initial = false)
     val boundsTransform by remember { mutableStateOf(
         BoundsTransform { _, _ ->
-            if(!isCenterAnimation) {
-                spring(
-                    dampingRatio = Spring.DampingRatioLowBouncy*1.15f,
-                    stiffness = StiffnessMediumLow,
-                    visibilityThreshold = Rect.VisibilityThreshold
-                )
-            } else {
-                tween(durationMillis = AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing)
-            }
+            spring(
+                dampingRatio = Spring.DampingRatioLowBouncy*1.15f,
+                stiffness = StiffnessMediumLow,
+                visibilityThreshold = Rect.VisibilityThreshold
+            )
         }
     ) }
     // 通知父布局开始进行模糊和缩放，同时暂时关闭topBar和bottomBar的实时模糊

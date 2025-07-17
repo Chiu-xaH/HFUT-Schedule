@@ -59,4 +59,4 @@ fun SharedTransitionScope.titleElementShare(
     modifier: Modifier = Modifier,
     animatedContentScope: AnimatedContentScope,
     route : String,
-) : Modifier = singleElementShare(modifier,animatedContentScope,"icon",route)
+) : Modifier = singleElementShare(modifier,animatedContentScope,"title",route)

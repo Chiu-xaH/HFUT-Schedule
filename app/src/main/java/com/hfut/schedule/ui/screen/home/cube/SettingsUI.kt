@@ -82,12 +82,12 @@ fun SettingsScreen(vm : NetWorkViewModel
                 }
                 composable(Screen.UIScreen.route) {
                     Scaffold {
-                        UIScreen(navController, innerPaddings,showlable, showlablechanged)
+                        UIScreen(innerPaddings,showlable, showlablechanged)
                     }
                 }
                 composable(Screen.APPScreen.route) {
                     Scaffold {
-                        APPScreen(navController, innerPaddings,ifSaved,hazeState)
+                        APPScreen(navController, innerPaddings)
                     }
                 }
                 composable(Screen.FIxAboutScreen.route) {
@@ -107,7 +107,7 @@ fun SettingsScreen(vm : NetWorkViewModel
                 }
                 composable("DEBUG") {
                     Scaffold {
-                        TEST(innerPadding)
+                        TEST(innerPaddings)
                     }
                 }
                 composable(Screen.DownloadScreen.route) {

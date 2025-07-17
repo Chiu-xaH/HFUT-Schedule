@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.state.TransitionState
 import com.xah.transition.style.transitionBackground
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -58,6 +59,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
 
     // 初始化网络请求
     LaunchedEffect(Unit) {
+        launch { AppAnimationManager.updateAnimationSpeed() }
         // 如果进入的是登陆界面 未登录做准备
         if(!(startActivity && login)) {
             //从服务器获取信息

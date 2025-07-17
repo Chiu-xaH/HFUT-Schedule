@@ -9,6 +9,7 @@ import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.ui.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 
 class MyApplication : Application() {

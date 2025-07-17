@@ -1,8 +1,11 @@
 package com.hfut.schedule.ui.util
 
 //import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
@@ -17,11 +20,38 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.Alignment
 import androidx.navigation.NavHostController
+import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.xah.transition.state.TransitionState
+import com.xah.transition.style.DefaultTransitionStyle
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 
 object AppAnimationManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
     // 全局动画速度 毫秒
-    const val ANIMATION_SPEED = 400
+    var ANIMATION_SPEED = 400
+    private suspend fun setAnimationSpeed() : Int {
+        val speedCode = DataStoreManager.animationSpeedType.first()
+        val speed = DataStoreManager.AnimationSpeed.entries.find { it.code == speedCode }?.speed ?: ANIMATION_SPEED
+        return speed
+    }
+    @OptIn(ExperimentalSharedTransitionApi::class)
+    suspend fun updateAnimationSpeed() = withContext(Dispatchers.IO) {
+        ANIMATION_SPEED = setAnimationSpeed()
+//        if(ANIMATION_SPEED == DataStoreManager.AnimationSpeed.NORMAL.code) {
+//            TransitionState.curveStyle.speedMs = DefaultTransitionStyle.DEFAULT_ANIMATION_SPEED
+//            TransitionState.curveStyle.boundsTransform = DefaultTransitionStyle.defaultBoundsTransform
+//        } else {
+//            TransitionState.curveStyle.speedMs = ANIMATION_SPEED
+//            TransitionState.curveStyle.boundsTransform = getCenterBoundsTransform()
+//        }
+    }
+
+    @OptIn(ExperimentalSharedTransitionApi::class)
+    fun getCenterBoundsTransform() = BoundsTransform { _, _ ->//FastOutSlowInEasing
+        tween(durationMillis = TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
+    }
 
     private val enterAnimation1 =
         scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +

@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
+import com.hfut.schedule.ui.screen.home.search.TopBarTopIcon
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -64,6 +65,8 @@ import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.component.titleElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -137,12 +140,15 @@ fun GradeScreen(
             topBar = {
                 Column {
                     TopAppBar(
-                        modifier = Modifier.topBarBlur(hazeState,),
+                        modifier = Modifier.topBarBlur(hazeState),
                         colors = topAppBarColors(
                             containerColor = Color.Transparent,
                             titleContentColor = MaterialTheme.colorScheme.primary
                         ),
                         title = { Text("成绩") },
+                        navigationIcon = {
+                            TopBarTopIcon(navTopController,animatedContentScope,targetRoute,R.drawable.article)
+                        },
                         actions = {
                             Row {
                                 if(!ifSaved) {
@@ -156,11 +162,6 @@ fun GradeScreen(
                                     showBottomSheet = true
                                 }) {
                                     Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
-                                }
-                                IconButton(onClick = {
-                                    navTopController.popBackStack()
-                                }) {
-                                    Icon(Icons.Filled.Close, contentDescription = "")
                                 }
                             }
                         }

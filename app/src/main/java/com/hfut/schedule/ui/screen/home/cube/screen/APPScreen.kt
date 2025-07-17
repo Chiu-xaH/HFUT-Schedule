@@ -59,8 +59,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun APPScreen(navController: NavController,
               innerPaddings : PaddingValues,
-              ifSaved : Boolean,
-              hazeState: HazeState
               ) {
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())

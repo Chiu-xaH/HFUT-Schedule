@@ -50,7 +50,7 @@ fun Modifier.transitionBackground(
         animationSpec = tween(TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
     )
     // 蒙版 遮罩
-    if(!transplantBackground)
+    if(forceTransition && !transplantBackground)
         Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
 
     val transitionModifier = if(forceTransition) this@transitionBackground.scale(scale.value).blur(blurSize) else this@transitionBackground

@@ -30,6 +30,9 @@ object DataStoreManager {
     enum class ColorMode(val code : Int) {
         LIGHT(1),DARK(2),AUTO(0)
     }
+    enum class AnimationSpeed(val code : Int,val speed : Int,val title : String) {
+        SLOW(3,550,"慢"),NORMAL(0,400,"正常"),FAST(1,250,"快"),NONE(2,0,"无")
+    }
     private const val EMPTY_STRING = ""
 
     private suspend fun <T> saveValue(key: Preferences.Key<T>, value: T) = dataStore.edit { it[key] = value }
@@ -79,6 +82,7 @@ object DataStoreManager {
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
     private val TODAY_CAMPUS_TIP = booleanPreferencesKey("today_campus_tip")
     private val COURSE_BOOK = stringPreferencesKey("course_book")
+    private val ANIMATION_SPEED = intPreferencesKey("animation_speed")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -87,7 +91,6 @@ object DataStoreManager {
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
     suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR,value)
-    suspend fun saveMotionAnimation(value: Boolean) = saveValue(MOTION_ANIMATION_TYPE,value)
     suspend fun saveTransition(value: Boolean) = saveValue(TRANSITION,value)
     suspend fun saveShowCloudFocus(value: Boolean) = saveValue(SHOW_CLOUD_FOCUS,value)
     suspend fun saveShowFocus(value: Boolean) = saveValue(SHOW_FOCUS,value)
@@ -107,6 +110,7 @@ object DataStoreManager {
     suspend fun saveAutoTermValue(value: Int) = saveValue(AUTO_TERM_VALUE,value)
     suspend fun saveTodayCampusTip(value: Boolean) = saveValue(TODAY_CAMPUS_TIP,value)
     suspend fun saveCourseBook(value: String) = saveValue(COURSE_BOOK,value)
+    suspend fun saveAnimationSpeed(value: AnimationSpeed) = saveValue(ANIMATION_SPEED,value.code)
 
     val animationTypeFlow = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookieFlow = getFlow(STU_COOKIE,EMPTY_STRING)
@@ -114,7 +118,6 @@ object DataStoreManager {
     val colorModeFlow = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val motionBlurFlow = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
     val hazeBlurFlow = getFlow(HAZE_BLUR,true)
-    val motionAnimationTypeFlow = getFlow(MOTION_ANIMATION_TYPE,false)
     val transitionFlow = getFlow(TRANSITION,false)
     val showCloudFocusFlow = getFlow(SHOW_CLOUD_FOCUS,true)
     val showFocusFlow = getFlow(SHOW_FOCUS,true)
@@ -133,6 +136,7 @@ object DataStoreManager {
     val autoTerm = getFlow(AUTO_TERM,true)
     val todayCampusTip = getFlow(TODAY_CAMPUS_TIP,true)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
+    val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val autoTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val firstStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
 }

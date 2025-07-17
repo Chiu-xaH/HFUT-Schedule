@@ -2,10 +2,12 @@ package com.hfut.schedule.ui.screen.home.search
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,17 +15,24 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -31,7 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.AppNavRoute
+import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.Huixin
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -76,10 +87,14 @@ import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
 import com.hfut.schedule.ui.screen.home.search.function.my.supabase.Supabase
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.TransitionState
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.delay
 
 private data class SearchAppBean(val searchKeyWord : String,val ui : @Composable () -> Unit,val route : String? = null)
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -104,7 +119,7 @@ fun SearchScreen(
         SearchAppBean("校园网 慧新易校 缴费" , { LoginWeb(vmUI, false, vm,hazeState) }),
         SearchAppBean("教育邮箱" , { Mail(ifSaved, vm,vmUI,hazeState) }),
         SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" , { Huixin() }),
-        SearchAppBean("成绩", { Grade(ifSaved,navController) }, AppNavRoute.Grade.receiveRoute()),
+        SearchAppBean("成绩", { Grade(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Grade.receiveRoute()),
         SearchAppBean("挂科率", { FailRate(vm,hazeState) }),
         SearchAppBean("课程汇总 教材 课本", { CourseTotal(vm,hazeState,ifSaved) }),
         SearchAppBean("个人信息", { PersonUI(vm,hazeState) }),
@@ -211,5 +226,80 @@ fun SearchFuncs(ifSaved: Boolean,input: String,webVpn: Boolean = false, onInputC
                 }
             },
         )
+    }
+}
+
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun SharedTransitionScope.TopBarTopIcon(
+    navController : NavHostController,
+    animatedContentScope: AnimatedContentScope,
+    route : String,
+    icon : Int
+) {
+    val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
+    var show by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        show = true
+        delay(speed*1L)
+        delay(1000L)
+        show = false
+        delay(3000L)
+        show = true
+    }
+
+    IconButton(onClick = { navController.popBackStack() }) {
+        Box() {
+            AnimatedVisibility(
+                visible = show,
+                enter = AppAnimationManager.centerAnimation.enter,
+                exit = AppAnimationManager.centerAnimation.exit
+            ) {
+                Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+            AnimatedVisibility(
+                visible = !show,
+                enter = AppAnimationManager.centerAnimation.enter,
+                exit = AppAnimationManager.centerAnimation.exit
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun TopBarTopIconTip(
+    icon : Int
+) {
+    val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
+    var show by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        show = true
+        delay(speed*1L)
+        delay(1000L)
+        show = false
+        delay(3000L)
+        show = true
+    }
+    IconButton(onClick = { showToast("返回上一级界面") }) {
+        Box() {
+            AnimatedVisibility(
+                visible = show,
+                enter = AppAnimationManager.centerAnimation.enter,
+                exit = AppAnimationManager.centerAnimation.exit
+            ) {
+                Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+            AnimatedVisibility(
+                visible = !show,
+                enter = AppAnimationManager.centerAnimation.enter,
+                exit = AppAnimationManager.centerAnimation.exit
+            ) {
+                Icon(Icons.Default.ArrowBack, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+        }
     }
 }

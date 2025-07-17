@@ -32,7 +32,7 @@ lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
 material3 = "1.4.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
-navigationCompose = "2.9.1" # 2.9.0 2.7.5
+navigationCompose = "2.7.5" # 2.9.1 2.7.5
 okhttp = "4.9.0"
 profileinstaller = "1.4.1"
 roomRuntime = "2.6.1"
@@ -46,6 +46,7 @@ runner = "1.5.2"
 core = "1.5.0"
 ksp = "2.1.20-1.0.32"
 test = "8.9.2"
+materialVersion = "1.12.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -106,6 +107,7 @@ kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", versio
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
+material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

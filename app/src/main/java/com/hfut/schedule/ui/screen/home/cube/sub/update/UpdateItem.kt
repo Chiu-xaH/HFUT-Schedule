@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-15") },
+                overlineContent = { Text(text = "2025-07-17") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -64,11 +64,10 @@ fun VersionInfo() {
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 学工系统/今日校园的登录")
         UpdateItems("新增 教务成绩按学期分类显示")
-        UpdateItems("新增 一些区域的引导与提示")
-        UpdateItems("新增 引入新的转场动效","暂时只引入在：查询中心-成绩，并且将动效暂时阉割了运动模糊、缩放、阴影等效果(待后期优化好再上)")
-//        UpdateItems("移除 转场的预测式返回适配","这个特性在转场时太烂了，先移除")
-
+        UpdateItems("新增 全局动画速度","位于 选项-界面显示 (目前是残血版，无法控制全部的动效速度，后续重构)")
         UpdateItems("新增 教材","位于 课程详情页面")
+        UpdateItems("新增 引入新的转场动效","暂时只引入在: 查询中心-成绩,先试水")
+        UpdateItems("移除 转场的预测式返回适配")
         UpdateItems("优化 教评一级界面可直接显示所有教师")
 //        UpdateItems("修复 邮箱未登录的Bug")
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")

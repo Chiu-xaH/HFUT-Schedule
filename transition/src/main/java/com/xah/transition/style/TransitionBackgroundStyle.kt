@@ -8,6 +8,6 @@ data class TransitionBackgroundStyle (
     var motionBlur : Boolean = true,
     var forceTransition : Boolean = false,
     var blurRadius : Dp = 20.dp,
-    var backgroundColor : Color = Color.Black.copy(0f),// 0.25
+    var backgroundColor : Color = Color.Black.copy(0.25f),
     var scaleValue : Float = 0.825f
 )

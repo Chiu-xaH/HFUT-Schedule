@@ -258,7 +258,7 @@ fun Modifier.transitionBackgroundF(
         }
     }
     // 蒙版 遮罩
-    if(!transplantBackground)
+    if(!transplantBackground && forceTransition)
         Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
 
     val transitionModifier = if(forceTransition) this@transitionBackgroundF.scale(scale.value).blur(blurSize) else this@transitionBackgroundF
