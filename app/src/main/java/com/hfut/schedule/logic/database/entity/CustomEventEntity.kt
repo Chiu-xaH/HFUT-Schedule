@@ -20,8 +20,6 @@ data class CustomEventEntity(
     val type : String,
     val remark : String,
     val description: String?,
-//    @ColumnInfo(name = "create_time", defaultValue = "CURRENT_TIMESTAMP")
-//    val createTime : Date = Date(),
     @ColumnInfo(name = "supabase_id")
     val supabaseId : Int? = null
 )
@@ -37,6 +35,5 @@ data class CustomEventDTO(
     val type : CustomEventType,
     val remark : String,
     val description: String?,
-//    val createTime: DateTimeBean = DateTimeUtils.DateTimeBeanNow,
     val supabaseId : Int? = null
 )

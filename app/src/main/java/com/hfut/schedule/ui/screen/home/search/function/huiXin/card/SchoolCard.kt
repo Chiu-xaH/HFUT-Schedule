@@ -29,10 +29,10 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 
 

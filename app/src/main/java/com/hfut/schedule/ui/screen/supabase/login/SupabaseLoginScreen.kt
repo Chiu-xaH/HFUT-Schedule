@@ -51,14 +51,13 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.custom.CustomTabRow
-import com.hfut.schedule.ui.component.custom.LoadingUI
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.status.LoadingUI
  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.GlobalUIStateHolder.isSupabaseRegistering
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 

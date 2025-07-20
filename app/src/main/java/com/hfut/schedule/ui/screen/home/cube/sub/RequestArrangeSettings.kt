@@ -1,10 +1,12 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -23,7 +25,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 
 @Composable
 fun RequestArrange(innerPadding : PaddingValues) {
@@ -37,7 +41,7 @@ fun RequestArrange(innerPadding : PaddingValues) {
         item { ArrangeItem(title = "就业信息", icon = R.drawable.work, key = "WorkSearchRequest") }
         item { ArrangeItem(title = "好友课表列表", icon = R.drawable.calendar, key = "FriendRequest") }
         item { ArrangeItem(title = "海乐生活-洗衣机", icon = R.drawable.local_laundry_service, key = "HaileRequest") }
-        item { ArrangeItem(title = "通知公告", icon = R.drawable.stream, key = "NewsRequest",false) }
+//        item { ArrangeItem(title = "通知公告", icon = R.drawable.stream, key = "NewsRequest",false) }
         item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
     }
 }
@@ -47,30 +51,30 @@ fun RequestArrange(innerPadding : PaddingValues) {
 fun ArrangeItem(title : String, icon : Int, key : String,canUse : Boolean = true) {
     val pageSize = prefs.getString(key,MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()
     var sliderPosition by remember { mutableFloatStateOf(pageSize.toFloat()) }
-//    val bd = BigDecimal(sliderPosition.toString())
     val str = formatDecimal(sliderPosition.toDouble(),0)
-    TransplantListItem(
-            headlineContent = { Text(text = "$title   $str 条/页")},
+    MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+        TransplantListItem(
+            overlineContent = { Text(text = title)},
+            headlineContent = { Text("$str 条/页")},
             leadingContent = { Icon(painterResource(id = icon), contentDescription = "") },
-            supportingContent = {
-                Slider(
-                    enabled = canUse,
-                    value = sliderPosition,
-                    onValueChange = {
-                        sliderPosition = it
-//                        val bd = BigDecimal(sliderPosition.toString())
-                        val str = formatDecimal(sliderPosition.toDouble(),0)
-                        SharedPrefs.saveString(key,str)
-                    },
-                    colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.secondary,
-                        activeTrackColor = MaterialTheme.colorScheme.secondary,
-                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                    ),
-                    steps = 39,
-                    valueRange = 10f..50f,
-                    modifier = Modifier.padding(horizontal = 25.dp)
-                )
-            }
         )
+        Slider(
+            enabled = canUse,
+            value = sliderPosition,
+            onValueChange = {
+                sliderPosition = it
+                val str = formatDecimal(sliderPosition.toDouble(),0)
+                SharedPrefs.saveString(key,str)
+            },
+            colors = SliderDefaults.colors(
+                thumbColor = MaterialTheme.colorScheme.secondary,
+                activeTrackColor = MaterialTheme.colorScheme.secondary,
+                inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+            ),
+            steps = 39,
+            valueRange = 10f..50f,
+            modifier = Modifier.padding(horizontal = 25.dp)
+        )
+    }
+    Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
 }

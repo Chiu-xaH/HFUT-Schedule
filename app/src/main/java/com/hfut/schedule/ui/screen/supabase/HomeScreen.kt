@@ -54,7 +54,7 @@ import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.custom.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
@@ -242,7 +242,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                     }
                 }
                 composable(SupabaseScreen.SETTINGS.name) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         SupabaseSettingsScreen(vm,innerPadding,hazeState)
                     }
                 }

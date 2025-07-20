@@ -27,11 +27,11 @@ import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LoadingLargeCard
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState

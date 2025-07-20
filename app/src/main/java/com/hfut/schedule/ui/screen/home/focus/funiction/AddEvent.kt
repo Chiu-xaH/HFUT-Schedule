@@ -12,7 +12,6 @@ import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.Spring.StiffnessMediumLow
 import androidx.compose.animation.core.VisibilityThreshold
@@ -87,24 +86,24 @@ import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.custom.CustomTextField
-import com.hfut.schedule.ui.component.DateRangePickerModal
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.LittleDialog
-import com.hfut.schedule.ui.component.custom.LoadingUI
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TimeRangePickerDialog
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.text.BottomTip
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
+import com.hfut.schedule.ui.component.container.TransplantListItem
  
-import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
   
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.LoadingIcon
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -664,7 +663,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             modifier = Modifier.clickable {
                             }
                         )
-                        HorizontalDivider()
+                        PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text("适用校区") },
                             supportingContent = {
@@ -680,7 +679,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
 
                             }
                         )
-                        HorizontalDivider()
+                        PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text("适用班级") },
                             supportingContent = {

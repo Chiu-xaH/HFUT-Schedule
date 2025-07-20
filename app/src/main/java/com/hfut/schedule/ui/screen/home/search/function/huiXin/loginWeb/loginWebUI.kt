@@ -51,18 +51,19 @@ import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.BottomButton
-import com.hfut.schedule.ui.component.custom.CustomTabRow
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.LargeButton
-import com.hfut.schedule.ui.component.LoadingLargeCard
-import com.hfut.schedule.ui.component.custom.LoadingUI
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.BottomButton
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.webview.WebDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
@@ -296,6 +297,71 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
         }
     }
+    val loginUi = @Composable { campus : Campus ->
+        DividerTextExpandedWith("登录") {
+            if(loadingLogin) {
+                LoadingUI()
+            } else {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP)) {
+                    LargeButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        onClick = {
+                            scope.launch {
+                                vm.loginSchoolNetResponse.clear()
+                                vm.loginSchoolNet(campus)
+                            }
+                        },
+                        text = textLogin,
+                        icon = R.drawable.login
+                    )
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                    LargeButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        onClick = {
+                            scope.launch {
+                                vm.loginSchoolNetResponse.clear()
+                                vm.logoutSchoolNet(campus)
+                            }
+                        },
+                        text = textLogout,
+                        icon = R.drawable.logout,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
+            }
+
+            if(textLogin == "已登录") {
+                Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP),
+                    shape = MaterialTheme.shapes.medium,
+                    onClick = {
+                        Starter.startWebUrl("https://cn.bing.com/")
+                    }
+                ) {
+                    Text("测试连通性")
+                }
+            }
+            Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+            StyleCardListItem(
+                headlineContent = {
+                    Text("一键校园网登录已支持Shortcut，可在系统控制中心添加")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.keyboard_command_key),null)
+                }
+            )
+        }
+    }
 //////////////////////////////布局区///////////////////////////////////
     Column() {
         HazeBottomSheetTopBar("校园网", isPaddingStatusBar = false) {
@@ -323,60 +389,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
             when(page) {
                 HEFEI_TAB -> {
                     Column {
-                        DividerTextExpandedWith(text = "登录",false) {
-                            if(loadingLogin) {
-                                LoadingUI()
-                            } else {
-                                Row(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = APP_HORIZONTAL_DP)) {
-                                    LargeButton(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(.5f),
-                                        onClick = {
-                                            scope.launch {
-                                                vm.loginSchoolNetResponse.clear()
-                                                vm.loginSchoolNet(Campus.HEFEI)
-                                            }
-                                        },
-                                        text = textLogin,
-                                        icon = R.drawable.login
-                                    )
-                                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
-                                    LargeButton(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(.5f),
-                                        onClick = {
-                                            scope.launch {
-                                                vm.loginSchoolNetResponse.clear()
-                                                vm.logoutSchoolNet(Campus.HEFEI)
-                                            }
-                                        },
-                                        text = textLogout,
-                                        icon = R.drawable.logout,
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                }
-                            }
-
-                            if(textLogin == "已登录") {
-                                Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
-                                OutlinedButton(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = APP_HORIZONTAL_DP),
-                                    shape = MaterialTheme.shapes.medium,
-                                    onClick = {
-                                        Starter.startWebUrl("https://cn.bing.com/")
-                                    }
-                                ) {
-                                    Text("测试连通性")
-                                }
-                            }
-                        }
+                        loginUi(Campus.HEFEI)
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
@@ -401,93 +414,39 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                 }
                 XUANCHENG_TAB -> {
                     Column {
-                        DividerTextExpandedWith(text = "数据",false) {
-                            LoadingLargeCard(
-                                title = "已用 $str GB",
-                                loading = loading,
-                                rightTop =  {
-                                    Text(text = "$flow MB")
-                                }
-                            ) {
-                                Row {
-                                    TransplantListItem(
-                                        headlineContent = { Text(text = "余额 ￥${fee}") },
-                                        overlineContent = { Text("1GB / ￥1") },
-                                        leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
-                                        modifier = Modifier.weight(.5f)
-                                    )
-                                    TransplantListItem(
-                                        overlineContent = { Text(text = "月免费额度 ${MyApplication.MAX_FREE_FLOW}GB") },
-                                        headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
-                                        leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
-                                        modifier = Modifier.weight(.5f)
-                                    )
-                                }
-                                BottomButton(
-                                    onClick = {
-                                        if(!loading) {
-                                            showDialog2 = true
-                                        }
-                                    },
-                                    text = "快速充值"
+                        LoadingLargeCard(
+                            title = "已用 $str GB",
+                            loading = loading,
+                            rightTop =  {
+                                Text(text = "$flow MB")
+                            }
+                        ) {
+                            Row {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "余额 ￥${fee}") },
+                                    overlineContent = { Text("1GB / ￥1") },
+                                    leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
+                                    modifier = Modifier.weight(.5f)
+                                )
+                                TransplantListItem(
+                                    overlineContent = { Text(text = "月免费额度 ${MyApplication.MAX_FREE_FLOW}GB") },
+                                    headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
+                                    leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
+                                    modifier = Modifier.weight(.5f)
                                 )
                             }
-
-
-                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                            if(loadingLogin) {
-                                LoadingUI()
-                            } else {
-                                Row(modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = APP_HORIZONTAL_DP)) {
-                                    LargeButton(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(.5f),
-                                        onClick = {
-                                            scope.launch {
-                                                vm.loginSchoolNetResponse.clear()
-                                                vm.loginSchoolNet(Campus.XUANCHENG)
-                                            }
-                                        },
-                                        text = textLogin,
-                                        icon = R.drawable.login
-                                    )
-                                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
-                                    LargeButton(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .weight(.5f),
-                                        onClick = {
-                                            scope.launch {
-                                                vm.loginSchoolNetResponse.clear()
-                                                vm.logoutSchoolNet(Campus.XUANCHENG)
-                                            }
-                                        },
-                                        text = textLogout,
-                                        icon = R.drawable.logout,
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                    )
-                                }
-                            }
-
-                            if(textLogin == "已登录") {
-                                Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
-                                OutlinedButton(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = APP_HORIZONTAL_DP),
-                                    shape = MaterialTheme.shapes.medium,
-                                    onClick = {
-                                        Starter.startWebUrl("https://cn.bing.com/")
+                            BottomButton(
+                                onClick = {
+                                    if(!loading) {
+                                        showDialog2 = true
                                     }
-                                ) {
-                                    Text("测试连通性")
-                                }
-                            }
+                                },
+                                text = "快速充值"
+                            )
                         }
+
+                        loginUi(Campus.XUANCHENG)
+
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
@@ -525,3 +484,5 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 }
 
 
+// Compose 嵌套用lambda
+// 普通函数 嵌套用嵌套函数

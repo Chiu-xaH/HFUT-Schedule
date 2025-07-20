@@ -60,17 +60,18 @@ import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.network.toStr
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.CenterScreen
-import com.hfut.schedule.ui.component.custom.CustomTextField
-import com.hfut.schedule.ui.component.DevelopingUI
-import com.hfut.schedule.ui.component.custom.LoadingScreen
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.custom.RefreshIndicator
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.status.CenterScreen
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.status.DevelopingUI
+import com.hfut.schedule.ui.component.status.LoadingScreen
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
   
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -324,7 +325,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                         ) {
                             Column {
-                                HorizontalDivider()
+                                PaddingHorizontalDivider()
                                 TransplantListItem(
                                     overlineContent = {
                                         Text("上传时间 ${item.createTime.toStr()}" ) },

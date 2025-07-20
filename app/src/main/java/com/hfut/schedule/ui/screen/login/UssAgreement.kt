@@ -39,11 +39,11 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.AppNavRoute
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur

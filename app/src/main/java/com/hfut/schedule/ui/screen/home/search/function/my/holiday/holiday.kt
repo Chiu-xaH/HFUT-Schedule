@@ -21,12 +21,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.SmallCard
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.text.BottomTip
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.container.SmallCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
   
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.style.HazeBottomSheet

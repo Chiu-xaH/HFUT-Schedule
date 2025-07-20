@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,20 +47,21 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
-import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.custom.CustomTextField
-import com.hfut.schedule.ui.component.EmptyUI
+import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.DepartmentIcons
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -157,6 +159,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
         }
     }
     if(list.isNotEmpty()) {
+        val state = rememberLazyListState()
         if(!isSearch) {
             CustomTextField(
                 input = input,
@@ -167,7 +170,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
             ) { input = it }
             Spacer(Modifier.height(CARD_NORMAL_DP))
         }
-        LazyColumn {
+        LazyColumn(state = state) {
             item { TermFirstlyInfo(list,isSearch) }
             items(sortList.size, key = { sortList[it].code }) { item ->
                 val data = sortList[item]

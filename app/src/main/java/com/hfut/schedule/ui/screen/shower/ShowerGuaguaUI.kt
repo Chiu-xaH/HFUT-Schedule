@@ -110,14 +110,10 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
                         }
                     }
                 )
-//                if(!blur)
-//                    Divider()
             }
         },
         bottomBar = {
             Column {
-//                if(!blur)
-//                    Divider()
                 NavigationBar(containerColor = Color.Transparent,
                     modifier = Modifier
                         .bottomBarBlur(hazeState)) {
@@ -197,7 +193,7 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
 
             }
             composable(ShowerBarItems.FUNCTION.name) {
-                Scaffold {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
                     GuaGuaSettings(innerPadding,navHostController)
                 }
             }

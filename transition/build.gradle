@@ -11,7 +11,6 @@ android {
     compileSdk maxAndroidVersion
 
     defaultConfig {
-//        applicationId "com.xah.transition"
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 1

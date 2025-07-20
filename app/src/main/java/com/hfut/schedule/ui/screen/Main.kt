@@ -1,15 +1,12 @@
 package com.hfut.schedule.ui.screen
 
 import android.annotation.SuppressLint
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,27 +25,31 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
-import com.hfut.schedule.logic.util.sys.queryCalendars
-import com.hfut.schedule.ui.AppNavRoute
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.component.Party
+import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.transition.state.TransitionState
-import com.xah.transition.style.transitionBackground
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("NewApi")
 @Composable
-fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIViewModel, login : Boolean) {
+fun MainHost(
+    networkVm : NetWorkViewModel,
+    loginVm : LoginViewModel,
+    uiVm : UIViewModel,
+    login : Boolean,
+    isSuccessActivity: Boolean,
+    isSuccessActivityWebVpn : Boolean
+) {
     val switchUpload by remember { mutableStateOf(prefs.getBoolean("SWITCHUPLOAD",true )) }
     val startActivity by produceState<Boolean>(initialValue = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)) {
         value = DataStoreManager.firstStart.first()
@@ -58,34 +59,35 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
     var value by remember { mutableIntStateOf(0) }
 
     // 初始化网络请求
-    LaunchedEffect(Unit) {
-        launch { AppAnimationManager.updateAnimationSpeed() }
-        // 如果进入的是登陆界面 未登录做准备
-        if(!(startActivity && login)) {
-            //从服务器获取信息
-            launch { loginVm.getMyApi() }
-            launch { loginVm.getCookie() }
-            launch { SharedPrefs.saveString("tip","0") }
-            launch {  loginVm.getKey() }
-            launch {
-                loginVm.getTicket()
-                val cookie = (loginVm.webVpnTicket.state.value as? UiState.Success)?.data ?: return@launch
-                loginVm.putKey(cookie)
-                val status = (loginVm.status.state.value as? UiState.Success)?.data ?: return@launch
-                if(status) {
-                    loginVm.getKeyWebVpn()
-                }
-            }
-        } else { // 否则进入的是主界面
-            //上传用户统计数据
-            if(switchUpload && value == 0 && !AppVersion.isPreview() && !AppVersion.isInDebugRunning()) {
+    if(!isSuccessActivity)
+        LaunchedEffect(Unit) {
+            launch { AppAnimationManager.updateAnimationSpeed() }
+            // 如果进入的是登陆界面 未登录做准备
+            if(!(startActivity && login)) {
+                //从服务器获取信息
+                launch { loginVm.getMyApi() }
+                launch { loginVm.getCookie() }
+                launch { SharedPrefs.saveString("tip","0") }
+                launch {  loginVm.getKey() }
                 launch {
-                    networkVm.postUser()
-                    value++
+                    loginVm.getTicket()
+                    val cookie = (loginVm.webVpnTicket.state.value as? UiState.Success)?.data ?: return@launch
+                    loginVm.putKey(cookie)
+                    val status = (loginVm.status.state.value as? UiState.Success)?.data ?: return@launch
+                    if(status) {
+                        loginVm.getKeyWebVpn()
+                    }
+                }
+            } else { // 否则进入的是主界面
+                //上传用户统计数据
+                if(switchUpload && value == 0 && !AppVersion.isPreview() && !AppVersion.isInDebugRunning()) {
+                    launch {
+                        networkVm.postUser()
+                        value++
+                    }
                 }
             }
         }
-    }
 
     SharedTransitionLayout(
         modifier = Modifier.background(MaterialTheme.colorScheme.surface)
@@ -99,7 +101,19 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
             // 主UI
             composable(AppNavRoute.Home.route) {
                 val mainUI = @Composable { celebrationText : String? ->
-                    if(startActivity && login) {
+                    if(isSuccessActivity) {
+                        MainScreen(
+                            vm = networkVm,
+                            vm2 = loginVm,
+                            vmUI = uiVm,
+                            celebrationText = celebrationText,
+                            webVpn = isSuccessActivityWebVpn,
+                            isLogin = true,
+                            navHostTopController = navController,
+                            this@SharedTransitionLayout,
+                            this@composable
+                        )
+                    } else if(startActivity && login) {
                         MainScreen(
                             networkVm,
                             loginVm,
@@ -111,7 +125,7 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
                             this@SharedTransitionLayout,
                             this@composable,
                         )
-                    } else LoginScreen(loginVm,navController)
+                    } else LoginScreen(loginVm)
                 }
                 // 如果庆祝为true则庆祝
                 getCelebration().let {
@@ -142,6 +156,39 @@ fun MainHost(networkVm : NetWorkViewModel, loginVm : LoginViewModel, uiVm : UIVi
                     navController,
                     this@SharedTransitionLayout,
                     this@composable,
+                )
+            }
+            // 招生
+            composable(AppNavRoute.Admission.route) {
+                AdmissionScreen(
+                    networkVm,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    navController
+                )
+            }
+            // 招生 二级界面
+            composable(
+                route = AppNavRoute.AdmissionRegionDetail.receiveRoute(),
+                arguments = listOf(
+                    navArgument("index") {
+                        type = NavType.IntType
+                    },
+                    navArgument("type") {
+                        type = NavType.StringType
+                    }
+                )
+            ) { backStackEntry ->
+                val index = backStackEntry.arguments?.getInt("index") ?: -1
+                val type = backStackEntry.arguments?.getString("type") ?: "本科招生"
+
+                AdmissionRegionScreen(
+                    networkVm,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    navController,
+                    type,
+                    index,
                 )
             }
         }

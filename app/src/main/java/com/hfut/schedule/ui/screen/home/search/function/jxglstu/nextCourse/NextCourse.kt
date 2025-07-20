@@ -26,10 +26,10 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.ScrollText
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.webview.WebDialog
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.CustomBottomSheet

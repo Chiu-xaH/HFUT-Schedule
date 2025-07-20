@@ -37,9 +37,9 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
 import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
-import com.hfut.schedule.ui.component.largeCardColor
+import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.transitionBackground
@@ -52,11 +52,32 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
+
+@OptIn(ExperimentalHazeMaterialsApi::class)
+@Composable
+fun Modifier.zIndexBlur(hazeState: HazeState,color : Color) : Modifier {
+    val surfaceColor = MaterialTheme.colorScheme.surface
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    return if(blur && CAN_HAZE_BLUR_BAR) {
+        this.hazeEffect(
+            state = hazeState,
+            style = HazeStyle(
+                tint = HazeTint(color = surfaceColor.copy(0.35f)),
+                backgroundColor = Color.Transparent,
+                blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
+                noiseFactor = 0f
+            )
+        )
+    } else {
+        return this.background(color)
+    }
+}
 @Composable
 fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
     val surfaceColor = MaterialTheme.colorScheme.surface

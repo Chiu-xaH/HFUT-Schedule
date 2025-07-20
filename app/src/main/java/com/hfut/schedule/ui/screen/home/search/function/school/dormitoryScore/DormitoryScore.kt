@@ -19,8 +19,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 

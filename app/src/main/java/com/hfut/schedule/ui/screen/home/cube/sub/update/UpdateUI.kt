@@ -56,11 +56,11 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.refused
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.component.BottomButton
-import com.hfut.schedule.ui.component.custom.LoadingUI
-import com.hfut.schedule.ui.component.MyCustomCard
+import com.hfut.schedule.ui.component.button.BottomButton
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch

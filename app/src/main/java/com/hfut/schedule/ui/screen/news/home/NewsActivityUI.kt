@@ -67,16 +67,16 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.PagingController
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.custom.CustomTabRow
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.PagingController
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.webview.WebDialog
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
 import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
@@ -257,13 +257,11 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
             composable(NewsBarItems.News.name) {
                 Scaffold {
                     NewsScreen(innerPadding,vm,newsPagerState)
-//                    NewsUI(innerPadding,vm)
                 }
             }
             composable(NewsBarItems.Academic.name) {
                 Scaffold {
                     AcademicScreen(innerPadding,vm,newsPagerState)
-//                    XuanquNewsUI(innerPadding, vm)
                 }
             }
             composable(NewsBarItems.School.name) {
@@ -313,10 +311,10 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         refreshNetwork()
     }
     val scope = rememberCoroutineScope()
-
+    var title by remember { mutableStateOf("通知公告") }
     var showDialog by remember { mutableStateOf(false) }
     var links by remember { mutableStateOf("") }
-    WebDialog(showDialog,{ showDialog = false },links,"新闻详情")
+    WebDialog(showDialog,{ showDialog = false },links,title)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -370,15 +368,14 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 items(list.size, key = { it }){ item ->
                     val listItem = list[item]
                     AnimationCardListItem(
-                        overlineContent = { listItem.date?.let { Text(text = it) } },
-                        headlineContent = { listItem.title?.let { Text(it) } },
+                        overlineContent = { Text(text = listItem.date) },
+                        headlineContent = { Text(listItem.title) },
                         leadingContent = { Text(text = (item + 1).toString()) },
                         modifier = Modifier.clickable {
                             val link = listItem.link
-                            if (link != null) {
-                                if(link.contains("http")) link.let { links = link }
-                                else links = MyApplication.NEWS_URL + link
-                            }
+                            if(link.contains("http")) link.let { links = link }
+                            else links = MyApplication.NEWS_URL + link
+                            title = listItem.title
                             showDialog = true
                         },
                         index = item

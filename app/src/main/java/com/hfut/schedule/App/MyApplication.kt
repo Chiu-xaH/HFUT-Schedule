@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.ui.AppNavRoute
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
@@ -110,6 +110,9 @@ class MyApplication : Application() {
         const val VERCEL_FORECAST_URL = "https://consumption-forecast.vercel.app/"
         // 海乐生活 洗衣机
         const val WASHING_URL = "https://yshz-user.haier-ioc.com/"
+        // 本科招生
+        const val UNDERGRADUATE_ADMISSION_URL = "https://bkzs.hfut.edu.cn/"
+        const val ADMISSION_COOKIE_HEADER = "zhaosheng.hfut.session.id="
         // 三个校区的经纬度 高德地图
         val campusLocations = mapOf<CampusDetail,Location>(
             CampusDetail.FCH to Location(117.20346,31.77014),

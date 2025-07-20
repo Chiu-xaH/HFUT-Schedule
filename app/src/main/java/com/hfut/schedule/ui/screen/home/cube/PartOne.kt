@@ -45,9 +45,9 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
@@ -125,10 +125,6 @@ sealed class Screen(val route: String) {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeSettingScreen(navController: NavController,
-                      vm : NetWorkViewModel,
-                      showlable : Boolean,
-                      showlablechanged: (Boolean) -> Unit,
-                      ifSaved : Boolean,
                       innerPaddings : PaddingValues,
                       hazeState: HazeState
 ) {

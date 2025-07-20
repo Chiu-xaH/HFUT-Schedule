@@ -12,9 +12,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.DepartmentIcons
+import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
 
 @Composable
 fun SchoolsUI(innerPdding : PaddingValues? = null) {

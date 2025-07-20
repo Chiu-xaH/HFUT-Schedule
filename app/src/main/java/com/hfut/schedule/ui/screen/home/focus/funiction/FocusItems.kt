@@ -49,20 +49,18 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.NOT_S
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
-import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.LittleDialog
-import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.ScheduleIcons
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.component.text.BottomTip
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.icon.ScheduleIcons
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.LoadingIcon
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
-import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.ColumnVertical
@@ -154,15 +152,15 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
 //        }
     }
 
-    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
+//    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
         //正常接受所有来自服务器的信息
-        itemUI()
-    } else {
+//        itemUI()
+//    } else {
         //仅接受showPublic为true
         if(showPublic) {
             itemUI()
         }
-    }
+//    }
 }
 
 @Composable
@@ -249,15 +247,15 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
         }
     }
 
-    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
+//    if(prefs.getBoolean("SWITCHMYAPIS", apiCheck())) {
         //正常接受所有来自服务器的信息
-        itemUI()
-    } else {
+//        itemUI()
+//    } else {
         //仅接受showPublic为true
         if(showPublic) {
             itemUI()
         }
-    }
+//    }
 }
 
 @Composable

@@ -11,11 +11,15 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
 import com.hfut.schedule.logic.model.AcademicNewsResponse
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.model.AcademicXCType
+import com.hfut.schedule.logic.model.AdmissionDetailBean
+import com.hfut.schedule.logic.model.AdmissionMapBean
+import com.hfut.schedule.logic.model.AdmissionTokenResponse
 import com.hfut.schedule.logic.model.ForecastAllBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
@@ -37,7 +41,6 @@ import com.hfut.schedule.logic.model.SupabaseRefreshLoginBean
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
-import com.hfut.schedule.logic.model.XuanquNewsItem
 import com.hfut.schedule.logic.model.XuanquResponse
 import com.hfut.schedule.logic.model.community.ApplyFriendResponse
 import com.hfut.schedule.logic.model.community.ApplyingLists
@@ -48,7 +51,6 @@ import com.hfut.schedule.logic.model.community.BookPositionResponse
 import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BorrowResponse
 import com.hfut.schedule.logic.model.community.DormitoryBean
-import com.hfut.schedule.logic.model.community.DormitoryInfoBean
 import com.hfut.schedule.logic.model.community.DormitoryInfoResponse
 import com.hfut.schedule.logic.model.community.DormitoryResponse
 import com.hfut.schedule.logic.model.community.DormitoryUser
@@ -139,8 +141,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.onListenStateHolder
-import com.hfut.schedule.ui.component.onListenStateHolderForNetwork
+import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
@@ -256,6 +257,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { supabase.delEvent(authorization = "Bearer $jwt",id = "eq.$id").awaitResponse() },
         transformSuccess = { _,_ -> true }
     )
+
+    val admissionTokenResp = StateHolder<AdmissionTokenResponse>()
+    suspend fun getAdmissionToken() = Repository.getAdmissionToken(admissionTokenResp)
+
+    val admissionListResp = StateHolder<Pair<AdmissionType,Map<String, List<AdmissionMapBean>>>>()
+    suspend fun getAdmissionList(type: AdmissionType) = Repository.getAdmissionList(type,admissionListResp)
+
+    val admissionDetailResp = StateHolder<AdmissionDetailBean>()
+    suspend fun getAdmissionDetail(type : AdmissionType,bean : AdmissionMapBean,region: String) = Repository.getAdmissionDetail(type,bean,region,admissionDetailResp,admissionTokenResp)
 
     val supabaseAddResp = MutableLiveData<Pair<Boolean,String?>?>()
     fun supabaseAdd(jwt: String,event : SupabaseEventOutput) {

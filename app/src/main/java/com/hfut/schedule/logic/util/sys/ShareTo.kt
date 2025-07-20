@@ -29,9 +29,7 @@ object ShareTo {
             MyApplication.context.startActivity(
                 Intent.createChooser(shareIntent,"分享安装包").addFlags(
                     Intent.FLAG_ACTIVITY_NEW_TASK))
-        } catch (e : Exception) {
-//            Log.d("错误", e.toString())
-        }
+        } catch (e : Exception) { }
     }
     @JvmStatic
     private fun getAPK(destinationPath : String) {
@@ -47,5 +45,18 @@ object ShareTo {
             e.printStackTrace()
         }
     }
-
+    // 分享字符串
+    @JvmStatic
+    fun shareString(str : String) {
+        try {
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, str)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            MyApplication.context.startActivity(Intent.createChooser(intent, "分享文本").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 }

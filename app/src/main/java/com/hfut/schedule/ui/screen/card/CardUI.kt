@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
-import com.hfut.schedule.ui.component.custom.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -138,10 +138,6 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                         }
                     }
                 )
-//                if(!blur) {
-//                    if(CardBarItems.COUNT != bottomBarItems)
-//                        Divider()
-//                }
                 if(bottomBarItems == CardBarItems.COUNT) {
                     CustomTabRow(pagerState, titles)
                 }
@@ -149,9 +145,6 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         },
         bottomBar = {
             Column {
-//                if(!blur) {
-//                    Divider()
-//                }
                 NavigationBar(containerColor = Color.Transparent ,
                     modifier = Modifier
                         .bottomBarBlur(hazeState)) {

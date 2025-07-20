@@ -31,9 +31,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.WebDialog
-import com.hfut.schedule.ui.component.WebViewScreen
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.webview.WebDialog
+import com.hfut.schedule.ui.component.webview.WebViewScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

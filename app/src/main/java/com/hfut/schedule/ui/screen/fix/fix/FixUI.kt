@@ -15,15 +15,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,14 +47,17 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.LittleDialog
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -123,61 +127,67 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
                 headlineContent = { Text(text = "版本信息") },
                 supportingContent = {Text("安卓版本 ${AppVersion.sdkInt} | 应用版本 ${AppVersion.getVersionName()} (${AppVersion.getVersionCode()})")},
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
+                color = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.clickable {}
             )
 //        }
-        Spacer(modifier = Modifier.height(5.dp))
-
-
-
-        TransplantListItem(
-            headlineContent = { Text(text = "快速启动") },
-            leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
-            trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
-            modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
-        )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "刷新登录状态") },
-            leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-                refreshLogin()
+        DividerTextExpandedWith("行为1") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "下载最新版本") },
+                    leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android") }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "刷新登录状态") },
+                    leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable {
+                        refreshLogin()
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "快速启动") },
+                    leadingContent = { Icon(painterResource(R.drawable.speed), contentDescription = "Localized description",) },
+                    trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
+                    modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
+                )
+                PaddingHorizontalDivider()
+                BugShare()
             }
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "下载最新版本") },
-            leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android") }
-        )
-
-        BugShare()
-
-        TransplantListItem(
-            headlineContent = { Text(text = "开发者接口") },
-            overlineContent = { getTimeStamp()?.let { Text(text = it) } },
-            leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {
-                vm.getMyApi()
-                showToast("正在更新信息")
+        }
+        DividerTextExpandedWith("行为2") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "开发者接口") },
+                    overlineContent = { getTimeStamp()?.let { Text(text = it) } },
+                    leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable {
+                        vm.getMyApi()
+                        showToast("正在更新信息")
+                    }
+                )
+                PaddingHorizontalDivider()
+//            TransplantListItem(
+//                headlineContent = { Text(text = "反馈") },
+//                leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
+//                modifier = Modifier.clickable{ Starter.startWebUrl("https://docs.qq.com/form/page/DWHlwd1JZYlRtcVZ0") }
+//            )
+                TransplantListItem(
+                    headlineContent = { Text(text = "联系开发者") },
+                    leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable{ emailMe() }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "常见问题解答") },
+                    leadingContent = { Icon(painterResource(R.drawable.help), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable {showBottomSheet = true }
+                )
             }
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "反馈") },
-//            supportingContent = { Text(text = "直接输入内容,将会发送至开发者的服务器")},
-            leadingContent = { Icon(painterResource(R.drawable.feedback), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ Starter.startWebUrl("https://docs.qq.com/form/page/DWHlwd1JZYlRtcVZ0") }
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "联系开发者") },
-            leadingContent = { Icon(painterResource(R.drawable.mail), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable{ emailMe() }
-        )
+        }
 
-        TransplantListItem(
-            headlineContent = { Text(text = "常见问题解答") },
-            leadingContent = { Icon(painterResource(R.drawable.help), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable {showBottomSheet = true }
-        )
     }
 }
 

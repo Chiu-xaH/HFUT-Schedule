@@ -78,6 +78,7 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
 
     val context = LocalActivity.current
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.fillMaxSize(),
         topBar = {
             Column {
@@ -96,14 +97,10 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
                         }
                     }
                 )
-//                if(!blur)
-//                Divider()
             }
         },
         bottomBar = {
             Column {
-//                if(!blur)
-//                Divider()
                 NavigationBar(containerColor =  Color.Transparent,
                     modifier = Modifier.bottomBarBlur(hazeState)) {
 
@@ -165,13 +162,13 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
             composable(FixBarItems.Fix.name) {
-                Scaffold {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     FixUI(innerPadding = innerPadding,vm, vm2,hazeState)
                 }
 
             }
             composable(FixBarItems.About.name) {
-                Scaffold {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     AboutUI(innerPadding = innerPadding, vm2,false,navController,hazeState)
                 }
             }

@@ -52,22 +52,22 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.EmptyUI
-import com.hfut.schedule.ui.component.LargeCard
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.cardNormalColor
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.container.LargeCard
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.chart.RadarChart
 import com.hfut.schedule.ui.component.chart.RadarData
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.LittleDialog
-import com.hfut.schedule.ui.component.custom.RefreshIndicator
-import com.hfut.schedule.ui.component.custom.ScrollText
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -361,7 +361,6 @@ fun GradeInfo(num : GradeResponseJXGLSTU) {
 
     Column(modifier = Modifier.hazeSource(hazeState)) {
         DividerTextExpandedWith(text = "雷达图") {
-//        Divider()
             val topPadding = if(radarList.isEmpty()) {
                 0
             } else {
@@ -381,7 +380,6 @@ fun GradeInfo(num : GradeResponseJXGLSTU) {
                 25
             }
             Spacer(modifier = Modifier.height(bottomPadding.dp))
-//        Divider()
         }
         DividerTextExpandedWith(text = "详情",false) {
             LargeCard("分数 ${num.totalGrade} 绩点 ${num.GPA}") {

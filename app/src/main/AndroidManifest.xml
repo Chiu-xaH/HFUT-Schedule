@@ -59,7 +59,7 @@
             android:label="@string/title_activity_news"
             android:theme="@style/Theme.App.Starting" />
         <activity
-            android:name=".activity.BaseActivity"
+            android:name=".activity.util.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_base"
             android:theme="@style/Theme.App.Starting" />
@@ -73,6 +73,11 @@
             android:exported="true"
             android:label="@string/title_activity_fix"
             android:theme="@style/Theme.App" />
+        <activity
+            android:name=".activity.util.TransplantActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false" />
+
 
 
         <provider

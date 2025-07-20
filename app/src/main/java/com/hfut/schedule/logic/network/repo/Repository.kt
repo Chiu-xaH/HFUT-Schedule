@@ -1,12 +1,19 @@
 package com.hfut.schedule.logic.network.repo
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.App.MyApplication.Companion.ADMISSION_COOKIE_HEADER
+import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.model.AcademicNewsResponse
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.model.AcademicXCType
+import com.hfut.schedule.logic.model.AdmissionDetailBean
+import com.hfut.schedule.logic.model.AdmissionDetailResponseHistory
+import com.hfut.schedule.logic.model.AdmissionDetailResponsePlan
+import com.hfut.schedule.logic.model.AdmissionListResponse
+import com.hfut.schedule.logic.model.AdmissionMapBean
+import com.hfut.schedule.logic.model.AdmissionTokenResponse
 import com.hfut.schedule.logic.model.ForecastAllBean
 import com.hfut.schedule.logic.model.ForecastResponse
 import com.hfut.schedule.logic.model.GithubBean
@@ -14,7 +21,6 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailResponse
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
-import com.hfut.schedule.logic.model.HaiLeNearPositionRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeNearPositionResponse
 import com.hfut.schedule.logic.model.HaiLeTradeBean
@@ -28,7 +34,6 @@ import com.hfut.schedule.logic.model.QWeatherWarnResponse
 import com.hfut.schedule.logic.model.SearchEleResponse
 import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
-import com.hfut.schedule.logic.model.XuanquNewsItem
 import com.hfut.schedule.logic.model.XuanquResponse
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
@@ -37,6 +42,7 @@ import com.hfut.schedule.logic.model.toVercelForecastRequestBody
 import com.hfut.schedule.logic.model.zjgd.BillBean
 import com.hfut.schedule.logic.network.api.AcademicService
 import com.hfut.schedule.logic.network.api.AcademicXCService
+import com.hfut.schedule.logic.network.api.AdmissionService
 import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.GithubRawService
@@ -52,6 +58,7 @@ import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.servicecreator.AcademicServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.AcademicXCServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.AdmissionServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
@@ -70,9 +77,11 @@ import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -82,6 +91,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Headers
@@ -114,8 +124,7 @@ object Repository {
     private val academic = AcademicServiceCreator.create(AcademicService::class.java)
     private val academicXC = AcademicXCServiceCreator.create(AcademicXCService::class.java)
     private val haiLe = HaiLeWashingServiceCreator.create(HaiLeWashingService::class.java)
-
-//    private val lePaoYun = LePaoYunServiceCreator.create(LePaoYunService::class.java)
+    private val admission = AdmissionServiceCreator.create(AdmissionService::class.java)
 
     //引入接口
     // 通用的网络请求方法，支持自定义的操作
@@ -320,6 +329,62 @@ object Repository {
     @JvmStatic
     private fun parseTeacherSearch(json : String) : TeacherResponse = try {
         Gson().fromJson(json, TeacherResponse::class.java)
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun getAdmissionList(type : AdmissionType,holder : StateHolder<Pair<AdmissionType,Map<String, List<AdmissionMapBean>>>>) = launchRequestSimple(
+        holder = holder,
+        request = {  admission.getList(type.type).awaitResponse() },
+        transformSuccess = { _,json -> parseAdmissionList(type,json) }
+    )
+
+    @JvmStatic
+    private fun parseAdmissionList(type: AdmissionType,json : String) : Pair<AdmissionType, Map<String, List<AdmissionMapBean>>> = try {
+        Pair(type,Gson().fromJson(json, AdmissionListResponse::class.java).data.list)
+    } catch (e : Exception) { throw e }
+
+    suspend fun getAdmissionDetail(type : AdmissionType,bean : AdmissionMapBean,region: String,holder : StateHolder<AdmissionDetailBean>,tokenHolder : StateHolder<AdmissionTokenResponse>) =
+        onListenStateHolderForNetwork(tokenHolder,holder) { token ->
+            launchRequestSimple(
+                holder = holder,
+                request = {  admission.getDetail(type.type,region,bean.year,bean.subject,bean.campus,bean.type,ADMISSION_COOKIE_HEADER + token.cookie,token.data).awaitResponse() },
+                transformSuccess = { _,json -> parseAdmissionDetail(type,json) }
+            )
+        }
+
+    @JvmStatic
+    private fun parseAdmissionDetail(type : AdmissionType,json : String) : AdmissionDetailBean = try {
+        when(type) {
+            AdmissionType.HISTORY -> {
+                val parsed = Gson().fromJson(json, AdmissionDetailResponseHistory::class.java)
+                AdmissionDetailBean.History(parsed.data)
+            }
+            AdmissionType.PLAN -> {
+                val parsed = Gson().fromJson(json, AdmissionDetailResponsePlan::class.java)
+                AdmissionDetailBean.Plan(parsed.data)
+            }
+        }
+    } catch (e : Exception) { throw e }
+
+
+
+    suspend fun getAdmissionToken(holder : StateHolder<AdmissionTokenResponse>) = launchRequestSimple(
+        holder = holder,
+        request = {
+            val state = holder.state.first()
+            val cookie = if(state !is UiState.Success) {
+                ""
+            } else {
+                ADMISSION_COOKIE_HEADER + state.data.cookie
+            }
+            admission.getToken(cookie = cookie).awaitResponse()
+        },
+        transformSuccess = { _,json -> parseAdmissionToken(json) }
+    )
+
+    @JvmStatic
+    private fun parseAdmissionToken(json : String) : AdmissionTokenResponse = try {
+        Gson().fromJson(json, AdmissionTokenResponse::class.java)
     } catch (e : Exception) { throw e }
 
     fun searchXuanChengNews(title : String, page: Int = 1) {

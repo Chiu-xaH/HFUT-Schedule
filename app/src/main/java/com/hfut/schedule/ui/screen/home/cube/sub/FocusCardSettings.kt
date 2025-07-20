@@ -21,6 +21,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -58,15 +59,16 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
-import com.hfut.schedule.ui.component.LoadingIcon
-import com.hfut.schedule.ui.component.MyCustomCard
-import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.cardNormalColor
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.ScrollText
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -133,58 +135,68 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Spacer(Modifier.height(innerPadding.calculateTopPadding()))
-        StyleCardListItem(headlineContent = { Text(text = "打开开关则会在APP启动时自动获取信息,并显示在聚焦即时卡片内，如需减少性能开销可按需开启或关闭") }, leadingContent = { Icon(
-            painter = painterResource(id = R.drawable.info),
-            contentDescription = ""
-        )})
+        StyleCardListItem(
+            headlineContent = { Text(text = "打开开关则会在APP冷启动或刷新时自动获取数据,并显示在聚焦首页第一张卡片内") },
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "",)},
+            color = MaterialTheme.colorScheme.surface
+        )
 
-
-        Spacer(modifier = Modifier.height(5.dp))
-
-        TransplantListItem(
-            headlineContent = { Text(text = "一卡通")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
-            trailingContent = {
-                Row {
-                    Switch(checked = showCardAdd, onCheckedChange = {showch -> showCardAdd = showch}, thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")})
-                    Spacer(modifier = Modifier.width(10.dp))
-                    Switch(checked = showCard, onCheckedChange = {showch -> showCard = showch})
-                }
+        DividerTextExpandedWith("预加载数据") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "一卡通")} ,
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
+                    trailingContent = {
+                        Row {
+                            Switch(checked = showCardAdd, onCheckedChange = {showch -> showCardAdd = showch}, thumbContent = { Icon(painter = painterResource(id = R.drawable.add), contentDescription = "")})
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Switch(checked = showCard, onCheckedChange = {showch -> showCard = showch})
+                        }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "寝室电费")} ,
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
+                    trailingContent = {
+                        Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "校园网")} ,
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
+                    trailingContent = { Switch(checked = showWeb, onCheckedChange = {showch -> showWeb = showch})}
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "聚焦通知")} ,
+                    supportingContent = { Text(text = "明日早八,临近课程,催还图书,临近考试")},
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.sentiment_very_satisfied), contentDescription = "")},
+                    trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "洗浴(需要时显示)")} ,
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.bathtub), contentDescription = "")},
+                    trailingContent = { Switch(checked = showShower, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowShower(!showShower) } })}
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "气象预警(需要时显示)")} ,
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.warning), contentDescription = "")},
+                    trailingContent = { Switch(checked = showWeather, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowWeatherWarn(!showWeather) } })}
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "调休提示(需要时显示)")} ,
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.beach_access), contentDescription = "")},
+                    trailingContent = { Switch(checked = true, onCheckedChange = { }, enabled = false)}
+                )
             }
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "寝室电费")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
-            trailingContent = {
-                Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
-            }
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "校园网")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.net), contentDescription = "")},
-            trailingContent = { Switch(checked = showWeb, onCheckedChange = {showch -> showWeb = showch})}
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "聚焦通知")} ,
-            supportingContent = { Text(text = "明日早八,临近课程,催还图书,临近考试")},
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.sentiment_very_satisfied), contentDescription = "")},
-            trailingContent = { Switch(checked = showToday, onCheckedChange = {showch -> showToday = showch})}
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "洗浴(需要时显示)")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.bathtub), contentDescription = "")},
-            trailingContent = { Switch(checked = showShower, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowShower(!showShower) } })}
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "气象预警(需要时显示)")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.warning), contentDescription = "")},
-            trailingContent = { Switch(checked = showWeather, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowWeatherWarn(!showWeather) } })}
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "调休提示(需要时显示)")} ,
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.beach_access), contentDescription = "")},
-            trailingContent = { Switch(checked = true, onCheckedChange = { }, enabled = false)}
-        )
+        }
+
+
         Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
     }
 

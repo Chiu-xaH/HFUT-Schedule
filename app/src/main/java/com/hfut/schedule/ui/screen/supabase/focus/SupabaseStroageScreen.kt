@@ -29,10 +29,10 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.network.ParseJsons.getCustomEvent
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
-import com.hfut.schedule.ui.component.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.custom.CustomTextField
-import com.hfut.schedule.ui.component.custom.LittleDialog
-import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.container.StyleCardListItem
   
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation

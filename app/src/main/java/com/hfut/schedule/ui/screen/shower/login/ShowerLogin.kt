@@ -52,12 +52,11 @@ import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.util.network.Encrypt
-import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.xah.transition.util.navigateAndClear
@@ -67,7 +66,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Locale

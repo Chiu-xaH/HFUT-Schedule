@@ -51,9 +51,9 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.component.custom.LoadingUI
+import com.hfut.schedule.ui.component.status.LoadingUI
  
 import com.hfut.schedule.logic.util.sys.showToast
 import kotlinx.coroutines.async

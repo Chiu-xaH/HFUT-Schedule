@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.google.gson.JsonObject
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
@@ -105,18 +107,23 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
         Spacer(Modifier.height(innerPadding.calculateTopPadding()))
         StyleCardListItem(
             headlineContent = { Text("修改或重置密码可前往慧新易校(位于查询中心)")},
-            leadingContent = { Icon(painterResource(R.drawable.info),null) }
+            leadingContent = { Icon(painterResource(R.drawable.info),null) },
+            color = MaterialTheme.colorScheme.surface
         )
-        TransplantListItem(
-            headlineContent = { Text("使用自定义密码") },
-            supportingContent = { Text( if(useEditedPwd) "现密码 $originPwd" else "初始密码 $originPwd")},
-            trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
-                click()
-            }) },
-            modifier = Modifier.clickable {
-                click()
-            }
-        )
+        DividerTextExpandedWith("一卡通密码") {
+            StyleCardListItem(
+                headlineContent = { Text("使用自定义密码") },
+                supportingContent = { Text( if(useEditedPwd) "现密码 $originPwd" else "初始密码 $originPwd")},
+                trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
+                    click()
+                }) },
+                modifier = Modifier.clickable {
+                    click()
+                },
+                color = MaterialTheme.colorScheme.surface
+            )
+        }
+
         Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
     }
 }

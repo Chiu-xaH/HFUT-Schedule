@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
+import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableEntity
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestStoragePermission
@@ -17,7 +18,14 @@ import java.io.InputStreamReader
 class MainActivity : BaseActivity() {
 
     @Composable
-    override fun UI() = MainHost(super.networkVm,super.loginVm,super.uiVm,intent.getBooleanExtra("nologin",true))
+    override fun UI() = MainHost(
+        super.networkVm,
+        super.loginVm,
+        super.uiVm,
+        intent.getBooleanExtra("nologin",true),
+        false,
+        false
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -116,8 +116,5 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleKsp = { id = "com.google.devtools.ksp" ,version.ref = "ksp" }
 testAndroid = {id = "com.android.test", version.ref = "test"}
-#composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
-#androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
-#kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 
 

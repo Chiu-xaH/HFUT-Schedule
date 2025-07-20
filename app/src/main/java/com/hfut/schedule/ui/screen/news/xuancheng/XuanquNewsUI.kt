@@ -22,11 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.AnimationCardListItem
-import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.PagingController
-import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.PagingController
+import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 //*******最新模范写法****
@@ -45,8 +45,8 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     LaunchedEffect(page) {
         refreshNetwork()
     }
-
-    WebDialog(showDialog,{ showDialog = false },MyApplication.NEWS_XC_URL + url,"新闻详情")
+    var title by remember { mutableStateOf("通知公告") }
+    WebDialog(showDialog,{ showDialog = false },MyApplication.NEWS_XC_URL + url,title)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -62,6 +62,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         overlineContent = { Text(item.date) },
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
+                            title = item.title
                             url = item.link
                             showDialog = true
                         },

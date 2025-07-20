@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -32,10 +33,11 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 
@@ -133,23 +135,21 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
 fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBackspaceClick: () -> Unit) {
     Column(modifier = modifier) {
         for(i in 1 until 8 step 3) {
-            Divider()
+            HorizontalDivider()
             Row {
                 Key(num = i, modifier = Modifier
                     .weight(.33f)
                     .height(65.dp),onKeyClick = onKeyClick,
                 )
-                //Divider()
                 Key(num = i+1,modifier = Modifier
                     .weight(.33f)
                     .height(65.dp),onKeyClick = onKeyClick,)
-                //Divider()
                 Key(num = i+2,modifier = Modifier
                     .weight(.33f)
                     .height(65.dp),onKeyClick = onKeyClick,)
             }
         }
-        Divider()
+        HorizontalDivider()
         Row {
             TextButton(onClick = { /*TODO*/ }, modifier = Modifier
                 .weight(.33f)
@@ -158,12 +158,10 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             ) {
                 Text("", fontSize = 13.sp)
             }
-            //Divider()
             Key(num = 0,modifier = Modifier
                 .weight(.33f)
                 .height(65.dp),onKeyClick = onKeyClick
             )
-            //Divider()
             TextButton(onClick =  onBackspaceClick , modifier = Modifier
                 .weight(.33f)
                 .height(65.dp),shape = RoundedCornerShape(0.dp)
@@ -171,7 +169,6 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
                 Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
             }
         }
-        // Spacer(modifier = Modifier.height(10.dp))
     }
 }
 @Composable

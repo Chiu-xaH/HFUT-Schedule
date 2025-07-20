@@ -15,10 +15,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.hfut.schedule.activity.BaseActivity
+import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
-import com.hfut.schedule.ui.AppNavRoute
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -33,50 +34,58 @@ class SuccessActivity : BaseActivity() {
     @SuppressLint("NewApi")
     @Composable
     override fun UI() {
-        val navController = rememberNavController()
-        SharedTransitionLayout(
-            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-        ) {
-            NavHost(
-                navController = navController,
-                startDestination = AppNavRoute.Home.route,
-                enterTransition = { AppAnimationManager.fadeAnimation.enter },
-                exitTransition = { AppAnimationManager.fadeAnimation.exit }
-            ) {
-                // 主UI
-                composable(AppNavRoute.Home.route) {
-                    MainScreen(
-                        vm = networkVms,
-                        vm2 = super.loginVm,
-                        vmUI = super.uiVm,
-                        celebrationText = getCelebration().str,
-                        webVpn = webVpn,
-                        isLogin = true,
-                        navHostTopController = navController,
-                        this@SharedTransitionLayout,
-                        this@composable
-                    )
-                }
-                // 成绩
-                composable(
-                    route = AppNavRoute.Grade.receiveRoute(),
-                    arguments = listOf(
-                        navArgument("ifSaved") {
-                            type = NavType.BoolType
-                        }
-                    )
-                ) { backStackEntry ->
-                    val ifSaved = backStackEntry.arguments?.getBoolean("ifSaved") ?: true
-                    GradeScreen(
-                        ifSaved,
-                        networkVm,
-                        navController,
-                        this@SharedTransitionLayout,
-                        this@composable,
-                    )
-                }
-            }
-        }
+        MainHost(
+            networkVms,
+            loginVm,
+            uiVm,
+            false,
+            true,
+            webVpn
+        )
+//        val navController = rememberNavController()
+//        SharedTransitionLayout(
+//            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+//        ) {
+//            NavHost(
+//                navController = navController,
+//                startDestination = AppNavRoute.Home.route,
+//                enterTransition = { AppAnimationManager.fadeAnimation.enter },
+//                exitTransition = { AppAnimationManager.fadeAnimation.exit }
+//            ) {
+//                // 主UI
+//                composable(AppNavRoute.Home.route) {
+//                    MainScreen(
+//                        vm = networkVms,
+//                        vm2 = super.loginVm,
+//                        vmUI = super.uiVm,
+//                        celebrationText = getCelebration().str,
+//                        webVpn = webVpn,
+//                        isLogin = true,
+//                        navHostTopController = navController,
+//                        this@SharedTransitionLayout,
+//                        this@composable
+//                    )
+//                }
+//                // 成绩
+//                composable(
+//                    route = AppNavRoute.Grade.receiveRoute(),
+//                    arguments = listOf(
+//                        navArgument("ifSaved") {
+//                            type = NavType.BoolType
+//                        }
+//                    )
+//                ) { backStackEntry ->
+//                    val ifSaved = backStackEntry.arguments?.getBoolean("ifSaved") ?: true
+//                    GradeScreen(
+//                        ifSaved,
+//                        networkVm,
+//                        navController,
+//                        this@SharedTransitionLayout,
+//                        this@composable,
+//                    )
+//                }
+//            }
+//        }
     }
 
     @SuppressLint("MissingInflatedId")

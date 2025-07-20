@@ -15,6 +15,15 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange
 
 object AppNotificationManager {
+
+    // 发送通知使用方法 调用sendNotification方法，传入AppNotificationChannel即可，AppNotificationChannel需要自己添加
+    /*
+    例如：AppNotificationManager.sendNotification(
+            channel = AppNotificationManager.AppNotificationChannel.LOGIN_SCHOOL_NET,
+            content = "登录校园网: $text",
+            intent = null
+        )
+     */
     // 发送通知自动递增
     private var currentNotificationId = 1
     // 进度通知 新建进度通知则递增，更新进度通知沿用原有id
@@ -24,7 +33,8 @@ object AppNotificationManager {
     // name作为其channelId,title为标题,importance重要性
     enum class AppNotificationChannel(val title : String, val importance: Int) {
         DOWNLOAD_OK(title = "下载完成通知",NotificationManager.IMPORTANCE_DEFAULT),
-        COURSE_PROGRESS(title = "上课进度",NotificationManager.IMPORTANCE_DEFAULT)
+        COURSE_PROGRESS(title = "上课进度",NotificationManager.IMPORTANCE_DEFAULT),
+        LOGIN_SCHOOL_NET(title = "磁贴通知",NotificationManager.IMPORTANCE_HIGH)
     }
 
     // 创建通知通道

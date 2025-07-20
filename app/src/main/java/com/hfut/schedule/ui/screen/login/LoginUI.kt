@@ -83,12 +83,12 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.URLImageWithOCR
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.LoadingUI
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.network.URLImageWithOCR
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.bottomSheetRound
@@ -247,7 +247,7 @@ fun isAnonymity() : Boolean {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
+fun LoginScreen(vm : LoginViewModel) {
     val context = LocalActivity.current
     var showBadge by remember { mutableStateOf(false) }
     if (AppVersion.getVersionName() != prefs.getString("version", AppVersion.getVersionName())) showBadge = true
@@ -293,7 +293,7 @@ fun LoginScreen(vm : LoginViewModel, navController : NavHostController) {
         },
     ) {innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            TwoTextField(vm,navController,webVpn)
+            TwoTextField(vm,webVpn)
             StyleCardListItem(
                 headlineContent = { Text("外地访问") },
                 leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
@@ -346,7 +346,7 @@ fun AnimatedWelcomeScreen() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVpn: Boolean) {
+fun TwoTextField(vm : LoginViewModel,webVpn: Boolean) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
@@ -366,6 +366,7 @@ fun TwoTextField(vm : LoginViewModel, navHostController: NavHostController,webVp
             onDismissRequest = {
                 showBottomSheet = false
             },
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
             sheetState = sheetState,
             shape = bottomSheetRound(sheetState)
         ) {

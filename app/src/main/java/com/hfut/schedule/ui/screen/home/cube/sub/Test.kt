@@ -52,11 +52,11 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_MOTION_BLUR
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.BottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.SharedTopBar
-import com.hfut.schedule.ui.component.SmallCard
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.SharedTopBar
+import com.hfut.schedule.ui.component.container.SmallCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle

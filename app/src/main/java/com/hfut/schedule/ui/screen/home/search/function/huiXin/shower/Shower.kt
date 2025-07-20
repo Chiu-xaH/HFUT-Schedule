@@ -15,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.component.LoadingIcon
-import com.hfut.schedule.ui.component.RotatingIcon
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.icon.RotatingIcon
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState

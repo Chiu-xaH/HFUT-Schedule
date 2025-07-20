@@ -69,7 +69,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.Observer
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -93,16 +92,16 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.custom.CustomTabRow
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.custom.ScrollText
-import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.component.container.StyleCardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.AppNavRoute
-import com.hfut.schedule.ui.component.onListenStateHolder
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
@@ -116,7 +115,7 @@ import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
-import com.hfut.schedule.ui.screen.home.search.function.community.termInfo.ApiForTermInfo
+import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTermInfo
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
@@ -134,7 +133,6 @@ import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.style.transitionBackground
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -158,8 +156,6 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
-    val switch = prefs.getBoolean("SWITCH",true)
-    var showlable by remember { mutableStateOf(switch) }
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
@@ -260,9 +256,9 @@ fun MainScreen(
     val pagerState = rememberPagerState(pageCount = { titles.size })
 
 
-    var searchText by remember { mutableStateOf("") }
+    var searchText by rememberSaveable(0) { mutableStateOf("") }
 
-    var showSearch by remember { mutableStateOf(false) }
+    var showSearch by rememberSaveable(0) { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -500,7 +496,10 @@ fun MainScreen(
                                     if(!showSearch) {
                                         ScrollText(texts(SEARCH))
                                     } else {
-                                        SearchFuncs(ifSaved,searchText) {
+                                        SearchFuncs(ifSaved,searchText, onShow = {
+                                            searchText = ""
+                                            showSearch = it
+                                        }) {
                                             searchText = it
                                         }
                                     }
@@ -581,7 +580,6 @@ fun MainScreen(
                             val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
                             NavigationBarItem(
                                 selected = selected,
-                                alwaysShowLabel = showlable,
                                 enabled = isEnabled,
                                 modifier = Modifier.scale(scale.value),
                                 interactionSource = interactionSource,
@@ -681,8 +679,6 @@ fun MainScreen(
                     Scaffold {
                         SettingsScreen(
                             vm,
-                            showlable,
-                            showlablechanged = { showlablech -> showlable = showlablech},
                             ifSaved,
                             innerPadding,
                             vm2,

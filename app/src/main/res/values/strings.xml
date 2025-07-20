@@ -7,8 +7,8 @@
     <string name="main">主界面</string>
     <string name="fix">修复</string>
     <string name="hot_water">热水机</string>
-    <string name="login_web_hefei">登录校园网(合肥)</string>
-    <string name="login_web_xuancheng">登录校园网(宣城)</string>
+    <string name="login_web_hefei">校园网(肥)</string>
+    <string name="login_web_xuancheng">校园网(宣)</string>
     <string name="recharge">一卡通充值</string>
     <string name="title_activity_grade">成绩</string>
     <string name="title_activity_fix">修复与检测</string>

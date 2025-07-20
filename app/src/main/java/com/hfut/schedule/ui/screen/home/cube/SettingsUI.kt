@@ -4,20 +4,30 @@ import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.logic.enumeration.FixBarItems
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
@@ -30,18 +40,29 @@ import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
+import com.hfut.schedule.ui.style.zIndexBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.util.isCurrentRoute
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 
+
+@Composable
+fun BackButton(onBack : () -> Unit) {
+    FilledTonalButton(
+        onClick = onBack,
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP),
+        colors = ButtonDefaults.filledTonalButtonColors()
+    ) {
+        Text("返回上一级", fontSize = 17.sp)
+    }
+}
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SettingsScreen(vm : NetWorkViewModel
-                   , showlable : Boolean,
-                   showlablechanged: (Boolean) -> Unit,
+fun SettingsScreen(vm : NetWorkViewModel,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
                    vm1 : LoginViewModel,
@@ -49,21 +70,7 @@ fun SettingsScreen(vm : NetWorkViewModel
 ) {
     val navController = rememberNavController()
     Box {
-        Scaffold(
-
-            floatingActionButton = {
-                navController.let {
-                    if(!it.isCurrentRoute(Screen.HomeScreen.route)) {
-                        FloatingActionButton (
-                            modifier = Modifier.padding(innerPaddings),
-                            onClick = { it.popBackStack() },
-                        ) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "")
-                        }
-                    }
-                }
-            }
-        ) { innerPadding ->
+        Scaffold { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = Screen.HomeScreen.route,
@@ -77,31 +84,31 @@ fun SettingsScreen(vm : NetWorkViewModel
 
                 composable(Screen.HomeScreen.route) {
                     Scaffold {
-                        HomeSettingScreen(navController,vm, showlable, showlablechanged, ifSaved, innerPaddings,hazeState)
+                        HomeSettingScreen(navController, innerPaddings,hazeState)
                     }
                 }
                 composable(Screen.UIScreen.route) {
-                    Scaffold {
-                        UIScreen(innerPaddings,showlable, showlablechanged)
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                        UIScreen(innerPaddings)
                     }
                 }
                 composable(Screen.APPScreen.route) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer)  {
                         APPScreen(navController, innerPaddings)
                     }
                 }
                 composable(Screen.FIxAboutScreen.route) {
-                    Scaffold {
+                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
                         AboutUI(innerPadding = innerPaddings, vm,true,navController,hazeState)
                     }
                 }
                 composable(Screen.NetWorkScreen.route) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         NetWorkScreen(navController, innerPaddings,ifSaved,hazeState)
                     }
                 }
                 composable(FixBarItems.Fix.name) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         FixUI(innerPadding = innerPaddings,vm1,vm,hazeState)
                     }
                 }
@@ -111,17 +118,17 @@ fun SettingsScreen(vm : NetWorkViewModel
                     }
                 }
                 composable(Screen.DownloadScreen.route) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         DownloadMLUI(innerPaddings)
                     }
                 }
                 composable(Screen.DeveloperScreen.route) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         DeveloperScreen(vm,innerPaddings)
                     }
                 }
                 composable(Screen.CalendarScreen.route) {
-                    Scaffold {
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         CalendarSettingsScreen(innerPaddings)
                     }
                 }
@@ -131,17 +138,17 @@ fun SettingsScreen(vm : NetWorkViewModel
                     }
                 }
                 composable(Screen.FocusCardScreen.route) {
-                    Scaffold {
+                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
                         FocusCardSettings(innerPaddings)
                     }
                 }
                 composable(Screen.RequestRangeScreen.route) {
-                    Scaffold {
+                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
                         RequestArrange(innerPaddings)
                     }
                 }
                 composable(Screen.PasswordScreen.route) {
-                    Scaffold {
+                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         EditPasswordScreen(hazeState,innerPaddings)
                     }
                 }

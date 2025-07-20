@@ -1,21 +1,15 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.network.ParseJsons.getSettingInfo
-//import com.hfut.schedule.logic.utils.parse.getSettingInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.component.APIIcons
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.StyleCardListItem
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.icon.APIIcons
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
 @Composable
 fun MyAPIItem() {
@@ -29,15 +23,15 @@ fun MyAPIItem() {
 
     if(show) {
         DividerTextExpandedWith(text = "重要通知") {
-                StyleCardListItem(
-                    headlineContent = {
-                        Text(text = title, fontWeight = FontWeight.Bold)
-                    },
-                    supportingContent = if(content.isNotBlank()) {
-                        { Text(text = content) }
-                    } else null,
-                    leadingContent = { APIIcons(celebration = celebration) },
-                )
-            }
+            StyleCardListItem(
+                headlineContent = {
+                    Text(text = title, fontWeight = FontWeight.Bold)
+                },
+                supportingContent = if(content.isNotBlank() && content.isNotEmpty()) {
+                    { Text(text = content) }
+                } else null,
+                leadingContent = { APIIcons(celebration = celebration) },
+            )
+        }
     }
 }

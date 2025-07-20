@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,13 +44,18 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
  
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -148,82 +154,88 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             }
         }
 
-
-        TransplantListItem(
-            headlineContent = { Text(text = "推广本应用") },
-            supportingContent = { Text(text = "如果你觉得好用的话,可以替开发者多多推广\n长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
-            leadingContent = {
-                Icon(
-                    painterResource(R.drawable.ios_share),
-                    contentDescription = "Localized description",
+        DividerTextExpandedWith("关于") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "本版本新特性") },
+                    supportingContent = { Text(text = "查看此版本的更新内容")},
+                    modifier = Modifier.clickable { showBottomSheet_version = true },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
                 )
-            },
-            modifier = Modifier.combinedClickable(
-                onClick = {
-                    showBottomSheet = true
-                },
-                onLongClick = { ShareTo.shareAPK() },
-                onDoubleClick = {
-                    ClipBoardUtils.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
-                }
-            )
-        )
-
-        var version by remember { mutableStateOf(getUpdates()) }
-        var showBadge by remember { mutableStateOf(false) }
-        if (version.version != AppVersion.getVersionName()) showBadge = true
-
-        TransplantListItem(
-            headlineContent = { Text(text = "本版本新特性") },
-            supportingContent = { Text(text = "查看此版本的更新内容")},
-            modifier = Modifier.clickable { showBottomSheet_version = true },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
-        )
-
-        TransplantListItem(
-            headlineContent = { Text(text = "关于") },
-            supportingContent = { Text(text = "开源 构建 开发者")},
-            modifier = Modifier.clickable { showBottomSheet_info = true },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "功能可用性支持") },
-            supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
-            modifier = Modifier.clickable { showBottomSheet_support = true },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
-        )
-        TransplantListItem(
-            headlineContent = { Text(text = "彩蛋") },
-            modifier = Modifier.clickable { showBottomSheet_icon = true },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.celebration), contentDescription = "")}
-        )
-
-
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "关于") },
+                    supportingContent = { Text(text = "开源 构建 开发者")},
+                    modifier = Modifier.combinedClickable(
+                        onClick = { showBottomSheet_info = true},
+                        onLongClick = {
+                            //长按操作
+                            showBottomSheet_icon = true
+                        }),
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
+                )
+            }
+        }
+       DividerTextExpandedWith("支持") {
+           MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+               TransplantListItem(
+                   headlineContent = { Text(text = "推广应用") },
+                   supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
+                   leadingContent = {
+                       Icon(
+                           painterResource(R.drawable.ios_share),
+                           contentDescription = "Localized description",
+                       )
+                   },
+                   modifier = Modifier.combinedClickable(
+                       onClick = {
+                           showBottomSheet = true
+                       },
+                       onLongClick = { ShareTo.shareAPK() },
+                       onDoubleClick = {
+                           ClipBoardUtils.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
+                       }
+                   )
+               )
+               PaddingHorizontalDivider()
+               TransplantListItem(
+                   headlineContent = { Text(text = "功能可用性支持") },
+                   supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
+                   modifier = Modifier.clickable { showBottomSheet_support = true },
+                   leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
+               )
+           }
+       }
 
         if(cubeShow) {
-            TransplantListItem(
-                headlineContent = { Text(text = "开发者选项") },
-                supportingContent = { Text(text = "一些可用于有经验用户的选项")},
-                modifier = Modifier.clickable { navController.navigate(Screen.DeveloperScreen.route) },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "")}
-            )
-
-            TransplantListItem(
-                headlineContent = { Text(text = "疑难解答 修复") },
-                supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
-                leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-                modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) }
-            )
-
-            ///////////////////////////////
-
-            if(AppVersion.isPreview())
-                TransplantListItem(
-                    headlineContent = { Text(text = "测试 调试") },
-                    supportingContent = { Text(text = "用户禁入!")},
-                    leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },
-                    modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
+            DividerTextExpandedWith("Develop") {
+                MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "开发者选项") },
+                        supportingContent = { Text(text = "一些可用于有经验用户的选项")},
+                        modifier = Modifier.clickable { navController.navigate(Screen.DeveloperScreen.route) },
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "")}
+                    )
+                    if(AppVersion.isPreview()) {
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(text = "测试 调试") },
+                            supportingContent = { Text(text = "用户禁入!")},
+                            leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },
+                            modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
+                        )
+                    }
+                }
+            }
+            DividerTextExpandedWith("修复") {
+                StyleCardListItem(
+                    headlineContent = { Text(text = "疑难解答与修复") },
+                    supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
+                    leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
+                    color = MaterialTheme.colorScheme.surface
                 )
+            }
         }
     }
 }

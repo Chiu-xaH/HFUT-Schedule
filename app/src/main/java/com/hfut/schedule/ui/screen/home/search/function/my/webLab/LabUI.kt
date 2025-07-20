@@ -18,8 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.WebDialog
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.webview.WebDialog
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,7 +42,6 @@ fun LabUI() {
             StyleCardListItem(
                 headlineContent = { Text(text = getLab()[item].title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
-                trailingContent = { Icon( Icons.Filled.ArrowForward, contentDescription = "") },
                 modifier = Modifier.clickable {
                     num = item
                     showDialog = true
@@ -50,5 +49,4 @@ fun LabUI() {
             )
 //        }
     }
-    Spacer(modifier = Modifier.height(10.dp))
 }

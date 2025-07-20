@@ -2,10 +2,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.person
 
 import android.annotation.SuppressLint
 import android.graphics.BitmapFactory
-import android.os.Build
 import android.util.Base64
-import androidx.annotation.RequiresApi
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -29,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,21 +36,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
  
-import com.hfut.schedule.ui.component.DepartmentIcons
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.CommonNetworkScreen
-import com.hfut.schedule.ui.component.TransplantListItem
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
 import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.flow.first
@@ -107,18 +102,21 @@ fun PersonItems(vm : NetWorkViewModel) {
             }
         }
     }
+    val state = rememberScrollState()
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
-            HazeBottomSheetTopBar("个人信息")
+            Column {
+                HazeBottomSheetTopBar("个人信息")
+            }
         },) {innerPadding ->
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(state)
                 .fillMaxSize()
         ) {
             DividerTextExpandedWith(text = "账号信息") {

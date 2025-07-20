@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -27,11 +29,13 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.BottomTip
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.StyleCardListItem
-import com.hfut.schedule.ui.component.TransplantListItem
-import com.hfut.schedule.ui.component.custom.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.text.BottomTip
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -102,52 +106,59 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         Spacer(Modifier.height(innerPadding.calculateTopPadding()))
         DividerTextExpandedWith("账户") {
-            TransplantListItem(
-                headlineContent = { Text("修改密码") },
-                leadingContent = { Icon(painterResource(R.drawable.password), null) },
-                modifier = Modifier.clickable { showToast("正在开发") }
-            )
-            TransplantListItem(
-                headlineContent = { Text("注销") },
-                leadingContent = { Icon(painterResource(R.drawable.delete), null) },
-                modifier = Modifier.clickable { showToast("正在开发") }
-            )
-            TransplantListItem(
-                headlineContent = { Text("了解隐私保护") },
-                leadingContent = { Icon(painterResource(R.drawable.visibility), null) },
-                modifier = Modifier.clickable { showBottomSheet = true }
-            )
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text("修改密码") },
+                    leadingContent = { Icon(painterResource(R.drawable.password), null) },
+                    modifier = Modifier.clickable { showToast("正在开发") }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("注销") },
+                    leadingContent = { Icon(painterResource(R.drawable.delete), null) },
+                    modifier = Modifier.clickable { showToast("正在开发") }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("了解隐私保护") },
+                    leadingContent = { Icon(painterResource(R.drawable.visibility), null) },
+                    modifier = Modifier.clickable { showBottomSheet = true }
+                )
+            }
         }
 
         DividerTextExpandedWith("设置") {
-            TransplantListItem(
-                headlineContent = { Text("刷新登陆状态") },
-                leadingContent = { Icon(painterResource(R.drawable.login), null) },
-                modifier = Modifier.clickable { Starter.loginSupabase() }
-            )
-
-            TransplantListItem(
-                headlineContent = { Text("自动检查登录") },
-                supportingContent = { Text("启动APP时自动检查登陆状态，以减少初次等待时间" ) },
-                leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
-                trailingContent = {
-                    Switch(checked = supabaseAutoCheck, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) } })
-                },
-                modifier = Modifier.clickable {
-                    scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) }
-                }
-            )
-            TransplantListItem(
-                headlineContent = { Text("过滤不适用日程") },
-                supportingContent = { Text("仅展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },
-                leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },
-                trailingContent = {
-                    Switch(checked = filter, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) } })
-                },
-                modifier = Modifier.clickable {
-                    scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) }
-                }
-            )
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text("刷新登陆状态") },
+                    leadingContent = { Icon(painterResource(R.drawable.login), null) },
+                    modifier = Modifier.clickable { Starter.loginSupabase() }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("自动检查登录") },
+                    supportingContent = { Text("启动APP时自动检查登陆状态，以减少初次等待时间" ) },
+                    leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
+                    trailingContent = {
+                        Switch(checked = supabaseAutoCheck, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) } })
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("过滤不适用日程") },
+                    supportingContent = { Text("仅展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },
+                    leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },
+                    trailingContent = {
+                        Switch(checked = filter, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) } })
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) }
+                    }
+                )
+            }
         }
         BottomTip("平台管理请联系 zsh0908@outlook.com")
         Spacer(Modifier.height(innerPadding.calculateBottomPadding()))

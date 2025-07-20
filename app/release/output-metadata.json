@@ -11,22 +11,9 @@
       "type": "UNIVERSAL",
       "filters": [],
       "attributes": [],
-      "versionCode": 196,
-      "versionName": "4.16.4 Preview",
+      "versionCode": 197,
+      "versionName": "4.17 Preview",
       "outputFile": "app-universal-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "x86_64"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 1964,
-      "versionName": "4.16.4 Preview",
-      "outputFile": "4.16.4 Preview-x86_64.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -37,9 +24,22 @@
         }
       ],
       "attributes": [],
-      "versionCode": 1962,
-      "versionName": "4.16.4 Preview",
-      "outputFile": "4.16.4 Preview-arm64-v8a.apk"
+      "versionCode": 1972,
+      "versionName": "4.17 Preview",
+      "outputFile": "4.17 Preview-arm64-v8a.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 1974,
+      "versionName": "4.17 Preview",
+      "outputFile": "4.17 Preview-x86_64.apk"
     }
   ],
   "elementType": "File",
@@ -49,8 +49,8 @@
       "maxApi": 30,
       "baselineProfiles": [
         "baselineProfiles/1/app-universal-release.dm",
-        "baselineProfiles/1/4.16.4 Preview-x86_64.dm",
-        "baselineProfiles/1/4.16.4 Preview-arm64-v8a.dm"
+        "baselineProfiles/1/4.17 Preview-arm64-v8a.dm",
+        "baselineProfiles/1/4.17 Preview-x86_64.dm"
       ]
     },
     {
@@ -58,8 +58,8 @@
       "maxApi": 2147483647,
       "baselineProfiles": [
         "baselineProfiles/0/app-universal-release.dm",
-        "baselineProfiles/0/4.16.4 Preview-x86_64.dm",
-        "baselineProfiles/0/4.16.4 Preview-arm64-v8a.dm"
+        "baselineProfiles/0/4.17 Preview-arm64-v8a.dm",
+        "baselineProfiles/0/4.17 Preview-x86_64.dm"
       ]
     }
   ],

@@ -31,8 +31,8 @@ import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.ui.screen.shower.home.function.GuaGuaPersonInfoUI
 import com.hfut.schedule.ui.screen.shower.home.function.StartShowerUI
 import com.hfut.schedule.ui.screen.shower.home.function.UseCodeUI
-import com.hfut.schedule.ui.component.DividerText
-import com.hfut.schedule.ui.component.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.DividerText
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -29,6 +28,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,10 +39,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.AppNavRoute
-import com.hfut.schedule.ui.component.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.Huixin
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -67,7 +67,6 @@ import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.Program
 import com.hfut.schedule.ui.screen.home.search.function.school.repair.Repair
-import com.hfut.schedule.ui.screen.home.search.function.my.schoolCalendar.SchoolCalendar
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse.SelectCourse
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.Shower
@@ -80,12 +79,13 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.practice.Practice
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
-import com.hfut.schedule.ui.component.SmallCard
-import com.hfut.schedule.ui.component.mixedCardNormalColor
-import com.hfut.schedule.ui.screen.home.search.function.community.termInfo.TermInfo
+import com.hfut.schedule.ui.component.container.SmallCard
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.screen.home.search.function.community.workRest.WorkAndRest
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
 import com.hfut.schedule.ui.screen.home.search.function.my.supabase.Supabase
+import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -138,7 +138,7 @@ fun SearchScreen(
         SearchAppBean("热水机 趣智校园", { HotWater() }),
         SearchAppBean("空教室", { EmptyRoom(vm, ifSaved,hazeState) }),
         SearchAppBean("乐跑云运动 校园跑 体测 体育测试 体育平台 体检", { LePaoYun(hazeState) }),
-        SearchAppBean("校历", { SchoolCalendar() }),
+        SearchAppBean("作息 校历", { WorkAndRest(hazeState) }),
         SearchAppBean("学信网", { XueXin() }),
         SearchAppBean("生活服务 校园 校园 天气 教学楼 建筑 学堂", { Life(vm,hazeState) }),
         SearchAppBean("转专业", { Transfer(ifSaved, vm,hazeState) }),
@@ -153,20 +153,10 @@ fun SearchScreen(
         SearchAppBean("国家法定节假日 假期 节日", { Holiday(hazeState) }),
         SearchAppBean("云端共建平台 信息共建 日程 网课 网址导航", { Supabase(vm) }),
         SearchAppBean("洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState) }),
-        SearchAppBean("作息", { TermInfo(hazeState) }),
+        SearchAppBean("本科招生 历年分数线 招生计划", { Admission(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Admission.route),
     )
 
-    var filteredList = funcMaps
-    LaunchedEffect(input) {
-        if(input != "") {
-            filteredList = funcMaps.filter {
-                it.searchKeyWord.contains(input, ignoreCase = true)
-            }
-        }
-//        else {
-//            filteredList = funcMaps
-//        }
-    }
+    val filteredList = funcMaps.filter { it.searchKeyWord.contains(input, ignoreCase = true) }
 
     
     val paddingModifier = remember { Modifier.padding(horizontal = 3.dp, vertical = 3.dp) }
@@ -189,14 +179,20 @@ fun SearchScreen(
                 }
             }
         }
-        items( 2) { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
+        items(2) { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
     }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchFuncs(ifSaved: Boolean,input: String,webVpn: Boolean = false, onInputChanged: (String) -> Unit) {
+fun SearchFuncs(
+    ifSaved: Boolean,
+    input: String,
+    webVpn: Boolean = false,
+    onShow : (Boolean) -> Unit,
+    onInputChanged: (String) -> Unit
+) {
 
     Row(
         modifier = Modifier
@@ -214,6 +210,13 @@ fun SearchFuncs(ifSaved: Boolean,input: String,webVpn: Boolean = false, onInputC
             singleLine = true,
             shape = MaterialTheme.shapes.small,
             colors = textFiledTransplant(),
+            leadingIcon = {
+                IconButton(onClick = {
+                    onShow(false)
+                }) {
+                    Icon(painterResource(R.drawable.search),null)
+                }
+            },
             trailingIcon = {
                 if(ifSaved) {
                     TextButton(onClick = { refreshLogin() }) {
