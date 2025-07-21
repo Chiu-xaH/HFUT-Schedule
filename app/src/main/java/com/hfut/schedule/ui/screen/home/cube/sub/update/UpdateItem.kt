@@ -49,6 +49,7 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
+        UpdateItems("修复 其他年级用户无法查看转专业情况的Bug")
         // 当前版本
         // 未实现
 //        UpdateItems("修复 好友课表之间无法切换的Bug")
@@ -63,16 +64,7 @@ fun VersionInfo() {
 //        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 学工系统/今日校园的登录")
-        UpdateItems("重构 所有设置界面的设计风格")
-        UpdateItems("新增 本科招生","位于 查询中心")
-        UpdateItems("新增 网页支持分享、收藏链接")
-        UpdateItems("新增 网页收藏夹","支持收藏一些通知公告和自行添加，位于 查询中心-网址导航")
-        UpdateItems("新增 开学倒计时","位于 查询中心-作息")
-        UpdateItems("重构 分割线的设计风格","分割线保留屏幕边界")
-        UpdateItems("修复 上版本导致查询中心搜索无法使用的Bug")
-        UpdateItems("优化 校园网登录磁贴的文字在已知华为设备显示不全的问题")
-        UpdateItems("优化 查询中心搜索框支持关闭")
-        UpdateItems("优化 校历的位置","原 查询中心-校历 迁移至 查询中心-作息 的右上角")
+
 //        UpdateItems("修复 邮箱未登录的Bug")
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")

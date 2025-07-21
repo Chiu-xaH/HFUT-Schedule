@@ -202,9 +202,9 @@ interface JxglstuService {
     @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
     fun getTransfer(
         @Header("Cookie") cookie: String,
-        @Query("auto") auto : Boolean,
         @Query("batchId") batchId : String,
-        @Query("studentId") studentId : Int
+        @Query("studentId") studentId : Int,
+        @Query("auto") auto : Boolean = false
     ): Call<ResponseBody>
 
     //我的转专业申请

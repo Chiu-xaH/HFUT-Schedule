@@ -625,7 +625,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getTransfer(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId,transferData) { sId ->
         launchRequestSimple(
             holder = transferData,
-            request = { jxglstuJSON.getTransfer(cookie, true, batchId, sId).awaitResponse() },
+            request = { jxglstuJSON.getTransfer(cookie, batchId, sId).awaitResponse() },
             transformSuccess = { _, json -> parseTransfer(json) }
         )
     }
