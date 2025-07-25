@@ -2,15 +2,19 @@ package com.hfut.schedule.ui.screen.home.search.function.one.mail
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +42,11 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.webview.WebDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.text.BottomTip
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -49,16 +58,17 @@ import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Mail(ifSaved : Boolean, vm : NetWorkViewModel,vmUI: UIViewModel, hazeState: HazeState) {
+fun Mail(
+    vm : NetWorkViewModel,
+    hazeState: HazeState
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
     TransplantListItem(
         headlineContent = { Text(text = "邮箱") },
         overlineContent = { ScrollText(text = MyApplication.EMAIL) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin()
-            else
-                showBottomSheet = true
+            showBottomSheet = true
         }
     )
 
@@ -66,23 +76,14 @@ fun Mail(ifSaved : Boolean, vm : NetWorkViewModel,vmUI: UIViewModel, hazeState: 
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
+            autoShape = false,
             isFullExpand = false,
             showBottomSheet = showBottomSheet
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("学生邮箱", isPaddingStatusBar = false)
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    MailUI(vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+            Column{
+                HazeBottomSheetTopBar("校园邮箱", isPaddingStatusBar = false)
+                MailUI(vm)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -111,56 +112,65 @@ fun MailUI(vm: NetWorkViewModel) {
 
     CommonNetworkScreen(uiState, loadingText = "正在登录邮箱", isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as UiState.Success).data
-        RowHorizontal {
-            Button(
-                onClick = {
-                    response?.data.let {
-                        if(it != null) {
-                            url = it
-                            showDialog = true
-                            used = !used
-                        } else {
-                            showToast( "错误 " + response?.msg)
-                        }
-                    }
-                }
-            ) {
-                Text("进入邮箱")
-            }
-            Spacer(Modifier.width(APP_HORIZONTAL_DP))
-            FilledTonalButton (
-                onClick = {
-                    response?.data.let {
-                        if(it != null) {
-                            url = it
-                            Starter.startWebUrl(url)
-                            used = !used
-                        } else {
-                            showToast( "错误 " + response?.msg)
-                        }
-                    }
-                }
-            ) {
-                Text("在浏览器使用")
-            }
-        }
-        if(isSupabaseRegistering.value) {
-            RowHorizontal {
-                Button(
-                    onClick = {
-                        response?.data.let {
-                            if(it != null) {
-                                url = it
-                                Starter.startWebUrl(url)
-                                showToast("请检查最新收件箱 来自Supabase Auth的邮件 点击链接Confirm")
-                                used = !used
-                            } else {
-                                showToast( "错误 " + response?.msg)
+        Column {
+            DividerTextExpandedWith (getSchoolEmail() ?: "邮箱") {
+                Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                    LargeButton(
+                        onClick = {
+                            response?.data.let {
+                                if(it != null) {
+                                    url = it
+                                    showDialog = true
+                                    used = !used
+                                } else {
+                                    showToast( "错误 " + response?.msg)
+                                }
                             }
-                        }
+                        },
+                        modifier = Modifier.fillMaxWidth().weight(.5f),
+                        text = "进入邮箱",
+                        icon = R.drawable.mail
+                    )
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+                    LargeButton (
+                        onClick = {
+                            response?.data.let {
+                                if(it != null) {
+                                    url = it
+                                    Starter.startWebUrl(url)
+                                    used = !used
+                                } else {
+                                    showToast( "错误 " + response?.msg)
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth().weight(.5f),
+                        text = "在浏览器打开",
+                        icon = R.drawable.net,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
+
+            DividerTextExpandedWith("使用说明") {
+                StyleCardListItem(
+                    headlineContent = {
+                        Text("一些邮件，可能在应用内无法跳转链接，需要选择右侧按钮以用浏览器打开")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.net),null)
                     }
-                ) {
-                    Text("注册激活请选此处")
+                )
+                if(isSupabaseRegistering.value) {
+                    StyleCardListItem(
+                        headlineContent = {
+                            Text("共建平台注册激活请选择在浏览器使用，并检查最新收件箱 来自Supabase Auth的邮件 点击链接并Confirm")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.database),null)
+                        }
+                    )
                 }
             }
         }

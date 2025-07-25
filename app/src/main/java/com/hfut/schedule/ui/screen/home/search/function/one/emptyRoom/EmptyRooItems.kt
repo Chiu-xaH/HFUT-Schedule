@@ -148,7 +148,6 @@ fun emptyRoomUI(vm : NetWorkViewModel) {
                     onClick = {
                         selected5 = !selected5
                         if (selected5) {
-                            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
                             val token = prefs.getString("bearer","")
                             token?.let { vm.searchEmptyRoom("XC001", it) }
                             CoroutineScope(Job()).launch {
@@ -177,7 +176,6 @@ fun emptyRoomUI(vm : NetWorkViewModel) {
                     onClick = {
                         selected4 = !selected4
                         if (selected4) {
-                            val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
                             val token = prefs.getString("bearer","")
                             token?.let { vm.searchEmptyRoom("XC001", it) }
                             CoroutineScope(Job()).launch {

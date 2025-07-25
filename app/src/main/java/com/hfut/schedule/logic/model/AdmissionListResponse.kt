@@ -25,6 +25,8 @@ data class AdmissionDetailResponsePlan(val data: AdmissionDetailBeanPlan)
 
 data class AdmissionDetailResponseHistory(val data: AdmissionDetailBeanHistory)
 
+
+
 sealed class AdmissionDetailBean {
     data class History(val data: AdmissionDetailBeanHistory) : AdmissionDetailBean()
     data class Plan(val data: AdmissionDetailBeanPlan) : AdmissionDetailBean()
@@ -45,6 +47,8 @@ data class AdmissionDetailBeanPlan(
     @SerializedName("zsjhList")
     val majorSituationList : List<AdmissionMajorSituationPlan>
 )
+
+
 
 abstract class AdmissionSituationHistory {
     abstract val minScore : Double?

@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-17") },
+                overlineContent = { Text(text = "2025-07-25") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -49,7 +49,11 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("修复 其他年级用户无法查看转专业情况的Bug")
+        UpdateItems("新增 一键教评整学期所有教师","位于 查询中心-评教 的右上角")
+        UpdateItems("修复 教师检索Host更换导致不可用的问题")
+        UpdateItems("修复 成绩雷达图以最高分而不是以满分为边界的Bug")
+        UpdateItems("修复 校园邮箱无法跟随刷新登录的Bug")
+        UpdateItems("优化 部分界面的显示")
         // 当前版本
         // 未实现
 //        UpdateItems("修复 好友课表之间无法切换的Bug")
@@ -65,7 +69,6 @@ fun VersionInfo() {
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 学工系统/今日校园的登录")
 
-//        UpdateItems("修复 邮箱未登录的Bug")
 //        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
         // v5.0 2025-07+ 远期规划

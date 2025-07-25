@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -46,7 +47,6 @@ fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState){
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin()
             else {
-                val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
                 val token = prefs.getString("bearer","")
                 showBottomSheet_EmptyRoom = true
                 token?.let { vm.searchEmptyRoom("XC001", it) }

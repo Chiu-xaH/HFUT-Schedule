@@ -2,6 +2,7 @@ package com.hfut.schedule.viewmodel.network
 
 import android.util.Base64
 import android.util.Log
+import androidx.camera.core.Logger.e
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -1453,11 +1454,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     fun getToken()  {
 
-        val codehttp = prefs.getString("code", "")
-        var code = codehttp
+        val codeHttp = prefs.getString("code", "")
+        var code = codeHttp
         if (code != null) { code = code.substringAfter("=") }
         if (code != null) { code = code.substringBefore("]") }
-        val http = codehttp?.substringAfter("[")?.substringBefore("]")
+        val http = codeHttp?.substringAfter("[")?.substringBefore("]")
 
 
         val call = http?.let { code?.let { it1 -> one.getToken(it, it1) } }
@@ -1471,7 +1472,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                         token.value = data.data.access_token
                         saveString("bearer", data.data.access_token)
                     }
-                } catch (_: Exception) {}
+                } catch (e : Exception) {
+                    e.printStackTrace()
+                }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }

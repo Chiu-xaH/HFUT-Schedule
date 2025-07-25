@@ -63,7 +63,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,code : String?= null) {
+fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,code : String?= null) {
 
     var semester by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(Unit) {
@@ -80,7 +80,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,code : String?= null) {
         }
     }
 
-    LaunchedEffect(semester) {
+    LaunchedEffect(semester,refresh) {
         if(semester != null)
             refreshNetwork()
     }

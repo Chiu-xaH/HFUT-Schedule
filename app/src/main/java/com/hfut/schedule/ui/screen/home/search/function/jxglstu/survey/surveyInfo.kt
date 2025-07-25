@@ -91,7 +91,7 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
             onDismissRequest = { showDialog = false },
             onConfirmation = {
                 scope.launch {
-                    async { selectMode(vm,postMode,bean,input) }.await()
+                    async { postSurvey(vm,postMode,bean,input) }.await()
                     launch {
                         showDialog = false
                         onResult()
@@ -174,15 +174,13 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
 }
 
 @SuppressLint("SuspiciousIndentation")
-suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyResponse,comment: String = "好") = withContext(Dispatchers.IO) {
+suspend fun postSurvey(vm : NetWorkViewModel, mode : PostMode, bean: SurveyResponse, comment: String = "好") = withContext(Dispatchers.IO) {
     // 主线程监听 StateFlow
     onListenStateHolder(vm.surveyToken) { token ->
         val cookie = getJxglstuCookie(vm)
-//    val token = prefs.getString("SurveyCookie","")
         when(mode) {
             PostMode.NORMAL -> {
-                //vm.postSurvey("$cookie;$token", postResultNormal(vm))
-                showToast("提交完成")
+                showToast("正在开发")
             }
             PostMode.GOOD ->  {
                 vm.postSurvey("$cookie;$token", postResult(true, bean, comment))
@@ -194,20 +192,6 @@ suspend fun selectMode(vm : NetWorkViewModel, mode : PostMode,bean: SurveyRespon
             }
         }
     }
-//    withContext(Dispatchers.Main) {
-//        // 只收集第一次流
-//        val state = vm.surveyToken.state.first { it !is SimpleUiState.Loading }
-//        when (state) {
-//            is SimpleUiState.Success -> {
-//                val token = state.data
-//
-//            }
-//            is SimpleUiState.Error -> {
-//                showToast("错误 " + state.exception?.message)
-//            }
-//            else -> {}
-//        }
-//    }
 }
 
 //true为好评，false为差评

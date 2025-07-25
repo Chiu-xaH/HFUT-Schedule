@@ -485,23 +485,15 @@ fun JxglstuCourseTableUI(
 
 //////////////////////////////////////////////////////////////////////////////////
    if(load) {
-//       val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-//       val cookie = if (!webVpn) prefs.getString(
-//            "redirect",
-//            ""
-//        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
         var num2 = 1
         val ONE = CasInHFUT.casCookies
         val TGC = prefs.getString("TGC", "")
-        val cardvalue = prefs.getString("borrow", "")
         val cookies = "$ONE;$TGC"
         val ticket = prefs.getString("TICKET", "")
         val CommuityTOKEN = prefs.getString("TOKEN", "")
         var a by rememberSaveable { mutableIntStateOf(0) }
         val job = Job()
         val job2 = Job()
-        val scope = CoroutineScope(job)
         val nextBoolean = isNextOpen()
 
 
@@ -540,31 +532,29 @@ fun JxglstuCourseTableUI(
        }
 
         if(!webVpn) {
-            val token = prefs.getString("bearer", "")
+//            val token = prefs.getString("bearer", "")
             //检测慧新易校可用性
-            if (prefs.getString("auth", "") == "") vm.goToHuiXin("$ONE;$TGC")
+            if (prefs.getString("auth", "") == "") vm.goToHuiXin(cookies)
            CoroutineScope(job2).launch {
-
-
-               async { vm.goToHuiXin("$ONE;$TGC") }
+               async { vm.goToHuiXin(cookies) }
                async { CommuityTOKEN?.let { vm.getExamFromCommunity(it) } }
 
                Handler(Looper.getMainLooper()).post { vm.examCodeFromCommunityResponse.observeForever(examObserver) }
 
-
                //登录信息门户的接口,还没做重构（懒）
-               if (token != null) {
-                   if (token.contains("AT") && cardvalue != "未获取") {
-                   } else {
-                       async {
-                           async { vm.goToOne(cookies) }.await()
-                           async {
-                               delay(500)
-                               vm.getToken()
-                           }.await()
-                       }
-                   }
+               async {
+                   async { vm.goToOne(cookies) }.await()
+                   async {
+                       delay(500)
+                       vm.getToken()
+                   }.await()
                }
+//               if (token != null) {
+//                   if (token.contains("AT") && cardvalue != "未获取") {
+//                   } else {
+//
+//                   }
+//               }
            }
        }
 
@@ -573,7 +563,6 @@ fun JxglstuCourseTableUI(
        LaunchedEffect(Unit) {
            val cookie = getJxglstuCookie(vm)
            // 等待读取本地Cookie
-//           if(webVpnCookie.isEmpty() && webVpn) return@LaunchedEffect
            if(loading == false) return@LaunchedEffect
            cookie?: return@LaunchedEffect
            vm.getStudentId(cookie)

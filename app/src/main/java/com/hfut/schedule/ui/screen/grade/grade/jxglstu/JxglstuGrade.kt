@@ -128,7 +128,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    SurveyUI(vm,hazeState,surveyCode)
+                    SurveyUI(vm,hazeState,true,surveyCode)
                 }
             }
         }

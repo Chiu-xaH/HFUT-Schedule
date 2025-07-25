@@ -3,14 +3,10 @@ package com.hfut.schedule.App
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.xah.transition.state.TransitionState
 
 class MyApplication : Application() {
     companion object {
@@ -70,12 +66,12 @@ class MyApplication : Application() {
         const val SHOWER_URL = "https://bathing.hfut.edu.cn/"
         // 宣城校区通知公告
         const val NEWS_XC_URL = "https://xc.hfut.edu.cn/"
-        // 教师检索
-        const val TEACHER_URL = "https://faculty.hfut.edu.cn/"
+        // 教师检索 https://faculty.hfut.edu.cn/
+        const val TEACHER_URL = "http://121.251.19.138/"
         // Github用户头像
         const val GITHUB_USER_IMAGE_URL = "https://avatars.githubusercontent.com/u/"
         // 和风天气
-        const val QWEATHER_URL = "https://devapi.qweather.com/v7/"
+        const val Q_WEATHER_URL = "https://devapi.qweather.com/v7/"
         // 学工系统
         const val STU_URL = "https://stu.hfut.edu.cn/"
         // 智慧后勤 宣城
@@ -187,10 +183,5 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
-        // 暂时削弱动效
-//        TransitionState.transitionBackgroundStyle.backgroundColor = Color.Black.copy(.25f)
-//        TransitionState.transitionBackgroundStyle.scaleValue = 0.825f
-//        TransitionState.transitionBackgroundStyle.forceTransition = false
-//        TransitionState.firstStartRoute = AppNavRoute.Home.route
     }
 }

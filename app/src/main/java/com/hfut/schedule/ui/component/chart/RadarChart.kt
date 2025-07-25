@@ -26,7 +26,8 @@ data class RadarData(val label: String, val value: Float)
 
 @Composable
 fun RadarChart(data: List<RadarData>, modifier: Modifier = Modifier) {
-    val maxValue = data.maxOf { it.value }
+    val maxValue = 1f
+//        data.maxOf { it.value }
     val animatedValues = remember { data.map { Animatable(0f) } }
     val coroutineScope = rememberCoroutineScope()
 

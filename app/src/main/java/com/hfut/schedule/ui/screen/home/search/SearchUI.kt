@@ -117,7 +117,7 @@ fun SearchScreen(
         SearchAppBean("考试" , { Exam(vm, ifSaved,hazeState) }),
         SearchAppBean("寝室电费 缴费 慧新易校" , { Electric(vm, false, vmUI,hazeState) }),
         SearchAppBean("校园网 慧新易校 缴费" , { LoginWeb(vmUI, false, vm,hazeState) }),
-        SearchAppBean("教育邮箱" , { Mail(ifSaved, vm,vmUI,hazeState) }),
+        SearchAppBean("教育邮箱" , { Mail(vm,hazeState) }),
         SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" , { Huixin() }),
         SearchAppBean("成绩", { Grade(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Grade.receiveRoute()),
         SearchAppBean("挂科率", { FailRate(vm,hazeState) }),
