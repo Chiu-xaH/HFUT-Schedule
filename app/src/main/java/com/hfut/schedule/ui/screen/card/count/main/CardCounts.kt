@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
@@ -146,7 +147,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
         //填充界面
         Box(modifier = Modifier.fillMaxSize()) {
             Column{
-                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                InnerPaddingHeight(innerPadding,true)
                 Spacer(modifier = Modifier.height(5.dp))
                 Card(
                     modifier = Modifier
@@ -207,7 +208,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             )
                         }
                     }
-                    items(if(filteredList.size % 2 == 0) 1 else 2) { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                    items(if(filteredList.size % 2 == 0) 1 else 2) { InnerPaddingHeight(innerPadding,false) }
 
                 }
             }

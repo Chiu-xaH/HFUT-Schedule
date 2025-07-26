@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -104,7 +105,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
         }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        Spacer(Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("账户") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
@@ -161,6 +162,6 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
             }
         }
         BottomTip("平台管理请联系 zsh0908@outlook.com")
-        Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
+        InnerPaddingHeight(innerPadding,false)
     }
 }

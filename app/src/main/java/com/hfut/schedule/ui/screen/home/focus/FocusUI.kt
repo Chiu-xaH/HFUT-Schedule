@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -215,7 +216,7 @@ fun TodayScreen(
             }
             Scaffold {
                 LazyColumn(state = scrollState) {
-                    item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+                    item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
                         TAB_LEFT -> {
                             item { FocusCard(vmUI,vm,hazeState) }
@@ -336,7 +337,7 @@ fun TodayScreen(
                             item { TimeStampItem() }
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                    item { InnerPaddingHeight(innerPadding,false) }
                 }
             }
         }

@@ -43,6 +43,7 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.style.ColumnVertical
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -126,7 +127,7 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
         it.toString().contains(input,ignoreCase = true)
     }
     LazyColumn {
-        item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+        item { InnerPaddingHeight(innerPadding,true) }
         item {
             CustomTextField(
                 input = input,
@@ -178,7 +179,7 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
                 }
             )
         }
-        items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
+        items(2) { InnerPaddingHeight(innerPadding,false) }
     }
 
 }

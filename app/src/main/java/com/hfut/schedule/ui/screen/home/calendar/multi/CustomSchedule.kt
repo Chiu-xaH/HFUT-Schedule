@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.component.status.LoadingUI
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -730,7 +731,7 @@ fun CustomSchedules(showAll : Boolean,
                         modifier = Modifier.padding(10.dp),
                         state = scrollstate
                     ) {
-                        items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+                        items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
                         items(if(showAll)42 else 30) { cell ->
                             Card(
                                 shape = MaterialTheme.shapes.extraSmall,
@@ -754,7 +755,7 @@ fun CustomSchedules(showAll : Boolean,
                                 }
                             }
                         }
-                        item {  Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                        item {  InnerPaddingHeight(innerPadding,false) }
                     }
                     androidx.compose.animation.AnimatedVisibility(
                         visible = shouldShowAddButton,

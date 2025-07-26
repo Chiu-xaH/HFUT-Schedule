@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -295,6 +296,6 @@ fun APPScreen(navController: NavController,
                 }
             }
         }
-        Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
+        InnerPaddingHeight(innerPaddings,false)
     }
 }

@@ -82,6 +82,4 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues) {
             }
         }
     }
-
-
 }

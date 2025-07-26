@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.webview.WebDialog
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 //*******最新模范写法****
@@ -53,7 +54,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         val listState = rememberLazyListState()
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {
-                item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+                item { InnerPaddingHeight(innerPadding,true) }
                 items(list.size, key = { it }) { index ->
                     val item = list[index]
 //                    MyCustomCard {
@@ -70,7 +71,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                     )
 //                    }
                 }
-                item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
             }
             PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding))

@@ -86,6 +86,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
 import com.hfut.schedule.ui.screen.home.search.function.my.supabase.Supabase
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -164,7 +165,7 @@ fun SearchScreen(
     LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 12.dp)) {
         items(2) {
             Column {
-                Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding()))
+                InnerPaddingHeight(innerPaddings,true)
                 Spacer(modifier = Modifier.height(4.dp))
             }
         }
@@ -179,7 +180,7 @@ fun SearchScreen(
                 }
             }
         }
-        items(2) { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
+        items(2) { InnerPaddingHeight(innerPaddings,false) }
     }
 }
 

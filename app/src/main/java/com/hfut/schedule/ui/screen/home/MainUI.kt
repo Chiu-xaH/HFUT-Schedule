@@ -133,6 +133,7 @@ import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.style.transitionBackground
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -180,7 +181,7 @@ fun MainScreen(
     ) }
     // 记录上一个
 
-    var showAll by remember { mutableStateOf(DateTimeManager.isOnWeekend()) }
+    var showAll by rememberSaveable { mutableStateOf(DateTimeManager.isOnWeekend()) }
     var findCourse by remember { mutableStateOf(false) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -250,7 +251,7 @@ fun MainScreen(
         findCourse = result
     }
 
-    var today by remember { mutableStateOf(DateTimeManager.getToday()) }
+    var today by rememberSaveable(0) { mutableStateOf(DateTimeManager.getToday()) }
     val titles = listOf("重要安排","其他事项")
 
     val pagerState = rememberPagerState(pageCount = { titles.size })
@@ -645,7 +646,7 @@ fun MainScreen(
                                 // 社区 1
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
                                 // 教务 0
-                                CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState)
+                                CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope)
                                 // 自定义导入课表 数据库id+3=swapUI
                                 else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-3,{newDate-> today = newDate}, today)
                             }

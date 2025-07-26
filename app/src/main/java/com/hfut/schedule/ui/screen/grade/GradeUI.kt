@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +52,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
 import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
@@ -127,7 +129,7 @@ fun GradeScreen(
                 R.drawable.article_filled)
         ),
         NavigationBarItemData(
-            GradeBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
+            GradeBarItems.COUNT.name,"计算", painterResource(R.drawable.leaderboard),
             painterResource(R.drawable.leaderboard_filled)
         )
     )
@@ -204,7 +206,6 @@ fun GradeScreen(
                                     Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
                                 },
                                 colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-
                             )
                         }
                     }
@@ -229,7 +230,8 @@ fun GradeScreen(
                 composable(GradeBarItems.COUNT.name) {
                     Scaffold(
                     ) {
-                        GradeCountUI(vm,innerPadding)
+                        AnalysisScreen(vm,innerPadding)
+//                        GradeCountUI(vm,innerPadding)
                     }
                 }
             }

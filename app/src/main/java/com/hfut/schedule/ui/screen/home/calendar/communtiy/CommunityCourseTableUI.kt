@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -419,7 +420,7 @@ fun CommunityCourseTableUI(
                     modifier = Modifier.padding(7.dp),
                     state = scrollState
                 ) {
-                    items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
+                    items(if(showAll)7 else 5) { InnerPaddingHeight(innerPaddings,true) }
                     items(if(showAll)42 else 30) { cell ->
                         val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                         val texts = transferSummaryCourseInfos(itemList).toMutableList()
@@ -490,7 +491,7 @@ fun CommunityCourseTableUI(
 
                         }
                     }
-                    item {  Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
+                    item { InnerPaddingHeight(innerPaddings,false) }
                 }
                 androidx.compose.animation.AnimatedVisibility(
                     visible = shouldShowAddButton,

@@ -40,7 +40,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
- 
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+
 import com.hfut.schedule.ui.style.RowHorizontal
 import kotlin.math.roundToInt
 
@@ -134,9 +135,8 @@ fun Egg() {
                 }
             },
         ) { innerPadding ->
-            Column(modifier = Modifier.fillMaxSize()
-                .verticalScroll(rememberScrollState())) {
-                Spacer(Modifier.height(innerPadding.calculateTopPadding()))
+            Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                InnerPaddingHeight(innerPadding,true)
                 for(i in 0 until num) {
                     RowHorizontal {
                         DraggableImage(R.drawable.hfut,dampingRatio, stiffness)
@@ -153,8 +153,7 @@ fun Egg() {
                         DraggableImage(R.drawable.buliding_dynamic,dampingRatio, stiffness)
                     }
                 }
-
-                Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
+                InnerPaddingHeight(innerPadding,false)
             }
         }
     }

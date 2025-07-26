@@ -28,6 +28,7 @@ import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 @Composable
@@ -51,7 +52,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
 
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("Cookies") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
@@ -163,6 +164,6 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
             }
         }
 
-        Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+        InnerPaddingHeight(innerPadding,false)
     }
 }

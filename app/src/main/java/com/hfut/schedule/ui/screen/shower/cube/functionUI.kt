@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -60,7 +61,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
        Column(modifier = Modifier
            .fillMaxSize()
            .verticalScroll(rememberScrollState())) {
-        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+           InnerPaddingHeight(innerPadding,true)
            DividerTextExpandedWith("设置") {
                MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                    TransplantListItem(
@@ -94,10 +95,8 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
                    )
                    EditLoginCode()
                }
-
            }
-
-            Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+           InnerPaddingHeight(innerPadding,false)
     }
 }
 

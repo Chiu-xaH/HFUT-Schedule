@@ -42,7 +42,8 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
- 
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -114,7 +115,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             showItemYear = false})
     }
     Column {
-        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start){
 
             AssistChip(
@@ -171,9 +172,8 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             index = 0
                         )
                     }
-                    item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                    item { InnerPaddingHeight(innerPadding,false) }
                 }
-
             }
         }
     }

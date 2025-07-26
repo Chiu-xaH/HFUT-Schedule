@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -143,7 +144,7 @@ fun UseAgreementScreen(navController : NavHostController) {
             modifier = Modifier.hazeSource(hazeState).fillMaxSize()
         ) {
             LazyColumn {
-                item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+                item { InnerPaddingHeight(innerPadding,true) }
                 items(argeements.size) { index ->
                     val item = argeements[index]
                     TransplantListItem(
@@ -151,7 +152,7 @@ fun UseAgreementScreen(navController : NavHostController) {
                         leadingContent = { Text((index+1).toString()) }
                     )
                 }
-                item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                item { InnerPaddingHeight(innerPadding,false) }
             }
         }
     }

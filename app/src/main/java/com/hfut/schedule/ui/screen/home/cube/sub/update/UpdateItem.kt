@@ -24,7 +24,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-25") },
+                overlineContent = { Text(text = "2025-07-26") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -49,11 +49,9 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
-        UpdateItems("新增 一键教评整学期所有教师","位于 查询中心-评教 的右上角")
-        UpdateItems("修复 教师检索Host更换导致不可用的问题")
-        UpdateItems("修复 成绩雷达图以最高分而不是以满分为边界的Bug")
-        UpdateItems("修复 校园邮箱无法跟随刷新登录的Bug")
-        UpdateItems("优化 部分界面的显示")
+        UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
+        UpdateItems("修复 成绩雷达图在五星制成绩显示为0的Bug")
+        UpdateItems("修复 校园邮箱在登陆后短时间不能保持登录的Bug")
         // 当前版本
         // 未实现
 //        UpdateItems("修复 好友课表之间无法切换的Bug")
@@ -69,13 +67,10 @@ fun VersionInfo() {
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 学工系统/今日校园的登录")
 
-//        UpdateItems("新增 开发者选项","可供有能力者使用某些功能")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
         // v5.0 2025-07+ 远期规划
 //        UpdateItems("新增 磁钉体系", "位于 选项-应用行为，构建全局磁钉体系，任何支持的界面向边缘滑动即可缩放为磁钉最小化", UpdateType.ADD)
 //        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)
-//        UpdateItems("重构 全局转场动画体系", "现在，转场时的动画完全重写，优化整体观感，并优化首次展开时动画卡顿的问题", UpdateType.RENEW)
-//        UpdateItems("新增 动画速度挡位调节", null, UpdateType.ADD)
     }
 }
 

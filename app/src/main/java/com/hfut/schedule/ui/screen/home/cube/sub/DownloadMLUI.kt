@@ -43,6 +43,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -82,7 +83,7 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
     }
 
     Column {
-        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
                 headlineContent = { Text("图片验证码自动填充") },
@@ -151,8 +152,6 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
                 )
             }
         }
-
-
-        Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+        InnerPaddingHeight(innerPadding,false)
     }
 }

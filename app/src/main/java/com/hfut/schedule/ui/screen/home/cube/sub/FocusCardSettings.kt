@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -134,7 +135,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
 
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        Spacer(Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         StyleCardListItem(
             headlineContent = { Text(text = "打开开关则会在APP冷启动或刷新时自动获取数据,并显示在聚焦首页第一张卡片内") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "",)},
@@ -195,9 +196,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
                 )
             }
         }
-
-
-        Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
+        InnerPaddingHeight(innerPadding,false)
     }
 
 

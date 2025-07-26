@@ -28,11 +28,12 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 
 @Composable
 fun RequestArrange(innerPadding : PaddingValues) {
     LazyColumn() {
-        item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+        item { InnerPaddingHeight(innerPadding,true) }
         item { ArrangeItem(title = "图书", icon = R.drawable.book, key = "BookRequest") }
         item { ArrangeItem(title = "一卡通", icon = R.drawable.credit_card, key = "CardRequest") }
         item { ArrangeItem(title = "挂科率", icon = R.drawable.monitoring, key = "FailRateRequest") }
@@ -42,7 +43,7 @@ fun RequestArrange(innerPadding : PaddingValues) {
         item { ArrangeItem(title = "好友课表列表", icon = R.drawable.calendar, key = "FriendRequest") }
         item { ArrangeItem(title = "海乐生活-洗衣机", icon = R.drawable.local_laundry_service, key = "HaileRequest") }
 //        item { ArrangeItem(title = "通知公告", icon = R.drawable.stream, key = "NewsRequest",false) }
-        item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
+        item { InnerPaddingHeight(innerPadding,false) }
     }
 }
 

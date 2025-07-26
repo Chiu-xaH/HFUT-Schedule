@@ -18,6 +18,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 
 @Composable
@@ -35,7 +36,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
         val response = (uiState as UiState.Success).data
         val list = response.data
         LazyColumn {
-            item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+            item { InnerPaddingHeight(innerPadding,true) }
             item { Spacer(modifier = Modifier.height(5.dp)) }
             items(list.size) {item ->
                 val info = list[item].description
@@ -74,7 +75,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                     index = item
                 )
             }
-            item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+            item { InnerPaddingHeight(innerPadding,false) }
         }
     }
 }

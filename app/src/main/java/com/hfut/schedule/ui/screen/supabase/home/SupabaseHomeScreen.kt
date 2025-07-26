@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -184,7 +185,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
         val downloadStates = remember { mutableStateMapOf<Int, Boolean>() }
 
         LazyColumn {
-            item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+            item { InnerPaddingHeight(innerPadding,true) }
             item {
                 CustomTextField(
                     input = input,
@@ -363,7 +364,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                 }
 
             }
-            items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
+            items(2) { InnerPaddingHeight(innerPadding,false) }
         }
     }
 }

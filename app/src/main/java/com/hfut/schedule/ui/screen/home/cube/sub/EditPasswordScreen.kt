@@ -33,6 +33,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -104,7 +105,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
         }
     }
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        Spacer(Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         StyleCardListItem(
             headlineContent = { Text("修改或重置密码可前往慧新易校(位于查询中心)")},
             leadingContent = { Icon(painterResource(R.drawable.info),null) },
@@ -123,7 +124,6 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
                 color = MaterialTheme.colorScheme.surface
             )
         }
-
-        Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
+        InnerPaddingHeight(innerPadding,false)
     }
 }

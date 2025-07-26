@@ -34,6 +34,7 @@ import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -120,7 +121,7 @@ fun NetWorkScreen(navController: NavController,
                 }
             }
         }
-        Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
+        InnerPaddingHeight(innerPaddings,false)
     }
 
 }

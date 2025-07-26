@@ -32,6 +32,7 @@ import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 
@@ -68,7 +69,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         }
     }
     Column {
-        Spacer(Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         CustomTabRow(
             pagerState = pagerState,
             titles = titles
@@ -106,7 +107,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                             )
 //                    }
                         }
-                        item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                        item { InnerPaddingHeight(innerPadding,false) }
                         item { PaddingForPageControllerButton() }
                     }
                     PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding))

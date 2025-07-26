@@ -3,7 +3,10 @@ package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -55,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
+import androidx.navigation.NavController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
@@ -77,6 +81,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
@@ -87,8 +92,11 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.component.containerShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -144,6 +152,7 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
         t.clear()
     }
 }
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun JxglstuCourseTableUI(
     showAll: Boolean,
@@ -154,7 +163,10 @@ fun JxglstuCourseTableUI(
     load: Boolean,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
-    hazeState: HazeState
+    hazeState: HazeState,
+    navController: NavController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
 ) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
@@ -721,80 +733,103 @@ fun JxglstuCourseTableUI(
                             modifier = Modifier.padding(10.dp),
                             state = scrollState
                         ) {
-                            items(if(showAll)7 else 5) { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
+                            items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
                             items(if(showAll)42 else 30) { cell ->
                                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                                Card(
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                                    modifier = Modifier
-                                        .height(125.dp)
-                                        .padding(if (showAll) 1.dp else 2.dp)
-                                        .clickable {
-                                            // 只有一节课
-                                            if (texts.size == 1) {
+                                with(sharedTransitionScope) {
+                                    val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
+                                    Card(
+                                        shape = MaterialTheme.shapes.extraSmall,
+                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                                        modifier = containerShare(
+                                            Modifier.height(125.dp)
+                                                .padding(if (showAll) 1.dp else 2.dp)
+                                                .clickable {
+                                                    // 只有一节课
+                                                    if (texts.size == 1) {
+                                                        // 如果是考试
+                                                        if (texts[0].contains("考试")) {
+                                                            return@clickable
+                                                        }
+                                                        val name =
+                                                            parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                                        if (name != null) {
+                                                            navController.navigateAndSaveForTransition(AppNavRoute.CourseDetail.withArgs(name,cell))
+//                                                    courseName = name
+//                                                    showBottomSheetTotalCourse = true
+                                                        }
+                                                    } else if (texts.size > 1) {
+                                                        multiWeekday =
+                                                            if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                                        multiWeek = currentWeek.toInt()
+                                                        courses = texts
+                                                        showBottomSheetMultiCourse = true
+                                                    }
+                                                    // 空数据
+                                                },
+                                            animatedContentScope,
+                                            route = if (texts.size == 1) {
                                                 // 如果是考试
                                                 if (texts[0].contains("考试")) {
-                                                    return@clickable
+                                                    route
+                                                } else {
+                                                    val name =
+                                                        parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                                    if (name != null) {
+                                                        AppNavRoute.CourseDetail.withArgs(name,cell)
+                                                    } else {
+                                                        route
+                                                    }
                                                 }
-                                                val name =
-                                                    parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
-                                                if (name != null) {
-                                                    courseName = name
-                                                    showBottomSheetTotalCourse = true
-                                                }
-                                            } else if (texts.size > 1) {
-                                                multiWeekday =
-                                                    if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                                multiWeek = currentWeek.toInt()
-                                                courses = texts
-                                                showBottomSheetMultiCourse = true
+                                            } else {
+                                                route
                                             }
-                                            // 空数据
-                                        }
-                                ) {
-                                    //存在待考时
-                                    if(examList.isNotEmpty()){
-                                        val numa = if(showAll) 7 else 5
-                                        val i = cell % numa
-                                        val j = cell / numa
-                                        val date = dateList[i]
-                                        examList.forEach {
-                                            if(date == it.day) {
-                                                val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
-
-                                                if(hour in 7..9 && j == 0) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour in 10..12 && j == 1) {
-                                                    texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour in 14..15  && j == 2) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour in 16..17  && j == 3) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour >= 18  && j == 4) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                }
-                                            }
-                                        }
-                                    }
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .verticalScroll(rememberScrollState())
-                                    ) {
-                                        Text(
-                                            text =
-                                                if(texts.size == 1) texts[0]
-                                                else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                                else "",
-                                            fontSize = if(showAll)12.sp else 14.sp,
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
                                         )
+
+                                    ) {
+                                        //存在待考时
+                                        if(examList.isNotEmpty()){
+                                            val numa = if(showAll) 7 else 5
+                                            val i = cell % numa
+                                            val j = cell / numa
+                                            val date = dateList[i]
+                                            examList.forEach {
+                                                if(date == it.day) {
+                                                    val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
+
+                                                    if(hour in 7..9 && j == 0) {
+                                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                                    } else if(hour in 10..12 && j == 1) {
+                                                        texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
+                                                    } else if(hour in 14..15  && j == 2) {
+                                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                                    } else if(hour in 16..17  && j == 3) {
+                                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                                    } else if(hour >= 18  && j == 4) {
+                                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .verticalScroll(rememberScrollState())
+                                        ) {
+                                            Text(
+                                                text =
+                                                    if(texts.size == 1) texts[0]
+                                                    else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                                    else "",
+                                                fontSize = if(showAll)12.sp else 14.sp,
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                            )
+                                        }
                                     }
                                 }
                             }
-                            item {  Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                            item {  InnerPaddingHeight(innerPadding,false) }
                         }
                         // 上一周
                         androidx.compose.animation.AnimatedVisibility(

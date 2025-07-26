@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -102,7 +103,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
         Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
             RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).padding(innerPaddings).zIndex(1f))
             LazyColumn(state = listState) {
-                item { Spacer(modifier = Modifier.height(innerPaddings.calculateTopPadding())) }
+                item { InnerPaddingHeight(innerPaddings,true) }
                 if (page == 1)
                     item { CardRow(vm,vmUI, hazeState) }
                 items(list.size) { item ->
@@ -131,7 +132,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                 item {
                     BottomTip("总 ${data.total} 条")
                 }
-                item { Spacer(modifier = Modifier.height(innerPaddings.calculateBottomPadding())) }
+                item { InnerPaddingHeight(innerPaddings,false) }
                 item { PaddingForPageControllerButton() }
             }
             PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPaddings))

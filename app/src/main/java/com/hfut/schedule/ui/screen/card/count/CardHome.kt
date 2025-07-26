@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
@@ -69,15 +70,13 @@ fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : P
                 when(page) {
                     TAB_DAY -> {
                         LazyColumn() {
-                            item {
-                                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
-                            }
+                            item { InnerPaddingHeight(innerPadding,true) }
                             if(uiState is UiState.Success) {
                                 val list = (uiState as UiState.Success).data.records
                                 if(list.isEmpty()) item { EmptyUI() }
                                 else { items(list.size) { item -> TodayCount(list[item]) } }
                             }
-                            item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                            item { InnerPaddingHeight(innerPadding,false) }
                         }
                     }
                     TAB_MONTH -> {
@@ -120,7 +119,7 @@ fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
             modifier = Modifier.padding(11.dp),
         ) {
             items(2) {
-                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                InnerPaddingHeight(innerPadding,true)
             }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Card(
@@ -155,7 +154,7 @@ fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
                 }
             }
             items(2) {
-                Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
+                InnerPaddingHeight(innerPadding,false)
             }
         }
     }
@@ -186,7 +185,7 @@ fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
             modifier = Modifier.padding(11.dp),
         ) {
             items(2) {
-                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                InnerPaddingHeight(innerPadding,true)
             }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Card(
@@ -220,9 +219,7 @@ fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
                     }
                 }
             }
-            items(2) {
-                Spacer(Modifier.height(innerPadding.calculateBottomPadding()))
-            }
+            items(2) { InnerPaddingHeight(innerPadding,false) }
         }
     }
 }
@@ -255,7 +252,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
         }
         val difference = dailyAvg-today
         Column {
-            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+            InnerPaddingHeight(innerPadding,true)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -421,7 +418,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+            InnerPaddingHeight(innerPadding,false)
         }
     }
 }

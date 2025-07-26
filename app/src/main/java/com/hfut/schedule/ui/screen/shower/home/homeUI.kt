@@ -34,6 +34,7 @@ import com.hfut.schedule.ui.screen.shower.home.function.UseCodeUI
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -45,7 +46,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues, netWm : NetWo
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
 
 
-        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith(text = "个人信息",false) {
             GuaGuaPersonInfoUI(netWm,hazeState)
         }
@@ -57,7 +58,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues, netWm : NetWo
         DividerTextExpandedWith("脱机使用 (无需APP 输入使用码)") {
             UseCodeUI(vm,hazeState,navHostController)
         }
-        Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+        InnerPaddingHeight(innerPadding,false)
     }
 }
 

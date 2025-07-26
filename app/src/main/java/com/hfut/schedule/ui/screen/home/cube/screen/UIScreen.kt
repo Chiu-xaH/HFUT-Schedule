@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.style.ColumnVertical
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
@@ -265,7 +266,7 @@ fun UIScreen(innerPaddings : PaddingValues) {
                 // 顶栏TabRow滑动
 //            }
 //        }
-        Spacer(Modifier.height(innerPaddings.calculateBottomPadding()))
+        InnerPaddingHeight(innerPaddings,false)
     }
 }
 
@@ -286,10 +287,11 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
     val container = MaterialTheme.colorScheme.primaryContainer
 
     // 居中颜色插值（基于正向偏移百分比）
-    val containColor = remember(offsetX.value) {
-        val fraction = ((offsetX.value + delta.value) / (2 * delta.value)).coerceIn(0f, 1f)
-        lerp(container, primary, fraction)
-    }
+//    val containColor = MaterialTheme.colorScheme.primary
+//        remember(offsetX.value) {
+//        val fraction = ((offsetX.value + delta.value) / (2 * delta.value)).coerceIn(0f, 1f)
+//        lerp(container, primary, fraction)
+//    }
 
     LaunchedEffect(animationSpeed) {
         while (true) {
@@ -313,7 +315,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
             if (trailList.size > maxTrailCount) {
                 trailList.removeLast()
             }
-            delay(16L)
+            delay(15L)
         }
     }
 
@@ -327,7 +329,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
         // 拖影
         trailList.forEachIndexed { index, trail ->
             val alpha = ((maxTrailCount - index).toFloat() / maxTrailCount).coerceIn(0f, 1f)
-            val sizeFactor = 1f - (index * 0.05f)
+            val sizeFactor = 1f - (index * 0.015f)
 
             Box(
                 modifier = Modifier
@@ -349,7 +351,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
                 .offset { IntOffset(offsetX.value.dp.roundToPx(), 0) }
                 .size(boxSize)
                 .clip(MaterialTheme.shapes.medium)
-                .background(containColor)
+                .background(primary)
         )
     }
 }

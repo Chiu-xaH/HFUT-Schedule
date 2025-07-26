@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.style
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -42,10 +41,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
-import com.xah.transition.style.transitionBackground
-import com.xah.transition.util.currentRoute
 import com.xah.transition.util.isCurrentRoute
-import dev.chrisbanes.haze.HazeDefaults.blurEnabled
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
@@ -53,8 +49,6 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
-import dev.chrisbanes.haze.materials.HazeMaterials
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 
@@ -251,10 +245,19 @@ fun Modifier.transitionBackgroundF(
     val blur by produceState(initialValue = true) {
         value = DataStoreManager.hazeBlurFlow.first()
     }
-    if(TransitionState.firstStartRoute == route && !TransitionState.started) {
-        TransitionState.started = true
-        return this@transitionBackgroundF
+    if(route == TransitionState.firstStartRoute && TransitionState.firstUse) {
+        return Modifier
     }
+    // 禁用刚冷启动第一个界面模糊缩放
+    if(TransitionState.firstUse && TransitionState.firstTransition) {
+        TransitionState.firstUse = false
+        return Modifier
+    } else if(TransitionState.firstTransition) {
+        // 禁用刚冷启动第一次转场动画的增强效果
+        TransitionState.firstTransition = false
+        return Modifier
+    }
+
     val transplantBackground = TransitionState.transplantBackground
     val isExpanded = !navHostController.isCurrentRoute(route)
     val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
@@ -279,7 +282,9 @@ fun Modifier.transitionBackgroundF(
         }
     }
     // 蒙版 遮罩
-    if(!transplantBackground && forceTransition)
+    if(!transplantBackground
+        && forceTransition
+        )
         Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
 
     val transitionModifier = if(forceTransition) this@transitionBackgroundF.scale(scale.value).blur(blurSize) else this@transitionBackgroundF

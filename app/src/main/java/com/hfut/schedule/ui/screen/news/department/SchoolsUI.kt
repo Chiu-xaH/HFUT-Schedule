@@ -15,9 +15,10 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 
 @Composable
-fun SchoolsUI(innerPdding : PaddingValues? = null) {
+fun SchoolsUI(innerPadding : PaddingValues? = null) {
     val maps = mapOf(
         "http://jxxy.hfut.edu.cn/" to "机械工程学院",
         "http://mse.hfut.edu.cn/" to "材料科学与工程学院",
@@ -45,7 +46,7 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
         "http://jxjy.hfut.edu.cn/" to "继续教育学院"
     )
     LazyColumn {
-        item { if(innerPdding != null) Spacer(modifier = Modifier.height(innerPdding.calculateTopPadding())) }
+        item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
         items(maps.entries.toList().size) { index ->
             val m = maps.entries.toList()[index]
             val title = m.value
@@ -65,6 +66,6 @@ fun SchoolsUI(innerPdding : PaddingValues? = null) {
                 )
 //            }
         }
-        item { if(innerPdding != null) Spacer(modifier = Modifier.height(innerPdding.calculateBottomPadding())) }
+        item { if(innerPadding != null) InnerPaddingHeight(innerPadding,false) }
     }
 }

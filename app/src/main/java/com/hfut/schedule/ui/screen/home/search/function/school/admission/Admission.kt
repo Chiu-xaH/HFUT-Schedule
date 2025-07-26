@@ -25,7 +25,7 @@ fun Admission(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val route = remember { AppNavRoute.Admission.receiveRoute() }
+    val route = remember { AppNavRoute.Admission.route }
     TransplantListItem(
         headlineContent = { Text("本科招生") },
         leadingContent = {

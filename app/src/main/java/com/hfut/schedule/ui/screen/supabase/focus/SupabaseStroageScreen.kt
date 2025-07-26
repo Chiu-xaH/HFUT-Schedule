@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.style.ColumnVertical
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -61,7 +62,7 @@ fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
     }
 
     LazyColumn {
-        item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+        item { InnerPaddingHeight(innerPadding,true) }
         item {
             CustomTextField(
                 input = input,
@@ -72,7 +73,7 @@ fun SupabaseStorageScreen(innerPadding : PaddingValues,hazeState : HazeState) {
         }
         customScheduleList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
 //        customNetCourseList.let { list -> items(list.size){ item -> activity?.let { it1 -> CustomItem(item = list[item], hazeState = hazeState, activity = it1) { refreshDB = !refreshDB } } } }
-        items(2) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
+        items(2) { InnerPaddingHeight(innerPadding,false) }
     }
 }
 

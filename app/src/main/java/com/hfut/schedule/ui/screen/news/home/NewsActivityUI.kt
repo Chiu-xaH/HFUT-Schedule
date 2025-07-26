@@ -82,6 +82,7 @@ import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
@@ -322,7 +323,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         Box(modifier = Modifier.fillMaxSize()) {
             LazyColumn(state = listState) {
                 item {
-                    Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                    InnerPaddingHeight(innerPadding,true)
                     LazyRow(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                         items(words.size) { index ->
                             val word = words[index]
@@ -381,7 +382,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         index = item
                     )
                 }
-                item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
             }
             PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding))

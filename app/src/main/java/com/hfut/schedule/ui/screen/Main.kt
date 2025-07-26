@@ -31,6 +31,8 @@ import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
@@ -143,13 +145,9 @@ fun MainHost(
             // 成绩
             composable(
                 route = AppNavRoute.Grade.receiveRoute(),
-                arguments = listOf(
-                    navArgument("ifSaved") {
-                        type = NavType.BoolType
-                    }
-                )
+                arguments = getArgs(AppNavRoute.Grade.Args.entries)
             ) { backStackEntry ->
-                val ifSaved = backStackEntry.arguments?.getBoolean("ifSaved") ?: true
+                val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.Grade.Args.IF_SAVED.argName) ?: (AppNavRoute.Grade.Args.IF_SAVED.default as Boolean)
                 GradeScreen(
                     ifSaved,
                     networkVm,
@@ -170,17 +168,10 @@ fun MainHost(
             // 招生 二级界面
             composable(
                 route = AppNavRoute.AdmissionRegionDetail.receiveRoute(),
-                arguments = listOf(
-                    navArgument("index") {
-                        type = NavType.IntType
-                    },
-                    navArgument("type") {
-                        type = NavType.StringType
-                    }
-                )
+                arguments = getArgs(AppNavRoute.AdmissionRegionDetail.Args.entries)
             ) { backStackEntry ->
-                val index = backStackEntry.arguments?.getInt("index") ?: -1
-                val type = backStackEntry.arguments?.getString("type") ?: "本科招生"
+                val index = backStackEntry.arguments?.getInt(AppNavRoute.AdmissionRegionDetail.Args.INDEX.argName) ?: (AppNavRoute.AdmissionRegionDetail.Args.INDEX.default as Int)
+                val type = backStackEntry.arguments?.getString(AppNavRoute.AdmissionRegionDetail.Args.TYPE.argName) ?: (AppNavRoute.AdmissionRegionDetail.Args.TYPE.default as String)
 
                 AdmissionRegionScreen(
                     networkVm,
@@ -189,6 +180,23 @@ fun MainHost(
                     navController,
                     type,
                     index,
+                )
+            }
+            // 课程详情
+            composable(
+                route = AppNavRoute.CourseDetail.receiveRoute(),
+                arguments = getArgs(AppNavRoute.CourseDetail.Args.entries)
+            ) { backStackEntry ->
+                val courseName = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.NAME.argName) ?: (AppNavRoute.CourseDetail.Args.NAME.default as String)
+                val index = backStackEntry.arguments?.getInt(AppNavRoute.CourseDetail.Args.INDEX.argName) ?: (AppNavRoute.CourseDetail.Args.INDEX.default as Int)
+
+                CourseDetailApiScreen(
+                    courseName,
+                    index,
+                    networkVm,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                    navController
                 )
             }
         }

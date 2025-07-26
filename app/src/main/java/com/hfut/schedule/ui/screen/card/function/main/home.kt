@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
@@ -397,7 +398,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         LazyColumn {
             item {
                 //////////////////////////////////////////////////////////////////////////////
-                Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                InnerPaddingHeight(innerPadding,true)
                 Spacer(modifier = Modifier.height(5.dp))
 
                 DividerTextExpandedWith(text = "校园卡",false) {
@@ -544,8 +545,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         modifier = Modifier.clickable { showBottomSheet_NFC = true }
                     )
                 }
-
-                Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+                InnerPaddingHeight(innerPadding,false)
             }
         }
         RefreshIndicator(refreshing, states,

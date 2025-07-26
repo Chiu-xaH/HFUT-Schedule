@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -140,13 +141,12 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ) {
-
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
                     HazeBottomSheetTopBar(title)
-                },) {innerPadding ->
+                },) { innerPadding ->
                 Column(
                     modifier = Modifier
                         .padding(innerPadding)
@@ -199,7 +199,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
             }
             Column {
                 if(showSearch) {
-                    Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                    InnerPaddingHeight(innerPadding,true)
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -240,44 +240,14 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                 else {
                     if(showSearch) {
                         LazyColumn{
-//                            if(!showSearch) {
-//                                item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
-//                                item { Spacer(modifier = Modifier.height(5.dp)) }
-//                            }
-
                             items(searchList.size) { item ->
                                 Item(searchList[item])
-//                                val grade = searchList[item]
-//                                val needSurvey = grade.grade.contains("评教")
-//                                AnimationCardListItem(
-//                                    headlineContent = {  Text(grade.title) },
-//                                    overlineContent = { Text(
-//                                        if(!needSurvey)
-//                                            "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
-//                                        else grade.code
-//                                    ) },
-//                                    leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-//                                    supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
-//                                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else null,
-//                                    modifier = Modifier.clickable {
-//                                        if(needSurvey) {
-//                                            surveyCode = grade.code
-//                                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
-//                                            showBottomSheet_Survey = true
-//                                        } else {
-//                                            title = grade.title
-//                                            num = grade
-//                                            showBottomSheet = true
-//                                        }
-//                                    },
-//                                    index = item
-//                                )
                             }
-                            item { Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding())) }
+                            item { InnerPaddingHeight(innerPadding,false) }
                         }
                     } else {
                         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
+                            InnerPaddingHeight(innerPadding,true)
                             Spacer(modifier = Modifier.height(5.dp))
                             for(i in gradeList) {
                                 DividerTextExpandedWith(i.term) {
@@ -286,8 +256,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                                     }
                                 }
                             }
-
-                            Spacer(modifier = Modifier.height(innerPadding.calculateBottomPadding()))
+                            InnerPaddingHeight(innerPadding,false)
                         }
                     }
                 }

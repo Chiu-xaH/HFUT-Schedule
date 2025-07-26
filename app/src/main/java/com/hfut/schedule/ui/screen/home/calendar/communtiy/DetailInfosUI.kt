@@ -1,6 +1,9 @@
 package com.hfut.schedule.ui.screen.home.calendar.communtiy
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,8 +18,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
@@ -42,7 +49,13 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.TopBarTopIcon
+import com.hfut.schedule.ui.screen.home.search.function.school.admission.NavigationBackIcon
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.HazeState
 
 
@@ -132,6 +145,65 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                         )
                     Spacer(modifier = Modifier.height(10.dp))
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun CourseDetailApiScreen(
+    courseName : String,
+    index : Int,
+    vm : NetWorkViewModel,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    navController : NavHostController,
+) {
+    val isNext = remember { false }
+    val hazeState = remember { HazeState() }
+    //用法
+    val json = SharedPrefs.prefs.getString(if(!isNext)"courses" else "coursesNext","")
+    val list = getTotalCourse(json)
+    var numItem by remember { mutableIntStateOf(0) }
+    for(i in list.indices) {
+        if(list[i].course.nameZh == courseName) {
+            numItem = i
+            break
+        }
+    }
+    val courseBookJson by DataStoreManager.courseBookJson.collectAsState(initial = "")
+    var courseBookData: Map<Long, CourseBookBean> by remember { mutableStateOf(emptyMap()) }
+    LaunchedEffect(courseBookJson) {
+//         是JSON
+        if(courseBookJson.contains("{")) {
+            val data = vm.parseCourseBook(courseBookJson)
+            courseBookData = data
+        }
+    }
+    val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,index) }
+
+    with(sharedTransitionScope) {
+        TransitionScaffold(
+            animatedContentScope = animatedContentScope,
+            route = route,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    title = { ScrollText(getTotalCourse(json)[numItem].course.nameZh) },
+                    colors = topBarTransplantColor(),
+                    navigationIcon = {
+                        TopBarTopIcon(navController,animatedContentScope,route,R.drawable.category)
+                    }
+                )
+            }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            ){
+                DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState,courseBookData )
             }
         }
     }
