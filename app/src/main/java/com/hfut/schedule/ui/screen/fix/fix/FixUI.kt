@@ -28,14 +28,18 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.ParseJsons.getTimeStamp
@@ -63,12 +67,13 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewModel, hazeState: HazeState) {
+fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, hazeState: HazeState,navController: NavHostController) {
     val firstStart by DataStoreManager.firstStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
 
     val switch_api = prefs.getBoolean("SWITCHMYAPI", apiCheck())
@@ -116,10 +121,13 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, vm2 : NetWorkViewMo
 //            feedBackUI(vm2)
 //        }
 //    }
-
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
-        .padding(innerPadding)) {
+        .padding(innerPadding).scale(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
 
 //        MyCustomCard{

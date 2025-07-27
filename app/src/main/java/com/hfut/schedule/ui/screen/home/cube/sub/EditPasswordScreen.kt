@@ -16,13 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
@@ -34,11 +37,16 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 @Composable
-fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
+fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navController: NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     val useDefaultCardPassword by DataStoreManager.useDefaultCardPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     var input by remember { mutableStateOf("") }
@@ -104,7 +112,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
             showDialog = true
         }
     }
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         StyleCardListItem(
             headlineContent = { Text("修改或重置密码可前往慧新易校(位于查询中心)")},

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledTonalButton
@@ -28,7 +30,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
@@ -44,11 +48,18 @@ import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.xah.transition.util.TransitionPredictiveBackHandler
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun DownloadMLUI(innerPadding : PaddingValues) {
+fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    navController?.let {
+        TransitionPredictiveBackHandler(it) {
+            scale = it
+        }
+    }
     val activity = LocalActivity.current
     activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
 
@@ -82,7 +93,7 @@ fun DownloadMLUI(innerPadding : PaddingValues) {
         }
     }
 
-    Column {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
             TransplantListItem(

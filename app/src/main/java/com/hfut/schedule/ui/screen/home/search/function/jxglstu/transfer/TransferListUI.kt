@@ -21,6 +21,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -248,9 +249,10 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHid
                 if(list.isNotEmpty()) {
                     item {
                         val item = list[0].changeMajorBatch ?: return@item
-                        StyleCardListItem(
+                        AnimationCardListItem(
+                            index = 0,
                             headlineContent = {
-                                Text(if(isHidden) item.nameZh else "提示")
+                                Text(if(isHidden) item.nameZh else "申请提示")
                             },
                             trailingContent = {
                                 Text("代号 $batchId")
@@ -260,7 +262,8 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHid
                                     Text(it)
                                 }
                             },
-                            overlineContent = { Text("申请 " + item.submitStartTime.replace("T"," ").substringBefore(".") + " ~ " + item.submitEndTime.replace("T"," ").substringBefore(".") + "\n审核 " + item.applyStartTime.replace("T"," ").substringBefore(".") + " ~ " + item.applyEndTime.replace("T"," ").substringBefore(".") ) },
+                            color = MaterialTheme.colorScheme.secondaryContainer,
+                            overlineContent = { Text(item.applyStartTime.replace("T"," ").substringBefore(".") + " ~ " + item.applyEndTime.replace("T"," ").substringBefore(".") ) },
                             )
                     }
                 }
@@ -288,7 +291,7 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHid
                         } else {
                             null
                         },
-                        index = item
+                        index = item+1
                     )
                 }
             }

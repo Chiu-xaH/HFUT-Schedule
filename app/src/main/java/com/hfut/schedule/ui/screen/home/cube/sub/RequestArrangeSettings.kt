@@ -18,8 +18,10 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -29,10 +31,15 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.xah.transition.util.TransitionPredictiveBackHandler
 
 @Composable
-fun RequestArrange(innerPadding : PaddingValues) {
-    LazyColumn() {
+fun RequestArrange(innerPadding : PaddingValues,navController: NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
+    LazyColumn(modifier = Modifier.scale(scale)) {
         item { InnerPaddingHeight(innerPadding,true) }
         item { ArrangeItem(title = "图书", icon = R.drawable.book, key = "BookRequest") }
         item { ArrangeItem(title = "一卡通", icon = R.drawable.credit_card, key = "CardRequest") }

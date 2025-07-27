@@ -17,13 +17,16 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs
@@ -35,20 +38,24 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NetWorkScreen(navController: NavController,
+fun NetWorkScreen(navController: NavHostController,
                   innerPaddings : PaddingValues,
                   ifSaved : Boolean,
-                  hazeState: HazeState
 ) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     // Design your second screen here
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
-        .padding(innerPaddings)) {
+        .padding(innerPaddings).scale(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
 
 //        val switch_api = SharedPrefs.prefs.getBoolean("SWITCHMYAPIS", isFocus())

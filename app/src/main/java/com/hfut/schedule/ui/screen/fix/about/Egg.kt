@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,6 +37,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -51,34 +53,33 @@ fun Egg() {
 
     var dampingRatio by remember { mutableFloatStateOf(Spring.DampingRatioMediumBouncy) }
     var stiffness by remember { mutableFloatStateOf(Spring.StiffnessHigh) }
-    var num by remember { mutableStateOf(1) }
-    Party(
-        show = true
-    ) {
+    var num by remember { mutableIntStateOf(1) }
+    Box() {
+        Party()
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                    HazeBottomSheetTopBar("彩蛋") {
-                        Row  {
+                HazeBottomSheetTopBar("彩蛋") {
+                    Row  {
+                        FilledTonalIconButton (
+                            onClick = {
+                                num++
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.add),null)
+                        }
+                        if(num >= 2) {
                             FilledTonalIconButton (
                                 onClick = {
-                                    num++
+                                    num--
+
                                 }
                             ) {
-                                Icon(painterResource(R.drawable.add),null)
-                            }
-                            if(num >= 2) {
-                                FilledTonalIconButton (
-                                    onClick = {
-                                        num--
-
-                                    }
-                                ) {
-                                    Icon(painterResource(R.drawable.close),null)
-                                }
+                                Icon(painterResource(R.drawable.close),null)
                             }
                         }
                     }
+                }
             },
             bottomBar = {
                 Column(modifier = Modifier.padding(APP_HORIZONTAL_DP)) {
@@ -86,7 +87,7 @@ fun Egg() {
                         Button(
                             onClick = {
                                 dampingRatio += period
-                                      },
+                            },
                             modifier = Modifier
                                 .weight(.5f)
                                 .fillMaxWidth()
@@ -111,7 +112,7 @@ fun Egg() {
                         Button(
                             onClick = {
                                 stiffness += period
-                                      },
+                            },
                             modifier = Modifier
                                 .weight(.5f)
                                 .fillMaxWidth()
@@ -157,6 +158,7 @@ fun Egg() {
             }
         }
     }
+
 }
 
 @Composable

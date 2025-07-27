@@ -19,9 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.queryCalendars
@@ -29,10 +34,15 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import kotlinx.coroutines.launch
 
 @Composable
-fun CalendarSettingsScreen(innerPadding : PaddingValues) {
+fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     val activity = LocalActivity.current
     LaunchedEffect(activity) {
         activity?.let {
@@ -45,7 +55,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues) {
         value = queryCalendars()
     }
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.padding(innerPadding)) {
+    Column(modifier = Modifier.padding(innerPadding).scale(scale)) {
         DividerTextExpandedWith("日历账户") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 LazyColumn() {

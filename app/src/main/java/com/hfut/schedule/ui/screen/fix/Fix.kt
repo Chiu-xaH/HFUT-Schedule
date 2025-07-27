@@ -163,7 +163,7 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
         ) {
             composable(FixBarItems.Fix.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    FixUI(innerPadding = innerPadding,vm, vm2,hazeState)
+                    FixUI(innerPadding = innerPadding,vm,hazeState,navController)
                 }
 
             }

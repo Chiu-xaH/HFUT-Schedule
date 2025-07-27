@@ -22,13 +22,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
@@ -39,12 +42,16 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
-
+fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)
     var pin by remember { mutableStateOf(switch_pin) }
     saveBoolean("SWITCHPIN", false,pin)
@@ -56,7 +63,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
     Column(
         modifier = Modifier
             .padding(innerPadding)
-            .fillMaxSize()
+            .fillMaxSize().scale(scale)
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "需要密码") },

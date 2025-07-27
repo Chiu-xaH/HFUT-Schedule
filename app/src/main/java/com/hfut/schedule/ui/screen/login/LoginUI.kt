@@ -140,7 +140,7 @@ private fun loginClick(
                                 vm.getCookie()
                             }
                             "401" -> {
-                                onResult("密码或验证码错误或教务问题")
+                                onResult("密码或验证码错误或软件Bug，可返回后再次进入重试")
                                 onRefresh()
                                 vm.getCookie()
                             }
@@ -376,7 +376,7 @@ fun TwoTextField(vm : LoginViewModel,webVpn: Boolean) {
                 topBar = {
                     BottomSheetTopBar("图片验证码自动填充")
                 },) {innerPadding ->
-                DownloadMLUI(innerPadding)
+                DownloadMLUI(innerPadding,null)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }

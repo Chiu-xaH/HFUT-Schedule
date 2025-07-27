@@ -34,15 +34,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
@@ -85,6 +88,7 @@ import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -93,8 +97,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FocusCardSettings(innerPadding : PaddingValues) {
-
+fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetState = rememberModalBottomSheetState()
 
@@ -134,7 +141,7 @@ fun FocusCardSettings(innerPadding : PaddingValues) {
     val scope = rememberCoroutineScope()
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         StyleCardListItem(
             headlineContent = { Text(text = "打开开关则会在APP冷启动或刷新时自动获取数据,并显示在聚焦首页第一张卡片内") },

@@ -36,16 +36,19 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 //import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -60,6 +63,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
+import com.xah.transition.util.TransitionPredictiveBackHandler
 
 
 //class Feed(val title: String, val content: String) : Serializable
@@ -107,7 +111,11 @@ import com.xah.transition.style.DefaultTransitionStyle
 @OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(36)
 @Composable
-fun TEST(innerPaddings : PaddingValues) {
+fun TEST(innerPaddings : PaddingValues,navController : NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     var motionBlur by remember { mutableStateOf(TransitionState.transitionBackgroundStyle.motionBlur) }
     LaunchedEffect(motionBlur) {
         TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
@@ -131,7 +139,7 @@ fun TEST(innerPaddings : PaddingValues) {
     LaunchedEffect(animationSpeed) {
         TransitionState.curveStyle.speedMs = animationSpeed.toInt()
     }
-    Column (modifier = Modifier.padding(innerPaddings)) {
+    Column (modifier = Modifier.padding(innerPaddings).scale(scale)) {
         DividerTextExpandedWith("模糊") {
             TransplantListItem(
                 headlineContent = { Text("运动模糊") },

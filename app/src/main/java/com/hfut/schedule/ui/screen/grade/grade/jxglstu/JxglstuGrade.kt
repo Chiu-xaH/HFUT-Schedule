@@ -2,6 +2,9 @@ package com.hfut.schedule.ui.screen.grade.grade.jxglstu
 
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,13 +42,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPA
+import com.hfut.schedule.logic.model.ScoreWithGPALevel
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -66,6 +72,7 @@ import com.hfut.schedule.ui.component.chart.RadarChart
 import com.hfut.schedule.ui.component.chart.RadarData
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -73,10 +80,12 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -136,25 +145,29 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
     }
 
     if (showBottomSheet) {
+        var party by remember { mutableStateOf(false) }
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet= false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(title)
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ){
-                    GradeInfo(num)
-                    Spacer(modifier = Modifier.height(30.dp))
+            Box {
+                Party(show = party)
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        HazeBottomSheetTopBar(title)
+                    },) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState())
+                            .fillMaxSize()
+                    ){
+                        GradeInfo(num) { party = it }
+                        Spacer(modifier = Modifier.height(30.dp))
+                    }
                 }
             }
         }
@@ -267,33 +280,18 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
 
 
 @Composable
-fun GradeInfo(num : GradeResponseJXGLSTU) {
+fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val list = num.grade.split(" ")
     val radarList = mutableListOf<RadarData>()
     list.forEach { item ->
         val label = item.substringBefore(":")
-        val score = try {
-            if (item.substringAfter(":").contains("中") || item.substringAfter(":")
-                    .contains("及格")
-            ) .6f
-            else if (item.substringAfter(":").contains("高") || item.substringAfter(":")
-                    .contains("优秀")
-            ) .9f
-            else if (item.substringAfter(":").contains("低")) .3f
-            else item.substringAfter(":").toFloat() / 100
-        } catch (_: Exception) {
-            if (item.substringAfter(":").contains("中") || item.substringAfter(":")
-                    .contains("及格")
-            ) .6f
-            else if (item.substringAfter(":").contains("高") || item.substringAfter(":")
-                    .contains("优秀")
-            ) .9f
-            else if (item.substringAfter(":").contains("低")) .3f
-            else 0f
-        }
-        radarList.add(RadarData(label, score))
+        val scoreText = item.substringAfter(":")
+        val scoreF = scoreText.toFloatOrNull()
+        // 五星制
+        val score = scoreF ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat() ?: 0f)
+        radarList.add(RadarData(label, score/100f))
     }
 
     var avgPingshi = 0f
@@ -327,29 +325,28 @@ fun GradeInfo(num : GradeResponseJXGLSTU) {
             hazeState = hazeState
         )
     }
+    var party by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.hazeSource(hazeState)) {
-        DividerTextExpandedWith(text = "雷达图") {
-            val topPadding = if(radarList.isEmpty()) {
-                0
-            } else {
-                35
+        if(radarList.size > 1) {
+            DividerTextExpandedWith(text = "雷达图") {
+                Spacer(modifier = Modifier.height(35.dp))
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                    RadarChart(data = radarList, modifier = Modifier.size(200.dp))
+                }
+                val bottomPadding = if(radarList.isEmpty()) {
+                    0
+                } else if(radarList.size == 1) {
+                    0
+                } else if(radarList.size == 3) {
+                    0
+                } else {
+                    25
+                }
+                Spacer(modifier = Modifier.height(bottomPadding.dp))
             }
-            Spacer(modifier = Modifier.height(topPadding.dp))
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                RadarChart(data = radarList, modifier = Modifier.size(200.dp))
-            }
-            val bottomPadding = if(radarList.isEmpty()) {
-                0
-            } else if(radarList.size == 1) {
-                0
-            } else if(radarList.size == 3) {
-                0
-            } else {
-                25
-            }
-            Spacer(modifier = Modifier.height(bottomPadding.dp))
         }
+
         DividerTextExpandedWith(text = "详情",false) {
             LargeCard("分数 ${num.totalGrade} 绩点 ${num.GPA}") {
                 for (i in list.indices step 2) {
@@ -448,19 +445,30 @@ fun GradeInfo(num : GradeResponseJXGLSTU) {
                     }
                 )
                 with(num) {
-                    TransplantListItem(
-                        headlineContent = {
-                            GPAStarGroup(totalGrade,GPA)
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.award_star),null)
-                        },
-                        overlineContent = {
-                            getGradeNextLevel(totalGrade,GPA)?.let { target ->
-                                totalGrade.toDoubleOrNull()?.let { current -> Text(" 距离下一绩点${target.gpa}需要${target.score.min - current}分") }
+                    if(GPA.toFloatOrNull() != null) {
+                        TransplantListItem(
+                            headlineContent = {
+                                GPAStarGroup(totalGrade,GPA) {
+                                    onParty(it)
+                                    party = it
+                                }
+                            },
+                            leadingContent = {
+                                Icon(painterResource(if(party) R.drawable.thumb_up else R.drawable.stairs),null)
+                            },
+                            overlineContent = {
+                                getGradeNextLevel(totalGrade,GPA)?.let { target ->
+                                    totalGrade.toDoubleOrNull().let { current ->
+                                        if(target.score == null) {
+                                            Text(" 下一绩点为${target.gpa}")
+                                        } else {
+                                            Text(" 距离下一绩点${target.gpa}需要${target.score.min - (current ?: 0.0)}分")
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
 
@@ -613,15 +621,15 @@ fun getGradeLevel(score : String,gpa : String) : Pair<Int, Int>? {
 }
 
 // 获取距离下一个级别需要的分数
-fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPA? {
+fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPALevel? {
     val gpaLevels = scoreWithGPA.reversed()
     try {
         when(score) {
             ScoreGrade.A.label -> return null
-            ScoreGrade.B.label -> return null
-            ScoreGrade.C.label -> return null
-            ScoreGrade.D.label -> return null
-            ScoreGrade.F.label -> return null
+            ScoreGrade.B.label -> return ScoreWithGPALevel(ScoreGrade.A.gpa,null)
+            ScoreGrade.C.label -> return ScoreWithGPALevel(ScoreGrade.B.gpa,null)
+            ScoreGrade.D.label -> return ScoreWithGPALevel(ScoreGrade.C.gpa,null)
+            ScoreGrade.F.label -> return ScoreWithGPALevel(ScoreGrade.D.gpa,null)
             else -> {
                 val gpaF = gpa.toFloat()
                 if(gpaF == gpaLevels.last().gpa) {
@@ -629,7 +637,8 @@ fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPA? {
                 }
                 // gpa等于gpaLevels列表某个值，对应后返回Pair(在列表的索引值,列表总长度-1)
                 val index = gpaLevels.indexOfFirst { it.gpa == gpaF }
-                return gpaLevels[index+1]
+                val bean = gpaLevels[index+1]
+                return ScoreWithGPALevel(bean.gpa,bean.score)
             }
         }
     } catch (e : Exception) {
@@ -640,7 +649,7 @@ fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPA? {
 
 // 等级星星
 @Composable
-fun StarGroup(level: Pair<Int, Int>) {
+fun StarGroup(level: Pair<Int, Int>,onParty : (Boolean) -> Unit) {
     val totalNum = level.second
     val onNum = level.first
     // 挂科
@@ -649,23 +658,64 @@ fun StarGroup(level: Pair<Int, Int>) {
     } else {
         MaterialTheme.colorScheme.secondary
     }
+
+    // 控制每个星星是否点亮
+    val starStates = remember { List(totalNum) { mutableStateOf(false) } }
+
+    // 控制最后一个星星的缩放动画
+    val starScales = remember(level) { List(totalNum) { Animatable(1f) } }
+
+    // 启动点亮动画
+    LaunchedEffect(Unit) {
+        delay(AppAnimationManager.ANIMATION_SPEED*1L)
+        for (i in 0 until onNum) {
+            delay(75L) // 每颗星延迟出现
+            starStates[i].value = true
+            // 同步启动缩放动画
+            launch {
+                starScales[i].animateTo(
+                    1.15f,
+                    animationSpec = tween(AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing)
+                )
+                starScales[i].animateTo(
+                    1f,
+                    animationSpec = tween(AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing)
+                )
+            }
+        }
+    }
+
     // 满绩
     if(totalNum == onNum) {
+        onParty(true)
         Text("满绩")
     } else {
+        onParty(false)
         Row {
-            for(i in 1..onNum) {
-                Icon(painterResource(R.drawable.star_filled),null, tint = color)
-            }
-            for(i in onNum+1..totalNum) {
-                Icon(painterResource(R.drawable.star),null,tint = color)
+            for (i in 0 until totalNum) {
+                val isFilled = starStates[i].value
+                val painter = if (isFilled) {
+                    if(i+1 == onNum) R.drawable.family_star else R.drawable.kid_star_filled
+                } else R.drawable.kid_star
+
+                val scale = starScales[i].value
+                Icon(
+                    painter = painterResource(id = painter),
+                    contentDescription = null,
+                    tint = color,
+                    modifier = Modifier.size(22.dp)
+                        .graphicsLayer {
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                )
             }
         }
     }
 }
 
 @Composable
-fun GPAStarGroup(score : String,gpa : String) = getGradeLevel(score,gpa)?.let { StarGroup(it) }
+fun GPAStarGroup(score : String,gpa : String,onParty: (Boolean) -> Unit) = getGradeLevel(score,gpa)?.let { StarGroup(it,onParty) }
 
 @Composable
 fun GradeIcons(text : String) {
@@ -673,26 +723,36 @@ fun GradeIcons(text : String) {
         Icon(painterResource(R.drawable.draw),null)
     } else if(text.contains("报告")) {
         Icon(painterResource(R.drawable.description),null)
+    } else if(text.contains("日记")) {
+        Icon(painterResource(R.drawable.book_5),null)
+    } else if(text.contains("预习")) {
+        Icon(painterResource(R.drawable.azm),null)
+    } else if(text.contains("操作")) {
+        Icon(painterResource(R.drawable.massage),null)
     } else if(text.contains("实验")) {
         Icon(painterResource(R.drawable.body_fat),null)
     } else if(text.contains("作业")) {
-        Icon(painterResource(R.drawable.article),null)
+        Icon(painterResource(R.drawable.ink_pen),null)
     } else if(text.contains("实习")) {
         Icon(painterResource(R.drawable.work),null)
     } else if(text.contains("测试")) {
         Icon(painterResource(R.drawable.tactic),null)
-    } else if(text == "平时成绩") {
-        Icon(painterResource(R.drawable.hotel_class),null)
+    } else if(text.contains("平时")) {
+        Icon(painterResource(R.drawable.kid_star),null)
     } else if(text.contains("演讲")) {
         Icon(painterResource(R.drawable.groups),null)
-    }  else if(text.contains("提问及讨论")) {
-        Icon(painterResource(R.drawable.lightbulb),null)
+    } else if(text.contains("讨论")) {
+        Icon(painterResource(R.drawable.forum),null)
     } else if(text.contains("口试")) {
         Icon(painterResource(R.drawable.voice_selection),null)
     } else if(text.contains("上机")) {
-        Icon(painterResource(R.drawable.computer),null)
+        Icon(painterResource(R.drawable.desktop_windows),null)
     } else if(text.contains("论文")) {
         Icon(painterResource(R.drawable.newsstand),null)
+    } else if(text.contains("验收")) {
+        Icon(painterResource(R.drawable.check_circle),null)
+    } else if(text.contains("出勤")) {
+        Icon(painterResource(R.drawable.meeting_room),null)
     } else {
         Icon(painterResource(R.drawable.category),null)
     }

@@ -193,7 +193,7 @@ fun CourseDetailApiScreen(
                     title = { ScrollText(getTotalCourse(json)[numItem].course.nameZh) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
-                        TopBarTopIcon(navController,animatedContentScope,route,R.drawable.category)
+                        NavigationBackIcon(navController)
                     }
                 )
             }

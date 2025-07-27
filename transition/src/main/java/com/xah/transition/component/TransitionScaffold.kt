@@ -15,14 +15,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.transitionBackground
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.transition.util.allRouteStack
 import com.xah.transition.util.currentRoute
 import com.xah.transition.util.isCurrentRoute
@@ -52,6 +56,11 @@ fun SharedTransitionScope.TransitionScaffold(
     containerColor : Color? = null,
     content: @Composable ((PaddingValues) -> Unit)
 ) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navHostController) {
+        scale = it
+    }
+
     val speed = TransitionState.curveStyle.speedMs
     // 当从CustomScaffold1向CustomScaffold2时，CustomScaffold2先showSurface=false再true，而CustomScaffold1一直为true
     val isCurrentEntry = navHostController.isCurrentRoute(route)
@@ -82,7 +91,7 @@ fun SharedTransitionScope.TransitionScaffold(
 
     Scaffold(
         containerColor = containerColor ?: if(TransitionState.transplantBackground) Color.Transparent else MaterialTheme.colorScheme.surface,
-        modifier = modifier,
+        modifier = modifier.scale(scale),
         topBar = topBar,
         bottomBar = {
             AnimatedVisibility(

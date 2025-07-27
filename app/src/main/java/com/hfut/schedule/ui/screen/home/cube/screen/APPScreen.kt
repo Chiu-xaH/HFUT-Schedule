@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -34,10 +35,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -58,17 +61,22 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 @Composable
-fun APPScreen(navController: NavController,
+fun APPScreen(navController: NavHostController,
               innerPaddings : PaddingValues,
               ) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
-        .padding(innerPaddings)) {
+        .padding(innerPaddings).scale(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
         val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
         val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)

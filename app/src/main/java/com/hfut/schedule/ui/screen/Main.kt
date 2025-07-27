@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -131,14 +132,17 @@ fun MainHost(
                 }
                 // 如果庆祝为true则庆祝
                 getCelebration().let {
-                    Party(show = it.use, timeSecond = it.time) {
+                    Box() {
                         mainUI(it.str)
+                        Party(show = it.use, timeSecond = it.time)
                     }
+
                 }
             }
             // 用户协议
             composable(AppNavRoute.UseAgreement.route) {
-                Party(timeSecond = 3L) {
+                Box() {
+                    Party(timeSecond = 3L)
                     UseAgreementScreen(navController)
                 }
             }

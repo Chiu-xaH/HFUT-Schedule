@@ -14,10 +14,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -30,9 +34,14 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.util.TransitionPredictiveBackHandler
 
 @Composable
-fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
+fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navController : NavHostController) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     val cookie by produceState(initialValue = "") {
         getStorageJxglstuCookie(isWebVpn = false)?.let {
             value = it
@@ -51,7 +60,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
     val bizTypeId by vm.bizTypeIdResponse.state.collectAsState()
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("Cookies") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {

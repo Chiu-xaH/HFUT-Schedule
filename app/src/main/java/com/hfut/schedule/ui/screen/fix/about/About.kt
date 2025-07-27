@@ -26,15 +26,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
@@ -58,15 +61,20 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavController, hazeState: HazeState) {
+fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavHostController, hazeState: HazeState) {
+    var scale by remember { mutableFloatStateOf(1f) }
+    TransitionPredictiveBackHandler(navController) {
+        scale = it
+    }
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
-        .padding(innerPadding)){
+        .padding(innerPadding).scale(scale)){
         Spacer(modifier = Modifier.height(5.dp))
 
         var showBottomSheet by remember { mutableStateOf(false) }
