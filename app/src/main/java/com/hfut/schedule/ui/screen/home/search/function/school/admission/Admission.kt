@@ -27,10 +27,10 @@ fun Admission(
 ) {
     val route = remember { AppNavRoute.Admission.route }
     TransplantListItem(
-        headlineContent = { Text("本科招生") },
+        headlineContent = { Text(AppNavRoute.Admission.title) },
         leadingContent = {
             with(sharedTransitionScope) {
-                Icon(painterResource(R.drawable.publics), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+                Icon(painterResource(AppNavRoute.Admission.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {

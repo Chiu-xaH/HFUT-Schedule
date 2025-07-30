@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -35,7 +34,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -43,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
@@ -51,16 +48,13 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.model.AdmissionDetailBean
-import com.hfut.schedule.logic.model.AdmissionGeneralSituationHistory
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -70,9 +64,10 @@ import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.search.TopBarTopIcon
 import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
 import com.xah.transition.util.navigateAndSaveForTransition
@@ -99,13 +94,10 @@ fun AdmissionScreen(
                 Column {
                     TopAppBar(
                         modifier = Modifier.topBarBlur(hazeState),
-                        colors = topAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary
-                        ),
+                        colors = topBarTransplantColor(),
                         title = { Text("本科招生") },
                         navigationIcon = {
-                            TopBarTopIcon(navController,animatedContentScope,route,R.drawable.publics)
+                            TopBarNavigateIcon(navController,animatedContentScope,route,R.drawable.publics)
                         },
                     )
                 }
@@ -221,7 +213,7 @@ fun AdmissionRegionScreen(
                         ),
                         title = { Text(type + " : "+ data.key) },
                         navigationIcon = {
-                            NavigationBackIcon(navController)
+                            TopBarNavigateIcon(navController)
                         }
                     )
                     CustomTabRow(pagerState,titles)
@@ -235,13 +227,6 @@ fun AdmissionRegionScreen(
                 AdmissionDetailScreen(innerPadding,bean,typeE,region,vm)
             }
         }
-    }
-}
-
-@Composable
-fun NavigationBackIcon(navController : NavController) {
-    IconButton(onClick = { navController.popBackStack() }) {
-        Icon(Icons.Default.ArrowBack,null, tint = MaterialTheme.colorScheme.primary)
     }
 }
 

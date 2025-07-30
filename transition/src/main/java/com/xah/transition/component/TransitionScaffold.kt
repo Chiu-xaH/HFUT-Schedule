@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -56,10 +57,8 @@ fun SharedTransitionScope.TransitionScaffold(
     containerColor : Color? = null,
     content: @Composable ((PaddingValues) -> Unit)
 ) {
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navHostController) {
-        scale = it
-    }
+    val scale = remember { Animatable(1f) }
+
 
     val speed = TransitionState.curveStyle.speedMs
     // 当从CustomScaffold1向CustomScaffold2时，CustomScaffold2先showSurface=false再true，而CustomScaffold1一直为true
@@ -82,6 +81,16 @@ fun SharedTransitionScope.TransitionScaffold(
         }
     }
 
+    var useBackHandler by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if(useBackHandler == false) {
+            delay(speed*1L)
+            useBackHandler = true
+        }
+    }
+    if(useBackHandler)
+        TransitionPredictiveBackHandler(navHostController,scale)
+
     // 回退后恢复上一个页面的显示状态
     LaunchedEffect(isPreviousEntry) {
         if (isPreviousEntry) {
@@ -91,7 +100,7 @@ fun SharedTransitionScope.TransitionScaffold(
 
     Scaffold(
         containerColor = containerColor ?: if(TransitionState.transplantBackground) Color.Transparent else MaterialTheme.colorScheme.surface,
-        modifier = modifier.scale(scale),
+        modifier = modifier.scale(scale.value),
         topBar = topBar,
         bottomBar = {
             AnimatedVisibility(

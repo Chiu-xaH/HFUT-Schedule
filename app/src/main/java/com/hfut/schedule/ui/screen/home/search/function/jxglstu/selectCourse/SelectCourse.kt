@@ -23,8 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
@@ -48,6 +46,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -67,7 +66,6 @@ import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -108,18 +106,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState, vmUI: UIViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
-//    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-
-    var showBottomSheet_info by remember { mutableStateOf(false) }
-//    val sheetState_info = rememberModalBottomSheetState()
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
     val scope = rememberCoroutineScope()
     var showDialog by remember { mutableStateOf(false) }
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    val cookie by produceState(initialValue = "") {
+        value = getJxglstuCookie(vm) ?: ""
+    }
     WebDialog(
         showDialog,
         { showDialog = false },
@@ -133,8 +125,6 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState,
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -142,9 +132,6 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState,
                 topBar = {
                     HazeBottomSheetTopBar("选课") {
                         Row() {
-                            FilledTonalIconButton(onClick = { showBottomSheet_info = true }, ) {
-                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
-                            }
                             FilledTonalButton(onClick = {
                                 showDialog = true
                             }) {
@@ -164,35 +151,7 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState,
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    selectCourseListLoading(vm, hazeState = hazeState)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-    if (showBottomSheet_info) {
-        HazeBottomSheet(
-            onDismissRequest = {
-                showBottomSheet_info = false
-                scope.launch{ updateCourses(vm,vmUI) }
-                               },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet_info
-//            sheetState = sheetState_info,
-//            shape = bottomSheetRound(sheetState_info)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("功能说明")
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()) {
-                    SelectShuoming()
+                    SelectCourseListLoading(vm, hazeState = hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -210,32 +169,11 @@ fun SelectCourse(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState,
         }
     )
 }
-@Composable
-fun SelectShuoming() {
-//    MyCustomCard {
-        StyleCardListItem(
-            headlineContent = { Text(text = "免责声明") },
-            supportingContent = { Text(text = "本应用不承担选课失败造成的后果\n请登录官方系统,确保一定选课成功")}
-        )
-//    }
-//    MyCustomCard {
-        StyleCardListItem(
-            headlineContent = { Text(text = "功能说明") },
-            supportingContent = { Text(text = "点击右侧按钮选退课\n点击卡片查看详细课程信息\n退课后列表并不会更新,请手动刷新\n选退课时请核对课程代码\n若持续加载可能为教务服务器问题\n选退课完成后前往课表与课程汇总,会显示出新课程(也可在右上角手动刷新)")}
-        )
-//    }
-}
 
 @Composable
-fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
+private fun SelectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-//
-//    val cookie = if (!vm.webVpn) prefs.getString(
-//        "redirect",
-//        ""
-//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 
     val scope = rememberCoroutineScope()
     if(refresh) {
@@ -285,7 +223,7 @@ fun selectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
+private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
     val list = getSelectCourseList(vm)
     var courseId by remember { mutableIntStateOf(0) }
     var nameTitle by remember { mutableStateOf("选课") }
@@ -459,7 +397,7 @@ fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
 }
 
 @Composable
-fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeState) {
+private fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeState) {
     var input by remember { mutableStateOf("") }
     val uiState by vm.selectCourseInfoData.state.collectAsState()
 
@@ -519,13 +457,11 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableIntStateOf(0) }
     var showBottomSheet_info by remember { mutableStateOf(false) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie =
-        if (!vm.webVpn) prefs.getString(
-            "redirect",
-            ""
-        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    val cookie by produceState<String?>(initialValue = null) {
+        value = getJxglstuCookie(vm)
+    }
+
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -537,7 +473,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         ) {
             Column() {
                 HazeBottomSheetTopBar("选课结果", isPaddingStatusBar = false)
-                selectCourseResultLoad(vm,courseId,lessonId, SelectType.add.name)
+                SelectCourseResultLoad(vm,courseId,lessonId, SelectType.add.name)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -565,7 +501,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
                         Text(text = "选课")
                     }
                 }
-                courseInfo(num,searchList,vm, hazeState =hazeState )
+                CourseInfo(num,searchList,vm, hazeState =hazeState )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -575,11 +511,9 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         items(searchList.size) {item ->
             val lists = searchList[item]
             var stdCount by remember { mutableStateOf("0") }
-            LaunchedEffect(lists.id,webVpnCookie) {
-                if(vm.webVpn) {
-                    if(webVpnCookie.isEmpty()) return@LaunchedEffect
-                }
-                async { cookie?.let { vm.getSCount(it,lists.id) } }.await()
+            LaunchedEffect(lists.id) {
+                if(cookie == null) return@LaunchedEffect
+                async { vm.getSCount(cookie!!,lists.id) }.await()
                 async {
                     Handler(Looper.getMainLooper()).post{
                         vm.stdCountData.observeForever { result ->
@@ -633,23 +567,18 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     }
 }
 
-fun parseDynamicJson(jsonString: String): Map<String, Int> {
+private fun parseDynamicJson(jsonString: String): Map<String, Int> {
     val gson = Gson()
     val mapType = object : TypeToken<Map<String, Int>>() {}.type
     return gson.fromJson(jsonString, mapType)
 }
 @Composable
-fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int, type : String) {
+fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int, type : String) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     var statusText by remember { mutableStateOf("提交中") }
     var statusBoolean by remember { mutableStateOf(false) }
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-//    val cookie = if (!vm.webVpn) prefs.getString(
-//        "redirect",
-//        ""
-//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     val scope = rememberCoroutineScope()
 
     if(refresh) {
@@ -716,7 +645,7 @@ fun selectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun courseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, hazeState: HazeState) {
+private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, hazeState: HazeState) {
     val data = lists[num]
 
     val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -775,7 +704,7 @@ fun courseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, 
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ApiToTeacherSearch(teacherTitle,vm)
+                    ApiToTeacherSearch(teacherTitle,vm,innerPadding)
                 }
             }
         }
@@ -864,16 +793,9 @@ fun courseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, 
 }
 
 @Composable
-fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeState) {
+private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeState) {
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-//    val cookie = if (!vm.webVpn) prefs.getString(
-//        "redirect",
-//        ""
-//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-
 
     if(refresh) {
         loading = true
@@ -908,7 +830,7 @@ fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeS
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int, hazeState: HazeState) {
+private fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int, hazeState: HazeState) {
     val lists = getSelectedCourse(vm)
     var name by remember { mutableStateOf("课程详情") }
     var num by remember { mutableStateOf(0) }
@@ -933,7 +855,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int, hazeState: HazeStat
                     }
                 }
 
-                courseInfo(num,lists,vm, hazeState = hazeState)
+                CourseInfo(num,lists,vm, hazeState = hazeState)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
@@ -955,7 +877,7 @@ fun haveSelectedCourse(vm: NetWorkViewModel, courseId : Int, hazeState: HazeStat
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    selectCourseResultLoad(vm,courseId,lessonId, SelectType.drop.name)
+                    SelectCourseResultLoad(vm,courseId,lessonId, SelectType.drop.name)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

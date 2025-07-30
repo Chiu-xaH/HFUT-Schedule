@@ -12,6 +12,9 @@ interface TeachersService {
         @Query("pagesize") size : String,
         @Query("pageindex") page : Int = 1,
         @Query("showlang") language : String = "zh_CN",
-        @Query("searchDirection") direction : String = ""
+        @Query("searchDirection") direction : String = "",
+        @Query("tutorType") tutorType : String = "",
+        @Query("viewid") viewid : String = "1034634",
+        @Query("productType") productType : String = "0"
     ) : Call<ResponseBody>
 }

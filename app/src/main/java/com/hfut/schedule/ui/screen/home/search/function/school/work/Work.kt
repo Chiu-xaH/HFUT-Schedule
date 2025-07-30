@@ -1,9 +1,13 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.work
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,13 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,93 +37,78 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.util.fastMap
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.WorkSearchType
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTabRow
-import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
-import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.webview.WebDialog
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Work(hazeState : HazeState,vm: NetWorkViewModel) {
+fun Work(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.Work.route }
 
-    var showBottomSheet by remember { mutableStateOf(false) }
+    TransplantListItem(
+        headlineContent = { Text(text = AppNavRoute.Work.title) },
+        leadingContent = {
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+        },
+        modifier = Modifier.clickable {
+            navController.navigateAndSaveForTransition(route)
+        }
+    )
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun WorkScreen(
+    vm: NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.Work.route }
+
+    var campus by remember { mutableStateOf(getCampus()) }
+
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb,{ showDialogWeb = false }, MyApplication.WORK_URL,"就业网", showTop = false)
 
-    TransplantListItem(
-        headlineContent = { Text(text = "就业信息") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.azm), contentDescription = "") },
-        modifier = Modifier.clickable {
-            showBottomSheet = true
-        }
-    )
-    var campus by remember { mutableStateOf(getCampus()) }
-
-    if (showBottomSheet ) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet
-        ) {
-            Scaffold(
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("就业信息") {
-                        Row {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    showDialogWeb = true
-                                }
-                            ) {
-                                Icon(painterResource(R.drawable.net),null)
-                            }
-                            FilledTonalButton(
-                                onClick = {
-                                    campus = when(campus) {
-                                        Campus.HEFEI -> Campus.XUANCHENG
-                                        Campus.XUANCHENG -> Campus.HEFEI
-                                    }
-                                }
-                            ) {
-                                Text(campus.description)
-                            }
-                        }
-                    }
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier.padding(innerPadding)) {
-                    WorkSearchUI(vm,campus)
-                }
-            }
-        }
-    }
-}
-// 模范写法
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@Composable
-private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
-
-    var showDialog by remember { mutableStateOf(false) }
-    var url by remember { mutableStateOf("") }
-    var webTitle by remember { mutableStateOf("详情") }
     val types = remember { listOf(
         WorkSearchType.ALL,
         WorkSearchType.JOB_FAIR,
@@ -126,12 +119,68 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
         WorkSearchType.ANNOUNCEMENT
     ) }
     val pagerState = rememberPagerState(pageCount = { types.size })
+
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                Column (
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                ) {
+                    TopAppBar(
+                        colors = topBarTransplantColor(),
+                        title = { Text(AppNavRoute.Work.title) },
+                        navigationIcon = {
+                            TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Work.icon)
+                        },
+                        actions = {
+                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        showDialogWeb = true
+                                    }
+                                ) {
+                                    Icon(painterResource(R.drawable.net),null)
+                                }
+                                FilledTonalButton(
+                                    onClick = {
+                                        campus = when(campus) {
+                                            Campus.HEFEI -> Campus.XUANCHENG
+                                            Campus.XUANCHENG -> Campus.HEFEI
+                                        }
+                                    }
+                                ) {
+                                    Text(campus.description)
+                                }
+                            }
+                        }
+                    )
+                    CustomTabRow(pagerState,types.fastMap { it.description })
+                }
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            ) {
+                WorkSearchUI(vm,campus,pagerState,innerPadding)
+            }
+        }
+    }
+}
+// 模范写法
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@Composable
+private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : PagerState,innerPadding : PaddingValues) {
+    var showDialog by remember { mutableStateOf(false) }
+    var url by remember { mutableStateOf("") }
+    var webTitle by remember { mutableStateOf("详情") }
+
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     WebDialog(showDialog,{ showDialog = false }, url,webTitle, showTop = false)
-
-    CustomTabRow(pagerState,types.fastMap { it.description })
 
     HorizontalPager(state = pagerState) { page ->
         val uiState by vm.workSearchResult.state.collectAsState()
@@ -152,6 +201,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
             val listState = rememberLazyListState()
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = listState) {
+                    item { InnerPaddingHeight(innerPadding,true) }
                     item {
                         CustomTextField(
                             input = input,
@@ -202,6 +252,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus) {
                         }
                     }
                     item { PaddingForPageControllerButton() }
+                    item { InnerPaddingHeight(innerPadding,false) }
                 }
                 PagingController(listState,currentPage,showUp = true, nextPage = { currentPage = it }, previousPage = { currentPage = it })
             }

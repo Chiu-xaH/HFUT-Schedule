@@ -1,9 +1,13 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,9 +18,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,10 +46,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -52,19 +62,207 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.status.StatusUI2
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 
 
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun TransferScreen(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+
+    val route = remember { AppNavRoute.Transfer.route }
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Transfer.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Transfer.icon)
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            ) {
+                TransferListUI(vm,hazeState,innerPadding)
+            }
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState,innerPadding : PaddingValues) {
+    var showBottomSheet by remember { mutableStateOf(false) }
+    var batchId by remember { mutableStateOf("") }
+    var title by remember { mutableStateOf("转专业") }
+    var showBottomSheet_apply by remember { mutableStateOf(false) }
+
+    if (showBottomSheet_apply) {
+        HazeBottomSheet(
+            onDismissRequest = { showBottomSheet_apply = false },
+            hazeState = hazeState,
+            isFullExpand = false,
+            showBottomSheet = showBottomSheet_apply
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = false)
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    MyApplyListUI(vm,batchId,hazeState)
+                }
+            }
+        }
+    }
+    var isHidden by remember { mutableStateOf(false) }
+
+
+    if (showBottomSheet) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar(title) {
+                        FilledTonalButton(
+                            onClick = { showBottomSheet_apply = true },
+                        ) {
+                            Text("我的申请")
+                        }
+                    }
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    TransferUI(vm,batchId,hazeState,isHidden)
+                }
+            }
+        }
+    }
+    val uiState by vm.transferListData.state.collectAsState()
+
+    val refreshNetwork: suspend () -> Unit = {
+        val cookie = getJxglstuCookie(vm)
+        cookie?.let {
+            vm.transferListData.clear()
+            vm.getTransferList(it)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+    var input by remember { mutableStateOf("") }
+
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val transferList = (uiState as UiState.Success).data
+        LazyColumn {
+            item { InnerPaddingHeight(innerPadding,true) }
+            items(transferList.size) { index ->
+                val data = transferList[index]
+                AnimationCardListItem(
+                    headlineContent = { Text(data.title) },
+                    supportingContent = { Text("申请日期 " + data.applicationDate + "\n转专业时期 " + data.admissionDate) },
+                    trailingContent = {
+                        Text("代号 " + data.batchId)
+                    },
+                    modifier = Modifier.clickable {
+                        isHidden = false
+                        title = data.title
+                        batchId = data.batchId
+                        showBottomSheet = true
+                    },
+                    index = index
+                )
+            }
+            item {
+                AnimationCardListItem(
+                    index = transferList.size,
+                    headlineContent = {
+                        Text("手动输入代号查看被隐藏掉的转专业入口")
+                    },
+                    supportingContent = {
+                        Column {
+                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n免责声明：只供看，不要报异地校区的志愿，后果自负\n示例：1,3,21,42,43,61,101等...")
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                            Row {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    value = input,
+                                    onValueChange = { input = it },
+                                    label = { Text("输入数字代号") },
+                                    trailingIcon = {
+                                        IconButton(onClick = {
+                                            if(input.toIntOrNull() != null) {
+                                                isHidden = true
+                                                title = "${input}入口"
+                                                batchId = input
+                                                showBottomSheet = true
+                                            } else {
+                                                showToast("必须为数字")
+                                            }
+                                        }) {
+                                            Icon(Icons.Default.ArrowForward,null)
+                                        }
+                                    },
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                )
+                            }
+                        }
+                    }
+                )
+            }
+            item { InnerPaddingHeight(innerPadding,false) }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHidden : Boolean = false) {
+private fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHidden : Boolean = false) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var showBottomSheet_select by remember { mutableStateOf(false) }
     var telephone by remember { mutableStateOf("") }
@@ -298,11 +496,10 @@ fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeState,isHid
         }
     }
 }
-data class TransferPostResponse(val result : Boolean,val errors : List<ErrorText>)
-data class ErrorText(val textZh : String)
+
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumber : String) {
+private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumber : String) {
     val refreshNetwork : suspend () -> Unit = {
         val cookie = getJxglstuCookie(vm)
         cookie?.let {
@@ -313,93 +510,13 @@ fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumbe
             vm.postTransfer("$cookie;$preferCookie",batchId,id.toString(),phoneNumber)
         }
     }
-//    val uiStateCookie by vm.fromCookie.state.collectAsState()
     val uiState by vm.postTransferResponse.state.collectAsState()
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
 
-
-
-//    val cookieObserver = Observer<String?> { result ->
-//        if (result != null) {
-//            if(countFunc == 0) {
-//                vm.postTransfer("$cookie;$result",batchId,id.toString(),phoneNumber)
-//                countFunc++
-//            }
-//        }
-//    }
-//    val postObserver = Observer<String?> { result ->
-//        if (result != null) {
-//            if(result.contains("result")) {
-//                try {
-//                    val data =  Gson().fromJson(result,TransferPostResponse::class.java)
-//                    if(data.result) {
-//                        msg = "成功"
-//                    } else {
-//                        val errors = data.errors
-//                        errors.forEach { item ->
-//                            msg += item.textZh + " "
-//                        }
-//                    }
-//                } catch (_: Exception) {
-//                    msg = "错误"
-//                }
-//
-//                refresh = false
-//                loading = false
-//            }
-//        }
-//    }
-
-//    if(refresh && countFunc == 0) {
-//
-//        loading = true
-//        Handler(Looper.getMainLooper()).post {
-//            vm.fromCookie.observeForever(cookieObserver)
-//            vm.postTransferResponse.observeForever(postObserver)
-//        }
-//        CoroutineScope(Job()).launch {
-//            async {
-//                reEmptyLiveDta(vm.fromCookie)
-//                reEmptyLiveDta(vm.postTransferResponse)
-//            }.await()
-//            async {
-//                if(countFunc == 0)
-//                cookie?.let { vm.getFormCookie(it,batchId,id.toString()) }
-//            }.await()
-//        }
-//    }
-//
-
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
         val msg = (uiState as UiState.Success).data
         StatusUI2(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
     }
-
-//    Box {
-//        AnimatedVisibility(
-//            visible = loading,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.Center
-//            ) {
-//                Spacer(modifier = Modifier.height(5.dp))
-//                LoadingUI()
-//            }
-//        }
-//
-//
-//        AnimatedVisibility(
-//            visible = !loading,
-//            enter = fadeIn(),
-//            exit = fadeOut()
-//        ) {
-//
-//        }
-//    }
-
 }

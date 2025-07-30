@@ -19,10 +19,8 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.ui.Alignment
-import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.xah.transition.state.TransitionState
-import com.xah.transition.style.DefaultTransitionStyle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -67,9 +65,10 @@ object AppAnimationManager {
             shrinkVertically(shrinkTowards = Alignment.Bottom,animationSpec = tween(durationMillis = ANIMATION_SPEED))
     val downUpAnimation = TransferAnimation("向上吸附",enterAnimation11, exitAnimation11)
 
-    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = .8f) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
+    private const val SPRING = 0.875f
+    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = SPRING) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
 
-    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = .8f) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
+    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = SPRING) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
 
     val centerAnimation = TransferAnimation("向中心运动",enterAnimation2, exitAnimation2)
 

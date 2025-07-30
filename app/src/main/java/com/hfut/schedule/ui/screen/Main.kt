@@ -34,8 +34,23 @@ import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferScreen
+import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScreen
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationsScreen
+import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayCampusScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -162,12 +177,7 @@ fun MainHost(
             }
             // 招生
             composable(AppNavRoute.Admission.route) {
-                AdmissionScreen(
-                    networkVm,
-                    this@SharedTransitionLayout,
-                    this@composable,
-                    navController
-                )
+                AdmissionScreen(networkVm, this@SharedTransitionLayout, this@composable, navController)
             }
             // 招生 二级界面
             composable(
@@ -201,6 +211,77 @@ fun MainHost(
                     this@SharedTransitionLayout,
                     this@composable,
                     navController
+                )
+            }
+            // 法定假日
+            composable(route = AppNavRoute.Holiday.route,) {
+                HolidayScreen(navController, this@SharedTransitionLayout, this@composable,)
+            }
+            // 微信专区
+            composable(route = AppNavRoute.Wechat.route) {
+                WeChatScreen(navController, this@SharedTransitionLayout, this@composable,)
+            }
+            // 作息
+            composable(route = AppNavRoute.TimeTable.route) {
+                TimeTableScreen(navController, this@SharedTransitionLayout, this@composable,)
+            }
+            // 海乐生活
+            composable(route = AppNavRoute.HaiLeWashing.route) {
+                HaiLeWashingScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 学费
+            composable(route = AppNavRoute.Fee.route) {
+                FeeScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 学工系统
+            composable(route = AppNavRoute.StuTodayCampus.route) {
+                StuTodayCampusScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 教师检索
+            composable(route = AppNavRoute.TeacherSearch.route) {
+                TeacherSearchScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 就业
+            composable(route = AppNavRoute.Work.route) {
+                WorkScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 个人信息
+            composable(route = AppNavRoute.Person.route) {
+                PersonScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 消息中心
+            composable(route = AppNavRoute.Notifications.route) {
+                NotificationsScreen(navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 寝室评分
+            composable(route = AppNavRoute.DormitoryScore.route) {
+                DormitoryScoreScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 考试
+            composable(route = AppNavRoute.Exam.route) {
+                ExamScreen(navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 转专业
+            composable(route = AppNavRoute.Transfer.route) {
+                TransferScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 评教
+            composable(route = AppNavRoute.Survey.route) {
+                SurveyScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 全校培养方案
+            composable(
+                route = AppNavRoute.ProgramSearch.receiveRoute(),
+                arguments = getArgs(AppNavRoute.ProgramSearch.Args.entries)
+            ) { backStackEntry ->
+                val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.ProgramSearch.Args.IF_SAVED.argName) ?: (AppNavRoute.ProgramSearch.Args.IF_SAVED.default as Boolean)
+
+                ProgramSearchScreen(
+                    networkVm,
+                    ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
                 )
             }
         }

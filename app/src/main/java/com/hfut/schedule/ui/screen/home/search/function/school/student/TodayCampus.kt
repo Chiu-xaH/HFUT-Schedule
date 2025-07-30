@@ -2,30 +2,43 @@ package com.hfut.schedule.ui.screen.home.search.function.school.student
 
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,108 +49,144 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.getTodayCampusApps
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.component.status.StatusUI2
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.URLImage
 import com.hfut.schedule.ui.component.screen.CustomTabRow
-import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.component.status.StatusUI2
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun ToadyCampus(hazeState : HazeState,vm: NetWorkViewModel){
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun ToadyCampus(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+){
+    val route = remember { AppNavRoute.StuTodayCampus.route }
+
     TransplantListItem(
-        headlineContent = { Text(text = "学工系统") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "") },
+        headlineContent = { Text(text = AppNavRoute.StuTodayCampus.title) },
+        leadingContent = {
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+        },
         modifier = Modifier.clickable {
-            showBottomSheet = true
+            navController.navigateAndSaveForTransition(route)
         }
     )
+}
+private val titles = listOf("Community源(动态)","今日校园源(静态)")
 
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("学工系统") {
-                        Row {
-                            FilledTonalButton(onClick = {
-                                Starter.startLaunchAPK("com.wisedu.cpdaily","今日校园")
-                            }) {
-                                Text("今日校园")
-                            }
-                            Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
-                            FilledTonalButton(onClick = {
-                                Starter.startWebUrl(MyApplication.STU_URL)
-                            }) {
-                                Text("学工系统")
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun StuTodayCampusScreen(
+    vm: NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.StuTodayCampus.route }
+
+    val paperState = rememberPagerState(pageCount = { titles.size })
+
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                Column (
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                ){
+                    TopAppBar(
+                        colors = topBarTransplantColor(),
+                        title = { Text(AppNavRoute.StuTodayCampus.title) },
+                        navigationIcon = {
+                            TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.StuTodayCampus.icon)
+                        },
+                        actions = {
+                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                StartAppIcon(Starter.AppPackages.TODAY_CAMPUS,R.drawable.today_campus_icon)
+                                Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
+                                FilledTonalButton(onClick = {
+                                    Starter.startWebUrl(MyApplication.STU_URL)
+                                }) {
+                                    Text("学工系统")
+                                }
                             }
                         }
-                    }
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    StuAppsScreen(vm)
-                    Spacer(modifier = Modifier.height(20.dp))
+                    )
+                    CustomTabRow(paperState,titles)
                 }
+
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.padding(innerPadding).fillMaxSize()
+            ) {
+                StuAppsScreen(vm,paperState)
             }
         }
     }
 }
+
 private const val TAB_LEFT = 0
 private const val TAB_RIGHT = 1
 @Composable
-fun StuAppsScreen(vm : NetWorkViewModel) {
+fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
     val refreshNetwork : suspend () -> Unit = {
         prefs.getString("TOKEN","")?.let {
             vm.stuAppsResponse.clear()
             vm.getStuApps(it)
         }
     }
-    val titles = remember { listOf("Community源(动态)","今日校园源(静态)") }
     val todayCampusTip by DataStoreManager.todayCampusTip.collectAsState(initial = true)
-    val paperState = rememberPagerState(pageCount = { titles.size })
     val scope = rememberCoroutineScope()
     val size = remember { 30.dp }
     var input by remember { mutableStateOf("") }
@@ -148,7 +197,6 @@ fun StuAppsScreen(vm : NetWorkViewModel) {
     }
 
     Column {
-        CustomTabRow(paperState,titles)
         HorizontalPager(state = paperState) { pager ->
             Column(modifier = Modifier.fillMaxSize()) {
                 if(todayCampusTip) {
@@ -177,6 +225,8 @@ fun StuAppsScreen(vm : NetWorkViewModel) {
                     )
                     Spacer(Modifier.height(CARD_NORMAL_DP))
                 }
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+
                 CustomTextField(
                     input = input,
                     label = { Text("检索功能") },

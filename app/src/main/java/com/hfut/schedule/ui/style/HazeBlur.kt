@@ -63,7 +63,7 @@ fun Modifier.zIndexBlur(hazeState: HazeState,color : Color) : Modifier {
             state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(0.35f)),
-                backgroundColor = Color.Transparent,
+                backgroundColor = surfaceColor,
                 blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
                 noiseFactor = 0f
             )
@@ -97,15 +97,22 @@ fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
                 )
             })
     } else {
-        return this.background(Brush.verticalGradient(
-            listOf(Color.Transparent, surfaceColor)
-        ))
+        return this.background(
+            Brush.verticalGradient(
+                colorStops = arrayOf(
+                    0.0f to surfaceColor.copy(alpha = 0f),
+                    0.25f to surfaceColor.copy(alpha = 0.65f),
+                    0.75f to surfaceColor.copy(alpha = 0.85f),
+                    1.0f to surfaceColor.copy(alpha = 1f)
+                )
+            )
+        )
     }
 }
 
 
 @Composable
-fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
+fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false) : Modifier {
     val surfaceColor = MaterialTheme.colorScheme.surface
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(blur && CAN_HAZE_BLUR_BAR) {
@@ -113,7 +120,7 @@ fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
             state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(.35f)),
-                backgroundColor = Color.Transparent,
+                backgroundColor = if(useTry)surfaceColor else Color.Transparent,
                 blurRadius = MyApplication.BLUR_RADIUS*1.2f,
                 noiseFactor = 0f
             ),
@@ -126,9 +133,20 @@ fun Modifier.topBarBlur(hazeState : HazeState) : Modifier {
             }
         )
     } else {
-         this.background(Brush.verticalGradient(
-             listOf(surfaceColor, Color.Transparent)
-        ))
+        this.background(
+            Brush.verticalGradient(
+                colorStops = arrayOf(
+                    0.0f to surfaceColor.copy(alpha = 1f),
+                    0.25f to surfaceColor.copy(alpha = 0.85f),
+                    0.75f to surfaceColor.copy(alpha = 0.65f),
+                    1.0f to surfaceColor.copy(alpha = 0f),
+                )
+            )
+        )
+
+//         this.background(Brush.verticalGradient(
+//             listOf(surfaceColor, Color.Transparent)
+//        ))
     }
 }
 

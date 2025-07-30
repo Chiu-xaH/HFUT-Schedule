@@ -304,6 +304,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
 //    }
 
     LaunchedEffect(animationSpeed) {
+        delay(AppAnimationManager.ANIMATION_SPEED*1L)
         while (true) {
             offsetX.animateTo(
                 targetValue = delta.value,

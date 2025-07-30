@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.washing
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,7 +21,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,28 +32,45 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.StyleCardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.webview.WebDialog
-
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.containerShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Washing(vm: NetWorkViewModel,hazeState: HazeState) {
+fun Washing(
+    vm: NetWorkViewModel,
+    hazeState: HazeState,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
+    val route = remember { AppNavRoute.HaiLeWashing.route }
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -61,49 +83,64 @@ fun Washing(vm: NetWorkViewModel,hazeState: HazeState) {
         }
     }
 
-    var showBottomSheetHaiLe by remember { mutableStateOf(false) }
-
-    if (showBottomSheetHaiLe) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheetHaiLe = false },
-            showBottomSheet = showBottomSheetHaiLe,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("海乐生活")
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    HaiLeScreen(vm,hazeState)
-                }
-            }
-        }
-    }
-
     TransplantListItem(
         headlineContent = { Text(text = "洗衣机") },
         leadingContent = {
             Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
         },
         trailingContent = {
-            FilledTonalIconButton(
-                modifier = Modifier.size(30.dp),
-                onClick = {
-                    showBottomSheetHaiLe = true
-                },
-            ) { Icon( painterResource(R.drawable.search), contentDescription = null, modifier = Modifier.size(20.dp)) }
+            with(sharedTransitionScope) {
+                FilledTonalIconButton(
+                    modifier = containerShare(Modifier.size(30.dp),animatedContentScope,route),
+                    onClick = {
+                        navController.navigateAndSaveForTransition(route)
+                    },
+                ) { Icon( painterResource(R.drawable.search), contentDescription = null, modifier = Modifier.size(20.dp)) }
+            }
         },
         modifier = Modifier.clickable {
             showBottomSheet = true
         }
     )
 }
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun HaiLeWashingScreen(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+
+    val route = remember { AppNavRoute.HaiLeWashing.route }
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text("海乐生活") },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController)
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize().padding(innerPadding)
+            ) {
+                HaiLeScreen(vm,hazeState)
+            }
+        }
+    }
+}
+
 
 private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
@@ -145,6 +182,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
     val auth = prefs.getString("auth","")
     var showDialogWeb by remember { mutableStateOf(false) }
     WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
+    val route = remember { AppNavRoute.HaiLeWashing.route }
 
 
     //布局///////////////////////////////////////////////////////////////////////////

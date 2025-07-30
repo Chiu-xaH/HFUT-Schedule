@@ -1,9 +1,13 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,36 +36,141 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.status.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun ProgramSearchScreen(
+    vm : NetWorkViewModel,
+    ifSaved: Boolean,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    var campus by remember { mutableStateOf( getCampus() ) }
+    var input by remember { mutableStateOf("") }
+
+    val route = remember { AppNavRoute.ProgramSearch.receiveRoute() }
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                Column(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                ) {
+                    TopAppBar(
+                        colors = topBarTransplantColor(),
+                        title = { Text(AppNavRoute.ProgramSearch.title) },
+                        navigationIcon = {
+                            TopBarNavigateIcon(navController)
+                        },
+                        actions = {
+                            FilledTonalButton(
+                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                                onClick = {
+                                    campus = when(campus) {
+                                        HEFEI -> XUANCHENG
+                                        XUANCHENG -> HEFEI
+                                    }
+                                },
+                            ) {
+                                Text(
+                                    when(campus) {
+                                        HEFEI -> "合肥"
+                                        XUANCHENG -> "宣城"
+                                    }
+                                )
+                            }
+                        }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = APP_HORIZONTAL_DP),
+                            value = input,
+                            onValueChange = {
+                                input = it
+                            },
+                            label = { Text("搜索") },
+                            singleLine = true,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {}) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            colors = textFiledTransplant()
+                        )
+                    }
+                }
+
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            ) {
+                ProgramSearch(vm,ifSaved,hazeState,campus,innerPadding,input)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
-    var campus by remember { mutableStateOf( getCampus() ) }
+private fun ProgramSearch(
+    vm : NetWorkViewModel,
+    ifSaved: Boolean,
+    hazeState: HazeState,
+    campus: Campus,
+    innerPadding : PaddingValues,
+    input : String
+) {
     val uiState by vm.programList.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         vm.programList.clear()
@@ -69,7 +179,6 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
     LaunchedEffect(campus) {
         refreshNetwork()
     }
-
     var item by remember { mutableStateOf(ProgramListBean(0,"","培养方案详情","","")) }
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -96,93 +205,40 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
-        topBar = {
-            HazeBottomSheetTopBar("全校培养方案") {
-                FilledTonalButton(
-                    onClick = {
-                        campus = when(campus) {
-                            HEFEI -> XUANCHENG
-                            XUANCHENG -> HEFEI
-                        }
-                    },
-                ) {
-                    Text(
-                        when(campus) {
-                            HEFEI -> "合肥"
-                            XUANCHENG -> "宣城"
-                        }
-                    )
-                }
+    Column {
+        CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "若加载过长 请搭外网") {
+            val programList = (uiState as UiState.Success).data
+            val searchList = programList.filter {
+                it.name.contains(input) || it.department.contains(input) || it.major.contains(input) || it.grade.contains(input)
             }
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            var input by remember { mutableStateOf("") }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = APP_HORIZONTAL_DP),
-                    value = input,
-                    onValueChange = {
-                        input = it
-                    },
-                    label = { Text("搜索") },
-                    singleLine = true,
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {}) {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                contentDescription = "description"
-                            )
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = textFiledTransplant()
-                )
-            }
-            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-
-            CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "若加载过长 请搭外网") {
-                val programList = (uiState as UiState.Success).data
-                val searchList = programList.filter {
-                    it.name.contains(input) || it.department.contains(input) || it.major.contains(input) || it.grade.contains(input)
-                }
-                if(searchList.isNotEmpty()) {
-                    LazyColumn {
-                        items(searchList.size, key = { it }) { index ->
-                            val data = searchList[index]
-                            var department = data.department
-                            val name = data.name
-                            department = department.substringBefore("（")
-                            AnimationCardListItem(
-                                headlineContent = { Text(name) },
-                                overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
-                                leadingContent = { DepartmentIcons(department) },
-                                modifier = Modifier.clickable {
-                                    item = data
-                                    showBottomSheet = true
-                                },
-                                index = index
-                            )
-                        }
+            if(searchList.isNotEmpty()) {
+                LazyColumn {
+                    item { InnerPaddingHeight(innerPadding,true) }
+                    item { Spacer(Modifier.height(CARD_NORMAL_DP))}
+                    items(searchList.size, key = { it }) { index ->
+                        val data = searchList[index]
+                        var department = data.department
+                        val name = data.name
+                        department = department.substringBefore("（")
+                        AnimationCardListItem(
+                            headlineContent = { Text(name) },
+                            overlineContent = { Text(data.grade + "级 " + department + " " + data.major) },
+                            leadingContent = { DepartmentIcons(department) },
+                            modifier = Modifier.clickable {
+                                item = data
+                                showBottomSheet = true
+                            },
+                            index = index
+                        )
                     }
-                } else {
-                    if(campus == HEFEI && programList.isEmpty()) {
+                    item { InnerPaddingHeight(innerPadding,false) }
+                }
+            } else {
+                if(campus == HEFEI && programList.isEmpty()) {
+                    CenterScreen {
                         Column {
                             EmptyUI("需合肥校区在读生贡献数据源")
-                            Spacer(Modifier.height(5.dp))
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             RowHorizontal {
                                 Button(
                                     onClick = {
@@ -193,7 +249,9 @@ fun ProgramSearch(vm : NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                                 }
                             }
                         }
-                    } else {
+                    }
+                } else {
+                    CenterScreen {
                         EmptyUI()
                     }
                 }
@@ -220,7 +278,7 @@ private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campu
 
 
 @Composable
-fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,vm: NetWorkViewModel,ifSaved : Boolean) {
+private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,vm: NetWorkViewModel,ifSaved : Boolean) {
     if(entity == null) return
     val children = entity.children
     val planCourses = entity.planCourses.sortedBy { it.terms.let { if(it.isNotEmpty()) it[0] else null } }
@@ -381,3 +439,6 @@ fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : HazeState,v
         }
     }
 }
+
+
+

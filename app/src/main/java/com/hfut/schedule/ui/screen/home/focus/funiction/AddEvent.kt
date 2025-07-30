@@ -270,24 +270,25 @@ private fun SharedTransitionScope.SurfaceUI(
                     colors = topBarTransplantColor(),
                     title = { Text("添加") },
                     actions = {
-                        Row {
-                            if(getPersonInfo().username != null && !isSupabase)
-                                FilledTonalButton(onClick = {
-                                    scope.launch {
-                                        loading = true
-                                        loginSupabaseWithCheck(jwt,refreshToken,vm)
-                                        loading = false
-                                    }
-                                }) {
-                                    Text("云端共建")
+                        if(getPersonInfo().username != null && !isSupabase)
+                            FilledTonalButton(onClick = {
+                                scope.launch {
+                                    loading = true
+                                    loginSupabaseWithCheck(jwt,refreshToken,vm)
+                                    loading = false
                                 }
-                            IconButton(
-                                onClick = { showChange(false) }
-                            ) {
-                                Icon(Icons.Filled.Close,null)
+                            }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                Text("云端共建")
                             }
-                        }
+
                     },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = { showChange(false) }
+                        ) {
+                            Icon(Icons.Filled.Close,null,tint = MaterialTheme.colorScheme.primary)
+                        }
+                    }
                 )
             }
         },

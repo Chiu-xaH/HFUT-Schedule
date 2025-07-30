@@ -53,7 +53,7 @@ fun LePaoYun(hazeState: HazeState) {
                 HazeBottomSheetTopBar("体育", isPaddingStatusBar = false)
                 StyleCardListItem(
                     headlineContent = { Text("校园跑") },
-                    modifier = Modifier.clickable { Starter.startLaunchAPK("com.yunzhi.tiyu","云运动") },
+                    modifier = Modifier.clickable { Starter.startAppLaunch(Starter.AppPackages.LEPAO) },
                     trailingContent = {
                         Icon(Icons.Default.ArrowForward,null)
                     },

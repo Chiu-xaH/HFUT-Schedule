@@ -87,6 +87,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
+import com.hfut.schedule.logic.model.jxglstu.TransferPostResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
@@ -153,7 +154,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeM
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferPostResponse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail

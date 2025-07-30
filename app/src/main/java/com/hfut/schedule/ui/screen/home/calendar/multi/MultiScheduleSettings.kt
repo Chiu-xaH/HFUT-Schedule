@@ -32,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -63,6 +64,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -239,12 +241,10 @@ fun MultiScheduleSettings(
         }
     }
     var showDialogN by remember { mutableStateOf(false) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+    val cookie by produceState(initialValue = "") {
+        value = getJxglstuCookie(vm) ?: ""
+    }
     WebDialog(
         showDialogN,
         { showDialogN = false },

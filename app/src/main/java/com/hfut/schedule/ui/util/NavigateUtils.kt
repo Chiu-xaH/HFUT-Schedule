@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.util
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
 
 //fun NavController.navigateAndClear(route: String) {
 //    navigate(route) {

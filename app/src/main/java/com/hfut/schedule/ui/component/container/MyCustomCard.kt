@@ -8,9 +8,11 @@ import androidx.compose.animation.core.EaseInOutQuad
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -21,16 +23,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 
@@ -155,14 +173,14 @@ fun AnimationCardListItem(
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
-    val animatedProgress = remember { Animatable(scale) }
+//    val animatedProgress = remember { Animatable(scale) }
 
-    LaunchedEffect(index) {
-        animatedProgress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
-        )
-    }
+//    LaunchedEffect(index) {
+//        animatedProgress.animateTo(
+//            targetValue = 1f,
+//            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
+//        )
+//    }
     StyleCardListItem(
         headlineContent,
         overlineContent,
@@ -171,13 +189,13 @@ fun AnimationCardListItem(
         leadingContent,
         color,
         modifier,
-        cardModifier.graphicsLayer {
-            scaleX = animatedProgress.value
-            scaleY = animatedProgress.value
-        },
-//        onOfferSet
+//        cardModifier.graphicsLayer {
+//            scaleX = animatedProgress.value
+//            scaleY = animatedProgress.value
+//        },
     )
 }
+
 @Composable
 fun AnimationCustomCard(
     modifier: Modifier = Modifier,
@@ -186,20 +204,20 @@ fun AnimationCustomCard(
     index : Int = 1,
     scale : Float = 0.8f,
     content: @Composable () -> Unit) {
-    val animatedProgress = remember { Animatable(scale) }
+//    val animatedProgress = remember { Animatable(scale) }
 
-    LaunchedEffect(index) {
-        animatedProgress.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
-        )
-    }
+//    LaunchedEffect(index) {
+//        animatedProgress.animateTo(
+//            targetValue = 1f,
+//            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
+//        )
+//    }
 
     MyCustomCard(
-        modifier = modifier.graphicsLayer {
-            scaleX = animatedProgress.value
-            scaleY = animatedProgress.value
-        },
+//        modifier = modifier.graphicsLayer {
+//            scaleX = animatedProgress.value
+//            scaleY = animatedProgress.value
+//        },
         containerColor = containerColor,
         hasElevation = hasElevation,
     ) {
@@ -207,28 +225,6 @@ fun AnimationCustomCard(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun SharedCardListItem(
-    headlineContent :  @Composable () -> Unit,
-    overlineContent  : @Composable() (() -> Unit)? = null,
-    supportingContent : @Composable() (() -> Unit)? = null,
-    trailingContent : @Composable() (() -> Unit)? = null,
-    leadingContent : @Composable() (() -> Unit)? = null,
-    color : Color? = null,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
-    modifier: Modifier = Modifier,
-    cardModifier: Modifier = Modifier
-) {
-    CardListItem(
-        headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
-        hasElevation = false,
-        containerColor = color
-            ?:   cardNormalColor()
-
-    )
-}
 
 @Composable
 fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
@@ -260,13 +256,15 @@ fun LargeCard(
                     text = title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = 28.sp
+                    fontSize = 28.sp,
+                    modifier = Modifier.padding(top = APP_HORIZONTAL_DP/6, bottom = 0.dp)
                 )
             },
             trailingContent = rightTop,
             leadingContent = leftTop,
             usePadding = false
         )
+        PaddingHorizontalDivider(isDashed = true)
         //下面的内容
         content()
     }
@@ -310,13 +308,15 @@ fun LoadingLargeCard(
                         text = title,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        fontSize = 28.sp
+                        fontSize = 28.sp,
+                        modifier = Modifier.padding(top = APP_HORIZONTAL_DP/6, bottom = 0.dp)
                     )
                 },
                 trailingContent = rightTop,
                 leadingContent = leftTop,
                 usePadding = false
             )
+            PaddingHorizontalDivider(isDashed = true)
             content()
         }
     }

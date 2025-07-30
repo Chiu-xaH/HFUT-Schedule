@@ -25,6 +25,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
@@ -33,7 +34,6 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState){
-    val sheetState_EmptyRoom = rememberModalBottomSheetState()
     var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
 
     TransplantListItem(
@@ -45,14 +45,15 @@ fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState){
             )
         },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin()
-            else {
-                val token = prefs.getString("bearer","")
-                showBottomSheet_EmptyRoom = true
-                token?.let { vm.searchEmptyRoom("XC001", it) }
-                token?.let { vm.searchEmptyRoom("XC002", it) }
-                // view = "待开发"
-            }
+            showToast("暂时关闭，后续版本重构")
+//            if(ifSaved) refreshLogin()
+//            else {
+//                val token = prefs.getString("bearer","")
+//                showBottomSheet_EmptyRoom = true
+//                token?.let { vm.searchEmptyRoom("XC001", it) }
+//                token?.let { vm.searchEmptyRoom("XC002", it) }
+//                // view = "待开发"
+//            }
         }
     )
 
@@ -63,8 +64,6 @@ fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState){
             },
             showBottomSheet = showBottomSheet_EmptyRoom,
             hazeState = hazeState
-//            sheetState = sheetState_EmptyRoom,
-//            shape = bottomSheetRound(sheetState_EmptyRoom)
         ) {
             Column() {
                 Row(

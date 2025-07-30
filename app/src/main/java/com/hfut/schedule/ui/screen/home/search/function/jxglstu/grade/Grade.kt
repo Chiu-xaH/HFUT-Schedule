@@ -36,11 +36,11 @@ fun Grade(
     val route = remember { AppNavRoute.Grade.receiveRoute() }
     TransplantListItem(
         headlineContent = {
-            Text(text = "成绩")
+            Text(text = AppNavRoute.Grade.title)
         },
         leadingContent = {
             with(sharedTransitionScope) {
-                Icon(painterResource(R.drawable.article), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+                Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {

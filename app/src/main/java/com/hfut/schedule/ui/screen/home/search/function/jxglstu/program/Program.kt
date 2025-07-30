@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -22,21 +25,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.containerShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Program(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
+fun Program(
+    vm : NetWorkViewModel,
+    ifSaved : Boolean,
+    hazeState: HazeState,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     var showBottomSheet_Program by remember { mutableStateOf(false) }
-    var showBottomSheet_search by remember { mutableStateOf(false) }
+    val route = remember { AppNavRoute.ProgramSearch.receiveRoute() }
+
 
     TransplantListItem(
         headlineContent = { ScrollText(text = "培养方案") },
@@ -47,13 +62,15 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
             )
         },
         trailingContent = {
-            FilledTonalIconButton(
-                onClick = {
-                    showBottomSheet_search = true
-                },
-                modifier = Modifier.size(30.dp)
-            ) {
-                Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
+            with(sharedTransitionScope) {
+                FilledTonalIconButton(
+                    onClick = {
+                        navController.navigateAndSaveForTransition(AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                    },
+                    modifier = containerShare(Modifier.size(30.dp),animatedContentScope,route)
+                ) {
+                    Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
+                }
             }
         },
         modifier = Modifier.clickable {
@@ -63,19 +80,6 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
             else refreshLogin()
         }
     )
-
-
-
-    if (showBottomSheet_search) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_search = false },
-            showBottomSheet = showBottomSheet_search,
-            hazeState = hazeState,
-        ) {
-            ProgramSearch(vm,ifSaved,hazeState)
-        }
-    }
-
 
     if (showBottomSheet_Program ) {
         HazeBottomSheet (
@@ -91,8 +95,8 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
                     HazeBottomSheetTopBar("培养方案") {
                         FilledTonalButton(
                             onClick = {
-                                showBottomSheet_search = true
-                            }
+                                navController.navigateAndSaveForTransition(AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                            },
                         ) {
                             Text("全校培养方案")
                         }
@@ -112,31 +116,3 @@ fun Program(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun GuestProgram(vm: NetWorkViewModel, hazeState: HazeState) {
-    var showBottomSheet_search by remember { mutableStateOf(false) }
-
-
-    if (showBottomSheet_search) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_search = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet_search
-        ) {
-            ProgramSearch(vm, true, hazeState )
-        }
-    }
-    TransplantListItem(
-        headlineContent = { Text(text = "全校培养方案") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.conversion_path),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable {
-            showBottomSheet_search = true
-        }
-    )
-}

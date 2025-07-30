@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -40,8 +42,6 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NextCourse(ifSaved : Boolean, vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
-
-    val sheetState_next = rememberModalBottomSheetState(true)
     var showBottomSheet_next by remember { mutableStateOf(false) }
 
     var next by remember { mutableStateOf(isNextOpen()) }
@@ -49,12 +49,11 @@ fun NextCourse(ifSaved : Boolean, vmUI : UIViewModel, vm : NetWorkViewModel, haz
     var showAll by remember { mutableStateOf(false) }
 
     var showDialogN by remember { mutableStateOf(false) }
-    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
 
-    val cookie = if (!vm.webVpn) prefs.getString(
-        "redirect",
-        ""
-    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+
+    val cookie by produceState(initialValue = "") {
+        value = getJxglstuCookie(vm) ?: ""
+    }
     WebDialog(
         showDialogN,
         { showDialogN = false },

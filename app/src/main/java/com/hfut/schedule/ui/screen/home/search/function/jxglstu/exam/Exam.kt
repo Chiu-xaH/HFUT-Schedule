@@ -2,95 +2,126 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addToCalendars
-import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
+import com.hfut.schedule.ui.component.status.CenterScreen
+import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun Exam(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState) {
-    var showBottomSheet_Exam by remember { mutableStateOf(false) }
+fun Exam(
+    ifSaved : Boolean,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.Exam.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = "考试") },
+        headlineContent = { Text(text = AppNavRoute.Exam.title) },
         overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
-            Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
         },
         modifier = Modifier.clickable {
             if(ifSaved)  {
                 refreshLogin()
-            }
-            else {
-                showBottomSheet_Exam = true
+            } else {
+                navController.navigateAndSaveForTransition(route)
             }
         }
     )
+}
 
-    if (showBottomSheet_Exam) {
-        
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet_Exam = false
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun ExamScreen(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.Exam.route }
+
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Exam.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Exam.icon)
+                    }
+                )
             },
-            showBottomSheet = showBottomSheet_Exam,
-            hazeState = hazeState,
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("考试")
-                },) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    if(ifSaved) {
-                        if(getExam().isEmpty()) EmptyUI()
-                        else LazyColumn { items(getExam().size) { item -> ExamItems(item,false) } }
-                    } else {
-                        if(getExamJXGLSTU().isEmpty()) EmptyUI()
-                        else LazyColumn { items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,true)} }
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            ) {
+                val list = remember { getExamJXGLSTU() }
+                if(list.isEmpty()) {
+                    CenterScreen {
+                        EmptyUI()
+                    }
+                } else {
+                    LazyColumn {
+                        item { InnerPaddingHeight(innerPadding,true) }
+                        items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,true)}
+                        item { InnerPaddingHeight(innerPadding,false) }
                     }
                 }
             }

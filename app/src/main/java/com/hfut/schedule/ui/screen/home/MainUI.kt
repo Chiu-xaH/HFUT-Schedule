@@ -115,7 +115,7 @@ import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
-import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTermInfo
+import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
@@ -133,7 +133,6 @@ import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.style.transitionBackground
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -510,7 +509,7 @@ fun MainScreen(
                                 when(targetPage){
                                     COURSES -> {
                                         if(isFriend) {
-                                            ApiForTermInfo(swapUI.toString(),hazeState)
+                                            ApiForTimeTable(swapUI.toString(),hazeState)
                                         } else {
                                             CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState, ifSaved = ifSaved)
                                         }

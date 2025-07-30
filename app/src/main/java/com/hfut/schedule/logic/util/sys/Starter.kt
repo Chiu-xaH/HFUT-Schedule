@@ -16,13 +16,21 @@ import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 
 object Starter {
+    enum class AppPackages(val packageName : String,val appName : String) {
+        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园"),
+        WECHAT("com.tencent.mm","微信"),
+        CHAO_XING("com.chaoxing.mobile","学习通"),
+        MOOC("com.netease.edu.ucmooc","中国大学MOOC"),
+        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂"),
+        LEPAO("com.yunzhi.tiyu","云运动"),
+    }
     //通过包名启动第三方应用
     @JvmStatic
     @SuppressLint("QueryPermissionsNeeded")
-    fun startLaunchAPK(packageName: String,appName : String = "应用") {
+    fun startAppLaunch(app : AppPackages) {
         try {
-            val intent = MyApplication.context.packageManager.getLaunchIntentForPackage(packageName)
-            if(intent == null) showToast("未安装${appName}")
+            val intent = MyApplication.context.packageManager.getLaunchIntentForPackage(app.packageName)
+            if(intent == null) showToast("未安装${app.appName}")
             else  MyApplication.context.startActivity(intent)
         } catch (_: Exception) {
             showToast("启动外部应用失败")

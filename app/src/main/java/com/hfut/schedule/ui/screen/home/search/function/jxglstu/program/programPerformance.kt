@@ -58,12 +58,6 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
     var moduleIndex by remember { mutableIntStateOf(-1) }
     var title by remember { mutableStateOf("完成情况") }
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-
-//    val cookie = if (!vm.webVpn) prefs.getString(
-//        "redirect",
-//        ""
-//    ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     val uiState by vm.programPerformanceData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie(vm)

@@ -51,10 +51,9 @@ import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.search.TopBarTopIcon
-import com.hfut.schedule.ui.screen.home.search.function.school.admission.NavigationBackIcon
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.HazeState
 
@@ -193,7 +192,7 @@ fun CourseDetailApiScreen(
                     title = { ScrollText(getTotalCourse(json)[numItem].course.nameZh) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
-                        NavigationBackIcon(navController)
+                        TopBarNavigateIcon(navController)
                     }
                 )
             }

@@ -65,10 +65,6 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
     var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf("") }
     var courseId by remember { mutableStateOf("") }
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-//
-//    val cookie = if (!vm.webVpn) prefs.getString("redirect", "") else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-
 
     var showSearch by remember { mutableStateOf(true) }
 

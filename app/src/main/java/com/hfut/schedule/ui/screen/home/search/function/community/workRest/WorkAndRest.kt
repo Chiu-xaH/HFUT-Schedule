@@ -1,24 +1,27 @@
 package com.hfut.schedule.ui.screen.home.search.function.community.workRest
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,27 +30,39 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.ParseJsons.getMy
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.webview.WebDialog
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
-fun TermInfoUI(friendUserName : String? = null) {
+fun TimeTableUI(friendUserName : String? = null) {
     val data = remember { getFormCommunity(friendUserName) } ?: return
     with(data) {
         val startDate = start.substringBefore(" ")
@@ -133,92 +148,113 @@ fun TermInfoUI(friendUserName : String? = null) {
                 }
             }
         }
-        DividerTextExpandedWith("线下课程(社区数据源 可能有更新延迟)") {
-            courseBasicInfoDTOList.forEachIndexed { index, item ->
-                val type = item.trainingCategoryName_dictText
-                val str = type?.let { " | $it" } ?: ""
-                val id = item.courseId
-                StyleCardListItem(
-                    headlineContent = { Text(item.courseName) },
-                    supportingContent = { Text(item.className)},
-                    overlineContent = { Text("学分 ${item.credit}" + " | $id"+ str)},
-                    leadingContent = { Text((index+1).toString())},
-                    modifier = Modifier.clickable {
-                        ClipBoardUtils.copy(id)
-                    }
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun WorkAndRest(hazeState: HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    TransplantListItem(
-        headlineContent = { Text(text = "作息") },
-        leadingContent = {
-            Icon(
-                painterResource(R.drawable.schedule),
-                contentDescription = "Localized description",
-            )
-        },
-        modifier = Modifier.clickable {
-            showBottomSheet = true
-        }
-    )
-    if (showBottomSheet) {
-        var showDialog by remember { mutableStateOf(false) }
-        val url = try {
-            getMy()!!.SchoolCalendar
-        } catch (e:Exception) {
-            null
-        }
-        url?.let { WebDialog(showDialog,{showDialog = false}, it,"校历") }
-
-        HazeBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("作息") {
-                        FilledTonalButton(onClick = {
-                            if(url == null) {
-                                showToast("正在从云端获取数据")
-                            } else {
-                                showDialog = true
-                                showToast("即将打开网页链接,可自行下载或保存图片")
-                            }
-                        }) {
-                            Text("校历")
+        if(courseBasicInfoDTOList.isNotEmpty()) {
+            DividerTextExpandedWith("线下课程(社区数据源 可能有更新延迟)") {
+                courseBasicInfoDTOList.forEachIndexed { index, item ->
+                    val type = item.trainingCategoryName_dictText
+                    val str = type?.let { " | $it" } ?: ""
+                    val id = item.courseId
+                    StyleCardListItem(
+                        headlineContent = { Text(item.courseName) },
+                        supportingContent = { Text(item.className)},
+                        overlineContent = { Text("学分 ${item.credit}" + " | $id"+ str)},
+                        leadingContent = { Text((index+1).toString())},
+                        modifier = Modifier.clickable {
+                            ClipBoardUtils.copy(id)
                         }
-                    }
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ){
-                    TermInfoUI()
-                    Spacer(modifier = Modifier.height(20.dp))
+                    )
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+fun WorkAndRest(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.TimeTable.route }
+
+    TransplantListItem(
+        headlineContent = { Text(text = AppNavRoute.TimeTable.title) },
+        leadingContent = {
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.TimeTable.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+        },
+        modifier = Modifier.clickable {
+            navController.navigateAndSaveForTransition(route)
+        }
+    )
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun TimeTableScreen(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    var showDialog by remember { mutableStateOf(false) }
+    val url = try {
+        getMy()!!.SchoolCalendar
+    } catch (e:Exception) {
+        null
+    }
+    url?.let { WebDialog(showDialog,{showDialog = false}, it,"校历") }
+    val route = remember { AppNavRoute.TimeTable.route }
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.TimeTable.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.TimeTable.icon)
+                    },
+                    actions = {
+                        FilledTonalButton(
+                            onClick = {
+                                if(url == null) {
+                                    showToast("正在从云端获取数据")
+                                } else {
+                                    showDialog = true
+                                    showToast("即将打开网页链接,可自行下载或保存图片")
+                                }
+                            },
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                        ) {
+                            Text("校历")
+                        }
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+            ) {
+                InnerPaddingHeight(innerPadding,true)
+                TimeTableUI()
+                InnerPaddingHeight(innerPadding,false)
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ApiForTermInfo(friendUserName: String,hazeState: HazeState) {
+fun ApiForTimeTable(friendUserName: String, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     IconButton(
@@ -246,7 +282,7 @@ fun ApiForTermInfo(friendUserName: String,hazeState: HazeState) {
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ){
-                    TermInfoUI(friendUserName)
+                    TimeTableUI(friendUserName)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }

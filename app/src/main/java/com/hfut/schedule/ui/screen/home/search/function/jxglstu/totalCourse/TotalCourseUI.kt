@@ -275,7 +275,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ApiToTeacherSearch(teacherTitle,vm)
+                    ApiToTeacherSearch(teacherTitle,vm,innerPadding)
                 }
             }
         }

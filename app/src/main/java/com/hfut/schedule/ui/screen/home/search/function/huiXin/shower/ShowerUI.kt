@@ -425,9 +425,11 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                         }
                                     ) {
                                         TransplantListItem(
-                                            //headlineContent = { androidx.compose.material3.Text( text = if(!show)"学号 " + " 2000000000" else "学号 $studentID") },
-                                            headlineContent = { (if(!show)"手机号 1XXXXXXXXXX" else "手机号 $phoneNumber").let { Text(text = it) } },
-                                            leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "") }
+                                            overlineContent = {
+                                                Text("手机号")
+                                            },
+                                            headlineContent = { Text(text = (if(!show)"1XXXXXXXXXX" else phoneNumber)) },
+                                            leadingContent = { Icon(painter = painterResource(id = R.drawable.call), contentDescription = "") }
                                         )
                                     }
                                 }

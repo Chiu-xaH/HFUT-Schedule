@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -52,18 +53,18 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -73,22 +74,12 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
-import kotlin.plus
 
 
 @Composable
 fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
 
     var showBottomSheet_Performance by remember { mutableStateOf(false) }
-//    val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-//
-//    val cookie =
-//        if (!vm.webVpn) prefs.getString(
-//            "redirect",
-//            ""
-//        ) else MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-
-
 
     val uiState by vm.programCompletionData.state.collectAsState()
     var loadingCard = uiState !is UiState.Success
@@ -272,7 +263,11 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
             }
         }
 
-        LazyColumn {
+
+
+
+        LazyColumn() {
+
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
                 AnimationCardListItem(
@@ -303,9 +298,13 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 }
             }
             entity.remark?.let { item { BottomTip(str = it) } }
+
         }
     }
     if(planCourses.isNotEmpty()) {
+
+        val state = rememberLazyListState()
+
         var input by remember { mutableStateOf("") }
 
         var courseInfo by remember { mutableStateOf<PlanCourses?>(null) }
@@ -356,7 +355,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         }
 
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-        LazyColumn {
+        LazyColumn(state = state) {
             items(searchList.size, key = { it }) {item ->
                 val listItem = searchList[item]
                 val course = listItem.course

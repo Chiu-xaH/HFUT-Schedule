@@ -109,6 +109,8 @@ class MyApplication : Application() {
         // 本科招生
         const val UNDERGRADUATE_ADMISSION_URL = "https://bkzs.hfut.edu.cn/"
         const val ADMISSION_COOKIE_HEADER = "zhaosheng.hfut.session.id="
+        // 缴费
+        const val PAY_FEE_URL = "http://pay.hfut.edu.cn/payment/mobileOnlinePay"
         // 三个校区的经纬度 高德地图
         val campusLocations = mapOf<CampusDetail,Location>(
             CampusDetail.FCH to Location(117.20346,31.77014),

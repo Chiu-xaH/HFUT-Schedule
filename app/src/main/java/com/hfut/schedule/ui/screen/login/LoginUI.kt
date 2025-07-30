@@ -184,26 +184,9 @@ fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResu
     // refresh当webVpn关闭才起效，开启时不需要refresh，直接重载图片
     val jSessionId by vm.jSessionId.state.collectAsState()
     val webVpnCookie by DataStoreManager.webVpnCookie.collectAsState(initial = "")
-//    var refresh by remember { mutableStateOf(true) }
-//    if(webVpn) {
-//        refresh = false
-//    } else {
-//        if(refresh) {
-//            LaunchedEffect(Unit) {
-//                launch {
-//                    Handler(Looper.getMainLooper()).post{
-//                        vm.jSessionId.observeForever { result ->
-//                            if(result != null) {
-//                                refresh = false
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
+
     val w by vm.webVpnTicket.state.collectAsState()
-//    prefs.getString("webVpnTicket", "")
+
     val refresh = if(webVpn) {
         w is UiState.Loading
     } else {

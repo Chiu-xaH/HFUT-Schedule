@@ -1,16 +1,25 @@
 package com.hfut.schedule.ui.screen.home.search.function.my.holiday
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -27,58 +38,85 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-  
-import com.hfut.schedule.ui.screen.home.getHolidays
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import dev.chrisbanes.haze.HazeState
+import com.hfut.schedule.ui.screen.AppNavRoute
 
+import com.hfut.schedule.ui.screen.home.getHolidays
+import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionListUI
+import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
+
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Holiday(hazeState : HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun Holiday(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.Holiday.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "法定假日") },
+        headlineContent = { ScrollText(text = AppNavRoute.Holiday.title) },
         leadingContent = {
-            Icon(
-                painterResource(R.drawable.beach_access),
-                contentDescription = "Localized description",
-            )
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
         },
         modifier = Modifier.clickable {
-                showBottomSheet = true
+            navController.navigateAndSaveForTransition(route)
         }
     )
+}
 
-    if (showBottomSheet) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("${DateTimeManager.Date_yyyy}年 国家法定假日")
-                },
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun HolidayScreen(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.Holiday.route }
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    colors = topBarTransplantColor(),
+                    title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.title}") },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.Holiday.icon)
+                    },
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true)
+                )
+            },
             ) { innerPadding ->
-                Column (
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    HolidayUI()
-                }
+            Column (
+                modifier = Modifier.hazeSource(hazeState)
+                    .fillMaxSize()
+            ) {
+                HolidayUI(innerPadding)
             }
         }
     }
 }
 
-
 @Composable
-fun HolidayUI() {
+fun HolidayUI(innerPadding : PaddingValues) {
     val list by remember { mutableStateOf(getHolidays()) }
     LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 11.dp)) {
+        items(2) { InnerPaddingHeight(innerPadding,true) }
         items(list.size) { index->
             val item = list[index]
             val isOffDay = item.isOffDay
@@ -93,6 +131,9 @@ fun HolidayUI() {
                 )
             }
         }
+        item(span = { GridItemSpan(maxLineSpan) })  {
+            BottomTip("数据来源:国务院")
+        }
+        items(2) { InnerPaddingHeight(innerPadding,false) }
     }
-    BottomTip("数据来源:国务院")
 }

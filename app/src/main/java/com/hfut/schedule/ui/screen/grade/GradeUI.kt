@@ -1,23 +1,21 @@
 package com.hfut.schedule.ui.screen.grade
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,23 +51,23 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
-import com.hfut.schedule.ui.screen.grade.analysis.GradeCountUI
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.screen.home.search.TopBarTopIcon
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.component.titleElementShare
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -138,37 +136,31 @@ fun GradeScreen(
             route = targetRoute,
             animatedContentScope = animatedContentScope,
             navHostController = navTopController,
-            modifier = containerShare(Modifier.fillMaxSize(), animatedContentScope, targetRoute, resize = false),
             topBar = {
-                Column {
-                    TopAppBar(
-                        modifier = Modifier.topBarBlur(hazeState),
-                        colors = topAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary
-                        ),
-                        title = { Text("成绩") },
-                        navigationIcon = {
-                            TopBarTopIcon(navTopController,animatedContentScope,targetRoute,R.drawable.article)
-                        },
-                        actions = {
-                            Row {
-                                if(!ifSaved) {
-                                    IconButton(onClick = {
-                                        showSearch = !showSearch
-                                    }) {
-                                        Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
-                                    }
-                                }
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Grade.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navTopController,animatedContentScope,targetRoute,AppNavRoute.Grade.icon)
+                    },
+                    actions = {
+                        Row {
+                            if(!ifSaved) {
                                 IconButton(onClick = {
-                                    showBottomSheet = true
+                                    showSearch = !showSearch
                                 }) {
-                                    Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
+                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
                                 }
                             }
+                            IconButton(onClick = {
+                                showBottomSheet = true
+                            }) {
+                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
+                            }
                         }
-                    )
-                }
+                    }
+                )
             },
             bottomBar = {
                 Column {

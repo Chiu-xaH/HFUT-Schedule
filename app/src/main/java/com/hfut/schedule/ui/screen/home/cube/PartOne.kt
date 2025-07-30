@@ -75,7 +75,7 @@ fun PartOne(navController: NavController) {
     )
     TransplantListItem(
         headlineContent = { Text(text = "应用行为") },
-        supportingContent = { Text(text = "默认偏好 配置")},
+        supportingContent = { Text(text = "偏好配置 缓存清理")},
         leadingContent = {
             Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
         },

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +58,9 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.zIndexBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -63,7 +68,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,code : String?= null) {
+fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,innerPadding : PaddingValues,code : String?= null) {
 
     var semester by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(Unit) {
@@ -88,7 +93,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,code 
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         Box(modifier = Modifier.fillMaxSize()) {
-            CourseSurveyListUI(vm,hazeState = hazeState, scope,code,refresh = refreshNetwork)
+            CourseSurveyListUI(vm,hazeState = hazeState, scope,code,refresh = refreshNetwork,innerPadding)
             if(semester != null) {
                 FloatingActionButton(
                     onClick = { semester = semester!! - 20 },
@@ -120,7 +125,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,code 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CourseSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, scope: CoroutineScope, code : String?, refresh : suspend () -> Unit) {
+private fun CourseSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, scope: CoroutineScope, code : String?, refresh : suspend () -> Unit,innerPadding : PaddingValues) {
     val uiState by vm.surveyListData.state.collectAsState()
     val list = (uiState as UiState.Success).data
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -174,6 +179,7 @@ private fun CourseSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, scop
 
     if(filteredList.isNotEmpty())
         LazyColumn {
+            item { InnerPaddingHeight(innerPadding,true) }
             items(filteredList.size) { item ->
                 val listItem = filteredList[item]
                 val teachers = listItem.lessonSurveyTasks
@@ -244,6 +250,7 @@ private fun CourseSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, scop
             item {
                 PaddingForPageControllerButton()
             }
+            item { InnerPaddingHeight(innerPadding,false) }
         }
     else {
         CenterScreen {

@@ -1,85 +1,123 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import com.hfut.schedule.R
+import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.enumeration.PostMode
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import dev.chrisbanes.haze.HazeState
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Survey(ifSaved : Boolean, vm : NetWorkViewModel, hazeState: HazeState){
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun Survey(
+    ifSaved : Boolean,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+){
+    val route = remember { AppNavRoute.Survey.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = "评教")},
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.verified), contentDescription = "")},
+        headlineContent = { Text(text = AppNavRoute.Survey.title)},
+        leadingContent = {
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+        },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin() else
-                showBottomSheet = true
+            if(ifSaved) refreshLogin() else {
+                navController.navigateAndSaveForTransition(route)
+            }
         }
     )
-    if (showBottomSheet) {
-        var refresh by remember { mutableStateOf(false) }
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("评教") {
-                        SurveyAllButton(vm) {
-                            refresh = !refresh
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun SurveyScreen(
+    vm: NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.Survey.route }
+    var refresh by rememberSaveable { mutableStateOf(false) }
+
+    with(sharedTransitionScope) {
+        TransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Survey.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Survey.icon)
+                    },
+                    actions = {
+                        Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                            SurveyAllButton(vm) {
+                                refresh = !refresh
+                            }
                         }
                     }
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    SurveyUI(vm,hazeState,refresh)
-                }
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            ) {
+                SurveyUI(vm,hazeState,refresh,innerPadding)
             }
         }
     }
 }
+
 @Composable
-fun SurveyAllButton(vm: NetWorkViewModel,refresh : suspend () -> Unit) {
+private fun SurveyAllButton(vm: NetWorkViewModel,refresh : suspend () -> Unit) {
     val surveyListData by vm.surveyListData.state.collectAsState()
     val surveyData by vm.surveyData.state.collectAsState()
     val scope = rememberCoroutineScope()

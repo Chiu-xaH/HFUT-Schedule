@@ -201,13 +201,13 @@ fun JxglstuCourseTableUI(
         }
     }
 
-    var loading by remember { mutableStateOf(load) }
+    var loading by rememberSaveable { mutableStateOf(load) }
 
-    val table = remember { List(30) { mutableStateListOf<String>() } }
-    val tableAll = remember { List(42) { mutableStateListOf<String>() } }
+    val table = rememberSaveable { List(30) { mutableStateListOf<String>() } }
+    val tableAll = rememberSaveable { List(42) { mutableStateListOf<String>() } }
 
     val dateList  =  getScheduleDate(showAll, today)
-    var examList by remember { mutableStateOf(examToCalendar()) }
+    var examList by rememberSaveable { mutableStateOf(examToCalendar()) }
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
@@ -224,7 +224,7 @@ fun JxglstuCourseTableUI(
     }
 
     val times by DataStoreManager.courseTableTime.collectAsState(initial = "")
-    var timeTable by remember { mutableStateOf(emptyList<CourseUnitBean>()) }
+    var timeTable by rememberSaveable { mutableStateOf(emptyList<CourseUnitBean>()) }
     LaunchedEffect(times) {
         timeTable = parseTimeTable(times)
     }

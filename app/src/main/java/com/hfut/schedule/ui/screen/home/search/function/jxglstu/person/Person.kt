@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.person
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -14,32 +17,36 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun PersonUI(vm : NetWorkViewModel,hazeState: HazeState) {
-    var showBottomSheet_Person by remember { mutableStateOf(false) }
+fun PersonUI(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.Person.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = "个人信息") },
-        leadingContent = { Icon(painterResource(R.drawable.person), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable { showBottomSheet_Person = true }
+        headlineContent = { Text(text = AppNavRoute.Person.title) },
+        leadingContent = {
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.Person.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+        },
+        modifier = Modifier.clickable {
+            navController.navigateAndSaveForTransition(route)
+        }
     )
-
-    if (showBottomSheet_Person) {
-
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet_Person = false
-            }, hazeState = hazeState,
-            showBottomSheet = showBottomSheet_Person
-        ) { PersonItems(vm) }
-    }
 }
 

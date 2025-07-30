@@ -57,15 +57,26 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
+//            UpdateItems("新增 应用内的长截图功能","经过调研发现小米设备的自带长截图不适配，有些厂商又适配，直接自己做一个吧")
             UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
             UpdateItems("新增 满绩成绩的礼花动画")//
             UpdateItems("新增 成绩小图标的更多适配")//
-            UpdateItems("新增 为课表方格与查询中心的一级界面适配新的转场动画")//
-            UpdateItems("回归 转场的预测式返回手势","目前还在探索新的方案，现在的预测式动画相比之前被削弱了")//
+            UpdateItems("新增 引入Material Design 3 Expressive设计的默认回弹")//
+            UpdateItems("新增 缓存清理","位于 选项-应用行为")//
+            UpdateItems("新增 为课表方格与查询中心的一级界面等30+场景适配新的转场动画")
+            UpdateItems("回归 转场的预测式返回手势，并优化了返回的延迟","目前还在探索新的方案，现在的预测式动画相比之前被削弱了")//
             UpdateItems("修复 成绩雷达图在五星制成绩显示为0的Bug")//
             UpdateItems("修复 校园邮箱在登陆后短时间不能保持登录的Bug")
             UpdateItems("修复 转专业申请日期错误的Bug")//
-            UpdateItems("优化 部分界面的显示","审美就是轮回，个人信息界面又回到卡片设计了😂")//
+            UpdateItems("修复 无法跳转到云运动APP的Bug")//
+            UpdateItems("优化 卡片滚动动画在长截图操作下自行滚动导致显示不全的问题","暂时砍掉滚动动画了，会回归的")//
+            UpdateItems("优化 削弱向中心运动转场的缩放程度","以减少掉帧")//
+            UpdateItems("优化 部分界面的设计")//
+            UpdateItems("优化 关闭层级实时模糊时的顶栏底栏可读性")//
+            UpdateItems("优化 大卡片的设计")//
+            UpdateItems("修复 教师检索研究方向无效的Bug")//
+            UpdateItems("新增 教师检索一些信息")//
+
         }
 
 

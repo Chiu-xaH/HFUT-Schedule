@@ -4,6 +4,8 @@ import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -33,6 +35,7 @@ private val OLEDColorScheme = darkColorScheme(
 
 
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun AppTheme(
@@ -81,7 +84,7 @@ fun AppTheme(
         }
     }
 
-    MaterialTheme(
+    MaterialExpressiveTheme (
         colorScheme = colorScheme,
         typography = Typography,
         content = content
