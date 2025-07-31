@@ -37,8 +37,6 @@ fun SharedTransitionScope.TopBarNavigateIcon(
         delay(speed*1L)
         delay(1000L)
         show = false
-//        delay(3000L)
-//        show = true
     }
 
     IconButton(onClick = { navController.popBackStack() }) {

@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -64,6 +65,7 @@ import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.hazeSource
@@ -104,10 +106,7 @@ fun WorkScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Work.route }
 
-    var campus by remember { mutableStateOf(getCampus()) }
-
-    var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb,{ showDialogWeb = false }, MyApplication.WORK_URL,"就业网", showTop = false)
+    var campus by rememberSaveable { mutableStateOf(getCampus()) }
 
     val types = remember { listOf(
         WorkSearchType.ALL,
@@ -137,13 +136,26 @@ fun WorkScreen(
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        showDialogWeb = true
-                                    }
-                                ) {
-                                    Icon(painterResource(R.drawable.net),null)
+                                val url = when(campus) {
+                                    Campus.HEFEI -> MyApplication.WORK_URL
+                                    Campus.XUANCHENG -> MyApplication.WORK_XC_URL
                                 }
+                                val iconRoute =  AppNavRoute.WebView.shareRoute(url)
+                                with(sharedTransitionScope) {
+                                    FilledTonalIconButton(
+                                        onClick = {
+                                            navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                                url = url,
+                                                title = "就业网(${campus.description})",
+                                                icon = R.drawable.net,
+                                            ),transplantBackground = true)
+                                        },
+//                                        modifier = containerShare(animatedContentScope = animatedContentScope, route = iconRoute)
+                                    ) {
+                                        Icon(painterResource(R.drawable.net), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = iconRoute))
+                                    }
+                                }
+
                                 FilledTonalButton(
                                     onClick = {
                                         campus = when(campus) {
@@ -189,6 +201,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : Pager
             vm.workSearchResult.clear()
             vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
         }
+
 
         LaunchedEffect(currentPage,campus) {
             // 避免旧数据影响

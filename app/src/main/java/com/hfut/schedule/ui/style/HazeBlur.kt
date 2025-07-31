@@ -112,15 +112,15 @@ fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
 
 
 @Composable
-fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false) : Modifier {
-    val surfaceColor = MaterialTheme.colorScheme.surface
+fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false,color : Color? = null) : Modifier {
+    val surfaceColor = color ?: MaterialTheme.colorScheme.surface
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(.35f)),
-                backgroundColor = if(useTry)surfaceColor else Color.Transparent,
+                backgroundColor = if(useTry) surfaceColor else Color.Transparent,
                 blurRadius = MyApplication.BLUR_RADIUS*1.2f,
                 noiseFactor = 0f
             ),

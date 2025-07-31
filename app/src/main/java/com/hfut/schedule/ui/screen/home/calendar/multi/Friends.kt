@@ -97,18 +97,18 @@ fun AddCourseUI(vm: NetWorkViewModel, hazeState: HazeState) {
         }
     }
 //    MyCustomCard {
-        StyleCardListItem(
-            headlineContent = { Text(text = "从文件导入") },
-            supportingContent = {
-                Text(text = "通过本应用分享课表会生成文本文件，他人接收文件并以本应用打开方式即可导入")
-            },
-            leadingContent = {
-                Icon(painterResource(id = R.drawable.attach_file), contentDescription = "")
-            },
-            modifier = Modifier.clickable {
-                showToast("请在外部应用选择文件以本应用打开")
-            }
-        )
+//        StyleCardListItem(
+//            headlineContent = { Text(text = "从文件导入") },
+//            supportingContent = {
+//                Text(text = "通过本应用分享课表会生成文本文件，他人接收文件并以本应用打开方式即可导入")
+//            },
+//            leadingContent = {
+//                Icon(painterResource(id = R.drawable.attach_file), contentDescription = "")
+//            },
+//            modifier = Modifier.clickable {
+//                showToast("请在外部应用选择文件以本应用打开")
+//            }
+//        )
 //    }
 
 //    MyCustomCard {

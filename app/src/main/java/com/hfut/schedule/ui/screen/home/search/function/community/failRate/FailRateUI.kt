@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.community.failRate
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -32,17 +33,21 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previousPage : (Int) -> Unit,) {
+fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previousPage : (Int) -> Unit,innerPadding : PaddingValues,hazeState: HazeState) {
     val uiState by vm.failRateData.state.collectAsState()
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     var num by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
@@ -50,6 +55,8 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
     Box(modifier = Modifier.fillMaxSize()) {
         PagingController(listState,page, showUp = true,nextPage,previousPage,modifier = Modifier.zIndex(2f))
         LazyColumn(state = listState) {
+            item { Spacer(Modifier.height(CARD_NORMAL_DP)) }
+            item { InnerPaddingHeight(innerPadding,true) }
             items(list.size){ item ->
                 AnimationCardListItem(
                     headlineContent = {  Text(list[item].courseName) },
@@ -63,6 +70,7 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
                 )
             }
             item { PaddingForPageControllerButton() }
+            item { InnerPaddingHeight(innerPadding,false) }
         }
     }
 
@@ -70,17 +78,17 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
 
     if (showBottomSheet) {
 
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+            hazeState = hazeState
         ) {
 
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    BottomSheetTopBar(list[num].courseName)
+                    HazeBottomSheetTopBar(list[num].courseName)
                 },
             ) { innerPadding ->
                 Column(

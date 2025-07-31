@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -77,7 +78,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
+fun sProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
 
     var showBottomSheet_Performance by remember { mutableStateOf(false) }
 
@@ -184,17 +185,19 @@ fun ProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) 
                         )
                 }
         }
-        Button(
+        LargeButton(
             onClick = {
                 if(ifSaved) refreshLogin()
                 else showBottomSheet_Performance = true
             },
+            icon = R.drawable.monitoring,
+            text = "培养方案完成情况",
             modifier = Modifier
                 .fillMaxWidth().scale(scale2.value)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
-        ) {
-            Text(text = "培养方案进度")
-        }
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.secondary
+        )
     }
 
 

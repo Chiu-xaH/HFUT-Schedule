@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import kotlinx.coroutines.launch
 
@@ -122,10 +123,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
         topBar = {
             if(showTop){
                 TopAppBar(
-                    colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
-        ),
+                    colors = topBarTransplantColor(),
                     actions = {
                         Row{
                             if(!visible) {
@@ -141,7 +139,6 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                 )
             }
         },
-
         bottomBar = {
             if(!showTop){
                 Box(

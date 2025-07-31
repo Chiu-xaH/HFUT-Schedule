@@ -153,7 +153,7 @@ fun StuTodayCampusScreen(
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 StartAppIcon(Starter.AppPackages.TODAY_CAMPUS,R.drawable.today_campus_icon)
-                                Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
+                                Spacer(Modifier.width(CARD_NORMAL_DP))
                                 FilledTonalButton(onClick = {
                                     Starter.startWebUrl(MyApplication.STU_URL)
                                 }) {

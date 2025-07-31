@@ -33,6 +33,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
@@ -84,7 +85,7 @@ fun CourseTotal(vm : NetWorkViewModel, hazeState: HazeState,ifSaved : Boolean) {
                                     Text(text = if(next) "下学期" else "本学期")
                                 }
                             }
-                            Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
+                            Spacer(Modifier.width(CARD_NORMAL_DP))
                             FilledTonalButton(
                                 onClick = { sortType = !sortType },) {
                                 Text(text = if(sortType) "开课时间" else "学分高低")
@@ -137,7 +138,7 @@ fun TermFirstlyInfo(list: List<lessons>, isSearch : Boolean) {
             painterResource(R.drawable.category),
             contentDescription = "Localized description",
         ) },
-        color = MaterialTheme.colorScheme.primaryContainer,
+        color = MaterialTheme.colorScheme.secondaryContainer,
         trailingContent = {
             if(!isSearch)
                 Text(text = "学分 ${periodsSum(list)}")

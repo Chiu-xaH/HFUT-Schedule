@@ -290,7 +290,7 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState) {
             },
             supportingContent = {
                 Column {
-                    Text("一些不符合自身条件的选课入口例如异地校区不会显示，但可以通过输入代号进入，代号位于右上角\n免责声明：只供看，不要乱选课，后果自负")
+                    Text("一些不符合自身条件的选课入口例如异地校区不会显示，但可以通过输入代号进入，代号位于右上角")
                     Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                     Row {
                         TextField(
@@ -669,10 +669,9 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
-                        .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(data.course.nameZh,vm, hazeState = hazeState)
+                    ApiToFailRate(data.course.nameZh,vm, hazeState = hazeState,innerPadding)
                 }
             }
         }

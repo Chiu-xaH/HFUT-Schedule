@@ -15,11 +15,9 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -31,13 +29,17 @@ import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.component.screen.Party
+import com.hfut.schedule.ui.component.webview.NewWebViewScreen
 import com.hfut.schedule.ui.screen.grade.GradeScreen
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferScreen
@@ -269,6 +271,14 @@ fun MainHost(
             composable(route = AppNavRoute.Survey.route) {
                 SurveyScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
             }
+            // 图书馆
+            composable(route = AppNavRoute.Library.route) {
+                LibraryScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
+            // 挂科率
+            composable(AppNavRoute.FailRate.route) {
+                FailRateScreen(networkVm, navController,this@SharedTransitionLayout, this@composable)
+            }
             // 全校培养方案
             composable(
                 route = AppNavRoute.ProgramSearch.receiveRoute(),
@@ -279,6 +289,57 @@ fun MainHost(
                 ProgramSearchScreen(
                     networkVm,
                     ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
+            // 培养方案
+            composable(
+                route = AppNavRoute.Program.receiveRoute(),
+                arguments = getArgs(AppNavRoute.Program.Args.entries)
+            ) { backStackEntry ->
+                val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.Program.Args.IF_SAVED.argName) ?: (AppNavRoute.Program.Args.IF_SAVED.default as Boolean)
+
+                ProgramScreen(
+                    networkVm,
+                    ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
+            // 培养方案
+            composable(
+                route = AppNavRoute.NextCourse.receiveRoute(),
+                arguments = getArgs(AppNavRoute.NextCourse.Args.entries)
+            ) { backStackEntry ->
+                val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.NextCourse.Args.IF_SAVED.argName) ?: (AppNavRoute.NextCourse.Args.IF_SAVED.default as Boolean)
+
+                NextCourseScreen(
+                    networkVm,
+                    uiVm,
+                    ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
+            // WebView
+            composable(
+                route = AppNavRoute.WebView.receiveRoute(),
+                arguments = getArgs(AppNavRoute.WebView.Args.entries)
+            ) { backStackEntry ->
+                val url = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.URL.argName) ?: return@composable
+                val cookies = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.COOKIES.argName)
+                val title = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.TITLE.argName) ?: url.substringAfter("://").substringBefore("/")
+                val icon = backStackEntry.arguments?.getInt(AppNavRoute.WebView.Args.ICON.argName)
+
+                NewWebViewScreen(
+                    url,
+                    title,
+                    icon,
+                    cookies,
                     navController,
                     this@SharedTransitionLayout,
                     this@composable,

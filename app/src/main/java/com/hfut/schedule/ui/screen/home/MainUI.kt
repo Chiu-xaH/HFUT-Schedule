@@ -108,6 +108,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
+import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
@@ -162,7 +163,7 @@ fun MainScreen(
     val showBadge by remember { mutableStateOf(getUpdates().version != AppVersion.getVersionName()) }
 
 //判定是否以聚焦作为第一页
-    val first  by remember { mutableStateOf(
+    val first  by rememberSaveable { mutableStateOf(
         if(isLogin) COURSES
         else when (prefs.getBoolean("SWITCHFOCUS",true)) {
                 true -> FOCUS
@@ -185,10 +186,9 @@ fun MainScreen(
 
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    var ifSaved by remember { mutableStateOf(!isLogin) }
+    var ifSaved by rememberSaveable { mutableStateOf(!isLogin) }
     val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
-    var swapUI by remember { mutableIntStateOf(if(ifSaved) defaultCalendar else CourseType.JXGLSTU.code) }
-    var isFriend by remember { mutableStateOf(false) }
+    var swapUI by rememberSaveable { mutableIntStateOf(if(ifSaved) defaultCalendar else CourseType.JXGLSTU.code) }
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
@@ -234,11 +234,8 @@ fun MainScreen(
                         swapUI = newSelected
                     },
                     vm,
-                    onFriendChange = { newed ->
-                        isFriend = newed
-                    },
                     vmUI,
-                    hazeState
+                    hazeState,
                 )
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -302,7 +299,7 @@ fun MainScreen(
     val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpanded } }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var isNavigationIconVisible by remember { mutableStateOf(true) }
+    var isNavigationIconVisible by rememberSaveable { mutableStateOf(true) }
     // 监听滚动状态
     if(targetPage == FOCUS) {
         LaunchedEffect(scrollBehavior.state) {
@@ -310,8 +307,8 @@ fun MainScreen(
                 .collect { collapsedFraction -> isNavigationIconVisible = collapsedFraction < 0.5f }
         }
     }
-    var sortReversed by remember { mutableStateOf(false) }
-    var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
+    var sortReversed by rememberSaveable { mutableStateOf(false) }
+    var sortType by rememberSaveable { mutableStateOf(SortType.TIME_LINE) }
     var showDialog by remember { mutableStateOf(false) }
 
     if(showDialog) {
@@ -508,10 +505,11 @@ fun MainScreen(
                             actions = {
                                 when(targetPage){
                                     COURSES -> {
+                                        val isFriend = CourseType.entries.all { swapUI > it.code }
                                         if(isFriend) {
                                             ApiForTimeTable(swapUI.toString(),hazeState)
                                         } else {
-                                            CourseTotalForApi(vm=vm, isIconOrText = true, hazeState = hazeState, ifSaved = ifSaved)
+                                            CourseTotalForApi(vm=vm, isIconOrText = true, next = swapUI == CourseType.NEXT.code, onNextChange = {}, hazeState = hazeState, ifSaved = ifSaved)
                                         }
 
                                         IconButton(onClick = {
@@ -519,10 +517,10 @@ fun MainScreen(
                                         }) {
                                             Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                                         }
-                                        TextButton(onClick = { showAll = !showAll }) {
+                                        IconButton(onClick = { showAll = !showAll }) {
                                             BadgedBox(badge = {
                                                 if (findCourse) Badge()
-                                            }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "") }
+                                            }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "", tint = MaterialTheme.colorScheme.primary) }
                                         }
                                     }
                                     SEARCH -> {
@@ -551,7 +549,7 @@ fun MainScreen(
                         )
                     }
                     when(targetPage) {
-                        COURSES -> ScheduleTopDate(showAll,today,swapUI == CourseType.JXGLSTU.code)
+                        COURSES -> if(swapUI == CourseType.NEXT.code) null else ScheduleTopDate(showAll,today,swapUI == CourseType.JXGLSTU.code)
                         FOCUS -> CustomTabRow(pagerState, titles)
                         else -> {}
                     }
@@ -639,15 +637,18 @@ fun MainScreen(
                                 }
                             }
                         }) {
+                        val isFriend = CourseType.entries.all { swapUI > it.code }
                         if(!isFriend) {
                             // 非好友课表
                             when (swapUI) {
-                                // 社区 1
+                                // 下学期
+                                CourseType.NEXT.code -> JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,innerPadding)
+                                // 社区
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
-                                // 教务 0
+                                // 教务
                                 CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope)
                                 // 自定义导入课表 数据库id+3=swapUI
-                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-3,{newDate-> today = newDate}, today)
+//                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
                             }
                         }
                         else // 好友课表 swapUI为学号

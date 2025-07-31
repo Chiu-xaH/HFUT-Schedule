@@ -1,5 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.community.bus
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,78 +33,39 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavHostController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.component.webview.WebViewScreen
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun SchoolBus() {
-    val sheetState_Bus = rememberModalBottomSheetState()
-    var showBottomSheet_Bus by remember { mutableStateOf(false) }
-    var showDialog by remember { mutableStateOf(false) }
+fun SchoolBus(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.WebView.shareRoute(MyApplication.BUS_URL) }
+    val icon = remember { R.drawable.directions_bus }
+    val title = remember { "校车" }
     TransplantListItem(
-        headlineContent = { Text(text = "校车") },
+        headlineContent = { Text(text = title) },
         leadingContent = {
-            Icon(
-                painterResource(R.drawable.directions_bus),
-                contentDescription = "Localized description",
-            )
+            with(sharedTransitionScope) {
+                Icon(painterResource(icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
         },
         modifier = Modifier.clickable {
-            showDialog = true
+            navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                url = MyApplication.BUS_URL,
+                title = title,
+                icon = icon,
+            ))
         }
     )
-
-    if (showBottomSheet_Bus) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet_Bus = false
-            },
-            sheetState = sheetState_Bus
-        ) {
-            Column() {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(text = "不想开发")
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-        }
-    }
-    WebDialog(showDialog,{showDialog = false},"file:///android_asset/BusInfos.html","校车")
-//    if (showDialog) {
-//        androidx.compose.ui.window.Dialog(
-//            onDismissRequest = { showDialog = false },
-//            properties = DialogProperties(usePlatformDefaultWidth = false)
-//        ) {
-//            Scaffold(
-//                modifier = Modifier.fillMaxSize(),
-//                topBar = {
-//                    TopAppBar(
-//                        colors = TopAppBarDefaults.mediumTopAppBarColors(
-//                            containerColor = Color.Transparent,
-//                            titleContentColor = MaterialTheme.colorScheme.primary,
-//                        ),
-//                        actions = { IconButton(onClick = { showDialog = false }) {
-//                            Icon(painterResource(id = R.drawable.close), contentDescription = "")
-//                        }
-//                        },
-//                        title = { Text("校车") }
-//                    )
-//                },
-//            ) { innerPadding ->
-//                Column(
-//                    modifier = Modifier
-//                        .padding(innerPadding)
-//                        .fillMaxSize()
-//                ) {
-//                    WebViewScreen("file:///android_asset/BusInfos.html")
-//                }
-//            }
-//        }
-//    }
 }

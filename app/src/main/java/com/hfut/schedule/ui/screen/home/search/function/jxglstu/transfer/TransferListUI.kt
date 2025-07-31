@@ -224,7 +224,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState,innerPaddi
                     },
                     supportingContent = {
                         Column {
-                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n免责声明：只供看，不要报异地校区的志愿，后果自负\n示例：1,3,21,42,43,61,101等...")
+                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,101等...")
                             Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                             Row {
                                 TextField(

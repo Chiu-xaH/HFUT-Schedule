@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.calendar.multi
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -25,10 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,25 +48,23 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -81,16 +79,15 @@ enum class CourseType(val code : Int) {
     COMMUNITY(1),
     NEXT(2)
 }
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MultiScheduleSettings(
     ifSaved : Boolean,
     select : Int,
     onSelectedChange : (Int) -> Unit,
     vm : NetWorkViewModel,
-    onFriendChange : (Boolean) -> Unit,
     vmUI : UIViewModel,
-    hazeState: HazeState
+    hazeState: HazeState,
 ) {
     val context = LocalActivity.current
     var customList by remember { mutableStateOf<List<CustomCourseTableSummary>>(emptyList()) }
@@ -100,19 +97,12 @@ fun MultiScheduleSettings(
 
     var showBottomSheet_add by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    var isFriendMode by remember { mutableStateOf(false) }
 
-    //已选择
-    var selected  by remember { mutableIntStateOf(select) }
     //长按要删除的
     var selectedDelTitle  by remember { mutableStateOf("课表") }
     var selectedDelId  by remember { mutableIntStateOf(0) }
     LaunchedEffect(showDialog,showDialog_Del) {
         customList = DataBaseManager.customCourseTableDao.get()
-    }
-    LaunchedEffect(selected,isFriendMode) {
-        onSelectedChange(selected)
-        onFriendChange(isFriendMode)
     }
     if(showDialog) {
         LittleDialog(
@@ -171,7 +161,7 @@ fun MultiScheduleSettings(
             Scaffold(
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("添加课程表")
+                    HazeBottomSheetTopBar("添加课程表", isPaddingStatusBar = false)
                 }
             ) {innerPadding->
                 Column(modifier = Modifier
@@ -183,46 +173,7 @@ fun MultiScheduleSettings(
         }
     }
 
-
-
-
-    var showBottomSheet_next by remember { mutableStateOf(false) }
-
     var showBottomSheet_loading by remember { mutableStateOf(false) }
-
-    var next by remember { mutableStateOf(isNextOpen()) }
-
-    var showAll by remember { mutableStateOf(false) }
-
-
-    if (showBottomSheet_next) {
-        CustomBottomSheet (
-            onDismissRequest = { showBottomSheet_next = false },
-            showBottomSheet = showBottomSheet_next,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("下学期课程表") {
-                        Row {
-                            CourseTotalForApi(vm=vm, next=next, onNextChange = { next = !next}, hazeState = hazeState, ifSaved = ifSaved)
-                            TextButton(onClick = { showAll = !showAll }) {
-                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                            }
-                        }
-                    }
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState)
-                }
-            }
-        }
-    }
 
     if (showBottomSheet_loading) {
         HazeBottomSheet (
@@ -234,7 +185,7 @@ fun MultiScheduleSettings(
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                HazeBottomSheetTopBar("写入日历日程", isPaddingStatusBar = false)
+                HazeBottomSheetTopBar("写入日历日程(以本学期教务课表为数据源)", isPaddingStatusBar = false)
                 EventUI(vmUI,context)
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -254,7 +205,7 @@ fun MultiScheduleSettings(
     )
 
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-    val normalColor = CardDefaults.outlinedCardColors(containerColor = Color.Transparent)
+    val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         BottomSheetTopBar("多课表") {
@@ -271,57 +222,54 @@ fun MultiScheduleSettings(
 
         LazyRow {
             //教务课表
-            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
+            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP)) }
             item {
-                OutlinedCard (
+                Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
                         .clickable {
-                            isFriendMode = false
-                            selected = CourseType.JXGLSTU.code
+                            onSelectedChange(CourseType.JXGLSTU.code)
                         },
-                    colors = if(selected == CourseType.JXGLSTU.code) selectedColor else normalColor
+                    colors = if(select == CourseType.JXGLSTU.code) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("教务系统", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(selected == CourseType.JXGLSTU.code) FontWeight.Bold else FontWeight.Thin)
+                            , fontWeight = if(select == CourseType.JXGLSTU.code) FontWeight.Bold else FontWeight.Light)
                     }
                 }
             }
             //社区课表
             item {
-                OutlinedCard (
+                Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
                         .clickable {
-                            isFriendMode = false
-                            selected = CourseType.COMMUNITY.code
+                            onSelectedChange(CourseType.COMMUNITY.code)
                         },
-                    colors = if(selected == CourseType.COMMUNITY.code) selectedColor else normalColor
+                    colors = if(select == CourseType.COMMUNITY.code) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("智慧社区", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(selected == CourseType.COMMUNITY.code) FontWeight.Bold else FontWeight.Thin
+                            , fontWeight = if(select == CourseType.COMMUNITY.code) FontWeight.Bold else FontWeight.Light
                         )
                     }
                 }
             }
             //下学期课表
             item {
-                OutlinedCard (
+                Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
                         .clickable {
                             if (isNextOpen()) {
-                                isFriendMode = false
                                 if (ifSaved) {
                                     if (prefs.getInt("FIRST", 0) != 0)
-                                        showBottomSheet_next = true
+                                        onSelectedChange(CourseType.NEXT.code)
                                     else refreshLogin()
-                                } else showBottomSheet_next = true
+                                } else onSelectedChange(CourseType.NEXT.code)
                             } else {
                                 if(!ifSaved) {
                                     showDialogN = true
@@ -330,81 +278,78 @@ fun MultiScheduleSettings(
                                 }
                             }
                         },
-                    colors = if(selected == CourseType.NEXT.code) selectedColor else normalColor
+                    colors = if(select == CourseType.NEXT.code) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("下学期", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(selected == CourseType.NEXT.code) FontWeight.Bold else FontWeight.Thin
+                            , fontWeight = if(select == CourseType.NEXT.code) FontWeight.Bold else FontWeight.Light
                         )
                     }
                 }
             }
             //好友课表
             items(friendList.size) { item ->
-                OutlinedCard (
+                Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
                         .combinedClickable(
                             onClick = {
                                 //点击加载好友课表
                                 val studentId = friendList[item]?.userId
                                 studentId?.let { getFriendsCourse(it, vm) }
-                                isFriendMode = true
                                 if (studentId != null) {
-                                    selected = studentId.toInt()
+                                    onSelectedChange(studentId.toInt())
                                 }
                             },
                             onLongClick = {
                                 //s删除
-
                             }
                         ),
-                    colors = if(selected.toString() == (friendList[item]?.userId ?: 999)) selectedColor else normalColor
+                    colors = if(select.toString() == (friendList[item]?.userId ?: 999)) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
                         friendList[item]?.realname?.let {
                             Text(
                                 it,
                                 modifier = Modifier.align(Alignment.Center),
-                                fontWeight = if(selected.toString() == (friendList[item]?.userId ?: 999)) FontWeight.Bold else FontWeight.Thin
+                                fontWeight = if(select.toString() == (friendList[item]?.userId ?: 999)) FontWeight.Bold else FontWeight.Light
                             )
                         }
                     }
                 }
             }
-            //文件导入课表
-            items(customList.size) { index ->
-                val item = customList[index]
-                val indexOffset = index + 4
-                OutlinedCard (
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = 4.dp)
-                        .combinedClickable(
-                            onClick = {
-                                isFriendMode = false
-                                selected = indexOffset
-                            },
-                            onLongClick = {
-                                //s删除
-                                selectedDelTitle = item.title
-                                selectedDelId = item.id
-                                showDialog = true
-                            }
-                        ),
-                    colors = if(selected == indexOffset) selectedColor else normalColor
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text(
-                            item.title, modifier = Modifier.align(Alignment.Center),
-                            fontWeight = if(selected == indexOffset) FontWeight.Bold else FontWeight.Thin)
-                    }
-                }
-            }
+//            //文件导入课表
+//            items(customList.size) { index ->
+//                val item = customList[index]
+//                val indexOffset = index + 4
+//                OutlinedCard (
+//                    modifier = Modifier
+//                        .size(width = 100.dp, height = 70.dp)
+//                        .padding(horizontal = 4.dp)
+//                        .combinedClickable(
+//                            onClick = {
+//                                indexOffset
+//                            },
+//                            onLongClick = {
+//                                //s删除
+//                                selectedDelTitle = item.title
+//                                selectedDelId = item.id
+//                                showDialog = true
+//                            }
+//                        ),
+//                    colors = if(selected == indexOffset) selectedColor else normalColor
+//                ) {
+//                    Box(modifier = Modifier.fillMaxSize()) {
+//                        Text(
+//                            item.title, modifier = Modifier.align(Alignment.Center),
+//                            fontWeight = if(selected == indexOffset) FontWeight.Bold else FontWeight.Thin)
+//                    }
+//                }
+//            }
             //添加按钮
             item {
-                OutlinedCard (
+                Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
@@ -581,7 +526,7 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
     var loading by remember { mutableStateOf(false) }
     TransplantListItem(
         headlineContent = {
-            Text("为解决APP无法推送通知提醒用户上课，可以将教务课表导入系统本地日历，定时提前提醒")
+            Text("可将课表导入系统日历，由日历定时提醒")
         },
         leadingContent = {
             Icon(painterResource(R.drawable.info),null)

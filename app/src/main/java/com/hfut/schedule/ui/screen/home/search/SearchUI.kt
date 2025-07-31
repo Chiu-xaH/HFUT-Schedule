@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -38,9 +39,10 @@ import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryItem
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.WorkAndRest
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.Huixin
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.HuiXin
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.Electric
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.getHuiXinURL
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.hotWater.HotWater
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.Shower
@@ -108,9 +110,9 @@ fun SearchScreen(
             SearchAppBean("寝室电费 缴费 慧新易校" , { Electric(vm, false, vmUI,hazeState) }),
             SearchAppBean("校园网 慧新易校 缴费" , { LoginWeb(vmUI, false, vm,hazeState) }),
             SearchAppBean("教育邮箱" , { Mail(vm,hazeState) }),
-            SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" , { Huixin() }),
+            SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" , { HuiXin(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
             SearchAppBean("成绩", { Grade(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Grade.receiveRoute()),
-            SearchAppBean("挂科率", { FailRate(vm,hazeState) }),
+            SearchAppBean("挂科率", { FailRate(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.FailRate.route),
             SearchAppBean("课程汇总 教材 课本", { CourseTotal(vm,hazeState,ifSaved) }),
             SearchAppBean("个人信息", { PersonUI(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Person.route),
             SearchAppBean("网址导航 实验室 收纳", { WebUI(hazeState) }),
@@ -120,16 +122,16 @@ fun SearchScreen(
             SearchAppBean("消息中心 通知中心 收纳", { NotificationsCenter(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Notifications.route),
             SearchAppBean("教师评教 教师教评", { Survey(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Survey.route),
             SearchAppBean("通知公告 新闻 教务处", { News() }),
-            SearchAppBean("培养方案", { Program(vm, ifSaved,hazeState,navController,sharedTransitionScope,animatedContentScope) }),
-            SearchAppBean("图书馆 座位预约 借阅", { LibraryItem(vm,hazeState) }),
-            SearchAppBean("校车", { SchoolBus() }),
+            SearchAppBean("培养方案", { Program(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Program.receiveRoute()),
+            SearchAppBean("图书馆 座位预约 借阅", { LibraryItem(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Library.route),
+            SearchAppBean("校车", { SchoolBus(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.BUS_URL)),
             SearchAppBean("报修 维修 后勤", { Repair(hazeState) }),
-            SearchAppBean("下学期课程表 下学期课表", { NextCourse(ifSaved, vmUI,vm, hazeState) }),
+            SearchAppBean("下学期课程表 下学期课表", { NextCourse(ifSaved,vm,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.NextCourse.receiveRoute()),
             SearchAppBean("热水机 趣智校园", { HotWater() }),
             SearchAppBean("空教室", { EmptyRoom(vm, ifSaved,hazeState) }),
             SearchAppBean("乐跑云运动 校园跑 体测 体育测试 体育平台 体检", { LePaoYun(hazeState) }),
             SearchAppBean("作息 校历", { WorkAndRest(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.TimeTable.route),
-            SearchAppBean("学信网", { XueXin() }),
+            SearchAppBean("学信网", { XueXin(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL)),
             SearchAppBean("生活服务 校园 校园 天气 教学楼 建筑 学堂", { Life(vm,hazeState) }),
             SearchAppBean("转专业", { Transfer(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Transfer.route),
             SearchAppBean("开课查询 全校开课", { CoursesSearch(ifSaved, vm,hazeState) }),
@@ -138,7 +140,7 @@ fun SearchScreen(
             SearchAppBean("实习", { Practice(ifSaved) }),
             SearchAppBean("微信专区 校友 毕业 第二课堂 今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常 空教室 教务 同班同学 快递 取件码 团员 团建", { WeChatGo(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.Wechat.route),
             SearchAppBean("今日校园 学工系统 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.StuTodayCampus.route),
-            SearchAppBean("大创 大学生创新创业", { IETP() }),
+            SearchAppBean("大创 大学生创新创业", { IETP(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
             SearchAppBean("就业 实习 春招 双选 秋招", { Work(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Work.route),
             SearchAppBean("国家法定节假日 假期 节日", { Holiday(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.Holiday.route),
             SearchAppBean("云端共建平台 信息共建 日程 网课 网址导航", { Supabase(vm) }),

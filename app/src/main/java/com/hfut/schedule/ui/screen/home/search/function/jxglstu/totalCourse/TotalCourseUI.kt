@@ -242,10 +242,9 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
             ) { innerPadding ->
                 Column(
                     modifier = Modifier
-                        .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(lessons.course.nameZh,vm, hazeState =hazeState )
+                    ApiToFailRate(lessons.course.nameZh,vm, hazeState =hazeState ,innerPadding)
                 }
             }
         }

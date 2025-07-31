@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.search.function.school.ietp
+package com.hfut.schedule.ui.screen.home.search.function.huiXin
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -16,27 +16,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.network.ParseJsons.getMy
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun IETP(
+fun HuiXin(
     navController : NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val route = remember { AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL) }
-    val icon = remember { R.drawable.groups }
-    val title = remember { "大创系统" }
+    val icon = remember { R.drawable.corporate_fare }
+    val title = remember { "慧新易校" }
+    val url = remember { getHuiXinURL() }
+    val route = AppNavRoute.WebView.shareRoute(url)
+
     TransplantListItem(
-        headlineContent = { Text(text = title) },
+        headlineContent = { Text(text = "生活缴费") },
+        overlineContent = { Text(title) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
@@ -44,10 +45,16 @@ fun IETP(
         },
         modifier = Modifier.clickable {
             navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
-                url = MyApplication.IETP_URL,
+                url = url,
                 title = title,
                 icon = icon,
             ))
         }
     )
+}
+
+fun getHuiXinURL(): String {
+    val auth = SharedPrefs.prefs.getString("auth","")
+    val urlHuixin = MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth
+    return urlHuixin
 }

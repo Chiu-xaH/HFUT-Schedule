@@ -214,10 +214,12 @@ fun AnimationCustomCard(
 //    }
 
     MyCustomCard(
-//        modifier = modifier.graphicsLayer {
+        modifier = modifier
+//            .graphicsLayer {
 //            scaleX = animatedProgress.value
 //            scaleY = animatedProgress.value
-//        },
+//        }
+        ,
         containerColor = containerColor,
         hasElevation = hasElevation,
     ) {
@@ -264,7 +266,7 @@ fun LargeCard(
             leadingContent = leftTop,
             usePadding = false
         )
-        PaddingHorizontalDivider(isDashed = true)
+//        PaddingHorizontalDivider(isDashed = true)
         //下面的内容
         content()
     }
@@ -316,7 +318,7 @@ fun LoadingLargeCard(
                 leadingContent = leftTop,
                 usePadding = false
             )
-            PaddingHorizontalDivider(isDashed = true)
+//            PaddingHorizontalDivider(isDashed = true)
             content()
         }
     }

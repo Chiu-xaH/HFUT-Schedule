@@ -111,6 +111,10 @@ class MyApplication : Application() {
         const val ADMISSION_COOKIE_HEADER = "zhaosheng.hfut.session.id="
         // 缴费
         const val PAY_FEE_URL = "http://pay.hfut.edu.cn/payment/mobileOnlinePay"
+        // 学信网
+        const val XUE_XIN_URL = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
+        // 校车
+        const val BUS_URL = "file:///android_asset/BusInfos.html"
         // 三个校区的经纬度 高德地图
         val campusLocations = mapOf<CampusDetail,Location>(
             CampusDetail.FCH to Location(117.20346,31.77014),
