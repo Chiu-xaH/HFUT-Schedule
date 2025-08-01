@@ -2,6 +2,9 @@ package com.hfut.schedule.ui.screen.home.focus
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -29,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
@@ -77,7 +81,9 @@ private const val TAB_RIGHT = 1
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
 fun TodayScreen(
     vm : NetWorkViewModel,
@@ -88,7 +94,10 @@ fun TodayScreen(
     state: PagerState,
     hazeState: HazeState,
     sortType: SortType,
-    sortReversed : Boolean
+    sortReversed : Boolean,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
 ) {
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
@@ -219,7 +228,7 @@ fun TodayScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
                         TAB_LEFT -> {
-                            item { FocusCard(vmUI,vm,hazeState) }
+                            item { FocusCard(vmUI,vm,hazeState, navController,sharedTransitionScope,animatedContentScope) }
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {

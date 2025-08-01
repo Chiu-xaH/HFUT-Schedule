@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.status.StatusUI2
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 
@@ -93,7 +94,7 @@ fun TransferScreen(
 
     val route = remember { AppNavRoute.Transfer.route }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -224,7 +225,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState,innerPaddi
                     },
                     supportingContent = {
                         Column {
-                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,101等...")
+                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,101,81等...")
                             Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                             Row {
                                 TextField(

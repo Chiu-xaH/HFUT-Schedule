@@ -32,6 +32,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.topBarBlur
@@ -85,7 +86,7 @@ fun SurveyScreen(
     var refresh by rememberSaveable { mutableStateOf(false) }
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -10,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,42 +18,47 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Button
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCourses
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.item
-import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.chart.PieChart
+import com.hfut.schedule.ui.component.chart.PieChartData
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -62,6 +66,7 @@ import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.status.CustomLineProgressIndicator
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -70,6 +75,8 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -77,19 +84,10 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 
+
+
 @Composable
-fun sProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState) {
-
-    var showBottomSheet_Performance by remember { mutableStateOf(false) }
-
-    val uiState by vm.programCompletionData.state.collectAsState()
-    var loadingCard = uiState !is UiState.Success
-    val scale2 = animateFloatAsState(
-        targetValue = if (loadingCard) 0.97f else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
-
+fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
     val programData by produceState<ProgramResponse?>(initialValue = null) {
         if(!ifSaved) {
             onListenStateHolder(vm.programData) { data ->
@@ -105,10 +103,6 @@ fun sProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
     }
 
 
-    var completion by remember { mutableStateOf(
-        item("培养方案课程",0.0,0.0).let { nilItem -> ProgramCompletionResponse(nilItem, listOf(nilItem,nilItem,nilItem)) }
-    ) }
-
     LaunchedEffect(Unit) {
         if(!ifSaved) {
             val cookie = getJxglstuCookie(vm)
@@ -117,6 +111,64 @@ fun sProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
                     vm.programData.clear()
                     vm.getProgram(it)
                 }
+            }
+        }
+    }
+
+    val loading = programData == null
+    Column(modifier = Modifier.padding(innerPadding)) {
+        DividerTextExpandedWith(text = getPersonInfo().program ?: "方案安排") {
+            Box {
+                androidx.compose.animation.AnimatedVisibility (
+                    visible = loading,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Spacer(modifier = Modifier.height(5.dp))
+                        LoadingUI()
+                    }
+                }
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = !loading,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    ProgramChildrenUI(programData,hazeState,vm,ifSaved)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadding : PaddingValues) {
+    val emptyData = remember {  item("培养方案课程",0.0,1.0).let { nilItem -> ProgramCompletionResponse(nilItem, listOf(nilItem,nilItem,nilItem)) } }
+    val completion by produceState(initialValue = emptyData) {
+        if(!ifSaved) {
+            onListenStateHolder(vm.programCompletionData) { data ->
+                value = data
+            }
+        } else {
+            value = try {
+                val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
+                val data : List<ProgramCompletionResponse> = Gson().fromJson(prefs.getString("PROGRAM_COMPETITION",""), listType)
+                data[0]
+            } catch (e : Exception) {
+                emptyData
+            }
+        }
+    }
+
+    val loading = completion == emptyData
+
+    LaunchedEffect(Unit) {
+        if(!ifSaved) {
+            val cookie = getJxglstuCookie(vm)
+            cookie?.let {
                 launch {
                     vm.programCompletionData.clear()
                     vm.getProgramCompletion(it)
@@ -125,106 +177,53 @@ fun sProgramScreen(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState)
         }
     }
 
-    if (showBottomSheet_Performance ) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet_Performance = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet_Performance
-        ) {
 
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("培养方案 完成情况")
-                },
-            ) {innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ){
-                    ProgramPerformance(vm,hazeState)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-
-
-    LaunchedEffect(uiState) {
-        if (uiState is UiState.Success) {
-            val response = (uiState as UiState.Success).data
-            response.let {
-                completion = it
-            }
-        }
-    }
-
-    DividerTextExpandedWith(text = if(ifSaved)"完成情况(登录后可查看)" else "完成情况",openBlurAnimation = false) {
-        LoadingLargeCard(
-            title = "已修 ${completion.total.actual}/${completion.total.full}",
-            rightTop = {
-                val res = completion.total.actual/completion.total.full * 100.0
-                Text(text = "${formatDecimal(res,1)} %")
-            },
-            loading = loadingCard
-        ) {
-            for(i in 0 until completion.other.size step 2)
-                Row {
-                    TransplantListItem(
-                        headlineContent = { Text(text = completion.other[i].name) },
-                        overlineContent = {Text(text = "${completion.other[i].actual}/${completion.other[i].full}", fontWeight = FontWeight.Bold) },
-                        modifier = Modifier.weight(.5f)
-                    )
-                    if(i+1 < completion.other.size)
-                        TransplantListItem(
-                            headlineContent = { Text(text = completion.other[i+1].name) },
-                            overlineContent = {Text(text = "${completion.other[i+1].actual}/${completion.other[i+1].full}",fontWeight = FontWeight.Bold) },
-                            modifier = Modifier.weight(.5f)
-                        )
-                }
-        }
-        LargeButton(
-            onClick = {
-                if(ifSaved) refreshLogin()
-                else showBottomSheet_Performance = true
-            },
-            icon = R.drawable.monitoring,
-            text = "培养方案完成情况",
-            modifier = Modifier
-                .fillMaxWidth().scale(scale2.value)
-                .padding(horizontal = APP_HORIZONTAL_DP, vertical = 5.dp),
-            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-            contentColor = MaterialTheme.colorScheme.secondary
-        )
-    }
-
-
-    val loading = programData == null
-    DividerTextExpandedWith(text = getPersonInfo().program ?: "方案安排") {
-        Box {
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
+    val state = rememberScrollState()
+    Column(
+        modifier = Modifier.verticalScroll(state)
+    ) {
+        InnerPaddingHeight(innerPadding,true)
+        DividerTextExpandedWith("详情",openBlurAnimation = false) {
+            completion.let {
+                LoadingLargeCard(
+                    title = "已修 ${it.total.actual}/${it.total.full}",
+                    rightTop = {
+                        val res = it.total.actual/it.total.full * 100.0
+                        Text(text = "${formatDecimal(res,1)} %")
+                    },
+                    loading = loading
                 ) {
-                    Spacer(modifier = Modifier.height(5.dp))
-                    LoadingUI()
+                    for(i in 0 until it.other.size step 2)
+                        Row {
+                            TransplantListItem(
+                                headlineContent = { Text(text = it.other[i].name) },
+                                overlineContent = {Text(text = "${it.other[i].actual}/${it.other[i].full}", fontWeight = FontWeight.Bold) },
+                                modifier = Modifier.weight(.5f)
+                            )
+                            if(i+1 < it.other.size)
+                                TransplantListItem(
+                                    headlineContent = { Text(text = it.other[i+1].name) },
+                                    overlineContent = {Text(text = "${it.other[i+1].actual}/${it.other[i+1].full}",fontWeight = FontWeight.Bold) },
+                                    modifier = Modifier.weight(.5f)
+                                )
+                        }
                 }
             }
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                ProgramChildrenUI(programData,hazeState,vm,ifSaved)
+            Spacer(Modifier.height(APP_HORIZONTAL_DP))
+
+            CustomLineProgressIndicator(
+                (completion.total.actual/completion.total.full).toFloat(),
+                color = MaterialTheme.colorScheme.error,
+            )
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
+            for (i in 0 until completion.other.size) {
+                CustomLineProgressIndicator((completion.other[i].actual/completion.other[i].full).toFloat())
+                if(i != completion.other.size-1) {
+                    Spacer(Modifier.height(CARD_NORMAL_DP*2))
+                }
             }
         }
+        InnerPaddingHeight(innerPadding,false)
     }
 }
 
@@ -267,10 +266,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         }
 
 
-
-
         LazyColumn() {
-
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
                 AnimationCardListItem(
@@ -319,7 +315,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 }
             }
         }
-
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -448,10 +443,12 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                     },
                     colors = if(specially) MaterialTheme.colorScheme.errorContainer else null,
                     overlineContent = { Text("真实选修性") },
-                    modifier = Modifier.weight(.5f).clickable {
-                        if(specially)
-                            showToast("虽然类型为$type,但是培养方案标注为必修")
-                    }
+                    modifier = Modifier
+                        .weight(.5f)
+                        .clickable {
+                            if (specially)
+                                showToast("虽然类型为$type,但是培养方案标注为必修")
+                        }
                 )
             }
             Row {
@@ -471,9 +468,11 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                             Icon(painterResource(R.drawable.tag),null)
                         },
                         overlineContent = { Text("课程代码") },
-                        modifier = Modifier.weight(.5f).clickable {
-                            ClipBoardUtils.copy(it)
-                        }
+                        modifier = Modifier
+                            .weight(.5f)
+                            .clickable {
+                                ClipBoardUtils.copy(it)
+                            }
                     )
                 }
             }

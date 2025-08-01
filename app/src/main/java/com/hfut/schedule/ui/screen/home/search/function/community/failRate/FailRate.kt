@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -112,7 +113,7 @@ fun FailRateScreen(
     val scope = rememberCoroutineScope()
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

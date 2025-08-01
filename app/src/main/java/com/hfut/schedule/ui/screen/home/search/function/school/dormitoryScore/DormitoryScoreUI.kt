@@ -68,6 +68,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.dialog.MenuChip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
@@ -161,7 +162,7 @@ fun DormitoryScoreScreen(
 
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -174,7 +175,7 @@ fun DormitoryScoreScreen(
                             TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.DormitoryScore.icon)
                         },
                         actions = {
-                            Row() {
+                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 if(showitem4)
                                     IconButton(onClick = {roomNumber = roomNumber.replaceFirst(".$".toRegex(), "")}) {
                                         Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }

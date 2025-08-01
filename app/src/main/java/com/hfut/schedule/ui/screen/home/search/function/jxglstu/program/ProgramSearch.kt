@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.BottomTip
@@ -88,7 +89,7 @@ fun ProgramSearchScreen(
 
     val route = remember { AppNavRoute.ProgramSearch.receiveRoute() }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

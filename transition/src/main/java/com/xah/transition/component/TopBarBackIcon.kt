@@ -28,7 +28,7 @@ fun SharedTransitionScope.TopBarNavigateIcon(
     navController : NavHostController,
     animatedContentScope: AnimatedContentScope,
     route : String,
-    icon : Int
+    icon : Int,
 ) {
     val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
     var show by remember { mutableStateOf(true) }
@@ -37,6 +37,10 @@ fun SharedTransitionScope.TopBarNavigateIcon(
         delay(speed*1L)
         delay(1000L)
         show = false
+        if(TransitionState.transplantBackground) {
+            delay(3000L)
+            show = true
+        }
     }
 
     IconButton(onClick = { navController.popBackStack() }) {

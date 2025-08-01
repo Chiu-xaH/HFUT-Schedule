@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.InnerPaddingHeight
@@ -103,7 +104,7 @@ fun TeacherSearchScreen(
     }
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

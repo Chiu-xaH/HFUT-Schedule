@@ -92,6 +92,7 @@ import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.model.jxglstu.result
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
@@ -989,6 +990,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _,json -> parseProgramCompletion(json) }
     )
     private fun parseProgramCompletion(json : String) : ProgramCompletionResponse = try {
+        saveString("PROGRAM_COMPETITION", json)
         val listType = object : TypeToken<List<ProgramCompletionResponse>>() {}.type
         val data : List<ProgramCompletionResponse> = Gson().fromJson(json, listType)
         data[0]
@@ -1003,6 +1005,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         )
     }
     private fun parseProgramPerformance(json : String) : ProgramBean = try {
+        saveString("PROGRAM_PERFORMANCE", json)
         Gson().fromJson(json,ProgramBean::class.java)
     } catch (e : Exception) { throw e }
 

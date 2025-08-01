@@ -101,7 +101,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     val auth = remember { prefs.getString("auth", "") }
     val zjgdUrl = remember { MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth }
     var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
+    WebDialog(showDialogWeb, url = zjgdUrl, title = "慧新易校",showChanged = { showDialogWeb = false })
     // 支付用的变量
     var showDialog2 by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }

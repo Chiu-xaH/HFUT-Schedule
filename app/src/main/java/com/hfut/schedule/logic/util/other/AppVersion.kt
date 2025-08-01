@@ -60,6 +60,8 @@ object AppVersion {
 
     val deviceName: String = Build.MODEL
 
+    val CAN_PREDICTIVE = sdkInt >= 33
+
     fun isInDebugRunning() : Boolean = deviceName.startsWith("sdk_gphone") == true
     fun isPreview() : Boolean = getVersionName().contains("Preview")
 

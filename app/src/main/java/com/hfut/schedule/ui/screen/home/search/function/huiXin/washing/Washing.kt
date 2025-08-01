@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.webview.WebDialog
@@ -117,7 +118,7 @@ fun HaiLeWashingScreen(
 
     val route = remember { AppNavRoute.HaiLeWashing.route }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -181,7 +182,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
     )
     val auth = prefs.getString("auth","")
     var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
+    WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false })
     val route = remember { AppNavRoute.HaiLeWashing.route }
 
 

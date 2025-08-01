@@ -5,10 +5,31 @@ import com.hfut.schedule.logic.model.community.CourseResult
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
 import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.model.jxglstu.lessonResponse
+import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.network.ParseJsons.getMy
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import java.time.LocalDate
+
+private fun parseDatumCourse(result: String) : List<lessons> = try {
+    Gson().fromJson(result,lessonResponse::class.java).lessons
+} catch (e : Exception) {
+    emptyList<lessons>()
+}
+
+
+fun getJxglstuStartDate(): LocalDate {
+    try {
+        val list = parseDatumCourse(prefs.getString("courses","")!!)
+        return LocalDate.parse(list[0].semester.startDate, formatter_YYYY_MM_DD)
+    } catch (e : Exception) {
+        return getStartWeekFromCommunity()
+    }
+}
+
+
 // 之前的奇葩脑回路，完全看不懂咋写的
 private fun getCourse(friendUserName : String? = null): List<courseBasicInfoDTOList>  {
     return try {

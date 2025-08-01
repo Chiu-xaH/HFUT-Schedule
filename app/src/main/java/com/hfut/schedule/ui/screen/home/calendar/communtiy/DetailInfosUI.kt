@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -183,7 +184,7 @@ fun CourseDetailApiScreen(
     val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,index) }
 
     with(sharedTransitionScope) {
-        TransitionScaffold(
+        CustomTransitionScaffold(
             animatedContentScope = animatedContentScope,
             route = route,
             navHostController = navController,

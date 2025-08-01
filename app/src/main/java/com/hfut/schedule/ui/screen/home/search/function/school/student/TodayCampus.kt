@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.URLImage
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.status.StatusUI2
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
@@ -136,7 +137,7 @@ fun StuTodayCampusScreen(
     val paperState = rememberPagerState(pageCount = { titles.size })
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

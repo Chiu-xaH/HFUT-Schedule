@@ -178,7 +178,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     }
 
     WebDialog(showDialog,{ showDialog = false },url,"付款码")
-    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校", showTop = false)
+    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
 
 
     if(showBottomSheet_Fee) {

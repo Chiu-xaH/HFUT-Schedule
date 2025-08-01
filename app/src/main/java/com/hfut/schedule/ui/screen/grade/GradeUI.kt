@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
@@ -132,7 +133,7 @@ fun GradeScreen(
         )
     )
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = targetRoute,
             animatedContentScope = animatedContentScope,
             navHostController = navTopController,

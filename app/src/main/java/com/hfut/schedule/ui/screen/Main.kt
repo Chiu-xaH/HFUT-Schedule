@@ -30,22 +30,30 @@ import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.NewWebViewScreen
+import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse.SelectCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationsScreen
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.NotificationBoxScreen
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebNavigationScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
@@ -247,6 +255,10 @@ fun MainHost(
             composable(route = AppNavRoute.Work.route) {
                 WorkScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
             }
+            // 开课查询
+            composable(route = AppNavRoute.CourseSearch.route) {
+                CourseSearchScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
+            }
             // 个人信息
             composable(route = AppNavRoute.Person.route) {
                 PersonScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
@@ -279,6 +291,22 @@ fun MainHost(
             composable(AppNavRoute.FailRate.route) {
                 FailRateScreen(networkVm, navController,this@SharedTransitionLayout, this@composable)
             }
+            // 选课
+            composable(AppNavRoute.SelectCourse.route) {
+                SelectCourseScreen(networkVm, uiVm,navController,this@SharedTransitionLayout, this@composable)
+            }
+            // 网址导航
+            composable(AppNavRoute.WebNavigation.route) {
+                WebNavigationScreen(navController,this@SharedTransitionLayout, this@composable)
+            }
+            // 收纳
+            composable(AppNavRoute.NotificationBox.route) {
+                NotificationBoxScreen(navController,this@SharedTransitionLayout, this@composable)
+            }
+            // 生活服务
+            composable(AppNavRoute.Life.route) {
+                LifeScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+            }
             // 全校培养方案
             composable(
                 route = AppNavRoute.ProgramSearch.receiveRoute(),
@@ -309,7 +337,22 @@ fun MainHost(
                     this@composable,
                 )
             }
-            // 培养方案
+            // 课程汇总
+            composable(
+                route = AppNavRoute.TotalCourse.receiveRoute(),
+                arguments = getArgs(AppNavRoute.TotalCourse.Args.entries)
+            ) { backStackEntry ->
+                val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.TotalCourse.Args.IF_SAVED.argName) ?: (AppNavRoute.TotalCourse.Args.IF_SAVED.default as Boolean)
+
+                TotalCourseScreen(
+                    networkVm,
+                    ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
+            // 下学期课表
             composable(
                 route = AppNavRoute.NextCourse.receiveRoute(),
                 arguments = getArgs(AppNavRoute.NextCourse.Args.entries)
@@ -325,6 +368,21 @@ fun MainHost(
                     this@composable,
                 )
             }
+            // 培养方案完成情况
+            composable(
+                route = AppNavRoute.ProgramCompetition.receiveRoute(),
+                arguments = getArgs(AppNavRoute.ProgramCompetition.Args.entries)
+            ) { backStackEntry ->
+                val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.ProgramCompetition.Args.IF_SAVED.argName) ?: (AppNavRoute.ProgramCompetition.Args.IF_SAVED.default as Boolean)
+
+                ProgramCompetitionScreen(
+                    networkVm,
+                    ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
             // WebView
             composable(
                 route = AppNavRoute.WebView.receiveRoute(),
@@ -332,7 +390,7 @@ fun MainHost(
             ) { backStackEntry ->
                 val url = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.URL.argName) ?: return@composable
                 val cookies = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.COOKIES.argName)
-                val title = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.TITLE.argName) ?: url.substringAfter("://").substringBefore("/")
+                val title = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.TITLE.argName) ?: getPureUrl(url)
                 val icon = backStackEntry.arguments?.getInt(AppNavRoute.WebView.Args.ICON.argName)
 
                 NewWebViewScreen(

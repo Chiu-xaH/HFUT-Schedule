@@ -113,7 +113,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             else
                                 FeeType.ELECTRIC_HEFEI_GRADUATE.code
                         }
-                }&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
+                }&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false })
 
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }

@@ -153,7 +153,7 @@ sealed class AppNavRoute(val route: String) {
         }
         fun shareRoute(url : String)  = withArgs(Args.URL.argName to url)
         fun receiveRoute() = receiveRoutePair(Args.entries)
-        fun withArgs(url : String,title : String?,cookies : String? = null,icon : Int? = null): String = withArgs(
+        fun withArgs(url : String,title : String?,cookies : String? = null,icon : Int = Args.ICON.default as Int): String = withArgs(
             Args.URL.argName to url,
             Args.COOKIES.argName to cookies,
             Args.TITLE.argName to title,
@@ -204,13 +204,17 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object WebNavigation : AppNavRoute("WEB_NAVIGATION") {
-        val icon = R.drawable.net
-        val title = "网址导航"
-    }
     object SelectCourse : AppNavRoute("SELECT_COURSE") {
         val icon = R.drawable.ads_click
         val title = "选课"
+    }
+    object WebNavigation : AppNavRoute("WEB_NAVIGATION") {
+        val icon = R.drawable.explore
+        val title = "网址导航"
+    }
+    object NotificationBox : AppNavRoute("BOX") {
+        val icon = R.drawable.notifications
+        val title = "收纳"
     }
     object Life : AppNavRoute("LIFE") {
         val icon = R.drawable.near_me
@@ -223,9 +227,24 @@ sealed class AppNavRoute(val route: String) {
     object TotalCourse : AppNavRoute("TOTAL_COURSE") {
         val icon = R.drawable.category
         val title = "课程汇总"
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            IF_SAVED("ifSaved", NavType.BoolType,true,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(ifSaved: Boolean): String = withArgs(
+            Args.IF_SAVED.argName to ifSaved
+        )
     }
     object ProgramCompetition : AppNavRoute("PROGRAM_COMPETITION") {
         val title = "培养方案完成情况"
+        val icon = R.drawable.leaderboard
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            IF_SAVED("ifSaved", NavType.BoolType,true,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(ifSaved: Boolean): String = withArgs(
+            Args.IF_SAVED.argName to ifSaved
+        )
     }
     object EmptyRoom : AppNavRoute("EMPTY_ROOM") {
         val icon = R.drawable.meeting_room

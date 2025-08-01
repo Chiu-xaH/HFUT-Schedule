@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -86,7 +87,7 @@ fun AdmissionScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Admission.route }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -200,7 +201,7 @@ fun AdmissionRegionScreen(
     val titles = remember { data.value.map { it.toString() } }
     val pagerState = rememberPagerState { titles.size }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

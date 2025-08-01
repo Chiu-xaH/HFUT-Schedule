@@ -1,56 +1,48 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import dev.chrisbanes.haze.HazeState
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
 
 
 @SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun CoursesSearch(ifSaved :  Boolean, vm : NetWorkViewModel, hazeState : HazeState) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun CoursesSearch(
+    ifSaved :  Boolean,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.CourseSearch.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "开课查询") },
-       // overlineContent = { Text(text = "查询下学期")},
+        headlineContent = { ScrollText(text = AppNavRoute.CourseSearch.title) },
         leadingContent = {
-            Icon(
-                painterResource(R.drawable.search),
-                contentDescription = "Localized description",
-            )
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
         },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin() else
-            showBottomSheet = true
+            if(ifSaved) refreshLogin()
+            else navController.navigateAndSaveForTransition(route)
         }
     )
-
-    if (showBottomSheet) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet,
-        ) {
-            CourseSearchUI(vm, hazeState )
-        }
-    }
 }
+
 

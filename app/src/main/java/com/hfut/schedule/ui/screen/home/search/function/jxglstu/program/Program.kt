@@ -1,26 +1,38 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -28,16 +40,24 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.zIndexBlur
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
@@ -85,7 +105,8 @@ fun Program(
 }
 
 
-
+private const val PAGE_COMPETITION = 0
+private const val PAGE_PROGRAM = 1
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProgramScreen(
@@ -97,42 +118,95 @@ fun ProgramScreen(
 ) {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-
     val route = remember { AppNavRoute.Program.receiveRoute() }
+    val titles = remember { listOf("完成情况","教学计划") }
+    val pageState = rememberPagerState(
+        initialPage = if(prefs.getString("PROGRAM_COMPETITION","") != null) PAGE_COMPETITION else PAGE_PROGRAM
+    ) { titles.size }
+    val competitionRoute = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
+
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
-            topBar = {
-                TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Program.title) },
-                    navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Program.icon)
-                    },
-                    actions = {
-                        FilledTonalButton(
-                            onClick = {
-                                navController.navigateAndSaveForTransition(AppNavRoute.ProgramSearch.withArgs(ifSaved))
-                            },
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                        ) {
-                            Text("全校培养方案")
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = pageState.currentPage == PAGE_COMPETITION,
+                    exit = AppAnimationManager.toBottomAnimation.exit,
+                    enter = AppAnimationManager.toBottomAnimation.enter
+                ) {
+                    Box(modifier = Modifier.bottomBarBlur(hazeState, true)) {
+                        with(sharedTransitionScope) {
+                            LargeButton(
+                                iconModifier = iconElementShare(animatedContentScope=animatedContentScope, route = competitionRoute),
+                                onClick = {
+                                    if(prefs.getString("PROGRAM_PERFORMANCE","")?.contains("children") == true || !ifSaved) navController.navigateAndSaveForTransition(AppNavRoute.ProgramCompetition.withArgs(ifSaved))
+                                    else refreshLogin()
+                                },
+                                icon = AppNavRoute.ProgramCompetition.icon,
+                                text = AppNavRoute.ProgramCompetition.title,
+                                modifier = containerShare(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            horizontal = APP_HORIZONTAL_DP,
+                                            vertical = CARD_NORMAL_DP
+                                        )
+                                        .navigationBarsPadding(),
+                                    animatedContentScope,
+                                    competitionRoute
+                                ),
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.75f),
+                                contentColor = MaterialTheme.colorScheme.secondary
+                            )
                         }
                     }
-                )
+                }
+            },
+            topBar = {
+                Column(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                ) {
+                    TopAppBar(
+                        colors = topBarTransplantColor(),
+                        title = { Text(AppNavRoute.Program.title) },
+                        navigationIcon = {
+                            TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Program.icon)
+                        },
+                        actions = {
+                            FilledTonalButton(
+                                onClick = {
+                                    navController.navigateAndSaveForTransition(AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                                },
+                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                            ) {
+                                Text("全校培养方案")
+                            }
+                        }
+                    )
+                    CustomTabRow(pageState,titles)
+                }
             },
         ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                sProgramScreen(vm,ifSaved,hazeState)
-                InnerPaddingHeight(innerPadding,false)
+            HorizontalPager(state = pageState) { page ->
+                Column(
+                    modifier = Modifier
+                        .hazeSource(hazeState)
+                        .fillMaxSize()
+                ) {
+                    when(page) {
+                        PAGE_PROGRAM -> {
+                            ProgramScreenMini(vm,ifSaved,hazeState,innerPadding)
+                        }
+                        PAGE_COMPETITION -> {
+                            ProgramCompetitionScreenMini(vm,ifSaved,innerPadding)
+                        }
+                    }
+                }
             }
         }
     }
 }
+
+

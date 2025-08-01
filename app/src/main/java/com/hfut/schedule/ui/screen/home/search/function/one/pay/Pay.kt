@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -99,7 +100,7 @@ fun FeeScreen(
 
     val route = remember { AppNavRoute.Fee.route }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

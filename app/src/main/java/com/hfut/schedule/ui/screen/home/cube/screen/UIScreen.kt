@@ -85,11 +85,13 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
         val animationList = remember { DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed } }
 
+        val webViewDark by DataStoreManager.webViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
         val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
         val currentColorModeIndex by DataStoreManager.colorModeFlow.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val animationSpeed by DataStoreManager.animationSpeedType.collectAsState(initial = DataStoreManager.AnimationSpeed.NORMAL.code)
+        val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
         LaunchedEffect(animationSpeed) {
             AppAnimationManager.updateAnimationSpeed()
@@ -122,6 +124,18 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                     },
                     modifier = Modifier.clickable {
                         cor.launch { DataStoreManager.savePureDark(!currentPureDark) }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "强制网页深色模式") },
+                    supportingContent = { Text(text = "将强制深色的代码注入到网页中，以尝试适配应用的深色模式，如有网页显示异常，请暂时关闭") },
+                    leadingContent = { Icon(painterResource(R.drawable.syringe), contentDescription = "Localized description",) },
+                    trailingContent = {
+                        Switch(checked = webViewDark, onCheckedChange = { cor.launch { DataStoreManager.saveWebViewDark(!webViewDark) } })
+                    },
+                    modifier = Modifier.clickable {
+                        cor.launch { DataStoreManager.saveWebViewDark(!webViewDark) }
                     }
                 )
                 PaddingHorizontalDivider()
@@ -164,33 +178,25 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         }
 
         DividerTextExpandedWith("动效") {
-//            StyleCardListItem(
-//                headlineContent = { Text("新转场动效下的新顶栏 提示") },
-//                leadingContent = {
-//                    Icon(painterResource(R.drawable.info),null)
-//                },
-//                supportingContent = {
-//                    ColumnVertical {
-//                        Text("标题左侧按钮始终为返回上一级界面，即使图标不为叉号")
-//                        TopAppBar(
-//                            title = { Text("标题") },
-//                            navigationIcon = {
-//                                TopBarTopIconTip(R.drawable.article)
-//                            },
-//                            actions = {
-//                                Row {
-//                                    IconButton(onClick = {
-//                                        showToast("搜索")
-//                                    }) {
-//                                        Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
-//                                    }
-//                                }
-//                            }
-//                        )
-//                    }
-//                }
-//            )
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "预测式返回") },
+                    supportingContent = {
+                        if(AppVersion.CAN_PREDICTIVE) {
+                            Text(text = "同Activity之间的部分转场可使用跟手的返回手势")
+                        } else {
+                            Text(text = "需为 Android 13+")
+                        }
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
+                    trailingContent = {
+                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { cor.launch { DataStoreManager.savePredict(!enablePredictive) }})
+                    },
+                    modifier = Modifier.clickable {
+                        cor.launch { DataStoreManager.savePredict(!enablePredictive) }
+                    }
+                )
+                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "全局动画速率") },
                     leadingContent = { Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",) },

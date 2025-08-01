@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
@@ -68,6 +69,9 @@ import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.containerShare
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -85,14 +89,8 @@ fun LibraryScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Library.route }
 
-    var showDialog by remember { mutableStateOf(false) }
-    WebDialog(showDialog,{ showDialog = false },MyApplication.NEW_LIBRARY_URL,"新图书馆")
-    var showDialog2 by remember { mutableStateOf(false) }
-    WebDialog(showDialog2,{ showDialog2 = false },MyApplication.LIBRARY_SEAT + "home/web/f_second","座位预约(合肥校区)(校园网)")
-
-
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -108,18 +106,39 @@ fun LibraryScreen(
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    showDialog = true
+                                    navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                        url = MyApplication.NEW_LIBRARY_URL,
+                                        title = "图书馆",
+                                        icon = R.drawable.net,
+                                    ),transplantBackground = true)
                                 }
                             ) {
-                                Icon(painterResource(R.drawable.net),null)
+                                with(sharedTransitionScope) {
+                                    Icon(
+                                        painterResource(R.drawable.net),
+                                        contentDescription = null,
+                                        modifier = iconElementShare(
+                                            animatedContentScope = animatedContentScope,
+                                            route = AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL)
+                                        )
+                                    )
+                                }
                             }
                             Spacer(Modifier.width(CARD_NORMAL_DP))
-                            FilledTonalButton(
-                                onClick = {
-                                    showDialog2 = true
+                            val seatTitle = remember { "座位预约" }
+                            val seatUrl = remember { MyApplication.LIBRARY_SEAT + "home/web/f_second" }
+                            with(sharedTransitionScope) {
+                                FilledTonalButton(
+                                    onClick = {
+                                        navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                            url = seatUrl,
+                                            title = seatTitle,
+                                        ))
+                                    },
+                                    modifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(seatUrl))
+                                ) {
+                                    Text(text = seatTitle)
                                 }
-                            ) {
-                                Text(text = "座位预约")
                             }
                         }
                     }
@@ -129,7 +148,6 @@ fun LibraryScreen(
             Column(
                 modifier = Modifier.padding(innerPadding)
                     .hazeSource(hazeState)
-//                    .verticalScroll(rememberScrollState())
                     .fillMaxSize()
             ) {
                 BooksUI(vm,hazeState)

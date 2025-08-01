@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-07-26") },
+                overlineContent = { Text(text = "2025-08-01") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,29 +58,30 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
-            UpdateItems("新增 满绩成绩的礼花动画")//
-            UpdateItems("新增 成绩小图标的更多适配")//
-            UpdateItems("新增 引入Material Design 3 Expressive设计的默认回弹")//
-            UpdateItems("新增 缓存清理","位于 选项-应用行为")//
+            UpdateItems("新增 满绩成绩的礼花动画")
+            UpdateItems("新增 成绩小图标的更多适配")
+            UpdateItems("新增 引入Material Design 3 Expressive设计的默认回弹")
+            UpdateItems("新增 缓存清理","位于 选项-应用行为")
             UpdateItems("新增 为课表方格与查询中心的一级界面等30+场景适配新的转场动画")
-            UpdateItems("新增 教师检索一些信息")//
-            UpdateItems("新增 培养方案完成情况缓存机制和项目筛选")//
-            UpdateItems("回归 转场的预测式返回手势，并优化了返回的延迟","目前还在探索新的方案，现在的预测式动画相比之前被削弱了")//
-            UpdateItems("修复 成绩雷达图在五星制成绩显示为0的Bug")//
-            UpdateItems("修复 校园邮箱在登陆后短时间不能保持登录的Bug")
-            UpdateItems("修复 教师检索研究方向无效的Bug")//
-            UpdateItems("修复 转专业申请日期错误的Bug")//
-            UpdateItems("修复 无法跳转到云运动APP的Bug")//
-            UpdateItems("优化 卡片滚动动画在长截图操作下自行滚动导致显示不全的问题","暂时砍掉滚动动画了，会回归的")//
-            UpdateItems("优化 削弱向中心运动转场的缩放程度","以减少掉帧")//
-            UpdateItems("优化 部分界面的设计")//
-            UpdateItems("优化 关闭层级实时模糊时的顶栏底栏可读性")//
-            UpdateItems("优化 大卡片的设计")//
-            UpdateItems("优化 多课表下学期课程表界面层级与其他课表的统一性")//
-            UpdateItems("修复 好友课表切换之间显示无限加载的Bug")//
-            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")//
-            UpdateItems("下线 空教室","后期重构完成后回归")//
-            UpdateItems("下线 成绩-统计","后期重构完成后回归")//
+            UpdateItems("新增 教师检索一些信息")
+            UpdateItems("新增 预测式返回手势开关，回归转场的预测式返回手势","位于 选项-界面显示-动效")
+            UpdateItems("新增 网页强制深色","位于 选项-界面显示-色彩")
+            UpdateItems("重构 培养方案完成情况","添加缓存机制、重构界面")
+            UpdateItems("重构 应用内打开网页的一些逻辑与界面显示")
+            UpdateItems("修复 成绩雷达图在五星制成绩显示为0的Bug")
+            UpdateItems("修复 教师检索研究方向为空的Bug")
+            UpdateItems("修复 转专业申请日期错误的Bug")
+            UpdateItems("修复 无法跳转到云运动APP的Bug")
+            UpdateItems("修复 好友课表切换之间显示无限加载的Bug")
+            UpdateItems("修复 用户协议界面层级实时模糊失效的Bug")
+            UpdateItems("优化 卡片滚动动画在长截图操作下自行滚动导致显示不全的问题","暂时砍掉滚动动画了，后续看情况回归")
+            UpdateItems("优化 削弱向中心运动转场的缩放程度","以减少掉帧")
+            UpdateItems("优化 部分界面的设计")
+            UpdateItems("优化 关闭层级实时模糊时的顶栏底栏可读性")
+            UpdateItems("优化 多课表下学期课程表界面层级与其他课表的统一性")
+            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
+            UpdateItems("下线 空教室","后期重构完成后回归")
+            UpdateItems("下线 成绩-统计","后期重构完成后回归")
         }
 
 

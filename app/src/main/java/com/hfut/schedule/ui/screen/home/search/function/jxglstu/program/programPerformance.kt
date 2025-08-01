@@ -1,41 +1,63 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
+import com.hfut.schedule.logic.model.jxglstu.ProgramBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -45,35 +67,101 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.status.LoadingScreen
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun ProgramCompetitionScreen(
+    vm: NetWorkViewModel,
+    ifSaved: Boolean,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
+
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.ProgramCompetition.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.ProgramCompetition.icon)
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            ) {
+                ProgramPerformance(vm,hazeState,ifSaved,innerPadding)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
+private fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState,ifSaved : Boolean,innerPadding : PaddingValues) {
+    val data by produceState<ProgramBean?>(initialValue = null) {
+        if(!ifSaved) {
+            onListenStateHolder(vm.programPerformanceData) { data ->
+                value = data
+            }
+        } else {
+            value = try {
+                Gson().fromJson(prefs.getString("PROGRAM_PERFORMANCE",""),ProgramBean::class.java)
+            } catch (e : Exception) {
+                null
+            }
+        }
+    }
+    val loading = data == null
+
     var showBottomSheet by remember { mutableStateOf(false) }
     var moduleIndex by remember { mutableIntStateOf(-1) }
     var title by remember { mutableStateOf("完成情况") }
-    val uiState by vm.programPerformanceData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie(vm)
         cookie?.let {
             // 禁用每次加载 特殊 数据较大 省流量
-            if(uiState !is UiState.Success) {
-                vm.programPerformanceData.clear()
-                vm.getProgramPerformance(it)
-            }
+            vm.programPerformanceData.clear()
+            vm.getProgramPerformance(it)
         }
     }
     LaunchedEffect(Unit) {
-        refreshNetwork()
+        if(!ifSaved) {
+            refreshNetwork()
+        }
     }
 
-    if (showBottomSheet) {
+    if (showBottomSheet && data != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
@@ -92,18 +180,20 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    PerformanceInfo(vm, moduleIndex,hazeState)
+                    PerformanceInfo(data!!, moduleIndex,hazeState)
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
         }
     }
-
-    CommonNetworkScreen(uiState, loadingText = "培养方案较大 加载较慢", onReload = refreshNetwork) {
-        val bean = (uiState as UiState.Success).data
-        val dataList = bean.moduleList
-        val outCourse = bean.outerCourseList
+    if(loading) {
+        LoadingScreen()
+    } else {
+        if(data == null) return
+        val dataList = data!!.moduleList
+        val outCourse = data!!.outerCourseList
         LazyColumn {
+            item { InnerPaddingHeight(innerPadding,true) }
             dataList.let { it ->
                 items(it.size) { index->
                     val item = it[index]
@@ -152,7 +242,7 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
             }
             if(outCourse.isNotEmpty()) {
-                val summary = bean.outerCompletionSummary
+                val summary = data!!.outerCompletionSummary
                 item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                 item {
                     AnimationCustomCard(containerColor = cardNormalColor()) {
@@ -195,6 +285,7 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
                     }
                 }
             }
+            item { InnerPaddingHeight(innerPadding,false) }
         }
     }
 }
@@ -202,7 +293,7 @@ fun ProgramPerformance(vm : NetWorkViewModel, hazeState: HazeState) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: HazeState) {
+private fun PerformanceInfo(bean : ProgramBean, moduleIndex : Int, hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var input by remember { mutableStateOf("") }
@@ -250,10 +341,8 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
         )
     }
 
-    Spacer(modifier = Modifier.height(5.dp))
+    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 
-    val uiState by vm.programPerformanceData.state.collectAsState()
-    val bean = (uiState as UiState.Success).data
 
     if(moduleIndex != 999) {
         val dataList = bean.moduleList[moduleIndex]
@@ -264,15 +353,16 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                 filteredList.add(i)
             }
         }
+        filteredList.sortBy { it.resultType }
         LazyColumn {
             if(filteredList.isNotEmpty()) {
                 items(filteredList.size) { index ->
                     val item = filteredList[index]
                     val term = transferTerm(item.terms)
                     val type = when(item.resultType) {
-                        "PASSED" -> "通过"
+                        "PASSED" -> "已修"
                         "TAKING" -> "在修"
-                        "UNREPAIRED" -> "待修"
+                        "UNREPAIRED" -> "未修"
                         else -> item.resultType
                     }
                         AnimationCardListItem(
@@ -295,7 +385,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                                         text = text + term[i] + " "
                                     }
                                 }
-                                Text(text = "第 ${text}学期" + " | 学分 ${item.credits}")
+                                Text(text = "第${text.replace(" ",",").dropLast(1)}学期" + " | 学分 ${item.credits}")
                             },
                             leadingContent = { PerfermanceIcons(item.resultType) },
                             modifier = Modifier.clickable {
@@ -315,14 +405,15 @@ private fun PerformanceInfo(vm: NetWorkViewModel, moduleIndex : Int, hazeState: 
                 filteredList.add(i)
             }
         }
+        filteredList.sortBy { it.resultType }
         LazyColumn {
             if(filteredList.isNotEmpty()) {
                 items(filteredList.size) { index ->
                     val item = filteredList[index]
                     val type = when(item.resultType) {
-                        "PASSED" -> "通过"
+                        "PASSED" -> "已修"
                         "TAKING" -> "在修"
-                        "UNREPAIRED" -> "待修"
+                        "UNREPAIRED" -> "未修"
                         else -> item.resultType
                     }
                         AnimationCardListItem(
@@ -380,9 +471,9 @@ fun PerfermanceIcons(type : String) {
 fun ProgramInfoItem(item : CourseItem) {
     val term = transferTerm(item.terms)
     val type = when(item.resultType) {
-        "PASSED" -> "已通过"
-        "TAKING" -> "本学期在修"
-        "UNREPAIRED" -> "待修"
+        "PASSED" -> "已修"
+        "TAKING" -> "在修"
+        "UNREPAIRED" -> "未修"
         else -> item.resultType
     }
     var text = ""

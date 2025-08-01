@@ -1,68 +1,98 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.life
 
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.hfut.schedule.R
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.text.ScrollText
+import androidx.navigation.NavHostController
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Life(vm : NetWorkViewModel, hazeState: HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
-
+fun Life(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val route = remember { AppNavRoute.Life.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "生活服务") },
-        leadingContent = { Icon(painter = painterResource(id = R.drawable.near_me), contentDescription = null) },
+        headlineContent = { ScrollText(text = AppNavRoute.Life.title) },
+        leadingContent = {
+            with(sharedTransitionScope) {
+                Icon(painterResource(AppNavRoute.Life.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+            }
+        },
         modifier = Modifier.clickable {
-                showBottomSheet = true
+            navController.navigateAndSaveForTransition(route)
         }
     )
+}
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun LifeScreen(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.Life.route }
 
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("生活服务")
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding).verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    LifeScreen(vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Life.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Life.icon)
+                    },
+                )
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier.hazeSource(hazeState)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+            ) {
+                InnerPaddingHeight(innerPadding,true)
+                LifeScreenMini(vm)
+                InnerPaddingHeight(innerPadding,false)
             }
         }
     }

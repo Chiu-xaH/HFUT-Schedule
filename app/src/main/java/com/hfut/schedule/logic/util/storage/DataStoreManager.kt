@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -83,6 +84,8 @@ object DataStoreManager {
     private val TODAY_CAMPUS_TIP = booleanPreferencesKey("today_campus_tip")
     private val COURSE_BOOK = stringPreferencesKey("course_book")
     private val ANIMATION_SPEED = intPreferencesKey("animation_speed")
+    private val WEB_VIEW_DARK = booleanPreferencesKey("web_view_dark")
+    private val PREDICTIVE = booleanPreferencesKey("predictive")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -111,6 +114,9 @@ object DataStoreManager {
     suspend fun saveTodayCampusTip(value: Boolean) = saveValue(TODAY_CAMPUS_TIP,value)
     suspend fun saveCourseBook(value: String) = saveValue(COURSE_BOOK,value)
     suspend fun saveAnimationSpeed(value: AnimationSpeed) = saveValue(ANIMATION_SPEED,value.code)
+    suspend fun saveWebViewDark(value: Boolean) = saveValue(WEB_VIEW_DARK,value)
+    suspend fun savePredict(value: Boolean) = saveValue(PREDICTIVE,value)
+
 
     val animationTypeFlow = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookieFlow = getFlow(STU_COOKIE,EMPTY_STRING)
@@ -135,6 +141,8 @@ object DataStoreManager {
     val webVpnCookie = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val autoTerm = getFlow(AUTO_TERM,true)
     val todayCampusTip = getFlow(TODAY_CAMPUS_TIP,true)
+    val enablePredictive = getFlow(PREDICTIVE,CAN_PREDICTIVE)
+    val webViewDark = getFlow(WEB_VIEW_DARK,true)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val autoTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }

@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.webview.WebDialog
@@ -120,7 +121,7 @@ fun WorkScreen(
     val pagerState = rememberPagerState(pageCount = { types.size })
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -141,21 +142,19 @@ fun WorkScreen(
                                     Campus.XUANCHENG -> MyApplication.WORK_XC_URL
                                 }
                                 val iconRoute =  AppNavRoute.WebView.shareRoute(url)
-                                with(sharedTransitionScope) {
-                                    FilledTonalIconButton(
-                                        onClick = {
-                                            navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
-                                                url = url,
-                                                title = "就业网(${campus.description})",
-                                                icon = R.drawable.net,
-                                            ),transplantBackground = true)
-                                        },
-//                                        modifier = containerShare(animatedContentScope = animatedContentScope, route = iconRoute)
-                                    ) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                            url = url,
+                                            title = "就业网(${campus.description})",
+                                            icon = R.drawable.net,
+                                        ),transplantBackground = true)
+                                    },
+                                ) {
+                                    with(sharedTransitionScope) {
                                         Icon(painterResource(R.drawable.net), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = iconRoute))
                                     }
                                 }
-
                                 FilledTonalButton(
                                     onClick = {
                                         campus = when(campus) {
@@ -192,7 +191,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : Pager
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
-    WebDialog(showDialog,{ showDialog = false }, url,webTitle, showTop = false)
+    WebDialog(showDialog,{ showDialog = false }, url,webTitle)
 
     HorizontalPager(state = pagerState) { page ->
         val uiState by vm.workSearchResult.state.collectAsState()

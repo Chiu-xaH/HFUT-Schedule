@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -94,7 +95,7 @@ fun ExamScreen(
     val route = remember { AppNavRoute.Exam.route }
 
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

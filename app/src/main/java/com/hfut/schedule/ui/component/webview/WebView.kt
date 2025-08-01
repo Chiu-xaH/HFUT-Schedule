@@ -1,14 +1,18 @@
 package com.hfut.schedule.ui.component.webview
 
 import android.annotation.SuppressLint
+import android.graphics.Canvas
 import android.webkit.CookieManager
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,60 +23,97 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
+import androidx.core.graphics.createBitmap
+import androidx.core.graphics.get
+import androidx.webkit.WebSettingsCompat
+import androidx.webkit.WebViewFeature
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLEntity
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
+import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.zIndexBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,title : String,showTop : Boolean) {
+fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,title : String) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var visible by remember { mutableStateOf(true) }
+    val isDark = isThemeDark()
+    val webViewDark by DataStoreManager.webViewDark.collectAsState(initial = true)
+    var backCount by remember { mutableIntStateOf(1) }
+    var currentUrl by remember { mutableStateOf(url) }
+    var currentTitle by remember { mutableStateOf(title) }
+
+    var fullScreen by remember { mutableStateOf(false) }
     BackHandler {
+        if(fullScreen) {
+            fullScreen = false
+        }
         if (webView?.canGoBack() == true) {
             webView?.goBack()
         } else {
-            showChanged.invoke()
+            if(backCount > 0) {
+                showToast("再滑一次退出")
+                backCount--
+            } else {
+                showChanged.invoke()
+            }
         }
     }
     var click by remember { mutableStateOf(false) }
     val isExist by produceState(initialValue = false, key1 = click) {
-        value = DataBaseManager.webUrlDao.isExist(url)
+        value = DataBaseManager.webUrlDao.isExist(currentUrl)
     }
     val scope = rememberCoroutineScope()
 
@@ -94,16 +135,26 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
             painterResource(id = R.drawable.net), contentDescription = "") }
 
         IconButton(onClick = {
+            if(!fullScreen) {
+                fullScreen = true
+                visible = true
+            } else {
+                fullScreen = false
+                visible = false
+            }
+        }) { Icon(
+            painterResource(id = if(!fullScreen)R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "") }
+        IconButton(onClick = {
             scope.launch {
                 if(isExist) {
-                    DataBaseManager.webUrlDao.delFromUrl(url)
+                    DataBaseManager.webUrlDao.delFromUrl(currentUrl)
                     showToast("已取消收藏")
                 } else {
                     DataBaseManager.webUrlDao.insert(
                         WebUrlDTO(
-                            name = title,
+                            name = currentTitle,
                             type = WebURLType.COLLECTION,
-                            url = url
+                            url = currentUrl
                         ).toEntity()
                     )
                     showToast("收藏成功")
@@ -114,15 +165,24 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
             painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = "") }
 
 
-        IconButton(onClick = { ShareTo.shareString(url) }) { Icon(
+        IconButton(onClick = { ShareTo.shareString(currentUrl) }) { Icon(
             painterResource(id = R.drawable.ios_share), contentDescription = "") }
     }
+    var loading by remember { mutableStateOf(true) }
 
+    var topColor by remember { mutableStateOf<Color?>(null) }
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            if(showTop){
+            AnimatedVisibility(
+                visible = !fullScreen,
+                enter = AppAnimationManager.toTopAnimation.enter,
+                exit = AppAnimationManager.toTopAnimation.exit
+            ) {
                 TopAppBar(
+                    modifier = Modifier.topBarBlur(hazeState,useTry = true, color = topColor),
                     colors = topBarTransplantColor(),
                     actions = {
                         Row{
@@ -130,59 +190,50 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                                 IconButton(
                                     onClick = { visible = true }
                                 ) {
-                                    Icon(painterResource(R.drawable.more_vert),null)
+                                    Icon(painterResource(R.drawable.more_vert),null, tint = MaterialTheme.colorScheme.primary)
                                 }
                             }
                         }
                     },
-                    title = { ScrollText(title) }
+                    title = {
+                        Column {
+                            ScrollText(currentTitle)
+                            ScrollText(
+                                getPureUrl(currentUrl),
+                                modifier = Modifier.padding(start = 2.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    },
                 )
             }
         },
-        bottomBar = {
-            if(!showTop){
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(APP_HORIZONTAL_DP * 2.75f),
-                    contentAlignment = Alignment.Center // 关键在这里
-                ) {
-                    if(!visible) {
-                        IconButton (
-                            onClick = { visible = true },
-                            modifier = Modifier.align(Alignment.CenterEnd)
-                        ) {
-                            Icon(painterResource(R.drawable.more_vert),null, tint = MaterialTheme.colorScheme.primary)
-                        }
-                    }
-                    Text(
-                        url.substringAfter("://").substringBefore("/"),
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 17.sp
-                    )
-                }
-            }
-        }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-
+        val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
+        val top = innerPadding.calculateTopPadding().value.toInt()
+        Box(modifier = Modifier.fillMaxSize()) {
             AnimatedVisibility(
                 visible = visible,
                 enter = AppAnimationManager.hiddenRightAnimation.enter,
                 exit = AppAnimationManager.hiddenRightAnimation.exit,
                 modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
             ) {
-                VerticalFloatingToolbar (expanded = true) {
+                VerticalFloatingToolbar (
+                    expanded = true,
+                    colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
+                    modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).zIndexBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
+                ) {
                     tools()
                     IconButton(onClick = { visible = false }) { Icon(
                         painterResource(id = R.drawable.visibility_off), contentDescription = "") }
                 }
+
+            }
+            if(loading) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter).padding(innerPadding).zIndex(2f)
+                )
             }
             AndroidView(
                 factory = { context ->
@@ -192,6 +243,18 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                         settings.builtInZoomControls = true
                         settings.displayZoomControls = false
 
+                        // 深色模式
+                        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                            // Android 13+
+                            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
+                        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                            // Android 10‑12
+                            val mode = if (isDark)
+                                WebSettingsCompat.FORCE_DARK_ON
+                            else
+                                WebSettingsCompat.FORCE_DARK_OFF
+                            WebSettingsCompat.setForceDark(settings, mode)
+                        }
 
                         // 启用 Cookie
                         val cookieManager = CookieManager.getInstance()
@@ -214,8 +277,82 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                         } ?: run {
                             loadUrl(url) // 没有 Cookie 直接加载
                         }
-
+                        // 标题获取
+                        if(!currentUrl.startsWith("file://")) {
+                            webChromeClient = object : WebChromeClient() {
+                                override fun onReceivedTitle(view: WebView?, title: String?) {
+                                    if (title != null) {
+                                        currentTitle = title
+                                    }
+                                    super.onReceivedTitle(view, title)
+                                }
+                            }
+                        }
                         webViewClient = object : WebViewClient() {
+                            override fun onPageFinished(view: WebView?, url: String?) {
+                                super.onPageFinished(view, url)
+                                if (url != null) {
+                                    currentUrl = url
+                                }
+                                webView = this@apply
+                                if (isDark && webViewDark) {
+                                    val css = """
+                                html, body {
+                                    background-color: #121212 !important;
+                                    color: #eeeeee !important;
+                                }
+                                * {
+                                    background-color: transparent !important;
+                                    color: #eeeeee !important;
+                                    border-color: #333333 !important;
+                                }
+                                a { color: #8ab4f8 !important; }
+                            """.trimIndent()
+
+                                    val js = """
+                                (function() {
+                                    let style = document.createElement('style');
+                                    style.type = 'text/css';
+                                    style.appendChild(document.createTextNode(`$css`));
+                                    document.head.appendChild(style);
+                                })();
+                            """.trimIndent()
+
+                                    view?.evaluateJavascript(js, null)
+                                }
+                                view?.postDelayed({
+                                    try {
+                                        val bitmap = createBitmap(view.width, view.height)
+                                        val canvas = Canvas(bitmap)
+                                        view.draw(canvas)
+
+                                        // 读取顶部某个位置的像素颜色，比如(10, 10)
+                                        val colors = (0 until 5).map { bitmap[0, it] }
+                                        val avgColorInt = colors.reduce { acc, c ->
+                                            val a = (android.graphics.Color.alpha(acc) + android.graphics.Color.alpha(c)) / 2
+                                            val r = (android.graphics.Color.red(acc) + android.graphics.Color.red(c)) / 2
+                                            val g = (android.graphics.Color.green(acc) + android.graphics.Color.green(c)) / 2
+                                            val b = (android.graphics.Color.blue(acc) + android.graphics.Color.blue(c)) / 2
+                                            android.graphics.Color.argb(a, r, g, b)
+                                        }
+                                        topColor =  Color(avgColorInt)
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }, 100) // 延迟一点确保绘制完成
+                                // 注入 JS，为网页内容添加 padding（单位 px）
+                                view?.evaluateJavascript(
+                                    """
+        (function() {
+            document.body.style.paddingTop = '${top}px';
+            document.body.style.paddingBottom = '${bottom}px';
+        })();
+        """.trimIndent(),
+                                    null
+                                )
+                                loading = false
+                            }
+
                             override fun shouldInterceptRequest(
                                 view: WebView?,
                                 request: WebResourceRequest?
@@ -228,6 +365,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                                 return super.shouldInterceptRequest(view, request)
                             }
                             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                                loading = true
                                 val urlS = request?.url.toString()
 
                                 if (urlS.contains("download")) { // 识别下载链接
@@ -242,14 +380,17 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                         // 监听 WebView 滚动事件
                         setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
                             if (scrollY > oldScrollY) {
-                                visible = false // 向下滚动时隐藏 Toolbar
+                                // 向下滚动
+                                // 隐藏topbar
+                                visible = false
                             } else if (scrollY < oldScrollY) {
-//                                visible = true // 向上滚动时显示 Toolbar
+                                // 向上滚动
+                                // 显示topbar
                             }
                         }
                     }
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize().hazeSource(hazeState)
             )
         }
     }

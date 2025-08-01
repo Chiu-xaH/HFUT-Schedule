@@ -55,6 +55,7 @@ fun SharedTransitionScope.TransitionScaffold(
     floatingActionButton: @Composable (() -> Unit) = {},
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor : Color? = null,
+    enablePredictive : Boolean = true,
     content: @Composable ((PaddingValues) -> Unit)
 ) {
     val scale = remember { Animatable(1f) }
@@ -88,7 +89,7 @@ fun SharedTransitionScope.TransitionScaffold(
             useBackHandler = true
         }
     }
-    if(useBackHandler)
+    if(useBackHandler && enablePredictive)
         TransitionPredictiveBackHandler(navHostController,scale)
 
     // 回退后恢复上一个页面的显示状态

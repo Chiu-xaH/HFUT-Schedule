@@ -26,8 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -88,39 +86,33 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTabRow
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.container.StyleCardListItem
- 
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
-import com.hfut.schedule.ui.screen.home.calendar.multi.CustomSchedules
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
-import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
-import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
-import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
-import com.hfut.schedule.ui.screen.home.search.function.my.webLab.LabUI
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -131,9 +123,11 @@ import com.hfut.schedule.ui.style.transitionBackgroundF
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -184,7 +178,6 @@ fun MainScreen(
     var showAll by rememberSaveable { mutableStateOf(DateTimeManager.isOnWeekend()) }
     var findCourse by remember { mutableStateOf(false) }
 
-    var showBottomSheet by remember { mutableStateOf(false) }
 
     var ifSaved by rememberSaveable { mutableStateOf(!isLogin) }
     val defaultCalendar = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
@@ -192,33 +185,7 @@ fun MainScreen(
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
-    if (showBottomSheet) {
-        saveString("Notifications", getNotifications().size.toString())
-        HazeBottomSheet(onDismissRequest = { showBottomSheet = false }, showBottomSheet = showBottomSheet, isFullExpand = true, hazeState = hazeState) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("收纳")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                ){
-                    MyAPIItem()
-                    DividerTextExpandedWith("通知") {
-                        NotificationItems()
-                    }
-                    DividerTextExpandedWith("实验室") {
-                        LabUI()
-                    }
-                }
-            }
-        }
-    }
+
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
 
     if (showBottomSheet_multi) {
@@ -402,12 +369,18 @@ fun MainScreen(
             }
 //            ApiFromLife(vm, hazeState)
             ApiToSupabase(vm)
-
-            IconButton(onClick = { showBottomSheet = true }) {
+            val iconRoute = remember { AppNavRoute.NotificationBox.route }
+            IconButton(onClick = {
+                navHostTopController.navigateAndSaveForTransition(iconRoute,transplantBackground = true)
+            }) {
                 BadgedBox(badge = {
                     if (getNotifications().size.toString() != prefs.getString("Notifications",""))
                         Badge()
-                }) { Icon(painterResource(id = R.drawable.notifications), contentDescription = "", tint = MaterialTheme.colorScheme.primary) }
+                }) {
+                    with(sharedTransitionScope) {
+                        Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = iconRoute))
+                    }
+                }
             }
         }
     }
@@ -658,7 +631,7 @@ fun MainScreen(
                 }
                 composable(FOCUS.name) {
                     Scaffold {
-                        TodayScreen(vm,vm2,innerPadding,vmUI,ifSaved,pagerState, hazeState = hazeState,sortType,sortReversed)
+                        TodayScreen(vm,vm2,innerPadding,vmUI,ifSaved,pagerState, hazeState = hazeState,sortType,sortReversed,navHostTopController,sharedTransitionScope,animatedContentScope)
                     }
                 }
                 composable(SEARCH.name) {

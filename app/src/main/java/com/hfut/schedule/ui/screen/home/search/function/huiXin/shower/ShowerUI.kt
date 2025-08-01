@@ -126,7 +126,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
     )
     val auth = prefs.getString("auth","")
     var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(pagerState.currentPage == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false }, showTop = false)
+    WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(pagerState.currentPage == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false })
     val savedPhoneNumber = prefs.getString("PhoneNumber","")
     var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
     var balance by remember { mutableStateOf(0) }

@@ -19,6 +19,7 @@ import com.hfut.schedule.ui.style.ColumnVertical
 @Composable
 fun LargeButton(
     modifier : Modifier = Modifier,
+    iconModifier : Modifier = Modifier,
     onClick : () -> Unit,
     enabled: Boolean = true,
     containerColor: Color =  Color.Unspecified,
@@ -33,7 +34,7 @@ fun LargeButton(
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor)
     ) {
         ColumnVertical {
-            Icon(painterResource(icon),null)
+            Icon(painterResource(icon),null,modifier = iconModifier)
             Spacer(Modifier.Companion.height(CARD_NORMAL_DP))
             Text(text)
         }

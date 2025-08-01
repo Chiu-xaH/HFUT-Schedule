@@ -3,7 +3,10 @@ package com.hfut.schedule.ui.screen.home.cube.sub
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -21,7 +24,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -68,10 +70,12 @@ import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.TodayUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardItem
@@ -81,14 +85,17 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebIn
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreenMini
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.component.containerShare
+import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -236,9 +243,16 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
 
 
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
+fun FocusCard(
+    vmUI : UIViewModel,
+    vm : NetWorkViewModel,
+    hazeState: HazeState,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     val showEle = prefs.getBoolean("SWITCHELE",getCampus() == Campus.XUANCHENG)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
@@ -246,117 +260,103 @@ fun FocusCard(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     var loading by remember { mutableStateOf(false) }
     val showShower by DataStoreManager.showFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("生活服务")
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding).verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    LifeScreen(vm)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
+    val route = remember { AppNavRoute.Life.route }
+
     if(showCard || showEle || showToday || showWeb)
-        MyCustomCard(
-            containerColor = cardNormalColor(),
-            hasElevation = false
-        ) {
-            Column() {
-                if(showCard || showToday)
-                    Row {
-                        if(showCard)
-                            Box(modifier = Modifier.weight(.5f)) {
-                                SchoolCardItem(vmUI,true)
-                            }
-                        if(showToday)
-                            Box(modifier = Modifier
-                                .weight(.5f)) {
-                                TodayUI(hazeState,vm)
-                            }
-                    }
-                if(showWeb || showEle)
-                    Row {
-                        if(showEle)
-                            Box(modifier = Modifier.weight(.5f)) {
-                                Electric(vm,true,vmUI,hazeState)
-                            }
-                        if(showWeb)
-                            Box(modifier = Modifier
-                                .weight(.5f)) {
-                                LoginWeb(vmUI,true,vm,hazeState)
-                            }
-                    }
-                if(DateTimeManager.Time_Hour.toInt() in 22 until 25 && showShower) {
-                    Row(
-                        modifier = Modifier.clickable {
-                            getInGuaGua(vm) { loading = it }
-                        }
-                    ) {
-                        if(loading) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "正在核对登录") },
-                                leadingContent = {
-                                    LoadingIcon()
+        with(sharedTransitionScope) {
+            MyCustomCard(
+                containerColor = mixedCardNormalColor(),
+                hasElevation = false,
+                modifier = containerShare(
+                    animatedContentScope = animatedContentScope,
+                    route = route
+                ),
+            ) {
+                Column() {
+                    if(showCard || showToday)
+                        Row {
+                            if(showCard)
+                                Box(modifier = Modifier.weight(.5f)) {
+                                    SchoolCardItem(vmUI,true)
                                 }
-                            )
-                        } else {
-                            Box(modifier = Modifier.weight(.5f)) {
+                            if(showToday)
+                                Box(modifier = Modifier
+                                    .weight(.5f)) {
+                                    TodayUI(hazeState,vm)
+                                }
+                        }
+                    if(showWeb || showEle)
+                        Row {
+                            if(showEle)
+                                Box(modifier = Modifier.weight(.5f)) {
+                                    Electric(vm,true,vmUI,hazeState)
+                                }
+                            if(showWeb)
+                                Box(modifier = Modifier
+                                    .weight(.5f)) {
+                                    LoginWeb(vmUI,true,vm,hazeState)
+                                }
+                        }
+                    if(DateTimeManager.Time_Hour.toInt() in 22 until 25 && showShower) {
+                        Row(
+                            modifier = Modifier.clickable {
+                                getInGuaGua(vm) { loading = it }
+                            }
+                        ) {
+                            if(loading) {
                                 TransplantListItem(
-                                    headlineContent = { Text(text = "晚上好") },
-                                    overlineContent = { Text(text = "洗去一身疲惫吧") },
+                                    headlineContent = { Text(text = "正在核对登录") },
                                     leadingContent = {
-                                        Icon(painterResource(id = R.drawable.dark_mode), contentDescription = "")
+                                        LoadingIcon()
                                     }
                                 )
-                            }
-                            Box(modifier = Modifier.weight(.5f)) {
-                                TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
-                                    Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
-                                }, overlineContent = { Text(text = "推荐") }
-                                )
+                            } else {
+                                Box(modifier = Modifier.weight(.5f)) {
+                                    TransplantListItem(
+                                        headlineContent = { Text(text = "晚上好") },
+                                        overlineContent = { Text(text = "洗去一身疲惫吧") },
+                                        leadingContent = {
+                                            Icon(painterResource(id = R.drawable.dark_mode), contentDescription = "")
+                                        }
+                                    )
+                                }
+                                Box(modifier = Modifier.weight(.5f)) {
+                                    TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
+                                        Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+                                    }, overlineContent = { Text(text = "推荐") }
+                                    )
+                                }
                             }
                         }
                     }
-                }
-                if(showWeather) {
-                    val uiStateWarn by vm.weatherWarningData.state.collectAsState()
-                    AnimatedVisibility(
-                        visible = uiStateWarn is UiState.Success,
-                        exit = AppAnimationManager.fadeAnimation.exit,
-                        enter = AppAnimationManager.fadeAnimation.enter
-                    ) {
-                        val list = (uiStateWarn as UiState.Success).data
+                    if(showWeather) {
+                        val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                         AnimatedVisibility(
-                            visible = list.isNotEmpty(),
+                            visible = uiStateWarn is UiState.Success,
                             exit = AppAnimationManager.fadeAnimation.exit,
                             enter = AppAnimationManager.fadeAnimation.enter
                         ) {
-                            with(list[0]) {
-                                TransplantListItem(
-                                    headlineContent = { Text(title) },
-                                    overlineContent = { Text(typeName)},
-                                    leadingContent = { Icon(painterResource(R.drawable.warning),null)},
-                                    modifier = Modifier.clickable { showBottomSheet = true }
-                                )
+                            val list = (uiStateWarn as UiState.Success).data
+                            AnimatedVisibility(
+                                visible = list.isNotEmpty(),
+                                exit = AppAnimationManager.fadeAnimation.exit,
+                                enter = AppAnimationManager.fadeAnimation.enter
+                            ) {
+                                with(list[0]) {
+                                    TransplantListItem(
+                                        headlineContent = { Text(title) },
+                                        overlineContent = { Text(typeName)},
+                                        leadingContent = { Icon(painterResource(R.drawable.warning),null)},
+                                        modifier = Modifier.clickable {
+                                            navController.navigateAndSaveForTransition(route)
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
+                    Special(vmUI,hazeState)
                 }
-                Special(vmUI,hazeState)
             }
         }
 }

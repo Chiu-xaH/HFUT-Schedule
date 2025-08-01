@@ -189,7 +189,8 @@ fun AnimationCardListItem(
         leadingContent,
         color,
         modifier,
-//        cardModifier.graphicsLayer {
+        cardModifier
+//            .graphicsLayer {
 //            scaleX = animatedProgress.value
 //            scaleY = animatedProgress.value
 //        },

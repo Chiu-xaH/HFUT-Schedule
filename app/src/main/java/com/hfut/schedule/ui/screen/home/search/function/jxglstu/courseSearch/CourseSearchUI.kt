@@ -1,11 +1,15 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch
 
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,34 +44,52 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
+fun CourseSearchScreen(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.CourseSearch.route }
+
+    var showSearch by remember { mutableStateOf(true) }
     var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
     var courseName by remember { mutableStateOf("") }
     var courseId by remember { mutableStateOf("") }
 
-    var showSearch by remember { mutableStateOf(true) }
 
     var semester by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(Unit) {
@@ -105,206 +128,218 @@ fun CourseSearchUI(vm : NetWorkViewModel, hazeState: HazeState) {
         }
     }
 
-
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
-        topBar = {
-            HazeBottomSheetTopBar("开课查询") {
-                AnimatedVisibility(
-                    visible = !showSearch,
-                    enter = AppAnimationManager.upDownAnimation.enter,
-                    exit = AppAnimationManager.upDownAnimation.exit
-                ) {
-                    FilledTonalButton(
-                        onClick = {
-                            showSearch = !showSearch
-                        },
-                    ) {
-                        Text("显示搜索框")
-                    }
-                }
-            }
-        },
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            Column {
-                AnimatedVisibility(
-                    visible = showSearch,
-                    enter = AppAnimationManager.downUpAnimation.enter,
-                    exit = AppAnimationManager.downUpAnimation.exit
-                ) {
-                    Column {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp),
-                            horizontalArrangement = Arrangement.Center
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                TopAppBar(
+//                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.CourseSearch.title) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.CourseSearch.icon)
+                    },
+                    actions = {
+                        AnimatedVisibility(
+                            visible = !showSearch,
+                            enter = AppAnimationManager.upDownAnimation.enter,
+                            exit = AppAnimationManager.upDownAnimation.exit,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         ) {
-                            TextField(
-                                modifier = Modifier
-                                    .weight(.5f)
-                                    .padding(horizontal = 3.dp),
-                                value = courseId,
-                                onValueChange = {
-                                    courseId = it
-                                },
-                                label = { Text("课程代码" ) },
-                                singleLine = true,
-                                shape = MaterialTheme.shapes.medium,
-                                colors = textFiledTransplant(),
-                                trailingIcon = if(courseId == "") {
-                                    {
-                                        IconButton(
-                                            onClick = {
-                                                courseId = ClipBoardUtils.paste()
-                                            },
-                                        ) {
-                                            Icon(painterResource(R.drawable.content_paste),null)
-                                        }
-                                    }
-                                } else null
-                            )
-                            TextField(
-                                modifier = Modifier
-                                    .weight(.5f)
-                                    .padding(horizontal = 3.dp),
-                                value = courseName,
-                                onValueChange = {
-                                    courseName = it
-                                },
-                                label = { Text("课程名称" ) },
-                                singleLine = true,
-                                shape = MaterialTheme.shapes.medium,
-                                colors = textFiledTransplant(),
-                                trailingIcon = if(courseName == "") {
-                                     {
-                                        IconButton(
-                                            onClick = {
-                                                courseName = ClipBoardUtils.paste()
-                                            },
-                                        ) {
-                                            Icon(painterResource(R.drawable.content_paste),null)
-                                        }
-                                    }
-                                } else null
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(6.dp))
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            val myClass = getPersonInfo().classes
-                            TextField(
-                                modifier = Modifier
-                                    .weight(.5f)
-                                    .padding(horizontal = 3.dp),
-                                value = className,
-                                onValueChange = {
-                                    className = it
-                                },
-                                label = { Text("教学班级" ) },
-                                singleLine = true,
-                                shape = MaterialTheme.shapes.medium,
-                                colors = textFiledTransplant(),
-                                trailingIcon = {
-                                    if(myClass != className){
-                                        IconButton(
-                                            onClick = {
-                                                myClass?.let { className = it }
-                                            },
-                                        ) {
-                                            Icon(painterResource(R.drawable.person),null)
-                                        }
-                                    } else {
-                                        IconButton(
-                                            onClick = {
-                                                className = ""
-                                            },
-                                        ) {
-                                            Icon(painterResource(R.drawable.close),null)
-                                        }
-                                    }
-                                }
-                            )
-                            FilledTonalIconButton(
+                            FilledTonalButton(
                                 onClick = {
-                                    scope.launch{ refreshNetwork() }
+                                    showSearch = !showSearch
                                 },
-                                modifier = Modifier
-                                    .weight(.5f)
-                                    .height(56.dp)
-                                    .padding(horizontal = 3.dp),
-                                shape = MaterialTheme.shapes.medium
                             ) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "description"
+                                Text("显示搜索框")
+                            }
+                        }
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Box(
+                Modifier.padding(innerPadding).fillMaxSize()
+            ) {
+                Column(modifier = Modifier.hazeSource(hazeState)) {
+                    AnimatedVisibility(
+                        visible = showSearch,
+                        enter = AppAnimationManager.downUpAnimation.enter,
+                        exit = AppAnimationManager.downUpAnimation.exit
+                    ) {
+                        Column {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(.5f)
+                                        .padding(horizontal = 3.dp),
+                                    value = courseId,
+                                    onValueChange = {
+                                        courseId = it
+                                    },
+                                    label = { Text("课程代码" ) },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                    trailingIcon = if(courseId == "") {
+                                        {
+                                            IconButton(
+                                                onClick = {
+                                                    courseId = ClipBoardUtils.paste()
+                                                },
+                                            ) {
+                                                Icon(painterResource(R.drawable.content_paste),null)
+                                            }
+                                        }
+                                    } else null
+                                )
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(.5f)
+                                        .padding(horizontal = 3.dp),
+                                    value = courseName,
+                                    onValueChange = {
+                                        courseName = it
+                                    },
+                                    label = { Text("课程名称" ) },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                    trailingIcon = if(courseName == "") {
+                                        {
+                                            IconButton(
+                                                onClick = {
+                                                    courseName = ClipBoardUtils.paste()
+                                                },
+                                            ) {
+                                                Icon(painterResource(R.drawable.content_paste),null)
+                                            }
+                                        }
+                                    } else null
                                 )
                             }
-                        }
 
-                        Spacer(modifier = Modifier.height(6.dp))
-                    }
-                }
+                            Spacer(modifier = Modifier.height(6.dp))
 
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                    CourseTotalUI(dataSource = TotalCourseDataSource.SEARCH, sortType = true,vm, hazeState = hazeState, false)
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-            if(semester != null){
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) {
-                    FloatingActionButton(
-                        onClick = { semester = semester!! - 20 },
-                    ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-                }
-
-
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) {
-                    ExtendedFloatingActionButton(
-                        onClick = {
-                            scope.launch {
-                                semester = getSemseter()
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 12.dp),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                val myClass = getPersonInfo().classes
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(.5f)
+                                        .padding(horizontal = 3.dp),
+                                    value = className,
+                                    onValueChange = {
+                                        className = it
+                                    },
+                                    label = { Text("教学班级" ) },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                    trailingIcon = {
+                                        if(myClass != className){
+                                            IconButton(
+                                                onClick = {
+                                                    myClass?.let { className = it }
+                                                },
+                                            ) {
+                                                Icon(painterResource(R.drawable.person),null)
+                                            }
+                                        } else {
+                                            IconButton(
+                                                onClick = {
+                                                    className = ""
+                                                },
+                                            ) {
+                                                Icon(painterResource(R.drawable.close),null)
+                                            }
+                                        }
+                                    }
+                                )
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        scope.launch{ refreshNetwork() }
+                                    },
+                                    modifier = Modifier
+                                        .weight(.5f)
+                                        .height(56.dp)
+                                        .padding(horizontal = 3.dp),
+                                    shape = MaterialTheme.shapes.medium
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
                             }
-                        },
-                    ) { semester?.let { Text(text = parseSemseter(it)) } }
-                }
 
-                AnimatedVisibility(
-                    visible = !loading,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) {
-                    FloatingActionButton(
-                        onClick = { semester = semester!! + 20 },
-                    ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                            Spacer(modifier = Modifier.height(6.dp))
+                        }
+                    }
+
+                    CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+                        CourseTotalUI(dataSource = TotalCourseDataSource.SEARCH, sortType = true,vm, hazeState = hazeState, false)
+                    }
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+                if(semester != null){
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+//                            .padding(innerPadding)
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                    ) {
+                        FloatingActionButton(
+                            onClick = { semester = semester!! - 20 },
+                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                    }
+
+
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+//                            .padding(innerPadding)
+                            .align(Alignment.BottomCenter)
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                    ) {
+                        ExtendedFloatingActionButton(
+                            onClick = {
+                                scope.launch {
+                                    semester = getSemseter()
+                                }
+                            },
+                        ) { semester?.let { Text(text = parseSemseter(it)) } }
+                    }
+
+                    AnimatedVisibility(
+                        visible = !loading,
+                        enter = scaleIn(),
+                        exit = scaleOut(),
+                        modifier = Modifier
+//                            .padding(innerPadding)
+                            .align(Alignment.BottomEnd)
+                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+                    ) {
+                        FloatingActionButton(
+                            onClick = { semester = semester!! + 20 },
+                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                    }
                 }
             }
         }

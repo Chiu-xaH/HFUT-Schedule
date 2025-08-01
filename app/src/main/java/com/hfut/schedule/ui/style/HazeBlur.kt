@@ -55,16 +55,16 @@ import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
-fun Modifier.zIndexBlur(hazeState: HazeState,color : Color) : Modifier {
-    val surfaceColor = MaterialTheme.colorScheme.surface
+fun Modifier.zIndexBlur(hazeState: HazeState,color : Color,alpha : Float = 0.3f) : Modifier {
+//    val surfaceColor = MaterialTheme.colorScheme.surface
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = surfaceColor.copy(0.35f)),
-                backgroundColor = surfaceColor,
-                blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
+                tint = HazeTint(color = color.copy(alpha)),
+                backgroundColor = color,
+                blurRadius = MyApplication.BLUR_RADIUS*2.5f,
                 noiseFactor = 0f
             )
         )
@@ -73,8 +73,8 @@ fun Modifier.zIndexBlur(hazeState: HazeState,color : Color) : Modifier {
     }
 }
 @Composable
-fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
-    val surfaceColor = MaterialTheme.colorScheme.surface
+fun Modifier.bottomBarBlur(hazeState : HazeState,useTry : Boolean = false,color : Color? = null) : Modifier {
+    val surfaceColor = color ?: MaterialTheme.colorScheme.surface
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(
         blur
@@ -85,7 +85,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState) : Modifier {
             state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(0.35f)),
-                backgroundColor = Color.Transparent,
+                backgroundColor = if(useTry) surfaceColor else Color.Transparent,
                 blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
                 noiseFactor = 0f
             ),

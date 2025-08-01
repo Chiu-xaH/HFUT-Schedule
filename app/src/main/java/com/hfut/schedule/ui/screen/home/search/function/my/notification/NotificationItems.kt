@@ -27,6 +27,7 @@ import com.hfut.schedule.logic.model.Notifications
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.webview.WebDialog
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -78,7 +79,7 @@ fun NotificationsScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Notifications.route }
     with(sharedTransitionScope) {
-        TransitionScaffold (
+        CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

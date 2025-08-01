@@ -8,6 +8,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -17,8 +18,12 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.unit.IntOffset
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.xah.transition.state.TransitionState
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +50,7 @@ object AppAnimationManager {
 //            TransitionState.curveStyle.boundsTransform = getCenterBoundsTransform()
 //        }
     }
+
 
     @OptIn(ExperimentalSharedTransitionApi::class)
     fun getCenterBoundsTransform() = BoundsTransform { _, _ ->//FastOutSlowInEasing
@@ -129,6 +135,33 @@ object AppAnimationManager {
     )
 
     private val rightToLeftAnimation = TransferAnimation("从右向左运动", enterAnimationRight, exitAnimationRight)
+
+
+    private val enterAnimationBottom = slideInVertically(
+        initialOffsetY = { fullWidth -> fullWidth },
+        animationSpec = tween(durationMillis = ANIMATION_SPEED)
+    )
+
+    private val exitAnimationBottom = slideOutVertically(
+        targetOffsetY = { fullWidth -> fullWidth },
+        animationSpec = tween(durationMillis = ANIMATION_SPEED)
+    )
+
+    val toBottomAnimation = TransferAnimation("向下运动", enterAnimationBottom, exitAnimationBottom)
+
+    private val enterAnimationTop = slideInVertically(
+        initialOffsetY = { fullWidth -> -fullWidth },
+        animationSpec = tween(durationMillis = ANIMATION_SPEED)
+    )
+
+    private val exitAnimationTop = slideOutVertically(
+        targetOffsetY = { fullWidth -> -fullWidth },
+        animationSpec = tween(durationMillis = ANIMATION_SPEED)
+    )
+
+    val toTopAnimation = TransferAnimation("向上运动", enterAnimationTop, exitAnimationTop)
+
+
 
 
 
