@@ -73,6 +73,7 @@ fun VersionInfo() {
             UpdateItems("修复 转专业申请日期错误的Bug")
             UpdateItems("修复 无法跳转到云运动APP的Bug")
             UpdateItems("修复 好友课表切换之间显示无限加载的Bug")
+            UpdateItems("修复 低版本安卓系统进入选项-界面显示崩溃的Bug")
             UpdateItems("修复 用户协议界面层级实时模糊失效的Bug")
             UpdateItems("优化 卡片滚动动画在长截图操作下自行滚动导致显示不全的问题","暂时砍掉滚动动画了，后续看情况回归")
             UpdateItems("优化 削弱向中心运动转场的缩放程度","以减少掉帧")

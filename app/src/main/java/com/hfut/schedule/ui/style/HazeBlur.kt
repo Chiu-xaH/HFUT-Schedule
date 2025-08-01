@@ -56,9 +56,8 @@ import kotlinx.coroutines.flow.first
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
 fun Modifier.zIndexBlur(hazeState: HazeState,color : Color,alpha : Float = 0.3f) : Modifier {
-//    val surfaceColor = MaterialTheme.colorScheme.surface
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
-    return if(blur && CAN_HAZE_BLUR_BAR) {
+    return if(blur) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -85,15 +84,15 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,useTry : Boolean = false,color 
             state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(0.35f)),
-                backgroundColor = if(useTry) surfaceColor else Color.Transparent,
+                backgroundColor = if(useTry || HAZE_BLUR_FOR_S) surfaceColor else Color.Transparent,
                 blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
                 noiseFactor = 0f
             ),
             block = fun HazeEffectScope.() {
                 progressive = HazeProgressive.verticalGradient(
                     // 适配安卓12
-                    startIntensity =  0f,
-                    endIntensity =  1f,
+                    startIntensity = 0f,
+                    endIntensity = 1f,
                 )
             })
     } else {
@@ -102,8 +101,9 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,useTry : Boolean = false,color 
                 colorStops = arrayOf(
                     0.0f to surfaceColor.copy(alpha = 0f),
                     0.25f to surfaceColor.copy(alpha = 0.65f),
-                    0.75f to surfaceColor.copy(alpha = 0.85f),
-                    1.0f to surfaceColor.copy(alpha = 1f)
+                    0.50f to surfaceColor.copy(alpha = 0.80f),
+                    0.75f to surfaceColor.copy(alpha = 0.95f),
+                    1.0f to surfaceColor.copy(alpha = 1f),
                 )
             )
         )
@@ -120,15 +120,15 @@ fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false,color : C
             state = hazeState,
             style = HazeStyle(
                 tint = HazeTint(color = surfaceColor.copy(.35f)),
-                backgroundColor = if(useTry) surfaceColor else Color.Transparent,
+                backgroundColor = if(useTry || HAZE_BLUR_FOR_S) surfaceColor else Color.Transparent,
                 blurRadius = MyApplication.BLUR_RADIUS*1.2f,
                 noiseFactor = 0f
             ),
             block = fun HazeEffectScope.() {
                 progressive = HazeProgressive.verticalGradient(
                     // 适配安卓12不了一点儿，效果比较差，直接砍了
-                    startIntensity = if(HAZE_BLUR_FOR_S)0.9f else 1f,
-                    endIntensity = if(HAZE_BLUR_FOR_S) 0.1f else 0f
+                    startIntensity = if(HAZE_BLUR_FOR_S) 0.9f else 1f,
+                    endIntensity = if(HAZE_BLUR_FOR_S) 0.1f else 0f,
                 )
             }
         )
@@ -137,16 +137,13 @@ fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false,color : C
             Brush.verticalGradient(
                 colorStops = arrayOf(
                     0.0f to surfaceColor.copy(alpha = 1f),
-                    0.25f to surfaceColor.copy(alpha = 0.85f),
+                    0.25f to surfaceColor.copy(alpha = 0.95f),
+                    0.50f to surfaceColor.copy(alpha = 0.80f),
                     0.75f to surfaceColor.copy(alpha = 0.65f),
                     1.0f to surfaceColor.copy(alpha = 0f),
                 )
             )
         )
-
-//         this.background(Brush.verticalGradient(
-//             listOf(surfaceColor, Color.Transparent)
-//        ))
     }
 }
 

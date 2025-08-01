@@ -330,7 +330,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
         while (true) {
             trailList.add(0, offsetX.value)
             if (trailList.size > maxTrailCount) {
-                trailList.removeLast()
+                trailList.removeAt(trailList.lastIndex)
             }
             delay(15L)
         }

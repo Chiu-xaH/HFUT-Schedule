@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -112,7 +113,7 @@ fun UseAgreementScreen(navController : NavHostController) {
             )
         },
         bottomBar = {
-            Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).statusBarsPadding().bottomBarBlur(hazeState,useTry = true),horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding().bottomBarBlur(hazeState,useTry = true),horizontalArrangement = Arrangement.Center) {
                 Button(
                     onClick = {
                         SharedPrefs.saveBoolean("canUse", default = false, save = true)
