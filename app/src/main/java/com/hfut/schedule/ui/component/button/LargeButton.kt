@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.style.ColumnVertical
@@ -25,11 +26,13 @@ fun LargeButton(
     containerColor: Color =  Color.Unspecified,
     contentColor : Color =  Color.Unspecified,
     icon : Int,
-    text : String) {
+    text : String,
+    shape : Shape = MaterialTheme.shapes.medium
+    ) {
     Button(
         enabled = enabled,
         modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
+        shape = shape,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = contentColor)
     ) {

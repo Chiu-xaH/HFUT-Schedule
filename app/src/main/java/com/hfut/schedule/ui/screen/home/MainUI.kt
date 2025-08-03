@@ -120,7 +120,7 @@ import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.transitionBackground
 import com.hfut.schedule.ui.style.transitionBackgroundF
-import com.hfut.schedule.ui.style.zIndexBlur
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave

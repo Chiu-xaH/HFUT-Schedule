@@ -110,7 +110,7 @@ fun TeacherSearchScreen(
             navHostController = navController,
             topBar = {
                 Column(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true)
+                    modifier = Modifier.topBarBlur(hazeState, )
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),

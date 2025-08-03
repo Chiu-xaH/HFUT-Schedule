@@ -12,8 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 
 @Composable
 fun Alumni() {
@@ -22,9 +23,7 @@ fun Alumni() {
         headlineContent = { Text(text = "校友平台") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.local_library), contentDescription = "") },
         modifier = Modifier.clickable {
-            showDialog = true
+            Starter.startWebView(MyApplication.ALUMNI_URL,"校友平台")
         }
     )
-
-    WebDialog(showDialog,{ showDialog = false },MyApplication.ALUMNI_URL,"校友平台")
 }

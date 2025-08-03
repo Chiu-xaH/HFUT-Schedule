@@ -55,25 +55,9 @@ import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
-fun Modifier.zIndexBlur(hazeState: HazeState,color : Color,alpha : Float = 0.3f) : Modifier {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
-    return if(blur) {
-        this.hazeEffect(
-            state = hazeState,
-            style = HazeStyle(
-                tint = HazeTint(color = color.copy(alpha)),
-                backgroundColor = color,
-                blurRadius = MyApplication.BLUR_RADIUS*2.5f,
-                noiseFactor = 0f
-            )
-        )
-    } else {
-        return this.background(color)
-    }
-}
+fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,2.5f,color,.5f)
 @Composable
-fun Modifier.bottomBarBlur(hazeState : HazeState,useTry : Boolean = false,color : Color? = null) : Modifier {
-    val surfaceColor = color ?: MaterialTheme.colorScheme.surface
+fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(
         blur
@@ -83,8 +67,8 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,useTry : Boolean = false,color 
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = surfaceColor.copy(0.35f)),
-                backgroundColor = if(useTry || HAZE_BLUR_FOR_S) surfaceColor else Color.Transparent,
+                tint = HazeTint(color = color.copy(0.35f)),
+                backgroundColor = color,
                 blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
                 noiseFactor = 0f
             ),
@@ -99,28 +83,26 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,useTry : Boolean = false,color 
         return this.background(
             Brush.verticalGradient(
                 colorStops = arrayOf(
-                    0.0f to surfaceColor.copy(alpha = 0f),
-                    0.25f to surfaceColor.copy(alpha = 0.65f),
-                    0.50f to surfaceColor.copy(alpha = 0.80f),
-                    0.75f to surfaceColor.copy(alpha = 0.95f),
-                    1.0f to surfaceColor.copy(alpha = 1f),
+                    0.0f to color.copy(alpha = 0f),
+                    0.25f to color.copy(alpha = 0.65f),
+                    0.50f to color.copy(alpha = 0.80f),
+                    0.75f to color.copy(alpha = 0.95f),
+                    1.0f to color.copy(alpha = 1f),
                 )
             )
         )
     }
 }
 
-
 @Composable
-fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false,color : Color? = null) : Modifier {
-    val surfaceColor = color ?: MaterialTheme.colorScheme.surface
+fun Modifier.topBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = surfaceColor.copy(.35f)),
-                backgroundColor = if(useTry || HAZE_BLUR_FOR_S) surfaceColor else Color.Transparent,
+                tint = HazeTint(color = color.copy(.35f)),
+                backgroundColor = color,
                 blurRadius = MyApplication.BLUR_RADIUS*1.2f,
                 noiseFactor = 0f
             ),
@@ -136,11 +118,11 @@ fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false,color : C
         this.background(
             Brush.verticalGradient(
                 colorStops = arrayOf(
-                    0.0f to surfaceColor.copy(alpha = 1f),
-                    0.25f to surfaceColor.copy(alpha = 0.95f),
-                    0.50f to surfaceColor.copy(alpha = 0.80f),
-                    0.75f to surfaceColor.copy(alpha = 0.65f),
-                    1.0f to surfaceColor.copy(alpha = 0f),
+                    0.0f to color.copy(alpha = 1f),
+                    0.25f to color.copy(alpha = 0.95f),
+                    0.50f to color.copy(alpha = 0.80f),
+                    0.75f to color.copy(alpha = 0.65f),
+                    1.0f to color.copy(alpha = 0f),
                 )
             )
         )
@@ -148,29 +130,30 @@ fun Modifier.topBarBlur(hazeState : HazeState,useTry : Boolean = false,color : C
 }
 
 @Composable
-private fun Modifier.blurStyle(hazeState: HazeState,radius : Float = 1f,tint : Color = Color.Transparent) : Modifier {
+private fun Modifier.blurStyle(
+    hazeState: HazeState,
+    radius : Float = 1f,
+    tint : Color = MaterialTheme.colorScheme.surface,
+    alpha : Float = .3f
+) : Modifier {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     return if(blur) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
-            tint = HazeTint(color =  tint),
-            backgroundColor = Color.Transparent,
+            tint = HazeTint(color =  tint.copy(alpha)),
+            backgroundColor = tint,
             blurRadius = MyApplication.BLUR_RADIUS*radius,
             noiseFactor = 0f
         ))
     } else {
-        Modifier
+        this.background(tint)
     }
 }
 
 @Composable
-fun Modifier.dialogBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState,2.5f)
+fun Modifier.dialogBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState,2.5f, MaterialTheme.colorScheme.surface,0f)
 
 @Composable
-fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(
-    hazeState,
-    3f,
-    tint = MaterialTheme.colorScheme.surface.copy(0.3f))
-
+fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState, 3f, MaterialTheme.colorScheme.surface,.3f)
 
 
 @OptIn(ExperimentalMaterial3Api::class)

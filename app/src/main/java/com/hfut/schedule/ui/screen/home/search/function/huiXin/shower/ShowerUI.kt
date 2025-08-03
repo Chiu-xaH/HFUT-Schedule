@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.model.zjgd.ShowerFeeResponse
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
@@ -66,7 +67,7 @@ import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
@@ -82,6 +83,10 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.math.BigDecimal
 
+private fun getUrl(page : Int,) : String {
+    val auth = prefs.getString("auth","")
+    return MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
+}
 fun getInGuaGua(vm: NetWorkViewModel,onResult : (Boolean) -> Unit) {
 
     lateinit var guaguaUserInfoObserver: Observer<String?> // 延迟初始化观察者
@@ -125,8 +130,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
         }
     )
     val auth = prefs.getString("auth","")
-    var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(pagerState.currentPage == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false })
+
     val savedPhoneNumber = prefs.getString("PhoneNumber","")
     var phoneNumber by remember { mutableStateOf(savedPhoneNumber ?: "") }
     var balance by remember { mutableStateOf(0) }
@@ -293,7 +297,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
 
                     FilledTonalButton(
                         onClick = {
-                            showDialogWeb = true
+                            Starter.startWebView(url = getUrl(XUANCHENG_TAB), title = "慧新易校")
                         }
                     ) {
                         Text("官方充值")
@@ -330,7 +334,8 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                         StyleCardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                showDialogWeb = true
+                                Starter.startWebView(url = getUrl(HEFEI_TAB), title = "慧新易校")
+
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

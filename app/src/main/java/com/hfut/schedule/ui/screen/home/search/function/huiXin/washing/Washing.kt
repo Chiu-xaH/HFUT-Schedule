@@ -38,6 +38,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -45,7 +46,7 @@ import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
@@ -124,7 +125,7 @@ fun HaiLeWashingScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
                     title = { Text("海乐生活") },
                     navigationIcon = {
@@ -181,8 +182,6 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
         }
     )
     val auth = prefs.getString("auth","")
-    var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb, url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false })
     val route = remember { AppNavRoute.HaiLeWashing.route }
 
 
@@ -203,7 +202,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         StyleCardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                showDialogWeb = true
+                                Starter.startWebView(url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

@@ -31,6 +31,7 @@ import com.hfut.schedule.logic.database.entity.WebURLEntity
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
@@ -39,7 +40,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -48,19 +49,16 @@ fun StorageWeb(hazeState : HazeState) {
     val types = WebURLType.entries
     val scope = rememberCoroutineScope()
 
-    var showDialogWebView by remember { mutableStateOf(false) }
     var showDialogDel by remember { mutableStateOf(false) }
 
     var selectedDelTitle by remember { mutableStateOf("") }
     var selectedDelId by remember { mutableIntStateOf(0) }
-    var selectedUrl by remember { mutableStateOf("") }
 
-    val list by produceState(initialValue = emptyList<WebURLEntity>(), key1 = showDialogDel, key2 = showDialogWebView) {
-        if(showDialogDel == false || showDialogWebView == false)
+    val list by produceState(initialValue = emptyList<WebURLEntity>(), key1 = showDialogDel) {
+        if(showDialogDel == false)
             value = DataBaseManager.webUrlDao.get().sortedBy { it.id }.reversed()
     }
 
-    WebDialog(showDialogWebView,{ showDialogWebView = false }, selectedUrl,selectedDelTitle)
 
 
     if(showDialogDel) {
@@ -116,9 +114,10 @@ fun StorageWeb(hazeState : HazeState) {
                                 },
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
-                                        selectedDelTitle = name
-                                        selectedUrl = url
-                                        showDialogWebView = true
+                                        Starter.startWebView(url,name)
+//                                        selectedDelTitle = name
+//                                        selectedUrl = url
+//                                        showDialogWebView = true
                                     },
                                     onDoubleClick = {},
                                     onLongClick = {

@@ -31,6 +31,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -54,7 +55,7 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.style.zIndexBlur
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
@@ -136,7 +137,7 @@ fun ProgramScreen(
                     exit = AppAnimationManager.toBottomAnimation.exit,
                     enter = AppAnimationManager.toBottomAnimation.enter
                 ) {
-                    Box(modifier = Modifier.bottomBarBlur(hazeState, true)) {
+                    Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
                         with(sharedTransitionScope) {
                             LargeButton(
                                 iconModifier = iconElementShare(animatedContentScope=animatedContentScope, route = competitionRoute),
@@ -146,14 +147,11 @@ fun ProgramScreen(
                                 },
                                 icon = AppNavRoute.ProgramCompetition.icon,
                                 text = AppNavRoute.ProgramCompetition.title,
+                                shape = MaterialTheme.shapes.large,
                                 modifier = containerShare(
                                     Modifier
                                         .fillMaxWidth()
-                                        .padding(
-                                            horizontal = APP_HORIZONTAL_DP,
-                                            vertical = CARD_NORMAL_DP
-                                        )
-                                        .navigationBarsPadding(),
+                                        .padding(APP_HORIZONTAL_DP),
                                     animatedContentScope,
                                     competitionRoute
                                 ),
@@ -166,7 +164,7 @@ fun ProgramScreen(
             },
             topBar = {
                 Column(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState),
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),

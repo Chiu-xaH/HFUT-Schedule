@@ -25,11 +25,12 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.Notifications
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.webview.WebDialog
+
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
@@ -44,10 +45,6 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun NotificationItems() {
     val list = getNotifications()
-    var showDialog by remember { mutableStateOf(false) }
-    var notice : Notifications? by remember { mutableStateOf(null) }
-
-    notice?.let { it.url?.let { it1 -> WebDialog(showDialog,{ showDialog = false }, it1,it.title) } }
     if(list.isEmpty()) EmptyUI() else {
         for(item in list.indices) {
             StyleCardListItem(
@@ -57,8 +54,7 @@ fun NotificationItems() {
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
                 modifier = Modifier.clickable {
                     if(list[item].url != null) {
-                        notice = list[item]
-                        showDialog = true
+                        list[item].url?.let { Starter.startWebView(it,list[item].title) }
                     } else {
                         showToast("暂无点击操作")
                     }
@@ -85,7 +81,7 @@ fun NotificationsScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Notifications.title) },
                     navigationIcon = {

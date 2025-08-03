@@ -12,8 +12,11 @@ import com.hfut.schedule.activity.screen.NewsActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.SupabaseActivity
+import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.webview.getPureUrl
 
 object Starter {
     enum class AppPackages(val packageName : String,val appName : String) {
@@ -116,6 +119,32 @@ object Starter {
     fun loginSupabase() {
         val it = Intent(MyApplication.context, SupabaseActivity::class.java).apply {
             putExtra("FIRST",SupabaseScreen.LOGIN.name)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        MyApplication.context.startActivity(it)
+    }
+    fun startWebView(
+        url : String,
+        title : String = getPureUrl(url),
+        cookie :String? = null,
+    ) {
+        val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
+        if(switch_startUri) {
+            goToWebView(url, title, cookie)
+        } else {
+            startWebUrl(url)
+        }
+    }
+    @JvmStatic
+    private fun goToWebView(
+        url : String,
+        title : String = getPureUrl(url),
+        cookies: String? = null,
+    ) {
+        val it = Intent(MyApplication.context, WebViewActivity::class.java).apply {
+            putExtra("url",url)
+            putExtra("title",title)
+            cookies?.let { putExtra("cookies",it) }
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)

@@ -5,8 +5,6 @@ import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import android.webkit.WebSettings.FORCE_DARK_OFF
-import android.webkit.WebSettings.FORCE_DARK_ON
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
@@ -14,7 +12,6 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -52,8 +49,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
@@ -66,7 +61,6 @@ import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.ColorMode
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
@@ -76,16 +70,14 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.style.zIndexBlur
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 fun getPureUrl(url : String): String {
@@ -93,31 +85,6 @@ fun getPureUrl(url : String): String {
         "本地"
     } else {
         url.substringAfter("://").substringBefore("/")
-    }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun WebDialog(
-    showDialog : Boolean,
-    showChanged : () -> Unit,
-    url : String,
-    title : String = getPureUrl(url),
-    cookie :String? = null,
-) {
-
-    val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
-
-    if (showDialog) {
-        if(switch_startUri) {
-            Dialog(
-                onDismissRequest = showChanged,
-                properties = DialogProperties(usePlatformDefaultWidth = false)
-            ) {
-                WebViewScreen(url,cookie, showChanged,title)
-            }
-        } else {
-            Starter.startWebUrl(url)
-        }
     }
 }
 
@@ -218,7 +185,7 @@ fun isThemeDark() : Boolean {
     ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
-fun NewWebViewScreen(
+fun WebViewScreenForNavigation(
     url : String,
     title : String = getPureUrl(url),
     icon : Int? = null,
@@ -231,26 +198,10 @@ fun NewWebViewScreen(
     val webViewDark by DataStoreManager.webViewDark.collectAsState(initial = true)
     var currentTitle by remember { mutableStateOf(title) }
     var fullScreen by remember { mutableStateOf(false) }
-
     var currentUrl by remember { mutableStateOf(url) }
     var webView by remember { mutableStateOf<WebView?>(null) }
     var visible by remember { mutableStateOf(true) }
     var backCount by remember { mutableIntStateOf(1) }
-    BackHandler {
-        if(fullScreen) {
-            fullScreen = false
-        }
-        if (webView?.canGoBack() == true) {
-            webView?.goBack()
-        } else {
-            if(backCount > 0) {
-                showToast("再滑一次退出")
-                backCount--
-            } else {
-                navController.popBackStack()
-            }
-        }
-    }
     var click by remember { mutableStateOf(false) }
     val isExist by produceState(initialValue = false, key1 = click) {
         value = DataBaseManager.webUrlDao.isExist(currentUrl)
@@ -309,12 +260,27 @@ fun NewWebViewScreen(
         IconButton(onClick = { ShareTo.shareString(currentUrl) }) { Icon(
             painterResource(id = R.drawable.ios_share), contentDescription = "") }
     }
-
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var topColor by remember { mutableStateOf<Color?>(null) }
-
     val route = remember { AppNavRoute.WebView.shareRoute(url) }
+
+    BackHandler {
+        if(fullScreen) {
+            fullScreen = false
+        }
+        if (webView?.canGoBack() == true) {
+            webView?.goBack()
+        } else {
+            if(backCount > 0) {
+                showToast("再滑一次退出")
+                backCount--
+            } else {
+                navController.popBackStack()
+            }
+        }
+    }
+
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             enablePredictive = false,
@@ -328,7 +294,7 @@ fun NewWebViewScreen(
                     exit = AppAnimationManager.toTopAnimation.exit
                 ) {
                     TopAppBar(
-                        modifier = Modifier.topBarBlur(hazeState,useTry = true, color = topColor),
+                        modifier = Modifier.topBarBlur(hazeState, topColor ?: MaterialTheme.colorScheme.surface),
                         colors = topBarTransplantColor(),
                         actions = {
                             Row{
@@ -372,7 +338,7 @@ fun NewWebViewScreen(
                     VerticalFloatingToolbar (
                         expanded = true,
                         colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
-                        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).zIndexBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
+                        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
                     ) {
                         tools()
                         IconButton(onClick = { visible = false }) { Icon(

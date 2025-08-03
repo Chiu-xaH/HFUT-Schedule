@@ -30,13 +30,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -61,19 +62,11 @@ fun NextCourse(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    var showDialogN by remember { mutableStateOf(false) }
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
 
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie(vm) ?: ""
     }
-    WebDialog(
-        showDialogN,
-        { showDialogN = false },
-        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
-        title = "教务系统",
-        cookie = cookie
-    )
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.NextCourse.title) },
@@ -91,7 +84,11 @@ fun NextCourse(
                 } else navController.navigateAndSaveForTransition(AppNavRoute.NextCourse.withArgs(ifSaved))
             } else {
                 if(!ifSaved) {
-                    showDialogN = true
+                    Starter.startWebView(
+                        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+                        title = "教务系统",
+                        cookie = cookie
+                    )
                 } else {
                     showToast("入口暂未开放")
                 }
@@ -123,7 +120,7 @@ fun NextCourseScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.NextCourse.title) },
                     navigationIcon = {

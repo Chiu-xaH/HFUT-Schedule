@@ -222,7 +222,7 @@ fun WebNavigationScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.WebNavigation.title) },
                     navigationIcon = {
@@ -287,7 +287,7 @@ fun NotificationBoxScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.NotificationBox.title) },
                     navigationIcon = {

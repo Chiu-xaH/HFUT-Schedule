@@ -20,9 +20,10 @@ import com.hfut.schedule.logic.model.community.NodeV
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.loadImage
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
@@ -67,9 +68,6 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
     val uiState by vm.mapsResponse.state.collectAsState()
 
     var showDialog by remember { mutableStateOf(false) }
-    var title by remember { mutableStateOf("校区地图") }
-    var url by remember { mutableStateOf("") }
-    WebDialog(showDialog,{ showDialog = false },url,title)
 
     CustomTabRow(pagerState,titles)
     HorizontalPager(state = pagerState) { pager ->
@@ -91,9 +89,7 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
                             contentDescription = null,
                             modifier = Modifier.padding(APP_HORIZONTAL_DP).clickable {
                                 // 点击全屏预览
-                                url = cUrl
-                                title = name
-                                showDialog = true
+                                Starter.startWebUrl(cUrl,name)
                             },
                             contentScale = ContentScale.Fit
                         )

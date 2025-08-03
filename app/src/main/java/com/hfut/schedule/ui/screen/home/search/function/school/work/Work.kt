@@ -46,6 +46,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.WorkSearchType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -56,7 +57,7 @@ import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
@@ -127,7 +128,7 @@ fun WorkScreen(
             navHostController = navController,
             topBar = {
                 Column (
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState, ),
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),
@@ -184,14 +185,8 @@ fun WorkScreen(
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : PagerState,innerPadding : PaddingValues) {
-    var showDialog by remember { mutableStateOf(false) }
-    var url by remember { mutableStateOf("") }
-    var webTitle by remember { mutableStateOf("详情") }
-
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
-
-    WebDialog(showDialog,{ showDialog = false }, url,webTitle)
 
     HorizontalPager(state = pagerState) { page ->
         val uiState by vm.workSearchResult.state.collectAsState()
@@ -252,12 +247,11 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : Pager
                                 overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
                                 index = index,
                                 modifier = Modifier.clickable {
-                                    url = when(campus) {
+                                    val url = when(campus) {
                                         Campus.HEFEI -> MyApplication.WORK_URL
                                         Campus.XUANCHENG -> MyApplication.WORK_XC_URL
                                     } + "detail/" + enumType.url +  id
-                                    webTitle = title
-                                    showDialog = true
+                                    Starter.startWebView(url,title)
                                 },
                                 leadingContent = { Text((index+1).toString()) }
                             )

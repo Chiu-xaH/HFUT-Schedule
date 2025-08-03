@@ -23,6 +23,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +32,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
@@ -59,6 +62,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -86,14 +90,21 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.network.URLImageWithOCR
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
+import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.LoginViewModel
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -232,17 +243,13 @@ fun isAnonymity() : Boolean {
 @Composable
 fun LoginScreen(vm : LoginViewModel) {
     val context = LocalActivity.current
-    var showBadge by remember { mutableStateOf(false) }
-    if (AppVersion.getVersionName() != prefs.getString("version", AppVersion.getVersionName())) showBadge = true
     var webVpn by remember { mutableStateOf(false) }
-
+    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
-        ),
+                colors = topBarTransplantColor(),
                 title = {
                     Box(modifier = Modifier.fillMaxWidth()) {
                         Text(
@@ -271,21 +278,29 @@ fun LoginScreen(vm : LoginViewModel) {
                 },
                 navigationIcon  = {
                     AnimatedWelcomeScreen()
-                }
+                },
+                modifier = Modifier.topBarBlur(hazeState, )
             )
         },
+        bottomBar = {
+            Box(modifier = Modifier.bottomBarBlur(hazeState, )) {
+                StyleCardListItem(
+                    headlineContent = { Text("外地访问") },
+                    overlineContent = { Text("WebVpn")},
+                    leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
+                    trailingContent = {
+                        Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
+                    },
+                    modifier = Modifier.clickable { webVpn = !webVpn },
+                    color = mixedCardNormalColor(),
+                    shape = MaterialTheme.shapes.large,
+                    cardModifier = Modifier.navigationBarsPadding().padding(vertical = APP_HORIZONTAL_DP)
+                )
+            }
+        }
     ) {innerPadding ->
-        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-            TwoTextField(vm,webVpn)
-            StyleCardListItem(
-                headlineContent = { Text("外地访问") },
-                leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
-                trailingContent = {
-                    Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
-                },
-                modifier = Modifier.clickable { webVpn = !webVpn },
-                cardModifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 25.dp- APP_HORIZONTAL_DP)
-            )
+        Box (modifier = Modifier.fillMaxSize().hazeSource(hazeState)) {
+            TwoTextField(vm,webVpn,innerPadding)
         }
     }
 }
@@ -329,7 +344,7 @@ fun AnimatedWelcomeScreen() {
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TwoTextField(vm : LoginViewModel,webVpn: Boolean) {
+fun TwoTextField(vm : LoginViewModel,webVpn: Boolean,innerPadding : PaddingValues) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
@@ -379,7 +394,7 @@ fun TwoTextField(vm : LoginViewModel,webVpn: Boolean) {
     val scope = rememberCoroutineScope()
 
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
         val interactionSource = remember { MutableInteractionSource() }
         val interactionSource2 = remember { MutableInteractionSource() } // 创建一个
         val isPressed by interactionSource.collectIsPressedAsState()
@@ -397,6 +412,7 @@ fun TwoTextField(vm : LoginViewModel,webVpn: Boolean) {
             label = "" // 使用弹簧动画
         )
 
+        InnerPaddingHeight(innerPadding,true)
         Spacer(modifier = Modifier.height(10.dp))
 
         RowHorizontal {
@@ -530,6 +546,7 @@ fun TwoTextField(vm : LoginViewModel,webVpn: Boolean) {
                 }
             }
         }
+        InnerPaddingHeight(innerPadding,false)
     }
 }
 

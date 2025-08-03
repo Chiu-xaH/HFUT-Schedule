@@ -29,11 +29,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
  
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -103,9 +104,6 @@ private fun CanSupportChip(title : String) = SupportChip(title,isSupported = tru
 
 @Composable
 private fun SupportItem(item : SupportItemBean) {
-    var url by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    WebDialog(showDialog = showDialog, url = url, title = "Github",showChanged = { showDialog = false })
     val list = item.list
     MyCustomCard(containerColor = cardNormalColor()) {
         Column {
@@ -154,8 +152,7 @@ private fun SupportItem(item : SupportItemBean) {
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp,
                         modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
-                            url = it
-                            showDialog = true
+                            Starter.startWebView(it,"Github")
                         }
                     )
                 }

@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
-import com.hfut.schedule.ui.style.zIndexBlur
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.util.isCurrentRoute
 import com.hfut.schedule.viewmodel.network.LoginViewModel

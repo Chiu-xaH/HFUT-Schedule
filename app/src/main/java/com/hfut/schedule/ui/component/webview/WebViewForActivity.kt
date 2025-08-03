@@ -9,14 +9,13 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -29,13 +28,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -43,19 +38,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
@@ -64,19 +53,17 @@ import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.database.entity.WebURLEntity
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
-import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.style.zIndexBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -86,7 +73,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
-fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,title : String) {
+fun WebViewScreenForActivity(
+    url: String,
+    cookies : String? = null,
+    title : String
+) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var visible by remember { mutableStateOf(true) }
     val isDark = isThemeDark()
@@ -94,29 +85,13 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
     var backCount by remember { mutableIntStateOf(1) }
     var currentUrl by remember { mutableStateOf(url) }
     var currentTitle by remember { mutableStateOf(title) }
-
+    val activity = LocalActivity.current
     var fullScreen by remember { mutableStateOf(false) }
-    BackHandler {
-        if(fullScreen) {
-            fullScreen = false
-        }
-        if (webView?.canGoBack() == true) {
-            webView?.goBack()
-        } else {
-            if(backCount > 0) {
-                showToast("再滑一次退出")
-                backCount--
-            } else {
-                showChanged.invoke()
-            }
-        }
-    }
     var click by remember { mutableStateOf(false) }
     val isExist by produceState(initialValue = false, key1 = click) {
         value = DataBaseManager.webUrlDao.isExist(currentUrl)
     }
     val scope = rememberCoroutineScope()
-
     val tools = @Composable {
         if(webView?.canGoBack() == true) {
             IconButton(onClick = {
@@ -124,7 +99,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
             }) { Icon(Icons.Default.ArrowBack, contentDescription = "") }
         } else {
             IconButton(onClick = {
-                showChanged()
+                activity?.finish()
             }) { Icon(Icons.Default.Close, contentDescription = "") }
         }
 
@@ -169,10 +144,26 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
             painterResource(id = R.drawable.ios_share), contentDescription = "") }
     }
     var loading by remember { mutableStateOf(true) }
-
     var topColor by remember { mutableStateOf<Color?>(null) }
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
+
+    BackHandler {
+        if(fullScreen) {
+            fullScreen = false
+        }
+        if (webView?.canGoBack() == true) {
+            webView?.goBack()
+        } else {
+            if(backCount > 0) {
+                showToast("再滑一次退出")
+                backCount--
+            } else {
+                activity?.finish()
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -182,7 +173,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                 exit = AppAnimationManager.toTopAnimation.exit
             ) {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true, color = topColor),
+                    modifier = Modifier.topBarBlur(hazeState, color = topColor ?: MaterialTheme.colorScheme.surface),
                     colors = topBarTransplantColor(),
                     actions = {
                         Row{
@@ -222,7 +213,7 @@ fun WebViewScreen(url: String,cookies : String? = null,showChanged : () -> Unit,
                 VerticalFloatingToolbar (
                     expanded = true,
                     colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
-                    modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).zIndexBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
+                    modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
                 ) {
                     tools()
                     IconButton(onClick = { visible = false }) { Icon(

@@ -29,7 +29,7 @@ import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.component.webview.NewWebViewScreen
+import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
@@ -393,7 +393,7 @@ fun MainHost(
                 val title = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.TITLE.argName) ?: getPureUrl(url)
                 val icon = backStackEntry.arguments?.getInt(AppNavRoute.WebView.Args.ICON.argName)
 
-                NewWebViewScreen(
+                WebViewScreenForNavigation(
                     url,
                     title,
                     icon,

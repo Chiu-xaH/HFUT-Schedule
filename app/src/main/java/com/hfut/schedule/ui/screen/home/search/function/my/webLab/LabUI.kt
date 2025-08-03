@@ -18,33 +18,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.StyleCardListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabUI() {
-    var showDialog by remember { mutableStateOf(false) }
-    var num by remember { mutableStateOf(-1) }
-
-    if(num != -1) {
-        WebDialog(showDialog,{ showDialog = false },getLab()[num].info,getLab()[num].title)
-    }
-
-
     StyleCardListItem(
         headlineContent = { Text(text = "选项会随云端发生变动,即使不更新软件") },
         leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
         color = Color.Transparent
     )
-    for(item in 0 until getLab().size) {
+    for(item in getLab()) {
 //        MyCustomCard {
             StyleCardListItem(
-                headlineContent = { Text(text = getLab()[item].title) },
+                headlineContent = { Text(text = item.title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
-                    num = item
-                    showDialog = true
+                    Starter.startWebView(item.info,item.title)
                 }
             )
 //        }

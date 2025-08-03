@@ -16,20 +16,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 
 @Composable
 fun Repair(hazeState : HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
-
-    var showDialog by remember { mutableStateOf(false) }
-    var url by remember { mutableStateOf("") }
-    WebDialog(showDialog,{ showDialog = false }, url,"报修")
 
     TransplantListItem(
         headlineContent = { Text(text = "后勤报修") },
@@ -54,8 +51,7 @@ fun Repair(hazeState : HazeState) {
                         Text("宣城校区")
                     },
                     modifier = Modifier.clickable {
-                        url = MyApplication.REPAIR_XC_URL
-                        showDialog = true
+                        Starter.startWebUrl(MyApplication.REPAIR_XC_URL)
                     }
                 )
                 StyleCardListItem(
@@ -63,8 +59,7 @@ fun Repair(hazeState : HazeState) {
                         Text("合肥校区")
                     },
                     modifier = Modifier.clickable {
-                        url = MyApplication.REPAIR_URL
-                        showDialog = true
+                        Starter.startWebUrl(MyApplication.REPAIR_URL)
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))

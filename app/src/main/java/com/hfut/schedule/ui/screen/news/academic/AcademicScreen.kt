@@ -26,11 +26,12 @@ import androidx.compose.ui.Modifier
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -42,8 +43,6 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val titles = AcademicType.entries.map { it.title }
     val pagerState = rememberPagerState(pageCount = { titles.size })
 
-    var showDialog by remember { mutableStateOf(false) }
-    var url by remember { mutableStateOf("") }
 
     var page by remember { mutableIntStateOf(1) }
     var totalPage by remember { mutableStateOf<Int?>(null) }
@@ -53,10 +52,6 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         vm.academicResp.clear()
         vm.getAcademicNews(AcademicType.entries[pagerState.currentPage],page, totalPage = totalPage)
     }
-
-    var title by remember { mutableStateOf("通知公告") }
-    WebDialog(showDialog,{ showDialog = false },MyApplication.ACADEMIC_URL + url,title)
-
 
     LaunchedEffect(page) {
         // 如果pagerState.currentPage动，则执行某操作
@@ -99,9 +94,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
                                 modifier = Modifier.clickable {
-                                    title = item.title
-                                    url = item.link
-                                    showDialog = true
+                                    Starter.startWebView(MyApplication.ACADEMIC_URL + item.link,item.title)
                                 },
                                 index = index
                             )

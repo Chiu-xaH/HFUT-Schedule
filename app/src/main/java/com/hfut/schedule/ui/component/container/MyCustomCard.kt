@@ -1,18 +1,11 @@
 package com.hfut.schedule.ui.component.container
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseInOutQuad
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -22,33 +15,15 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.appBlur
 import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 
@@ -57,13 +32,15 @@ fun MyCustomCard(
     modifier: Modifier = Modifier,
     containerColor : Color? = null,
     hasElevation : Boolean = false,
-    content: @Composable () -> Unit) {
+    shape: Shape = MaterialTheme.shapes.medium,
+    content: @Composable () -> Unit
+) {
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = if(hasElevation) 1.75.dp else 0.dp),
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
-        shape = MaterialTheme.shapes.medium,
+        shape = shape,
         colors = if(containerColor == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = containerColor)
     ) {
         content()
@@ -125,10 +102,11 @@ private fun CardListItem(
     leadingContent : @Composable() (() -> Unit)? = null,
     hasElevation : Boolean = false,
     containerColor : Color? = null,
+    shape: Shape = MaterialTheme.shapes.medium,
     modifier: Modifier = Modifier,
     cardModifier : Modifier = Modifier
 ) {
-    MyCustomCard(hasElevation = hasElevation, containerColor = containerColor, modifier = cardModifier) {
+    MyCustomCard(hasElevation = hasElevation, containerColor = containerColor, modifier = cardModifier, shape = shape) {
         TransplantListItem(
             headlineContent = headlineContent,
             overlineContent = overlineContent,
@@ -150,13 +128,15 @@ fun StyleCardListItem(
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
     color : Color? = null,
+    shape: Shape = MaterialTheme.shapes.medium,
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
     CardListItem(
         headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
         hasElevation = false,
-        containerColor = color ?: cardNormalColor()
+        containerColor = color ?: cardNormalColor(),
+        shape = shape
     )
 }
 // 用在LazyColumn
@@ -170,6 +150,7 @@ fun AnimationCardListItem(
     color : Color? = null,
     index : Int,
     scale : Float = 0.8f,
+    shape: Shape = MaterialTheme.shapes.medium,
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
@@ -188,6 +169,7 @@ fun AnimationCardListItem(
         trailingContent,
         leadingContent,
         color,
+        shape,
         modifier,
         cardModifier
 //            .graphicsLayer {

@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -33,7 +34,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.URLImage
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,13 +42,6 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 fun TeacherListUI(vm: NetWorkViewModel,innerPadding : PaddingValues) {
     val uiState by vm.teacherSearchData.state.collectAsState()
     val dataList = (uiState as UiState.Success).data.teacherData
-
-    var showDialog by remember { mutableStateOf(false) }
-    var links by remember { mutableStateOf("") }
-    var title by remember { mutableStateOf("教师主页") }
-
-    WebDialog(showDialog,{ showDialog = false },links,title)
-
 
     LazyColumn() {
         item { InnerPaddingHeight(innerPadding,true) }
@@ -74,9 +68,7 @@ fun TeacherListUI(vm: NetWorkViewModel,innerPadding : PaddingValues) {
                         Text(jobList.toString().replace("[","").replace("]",""))
                     },
                     modifier = Modifier.clickable {
-                        links = it.url
-                        title = it.name
-                        showDialog = true
+                        Starter.startWebView(it.url,it.name)
                     }
                 )
             }

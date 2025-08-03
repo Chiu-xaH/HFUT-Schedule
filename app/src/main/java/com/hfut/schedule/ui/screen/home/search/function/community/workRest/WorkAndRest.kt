@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import com.hfut.schedule.logic.util.network.ParseJsons.getMy
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
@@ -47,7 +49,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -201,13 +203,13 @@ fun TimeTableScreen(
 ) {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    var showDialog by remember { mutableStateOf(false) }
-    val url = try {
-        getMy()!!.SchoolCalendar
-    } catch (e:Exception) {
-        null
+    val url by produceState<String?>(initialValue = null) {
+        value = try {
+            getMy()!!.SchoolCalendar
+        } catch (e:Exception) {
+            null
+        }
     }
-    url?.let { WebDialog(showDialog,{showDialog = false}, it,"校历") }
     val route = remember { AppNavRoute.TimeTable.route }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -216,7 +218,7 @@ fun TimeTableScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.TimeTable.title) },
                     navigationIcon = {
@@ -228,7 +230,7 @@ fun TimeTableScreen(
                                 if(url == null) {
                                     showToast("正在从云端获取数据")
                                 } else {
-                                    showDialog = true
+                                    Starter.startWebView(url!!,"校历")
                                     showToast("即将打开网页链接,可自行下载或保存图片")
                                 }
                             },

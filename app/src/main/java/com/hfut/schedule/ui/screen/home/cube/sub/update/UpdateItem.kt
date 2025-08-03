@@ -58,53 +58,28 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
-            UpdateItems("新增 满绩成绩的礼花动画")
-            UpdateItems("新增 成绩小图标的更多适配")
-            UpdateItems("新增 引入Material Design 3 Expressive设计的默认回弹")
-            UpdateItems("新增 缓存清理","位于 选项-应用行为")
-            UpdateItems("新增 为课表方格与查询中心的一级界面等30+场景适配新的转场动画")
-            UpdateItems("新增 教师检索一些信息")
-            UpdateItems("新增 预测式返回手势开关，回归转场的预测式返回手势","位于 选项-界面显示-动效")
-            UpdateItems("新增 网页强制深色","位于 选项-界面显示-色彩")
-            UpdateItems("重构 培养方案完成情况","添加缓存机制、重构界面")
-            UpdateItems("重构 应用内打开网页的一些逻辑与界面显示")
-            UpdateItems("修复 成绩雷达图在五星制成绩显示为0的Bug")
-            UpdateItems("修复 教师检索研究方向为空的Bug")
-            UpdateItems("修复 转专业申请日期错误的Bug")
-            UpdateItems("修复 无法跳转到云运动APP的Bug")
-            UpdateItems("修复 好友课表切换之间显示无限加载的Bug")
-            UpdateItems("修复 低版本安卓系统进入选项-界面显示崩溃的Bug")
-            UpdateItems("修复 用户协议界面层级实时模糊失效的Bug")
-            UpdateItems("优化 卡片滚动动画在长截图操作下自行滚动导致显示不全的问题","暂时砍掉滚动动画了，后续看情况回归")
-            UpdateItems("优化 削弱向中心运动转场的缩放程度","以减少掉帧")
-            UpdateItems("优化 部分界面的设计")
-            UpdateItems("优化 关闭层级实时模糊时的顶栏底栏可读性")
-            UpdateItems("优化 多课表下学期课程表界面层级与其他课表的统一性")
-            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
-            UpdateItems("下线 空教室","后期重构完成后回归")
-            UpdateItems("下线 成绩-统计","后期重构完成后回归")
-        }
-
-
-        // 当前版本
-        // 未实现
-//        UpdateItems("修复 好友课表之间无法切换的Bug")
+            UpdateItems("新增 为一些按钮和N级界面等10+场景适配新的转场动画")
+            UpdateItems("修复 主页偶见崩溃的Bug")
+//            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
+//            UpdateItems("下线 空教室","后期重构完成后回归")
+//            UpdateItems("下线 成绩-统计","后期重构完成后回归")
+            // 未实现
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
-//        UpdateItems("重构 提纯出CAS统一认证登录逻辑，为更多平台的一键登录做准备", null,UpdateType.RENEW)
 //        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
-        // 下版本规划
+            // 下版本规划
 //        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 学工系统/今日校园的登录")
 
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
-        // v5.0 2025-07+ 远期规划
+            // v5.0 2025-07+ 远期规划
 //        UpdateItems("新增 磁钉体系", "位于 选项-应用行为，构建全局磁钉体系，任何支持的界面向边缘滑动即可缩放为磁钉最小化", UpdateType.ADD)
 //        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)
+        }
     }
 }
 

@@ -74,7 +74,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.container.StyleCardListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
@@ -312,10 +312,6 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         refreshNetwork()
     }
     val scope = rememberCoroutineScope()
-    var title by remember { mutableStateOf("通知公告") }
-    var showDialog by remember { mutableStateOf(false) }
-    var links by remember { mutableStateOf("") }
-    WebDialog(showDialog,{ showDialog = false },links,title)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -373,11 +369,12 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         headlineContent = { Text(listItem.title) },
                         leadingContent = { Text(text = (item + 1).toString()) },
                         modifier = Modifier.clickable {
+                            var links = ""
                             val link = listItem.link
                             if(link.contains("http")) link.let { links = link }
                             else links = MyApplication.NEWS_URL + link
-                            title = listItem.title
-                            showDialog = true
+
+                            Starter.startWebView(links,listItem.title)
                         },
                         index = item
                     )

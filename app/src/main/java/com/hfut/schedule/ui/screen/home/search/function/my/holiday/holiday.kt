@@ -99,7 +99,7 @@ fun HolidayScreen(
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.Holiday.icon)
                     },
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true)
+                    modifier = Modifier.topBarBlur(hazeState, )
                 )
             },
             ) { innerPadding ->

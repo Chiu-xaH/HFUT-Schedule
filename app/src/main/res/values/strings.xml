@@ -18,5 +18,6 @@
     <string name="title_activity_news">新闻与通知</string>
     <string name="title_activity_anonymity">游客模式</string>
     <string name="title_activity_supbase">信息平台</string>
+    <string name="title_activity_web_view">WebView</string>
 
 </resources>

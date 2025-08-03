@@ -65,7 +65,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.util.sys.showToast
@@ -140,7 +140,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         }
     })
 
-    var showDialog by remember { mutableStateOf(false) }
     var showBottomSheet_Range by remember { mutableStateOf(false) }
     var showBottomSheet_Search by remember { mutableStateOf(false) }
     var showBottomSheet_Settings by remember { mutableStateOf(false) }
@@ -163,12 +162,10 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var nows by remember { mutableStateOf(cardValue?.now ?: prefs.getString("card_now","00")) }
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
-    val auth = prefs.getString("auth","")
+    val auth = remember { prefs.getString("auth","") }
     val url by remember { mutableStateOf(MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
 
-    var showDialog_Huixin by remember { mutableStateOf(false) }
-
-    val urlHuixin = MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth
+    val urlHuixin = remember { MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth }
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
@@ -176,10 +173,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         nows = cardValue?.now ?: prefs.getString("card_now","00")
         settles = cardValue?.settle ?: prefs.getString("card_settle","00")
     }
-
-    WebDialog(showDialog,{ showDialog = false },url,"付款码")
-    WebDialog(showDialog_Huixin,{ showDialog_Huixin = false },urlHuixin,"慧新易校")
-
 
     if(showBottomSheet_Fee) {
         HazeBottomSheet (
@@ -244,7 +237,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         leadingContent = {
                             Icon(Icons.Default.ArrowForward, contentDescription = "")
                         },
-                        modifier = Modifier.clickable { showDialog_Huixin = true }
+                        modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校") }
                     )
                 }
             }
@@ -518,7 +511,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         headlineContent = { Text(text = "付款码") },
                         supportingContent = { Text(text = "在支持扫码的食堂支付机使用以替代实体卡")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
-                        modifier = Modifier.clickable { showDialog = true }
+                        modifier = Modifier.clickable { Starter.startWebView(url,"付款码") }
                     )
                     TransplantListItem(
                         headlineContent = { Text(text = "范围支出") },
@@ -536,7 +529,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         headlineContent = { Text(text = "慧新易校") },
                         supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "")},
-                        modifier = Modifier.clickable { showDialog_Huixin = true }
+                        modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校") }
                     )
                     TransplantListItem(
                         headlineContent = { Text(text = "实体卡复制") },

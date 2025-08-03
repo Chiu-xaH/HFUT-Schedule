@@ -39,7 +39,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -91,11 +91,7 @@ fun Mail(
 
 @Composable
 fun MailUI(vm: NetWorkViewModel) {
-    var url by remember { mutableStateOf("") }
     var used by remember { mutableStateOf(false) }
-
-    var showDialog by remember { mutableStateOf(false) }
-    WebDialog(showDialog,{ showDialog = false },url,getSchoolEmail() ?: "邮箱")
 
     val uiState by vm.mailData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
@@ -119,9 +115,8 @@ fun MailUI(vm: NetWorkViewModel) {
                         onClick = {
                             response?.data.let {
                                 if(it != null) {
-                                    url = it
-                                    showDialog = true
                                     used = !used
+                                    Starter.startWebView(it,getSchoolEmail() ?: "邮箱")
                                 } else {
                                     showToast( "错误 " + response?.msg)
                                 }
@@ -136,8 +131,7 @@ fun MailUI(vm: NetWorkViewModel) {
                         onClick = {
                             response?.data.let {
                                 if(it != null) {
-                                    url = it
-                                    Starter.startWebUrl(url)
+                                    Starter.startWebUrl(it)
                                     used = !used
                                 } else {
                                     showToast( "错误 " + response?.msg)

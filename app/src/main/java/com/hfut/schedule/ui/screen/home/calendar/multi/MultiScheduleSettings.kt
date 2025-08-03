@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delCourseEvents
@@ -63,7 +64,7 @@ import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -191,18 +192,10 @@ fun MultiScheduleSettings(
             }
         }
     }
-    var showDialogN by remember { mutableStateOf(false) }
 
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie(vm) ?: ""
     }
-    WebDialog(
-        showDialogN,
-        { showDialogN = false },
-        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
-        title = "教务系统",
-        cookie = cookie
-    )
 
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
@@ -272,7 +265,11 @@ fun MultiScheduleSettings(
                                 } else onSelectedChange(CourseType.NEXT.code)
                             } else {
                                 if(!ifSaved) {
-                                    showDialogN = true
+                                    Starter.startWebView(
+                                        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+                                        title = "教务系统",
+                                        cookie = cookie
+                                    )
                                 } else {
                                     showToast("入口暂未开放")
                                 }

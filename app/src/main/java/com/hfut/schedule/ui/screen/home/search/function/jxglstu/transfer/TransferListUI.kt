@@ -100,7 +100,7 @@ fun TransferScreen(
             navHostController = navController,
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState,useTry = true),
+                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Transfer.title) },
                     navigationIcon = {

@@ -61,6 +61,7 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -69,7 +70,7 @@ import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.dialog.MenuChip
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.webview.WebDialog
+   
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -88,6 +89,20 @@ import kotlin.collections.iterator
 private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
 
+
+private fun getUrl(page : Int,isUnderGraduate : Boolean) : String {
+    val auth = prefs.getString("auth","")
+    return  MyApplication.HUIXIN_URL +
+            "charge-app/?name=pays&appsourse=ydfwpt&id=${
+                if(page == XUANCHENG_TAB)
+                    FeeType.ELECTRIC_XUANCHENG.code else {
+                    if(isUnderGraduate)
+                        FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
+                    else
+                        FeeType.ELECTRIC_HEFEI_GRADUATE.code
+                }
+            }&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
+}
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,18 +117,6 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     )
     var isUnderGraduate by remember { mutableStateOf(getPersonInfo().benshuo?.contains("本") == true) }
     val auth = prefs.getString("auth","")
-    var showDialogWeb by remember { mutableStateOf(false) }
-    WebDialog(showDialogWeb,
-        url = MyApplication.HUIXIN_URL +
-                "charge-app/?name=pays&appsourse=ydfwpt&id=${
-                    if(pagerState.currentPage == XUANCHENG_TAB) 
-                        FeeType.ELECTRIC_XUANCHENG.code else { 
-                            if(isUnderGraduate)
-                                FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
-                            else
-                                FeeType.ELECTRIC_HEFEI_GRADUATE.code
-                        }
-                }&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校",showChanged = { showDialogWeb = false })
 
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
     var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
@@ -227,7 +230,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
                     FilledTonalButton(
                         onClick = {
-                            showDialogWeb = true
+                            Starter.startWebView(getUrl(XUANCHENG_TAB,true), title = "慧新易校")
                         }
                     ) {
                         Text("官方充值")
@@ -365,8 +368,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("本科生")},
                             modifier = Modifier.clickable {
-                                isUnderGraduate = true
-                                showDialogWeb = true
+                                Starter.startWebView(getUrl(HEFEI_TAB,true), title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)
@@ -380,8 +382,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("研究生")},
                             modifier = Modifier.clickable {
-                                isUnderGraduate = false
-                                showDialogWeb = true
+                                Starter.startWebView(getUrl(HEFEI_TAB,false), title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

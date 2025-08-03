@@ -109,11 +109,11 @@ fun UseAgreementScreen(navController : NavHostController) {
                 navigationIcon = {
                     AnimatedWelcomeScreen()
                 },
-                modifier = Modifier.topBarBlur(hazeState,useTry = true)
+                modifier = Modifier.topBarBlur(hazeState, )
             )
         },
         bottomBar = {
-            Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding().bottomBarBlur(hazeState,useTry = true),horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding().bottomBarBlur(hazeState, ),horizontalArrangement = Arrangement.Center) {
                 Button(
                     onClick = {
                         SharedPrefs.saveBoolean("canUse", default = false, save = true)

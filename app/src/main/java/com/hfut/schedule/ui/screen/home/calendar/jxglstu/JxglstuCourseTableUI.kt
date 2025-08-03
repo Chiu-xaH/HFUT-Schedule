@@ -47,6 +47,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -224,10 +225,10 @@ fun JxglstuCourseTableUI(
     }
 
     val times by DataStoreManager.courseTableTime.collectAsState(initial = "")
-    var timeTable by rememberSaveable { mutableStateOf(emptyList<CourseUnitBean>()) }
-    LaunchedEffect(times) {
-        timeTable = parseTimeTable(times)
+    val timeTable by produceState(initialValue = emptyList<CourseUnitBean>()) {
+        value = parseTimeTable(times)
     }
+
 
     fun refreshUI(showAll : Boolean,timeList : List<CourseUnitBean>) {
         // 清空

@@ -3,8 +3,10 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
+import androidx.activity.BackEventCompat
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -31,6 +33,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -46,7 +49,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +61,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -68,6 +71,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -83,27 +87,26 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
-import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.container.TransplantListItem
- 
 import com.hfut.schedule.ui.component.container.cardNormalColor
-  
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.component.text.BottomTip
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -113,11 +116,13 @@ import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 private enum class ShareRoutes {
     BUTTON,SURFACE
@@ -167,7 +172,6 @@ fun AddEventFloatButton(
     }
     SharedTransitionLayout {
         AnimatedContent(
-//            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
             targetState = showAddUI,
             transitionSpec = {
                 fadeIn(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED)) togetherWith fadeOut(animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2))
@@ -178,7 +182,6 @@ fun AddEventFloatButton(
             if (targetShowAddUI) {
                 SurfaceUI(
                     isSupabase,
-                    sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this,
                     showSurface = showSurface,
                     showChange = { showAddUI = it },
@@ -189,9 +192,7 @@ fun AddEventFloatButton(
                 ButtonUI(
                     isVisible = isVisible,
                     innerPaddings = innerPaddings,
-                    sharedTransitionScope = this@SharedTransitionLayout,
                     animatedContentScope = this,
-                    showAddUI,
                     showChange = { showAddUI = it },
                     boundsTransform
                 )
@@ -206,9 +207,7 @@ fun AddEventFloatButton(
 private fun SharedTransitionScope.ButtonUI(
     isVisible: Boolean,
     innerPaddings : PaddingValues,
-    sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    showAddUI : Boolean,
     showChange : (Boolean) -> Unit,
     boundsTransform: BoundsTransform
 ) {
@@ -236,7 +235,6 @@ private fun SharedTransitionScope.ButtonUI(
 @Composable
 private fun SharedTransitionScope.SurfaceUI(
     isSupabase : Boolean,
-    sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     showSurface : Boolean,
     showChange: (Boolean) -> Unit,
@@ -247,15 +245,42 @@ private fun SharedTransitionScope.SurfaceUI(
     val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
 
     var loading by remember { mutableStateOf(false) }
-    BackHandler {
-        showChange(false)
+
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+    var useBackHandler by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        if(useBackHandler == false) {
+            delay(AppAnimationManager.ANIMATION_SPEED*1L)
+            useBackHandler = true
+        }
     }
+    var scale by remember { mutableFloatStateOf(1f) }
+    if(useBackHandler && enablePredictive) {
+        PredictiveBackHandler() { progress: Flow<BackEventCompat> ->
+            // code for gesture back started
+            try {
+                progress.collect { backEvent ->
+                    // code for progress
+                    scale = 1f - (0.075f * backEvent.progress)
+                }
+                // code for completion
+                scale = 0f
+                showChange(false)
+            } catch (e: CancellationException) {
+                // code for cancellation
+                scale = 1f
+            }
+        }
+    } else {
+        BackHandler {
+            showChange(false)
+        }
+    }
+
     val scope = rememberCoroutineScope()
     Scaffold(
-//        containerColor = Color.Transparent,
         modifier = Modifier
             .fillMaxSize()
-//            .clip(RoundedCornerShape(APP_HORIZONTAL_DP))
             .sharedBounds(
                 enter = AppAnimationManager.fadeAnimation.enter,
                 exit = AppAnimationManager.fadeAnimation.exit,
@@ -294,6 +319,10 @@ private fun SharedTransitionScope.SurfaceUI(
         },
     ) { innerPadding ->
         AnimatedVisibility(
+            modifier = Modifier
+                .scale(scale)
+
+            ,
             visible = showSurface,
             enter  = fadeIn(),
             exit = fadeOut(tween(durationMillis = 0))
@@ -490,6 +519,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .padding(horizontal = APP_HORIZONTAL_DP)
                 .align(Alignment.BottomCenter)
                 .zIndex(2f)
