@@ -116,7 +116,7 @@ fun MailUI(vm: NetWorkViewModel) {
                             response?.data.let {
                                 if(it != null) {
                                     used = !used
-                                    Starter.startWebView(it,getSchoolEmail() ?: "邮箱")
+                                    Starter.startWebView(it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
                                 } else {
                                     showToast( "错误 " + response?.msg)
                                 }

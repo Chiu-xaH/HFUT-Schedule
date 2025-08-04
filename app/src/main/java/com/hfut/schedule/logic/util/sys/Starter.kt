@@ -127,10 +127,11 @@ object Starter {
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
+        icon : Int? = null
     ) {
         val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
         if(switch_startUri) {
-            goToWebView(url, title, cookie)
+            goToWebView(url, title, cookie,icon)
         } else {
             startWebUrl(url)
         }
@@ -140,11 +141,13 @@ object Starter {
         url : String,
         title : String = getPureUrl(url),
         cookies: String? = null,
+        icon : Int? = null
     ) {
         val it = Intent(MyApplication.context, WebViewActivity::class.java).apply {
             putExtra("url",url)
             putExtra("title",title)
             cookies?.let { putExtra("cookies",it) }
+            icon?.let { putExtra("icon",it) }
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)

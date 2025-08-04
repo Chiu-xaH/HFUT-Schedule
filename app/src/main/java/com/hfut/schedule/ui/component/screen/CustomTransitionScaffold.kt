@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.style.transitionBackgroundF
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
 import com.xah.transition.style.transitionBackground
@@ -28,7 +29,7 @@ fun SharedTransitionScope.CustomTransitionScaffold(
     modifier: Modifier = containerShare(
         Modifier
             .fillMaxSize()
-            .transitionBackground(navHostController, route)
+            .transitionBackgroundF(navHostController, route)
         ,
         animatedContentScope,
         route,

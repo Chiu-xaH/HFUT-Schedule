@@ -59,6 +59,12 @@ fun VersionInfo() {
         MyCustomCard (containerColor = cardNormalColor()){
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
             UpdateItems("新增 为一些按钮和N级界面等10+场景适配新的转场动画")
+            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
+            UpdateItems("新增 WEBVPN","位于 查询中心-WEBVPN，通过外地访问登录后，可自行定义任意链接")
+
+            UpdateItems("优化 新转场动画的细节")
+            UpdateItems("优化 新转场动画下的网页无法快速打断的连贯性")
+            UpdateItems("修复 打开部分网页闪烁的Bug","移除 层级模糊的支持，使用自动取色沉浸化的机制")
             UpdateItems("修复 主页偶见崩溃的Bug")
 //            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
 //            UpdateItems("下线 空教室","后期重构完成后回归")

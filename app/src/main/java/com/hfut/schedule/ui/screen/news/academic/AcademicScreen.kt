@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
@@ -94,7 +95,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
                                 modifier = Modifier.clickable {
-                                    Starter.startWebView(MyApplication.ACADEMIC_URL + item.link,item.title)
+                                    Starter.startWebView(MyApplication.ACADEMIC_URL + item.link,item.title, icon = R.drawable.stream)
                                 },
                                 index = index
                             )

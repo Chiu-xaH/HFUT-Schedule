@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
+import com.xah.transition.style.transitionBackground
 import com.xah.transition.util.isCurrentRoute
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -201,7 +202,7 @@ fun CustomBottomSheet(
 
 // isExpanded=true时，下层背景进入高斯模糊，并用黑色压暗，伴随缩放，上层背景展开
 @Composable
-fun transitionBackground(isExpanded : Boolean) : Modifier {
+fun transitionBackground2(isExpanded : Boolean) : Modifier {
     val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
     // 稍微晚于运动结束
@@ -243,35 +244,10 @@ fun Modifier.transitionBackgroundF(
     val blur by produceState(initialValue = true) {
         value = DataStoreManager.hazeBlurFlow.first()
     }
-    if(route == TransitionState.firstStartRoute && TransitionState.firstUse) {
-        return Modifier
-    }
-    // 禁用刚冷启动第一个界面模糊缩放
-    if(TransitionState.firstUse && TransitionState.firstTransition) {
-        TransitionState.firstUse = false
-        return Modifier
-    } else if(TransitionState.firstTransition) {
-        // 禁用刚冷启动第一次转场动画的增强效果
-        TransitionState.firstTransition = false
-        return Modifier
-    }
 
-    val transplantBackground = TransitionState.transplantBackground
     val isExpanded = !navHostController.isCurrentRoute(route)
     val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
-    // 稍微晚于运动结束
-    val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp, label = ""
-        ,animationSpec = tween(speed, easing = FastOutSlowInEasing),
-    )
-    val scale = animateFloatAsState( //.875f
-        targetValue = if (isExpanded) scaleValue else 1f,
-        animationSpec = tween(speed , easing = FastOutSlowInEasing)
-    )
-    val backgroundColor by animateColorAsState(
-        targetValue = if(isExpanded) backgroundColor else Color.Transparent,
-        animationSpec = tween(TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
-    )
+
     LaunchedEffect(isExpanded) {
         if(blur && TransitionState.transitionBackgroundStyle.forceTransition) {
             DataStoreManager.saveHazeBlur(false)
@@ -279,15 +255,7 @@ fun Modifier.transitionBackgroundF(
             DataStoreManager.saveHazeBlur(true)
         }
     }
-    // 蒙版 遮罩
-    if(!transplantBackground
-        && forceTransition
-        )
-        Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
-
-    val transitionModifier = if(forceTransition) this@transitionBackgroundF.scale(scale.value).blur(blurSize) else this@transitionBackgroundF
-
-    transitionModifier
+    return transitionBackground(navHostController,route)
 }
 
 @Composable

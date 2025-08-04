@@ -40,7 +40,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.text.ScrollText
-   
+import com.hfut.schedule.ui.screen.AppNavRoute
+
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -114,7 +115,7 @@ fun StorageWeb(hazeState : HazeState) {
                                 },
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
-                                        Starter.startWebView(url,name)
+                                        Starter.startWebView(url,name, icon = AppNavRoute.WebNavigation.icon)
 //                                        selectedDelTitle = name
 //                                        selectedUrl = url
 //                                        showDialogWebView = true

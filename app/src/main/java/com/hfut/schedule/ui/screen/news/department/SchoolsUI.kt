@@ -15,6 +15,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 
 @Composable
@@ -51,18 +52,15 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
             val m = maps.entries.toList()[index]
             val title = m.value
             val url = m.key
+            val icon = departmentIcon(title)
 //            MyCustomCard {
             AnimationCardListItem(
                     headlineContent = { ScrollText(text = title) },
                     leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(url)
-                    },
-                    trailingContent = {
-                        Icon(Icons.Filled.ArrowForward, contentDescription = "")
-                    },
-                index = index
+                        Starter.startWebView(url, icon = icon )
+                    }, index = index
                 )
 //            }
         }

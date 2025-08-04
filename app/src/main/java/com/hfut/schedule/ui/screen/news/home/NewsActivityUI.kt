@@ -374,7 +374,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                             if(link.contains("http")) link.let { links = link }
                             else links = MyApplication.NEWS_URL + link
 
-                            Starter.startWebView(links,listItem.title)
+                            Starter.startWebView(links,listItem.title, icon = R.drawable.stream)
                         },
                         index = item
                     )

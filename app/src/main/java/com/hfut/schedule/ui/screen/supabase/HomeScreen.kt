@@ -62,7 +62,7 @@ import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.transitionBackground
+import com.hfut.schedule.ui.style.transitionBackground2
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
@@ -110,7 +110,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         }
 
         Scaffold(
-            modifier = transitionBackground(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).fillMaxSize(),
+            modifier = transitionBackground2(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).fillMaxSize(),
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     TopAppBar(

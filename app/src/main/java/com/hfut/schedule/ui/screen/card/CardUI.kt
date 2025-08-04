@@ -212,7 +212,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                 )
         ) {
             composable(CardBarItems.HOME.name) {
-                Scaffold {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     HomeScreen(innerPadding,vm,navController,vmUI,hazeState)
                 }
             }
@@ -220,7 +220,6 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                 Scaffold {
                     CardBills(vm,innerPadding,vmUI, hazeState)
                 }
-
             }
             composable(CardBarItems.COUNT.name) {
                 Scaffold {

@@ -339,20 +339,6 @@ fun APPScreen(
         }
         DividerTextExpandedWith("存储") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-//                TransplantListItem(
-//                    headlineContent = { Text("长截图") },
-//                    leadingContent = { Icon(painterResource(R.drawable.screenshot_frame),null)},
-//                    supportingContent = {
-//                        Text("开启后，在支持长截图的界面中，可自动滚动并保存截图")
-//                    },
-//                    trailingContent = {
-//                        Switch(checked = false, onCheckedChange = { })
-//                    },
-//                    modifier = Modifier.clickable {
-//                        saveTrigger.value = 1
-//                    }
-//                )
-//                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text("备份与恢复") },
                     leadingContent = { Icon(painterResource(R.drawable.database),null)},
@@ -375,6 +361,52 @@ fun APPScreen(
                             val result = async { cleanCache() }.await()
                             showToast("已清理 $result MB")
                         }
+                    }
+                )
+            }
+        }
+        DividerTextExpandedWith("其他") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                //                TransplantListItem(
+//                    headlineContent = { Text("长截图") },
+//                    leadingContent = { Icon(painterResource(R.drawable.screenshot_frame),null)},
+//                    supportingContent = {
+//                        Text("开启后，在支持长截图的界面中，可自动滚动并保存截图")
+//                    },
+//                    trailingContent = {
+//                        Switch(checked = false, onCheckedChange = { })
+//                    },
+//                    modifier = Modifier.clickable {
+//                        saveTrigger.value = 1
+//                    }
+//                )
+//                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("自定义Shortcut") },
+                    supportingContent = {
+                        Text("自定义桌面APP图标长按菜单项目或控制中心按钮")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.menu),null)
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("磁钉") },
+                    supportingContent = {
+                        Text("支持以类似小程序的形式，将界面暂时收起")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.bookmark),null)
+                    },
+                    trailingContent = {
+                        Switch(checked = false, onCheckedChange = { showToast("正在开发") })
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
                     }
                 )
             }

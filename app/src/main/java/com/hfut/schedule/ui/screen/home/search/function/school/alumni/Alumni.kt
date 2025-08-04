@@ -23,7 +23,7 @@ fun Alumni() {
         headlineContent = { Text(text = "校友平台") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.local_library), contentDescription = "") },
         modifier = Modifier.clickable {
-            Starter.startWebView(MyApplication.ALUMNI_URL,"校友平台")
+            Starter.startWebView(MyApplication.ALUMNI_URL,"校友平台", icon = R.drawable.local_library)
         }
     )
 }

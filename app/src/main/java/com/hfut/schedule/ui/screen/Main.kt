@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.Do
 import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayCampusScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
+import com.hfut.schedule.ui.screen.other.NavigationExceptionScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -398,6 +399,20 @@ fun MainHost(
                     title,
                     icon,
                     cookies,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
+            // Exception
+            composable(
+                route = AppNavRoute.Exception.receiveRoute(),
+                arguments = getArgs(AppNavRoute.Exception.Args.entries)
+            ) { backStackEntry ->
+                val exception = backStackEntry.arguments?.getString(AppNavRoute.Exception.Args.EXCEPTION.argName) ?: (AppNavRoute.Exception.Args.EXCEPTION.default as String)
+
+                NavigationExceptionScreen(
+                    exception,
                     navController,
                     this@SharedTransitionLayout,
                     this@composable,

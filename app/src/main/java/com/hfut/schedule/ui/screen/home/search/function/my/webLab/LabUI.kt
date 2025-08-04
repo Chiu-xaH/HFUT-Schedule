@@ -20,7 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.StyleCardListItem
-   
+import com.hfut.schedule.ui.screen.AppNavRoute
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,7 +37,7 @@ fun LabUI() {
                 headlineContent = { Text(text = item.title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
-                    Starter.startWebView(item.info,item.title)
+                    Starter.startWebView(item.info,item.title, icon=AppNavRoute.WebNavigation.icon)
                 }
             )
 //        }

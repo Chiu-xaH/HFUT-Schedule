@@ -118,9 +118,8 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.style.transitionBackground
+import com.hfut.schedule.ui.style.transitionBackground2
 import com.hfut.schedule.ui.style.transitionBackgroundF
-import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
@@ -430,7 +429,7 @@ fun MainScreen(
         }
 
         Scaffold(
-            modifier = transitionBackground(isAddUIExpanded).fillMaxSize().let {
+            modifier = transitionBackground2(isAddUIExpanded).fillMaxSize().let {
                 if (targetPage == FOCUS) {
                     it.nestedScroll(scrollBehavior.nestedScrollConnection)
                 } else {

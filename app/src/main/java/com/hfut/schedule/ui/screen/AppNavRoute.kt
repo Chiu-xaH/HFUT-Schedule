@@ -250,6 +250,17 @@ sealed class AppNavRoute(val route: String) {
         val icon = R.drawable.meeting_room
         val title = "空教室"
     }
+    object Exception : AppNavRoute("EXCEPTION") {
+        val icon = R.drawable.warning
+        val title = "错误"
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            EXCEPTION("exception", NavType.StringType,"",false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(exception: String): String = withArgs(
+            Args.EXCEPTION.argName to exception
+        )
+    }
 }
 
 fun getArgs(args : Iterable<NavArg>) : List<NamedNavArgument> = args.map { item ->

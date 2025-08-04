@@ -31,6 +31,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -95,6 +97,7 @@ private fun WebViewBackIcon(
     icon : Int? = null,
     navController: NavHostController,
     route : String,
+    color : Color,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
@@ -126,7 +129,7 @@ private fun WebViewBackIcon(
     with(sharedTransitionScope) {
         if(icon == null) {
             button {
-                Icon(cIcon, contentDescription = "",tint = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+                Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
             }
         } else {
             val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
@@ -150,20 +153,23 @@ private fun WebViewBackIcon(
                         enter = DefaultTransitionStyle.centerAllAnimation.enter,
                         exit = DefaultTransitionStyle.centerAllAnimation.exit
                     ) {
-                        Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = iconElementShare(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),animatedContentScope = animatedContentScope, route = route))
+                        Icon(painterResource(icon), contentDescription = null, tint = color,modifier = iconElementShare(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),animatedContentScope = animatedContentScope, route = route))
                     }
                     AnimatedVisibility(
                         visible = !show,
                         enter = DefaultTransitionStyle.centerAllAnimation.enter,
                         exit = DefaultTransitionStyle.centerAllAnimation.exit
                     ) {
-                        Icon(cIcon, contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+                        Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
                     }
                 }
             }
         }
     }
 }
+
+
+
 
 @Composable
 fun isThemeDark() : Boolean {
@@ -260,11 +266,13 @@ fun WebViewScreenForNavigation(
         IconButton(onClick = { ShareTo.shareString(currentUrl) }) { Icon(
             painterResource(id = R.drawable.ios_share), contentDescription = "") }
     }
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+//    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+//    val hazeState = rememberHazeState(blurEnabled = blur)
     var topColor by remember { mutableStateOf<Color?>(null) }
+    val topBarTitleColor = topColor?.let {
+        if (it.luminance() < 0.5f) Color.White else Color.Black
+    } ?: MaterialTheme.colorScheme.primary
     val route = remember { AppNavRoute.WebView.shareRoute(url) }
-
     BackHandler {
         if(fullScreen) {
             fullScreen = false
@@ -272,7 +280,7 @@ fun WebViewScreenForNavigation(
         if (webView?.canGoBack() == true) {
             webView?.goBack()
         } else {
-            if(backCount > 0) {
+            if(backCount > 0 && loading == false) {
                 showToast("再滑一次退出")
                 backCount--
             } else {
@@ -294,21 +302,25 @@ fun WebViewScreenForNavigation(
                     exit = AppAnimationManager.toTopAnimation.exit
                 ) {
                     TopAppBar(
-                        modifier = Modifier.topBarBlur(hazeState, topColor ?: MaterialTheme.colorScheme.surface),
-                        colors = topBarTransplantColor(),
+//                        modifier = Modifier.topBarBlur(hazeState, topColor ?: MaterialTheme.colorScheme.surface),
+//                        colors = topBarTransplantColor(),
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = topColor ?: MaterialTheme.colorScheme.surface,
+                            titleContentColor = topBarTitleColor,
+                        ),
                         actions = {
                             Row{
                                 if(!visible) {
                                     IconButton(
                                         onClick = { visible = true }
                                     ) {
-                                        Icon(painterResource(R.drawable.more_vert),null, tint = MaterialTheme.colorScheme.primary)
+                                        Icon(painterResource(R.drawable.more_vert),null, tint = topBarTitleColor)
                                     }
                                 }
                             }
                         },
                         navigationIcon = {
-                            WebViewBackIcon(webView,icon,navController,route,sharedTransitionScope,animatedContentScope)
+                            WebViewBackIcon(webView,icon,navController,route,topBarTitleColor,sharedTransitionScope,animatedContentScope)
                         },
                         title = {
                             Column {
@@ -317,7 +329,7 @@ fun WebViewScreenForNavigation(
                                     getPureUrl(currentUrl),
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                                    color = topBarTitleColor,
                                 )
                             }
                         },
@@ -326,7 +338,7 @@ fun WebViewScreenForNavigation(
             },
         ) { innerPadding ->
             val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
-            val top = innerPadding.calculateTopPadding().value.toInt()
+//            val top = innerPadding.calculateTopPadding().value.toInt()
 
             Box(modifier = Modifier.fillMaxSize()) {
                 AnimatedVisibility(
@@ -337,8 +349,8 @@ fun WebViewScreenForNavigation(
                 ) {
                     VerticalFloatingToolbar (
                         expanded = true,
-                        colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
-                        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
+//                        colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
+//                        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
                     ) {
                         tools()
                         IconButton(onClick = { visible = false }) { Icon(
@@ -456,11 +468,12 @@ fun WebViewScreenForNavigation(
                                             e.printStackTrace()
                                         }
                                     }, 100) // 延迟一点确保绘制完成
+                                    // document.body.style.paddingTop = '${top}px';
                                     // 注入 JS，为网页内容添加 padding（单位 px）
                                     view?.evaluateJavascript(
                                         """
         (function() {
-            document.body.style.paddingTop = '${top}px';
+            
             document.body.style.paddingBottom = '${bottom}px';
         })();
         """.trimIndent(),
@@ -502,7 +515,10 @@ fun WebViewScreenForNavigation(
                             }
                         }
                     },
-                    modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+                    modifier = Modifier
+                        .padding(innerPadding)
+//                        .hazeSource(hazeState)
+                        .fillMaxSize()
                 )
             }
         }

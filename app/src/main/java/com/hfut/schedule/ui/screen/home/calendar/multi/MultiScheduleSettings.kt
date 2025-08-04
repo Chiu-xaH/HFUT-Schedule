@@ -64,7 +64,8 @@ import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-   
+import com.hfut.schedule.ui.screen.AppNavRoute
+
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -268,7 +269,8 @@ fun MultiScheduleSettings(
                                     Starter.startWebView(
                                         url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
                                         title = "教务系统",
-                                        cookie = cookie
+                                        cookie = cookie,
+                                        icon = AppNavRoute.NextCourse.icon
                                     )
                                 } else {
                                     showToast("入口暂未开放")

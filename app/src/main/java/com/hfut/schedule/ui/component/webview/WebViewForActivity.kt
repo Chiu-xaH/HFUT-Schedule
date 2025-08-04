@@ -10,7 +10,11 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +27,17 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -43,12 +50,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
+import androidx.navigation.NavHostController
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.hfut.schedule.R
@@ -65,10 +74,81 @@ import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.TransitionState
+import com.xah.transition.style.DefaultTransitionStyle
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+private fun WebViewBackIcon(
+    webView: WebView?,
+    icon : Int? = null,
+    color : Color,
+    onExit : () -> Unit
+) {
+    val back : () -> Unit = {
+        if(webView?.canGoBack() == true) {
+            webView.goBack()
+        } else {
+            onExit()
+        }
+    }
+    val cIcon = if(webView?.canGoBack() == true) {
+        Icons.Default.ArrowBack
+    } else {
+        Icons.Default.Close
+    }
+    val button = @Composable { content  : @Composable () -> Unit ->
+        Box(
+            modifier = Modifier
+                .combinedClickable(
+                    onClick = back,
+                    onLongClick = {
+                        onExit()
+                    }
+                )
+        ) {
+            content()
+        }
+    }
+    if(icon == null) {
+        button {
+            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+        }
+    } else {
+        val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
+        var show by remember { mutableStateOf(true) }
+        LaunchedEffect(Unit) {
+            show = true
+            delay(speed*1L)
+            delay(1000L)
+            show = false
+        }
+
+        button {
+            Box() {
+                AnimatedVisibility(
+                    visible = show,
+                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
+                    exit = DefaultTransitionStyle.centerAllAnimation.exit
+                ) {
+                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+                }
+                AnimatedVisibility(
+                    visible = !show,
+                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
+                    exit = DefaultTransitionStyle.centerAllAnimation.exit
+                ) {
+                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+                }
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -76,7 +156,8 @@ import kotlinx.coroutines.launch
 fun WebViewScreenForActivity(
     url: String,
     cookies : String? = null,
-    title : String
+    title : String,
+    icon : Int
 ) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var visible by remember { mutableStateOf(true) }
@@ -145,8 +226,11 @@ fun WebViewScreenForActivity(
     }
     var loading by remember { mutableStateOf(true) }
     var topColor by remember { mutableStateOf<Color?>(null) }
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val topBarTitleColor = topColor?.let {
+        if (it.luminance() < 0.5f) Color.White else Color.Black
+    } ?: MaterialTheme.colorScheme.primary
+//    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+//    val hazeState = rememberHazeState(blurEnabled = blur)
 
     BackHandler {
         if(fullScreen) {
@@ -155,7 +239,7 @@ fun WebViewScreenForActivity(
         if (webView?.canGoBack() == true) {
             webView?.goBack()
         } else {
-            if(backCount > 0) {
+            if(backCount > 0 && loading == false) {
                 showToast("再滑一次退出")
                 backCount--
             } else {
@@ -166,54 +250,73 @@ fun WebViewScreenForActivity(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = topColor ?: MaterialTheme.colorScheme.primary,
         topBar = {
             AnimatedVisibility(
                 visible = !fullScreen,
                 enter = AppAnimationManager.toTopAnimation.enter,
                 exit = AppAnimationManager.toTopAnimation.exit
             ) {
-                TopAppBar(
-                    modifier = Modifier.topBarBlur(hazeState, color = topColor ?: MaterialTheme.colorScheme.surface),
-                    colors = topBarTransplantColor(),
-                    actions = {
-                        Row{
-                            if(!visible) {
-                                IconButton(
-                                    onClick = { visible = true }
-                                ) {
-                                    Icon(painterResource(R.drawable.more_vert),null, tint = MaterialTheme.colorScheme.primary)
+                Column {
+                    TopAppBar(
+//                    modifier = Modifier.topBarBlur(hazeState, color = topColor ?: MaterialTheme.colorScheme.surface),
+//                    colors = topBarTransplantColor(),
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = topColor ?: MaterialTheme.colorScheme.surface,
+                            titleContentColor = topBarTitleColor
+                        ),
+                        actions = {
+                            Row {
+                                if (!visible) {
+                                    IconButton(
+                                        onClick = { visible = true }
+                                    ) {
+                                        Icon(
+                                            painterResource(R.drawable.more_vert),
+                                            null,
+                                            tint = topBarTitleColor
+                                        )
+                                    }
                                 }
                             }
-                        }
-                    },
-                    title = {
-                        Column {
-                            ScrollText(currentTitle)
-                            ScrollText(
-                                getPureUrl(currentUrl),
-                                modifier = Modifier.padding(start = 2.dp),
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    },
-                )
+                        },
+                        navigationIcon = {
+                            WebViewBackIcon(webView=webView, color = topBarTitleColor,icon = icon) {
+                                activity?.finish()
+                            }
+                        },
+                        title = {
+                            Column {
+                                ScrollText(currentTitle)
+                                ScrollText(
+                                    getPureUrl(currentUrl),
+                                    modifier = Modifier.padding(start = 2.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                        },
+                    )
+                }
             }
         },
     ) { innerPadding ->
         val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
-        val top = innerPadding.calculateTopPadding().value.toInt()
+//        val top = innerPadding.calculateTopPadding().value.toInt()
         Box(modifier = Modifier.fillMaxSize()) {
             AnimatedVisibility(
                 visible = visible,
                 enter = AppAnimationManager.hiddenRightAnimation.enter,
                 exit = AppAnimationManager.hiddenRightAnimation.exit,
-                modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = APP_HORIZONTAL_DP)
+                    .align(Alignment.CenterEnd)
+                    .zIndex(1f)
             ) {
                 VerticalFloatingToolbar (
                     expanded = true,
-                    colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
-                    modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
+//                    colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
+//                    modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
                 ) {
                     tools()
                     IconButton(onClick = { visible = false }) { Icon(
@@ -223,7 +326,11 @@ fun WebViewScreenForActivity(
             }
             if(loading) {
                 LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter).padding(innerPadding).zIndex(2f)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter)
+                        .padding(innerPadding)
+                        .zIndex(2f)
                 )
             }
             AndroidView(
@@ -330,12 +437,12 @@ fun WebViewScreenForActivity(
                                     } catch (e: Exception) {
                                         e.printStackTrace()
                                     }
-                                }, 100) // 延迟一点确保绘制完成
+                                }, 100) // 延迟一点确保绘制完成 document.body.style.paddingTop = '${top}px';
                                 // 注入 JS，为网页内容添加 padding（单位 px）
                                 view?.evaluateJavascript(
                                     """
         (function() {
-            document.body.style.paddingTop = '${top}px';
+            
             document.body.style.paddingBottom = '${bottom}px';
         })();
         """.trimIndent(),
@@ -381,7 +488,10 @@ fun WebViewScreenForActivity(
                         }
                     }
                 },
-                modifier = Modifier.fillMaxSize().hazeSource(hazeState)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+//                    .hazeSource(hazeState)
             )
         }
     }

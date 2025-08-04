@@ -54,7 +54,7 @@ fun NotificationItems() {
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
                 modifier = Modifier.clickable {
                     if(list[item].url != null) {
-                        list[item].url?.let { Starter.startWebView(it,list[item].title) }
+                        list[item].url?.let { Starter.startWebView(it,list[item].title, icon = AppNavRoute.Notifications.icon) }
                     } else {
                         showToast("暂无点击操作")
                     }

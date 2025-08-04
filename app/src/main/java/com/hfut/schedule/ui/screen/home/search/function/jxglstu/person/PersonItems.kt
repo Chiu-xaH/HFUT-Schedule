@@ -62,7 +62,6 @@ import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first

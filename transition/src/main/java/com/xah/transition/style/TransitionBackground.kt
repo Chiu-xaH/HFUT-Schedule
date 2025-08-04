@@ -65,7 +65,12 @@ fun Modifier.transitionBackground(
         !transplantBackground)
         Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
 
-    val transitionModifier = if(forceTransition) this@transitionBackground.scale(scale.value).blur(blurSize) else this@transitionBackground
+    val transitionModifier =
+        if(forceTransition)
+            this@transitionBackground
+                .scale(scale.value)
+                .blur(blurSize)
+        else this@transitionBackground
 
     transitionModifier
 }

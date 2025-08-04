@@ -75,9 +75,6 @@ object Encrypt {
         return String(decryptedBytes, Charsets.UTF_8)
     }
 
-
-
-
     @JvmStatic
     fun encryptAesECB(plainText: String, key: String): String {
         val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")

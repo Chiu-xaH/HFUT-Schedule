@@ -63,7 +63,8 @@ UI: Material You (Material Design 3) v1.4.0-alpha12
 
 IDE: Android Studio Meerkat
 
-## 开源库(鸣谢)
+## 鸣谢
+### 库/依赖
 [OkHttp](https://github.com/square/okhttp) 网络请求
 
 [Retrofit](https://github.com/square/retrofit) 网络请求
@@ -86,7 +87,16 @@ IDE: Android Studio Meerkat
 
 [Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract (供识别图片验证码)
 
-[Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新
+[Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新(自己)
+
+[Compose-Transition-Sample](https://github.com/Chiu-xaH/Compose-Transition-Sample) 转场动画(自己)
+
+### 工具
+[holiday-cn](https://github.com/NateScarlet/holiday-cn) 节假日
+
+[Consumption-Forecast](https://github.com/Chiu-xaH/Consumption-Forecast) 饭卡消费预测(自己)
+
+[webvpn-dlut](https://github.com/ESWZY/webvpn-dlut) WENVPN URL转换
 
 ## [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
 

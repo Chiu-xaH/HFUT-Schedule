@@ -1,13 +1,11 @@
 package com.hfut.schedule.ui.util
 
 import androidx.navigation.NavController
-
-//fun NavController.navigateAndClear(route: String) {
-//    navigate(route) {
-//        popUpTo(graph.startDestinationId) { inclusive = true } // 清除所有历史记录
-//        launchSingleTop = true // 避免多次实例化相同的目的地
-//    }
-//}
+import com.hfut.schedule.logic.util.development.getKeyStackTrace
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.transition.util.navigateWithSave
 
 fun NavController.navigateAndSave(route: String) {
     navigate(route) {
@@ -20,7 +18,9 @@ fun NavController.navigateAndSave(route: String) {
 }
 
 
-//@Composable
-//fun NavController.currentRoute() : String? = this.currentBackStackEntryAsState().value?.destination?.route
-//@Composable
-//fun NavController.isCurrentRoute(route: String) : Boolean = currentRoute() != route
+fun NavController.navigateForTransition(route: String,transplantBackground : Boolean = false) = try {
+    navigateAndSaveForTransition(route,transplantBackground)
+} catch (e : Exception) {
+    e.printStackTrace()
+    showToast(getKeyStackTrace(e))
+}

@@ -152,7 +152,7 @@ private fun SupportItem(item : SupportItemBean) {
                         color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp,
                         modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
-                            Starter.startWebView(it,"Github")
+                            Starter.startWebView(it,"Github", icon = R.drawable.github)
                         }
                     )
                 }

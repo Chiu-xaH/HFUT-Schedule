@@ -33,6 +33,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.URLImage
    
 import com.hfut.schedule.ui.style.InnerPaddingHeight
@@ -50,6 +51,7 @@ fun TeacherListUI(vm: NetWorkViewModel,innerPadding : PaddingValues) {
             val item = dataList[index]
             item.let {
                 val department = it.department.replace("&nbsp;","").substringBefore("（")
+                val icon = departmentIcon(department)
                 val jobList = listOf(it.job,it.gtutor ,it.doctorTutor).filter { it.isNotEmpty() && it.isNotBlank() }
                 StyleCardListItem(
                     headlineContent = {
@@ -68,7 +70,7 @@ fun TeacherListUI(vm: NetWorkViewModel,innerPadding : PaddingValues) {
                         Text(jobList.toString().replace("[","").replace("]",""))
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebView(it.url,it.name)
+                        Starter.startWebView(it.url,it.name, icon = icon)
                     }
                 )
             }

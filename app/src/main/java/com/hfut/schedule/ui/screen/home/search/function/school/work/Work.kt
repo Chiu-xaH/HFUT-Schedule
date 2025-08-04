@@ -251,7 +251,7 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : Pager
                                         Campus.HEFEI -> MyApplication.WORK_URL
                                         Campus.XUANCHENG -> MyApplication.WORK_XC_URL
                                     } + "detail/" + enumType.url +  id
-                                    Starter.startWebView(url,title)
+                                    Starter.startWebView(url,title, icon = AppNavRoute.Work.icon)
                                 },
                                 leadingContent = { Text((index+1).toString()) }
                             )
