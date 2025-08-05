@@ -113,30 +113,32 @@ fun UseAgreementScreen(navController : NavHostController) {
             )
         },
         bottomBar = {
-            Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding().bottomBarBlur(hazeState, ),horizontalArrangement = Arrangement.Center) {
-                Button(
-                    onClick = {
-                        SharedPrefs.saveBoolean("canUse", default = false, save = true)
-                        navController.navigateAndClear(AppNavRoute.Home.route)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f)
-                ) {
-                    Text("同意")
-                }
-                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                FilledTonalButton(
-                    onClick = {
-                        showToast("已关闭APP")
-                        context?.finish()
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(.5f)
-                ) {
-                    SharedPrefs.saveBoolean("canUse", default = false, save = false)
-                    Text("拒绝")
+            Box(modifier = Modifier.bottomBarBlur(hazeState)) {
+                Row(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding(),horizontalArrangement = Arrangement.Center) {
+                    Button(
+                        onClick = {
+                            SharedPrefs.saveBoolean("canUse", default = false, save = true)
+                            navController.navigateAndClear(AppNavRoute.Home.route)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f)
+                    ) {
+                        Text("同意")
+                    }
+                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
+                    FilledTonalButton(
+                        onClick = {
+                            showToast("已关闭APP")
+                            context?.finish()
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f)
+                    ) {
+                        SharedPrefs.saveBoolean("canUse", default = false, save = false)
+                        Text("拒绝")
+                    }
                 }
             }
         },

@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -28,7 +29,9 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
-   
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
+
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
@@ -36,8 +39,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
-    var url by remember { mutableStateOf("") }
-
+    val cookies by produceState<String?>(initialValue = null) {
+        value = getWebVpnCookie(vm)
+    }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.newsXuanChengResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
@@ -62,7 +66,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         overlineContent = { Text(item.date) },
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
-                            Starter.startWebView(MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream)
+                            autoWebVpnForNews(MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
                         },
                         index = index
                     )

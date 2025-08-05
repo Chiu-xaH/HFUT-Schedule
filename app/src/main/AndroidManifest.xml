@@ -59,11 +59,6 @@
         <!-- </receiver> -->
         <!-- <profileable android:shell="true" /> -->
         <activity
-            android:name=".activity.screen.NewsActivity"
-            android:exported="true"
-            android:label="@string/title_activity_news"
-            android:theme="@style/Theme.App.Starting" />
-        <activity
             android:name=".activity.util.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_base"

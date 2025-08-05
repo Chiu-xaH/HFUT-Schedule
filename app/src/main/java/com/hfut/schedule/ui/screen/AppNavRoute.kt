@@ -93,9 +93,17 @@ sealed class AppNavRoute(val route: String) {
             Args.INDEX.argName to index
         )
     }
+    object WebVpn : AppNavRoute("WEBVPN") {
+        val icon = R.drawable.vpn_key
+        val title = "WebVpn"
+    }
     object Holiday : AppNavRoute("HOLIDAY") {
         val icon = R.drawable.beach_access
         val title = "法定假日"
+    }
+    object News : AppNavRoute("News") {
+        val icon = R.drawable.stream
+        val title = "通知公告"
     }
     object Wechat : AppNavRoute("WECHAT") {
         val icon = R.drawable.wechat
@@ -244,6 +252,17 @@ sealed class AppNavRoute(val route: String) {
         fun receiveRoute() = receiveRoutePair(Args.entries)
         fun withArgs(ifSaved: Boolean): String = withArgs(
             Args.IF_SAVED.argName to ifSaved
+        )
+    }
+    object ProgramCompetitionDetail : AppNavRoute("PROGRAM_COMPETITION_DETAIL") {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            TITLE("title", NavType.StringType,"详情",false),
+            INDEX("index", NavType.IntType,-1,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(title : String,index : Int): String = withArgs(
+            Args.TITLE.argName to title,
+            Args.INDEX.argName to index
         )
     }
     object EmptyRoom : AppNavRoute("EMPTY_ROOM") {

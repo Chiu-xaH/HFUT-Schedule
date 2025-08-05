@@ -15,6 +15,7 @@ import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.transition.style.TransitionLevel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -31,6 +32,7 @@ object DataStoreManager {
     enum class ColorMode(val code : Int) {
         LIGHT(1),DARK(2),AUTO(0)
     }
+
     enum class AnimationSpeed(val code : Int,val speed : Int,val title : String) {
         SLOW(3,550,"慢"),NORMAL(0,400,"正常"),FAST(1,250,"快"),NONE(2,0,"无")
     }
@@ -62,8 +64,7 @@ object DataStoreManager {
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
     private val HAZE_BLUR = booleanPreferencesKey("haze_blur_2")
-    private val TRANSITION = booleanPreferencesKey("transition")
-    private val MOTION_ANIMATION_TYPE = booleanPreferencesKey("motion_animation_type")
+    private val TRANSITION = intPreferencesKey("transitions")
     private val SHOW_CLOUD_FOCUS = booleanPreferencesKey("show_cloud_focus")
     private val SHOW_FOCUS = booleanPreferencesKey("show_focus")
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
@@ -94,7 +95,7 @@ object DataStoreManager {
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
     suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR,value)
-    suspend fun saveTransition(value: Boolean) = saveValue(TRANSITION,value)
+    suspend fun saveTransition(value: TransitionLevel) = saveValue(TRANSITION,value.code)
     suspend fun saveShowCloudFocus(value: Boolean) = saveValue(SHOW_CLOUD_FOCUS,value)
     suspend fun saveShowFocus(value: Boolean) = saveValue(SHOW_FOCUS,value)
     suspend fun saveSupabaseJwt(value: String) = saveValue(SUPABASE_JWT,value)
@@ -124,7 +125,7 @@ object DataStoreManager {
     val colorModeFlow = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val motionBlurFlow = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
     val hazeBlurFlow = getFlow(HAZE_BLUR,true)
-    val transitionFlow = getFlow(TRANSITION,false)
+    val transitionFlow = getFlow(TRANSITION, TransitionLevel.NONE.code)
     val showCloudFocusFlow = getFlow(SHOW_CLOUD_FOCUS,true)
     val showFocusFlow = getFlow(SHOW_FOCUS,true)
     val supabaseJwtFlow = getFlow(SUPABASE_JWT,EMPTY_STRING)

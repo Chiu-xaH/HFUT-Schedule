@@ -46,5 +46,11 @@ object DefaultTransitionStyle {
     private val exitAnimationFade = fadeOut(animationSpec = tween(durationMillis = DEFAULT_ANIMATION_SPEED))
 
     val fadeAnimation = TransferAnimation("淡入淡出", enterAnimationFade, exitAnimationFade)
+
+    private val enterAnimationNull = fadeIn(animationSpec = tween(durationMillis = 0))
+
+    private val exitAnimationNull = fadeOut(animationSpec = tween(durationMillis = 0))
+
+    val nullAnimation = TransferAnimation("无", enterAnimationNull, exitAnimationNull)
 }
 

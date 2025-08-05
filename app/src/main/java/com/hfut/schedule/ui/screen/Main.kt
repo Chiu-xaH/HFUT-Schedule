@@ -41,6 +41,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.Cou
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionDetailScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramSearchScreen
@@ -60,7 +61,9 @@ import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admissi
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayCampusScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpnScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
+import com.hfut.schedule.ui.screen.news.home.NewsScreen
 import com.hfut.schedule.ui.screen.other.NavigationExceptionScreen
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -308,6 +311,14 @@ fun MainHost(
             composable(AppNavRoute.Life.route) {
                 LifeScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
             }
+            // WebVpn
+            composable(AppNavRoute.WebVpn.route) {
+                WebVpnScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+            }
+            // 通知公告
+            composable(AppNavRoute.News.route) {
+                NewsScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+            }
             // 全校培养方案
             composable(
                 route = AppNavRoute.ProgramSearch.receiveRoute(),
@@ -379,6 +390,26 @@ fun MainHost(
                 ProgramCompetitionScreen(
                     networkVm,
                     ifSaved,
+                    navController,
+                    this@SharedTransitionLayout,
+                    this@composable,
+                )
+            }
+            // 培养方案完成情况 二级界面
+            composable(
+                route = AppNavRoute.ProgramCompetitionDetail.receiveRoute(),
+                arguments = getArgs(AppNavRoute.ProgramCompetitionDetail.Args.entries)
+            ) { backStackEntry ->
+                val index = backStackEntry.arguments?.getInt(AppNavRoute.ProgramCompetitionDetail.Args.INDEX.argName) ?: (AppNavRoute.ProgramCompetitionDetail.Args.INDEX.default as Int)
+                val title = backStackEntry.arguments?.getString(AppNavRoute.ProgramCompetitionDetail.Args.TITLE.argName) ?: (AppNavRoute.ProgramCompetitionDetail.Args.TITLE.default as String)
+
+                if(index < 0) {
+                    return@composable
+                }
+                ProgramCompetitionDetailScreen(
+                    networkVm,
+                    title,
+                    index,
                     navController,
                     this@SharedTransitionLayout,
                     this@composable,

@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-01") },
+                overlineContent = { Text(text = "2025-08-05") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,14 +58,26 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
-            UpdateItems("新增 为一些按钮和N级界面等10+场景适配新的转场动画")
-            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
-            UpdateItems("新增 WEBVPN","位于 查询中心-WEBVPN，通过外地访问登录后，可自行定义任意链接")
-
-            UpdateItems("优化 新转场动画的细节")
-            UpdateItems("优化 新转场动画下的网页无法快速打断的连贯性")
+//            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
+            UpdateItems("新增 为部分场景适配新的转场动画")
+            UpdateItems("新增 通过WebVpn转换内外网","位于 查询中心-WebVpn，通过外地访问登录后，可自行访问内网的任意链接")
+            UpdateItems("新增 支持在外地访问的状态下，查看内网通知公告")
+            UpdateItems("重构 增强转场动画开关","现在细分为 增强转场动画等级，共有4个Level")
             UpdateItems("修复 打开部分网页闪烁的Bug","移除 层级模糊的支持，使用自动取色沉浸化的机制")
             UpdateItems("修复 主页偶见崩溃的Bug")
+            UpdateItems("优化 打开网页时当前链接与初始链接不同时一些功能的逻辑")
+            UpdateItems("优化 新转场动画下的网页无法快速打断的连贯性")
+            UpdateItems("优化 部分界面的设计")
+            UpdateItems("优化 转场动画曲线")
+            /*
+                        转专业二级界面
+            就业二级界面 通知公告二级界面
+            教师检索二级界面 课程详情查教师三级界面
+            开课查询二级界面 课程汇总二级界面
+            课程详情查挂科率三级界面 挂科率二级界面
+            一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
+
+             */
 //            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
 //            UpdateItems("下线 空教室","后期重构完成后回归")
 //            UpdateItems("下线 成绩-统计","后期重构完成后回归")

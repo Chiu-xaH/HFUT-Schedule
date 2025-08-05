@@ -1,7 +1,9 @@
 package com.hfut.schedule.ui.screen.news.home
 
 import android.annotation.SuppressLint
-import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -25,18 +27,17 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -46,6 +47,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -54,6 +56,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -70,13 +73,17 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
-import com.hfut.schedule.ui.component.container.StyleCardListItem
-   
-import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
 import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
@@ -91,20 +98,26 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import org.json.JSONArray
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun NewsActivityUI(vm: NetWorkViewModel) {
-    val navController = rememberNavController()
-    val context = LocalActivity.current
+fun NewsScreen(
+    vm: NetWorkViewModel,
+    navTopController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.News.route }
+
+    val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(NewsBarItems.News) }
     // 保存上一页页码 用于决定左右动画
@@ -117,6 +130,9 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
     val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet ) {
+        val cookies by produceState<String?>(initialValue = null) {
+            value = getWebVpnCookie(vm)
+        }
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
@@ -132,7 +148,7 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                         Text("宣城校区教务处")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(MyApplication.XC_ACADEMIC_URL)
+                        autoWebVpnForNews(MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
                     }
                 )
                 StyleCardListItem(
@@ -140,143 +156,154 @@ fun NewsActivityUI(vm: NetWorkViewModel) {
                         Text("总教务处")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(MyApplication.ACADEMIC_URL)
+                        Starter.startWebView(MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState)) {
-                TopAppBar(
-                    colors = topBarTransplantColor(),
-                    title = { Text("通知公告") },
-                    actions = {
-                        if(targetPage == NewsBarItems.Academic) {
-                            IconButton(
-                                onClick = {
-                                    showBottomSheet = true
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navTopController,
+            topBar = {
+                Column(
+                    Modifier.topBarBlur(hazeState)
+                ) {
+                    TopAppBar(
+                        colors = topBarTransplantColor(),
+                        title = { Text(AppNavRoute.News.title) },
+                        navigationIcon = {
+                            TopBarNavigateIcon(
+                                navTopController,
+                                animatedContentScope,
+                                route,
+                                AppNavRoute.News.icon
+                            )
+                        },
+                        actions = {
+                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                if (targetPage == NewsBarItems.Academic) {
+                                    FilledTonalIconButton(
+                                        onClick = {
+                                            showBottomSheet = true
+                                        }
+                                    ) {
+                                        Icon(painterResource(R.drawable.net), null)
+                                    }
                                 }
-                            ) {
-                                Icon(painterResource(R.drawable.net),null)
+                                Spacer(Modifier.width(APP_HORIZONTAL_DP / 3))
+                                if (targetPage != NewsBarItems.School) {
+                                    FilledTonalButton(onClick = {
+                                        if (!vm.webVpn) {
+                                            showToast("请勾选外地访问后登录")
+                                            Starter.refreshLogin()
+                                        }
+                                    }) {
+                                        Text(if (vm.webVpn) "已启用WebVpn" else "启用WebVpn")
+                                    }
+                                }
                             }
                         }
-                        IconButton(onClick = {
-                            showToast("部分公告需要连接校园网才可阅读（对外私密）")
-                        }) {
-                            Icon(painterResource(R.drawable.info), contentDescription = "")
-                        }
-                        IconButton(onClick = {
-                            context?.finish()
-                        }) {
-                            Icon(Icons.Filled.Close, contentDescription = "")
-                        }
+                    )
+                    if (targetPage != NewsBarItems.School) {
+                        CustomTabRow(
+                            pagerState = newsPagerState,
+                            titles = newsTitles
+                        )
                     }
-                )
-                if(targetPage != NewsBarItems.School) {
-                    CustomTabRow(
-                        pagerState = newsPagerState,
-                        titles = newsTitles
-                    )
                 }
-            }
-        },
-        bottomBar = {
-            Column {
-                NavigationBar(containerColor = Color.Transparent,
-                    modifier = Modifier
-                        .bottomBarBlur(hazeState)) {
+            },
+            bottomBar = {
+                Column {
+                    NavigationBar(containerColor = Color.Transparent,
+                        modifier = Modifier
+                            .bottomBarBlur(hazeState)) {
 
-                    val items = listOf(
-                        NavigationBarItemData(
-                            NewsBarItems.News.name,"通知公告", painterResource(R.drawable.star), painterResource(
-                                R.drawable.star_filled)
-                        ),
-                        NavigationBarItemData(
-                            NewsBarItems.Academic.name,"教务处", painterResource(R.drawable.star_half), painterResource(
-                                R.drawable.star_filled)
-                        ),
-                        NavigationBarItemData(
-                            NewsBarItems.School.name,"各级学院", painterResource(R.drawable.school),
-                            painterResource(R.drawable.school_filled)
+                        val items = listOf(
+                            NavigationBarItemData(
+                                NewsBarItems.News.name,"通知公告", painterResource(R.drawable.star), painterResource(
+                                    R.drawable.star_filled)
+                            ),
+                            NavigationBarItemData(
+                                NewsBarItems.Academic.name,"教务处", painterResource(R.drawable.star_half), painterResource(
+                                    R.drawable.star_filled)
+                            ),
+                            NavigationBarItemData(
+                                NewsBarItems.School.name,"各级学院", painterResource(R.drawable.school),
+                                painterResource(R.drawable.school_filled)
+                            )
                         )
-                    )
-                    items.forEach { item ->
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-                        val scale = animateFloatAsState(
-                            targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                            label = "" // 使用弹簧动画
-                        )
-                        val route = item.route
-                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                        NavigationBarItem(
-                            selected = selected,
-                            modifier = Modifier.scale(scale.value),
-                            interactionSource = interactionSource,
-                            onClick = {
-                                //     atEnd = !atEnd
-                                targetPage = when(item) {
-                                    items[0] -> NewsBarItems.News
-                                    items[1] -> NewsBarItems.Academic
-                                    items[2] -> NewsBarItems.School
-                                    else -> NewsBarItems.News
-                                }
-                                if (!selected) { navController.navigateAndSave(route) }
+                        items.forEach { item ->
+                            val interactionSource = remember { MutableInteractionSource() }
+                            val isPressed by interactionSource.collectIsPressedAsState()
+                            val scale = animateFloatAsState(
+                                targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
+                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                                label = "" // 使用弹簧动画
+                            )
+                            val route = item.route
+                            val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
+                            NavigationBarItem(
+                                selected = selected,
+                                modifier = Modifier.scale(scale.value),
+                                interactionSource = interactionSource,
+                                onClick = {
+                                    //     atEnd = !atEnd
+                                    targetPage = when(item) {
+                                        items[0] -> NewsBarItems.News
+                                        items[1] -> NewsBarItems.Academic
+                                        items[2] -> NewsBarItems.School
+                                        else -> NewsBarItems.News
+                                    }
+                                    if (!selected) { navController.navigateAndSave(route) }
 
 //                                if(route != NewsBarItems.Academic.name) {
 //                                } else {
 //                                    /
 //                                }
-                            },
-                            label = { Text(text = item.label) },
-                            icon = {
-                                BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                            },
-                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+                                },
+                                label = { Text(text = item.label) },
+                                icon = {
+                                    BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
+                                },
+                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
 
-                        )
+                            )
+                        }
                     }
                 }
+
             }
+        ) { innerPadding ->
+            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
-        }
-    ) {innerPadding ->
-
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
-        NavHost(navController = navController,
-            startDestination = NewsBarItems.News.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
-            modifier = Modifier.hazeSource(state = hazeState)
-        ) {
-            composable(NewsBarItems.News.name) {
-                Scaffold {
-                    NewsScreen(innerPadding,vm,newsPagerState)
+            NavHost(navController = navController,
+                startDestination = NewsBarItems.News.name,
+                enterTransition = { animation.enter },
+                exitTransition = { animation.exit },
+                modifier = Modifier.hazeSource(state = hazeState)
+            ) {
+                composable(NewsBarItems.News.name) {
+                    NewsScreenMini(innerPadding,vm,newsPagerState)
                 }
-            }
-            composable(NewsBarItems.Academic.name) {
-                Scaffold {
+                composable(NewsBarItems.Academic.name) {
                     AcademicScreen(innerPadding,vm,newsPagerState)
                 }
-            }
-            composable(NewsBarItems.School.name) {
-                Scaffold {
+                composable(NewsBarItems.School.name) {
                     SchoolsUI(innerPadding)
                 }
             }
         }
     }
 }
+
 private const val TAB_TOTAL = 0
 private const val TAB_XC = 1
 @Composable
-fun NewsScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState) {
+fun NewsScreenMini(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState) {
     HorizontalPager(state = pagerState) { page ->
         when(page) {
             TAB_TOTAL -> NewsUI(innerPadding,vm)
@@ -297,6 +324,9 @@ fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
+    val cookies by produceState<String?>(initialValue = null) {
+        value = getWebVpnCookie(vm)
+    }
     val words = remember { listOf(
         "放假","转专业","周考试安排","选课"
     ) }
@@ -369,12 +399,13 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         headlineContent = { Text(listItem.title) },
                         leadingContent = { Text(text = (item + 1).toString()) },
                         modifier = Modifier.clickable {
-                            var links = ""
-                            val link = listItem.link
-                            if(link.contains("http")) link.let { links = link }
-                            else links = MyApplication.NEWS_URL + link
+                            val links = if(isValidWebUrl(listItem.link)) {
+                                listItem.link
+                            } else {
+                                MyApplication.NEWS_URL + listItem.link
+                            }
 
-                            Starter.startWebView(links,listItem.title, icon = R.drawable.stream)
+                            autoWebVpnForNews(links,listItem.title, icon = R.drawable.stream, cookie = cookies)
                         },
                         index = item
                     )
@@ -386,6 +417,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         }
     }
 }
+
 
 
 fun transferToPostData(text : String, page : Int = 1)  : String {

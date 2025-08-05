@@ -23,9 +23,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,7 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -64,9 +67,19 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
+import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionPredictiveBackHandler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
+
+suspend fun initTransition() = withContext(Dispatchers.IO) {
+    val transition = DataStoreManager.transitionFlow.first()
+    TransitionState.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
@@ -88,16 +101,17 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         val webViewDark by DataStoreManager.webViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
         val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-        val transition by DataStoreManager.transitionFlow.collectAsState(initial = false)
+        val transition by DataStoreManager.transitionFlow.collectAsState(initial = TransitionLevel.NONE.code)
         val currentColorModeIndex by DataStoreManager.colorModeFlow.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val animationSpeed by DataStoreManager.animationSpeedType.collectAsState(initial = DataStoreManager.AnimationSpeed.NORMAL.code)
         val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
+        val transitionLevels = remember { TransitionLevel.entries }
         LaunchedEffect(animationSpeed) {
             AppAnimationManager.updateAnimationSpeed()
         }
         LaunchedEffect(transition) {
-            TransitionState.transitionBackgroundStyle.forceTransition = transition
+            TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.LOW
         }
         val cor = rememberCoroutineScope()
 
@@ -251,14 +265,34 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                     PaddingHorizontalDivider()
 
                     TransplantListItem(
-                        headlineContent = { Text(text = "增强转场动画") },
+                        headlineContent = {
+                            Column {
+                                Text(text = "转场动画等级")
+                                Text("Level${transition+1} (${transitionLevels.find { it.code == transition}?.title})")
+                            }
+                        },
                         supportingContent = {
-                            Text(text = "转场动画伴随较高强度的模糊、缩放、压暗、回弹等效果，可能会在某些设备上掉帧")
+                            Column {
+                                Text(text = "转场动画伴随较高强度的模糊、缩放、压暗、回弹等效果，等级越高，越可能会在某些设备上掉帧")
+                                Slider(
+                                    value = transition.toFloat(),
+                                    onValueChange = { value ->
+                                        val level = transitionLevels.find { it.code == value.toInt() } ?: return@Slider
+                                        cor.launch { DataStoreManager.saveTransition(level) }
+                                    },
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = MaterialTheme.colorScheme.secondary,
+                                        activeTrackColor = MaterialTheme.colorScheme.secondary,
+                                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    ),
+                                    steps = 2,
+                                    valueRange = 0f..3f,
+                                )
+                            }
                         },
                         leadingContent = { Icon(painterResource(R.drawable.transition_fade), contentDescription = "Localized description",) },
-                        trailingContent = {  Switch(checked = transition, onCheckedChange = { cor.launch { DataStoreManager.saveTransition(!transition) } }) },
-                        modifier = Modifier.clickable { cor.launch { DataStoreManager.saveTransition(!transition) } }
                     )
+
                     PaddingHorizontalDivider()
 
                     TransplantListItem(

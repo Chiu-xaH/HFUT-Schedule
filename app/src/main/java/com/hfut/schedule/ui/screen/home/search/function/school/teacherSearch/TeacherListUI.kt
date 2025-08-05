@@ -40,7 +40,10 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TeacherListUI(vm: NetWorkViewModel,innerPadding : PaddingValues) {
+fun TeacherListUI(
+    vm: NetWorkViewModel,
+    innerPadding : PaddingValues,
+) {
     val uiState by vm.teacherSearchData.state.collectAsState()
     val dataList = (uiState as UiState.Success).data.teacherData
 
@@ -70,6 +73,7 @@ fun TeacherListUI(vm: NetWorkViewModel,innerPadding : PaddingValues) {
                         Text(jobList.toString().replace("[","").replace("]",""))
                     },
                     modifier = Modifier.clickable {
+
                         Starter.startWebView(it.url,it.name, icon = icon)
                     }
                 )

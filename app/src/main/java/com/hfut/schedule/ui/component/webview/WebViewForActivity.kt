@@ -14,12 +14,16 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -33,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalFloatingToolbar
@@ -65,11 +70,17 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
+import com.hfut.schedule.ui.style.CustomBottomSheet
+import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
@@ -120,7 +131,7 @@ private fun WebViewBackIcon(
             Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
         }
     } else {
-        val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
+        val speed = TransitionState.curveStyle.speedMs
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true
@@ -173,6 +184,41 @@ fun WebViewScreenForActivity(
         value = DataBaseManager.webUrlDao.isExist(currentUrl)
     }
     val scope = rememberCoroutineScope()
+    var on by remember { mutableStateOf<(String) -> Unit>({}) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        if(currentUrl == url) {
+            on(url)
+        } else {
+            CustomBottomSheet (
+                onDismissRequest = { showBottomSheet = false },
+                showBottomSheet = showBottomSheet,
+                isFullExpand = false,
+                autoShape = false
+            ) {
+                Column {
+                    HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
+                    StyleCardListItem(
+                        headlineContent = { Text(currentUrl) },
+                        overlineContent = { Text("现链接") },
+                        modifier = Modifier.clickable {
+                            on(currentUrl)
+                            showBottomSheet = false
+                        }
+                    )
+                    StyleCardListItem(
+                        headlineContent = { Text(url) },
+                        overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
+                        modifier = Modifier.clickable {
+                            on(url)
+                            showBottomSheet = false
+                        }
+                    )
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
+                }
+            }
+        }
+    }
     val tools = @Composable {
         if(webView?.canGoBack() == true) {
             IconButton(onClick = {
@@ -187,7 +233,10 @@ fun WebViewScreenForActivity(
         IconButton(onClick = { webView?.reload() }) { Icon(
             painterResource(id = R.drawable.rotate_right), contentDescription = "") }
 
-        IconButton(onClick = { Starter.startWebUrl(url) }) { Icon(
+        IconButton(onClick = {
+            on = { Starter.startWebUrl(it) }
+            showBottomSheet = true
+        }) { Icon(
             painterResource(id = R.drawable.net), contentDescription = "") }
 
         IconButton(onClick = {
@@ -201,27 +250,37 @@ fun WebViewScreenForActivity(
         }) { Icon(
             painterResource(id = if(!fullScreen)R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "") }
         IconButton(onClick = {
-            scope.launch {
-                if(isExist) {
-                    DataBaseManager.webUrlDao.delFromUrl(currentUrl)
-                    showToast("已取消收藏")
-                } else {
-                    DataBaseManager.webUrlDao.insert(
-                        WebUrlDTO(
-                            name = currentTitle,
-                            type = WebURLType.COLLECTION,
-                            url = currentUrl
-                        ).toEntity()
-                    )
-                    showToast("收藏成功")
+            on = {
+                scope.launch {
+                    if(isExist) {
+                        DataBaseManager.webUrlDao.delFromUrl(it)
+                        showToast("已取消收藏")
+                    } else {
+                        DataBaseManager.webUrlDao.insert(
+                            WebUrlDTO(
+                                name = currentTitle,
+                                type = WebURLType.COLLECTION,
+                                url = it
+                            ).toEntity()
+                        )
+                        showToast("收藏成功")
+                    }
+                    click = !click
                 }
-                click = !click
             }
+            showBottomSheet = true
         }) { Icon(
             painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = "") }
+        IconButton(onClick = {
+            on = { ClipBoardUtils.copy(it) }
+            showBottomSheet = true
+        }) { Icon(
+            painterResource(id = R.drawable.copy_all), contentDescription = "") }
 
-
-        IconButton(onClick = { ShareTo.shareString(currentUrl) }) { Icon(
+        IconButton(onClick = {
+            on = { ShareTo.shareString(currentUrl) }
+            showBottomSheet = true
+        }) { Icon(
             painterResource(id = R.drawable.ios_share), contentDescription = "") }
     }
     var loading by remember { mutableStateOf(true) }

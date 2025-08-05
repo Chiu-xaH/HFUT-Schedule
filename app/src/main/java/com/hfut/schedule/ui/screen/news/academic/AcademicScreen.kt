@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,6 +35,9 @@ import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
    
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
@@ -43,7 +47,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val titles = AcademicType.entries.map { it.title }
     val pagerState = rememberPagerState(pageCount = { titles.size })
-
+    val cookies by produceState<String?>(initialValue = null) {
+        value = getWebVpnCookie(vm)
+    }
 
     var page by remember { mutableIntStateOf(1) }
     var totalPage by remember { mutableStateOf<Int?>(null) }
@@ -95,7 +101,16 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
                                 modifier = Modifier.clickable {
-                                    Starter.startWebView(MyApplication.ACADEMIC_URL + item.link,item.title, icon = R.drawable.stream)
+                                    val link = if(isValidWebUrl(item.link)) {
+                                        item.link
+                                    } else {
+                                        MyApplication.ACADEMIC_URL + if(item.link.startsWith("..")) {
+                                            item.link.substringAfter("..")
+                                        } else {
+                                            item.link
+                                        }
+                                    }
+                                    autoWebVpnForNews(link,item.title, icon = R.drawable.stream, cookie = cookies)
                                 },
                                 index = index
                             )

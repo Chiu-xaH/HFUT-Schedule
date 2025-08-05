@@ -33,7 +33,7 @@ fun SharedTransitionScope.TopBarNavigateIcon(
     route : String,
     icon : Int,
 ) {
-    val speed = TransitionState.curveStyle.speedMs + TransitionState.curveStyle.speedMs/2
+    val speed = TransitionState.curveStyle.speedMs
     var show by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         show = true

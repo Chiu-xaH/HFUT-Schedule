@@ -132,8 +132,11 @@ private fun Schools(hazeState: HazeState) {
     }
 }
 
-fun isWebUrlValid(url: String): Boolean {
+fun isValidWebUrl(url: String, strict : Boolean = false): Boolean {
     val checkUrl = if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        if(strict) {
+            return false
+        }
         "http://$url"
     } else url
     return Patterns.WEB_URL.matcher(checkUrl).matches()
@@ -188,7 +191,7 @@ fun WebNavigationScreen(
                         Button(
                             onClick = {
                                 scope.launch {
-                                    if(!isWebUrlValid(inputUrl)) {
+                                    if(!isValidWebUrl(inputUrl)) {
                                         showToast("不合理链接")
                                         return@launch
                                     }

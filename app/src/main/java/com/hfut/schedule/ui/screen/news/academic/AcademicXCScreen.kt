@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -33,6 +34,9 @@ import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
    
 import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
@@ -51,6 +55,9 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val refreshNetwork: suspend () -> Unit = {
         vm.academicXCResp.clear()
         vm.getAcademicXCNews(AcademicXCType.entries[pagerState.currentPage],page)
+    }
+    val cookies by produceState<String?>(initialValue = null) {
+        value = getWebVpnCookie(vm)
     }
 
     LaunchedEffect(page,pagerState.currentPage) {
@@ -80,7 +87,12 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
                                 modifier = Modifier.clickable {
-                                    Starter.startWebUrl(MyApplication.XC_ACADEMIC_URL + item.link,item.title)
+                                    val link = if(isValidWebUrl(item.link)) {
+                                        item.link
+                                    } else {
+                                        MyApplication.XC_ACADEMIC_URL + item.link
+                                    }
+                                    autoWebVpnForNews(link,item.title,cookie = cookies)
                                 },
                                 index = index
                             )

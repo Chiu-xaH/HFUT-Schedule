@@ -6,6 +6,7 @@ import android.content.Context
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
+import com.hfut.schedule.ui.screen.home.cube.screen.initTransition
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
 
 class MyApplication : Application() {
@@ -115,6 +116,9 @@ class MyApplication : Application() {
         const val XUE_XIN_URL = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
         // 校车
         const val BUS_URL = "file:///android_asset/BusInfos.html"
+        // U校园
+        const val UNIPUS_URL = "https://u.unipus.cn/"
+        const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"
         // 三个校区的经纬度 高德地图
         val campusLocations = mapOf<CampusDetail,Location>(
             CampusDetail.FCH to Location(117.20346,31.77014),

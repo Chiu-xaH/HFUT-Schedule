@@ -8,7 +8,6 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.activity.screen.FixActivity
-import com.hfut.schedule.activity.screen.NewsActivity
 import com.hfut.schedule.activity.screen.ShowerActivity
 import com.hfut.schedule.activity.screen.SuccessActivity
 import com.hfut.schedule.activity.screen.SupabaseActivity
@@ -52,15 +51,10 @@ object Starter {
     }
     //传入网页URL打开
     @JvmStatic
-    fun startWebUrl(url : String,cookies : String? = null) {
+    fun startWebUrl(url : String) {
         try {
             val it = Intent(Intent.ACTION_VIEW, url.toUri())
             it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-            if(cookies != null) {
-                CookieManager.getInstance().setCookie(url, cookies)
-                CookieManager.getInstance().flush() // 确保 Cookie 立即生效
-            }
 
             MyApplication.context.startActivity(it)
         } catch (e : Exception) {
@@ -176,13 +170,6 @@ object Starter {
         val it = Intent(MyApplication.context, SuccessActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra("webVpn",webVpn)
-        }
-        MyApplication.context.startActivity(it)
-    }
-    @JvmStatic
-    fun startNews() {
-        val it = Intent(MyApplication.context, NewsActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         MyApplication.context.startActivity(it)
     }

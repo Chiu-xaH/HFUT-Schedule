@@ -11,21 +11,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 //import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -60,9 +53,7 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.SharedTopBar
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
-import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.TransitionPredictiveBackHandler
 
 
@@ -112,135 +103,84 @@ import com.xah.transition.util.TransitionPredictiveBackHandler
 @RequiresApi(36)
 @Composable
 fun TEST(innerPaddings : PaddingValues,navController : NavHostController) {
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
-        scale = it
-    }
-    var motionBlur by remember { mutableStateOf(TransitionState.transitionBackgroundStyle.motionBlur) }
-    LaunchedEffect(motionBlur) {
-        TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
-    }
-
-    var forceAnimation by remember { mutableStateOf(TransitionState.transitionBackgroundStyle.forceTransition) }
-    LaunchedEffect(forceAnimation) {
-        TransitionState.transitionBackgroundStyle.forceTransition = forceAnimation
-    }
-
-    var isCenterAnimation by remember { mutableStateOf((TransitionState.curveStyle.boundsTransform != DefaultTransitionStyle.defaultBoundsTransform)) }
-    LaunchedEffect(isCenterAnimation) {
-        if(!isCenterAnimation) {
-            // 恢复默认速度
-            TransitionState.curveStyle.speedMs = DefaultTransitionStyle.DEFAULT_ANIMATION_SPEED
-        }
-        TransitionState.curveStyle.boundsTransform = if(!isCenterAnimation) DefaultTransitionStyle.defaultBoundsTransform else AppAnimationManager.getCenterBoundsTransform()
-    }
-
-    var animationSpeed by remember { mutableStateOf(TransitionState.curveStyle.speedMs.toFloat()) }
-    LaunchedEffect(animationSpeed) {
-        TransitionState.curveStyle.speedMs = animationSpeed.toInt()
-    }
-    Column (modifier = Modifier.padding(innerPaddings).scale(scale)) {
-        DividerTextExpandedWith("模糊") {
-            TransplantListItem(
-                headlineContent = { Text("运动模糊") },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.deblur),null)
-                },
-                trailingContent = {
-                    Switch(enabled = CAN_MOTION_BLUR, checked = motionBlur, onCheckedChange = { motionBlur = !motionBlur })
-                },
-                supportingContent = { Text("一些组件在运动中会伴随模糊效果" + if(CAN_MOTION_BLUR) "(Android 12+)" else "")},
-                modifier = Modifier.clickable { motionBlur = !motionBlur }
-            )
-        }
-        DividerTextExpandedWith("动效") {
-            TransplantListItem(
-                headlineContent = { Text("增强转场动画") },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.animation),null)
-                },
-                trailingContent = {
-                    Switch(checked = forceAnimation, onCheckedChange = { forceAnimation = !forceAnimation })
-                },
-                supportingContent = { Text("转场时启用背景模糊和缩放")},
-                modifier = Modifier.clickable { forceAnimation = !forceAnimation }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "动画曲线") },
-                supportingContent = {
-                    Row {
-                        FilterChip(
-                            onClick = {
-                                // 暂时停用
-                                isCenterAnimation = true
-                            },
-                            label = { Text(text = "向中间运动") }, selected = isCenterAnimation
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        FilterChip(
-                            onClick = { isCenterAnimation = false },
-                            label = { Text(text = "直接展开") }, selected = !isCenterAnimation
-                        )
-                    }
-                },
-                leadingContent = { Icon(painterResource(R.drawable.deployed_code), null) },
-                modifier = Modifier.clickable { isCenterAnimation = !isCenterAnimation }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "动画时长 ${animationSpeed.toInt()}ms") },
-                supportingContent = {
-                    Slider(
-                        enabled = isCenterAnimation,
-                        value = animationSpeed,
-                        onValueChange = {
-                            animationSpeed = it
-                        },
-                        colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.secondary,
-                            activeTrackColor = MaterialTheme.colorScheme.secondary,
-                            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                        ),
-                        steps = DefaultTransitionStyle.DEFAULT_ANIMATION_SPEED*4-1,
-                        valueRange = 0f..DefaultTransitionStyle.DEFAULT_ANIMATION_SPEED*4f,
-                        modifier = Modifier.padding(horizontal = 25.dp)
-                    )
-                },
-                leadingContent = { Icon(painterResource(R.drawable.deployed_code), null) },
-                modifier = Modifier.clickable {  }
-            )
-        }
-//        val  feedList = listOf(
-//                    Feed("A",  "Feed A Content"),
-//                    Feed("B",  "Feed B Content"),
-//                    Feed("C",  "Feed C Content"),
-//                    Feed("D",  "Feed D Content"),
-//                    Feed("E",  "Feed E Content"),
-//                    Feed("F",  "Feed F Content"),
-//                    Feed("G",  "Feed G Content"),
-//              )
-//               val  navigator = rememberListDetailPaneScaffoldNavigator<Feed>()
-//               val  scope = rememberCoroutineScope()
-//              NavigableListDetailPaneScaffold(
-//                    navigator = navigator,
-//                    listPane = {
-//                          AnimatedPane {
-//                                ListPane(feedList) { feed ->
-//                                      scope.launch {
-//                                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, feed)
-//                                      }
-//                                }
-//                          }
-//                    },
-//                    detailPane = {
-//                          AnimatedPane {
-//                                navigator.currentDestination?.contentKey?.let {
-//                                      DetailPane(it)
-//                                } ?: DetailPane(feedList[0])
-//                          }
-//                    },
-//              )
-//        ShareUI()
-    }
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionPredictiveBackHandler(navController) {
+//        scale = it
+//    }
+//    var motionBlur by remember { mutableStateOf(TransitionState.transitionBackgroundStyle.motionBlur) }
+//    LaunchedEffect(motionBlur) {
+//        TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
+//    }
+//
+//    var forceAnimation by remember { mutableStateOf(TransitionState.transitionBackgroundStyle.level) }
+//    LaunchedEffect(forceAnimation) {
+//        TransitionState.transitionBackgroundStyle.level = forceAnimation
+//    }
+//
+//
+//    var animationSpeed by remember { mutableStateOf(TransitionState.curveStyle.speedMs.toFloat()) }
+//    LaunchedEffect(animationSpeed) {
+//        TransitionState.curveStyle.speedMs = animationSpeed.toInt()
+//    }
+//    Column (modifier = Modifier.padding(innerPaddings).scale(scale)) {
+//        DividerTextExpandedWith("模糊") {
+//            TransplantListItem(
+//                headlineContent = { Text("运动模糊") },
+//                leadingContent = {
+//                    Icon(painterResource(R.drawable.deblur),null)
+//                },
+//                trailingContent = {
+//                    Switch(enabled = CAN_MOTION_BLUR, checked = motionBlur, onCheckedChange = { motionBlur = !motionBlur })
+//                },
+//                supportingContent = { Text("一些组件在运动中会伴随模糊效果" + if(CAN_MOTION_BLUR) "(Android 12+)" else "")},
+//                modifier = Modifier.clickable { motionBlur = !motionBlur }
+//            )
+//        }
+//        DividerTextExpandedWith("动效") {
+//            TransplantListItem(
+//                headlineContent = { Text("增强转场动画") },
+//                leadingContent = {
+//                    Icon(painterResource(R.drawable.animation),null)
+//                },
+//                trailingContent = {
+//                    Switch(checked = forceAnimation, onCheckedChange = { forceAnimation = !forceAnimation })
+//                },
+//                supportingContent = { Text("转场时启用背景模糊和缩放")},
+//                modifier = Modifier.clickable { forceAnimation = !forceAnimation }
+//            )
+//        }
+////        val  feedList = listOf(
+////                    Feed("A",  "Feed A Content"),
+////                    Feed("B",  "Feed B Content"),
+////                    Feed("C",  "Feed C Content"),
+////                    Feed("D",  "Feed D Content"),
+////                    Feed("E",  "Feed E Content"),
+////                    Feed("F",  "Feed F Content"),
+////                    Feed("G",  "Feed G Content"),
+////              )
+////               val  navigator = rememberListDetailPaneScaffoldNavigator<Feed>()
+////               val  scope = rememberCoroutineScope()
+////              NavigableListDetailPaneScaffold(
+////                    navigator = navigator,
+////                    listPane = {
+////                          AnimatedPane {
+////                                ListPane(feedList) { feed ->
+////                                      scope.launch {
+////                                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail, feed)
+////                                      }
+////                                }
+////                          }
+////                    },
+////                    detailPane = {
+////                          AnimatedPane {
+////                                navigator.currentDestination?.contentKey?.let {
+////                                      DetailPane(it)
+////                                } ?: DetailPane(feedList[0])
+////                          }
+////                    },
+////              )
+////        ShareUI()
+//    }
 }
 enum class ShareBarRoutes {
     FIRST,SECOND

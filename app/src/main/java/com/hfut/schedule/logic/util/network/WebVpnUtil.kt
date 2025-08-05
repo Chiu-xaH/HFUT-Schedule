@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.util.network
 
+import com.hfut.schedule.App.MyApplication
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
@@ -8,7 +9,6 @@ import javax.crypto.spec.SecretKeySpec
 object WebVpnUtil {
     private val key = "wrdvpnisthebest!".toByteArray(Charsets.UTF_8)
     private val iv = "wrdvpnisthebest!".toByteArray(Charsets.UTF_8)
-    private val institution = "webvpn.hfut.edu.cn"
 
     private fun getCiphertext(plaintext: String): String {
         val cipher = Cipher.getInstance("AES/CFB/NoPadding")
@@ -29,7 +29,7 @@ object WebVpnUtil {
         return String(decrypted, Charsets.UTF_8)
     }
 
-    fun getWebVpnUrl(url: String): String {
+    fun getWebVpnUrl(url: String): String = try {
         val parts = url.split("://")
         val protocol = parts[0]
         val addr = parts[1]
@@ -43,10 +43,12 @@ object WebVpnUtil {
 
         val keyHex = iv.joinToString("") { "%02x".format(it) }
 
-        return "https://$institution/$protocol$port/$keyHex$cph/$path"
+        MyApplication.WEBVPN_URL + "$protocol$port/$keyHex$cph/$path"
+    } catch (e : Exception) {
+        MyApplication.WEBVPN_URL
     }
 
-    fun getOrdinaryUrl(url: String): String {
+    fun getOrdinaryUrl(url: String): String = try {
         val parts = url.split("/")
         val protocol = parts[3]
         val keyCph = parts[4]
@@ -55,6 +57,8 @@ object WebVpnUtil {
         val hostname = getPlaintext(cipherText)
         val path = parts.drop(5).joinToString("/")
 
-        return "$protocol://$hostname/$path"
+         "$protocol://$hostname/$path"
+    } catch (e : Exception) {
+        MyApplication.WEBVPN_URL
     }
 }

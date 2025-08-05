@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -47,6 +48,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -92,14 +94,21 @@ fun Mail(
 @Composable
 fun MailUI(vm: NetWorkViewModel) {
     var used by remember { mutableStateOf(false) }
-
+    val webVpnCookie by produceState<String?>(initialValue = null) {
+        value = getWebVpnCookie(vm)
+    }
     val uiState by vm.mailData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val token = prefs.getString("bearer","")
-        token?.let {
-            vm.mailData.clear()
-            vm.getMailURL(it)
-        }
+//        if(vm.webVpn) {
+//            vm.mailData.clear()
+//            vm.getMailURL(webVpnCookie!!)
+//        } else {
+            val token = prefs.getString("bearer","")
+            token?.let {
+                vm.mailData.clear()
+                vm.getMailURL(it)
+            }
+//        }
     }
 
     LaunchedEffect(used) {

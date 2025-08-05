@@ -233,7 +233,7 @@ fun About(vm : NetWorkViewModel) {
                                     )
                             }
                             if(index != openSourceProjects.size - 2)
-                            PaddingHorizontalDivider()
+                                PaddingHorizontalDivider()
                         }
                     }
                 }

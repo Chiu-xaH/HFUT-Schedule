@@ -52,10 +52,10 @@ object AppAnimationManager {
     }
 
 
-    @OptIn(ExperimentalSharedTransitionApi::class)
-    fun getCenterBoundsTransform() = BoundsTransform { _, _ ->//FastOutSlowInEasing
-        tween(durationMillis = TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
-    }
+//    @OptIn(ExperimentalSharedTransitionApi::class)
+//    fun getCenterBoundsTransform() = BoundsTransform { _, _ ->//FastOutSlowInEasing
+//        tween(durationMillis = TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
+//    }
 
     private val enterAnimation1 =
         scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +

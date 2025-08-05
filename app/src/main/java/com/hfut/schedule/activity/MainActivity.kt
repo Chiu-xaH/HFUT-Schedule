@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.database.entity.CustomCourseTableEntity
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestStoragePermission
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.screen.home.cube.screen.initTransition
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
@@ -29,7 +30,9 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        lifecycleScope.launch {
+            initTransition()
+        }
         //当用户以本应用打开TXT文件时进行读取操作
         intent?.data?.let { uri ->
             checkAndRequestStoragePermission(this)

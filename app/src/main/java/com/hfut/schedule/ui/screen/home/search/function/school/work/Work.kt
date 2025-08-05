@@ -20,6 +20,9 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -51,6 +54,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTabRow
@@ -176,33 +180,41 @@ fun WorkScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                WorkSearchUI(vm,campus,pagerState,innerPadding)
+                WorkSearchUI(vm,campus,pagerState,innerPadding,navController,sharedTransitionScope,animatedContentScope)
             }
         }
     }
 }
 // 模范写法
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterialApi::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : PagerState,innerPadding : PaddingValues) {
+private fun WorkSearchUI(
+    vm : NetWorkViewModel,
+    campus: Campus,
+    pagerState : PagerState,
+    innerPadding : PaddingValues,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
 
     HorizontalPager(state = pagerState) { page ->
         val uiState by vm.workSearchResult.state.collectAsState()
-        var currentPage by remember { mutableIntStateOf(1) }
-        val refreshNetwork: suspend () -> Unit = {
+        var currentPage by rememberSaveable { mutableIntStateOf(1) }
+        val refreshNetwork: suspend () -> Unit =  {
             vm.workSearchResult.clear()
             vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
         }
-
 
         LaunchedEffect(currentPage,campus) {
             // 避免旧数据影响
             refreshNetwork()
         }
 
-        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        CommonNetworkScreen(uiState, onReload = { refreshNetwork() }) {
             val response = (uiState as UiState.Success).data
             val repos = response.data
             val listState = rememberLazyListState()
@@ -242,19 +254,24 @@ private fun WorkSearchUI(vm : NetWorkViewModel,campus: Campus,pagerState : Pager
                                 WorkSearchType.ANNOUNCEMENT.code.toString() -> WorkSearchType.ANNOUNCEMENT
                                 else -> WorkSearchType.ALL
                             }
-                            AnimationCardListItem(
-                                headlineContent = { Text(title) },
-                                overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
-                                index = index,
-                                modifier = Modifier.clickable {
-                                    val url = when(campus) {
-                                        Campus.HEFEI -> MyApplication.WORK_URL
-                                        Campus.XUANCHENG -> MyApplication.WORK_XC_URL
-                                    } + "detail/" + enumType.url +  id
+                            with(sharedTransitionScope) {
+                                val url = when(campus) {
+                                    Campus.HEFEI -> MyApplication.WORK_URL
+                                    Campus.XUANCHENG -> MyApplication.WORK_XC_URL
+                                } + "detail/" + enumType.url +  id
+                                AnimationCardListItem(
+                                    color = mixedCardNormalColor(),
+//                                    cardModifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url)),
+                                    headlineContent = { Text(title) },
+                                    overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
+                                    index = index,
+                                    modifier = Modifier.clickable {
+//                                        navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(url,title,null,AppNavRoute.Work.icon))
                                     Starter.startWebView(url,title, icon = AppNavRoute.Work.icon)
-                                },
-                                leadingContent = { Text((index+1).toString()) }
-                            )
+                                    },
+                                    leadingContent = { Text((index+1).toString()) }
+                                )
+                            }
                         }
                     }
                     item { PaddingForPageControllerButton() }

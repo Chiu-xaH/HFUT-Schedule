@@ -89,7 +89,7 @@ fun SchoolMapScreen(vm : NetWorkViewModel) {
                             contentDescription = null,
                             modifier = Modifier.padding(APP_HORIZONTAL_DP).clickable {
                                 // 点击全屏预览
-                                Starter.startWebUrl(cUrl,name)
+                                Starter.startWebView(cUrl,name)
                             },
                             contentScale = ContentScale.Fit
                         )

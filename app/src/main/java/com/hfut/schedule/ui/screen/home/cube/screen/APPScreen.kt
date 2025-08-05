@@ -403,7 +403,7 @@ fun APPScreen(
                         Icon(painterResource(R.drawable.bookmark),null)
                     },
                     trailingContent = {
-                        Switch(checked = false, onCheckedChange = { showToast("正在开发") })
+                        Switch(checked = false, onCheckedChange = { showToast("正在开发") }, enabled = false)
                     },
                     modifier = Modifier.clickable {
                         showToast("正在开发")

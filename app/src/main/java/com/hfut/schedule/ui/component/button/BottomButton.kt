@@ -15,11 +15,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun BottomButton(onClick : () -> Unit,text : String,color : Color = MaterialTheme.colorScheme.secondaryContainer) {
+fun BottomButton(
+    onClick : () -> Unit,
+    text : String,
+    enable : Boolean = true,
+    color : Color = if(enable) MaterialTheme.colorScheme.secondaryContainer else Color.Gray.copy(.3f)
+) {
     Column {
         Box(Modifier.background(color)) {
             FilledTonalButton(
-                onClick = onClick,
+                onClick = if(enable) onClick else {{}},
                 shape = RoundedCornerShape(0.dp),
                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
                 modifier = Modifier.fillMaxSize(),

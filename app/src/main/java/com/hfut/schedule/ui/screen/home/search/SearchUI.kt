@@ -76,6 +76,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.repair.Repair
 import com.hfut.schedule.ui.screen.home.search.function.school.sport.lepao.LePaoYun
 import com.hfut.schedule.ui.screen.home.search.function.school.student.ToadyCampus
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearch
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -121,7 +122,7 @@ fun SearchScreen(
             SearchAppBean("寝室卫生评分 寝室卫生分数", { DormitoryScoreXuanCheng(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.DormitoryScore.route),
             SearchAppBean("消息中心 通知中心 收纳", { NotificationsCenter(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Notifications.route),
             SearchAppBean("教师评教 教师教评", { Survey(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Survey.route),
-            SearchAppBean("通知公告 新闻 教务处", { News() }),
+            SearchAppBean("通知公告 新闻 教务处", { News(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.News.route),
             SearchAppBean("培养方案", { Program(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Program.receiveRoute()),
             SearchAppBean("图书馆 座位预约 借阅", { LibraryItem(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Library.route),
             SearchAppBean("校车", { SchoolBus(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.BUS_URL)),
@@ -146,6 +147,7 @@ fun SearchScreen(
             SearchAppBean("云端共建平台 信息共建 日程 网课 网址导航", { Supabase(vm) }),
             SearchAppBean("洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState,navController,sharedTransitionScope,animatedContentScope) }),
             SearchAppBean("本科招生 历年分数线 招生计划", { Admission(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Admission.route),
+            SearchAppBean("WEBVPN 外地访问 内网", { WebVpn(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebVpn.route),
         )
     }
 
