@@ -29,7 +29,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -50,7 +49,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
@@ -79,15 +77,10 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.CustomBottomSheet
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -183,7 +176,7 @@ private fun WebViewBackIcon(
 @Composable
 fun isThemeDark() : Boolean {
     val colorCode = remember { ColorMode.entries }
-    val setting by DataStoreManager.colorModeFlow.collectAsState(initial = null)
+    val setting by DataStoreManager.colorMode.collectAsState(initial = null)
     if(setting != null) {
         val mode = colorCode.find { it.code == setting } ?: ColorMode.AUTO
         return when(mode) {
@@ -210,7 +203,7 @@ fun WebViewScreenForNavigation(
     animatedContentScope: AnimatedContentScope,
 ) {
     val isDark = isThemeDark()
-    val webViewDark by DataStoreManager.webViewDark.collectAsState(initial = true)
+    val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
     var currentTitle by remember { mutableStateOf(title) }
     var fullScreen by remember { mutableStateOf(false) }
     var currentUrl by remember { mutableStateOf(url) }

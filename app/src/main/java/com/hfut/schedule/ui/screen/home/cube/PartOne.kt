@@ -17,6 +17,7 @@ import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -37,6 +38,8 @@ import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.Starter.startWebUrl
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
@@ -48,6 +51,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
@@ -65,38 +69,46 @@ fun apiCheck() : Boolean {
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun PartOne(navController: NavController) {
-    TransplantListItem(
-        headlineContent = { Text(text = "界面显示") },
-        supportingContent = { Text(text = "色彩 动效 动态模糊")},
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
-        },
-        modifier = Modifier.clickable { navController.navigate(Screen.UIScreen.route)  }
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "应用行为") },
-        supportingContent = { Text(text = "偏好配置 缓存清理")},
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
-        },
-        modifier = Modifier.clickable { navController.navigate(Screen.APPScreen.route)  }
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "网络相关") },
-        supportingContent = { Text(text = "网络接口 请求范围")},
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
-        },
-        modifier = Modifier.clickable { navController.navigate(Screen.NetWorkScreen.route)  }
-    )
-    TransplantListItem(
-        headlineContent = { Text(text = "维护关于") },
-        supportingContent = { Text(text = "疑难修复 联系反馈")},
-        leadingContent = {
-            Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
-        },
-        modifier = Modifier.clickable { navController.navigate(Screen.FIxAboutScreen.route)  }
-    )
+    MyCustomCard (
+        containerColor = MaterialTheme.colorScheme.surface
+    ){
+        TransplantListItem(
+            headlineContent = { Text(text = "界面显示") },
+            supportingContent = { Text(text = "色彩 动效 动态模糊")},
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
+            },
+            modifier = Modifier.clickable { navController.navigate(Screen.UIScreen.route)  }
+        )
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = { Text(text = "应用行为") },
+            supportingContent = { Text(text = "偏好配置 缓存清理")},
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
+            },
+            modifier = Modifier.clickable { navController.navigate(Screen.APPScreen.route)  }
+        )
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = { Text(text = "网络相关") },
+            supportingContent = { Text(text = "网络接口 请求范围")},
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
+            },
+            modifier = Modifier.clickable { navController.navigate(Screen.NetWorkScreen.route)  }
+        )
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = { Text(text = "维护关于") },
+            supportingContent = { Text(text = "疑难修复 联系反馈")},
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
+            },
+            modifier = Modifier.clickable { navController.navigate(Screen.FIxAboutScreen.route)  }
+        )
+    }
+
 }
 
 enum class DetailSettings {
@@ -126,7 +138,8 @@ sealed class Screen(val route: String) {
 @Composable
 fun HomeSettingScreen(navController: NavController,
                       innerPaddings : PaddingValues,
-                      hazeState: HazeState
+                      hazeState: HazeState,
+                      vm : NetWorkViewModel
 ) {
    //
     val currentVersion = AppVersion.getVersionName()
@@ -143,17 +156,18 @@ fun HomeSettingScreen(navController: NavController,
         }
 
 
-        MyAPIItem()
+        MyAPIItem(color = MaterialTheme.colorScheme.surface)
 
         if (currentVersion != getUpdates().version) {
             DividerTextExpandedWith(text = "更新版本") {
-                UpdateUI()
+                UpdateUI(vm)
 
                 val patchItem = getPatchVersions().find { item ->
                     currentVersion == item.oldVersion
+//                    true
                 }
                 if (patchItem != null) {
-                    PatchUpdateUI(patchItem)
+                    PatchUpdateUI(patchItem,vm)
                 } else {
                     // 清理
                     if(!hasCleaned) {
@@ -181,10 +195,10 @@ fun HomeSettingScreen(navController: NavController,
 @Composable
 fun AlwaysItem(hazeState: HazeState) {
     val version by remember { mutableStateOf(getUpdates()) }
-    var showBadge by remember { mutableStateOf(false) }
-    if (version.version != AppVersion.getVersionName()) showBadge = true
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     var showBottomSheet by remember { mutableStateOf(false) }
+    val isPreview = remember { AppVersion.isPreview() }
+
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
@@ -211,32 +225,27 @@ fun AlwaysItem(hazeState: HazeState) {
             }
         }
     }
-    TransplantListItem(
-        headlineContent = { Text(text = "刷新登录状态") },
-        supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
-        leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
-        modifier = Modifier.clickable {
-            refreshLogin()
-             }
-    )
-    if (AppVersion.getVersionName() == getUpdates().version)
+    MyCustomCard(
+        containerColor = MaterialTheme.colorScheme.surface
+    ) {
         TransplantListItem(
-            headlineContent = { Text(text = "查看本版本新特性") },
-            supportingContent = { Text(text = if(version.version == AppVersion.getVersionName()) "当前为最新版本 ${AppVersion.getVersionName()}" else "当前版本  ${AppVersion.getVersionName()}\n最新版本  ${version.version}") },
-            leadingContent = {
-                BadgedBox(badge = {
-                    if(showBadge)
-                        Badge(modifier = Modifier.size(7.dp)) }) {
+            headlineContent = { Text(text = "刷新登录状态") },
+            supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
+            leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
+            modifier = Modifier.clickable { refreshLogin() },
+        )
+        if (currentVersion == version.version || isPreview) {
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = { Text(text = "本版本新特性") },
+                supportingContent = { Text(text = if(isPreview) "当前为内部测试版" else "当前已为最新版本 $currentVersion") },
+                leadingContent = {
                     Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",)
-                }
-            },
-            modifier = Modifier.clickable{
-                if (version.version != AppVersion.getVersionName())
-                    startWebUrl(MyApplication.GITEE_UPDATE_URL+ "releases/download/Android/${version.version}.apk")
-                else {
+                },
+                modifier = Modifier.clickable{
                     showBottomSheet = true
                 }
-            }
-        )
-
+            )
+        }
+    }
 }

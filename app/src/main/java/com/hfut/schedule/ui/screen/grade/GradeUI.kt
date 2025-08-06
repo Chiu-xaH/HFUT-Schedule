@@ -7,14 +7,12 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,7 +23,6 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -64,11 +61,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.TransitionScaffold
-import com.xah.transition.component.containerShare
-import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.materials.HazeMaterials
 import dev.chrisbanes.haze.rememberHazeState
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -82,7 +75,7 @@ fun GradeScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
 
@@ -90,7 +83,7 @@ fun GradeScreen(
 
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(GradeBarItems.GRADE) }
     // 保存上一页页码 用于决定左右动画
     if(currentAnimationIndex == 2) {
@@ -141,7 +134,7 @@ fun GradeScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Grade.title) },
+                    title = { Text(AppNavRoute.Grade.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navTopController,animatedContentScope,targetRoute,AppNavRoute.Grade.icon)
                     },

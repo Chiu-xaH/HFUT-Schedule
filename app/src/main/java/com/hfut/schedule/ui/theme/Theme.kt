@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -43,14 +42,14 @@ fun AppTheme(
     content: @Composable () -> Unit
 ) {
     // 跟随系统深色模式
-    val currentColorModeIndex by DataStoreManager.colorModeFlow.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
+    val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
     val darkTheme = when(currentColorModeIndex) {
         DataStoreManager.ColorMode.DARK.code -> true
         DataStoreManager.ColorMode.LIGHT.code -> false
         else -> isSystemInDarkTheme()
     }
     // 是否使用 OLED 纯黑
-    val usePureBlack by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
+    val usePureBlack by DataStoreManager.enablePureDark.collectAsState(initial = false)
 
     val colorScheme = when {
         dynamicColor && AppVersion.CAN_DYNAMIC_COLOR -> {

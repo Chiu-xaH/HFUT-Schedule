@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-05") },
+                overlineContent = { Text(text = "2025-08-06") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -59,16 +59,15 @@ fun VersionInfo() {
         MyCustomCard (containerColor = cardNormalColor()){
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
-            UpdateItems("新增 为部分场景适配新的转场动画")
-            UpdateItems("新增 通过WebVpn转换内外网","位于 查询中心-WebVpn，通过外地访问登录后，可自行访问内网的任意链接")
-            UpdateItems("新增 支持在外地访问的状态下，查看内网通知公告")
-            UpdateItems("重构 增强转场动画开关","现在细分为 增强转场动画等级，共有4个Level")
-            UpdateItems("修复 打开部分网页闪烁的Bug","移除 层级模糊的支持，使用自动取色沉浸化的机制")
-            UpdateItems("修复 主页偶见崩溃的Bug")
-            UpdateItems("优化 打开网页时当前链接与初始链接不同时一些功能的逻辑")
-            UpdateItems("优化 新转场动画下的网页无法快速打断的连贯性")
+//            UpdateItems("新增 为部分场景适配新的转场动画")
+            UpdateItems("新增 任务台","位于 选项-应用行为-其他，开启后，在支持的界面中向内轻扫以唤出，可快速切换最近打开的窗口")
+            UpdateItems("新增 支持自定义教务Cookies","位于 选项-维护关于-开发者选项，用于自定义登录教务")
+            UpdateItems("新增 成绩及培养方案完全情况中对挂科项目的标注")
+            UpdateItems("新增 下载更新前可查看其大小")
+            UpdateItems("修复 转场动画带背景模糊时层级模糊短暂错位的Bug")
+            UpdateItems("修复 本科招生翻页时获取信息错乱的Bug")
+            UpdateItems("移除 选项-应用设置中的无用项目")
             UpdateItems("优化 部分界面的设计")
-            UpdateItems("优化 转场动画曲线")
             /*
                         转专业二级界面
             就业二级界面 通知公告二级界面

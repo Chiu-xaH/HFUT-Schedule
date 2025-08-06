@@ -33,6 +33,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.iconElementShare
@@ -52,14 +53,14 @@ fun CourseTotal(
     val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.TotalCourse.title) },
+        headlineContent = { Text(text = AppNavRoute.TotalCourse.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.TotalCourse.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(AppNavRoute.TotalCourse.withArgs(ifSaved))
+            navController.navigateForTransition(AppNavRoute.TotalCourse,AppNavRoute.TotalCourse.withArgs(ifSaved))
         }
     )
 
@@ -78,7 +79,7 @@ fun TotalCourseScreen(
     var next by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(true) }
 
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
@@ -91,7 +92,7 @@ fun TotalCourseScreen(
                 TopAppBar(
 //                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.TotalCourse.title) },
+                    title = { Text(AppNavRoute.TotalCourse.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.TotalCourse.icon)
                     },

@@ -15,14 +15,14 @@ data class WebInfo(val fee : String, val flow : String,val postJson : String = "
 
 suspend fun getCardPsk() : String? = withContext(Dispatchers.IO) {
     return@withContext try {
-        val isDefault = DataStoreManager.useDefaultCardPassword.first()
+        val isDefault = DataStoreManager.enableUseDefaultCardPassword.first()
         if(isDefault) {
             val seven = getPersonInfo().chineseID?.takeLast(7)
             if (seven == null) return@withContext null
             // 处理X结尾
             if(seven.last() == 'X') seven.take(6) else seven.takeLast(6)
         } else {
-            val pwd = DataStoreManager.cardPassword.first()
+            val pwd = DataStoreManager.customCardPassword.first()
             if (pwd.isEmpty() || pwd.length != 6) null else pwd
         }
     } catch (e : Exception) {

@@ -47,14 +47,6 @@ fun ScheduleIcons(title : String) {
 }
 
 @Composable
-fun APIIcons(celebration: Boolean) {
-    when {
-        celebration -> Icon(painterResource(R.drawable.celebration), contentDescription = "Localized description",)
-        else -> Icon(painterResource(R.drawable.error), contentDescription = "Localized description",)
-    }
-}
-
-@Composable
 fun BillsIcons(name : String) {
     when {
         name.contains("淋浴") ->  Icon(painterResource(R.drawable.bathtub), contentDescription = "")

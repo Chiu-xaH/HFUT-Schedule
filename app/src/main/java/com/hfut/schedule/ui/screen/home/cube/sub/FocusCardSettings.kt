@@ -69,7 +69,6 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
@@ -85,15 +84,14 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebIn
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreenMini
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
@@ -141,8 +139,8 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     var showShortCut by remember { mutableStateOf(switch_shortCut) }
     SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
-    val showShower by DataStoreManager.showFocusShower.collectAsState(initial = true)
-    val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
+    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
+    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
 //    val showSpecial by DataStoreManager.showFocusSpecial.collectAsState(initial = true)
 
     val scope = rememberCoroutineScope()
@@ -258,8 +256,8 @@ fun FocusCard(
     val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     var loading by remember { mutableStateOf(false) }
-    val showShower by DataStoreManager.showFocusShower.collectAsState(initial = true)
-    val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
+    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
+    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
     val route = remember { AppNavRoute.Life.route }
 
     if(showCard || showEle || showToday || showWeb)
@@ -348,7 +346,7 @@ fun FocusCard(
                                         overlineContent = { Text(typeName)},
                                         leadingContent = { Icon(painterResource(R.drawable.warning),null)},
                                         modifier = Modifier.clickable {
-                                            navController.navigateAndSaveForTransition(route)
+                                            navController.navigateForTransition(AppNavRoute.Life,route)
                                         },
                                     )
                                 }

@@ -75,7 +75,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI : UIViewModel) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var bottomBarItems by remember { mutableStateOf(SupabaseScreen.HOME) }
     val navController = rememberNavController()
@@ -88,7 +88,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
 
 
 
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     // 保存上一页页码 用于决定左右动画
     if(currentAnimationIndex == 2) {
         LaunchedEffect(bottomBarItems) {

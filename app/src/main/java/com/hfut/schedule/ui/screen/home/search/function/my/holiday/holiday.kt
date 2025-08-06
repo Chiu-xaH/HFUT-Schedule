@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
@@ -65,14 +66,14 @@ fun Holiday(
     val route = remember { AppNavRoute.Holiday.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Holiday.title) },
+        headlineContent = { ScrollText(text = AppNavRoute.Holiday.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.Holiday,route)
         }
     )
 }
@@ -84,7 +85,7 @@ fun HolidayScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Holiday.route }
     with(sharedTransitionScope) {
@@ -95,7 +96,7 @@ fun HolidayScreen(
             topBar = {
                 TopAppBar(
                     colors = topBarTransplantColor(),
-                    title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.title}") },
+                    title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.label}") },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.Holiday.icon)
                     },

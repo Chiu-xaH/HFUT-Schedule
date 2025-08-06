@@ -8,9 +8,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -130,8 +128,6 @@ fun TodayScreen(
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
 
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
-    val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
-    val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
 
     var specialWorkToday  by remember { mutableStateOf<String?>(null) }
     var specialWorkTomorrow by remember { mutableStateOf<String?>(null) }
@@ -264,61 +260,61 @@ fun TodayScreen(
                                 CourseType.NEXT.code -> {}
                             }
                             //日程
-                            if(showStorageFocus)
-                                customScheduleList.let { list ->
-                                    items(list.size){ item ->
-                                        activity?.let { it1 ->
-                                            CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow) { refreshDB = !refreshDB }
-                                        }
+                            customScheduleList.let { list ->
+                                items(list.size){ item ->
+                                    activity?.let { it1 ->
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow) { refreshDB = !refreshDB }
                                     }
                                 }
-                            if(showFocus)
-                                scheduleList.let { list ->
-                                    items(list.size) { item ->
-                                        activity?.let {
-                                            ScheduleItem(listItem = list[item],false,it)
-                                        }
+                            }
+
+                            scheduleList.let { list ->
+                                items(list.size) { item ->
+                                    activity?.let {
+                                        ScheduleItem(listItem = list[item],false,it)
                                     }
                                 }
+                            }
+
                             //考试
                             items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
                             //网课
-                            if(showFocus)
-                                netCourseList.let { list ->
-                                    items(list.size) { item ->
-                                        activity?.let {
-                                            NetCourseItem(listItem = list[item],false,it)
-                                        }
+                            netCourseList.let { list ->
+                                items(list.size) { item ->
+                                    activity?.let {
+                                        NetCourseItem(listItem = list[item],false,it)
                                     }
                                 }
+                            }
+
                         }
                         TAB_RIGHT -> {
                             //日程
-                            if(showStorageFocus)
-                                customScheduleList.let { list ->
-                                    items(list.size){ item ->
-                                        activity?.let { it1 ->
-                                            CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false) { refreshDB = !refreshDB }
-                                        }
+                            customScheduleList.let { list ->
+                                items(list.size){ item ->
+                                    activity?.let { it1 ->
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false) { refreshDB = !refreshDB }
                                     }
                                 }
-                            if(showFocus)
-                                scheduleList.let { list ->
-                                    items(list.size) { item ->
-                                        activity?.let {
-                                            ScheduleItem(listItem = list[item],true,it)
-                                        }
+                            }
+
+                            scheduleList.let { list ->
+                                items(list.size) { item ->
+                                    activity?.let {
+                                        ScheduleItem(listItem = list[item],true,it)
                                     }
                                 }
+                            }
+
                             //网课
-                            if(showFocus)
-                                netCourseList.let { list ->
-                                    items(list.size) { item ->
-                                        activity?.let {
-                                            NetCourseItem(listItem = list[item],true,it)
-                                        }
+                            netCourseList.let { list ->
+                                items(list.size) { item ->
+                                    activity?.let {
+                                        NetCourseItem(listItem = list[item],true,it)
                                     }
                                 }
+                            }
+
 
                             //第二天课表
                             if(!isHolidayTomorrow()) {

@@ -37,7 +37,7 @@ fun LittleDialog(
     dismissText : String = "取消",
     hazeState: HazeState? = null
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val modifier = if(blur && hazeState != null) {
         Modifier.dialogBlur(hazeState)
     } else {

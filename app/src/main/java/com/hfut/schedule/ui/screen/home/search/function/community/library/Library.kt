@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
@@ -81,14 +82,14 @@ fun LibraryItem(
     val route = remember { AppNavRoute.Library.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Library.title) },
+        headlineContent = { Text(text = AppNavRoute.Library.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Library.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.Library,route)
         }
     )
 }

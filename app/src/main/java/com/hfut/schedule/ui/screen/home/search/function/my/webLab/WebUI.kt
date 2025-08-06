@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.style.RowHorizontal
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
@@ -84,14 +85,14 @@ fun WebUI(
     val route = remember { AppNavRoute.WebNavigation.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.WebNavigation.title) },
+        headlineContent = { Text(text = AppNavRoute.WebNavigation.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.WebNavigation.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.WebNavigation,route)
         }
     )
 }
@@ -149,7 +150,7 @@ fun WebNavigationScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.WebNavigation.route }
     var showBottomSheet_Add by remember { mutableStateOf(false) }
@@ -227,7 +228,7 @@ fun WebNavigationScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.WebNavigation.title) },
+                    title = { Text(AppNavRoute.WebNavigation.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.WebNavigation.icon)
                     },
@@ -275,7 +276,7 @@ fun NotificationBoxScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.NotificationBox.route }
 
@@ -292,7 +293,7 @@ fun NotificationBoxScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.NotificationBox.title) },
+                    title = { Text(AppNavRoute.NotificationBox.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.NotificationBox.icon)
                     },

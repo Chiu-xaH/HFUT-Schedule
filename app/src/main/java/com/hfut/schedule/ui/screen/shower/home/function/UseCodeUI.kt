@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.ui.style.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
@@ -151,7 +151,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                 }
             }
 
-            Column(modifier = appBlur(loading).scale(scale.value)){
+            Column(modifier = coverBlur(loading).scale(scale.value)){
                 TransplantListItem(
                     headlineContent = {
                         Text(

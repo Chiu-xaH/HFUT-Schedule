@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -85,7 +86,7 @@ fun LibraryScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Library.route }
 
@@ -98,7 +99,7 @@ fun LibraryScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Library.title) },
+                    title = { Text(AppNavRoute.Library.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Library.icon)
                     },
@@ -106,7 +107,9 @@ fun LibraryScreen(
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                    navController.navigateForTransition(
+                                        AppNavRoute.WebView,
+                                        AppNavRoute.WebView.withArgs(
                                         url = MyApplication.NEW_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.net,
@@ -130,7 +133,9 @@ fun LibraryScreen(
                             with(sharedTransitionScope) {
                                 FilledTonalButton(
                                     onClick = {
-                                        navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                        navController.navigateForTransition(
+                                            AppNavRoute.WebView,
+                                            AppNavRoute.WebView.withArgs(
                                             url = seatUrl,
                                             title = seatTitle,
                                         ))

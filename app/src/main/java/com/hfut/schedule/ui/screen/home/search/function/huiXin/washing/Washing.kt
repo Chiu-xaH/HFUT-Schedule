@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCamp
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -95,7 +96,7 @@ fun Washing(
                 FilledTonalIconButton(
                     modifier = containerShare(Modifier.size(30.dp),animatedContentScope,route),
                     onClick = {
-                        navController.navigateAndSaveForTransition(route)
+                        navController.navigateForTransition(AppNavRoute.HaiLeWashing,route)
                     },
                 ) { Icon( painterResource(R.drawable.search), contentDescription = null, modifier = Modifier.size(20.dp)) }
             }
@@ -114,7 +115,7 @@ fun HaiLeWashingScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val route = remember { AppNavRoute.HaiLeWashing.route }

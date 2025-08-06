@@ -94,6 +94,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJ
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
@@ -224,7 +225,7 @@ fun JxglstuCourseTableUI(
         )
     }
 
-    val times by DataStoreManager.courseTableTime.collectAsState(initial = "")
+    val times by DataStoreManager.courseTableTimeValue.collectAsState(initial = "")
     val timeTable by produceState(initialValue = emptyList<CourseUnitBean>()) {
         value = parseTimeTable(times)
     }
@@ -755,7 +756,7 @@ fun JxglstuCourseTableUI(
                                                         val name =
                                                             parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
                                                         if (name != null) {
-                                                            navController.navigateAndSaveForTransition(AppNavRoute.CourseDetail.withArgs(name,cell))
+                                                            navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name,cell))
 //                                                    courseName = name
 //                                                    showBottomSheetTotalCourse = true
                                                         }

@@ -79,7 +79,7 @@ import kotlinx.coroutines.flow.first
 fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,2.5f,color,.5f)
 @Composable
 fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     return if(
         blur
         && CAN_HAZE_BLUR_BAR
@@ -117,7 +117,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.c
 
 @Composable
 fun Modifier.topBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     return if(blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
@@ -157,7 +157,7 @@ private fun Modifier.blurStyle(
     tint : Color = MaterialTheme.colorScheme.surface,
     alpha : Float = .3f
 ) : Modifier {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     return if(blur) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint.copy(alpha)),
@@ -223,8 +223,8 @@ fun CustomBottomSheet(
 // isExpanded=true时，下层背景进入高斯模糊，并用黑色压暗，伴随缩放，上层背景展开
 @Composable
 fun transitionBackground2(isExpanded : Boolean) : Modifier {
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-    val transition by DataStoreManager.transitionFlow.collectAsState(initial = TransitionLevel.NONE.code)
+    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+    val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
     // 👍 NONE
     if(transition == TransitionLevel.NONE.code) {
         return Modifier
@@ -261,7 +261,7 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
     )
 
     if(transition == TransitionLevel.HIGH.code) {
-        val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
         LaunchedEffect(isExpanded) {
             if(blur && transition == TransitionLevel.HIGH.code) {
                 DataStoreManager.saveHazeBlur(false)
@@ -281,7 +281,7 @@ fun Modifier.transitionBackgroundF(
     route : String,
 ) : Modifier = with(TransitionState.transitionBackgroundStyle) {
     val blur by produceState(initialValue = true) {
-        value = DataStoreManager.hazeBlurFlow.first()
+        value = DataStoreManager.enableHazeBlur.first()
     }
 
     val isExpanded = !navHostController.isCurrentRoute(route)
@@ -290,20 +290,21 @@ fun Modifier.transitionBackgroundF(
     LaunchedEffect(isExpanded) {
         if(blur && TransitionState.transitionBackgroundStyle.level == TransitionLevel.HIGH) {
             DataStoreManager.saveHazeBlur(false)
-            delay(speed*1L)
+            delay(speed*4/3*1L)
             DataStoreManager.saveHazeBlur(true)
         }
     }
     return transitionBackground(navHostController,route)
 }
 
+// 用于遮挡的blur
 @Composable
-fun appBlur(
+fun coverBlur(
     showBlur: Boolean,
-    radius: Dp = 10.dp,
+    radius: Dp = MyApplication.BLUR_RADIUS/2,
     tweenDuration: Int = AppAnimationManager.ANIMATION_SPEED / 2
 ): Modifier {
-    val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
     val blurRadius by animateDpAsState(
         targetValue = if (showBlur && motionBlur) radius else 0.dp,

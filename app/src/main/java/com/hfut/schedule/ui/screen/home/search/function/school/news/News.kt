@@ -15,6 +15,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 
@@ -28,14 +29,14 @@ fun News(
     val route = remember { AppNavRoute.News.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.News.title) },
+        headlineContent = { Text(text = AppNavRoute.News.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.News.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.News,route)
         }
     )
 }

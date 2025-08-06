@@ -7,7 +7,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.AppNavRoute.NavArg
 
 // 主导航
-sealed class AppNavRoute(val route: String) {
+sealed class AppNavRoute(val route: String, val label : String, val icon : Int) {
     interface NavArg {
         val argName: String
         val navType: NavType<out Any?>
@@ -54,9 +54,7 @@ sealed class AppNavRoute(val route: String) {
 
 
 
-    object Grade : AppNavRoute("GRADE") {
-        val icon = R.drawable.article
-        val title = "成绩"
+    object Grade : AppNavRoute("GRADE","成绩",R.drawable.article) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any,override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
         }
@@ -65,13 +63,10 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object Home : AppNavRoute("HOME")
-    object UseAgreement : AppNavRoute("USE_AGREEMENT")
-    object Admission : AppNavRoute("ADMISSION") {
-        val icon = R.drawable.publics
-        val title = "本科招生"
-    }
-    object AdmissionRegionDetail : AppNavRoute("ADMISSION_REGION_DETAIL") {
+    object Home : AppNavRoute("HOME","主页面",R.drawable.home)
+    object UseAgreement : AppNavRoute("USE_AGREEMENT","用户协议",R.drawable.home)
+    object Admission : AppNavRoute("ADMISSION","本科招生",R.drawable.publics)
+    object AdmissionRegionDetail : AppNavRoute("ADMISSION_REGION_DETAIL","本科招生详情",R.drawable.publics) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             INDEX("index", NavType.IntType,-1,false),
             TYPE("type", NavType.StringType,"本科招生",false)
@@ -82,7 +77,7 @@ sealed class AppNavRoute(val route: String) {
             Args.TYPE.argName to type
         )
     }
-    object CourseDetail : AppNavRoute("COURSE_DETAIL") {
+    object CourseDetail : AppNavRoute("COURSE_DETAIL","课程详情",R.drawable.category) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             NAME("name", NavType.StringType,"课程详情",false),
             INDEX("index",NavType.IntType,-1,false)
@@ -93,66 +88,22 @@ sealed class AppNavRoute(val route: String) {
             Args.INDEX.argName to index
         )
     }
-    object WebVpn : AppNavRoute("WEBVPN") {
-        val icon = R.drawable.vpn_key
-        val title = "WebVpn"
-    }
-    object Holiday : AppNavRoute("HOLIDAY") {
-        val icon = R.drawable.beach_access
-        val title = "法定假日"
-    }
-    object News : AppNavRoute("News") {
-        val icon = R.drawable.stream
-        val title = "通知公告"
-    }
-    object Wechat : AppNavRoute("WECHAT") {
-        val icon = R.drawable.wechat
-        val title = "微信专区"
-    }
-    object TimeTable : AppNavRoute("TIME_TABLE") {
-        val icon = R.drawable.schedule
-        val title = "作息"
-    }
-    object HaiLeWashing : AppNavRoute("HAILE_WASHING") {
-        val title = "海乐生活"
-    }
-    object Fee : AppNavRoute("Fee") {
-        val icon = R.drawable.paid
-        val title = "学费"
-    }
-    object StuTodayCampus : AppNavRoute("STU") {
-        val icon = R.drawable.handshake
-        val title = "学工系统"
-    }
-    object TeacherSearch : AppNavRoute("TEACHER_SEARCH") {
-        val icon = R.drawable.group
-        val title = "教师检索"
-    }
-    object Work : AppNavRoute("WORK") {
-        val icon = R.drawable.azm
-        val title = "就业"
-    }
-    object Person : AppNavRoute("PERSON") {
-        val icon = R.drawable.person
-        val title = "个人信息"
-    }
-    object Exam : AppNavRoute("EXAM") {
-        val icon = R.drawable.draw
-        val title = "考试"
-    }
-    object DormitoryScore : AppNavRoute("DORMITORY_SCORE") {
-        val icon = R.drawable.psychiatry
-        val title = "寝室评分"
-    }
-    object Notifications : AppNavRoute("NOTIFICATIONS") {
-        val icon = R.drawable.notifications
-        val title = "消息中心"
-    }
-    object Survey : AppNavRoute("SURVEY") {
-        val icon = R.drawable.verified
-        val title = "评教"
-    }
-    object WebView : AppNavRoute("WEB_VIEW") {
+    object WebVpn : AppNavRoute("WEBVPN","WebVpn",R.drawable.vpn_key)
+    object Holiday : AppNavRoute("HOLIDAY","法定假日",R.drawable.beach_access)
+    object News : AppNavRoute("News","通知公告",R.drawable.stream)
+    object Wechat : AppNavRoute("WECHAT","微信专区",R.drawable.wechat)
+    object TimeTable : AppNavRoute("TIME_TABLE","作息",R.drawable.schedule)
+    object HaiLeWashing : AppNavRoute("HAILE_WASHING","海乐生活",R.drawable.local_laundry_service)
+    object Fee : AppNavRoute("Fee","学费",R.drawable.paid)
+    object StuTodayCampus : AppNavRoute("STU","学工系统",R.drawable.handshake)
+    object TeacherSearch : AppNavRoute("TEACHER_SEARCH","教师检索",R.drawable.group)
+    object Work : AppNavRoute("WORK","就业",R.drawable.azm)
+    object Person : AppNavRoute("PERSON","个人信息",R.drawable.person)
+    object Exam : AppNavRoute("EXAM","考试",R.drawable.draw)
+    object DormitoryScore : AppNavRoute("DORMITORY_SCORE","寝室评分",R.drawable.psychiatry)
+    object Notifications : AppNavRoute("NOTIFICATIONS","消息中心",R.drawable.notifications)
+    object Survey : AppNavRoute("SURVEY","评教",R.drawable.verified)
+    object WebView : AppNavRoute("WEB_VIEW","网页",R.drawable.net) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any?,override val isNullable: Boolean) : NavArg {
             URL("url", NavType.StringType,"",false),
             COOKIES("cookies", NavType.StringType,null,true),
@@ -168,20 +119,10 @@ sealed class AppNavRoute(val route: String) {
             Args.ICON.argName to icon,
         )
     }
-    object FailRate : AppNavRoute("FAIL_RATE") {
-        val icon = R.drawable.monitoring
-        val title = "挂科率"
-    }
-    object Transfer : AppNavRoute("TRANSFER") {
-        val icon = R.drawable.compare_arrows
-        val title = "转专业"
-    }
-    object Library : AppNavRoute("LIBRARY") {
-        val icon = R.drawable.book_5
-        val title = "图书馆"
-    }
-    object ProgramSearch : AppNavRoute("PROGRAM_SEARCH") {
-        val title = "全校培养方案"
+    object FailRate : AppNavRoute("FAIL_RATE","挂科率",R.drawable.monitoring)
+    object Transfer : AppNavRoute("TRANSFER","转专业",R.drawable.compare_arrows)
+    object Library : AppNavRoute("LIBRARY","图书馆",R.drawable.book_5)
+    object ProgramSearch : AppNavRoute("PROGRAM_SEARCH","全校培养方案",R.drawable.conversion_path) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any,override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
         }
@@ -190,9 +131,7 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object Program : AppNavRoute("PROGRAM") {
-        val title = "培养方案"
-        val icon = R.drawable.conversion_path
+    object Program : AppNavRoute("PROGRAM","培养方案",R.drawable.conversion_path) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
         }
@@ -201,9 +140,7 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object NextCourse : AppNavRoute("NEXT_COURSE") {
-        val icon = R.drawable.calendar
-        val title = "下学期课表"
+    object NextCourse : AppNavRoute("NEXT_COURSE","下学期课表",R.drawable.calendar) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
         }
@@ -212,29 +149,12 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object SelectCourse : AppNavRoute("SELECT_COURSE") {
-        val icon = R.drawable.ads_click
-        val title = "选课"
-    }
-    object WebNavigation : AppNavRoute("WEB_NAVIGATION") {
-        val icon = R.drawable.explore
-        val title = "网址导航"
-    }
-    object NotificationBox : AppNavRoute("BOX") {
-        val icon = R.drawable.notifications
-        val title = "收纳"
-    }
-    object Life : AppNavRoute("LIFE") {
-        val icon = R.drawable.near_me
-        val title = "生活服务"
-    }
-    object CourseSearch : AppNavRoute("COURSE_SEARCH") {
-        val icon = R.drawable.search
-        val title = "开课查询"
-    }
-    object TotalCourse : AppNavRoute("TOTAL_COURSE") {
-        val icon = R.drawable.category
-        val title = "课程汇总"
+    object SelectCourse : AppNavRoute("SELECT_COURSE","选课",R.drawable.ads_click)
+    object WebNavigation : AppNavRoute("WEB_NAVIGATION","网址导航",R.drawable.explore)
+    object NotificationBox : AppNavRoute("BOX","收纳",R.drawable.notifications)
+    object Life : AppNavRoute("LIFE","生活服务",R.drawable.near_me)
+    object CourseSearch : AppNavRoute("COURSE_SEARCH","开课查询",R.drawable.search)
+    object TotalCourse : AppNavRoute("TOTAL_COURSE","课程汇总",R.drawable.category) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
         }
@@ -243,9 +163,7 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object ProgramCompetition : AppNavRoute("PROGRAM_COMPETITION") {
-        val title = "培养方案完成情况"
-        val icon = R.drawable.leaderboard
+    object ProgramCompetition : AppNavRoute("PROGRAM_COMPETITION","培养方案完成情况",R.drawable.leaderboard) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
         }
@@ -254,7 +172,7 @@ sealed class AppNavRoute(val route: String) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object ProgramCompetitionDetail : AppNavRoute("PROGRAM_COMPETITION_DETAIL") {
+    object ProgramCompetitionDetail : AppNavRoute("PROGRAM_COMPETITION_DETAIL","培养方案完成情况详情",R.drawable.leaderboard) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             TITLE("title", NavType.StringType,"详情",false),
             INDEX("index", NavType.IntType,-1,false)
@@ -265,13 +183,8 @@ sealed class AppNavRoute(val route: String) {
             Args.INDEX.argName to index
         )
     }
-    object EmptyRoom : AppNavRoute("EMPTY_ROOM") {
-        val icon = R.drawable.meeting_room
-        val title = "空教室"
-    }
-    object Exception : AppNavRoute("EXCEPTION") {
-        val icon = R.drawable.warning
-        val title = "错误"
+    object EmptyRoom : AppNavRoute("EMPTY_ROOM", "空教室",R.drawable.meeting_room)
+    object Exception : AppNavRoute("EXCEPTION","错误",R.drawable.warning) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             EXCEPTION("exception", NavType.StringType,"",false)
         }

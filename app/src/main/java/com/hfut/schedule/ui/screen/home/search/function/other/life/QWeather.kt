@@ -73,7 +73,7 @@ private fun LifeUIS(vm : NetWorkViewModel) {
     var campus by remember { mutableStateOf(getCampus()) }
     val uiState by vm.qWeatherResult.state.collectAsState()
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
-    val showWeather by DataStoreManager.showFocusWeatherWarn.collectAsState(initial = true)
+    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
 
     var loading = uiState !is UiState.Success
     val refreshNetwork: suspend () -> Unit = {

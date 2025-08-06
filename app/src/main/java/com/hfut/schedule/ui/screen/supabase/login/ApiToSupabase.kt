@@ -25,12 +25,12 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ApiToSupabase(vm : NetWorkViewModel) {
-    val supabaseAutoCheck by DataStoreManager.supabaseAutoCheck.collectAsState(initial = true)
+    val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val check by vm.supabaseCheckResp.state.collectAsState()
 
-    val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
+    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
     var showBadge by remember { mutableStateOf(false) }
 
     val uiState by vm.supabaseGetEventLatestResp.state.collectAsState()

@@ -82,7 +82,7 @@ fun ProgramSearchScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var campus by remember { mutableStateOf( getCampus() ) }
     var input by remember { mutableStateOf("") }
@@ -99,7 +99,7 @@ fun ProgramSearchScreen(
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.ProgramSearch.title) },
+                        title = { Text(AppNavRoute.ProgramSearch.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(navController)
                         },

@@ -1,5 +1,8 @@
 package com.hfut.schedule.logic.model.jxglstu
 
+import android.accessibilityservice.GestureDescription
+import com.hfut.schedule.R
+
 
 data class ProgramListBean(
     val id : Int,
@@ -145,6 +148,11 @@ data class CourseItem(
     val rank : String?, //合格/及格
     val gp : Double? //GPA
 )
+
+enum class ProgramCompetitionType(val description: String,val icon : Int) {
+    PASSED("已修",R.drawable.star_filled),TAKING("在修",R.drawable.star_half),UNREPAIRED("未修",R.drawable.star),FAILED("挂科",R.drawable.star)
+}
+fun getProgramCompetitionType(description : String)  : ProgramCompetitionType? = ProgramCompetitionType.entries.find { it.name == description }
 
 
 

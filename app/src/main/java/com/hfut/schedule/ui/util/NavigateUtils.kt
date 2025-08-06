@@ -18,6 +18,14 @@ fun NavController.navigateAndSave(route: String) {
 }
 
 
+fun NavController.navigateForTransition(app : AppNavRoute,route: String,transplantBackground : Boolean = false) = try {
+    GlobalUIStateHolder.pushToFront(route,app)
+    navigateAndSaveForTransition(route,transplantBackground)
+} catch (e : Exception) {
+    e.printStackTrace()
+    showToast(getKeyStackTrace(e))
+}
+
 fun NavController.navigateForTransition(route: String,transplantBackground : Boolean = false) = try {
     navigateAndSaveForTransition(route,transplantBackground)
 } catch (e : Exception) {

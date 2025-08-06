@@ -80,7 +80,7 @@ fun WeChatScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var showedUrl by remember { mutableStateOf("") }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
@@ -113,7 +113,7 @@ fun WeChatScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Wechat.title) },
+                    title = { Text(AppNavRoute.Wechat.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Wechat.icon)
                     },

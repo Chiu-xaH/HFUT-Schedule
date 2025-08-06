@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
@@ -78,7 +79,7 @@ fun Program(
 
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Program.title) },
+        headlineContent = { ScrollText(text = AppNavRoute.Program.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
@@ -88,7 +89,7 @@ fun Program(
             with(sharedTransitionScope) {
                 FilledTonalIconButton(
                     onClick = {
-                        navController.navigateAndSaveForTransition(AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                        navController.navigateForTransition(AppNavRoute.ProgramSearch,AppNavRoute.ProgramSearch.withArgs(ifSaved))
                     },
                     modifier = containerShare(Modifier.size(30.dp),animatedContentScope,iconRoute)
                 ) {
@@ -98,7 +99,7 @@ fun Program(
         },
         modifier = Modifier.clickable {
             if (prefs.getString("program","")?.contains("children") == true || !ifSaved) {
-                navController.navigateAndSaveForTransition(AppNavRoute.Program.withArgs(ifSaved))
+                navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
             }
             else refreshLogin()
         }
@@ -117,7 +118,7 @@ fun ProgramScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val titles = remember { listOf("完成情况","教学计划") }
@@ -142,11 +143,11 @@ fun ProgramScreen(
                             LargeButton(
                                 iconModifier = iconElementShare(animatedContentScope=animatedContentScope, route = competitionRoute),
                                 onClick = {
-                                    if(prefs.getString("PROGRAM_PERFORMANCE","")?.contains("children") == true || !ifSaved) navController.navigateAndSaveForTransition(AppNavRoute.ProgramCompetition.withArgs(ifSaved))
+                                    if(prefs.getString("PROGRAM_PERFORMANCE","")?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
                                     else refreshLogin()
                                 },
                                 icon = AppNavRoute.ProgramCompetition.icon,
-                                text = AppNavRoute.ProgramCompetition.title,
+                                text = AppNavRoute.ProgramCompetition.label,
                                 shape = MaterialTheme.shapes.large,
                                 modifier = containerShare(
                                     Modifier
@@ -168,14 +169,14 @@ fun ProgramScreen(
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.Program.title) },
+                        title = { Text(AppNavRoute.Program.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Program.icon)
                         },
                         actions = {
                             FilledTonalButton(
                                 onClick = {
-                                    navController.navigateAndSaveForTransition(AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                                    navController.navigateForTransition(AppNavRoute.ProgramSearch,AppNavRoute.ProgramSearch.withArgs(ifSaved))
                                 },
                                 modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                             ) {

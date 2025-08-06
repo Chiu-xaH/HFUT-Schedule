@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -65,14 +66,14 @@ fun FailRate(
     val route = remember { AppNavRoute.FailRate.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.FailRate.title) },
+        headlineContent = { Text(text = AppNavRoute.FailRate.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.FailRate,route)
         }
     )
 }
@@ -85,7 +86,7 @@ fun FailRateScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.FailRate.route }
     var input by remember { mutableStateOf( "") }
@@ -123,7 +124,7 @@ fun FailRateScreen(
                 ){
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.FailRate.title) },
+                        title = { Text(AppNavRoute.FailRate.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.FailRate.icon)
                         }

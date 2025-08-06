@@ -61,10 +61,9 @@ fun Modifier.transitionBackground(
 
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp, label = ""
-        ,
+        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp,
+        label = "",
         animationSpec = tween(speed*7/5, easing = FastOutSlowInEasing)
-
     )
 
     //👍 MEDIUM

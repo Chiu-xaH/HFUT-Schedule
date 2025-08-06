@@ -71,7 +71,7 @@ fun NotificationsScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Notifications.route }
     with(sharedTransitionScope) {
@@ -83,7 +83,7 @@ fun NotificationsScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Notifications.title) },
+                    title = { Text(AppNavRoute.Notifications.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Notifications.icon)
                     },

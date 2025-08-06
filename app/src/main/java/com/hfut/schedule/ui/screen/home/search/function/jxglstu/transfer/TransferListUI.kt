@@ -89,7 +89,7 @@ fun TransferScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val route = remember { AppNavRoute.Transfer.route }
@@ -102,7 +102,7 @@ fun TransferScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Transfer.title) },
+                    title = { Text(AppNavRoute.Transfer.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Transfer.icon)
                     }

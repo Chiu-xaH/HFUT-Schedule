@@ -241,8 +241,8 @@ private fun SharedTransitionScope.SurfaceUI(
     boundsTransform: BoundsTransform,
     vm: NetWorkViewModel
 ) {
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
-    val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
 
     var loading by remember { mutableStateOf(false) }
 
@@ -401,7 +401,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
         enabled = title.isNotBlank() && title.isNotEmpty() && time.first.isNotEmpty() && time.second.isNotEmpty() && date.first.isNotEmpty() && date.second.isNotEmpty() && remark.isNotBlank() && remark.isNotEmpty()
     }
 
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     var isClone by remember { mutableStateOf(true) }
     val classList = remember { mutableStateListOf<String>() }
     var updateLoading by remember { mutableStateOf(false) }

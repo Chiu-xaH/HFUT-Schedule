@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 
@@ -30,14 +31,14 @@ fun WebVpn(
     val route = remember { AppNavRoute.WebVpn.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.WebVpn.title) },
+        headlineContent = { Text(text = AppNavRoute.WebVpn.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.WebVpn,route)
         }
     )
 }

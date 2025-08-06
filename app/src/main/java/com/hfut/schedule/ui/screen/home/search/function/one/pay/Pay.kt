@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -75,14 +76,14 @@ fun Pay(
     val route = remember { AppNavRoute.Fee.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Fee.title) },
+        headlineContent = { Text(text = AppNavRoute.Fee.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.Fee,route)
         }
     )
 }
@@ -95,7 +96,7 @@ fun FeeScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val route = remember { AppNavRoute.Fee.route }
@@ -108,7 +109,7 @@ fun FeeScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Fee.title) },
+                    title = { Text(AppNavRoute.Fee.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.Fee.icon)
                     },

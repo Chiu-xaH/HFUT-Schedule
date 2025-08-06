@@ -18,6 +18,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.MainHost
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.component.titleElementShare
@@ -36,7 +37,7 @@ fun Grade(
     val route = remember { AppNavRoute.Grade.receiveRoute() }
     TransplantListItem(
         headlineContent = {
-            Text(text = AppNavRoute.Grade.title)
+            Text(text = AppNavRoute.Grade.label)
         },
         leadingContent = {
             with(sharedTransitionScope) {
@@ -44,7 +45,7 @@ fun Grade(
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(AppNavRoute.Grade.withArgs(ifSaved))
+            navController.navigateForTransition(AppNavRoute.Grade,AppNavRoute.Grade.withArgs(ifSaved))
         }
     )
 }

@@ -81,7 +81,7 @@ fun CourseSearchScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.CourseSearch.route }
 
@@ -137,7 +137,7 @@ fun CourseSearchScreen(
                 TopAppBar(
 //                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.CourseSearch.title) },
+                    title = { Text(AppNavRoute.CourseSearch.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.CourseSearch.icon)
                     },

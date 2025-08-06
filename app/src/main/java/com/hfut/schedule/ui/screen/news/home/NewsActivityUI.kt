@@ -113,12 +113,12 @@ fun NewsScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.News.route }
 
     val navController = rememberNavController()
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(NewsBarItems.News) }
     // 保存上一页页码 用于决定左右动画
     if(currentAnimationIndex == 2) {
@@ -174,7 +174,7 @@ fun NewsScreen(
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.News.title) },
+                        title = { Text(AppNavRoute.News.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(
                                 navTopController,

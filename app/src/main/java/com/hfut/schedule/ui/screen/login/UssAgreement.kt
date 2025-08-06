@@ -58,7 +58,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 //@Preview
 fun UseAgreementScreen(navController : NavHostController) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val argeements = listOf(

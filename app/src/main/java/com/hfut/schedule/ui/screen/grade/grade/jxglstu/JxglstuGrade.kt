@@ -186,6 +186,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
             var searchList = mutableListOf<GradeResponseJXGLSTU>()
 
             val Item = @Composable { grade : GradeResponseJXGLSTU ->
+                val isFailed = grade.GPA.toFloatOrNull() == 0f
                 val needSurvey = grade.grade.contains("评教")
                 StyleCardListItem(
                     headlineContent = {  Text(grade.title) },
@@ -196,7 +197,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
                     ) },
                     leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                     supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
-                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else null,
+                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
                     modifier = Modifier.clickable {
                         if(needSurvey) {
                             surveyCode = grade.code
@@ -281,7 +282,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
 
 @Composable
 fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val list = num.grade.split(" ")
     val radarList = mutableListOf<RadarData>()
@@ -327,12 +328,18 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
     }
     var party by remember { mutableStateOf(false) }
 
+    val isFailed = num.GPA.toFloatOrNull() == 0f
     Column(modifier = Modifier.hazeSource(hazeState)) {
         if(radarList.size > 1) {
             DividerTextExpandedWith(text = "雷达图") {
                 Spacer(modifier = Modifier.height(35.dp))
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    RadarChart(data = radarList, modifier = Modifier.size(200.dp))
+                    RadarChart(
+                        data = radarList,
+                        modifier = Modifier.size(200.dp),
+                        primaryColor = if(isFailed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                        onPrimaryColor = if(isFailed) MaterialTheme.colorScheme.error.copy(.25f) else MaterialTheme. colorScheme. inversePrimary
+                    )
                 }
                 val bottomPadding = if(radarList.isEmpty()) {
                     0
@@ -461,6 +468,8 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
                                     totalGrade.toDoubleOrNull().let { current ->
                                         if(target.score == null) {
                                             Text(" 下一绩点为${target.gpa}")
+                                        } else if(isFailed) {
+                                            Text("挂科")
                                         } else {
                                             Text(" 距离下一绩点${target.gpa}需要${target.score.min - (current ?: 0.0)}分")
                                         }

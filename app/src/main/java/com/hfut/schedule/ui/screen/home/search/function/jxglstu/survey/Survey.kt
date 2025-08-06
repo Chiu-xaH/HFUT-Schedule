@@ -37,6 +37,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -58,7 +59,7 @@ fun Survey(
     val route = remember { AppNavRoute.Survey.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Survey.title)},
+        headlineContent = { Text(text = AppNavRoute.Survey.label)},
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
@@ -66,7 +67,7 @@ fun Survey(
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin() else {
-                navController.navigateAndSaveForTransition(route)
+                navController.navigateForTransition(AppNavRoute.Survey,route)
             }
         }
     )
@@ -80,7 +81,7 @@ fun SurveyScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Survey.route }
     var refresh by rememberSaveable { mutableStateOf(false) }
@@ -94,7 +95,7 @@ fun SurveyScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Survey.title) },
+                    title = { Text(AppNavRoute.Survey.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Survey.icon)
                     },

@@ -36,7 +36,7 @@ private suspend fun isExistEvent(dateTime: DateTime, title: String): Long? = wit
         val beginTime = Calendar.getInstance().apply {
             set(dateTime.start.year, dateTime.start.month - 1, dateTime.start.day, dateTime.start.hour, dateTime.start.minute)
         }
-        val id = DataStoreManager.defaultCalendarAccount.first()
+        val id = DataStoreManager.defaultCalendarAccountId.first()
         val selectionArgs = arrayOf(
             title,
             (beginTime.timeInMillis - 60000).toString(), // 放宽 1 分钟范围
@@ -89,7 +89,7 @@ private suspend fun addEvent(
         }
 
         val values = ContentValues().apply {
-            val id = DataStoreManager.defaultCalendarAccount.first()
+            val id = DataStoreManager.defaultCalendarAccountId.first()
             put(CalendarContract.Events.CALENDAR_ID,id ) // 日历的ID，可以通过查询日历提供者获取
             put(CalendarContract.Events.TITLE, title) // 标题
             remark?.let { put(CalendarContract.Events.DESCRIPTION, remark) } // 备注

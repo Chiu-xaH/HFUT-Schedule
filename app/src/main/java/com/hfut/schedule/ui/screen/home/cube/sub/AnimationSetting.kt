@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,8 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
- 
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -50,7 +48,7 @@ fun AnimationSetting(speed : Int) {
         AppAnimationManager.fadeAnimation,
         AppAnimationManager.nullAnimation
     )
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 1)
+    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 1)
 
     LazyRow() {
         item { Spacer(Modifier.width(10.dp)) }

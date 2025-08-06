@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
-import android.content.Context
-import android.os.Environment
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
@@ -61,10 +58,7 @@ import com.xah.transition.util.TransitionPredictiveBackHandler
 import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.util.SaveComposeAsImage
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.withContext
-import java.io.File
 
 @Composable
 fun APPScreen(
@@ -87,12 +81,11 @@ fun APPScreen(
         .fillMaxSize()
         .padding(innerPaddings).scale(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
-        val showStorageFocus by DataStoreManager.showFocusFlow.collectAsState(initial = true)
-        val showFocus by DataStoreManager.showCloudFocusFlow.collectAsState(initial = true)
         val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
         var showfocus by remember { mutableStateOf(switch_focus) }
 
-        val firstStart by DataStoreManager.firstStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
+        val firstStart by DataStoreManager.enableQuickStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
+        val controlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
 
         val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
         var showStartUri by remember { mutableStateOf(switch_startUri) }
@@ -114,8 +107,8 @@ fun APPScreen(
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
         val scope = rememberCoroutineScope()
-        val autoTerm by DataStoreManager.autoTerm.collectAsState(initial = true)
-        val autoTermValue by DataStoreManager.autoTermValue.collectAsState(initial = getSemseterWithoutSuspend())
+        val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
+        val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemseterWithoutSuspend())
 
 
         DividerTextExpandedWith("偏好") {
@@ -124,7 +117,7 @@ fun APPScreen(
                     headlineContent = { Text(text = "主页面") },
                     supportingContent = {
                         Column {
-                            Text(text = "选择作为本地速览的第一页面")
+                            Text(text = "选择作为冷启动后的第一页面")
                             Row {
                                 FilterChip(
                                     onClick = {
@@ -177,36 +170,6 @@ fun APPScreen(
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.calendar),
-                        contentDescription = "Localized description"
-                    ) },
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "聚焦数据源") },
-                    supportingContent = {
-                        Column {
-                            Row {
-                                FilterChip(
-                                    onClick = {
-                                        scope.launch{ DataStoreManager.saveShowCloudFocus(!showFocus) }
-                                    },
-                                    selected = showFocus,
-                                    label = { Text(text = "4.15.1前的旧接口") })
-
-                                Spacer(Modifier.width(10.dp))
-
-                                FilterChip(
-                                    onClick = {
-                                        scope.launch{ DataStoreManager.saveShowFocus(!showStorageFocus) }
-                                    },
-                                    selected = showStorageFocus,
-                                    label = { Text(text = "本地") })
-                            }
-
-                        }
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.lightbulb),
                         contentDescription = "Localized description"
                     ) },
                 )
@@ -395,18 +358,18 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("磁钉") },
+                    headlineContent = { Text("任务台") },
                     supportingContent = {
-                        Text("支持以类似小程序的形式，将界面暂时收起")
+                        Text("从顶栏位置的左边缘向内轻扫唤出(部分界面暂未支持)，可快速切换到最近打开的窗口\n注意:开启后上下滑动手势偶见变阻塞，正在优化")
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.bookmark),null)
+                        Icon(painterResource(R.drawable.responsive_layout),null)
                     },
                     trailingContent = {
-                        Switch(checked = false, onCheckedChange = { showToast("正在开发") }, enabled = false)
+                        Switch(checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
                     },
                     modifier = Modifier.clickable {
-                        showToast("正在开发")
+                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
                     }
                 )
             }

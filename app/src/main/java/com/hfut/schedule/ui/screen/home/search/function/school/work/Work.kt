@@ -68,6 +68,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCamp
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -88,14 +89,14 @@ fun Work(
     val route = remember { AppNavRoute.Work.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Work.title) },
+        headlineContent = { Text(text = AppNavRoute.Work.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.Work,route)
         }
     )
 }
@@ -108,7 +109,7 @@ fun WorkScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Work.route }
 
@@ -136,7 +137,7 @@ fun WorkScreen(
                 ) {
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.Work.title) },
+                        title = { Text(AppNavRoute.Work.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Work.icon)
                         },
@@ -149,7 +150,9 @@ fun WorkScreen(
                                 val iconRoute =  AppNavRoute.WebView.shareRoute(url)
                                 FilledTonalIconButton(
                                     onClick = {
-                                        navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                        navController.navigateForTransition(
+                                            AppNavRoute.WebView,
+                                            AppNavRoute.WebView.withArgs(
                                             url = url,
                                             title = "就业网(${campus.description})",
                                             icon = R.drawable.net,
@@ -266,7 +269,7 @@ private fun WorkSearchUI(
                                     overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
                                     index = index,
                                     modifier = Modifier.clickable {
-//                                        navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(url,title,null,AppNavRoute.Work.icon))
+//                                        navController.navigateForTransition(AppNavRoute.WebView,AppNavRoute.WebView.withArgs(url,title,null,AppNavRoute.Work.icon))
                                     Starter.startWebView(url,title, icon = AppNavRoute.Work.icon)
                                     },
                                     leadingContent = { Text((index+1).toString()) }

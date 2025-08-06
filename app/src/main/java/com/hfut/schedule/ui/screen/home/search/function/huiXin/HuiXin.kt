@@ -20,6 +20,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 
@@ -44,7 +45,9 @@ fun HuiXin(
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+            navController.navigateForTransition(
+                AppNavRoute.WebView,
+                AppNavRoute.WebView.withArgs(
                 url = url,
                 title = title,
                 icon = icon,

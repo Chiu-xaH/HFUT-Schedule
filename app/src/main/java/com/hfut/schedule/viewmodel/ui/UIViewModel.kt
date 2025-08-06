@@ -21,12 +21,6 @@ class UIViewModel : ViewModel()  {
     var isAddUIExpanded by mutableStateOf(false)
     var specialWOrkDayChange by mutableIntStateOf(0)
 
-    private val _isSupabaseRegistering = MutableStateFlow(false)
-    val isSupabaseRegistering: StateFlow<Boolean> = _isSupabaseRegistering
-    fun setSupabaseRegistering(value: Boolean) {
-        _isSupabaseRegistering.value = value
-    }
-
     var isAddUIExpandedSupabase by mutableStateOf(false)
 
     // 缓存复用 由于数据过大

@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
@@ -136,7 +137,7 @@ fun JxglstuCourseTableUINext(
 
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
 
-    val times by DataStoreManager.courseTableTimeNext.collectAsState(initial = "")
+    val times by DataStoreManager.courseTableTimeNextValue.collectAsState(initial = "")
     var timeTable by rememberSaveable { mutableStateOf(emptyList<CourseUnitBean>()) }
     LaunchedEffect(times) {
         timeTable = parseTimeTable(times,true)
@@ -434,7 +435,7 @@ fun JxglstuCourseTableUINext(
                                         val name =
                                             parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
                                         if (name != null) {
-                                            navController.navigateAndSaveForTransition(AppNavRoute.CourseDetail.withArgs(name, cell))
+                                            navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, cell))
                                         }
                                     } else if (texts.size > 1) {
                                         multiWeekday =

@@ -20,6 +20,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 
@@ -42,7 +43,9 @@ fun XueXin(
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+            navController.navigateForTransition(
+                AppNavRoute.WebView,
+                AppNavRoute.WebView.withArgs(
                 url = MyApplication.XUE_XIN_URL,
                 title = title,
                 icon = icon,

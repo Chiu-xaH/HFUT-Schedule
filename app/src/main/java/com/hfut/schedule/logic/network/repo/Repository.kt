@@ -198,6 +198,44 @@ object Repository {
     } catch (e: Exception) {
         holder.emitError(e,null)
     }
+    @JvmStatic
+    suspend fun <T> launchRequestSimple(
+        holder: StateHolder<T>,
+        request: suspend () -> Response<Void>,
+        transformSuccess: suspend (Headers) -> T,
+        transformRedirect: ((Headers) -> T)? = null
+    ) = try {
+        holder.setLoading()
+        val response = request()
+        val headers = response.headers()
+
+        if (response.isSuccessful) {
+            // 成功
+            val result = try {
+                transformSuccess(headers)
+            } catch (e: Exception) {
+                holder.emitError(e, PARSE_ERROR_CODE)
+                return
+            }
+            holder.emitData(result)
+        }
+        else if(response.code() == 302){
+//             重定向 特殊处理
+            val result = try {
+                transformRedirect!!(headers)
+            } catch (e: Exception) {
+                holder.emitError(e, PARSE_ERROR_CODE)
+                return
+            }
+            holder.emitData(result)
+        }
+        else {
+            // 承接错误解析 可选
+            holder.emitError(HttpException(response), response.code())
+        }
+    } catch (e: Exception) {
+        holder.emitError(e,null)
+    }
 
     suspend fun loginSchoolNet(campus: Campus = getCampus(), loginSchoolNetResponse : StateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
@@ -635,6 +673,20 @@ object Repository {
             throw Exception(result)
         }
     } catch (e: Exception) { throw e }
+
+
+    suspend fun getUpdateFileSize(fileName : String,holder : StateHolder<Double>) = launchRequestSimple(
+        holder = holder,
+        request = { gitee.download(fileName).awaitResponse() },
+        transformSuccess = { headers -> parseGiteeFileSize(headers) }
+    )
+
+    @JvmStatic
+    private fun parseGiteeFileSize(headers: Headers): Double = try {
+        val contentLength = headers["Content-Length"]?.toLongOrNull() ?: throw Exception("无法获取文件")
+        contentLength.toDouble() / (1024 * 1024)
+    } catch (e: Exception) { throw e }
+
 
     suspend fun getHaiLDeviceDetail(bean : HaiLeDeviceDetailRequestBody,holder : StateHolder<List<HaiLeDeviceDetailBean>>) = launchRequestSimple(
         holder = holder,

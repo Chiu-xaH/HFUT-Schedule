@@ -91,7 +91,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
@@ -111,7 +111,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
 
 
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
 // 保存上一页页码 用于决定左右动画
     if(currentAnimationIndex == 2) {
         LaunchedEffect(bottomBarItems) {

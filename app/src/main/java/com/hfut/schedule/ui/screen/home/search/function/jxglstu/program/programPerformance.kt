@@ -18,6 +18,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -38,6 +39,8 @@ import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
+import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -64,6 +67,7 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
@@ -83,7 +87,7 @@ fun ProgramCompetitionScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
 
@@ -96,7 +100,7 @@ fun ProgramCompetitionScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.ProgramCompetition.title) },
+                    title = { Text(AppNavRoute.ProgramCompetition.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.ProgramCompetition.icon)
                     }
@@ -205,7 +209,7 @@ private fun ProgramPerformance(
                                         trailingContent = {
                                             Button(
                                                 onClick = {
-                                                    navController.navigateAndSaveForTransition(route)
+                                                    navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
                                                 },
                                             ) {
                                                 Text(text = "查看详情")
@@ -254,7 +258,7 @@ private fun ProgramPerformance(
                                     trailingContent = {
                                         Button(
                                             onClick = {
-                                                navController.navigateAndSaveForTransition(route)
+                                                navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
                                             },
                                         ) {
                                             Text(text = "查看详情")
@@ -283,7 +287,7 @@ fun ProgramCompetitionDetailScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var input by remember { mutableStateOf("") }
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
@@ -387,16 +391,11 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                     items(filteredList.size) { index ->
                         val item = filteredList[index]
                         val term = transferTerm(item.terms)
-                        val type = when(item.resultType) {
-                            "PASSED" -> "已修"
-                            "TAKING" -> "在修"
-                            "UNREPAIRED" -> "未修"
-                            else -> item.resultType
-                        }
+                        val type = getProgramCompetitionType(item.resultType)
                         AnimationCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
-                                if(type == "通过") {
+                                if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
                                     Text(text =
                                         "均分 ${item.score} 绩点 ${item.gp} " +
                                                 if(item.rank != null) "等级 ${item.rank}" else ""
@@ -404,7 +403,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                                 }
                             },
                             trailingContent = {
-                                Text(text = type)
+                                Text(text = type?.description ?: item.resultType)
                             },
                             overlineContent = {
                                 var text = ""
@@ -415,7 +414,14 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                                 }
                                 Text(text = "第${text.replace(" ",",").dropLast(1)}学期" + " | 学分 ${item.credits}")
                             },
-                            leadingContent = { PerfermanceIcons(item.resultType) },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(type?.icon ?: R.drawable.question_mark),
+                                    null,
+                                    tint = if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                    else  LocalContentColor. current
+                                )
+                            },
                             modifier = Modifier.clickable {
                                 itemForInfo = item
                                 showBottomSheet = true
@@ -443,16 +449,11 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                 if(filteredList.isNotEmpty()) {
                     items(filteredList.size) { index ->
                         val item = filteredList[index]
-                        val type = when(item.resultType) {
-                            "PASSED" -> "已修"
-                            "TAKING" -> "在修"
-                            "UNREPAIRED" -> "未修"
-                            else -> item.resultType
-                        }
+                        val type = getProgramCompetitionType(item.resultType)
                         AnimationCardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
-                                if(type == "通过") {
+                                if(type == ProgramCompetitionType.PASSED || type == ProgramCompetitionType.FAILED) {
                                     Text(text =
                                         "均分 ${item.score} 绩点 ${item.gp} " +
                                                 if(item.rank != null) "等级 ${item.rank}" else ""
@@ -460,12 +461,19 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                                 }
                             },
                             trailingContent = {
-                                Text(text = type)
+                                Text(text = type?.description ?: item.resultType)
                             },
                             overlineContent = {
                                 Text(text = "学分 ${item.credits}")
                             },
-                            leadingContent = { PerfermanceIcons(item.resultType) },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(type?.icon ?: R.drawable.question_mark),
+                                    null,
+                                    tint = if(type == ProgramCompetitionType.FAILED) MaterialTheme.colorScheme.error
+                                    else  LocalContentColor. current
+                                )
+                            },
                             modifier = Modifier.clickable {
                                 itemForInfo = item
                                 showBottomSheet = true
@@ -495,24 +503,9 @@ fun transferTerm(term : List<String>) : List<String>? {
 }
 
 @Composable
-fun PerfermanceIcons(type : String) {
-    when(type) {
-        "PASSED" -> Icon(painterResource(id = R.drawable.star_filled), contentDescription = null)
-        "TAKING" -> Icon(painterResource(id = R.drawable.star_half), contentDescription = null)
-        "UNREPAIRED" -> Icon(painterResource(id = R.drawable.star), contentDescription = null)
-        else -> Icon(painterResource(id = R.drawable.hotel_class), contentDescription = null)
-    }
-}
-
-@Composable
 fun ProgramInfoItem(item : CourseItem) {
     val term = transferTerm(item.terms)
-    val type = when(item.resultType) {
-        "PASSED" -> "已修"
-        "TAKING" -> "在修"
-        "UNREPAIRED" -> "未修"
-        else -> item.resultType
-    }
+    val type = getProgramCompetitionType(item.resultType)
     var text = ""
     if (term != null) {
         for(i in term.indices) {
@@ -521,7 +514,7 @@ fun ProgramInfoItem(item : CourseItem) {
     }
 
     LargeCard(
-        title = type
+        title = type?.description ?: item.resultType
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -529,7 +522,7 @@ fun ProgramInfoItem(item : CourseItem) {
         ) {
             TransplantListItem(
                 headlineContent = { Text(text = item.code) },
-                overlineContent = { ScrollText(text = item.nameZh) },
+                overlineContent = { ScrollText(text = "代号") },
                 leadingContent = {
                     Icon(painterResource(id = R.drawable.tag), contentDescription = null)
                 },
@@ -545,7 +538,7 @@ fun ProgramInfoItem(item : CourseItem) {
             )
         }
 
-        if(type == "已通过") {
+        if(type == ProgramCompetitionType.PASSED || type == ProgramCompetitionType.FAILED) {
             TransplantListItem(
                 headlineContent = {
                     Text(

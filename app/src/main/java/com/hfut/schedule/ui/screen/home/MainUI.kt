@@ -123,6 +123,7 @@ import com.hfut.schedule.ui.style.transitionBackgroundF
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -151,7 +152,7 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val showBadge by remember { mutableStateOf(getUpdates().version != AppVersion.getVersionName()) }
@@ -186,7 +187,7 @@ fun MainScreen(
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
 
-    val currentAnimationIndex by DataStoreManager.animationTypeFlow.collectAsState(initial = 0)
+    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
 
     if (showBottomSheet_multi) {
         HazeBottomSheet(
@@ -371,7 +372,7 @@ fun MainScreen(
             ApiToSupabase(vm)
             val iconRoute = remember { AppNavRoute.NotificationBox.route }
             IconButton(onClick = {
-                navHostTopController.navigateAndSaveForTransition(iconRoute,transplantBackground = true)
+                navHostTopController.navigateForTransition(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
             }) {
                 BadgedBox(badge = {
                     if (getNotifications().size.toString() != prefs.getString("Notifications",""))

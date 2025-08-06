@@ -105,6 +105,7 @@ import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.TopBarNavigateIcon
@@ -129,7 +130,7 @@ fun SelectCourseScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.SelectCourse.route }
     val scope = rememberCoroutineScope()
@@ -146,7 +147,7 @@ fun SelectCourseScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.SelectCourse.title) },
+                    title = { Text(AppNavRoute.SelectCourse.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.SelectCourse.icon)
                     },
@@ -154,7 +155,9 @@ fun SelectCourseScreen(
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             with(sharedTransitionScope) {
                                 FilledTonalButton(onClick = {
-                                    navController.navigateAndSaveForTransition(AppNavRoute.WebView.withArgs(
+                                    navController.navigateForTransition(
+                                        AppNavRoute.WebView,
+                                        AppNavRoute.WebView.withArgs(
                                         url = url,
                                         title = "教务系统",
                                         cookies = cookie

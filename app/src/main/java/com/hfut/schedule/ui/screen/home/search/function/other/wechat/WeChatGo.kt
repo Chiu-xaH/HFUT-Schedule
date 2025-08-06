@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
@@ -62,14 +63,14 @@ fun WeChatGo(
     val route = remember { AppNavRoute.Wechat.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Wechat.title) },
+        headlineContent = { Text(text = AppNavRoute.Wechat.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Wechat.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.Wechat,route)
         }
     )
 }

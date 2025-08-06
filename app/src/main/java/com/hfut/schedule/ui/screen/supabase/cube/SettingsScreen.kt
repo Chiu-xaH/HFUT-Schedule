@@ -3,13 +3,10 @@ package com.hfut.schedule.ui.screen.supabase.cube
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -45,8 +42,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,hazeState: HazeState) {
-    val filter by DataStoreManager.supabaseFilterEventFlow.collectAsState(initial = false)
-    val supabaseAutoCheck by DataStoreManager.supabaseAutoCheck.collectAsState(initial = true)
+    val filter by DataStoreManager.enableSupabaseFilterEvent.collectAsState(initial = false)
+    val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
 
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }

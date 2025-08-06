@@ -28,6 +28,7 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
@@ -42,14 +43,14 @@ fun DormitoryScoreXuanCheng(
     val route = remember { AppNavRoute.DormitoryScore.route }
 
     TransplantListItem(
-        headlineContent = { Text(AppNavRoute.DormitoryScore.title) },
+        headlineContent = { Text(AppNavRoute.DormitoryScore.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.DormitoryScore.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.DormitoryScore,route)
         }
     )
 }

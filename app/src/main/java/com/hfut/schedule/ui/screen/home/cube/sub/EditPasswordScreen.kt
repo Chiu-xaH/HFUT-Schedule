@@ -30,8 +30,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
- 
+
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
@@ -47,7 +46,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     TransitionPredictiveBackHandler(navController) {
         scale = it
     }
-    val useDefaultCardPassword by DataStoreManager.useDefaultCardPassword.collectAsState(initial = true)
+    val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()

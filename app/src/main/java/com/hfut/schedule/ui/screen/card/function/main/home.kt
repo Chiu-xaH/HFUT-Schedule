@@ -70,7 +70,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
@@ -84,7 +83,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.ui.style.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -407,7 +406,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         shape = MaterialTheme.shapes.medium,
                         colors = CardDefaults.cardColors(largeCardColor())
                     ) {
-                        Column(modifier = appBlur(loading).scale(scale.value)
+                        Column(modifier = coverBlur(loading).scale(scale.value)
                             ) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "$name 校园一卡通") },

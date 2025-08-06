@@ -93,7 +93,7 @@ fun DormitoryScoreScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.DormitoryScore.route }
 
@@ -170,7 +170,7 @@ fun DormitoryScoreScreen(
                 Column {
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.DormitoryScore.title) },
+                        title = { Text(AppNavRoute.DormitoryScore.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.DormitoryScore.icon)
                         },

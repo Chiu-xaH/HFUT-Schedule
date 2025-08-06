@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
@@ -66,7 +67,7 @@ fun Exam(
     val route = remember { AppNavRoute.Exam.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Exam.title) },
+        headlineContent = { Text(text = AppNavRoute.Exam.label) },
         overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
             with(sharedTransitionScope) {
@@ -77,7 +78,7 @@ fun Exam(
             if(ifSaved)  {
                 refreshLogin()
             } else {
-                navController.navigateAndSaveForTransition(route)
+                navController.navigateForTransition(AppNavRoute.Exam,route)
             }
         }
     )
@@ -90,7 +91,7 @@ fun ExamScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Exam.route }
 
@@ -103,7 +104,7 @@ fun ExamScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Exam.title) },
+                    title = { Text(AppNavRoute.Exam.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Exam.icon)
                     }

@@ -74,11 +74,11 @@ object SemseterParser {
     @JvmStatic
     suspend fun getSemseter() : Int {
         try {
-            val autoTerm = DataStoreManager.autoTerm.first()
+            val autoTerm = DataStoreManager.enableAutoTerm.first()
             if(autoTerm) {
                 return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
             } else {
-                val autoTermValue = DataStoreManager.autoTermValue.first()
+                val autoTermValue = DataStoreManager.customTermValue.first()
                 return autoTermValue
             }
         } catch (e : Exception) {

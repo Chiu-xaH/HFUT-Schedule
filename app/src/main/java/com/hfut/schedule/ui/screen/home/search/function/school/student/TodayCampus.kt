@@ -5,18 +5,13 @@ import android.os.Looper
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,17 +19,14 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,9 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -87,12 +77,11 @@ import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
-import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -109,14 +98,14 @@ fun ToadyCampus(
     val route = remember { AppNavRoute.StuTodayCampus.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.StuTodayCampus.title) },
+        headlineContent = { Text(text = AppNavRoute.StuTodayCampus.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.StuTodayCampus,route)
         }
     )
 }
@@ -130,7 +119,7 @@ fun StuTodayCampusScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.StuTodayCampus.route }
 
@@ -147,7 +136,7 @@ fun StuTodayCampusScreen(
                 ){
                     TopAppBar(
                         colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.StuTodayCampus.title) },
+                        title = { Text(AppNavRoute.StuTodayCampus.label) },
                         navigationIcon = {
                             TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.StuTodayCampus.icon)
                         },
@@ -187,7 +176,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
             vm.getStuApps(it)
         }
     }
-    val todayCampusTip by DataStoreManager.todayCampusTip.collectAsState(initial = true)
+    val todayCampusTip by DataStoreManager.showTodayCampusTip.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
     val size = remember { 30.dp }
     var input by remember { mutableStateOf("") }
@@ -361,7 +350,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
 @Composable
 fun TodayCampusUI(vm : NetWorkViewModel) {
 
-    val stuCookie by DataStoreManager.stuCookieFlow.collectAsState(initial = null)
+    val stuCookie by DataStoreManager.stuCookies.collectAsState(initial = null)
     var loading by remember { mutableStateOf(true) }
     var refresh by remember { mutableStateOf(true) }
     var r by remember { mutableStateOf("") }

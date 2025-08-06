@@ -51,7 +51,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) {
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val uiState by vm.supabaseGetMyEventsResp.state.collectAsState()
     val refreshNetwork : suspend () -> Unit = {
         vm.supabaseGetMyEventsResp.clear()
@@ -89,7 +89,7 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
 
 @Composable
 private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,onRefresh :  () -> Unit) {
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     var input by remember { mutableStateOf("") }
     var id by remember { mutableIntStateOf(-1) }
     var showDialogDel by remember { mutableStateOf(false) }

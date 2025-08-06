@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +48,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
@@ -60,7 +63,10 @@ import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch
@@ -70,7 +76,7 @@ import kotlinx.coroutines.launch
 // 全量更新UI
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun UpdateUI() {
+fun UpdateUI(vm : NetWorkViewModel) {
     val handler = Handler(Looper.getMainLooper())
     var pro by remember { mutableFloatStateOf(0f) }
     var able by remember { mutableStateOf(true) }
@@ -101,10 +107,20 @@ fun UpdateUI() {
     val version by remember { mutableStateOf(getUpdates()) }
 
     var expandItems by remember { mutableStateOf(false) }
+    val uiState by vm.giteeApkSizeResp.state.collectAsState()
+
+    LaunchedEffect(version.version) {
+        if(uiState is UiState.Success)
+            return@LaunchedEffect
+        version.version?.let {
+            vm.giteeApkSizeResp.clear()
+            vm.getGiteeApkSize(it)
+        }
+    }
 
     MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.errorContainer) {
         TransplantListItem(
-            headlineContent = { Text(text = "最新版本") },
+            headlineContent = { Text(text = "发现新版本") },
             supportingContent = { Text(text = "${AppVersion.getVersionName()} → ${version.version}") },
             leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
             trailingContent = {
@@ -127,12 +143,13 @@ fun UpdateUI() {
                 transformOrigin = TransformOrigin(0.5f, 0f)
             ) + fadeIn(initialAlpha = 0.3f),
             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)) {
+            PaddingHorizontalDivider()
             TransplantListItem(
                 headlineContent = { Text(text ="更新日志") },
                 supportingContent = {
-                    getUpdates().text?.let { Text(text = " $it") }
+                    getUpdates().text?.let { Text(text = it) }
                 },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.hotel_class), contentDescription = "") },
+//                leadingContent = { Icon(painter = painterResource(id = R.drawable.hotel_class), contentDescription = "") },
 //                colors = MaterialTheme.colorScheme.errorContainer
             )
         }
@@ -148,7 +165,9 @@ fun UpdateUI() {
                         able = false
                     }
                 },
-                text = "下载并安装",
+                text = "下载并安装" + if(uiState is UiState.Success) {
+                    " ("+formatDecimal((uiState as UiState.Success).data,2) + "MB)"
+                } else "",
                 color = MaterialTheme.colorScheme.error.copy(.07f)
             )
         }
@@ -175,7 +194,9 @@ fun UpdateUI() {
                         if(pro != 0f && pro != 1f) {
                             CircularProgressIndicator(
                                 progress = { pro },
-                                modifier = Modifier.size(20.dp).height(20.dp),
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .height(20.dp),
                                 color = MaterialTheme.colorScheme.error
                             )
                             Spacer(modifier = Modifier.width(20.dp))
@@ -205,7 +226,7 @@ fun UpdateUI() {
 // 增量更新UI
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun PatchUpdateUI(patch: Patch) {
+fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
     val coroutineScope = rememberCoroutineScope()
     var loadingPatch by remember { mutableStateOf(false) }
 
@@ -234,16 +255,27 @@ fun PatchUpdateUI(patch: Patch) {
         }
     }
 
+    val uiStatePatch by vm.giteePatchSizeResp.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        if(uiStatePatch is UiState.Success)
+            return@LaunchedEffect
+        vm.giteePatchSizeResp.clear()
+        vm.getGiteePatchSize(patch)
+    }
 
 
     if(loadingPatch) {
         LoadingUI()
     } else {
-        MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+        Spacer(Modifier.height(CARD_NORMAL_DP))
+        MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
-                headlineContent = { Text(text = "增量更新") },
+                headlineContent = { Text(text = "增量更新至" +
+                        patch.newVersion.let{ if (it == getUpdates().version) "最新版本" else (""+ it) }
+                ) },
                 supportingContent = {
-                    Text(text = "开发者为若干最近版本提供补丁包，使用户以更少的下载流量实现版本更新")
+                    Text(text = "开发者为一个月(动态调整)内的过去版本提供增量包，可节省至少40%的下载实现版本更新")
                 },
                 leadingContent = { Icon(painterResource(R.drawable.package_2), contentDescription = "Localized description",) },
             )
@@ -261,8 +293,12 @@ fun PatchUpdateUI(patch: Patch) {
                             able = false
                         }
                     },
-                    text = patch.newVersion.let { if(it != getUpdates().version) "更新至 $it" else "下载增量包" },
-                    color = MaterialTheme.colorScheme.primary.copy(.07f)
+                    text =
+                        patch.newVersion.let { if(it != getUpdates().version) "更新至 $it" else "下载增量包" } +
+                                if(uiStatePatch is UiState.Success) {
+                                   " ("+ formatDecimal((uiStatePatch as UiState.Success).data,2) + "MB)"
+                                } else ""
+                    , color = MaterialTheme.colorScheme.surfaceVariant
                 )
             }
         }
@@ -287,7 +323,9 @@ fun PatchUpdateUI(patch: Patch) {
                             if(pro != 0f && pro != 1f) {
                                 CircularProgressIndicator(
                                     progress = { pro },
-                                    modifier = Modifier.size(20.dp).height(20.dp),
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .height(20.dp),
                                     color = MaterialTheme.colorScheme.error
                                 )
                                 Spacer(modifier = Modifier.width(20.dp))

@@ -91,8 +91,8 @@ fun SettingsScreen(vm : NetWorkViewModel,
             ) {
 
                 composable(Screen.HomeScreen.route) {
-                    Scaffold {
-                        HomeSettingScreen(navController, innerPaddings,hazeState)
+                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                        HomeSettingScreen(navController, innerPaddings,hazeState,vm)
                     }
                 }
                 composable(Screen.UIScreen.route) {

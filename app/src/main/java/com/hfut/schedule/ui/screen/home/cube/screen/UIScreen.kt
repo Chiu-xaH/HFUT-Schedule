@@ -52,15 +52,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.InnerPaddingHeight
@@ -77,7 +76,10 @@ import kotlinx.coroutines.withContext
 
 
 suspend fun initTransition() = withContext(Dispatchers.IO) {
-    val transition = DataStoreManager.transitionFlow.first()
+    val transition = DataStoreManager.transitionLevel.first()
+    val motionBlur = DataStoreManager.enableMotionBlur.first()
+//    TransitionState.firstStartRoute = AppNavRoute.Home.route
+    TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
     TransitionState.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
 }
 
@@ -95,14 +97,14 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         .padding(innerPaddings).scale(scale).alpha(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
         val animationList = remember { DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed } }
 
-        val webViewDark by DataStoreManager.webViewDark.collectAsState(initial = true)
-        val currentPureDark by DataStoreManager.pureDarkFlow.collectAsState(initial = false)
-        val motionBlur by DataStoreManager.motionBlurFlow.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-        val transition by DataStoreManager.transitionFlow.collectAsState(initial = TransitionLevel.NONE.code)
-        val currentColorModeIndex by DataStoreManager.colorModeFlow.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
+        val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
+        val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
+        val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+        val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
+        val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val animationSpeed by DataStoreManager.animationSpeedType.collectAsState(initial = DataStoreManager.AnimationSpeed.NORMAL.code)
         val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
@@ -112,6 +114,9 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         }
         LaunchedEffect(transition) {
             TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.LOW
+        }
+        LaunchedEffect(motionBlur) {
+            TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
         }
         val cor = rememberCoroutineScope()
 

@@ -158,6 +158,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAn
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import com.xah.bsdiffs.model.Patch
+import com.xah.bsdiffs.util.parsePatch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -202,6 +204,13 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val haiLeNearPositionResp = StateHolder<List<HaiLeNearPositionBean>>()
     suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = Repository.getHaiLeNear(bean,haiLeNearPositionResp)
+
+    val giteeApkSizeResp = StateHolder<Double>()
+    suspend fun getGiteeApkSize(version : String) = Repository.getUpdateFileSize("$version.apk",giteeApkSizeResp)
+    val giteePatchSizeResp = StateHolder<Double>()
+    suspend fun getGiteePatchSize(patch: Patch) = Repository.getUpdateFileSize(parsePatch(patch),giteePatchSizeResp)
+
+
 
     val haiLeDeviceDetailResp = StateHolder<List<HaiLeDeviceDetailBean>>()
     suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequestBody) = Repository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)

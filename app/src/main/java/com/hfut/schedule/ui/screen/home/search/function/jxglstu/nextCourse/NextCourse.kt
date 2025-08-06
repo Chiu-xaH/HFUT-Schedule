@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.TopBarNavigateIcon
@@ -69,7 +70,7 @@ fun NextCourse(
     }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.NextCourse.title) },
+        headlineContent = { ScrollText(text = AppNavRoute.NextCourse.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.NextCourse.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
@@ -79,9 +80,9 @@ fun NextCourse(
             if (isNextOpen()) {
                 if(ifSaved) {
                     if(prefs.getInt("FIRST",0) != 0)
-                        navController.navigateAndSaveForTransition(AppNavRoute.NextCourse.withArgs(ifSaved))
+                        navController.navigateForTransition(AppNavRoute.NextCourse,AppNavRoute.NextCourse.withArgs(ifSaved))
                     else refreshLogin()
-                } else navController.navigateAndSaveForTransition(AppNavRoute.NextCourse.withArgs(ifSaved))
+                } else navController.navigateForTransition(AppNavRoute.NextCourse,AppNavRoute.NextCourse.withArgs(ifSaved))
             } else {
                 if(!ifSaved) {
                     Starter.startWebView(
@@ -110,7 +111,7 @@ fun NextCourseScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var next by remember { mutableStateOf(isNextOpen()) }
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
@@ -123,7 +124,7 @@ fun NextCourseScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.NextCourse.title) },
+                    title = { Text(AppNavRoute.NextCourse.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.NextCourse.icon)
                     },

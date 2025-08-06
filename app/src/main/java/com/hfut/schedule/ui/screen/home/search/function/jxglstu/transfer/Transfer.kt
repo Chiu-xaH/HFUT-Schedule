@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
@@ -71,7 +72,7 @@ fun Transfer(
     val route = remember { AppNavRoute.Transfer.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Transfer.title) },
+        headlineContent = { Text(text = AppNavRoute.Transfer.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Transfer.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
@@ -79,7 +80,7 @@ fun Transfer(
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin() else {
-                navController.navigateAndSaveForTransition(route)
+                navController.navigateForTransition(AppNavRoute.Transfer,route)
             }
         }
     )

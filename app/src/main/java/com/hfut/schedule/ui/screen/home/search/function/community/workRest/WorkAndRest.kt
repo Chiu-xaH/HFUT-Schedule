@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
@@ -182,14 +183,14 @@ fun WorkAndRest(
     val route = remember { AppNavRoute.TimeTable.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.TimeTable.title) },
+        headlineContent = { Text(text = AppNavRoute.TimeTable.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.TimeTable.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.TimeTable,route)
         }
     )
 }
@@ -201,7 +202,7 @@ fun TimeTableScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val url by produceState<String?>(initialValue = null) {
         value = try {
@@ -220,7 +221,7 @@ fun TimeTableScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.TimeTable.title) },
+                    title = { Text(AppNavRoute.TimeTable.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.TimeTable.icon)
                     },

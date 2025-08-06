@@ -30,7 +30,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Badge
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -89,7 +88,7 @@ private const val TAB_RIGHT = 1
 @Composable
 fun SupabaseHomeScreen(vm: NetWorkViewModel, sortType: SortType, sortReversed : Boolean, innerPadding : PaddingValues, pagerState : PagerState) {
     var refreshing by remember { mutableStateOf(true) }
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
 
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
@@ -148,10 +147,10 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel, sortType: SortType, sortReversed : 
 
 @Composable
 private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReversed : Boolean,innerPadding : PaddingValues,refresh : Boolean,onRefresh : (Boolean) -> Unit) {
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val scope = rememberCoroutineScope()
 //    var sortType by remember { mutableStateOf(SortType.ID) }
-    val filter by DataStoreManager.supabaseFilterEventFlow.collectAsState(initial = false)
+    val filter by DataStoreManager.enableSupabaseFilterEvent.collectAsState(initial = false)
 
     if(refresh) {
         LoadingScreen()

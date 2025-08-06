@@ -16,6 +16,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 
@@ -32,7 +33,7 @@ fun CoursesSearch(
     val route = remember { AppNavRoute.CourseSearch.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.CourseSearch.title) },
+        headlineContent = { ScrollText(text = AppNavRoute.CourseSearch.label) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
@@ -40,7 +41,7 @@ fun CoursesSearch(
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin()
-            else navController.navigateAndSaveForTransition(route)
+            else navController.navigateForTransition(AppNavRoute.CourseSearch,route)
         }
     )
 }

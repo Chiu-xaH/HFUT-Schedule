@@ -33,6 +33,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
@@ -49,9 +50,9 @@ fun NotificationsCenter(
     val route = remember { AppNavRoute.Notifications.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Notifications.title) },
+        headlineContent = { Text(text = AppNavRoute.Notifications.label) },
         modifier = Modifier.clickable {
-            navController.navigateAndSaveForTransition(route)
+            navController.navigateForTransition(AppNavRoute.Notifications,route)
             saveString("Notifications", getNotifications().size.toString())
         },
         leadingContent = {

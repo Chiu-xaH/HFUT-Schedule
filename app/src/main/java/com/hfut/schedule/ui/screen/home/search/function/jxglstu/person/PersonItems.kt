@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.ui.style.coverBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -76,7 +76,7 @@ fun PersonScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Person.route }
     with(sharedTransitionScope) {
@@ -88,7 +88,7 @@ fun PersonScreen(
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Person.title) },
+                    title = { Text(AppNavRoute.Person.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Person.icon)
                     },
@@ -193,7 +193,7 @@ private fun PersonItems(vm : NetWorkViewModel) {
                     FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = APP_HORIZONTAL_DP)) {
                         Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
                     }
-                    Column(modifier = appBlur(!show2)) {
+                    Column(modifier = coverBlur(!show2)) {
                         chineseid?.let {
                             TransplantListItem(
                                 headlineContent = { Text(text = it)  },
@@ -299,7 +299,7 @@ private fun PersonItems(vm : NetWorkViewModel) {
                     }
                 )
                 PaddingHorizontalDivider()
-                Column(modifier = appBlur(!show)) {
+                Column(modifier = coverBlur(!show)) {
                     val pwd= prefs.getString("Password","")
                     pwd?.let {
                         TransplantListItem(

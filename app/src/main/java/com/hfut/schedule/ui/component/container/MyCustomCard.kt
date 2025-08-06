@@ -24,7 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.ui.style.appBlur
+import com.hfut.schedule.ui.style.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 
 @Composable
@@ -286,7 +286,7 @@ fun LoadingLargeCard(
         colors = color
     ) {
         //下面的内容
-        Column (modifier = appBlur(loading).scale(scale.value)) {
+        Column (modifier = coverBlur(loading).scale(scale.value)) {
             TransplantListItem(
                 headlineContent = {
                     Text(

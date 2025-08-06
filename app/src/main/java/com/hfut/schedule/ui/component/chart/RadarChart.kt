@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
@@ -25,7 +26,12 @@ import kotlin.math.sin
 data class RadarData(val label: String, val value: Float)
 
 @Composable
-fun RadarChart(data: List<RadarData>, modifier: Modifier = Modifier) {
+fun RadarChart(
+    data: List<RadarData>,
+    modifier: Modifier = Modifier,
+    primaryColor : Color = MaterialTheme.colorScheme.primary,
+    onPrimaryColor : Color = MaterialTheme.colorScheme.inversePrimary
+) {
     val maxValue = 1f
 //        data.maxOf { it.value }
     val animatedValues = remember { data.map { Animatable(0f) } }
@@ -44,8 +50,6 @@ fun RadarChart(data: List<RadarData>, modifier: Modifier = Modifier) {
 
     val angle = 360f / data.size
     val startAngle = -90f // 使第一个点位于顶部
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val onPrimaryColor = MaterialTheme.colorScheme.inversePrimary
     val fillColor = primaryColor.copy(alpha = 0.3f)
 
     Canvas(modifier = modifier) {

@@ -26,8 +26,8 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun Supabase(vm: NetWorkViewModel) {
-    val jwt by DataStoreManager.supabaseJwtFlow.collectAsState(initial = "")
-    val refreshToken by DataStoreManager.supabaseRefreshTokenFlow.collectAsState(initial = "")
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
 

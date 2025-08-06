@@ -16,9 +16,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCamp
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,7 +24,7 @@ import kotlinx.coroutines.withContext
 suspend fun getJxglstuCookie(vm: NetWorkViewModel) : String? {
     var cookie : String?
     if(vm.webVpn) {
-        val webVpnCookie = DataStoreManager.webVpnCookie.first{ it.isNotEmpty() }
+        val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
         cookie =  prefs.getString("redirect", "")
@@ -37,7 +35,7 @@ suspend fun getJxglstuCookie(vm: NetWorkViewModel) : String? {
 suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     var cookie : String?
     if(isWebVpn) {
-        val webVpnCookie = DataStoreManager.webVpnCookie.first{ it.isNotEmpty() }
+        val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
         cookie =  prefs.getString("redirect", "")
@@ -53,7 +51,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",isXuanCheng)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
-    val webVpnCookie = DataStoreManager.webVpnCookie.first{ it.isNotEmpty() }
+    val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
 
     val cookie =  getJxglstuCookie(vm)
     // 刷新个人接口
@@ -105,7 +103,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
     if(showCard)
         launch { initCardNetwork(vm,vmUI) }
     launch {
-        val showWeather = DataStoreManager.showFocusWeatherWarn.first()
+        val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
         val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
         if(showWeather && state  !is UiState.Success) {
             vm.getWeatherWarn(getCampus())
@@ -120,7 +118,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
 
 //更新教务课表与课程汇总
 suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {
-    val webVpnCookie = DataStoreManager.webVpnCookie.first { it.isNotEmpty() }
+    val webVpnCookie = DataStoreManager.webVpnCookies.first { it.isNotEmpty() }
 
     val cookie = if (!vm.webVpn) {
             prefs.getString("redirect", "") ?: return@withContext

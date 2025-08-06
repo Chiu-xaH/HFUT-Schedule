@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -337,23 +338,23 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
             }
 
             if(textLogin == "已登录") {
-                Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                Spacer(Modifier.height(APP_HORIZONTAL_DP/2- CARD_NORMAL_DP))
                 OutlinedButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = APP_HORIZONTAL_DP),
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
-                        Starter.startWebUrl("https://cn.bing.com/")
+                        Starter.startWebView("https://www.hfut.edu.cn/")
                     }
                 ) {
                     Text("测试连通性")
                 }
             }
-            Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+            Spacer(Modifier.height(APP_HORIZONTAL_DP/2- CARD_NORMAL_DP*(if(textLogin == "已登录")2 else 1)))
             StyleCardListItem(
                 headlineContent = {
-                    Text("一键校园网登录已支持Shortcut，可在系统控制中心添加")
+                    Text("一键校园网登录已支持磁贴，可在系统控制中心添加")
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.keyboard_command_key),null)
