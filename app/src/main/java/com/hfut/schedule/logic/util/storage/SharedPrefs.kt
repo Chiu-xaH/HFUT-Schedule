@@ -20,6 +20,9 @@ object SharedPrefs {
     fun saveInt(title : String, save : Int) {
         if (saved.getInt(title, 0) != save) { saved.edit().putInt(title,save).apply() }
     }
+    fun saveFloat(title : String, save : Float,default : Float,) {
+        if (saved.getFloat(title, default) != save) { saved.edit().putFloat(title,save).apply() }
+    }
 
     fun saveLong(title : String, info : Long) {
         if (saved.getLong(title, 0L) != info) { saved.edit().putLong(title,info).apply() }

@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -10,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
@@ -20,18 +22,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -46,6 +52,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
@@ -96,9 +103,26 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.state.TransitionState
 import com.xah.transition.util.currentRoute
 import com.xah.transition.util.isCurrentRoute
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlin.Float.Companion.NaN
 
+private const val OFFSET_KEY = "OFFSET_DRAWERS"
+suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(Dispatchers.IO) {
+    drawerState.close()
+    val currentValue = prefs.getFloat(OFFSET_KEY,0f)
+    val newValue = drawerState.currentOffset
+    if(currentValue == 0f || newValue != currentValue) {
+        showToast("正在校准，请勿动稍后")
+        SharedPrefs.saveFloat(OFFSET_KEY,newValue,0f)
+        showToast("校准完成")
+        return@withContext newValue
+    } else {
+        return@withContext currentValue
+    }
+}
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("NewApi")
 @Composable
@@ -147,26 +171,50 @@ fun MainHost(
                 }
             }
         }
+    val configuration = LocalConfiguration.current
+    var screenWidth by remember { mutableIntStateOf(0) }
     val drawerState =  rememberDrawerState(DrawerValue.Closed)
-    val maxOffset = remember { -1000f }
-    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-    val blurDp by remember {
-        derivedStateOf {
-            val fraction = 1 - (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-            (fraction * MyApplication.BLUR_RADIUS.value*2).dp // 最大 blur 40dp
-        }
-    }
-    val scale by remember {
-        derivedStateOf {
-            val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-            (TransitionState.transitionBackgroundStyle.scaleValue - if(motionBlur) TransitionState.transitionBackgroundStyle.scaleDiffer else 0f) * (1 - fraction) + fraction
-        }
-    }
+    var maxOffset by rememberSaveable { mutableFloatStateOf(
+        prefs.getFloat(OFFSET_KEY,0f)
+    ) }
     val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val isWebView = navController.isCurrentRoute(AppNavRoute.WebView.route)
     val enableGesture = enableControlCenter && !isWebView
     var containerColor by remember { mutableStateOf<Color?>(null) }
+    LaunchedEffect(configuration,enableControlCenter) {
+        if(enableControlCenter) {
+            snapshotFlow { configuration.screenWidthDp }
+                .collect {
+                    screenWidth = it
+                    // 你可以在这里更新 maxOffset
+                    maxOffset = getDrawOpenOffset(drawerState)
+                }
+        }
+    }
+    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+    val blurDp by remember {
+        derivedStateOf {
+            if (maxOffset == 0f) {
+                0.dp // 未校准前不模糊
+            } else {
+                val fraction = 1 - (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
+                (fraction * MyApplication.BLUR_RADIUS.value * 2).dp
+            }
+        }
+    }
+    val scale by remember {
+        derivedStateOf {
+            if (maxOffset == 0f) {
+                1f
+            } else {
+                val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
+                (TransitionState.transitionBackgroundStyle.scaleValue - if(motionBlur) TransitionState.transitionBackgroundStyle.scaleDiffer else 0f) * (1 - fraction) + fraction
+            }
+        }
+    }
+
+
     ModalNavigationDrawer  (
         scrimColor = MaterialTheme.colorScheme.surface.copy(if(motionBlur) .25f else 0.925f),
         drawerState = drawerState,
@@ -184,7 +232,7 @@ fun MainHost(
     ) {
         Box(modifier = Modifier.fillMaxSize()
             .let {
-                if(enableGesture) it.limitDrawerSwipeArea(allowedArea = with(LocalDensity.current) { Rect(0f,0f,1000.dp.toPx(),150.dp.toPx()) })
+                if(enableGesture) it.limitDrawerSwipeArea(allowedArea = with(LocalDensity.current) { Rect(0f,0f, screenWidth.dp.toPx(),150.dp.toPx()) })
                 else it
             }
         ) {
@@ -200,8 +248,9 @@ fun MainHost(
                         else
                             it.background(MaterialTheme.colorScheme.surface)
                     }
-                    .let{ if(motionBlur) it.blur(blurDp) else it }
-                    .scale(scale)
+                    .let{ if(motionBlur && enableControlCenter) it.blur(blurDp) else it }
+                    .let { if(enableControlCenter) it.scale(scale) else it }
+
             ) {
                 NavHost(
                     navController = navController,

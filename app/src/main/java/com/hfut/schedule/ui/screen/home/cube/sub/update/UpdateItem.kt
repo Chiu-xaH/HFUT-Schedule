@@ -61,10 +61,11 @@ fun VersionInfo() {
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 为部分场景适配新的转场动画")
             UpdateItems("新增 交互学习","位于 选项-应用行为-其他")
-            UpdateItems("修复 启动台的一些逻辑Bug")
-            UpdateItems("修复 自定义学期时无法复位的Bug")
+            UpdateItems("修复 大屏设备使用本APP时模糊的Bug","加入了根据屏幕宽度校准机制")
             UpdateItems("修复 开启启动台时网页无法滑动的Bug")
+            UpdateItems("修复 启动台的一些逻辑Bug")
             UpdateItems("修复 部分界面错位的Bug")
+            UpdateItems("修复 自定义学期时无法复位的Bug")
             UpdateItems("优化 部分动效的数值细节")
             UpdateItems("优化 选项-应用设置中部分项目的位置")
 
