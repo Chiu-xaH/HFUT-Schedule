@@ -274,8 +274,6 @@ fun WebViewScreenForActivity(
     val topBarTitleColor = topColor?.let {
         if (it.luminance() < 0.5f) Color.White else Color.Black
     } ?: MaterialTheme.colorScheme.primary
-//    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
-//    val hazeState = rememberHazeState(blurEnabled = blur)
 
     BackHandler {
         if(fullScreen) {
@@ -304,8 +302,6 @@ fun WebViewScreenForActivity(
             ) {
                 Column {
                     TopAppBar(
-//                    modifier = Modifier.topBarBlur(hazeState, color = topColor ?: MaterialTheme.colorScheme.surface),
-//                    colors = topBarTransplantColor(),
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = topColor ?: MaterialTheme.colorScheme.surface,
                             titleContentColor = topBarTitleColor
@@ -360,8 +356,6 @@ fun WebViewScreenForActivity(
             ) {
                 VerticalFloatingToolbar (
                     expanded = true,
-//                    colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
-//                    modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
                 ) {
                     tools()
                     IconButton(onClick = { visible = false }) { Icon(
@@ -439,60 +433,12 @@ fun WebViewScreenForActivity(
                                 }
                                 webView = this@apply
                                 if (isDark && webViewDark) {
-                                    val css = """
-                                html, body {
-                                    background-color: #121212 !important;
-                                    color: #eeeeee !important;
-                                }
-                                * {
-                                    background-color: transparent !important;
-                                    color: #eeeeee !important;
-                                    border-color: #333333 !important;
-                                }
-                                a { color: #8ab4f8 !important; }
-                            """.trimIndent()
-
-                                    val js = """
-                                (function() {
-                                    let style = document.createElement('style');
-                                    style.type = 'text/css';
-                                    style.appendChild(document.createTextNode(`$css`));
-                                    document.head.appendChild(style);
-                                })();
-                            """.trimIndent()
-
+                                    val js = FORCE_DARK_JS.trimIndent()
                                     view?.evaluateJavascript(js, null)
                                 }
-                                view?.postDelayed({
-                                    try {
-                                        val bitmap = createBitmap(view.width, view.height)
-                                        val canvas = Canvas(bitmap)
-                                        view.draw(canvas)
-
-                                        // 读取顶部某个位置的像素颜色，比如(10, 10)
-                                        val colors = (0 until 5).map { bitmap[0, it] }
-                                        val avgColorInt = colors.reduce { acc, c ->
-                                            val a = (android.graphics.Color.alpha(acc) + android.graphics.Color.alpha(c)) / 2
-                                            val r = (android.graphics.Color.red(acc) + android.graphics.Color.red(c)) / 2
-                                            val g = (android.graphics.Color.green(acc) + android.graphics.Color.green(c)) / 2
-                                            val b = (android.graphics.Color.blue(acc) + android.graphics.Color.blue(c)) / 2
-                                            android.graphics.Color.argb(a, r, g, b)
-                                        }
-                                        topColor =  Color(avgColorInt)
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                    }
-                                }, 100) // 延迟一点确保绘制完成 document.body.style.paddingTop = '${top}px';
+                                selectColor(view) { topColor = it }
                                 // 注入 JS，为网页内容添加 padding（单位 px）
-                                view?.evaluateJavascript(
-                                    """
-        (function() {
-            
-            document.body.style.paddingBottom = '${bottom}px';
-        })();
-        """.trimIndent(),
-                                    null
-                                )
+                                view?.evaluateJavascript(getPaddingPxJs(null,bottom), null)
                                 loading = false
                             }
 
@@ -536,7 +482,6 @@ fun WebViewScreenForActivity(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-//                    .hazeSource(hazeState)
             )
         }
     }

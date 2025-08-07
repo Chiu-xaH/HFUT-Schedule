@@ -5,6 +5,7 @@ import android.content.Intent
 import android.webkit.CookieManager
 import androidx.core.net.toUri
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.activity.screen.CardActivity
 import com.hfut.schedule.activity.screen.FixActivity
@@ -16,6 +17,8 @@ import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.webview.getPureUrl
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 
 object Starter {
     enum class AppPackages(val packageName : String,val appName : String) {
@@ -46,7 +49,7 @@ object Starter {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             MyApplication.context.startActivity(intent)
         } catch (e : Exception) {
-            showToast("打开支付宝失败")
+            showToast("打开失败")
         }
     }
     //传入网页URL打开
@@ -137,6 +140,7 @@ object Starter {
         cookies: String? = null,
         icon : Int? = null
     ) {
+        GlobalUIStateHolder.pushToFront(AppNavRoute.WebView.withArgs(url,title,cookies,icon ?: R.drawable.net), AppNavRoute.WebView)
         val it = Intent(MyApplication.context, WebViewActivity::class.java).apply {
             putExtra("url",url)
             putExtra("title",title)

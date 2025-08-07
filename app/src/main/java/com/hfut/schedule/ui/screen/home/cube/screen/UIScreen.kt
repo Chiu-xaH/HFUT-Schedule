@@ -106,7 +106,6 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val animationSpeed by DataStoreManager.animationSpeedType.collectAsState(initial = DataStoreManager.AnimationSpeed.NORMAL.code)
-        val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
         val transitionLevels = remember { TransitionLevel.entries }
         LaunchedEffect(animationSpeed) {
@@ -198,24 +197,6 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
 
         DividerTextExpandedWith("动效") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = { Text(text = "预测式返回") },
-                    supportingContent = {
-                        if(AppVersion.CAN_PREDICTIVE) {
-                            Text(text = "同Activity之间的部分转场可使用跟手的返回手势")
-                        } else {
-                            Text(text = "需为 Android 13+")
-                        }
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
-                    trailingContent = {
-                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { cor.launch { DataStoreManager.savePredict(!enablePredictive) }})
-                    },
-                    modifier = Modifier.clickable {
-                        cor.launch { DataStoreManager.savePredict(!enablePredictive) }
-                    }
-                )
-                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "全局动画速率") },
                     leadingContent = { Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",) },

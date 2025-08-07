@@ -36,14 +36,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseterWithoutSuspend
+import com.hfut.schedule.logic.util.parse.SemseterParser.reverseGetSemester
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.cleanCache
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -74,6 +77,7 @@ fun APPScreen(
     if (saveTrigger.intValue == 1) {
         SaveComposeAsImage(saveTrigger, "my_tab", tabThumbFilePath)
     }
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier
@@ -227,30 +231,6 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "默认日程账户") },
-                    supportingContent = {
-                        Text("自定义添加到系统日历的账户")
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.calendar_add_on),
-                        contentDescription = "Localized description"
-                    ) },
-                    modifier = Modifier.clickable { navController.navigate(Screen.CalendarScreen.route) }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "图片验证码自动填充") },
-                    supportingContent = {
-                        Text(text = "登录教务时,使用Tesseract库提供的机器学习OCR能力,填充验证码")
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.center_focus_strong),
-                        contentDescription = "Localized description"
-                    ) },
-                    modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
                     headlineContent = { Text(text = "自动计算学期") },
                     leadingContent = {
                         Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
@@ -282,7 +262,7 @@ fun APPScreen(
                         Spacer(Modifier.width(APP_HORIZONTAL_DP))
                         FilledTonalButton(
                             onClick = { scope.launch {
-                                DataStoreManager.saveAutoTermValue(getSemseter())
+                                reverseGetSemester(DateTimeManager.Date_yyyy_MM)?.let { DataStoreManager.saveAutoTermValue(it) }
                             } }
                         ) {
                             Icon(painterResource(R.drawable.refresh),null)
@@ -298,6 +278,30 @@ fun APPScreen(
                     }
                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 }
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "默认日程账户") },
+                    supportingContent = {
+                        Text("自定义添加到系统日历的账户")
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.calendar_add_on),
+                        contentDescription = "Localized description"
+                    ) },
+                    modifier = Modifier.clickable { navController.navigate(Screen.CalendarScreen.route) }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "图片验证码自动填充") },
+                    supportingContent = {
+                        Text(text = "登录教务时,使用Tesseract库提供的OCR能力,填充验证码")
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.center_focus_strong),
+                        contentDescription = "Localized description"
+                    ) },
+                    modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
+                )
             }
         }
         DividerTextExpandedWith("存储") {
@@ -328,7 +332,7 @@ fun APPScreen(
                 )
             }
         }
-        DividerTextExpandedWith("其他") {
+        DividerTextExpandedWith("交互") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 //                TransplantListItem(
 //                    headlineContent = { Text("长截图") },
@@ -344,6 +348,57 @@ fun APPScreen(
 //                    }
 //                )
 //                PaddingHorizontalDivider()
+
+                TransplantListItem(
+                    headlineContent = { Text(text = "预测式返回") },
+                    supportingContent = {
+                        if(AppVersion.CAN_PREDICTIVE) {
+                            Text(text = "同Activity之间的部分转场可使用跟手的返回手势")
+                        } else {
+                            Text(text = "需为 Android 13+")
+                        }
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
+                    trailingContent = {
+                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("启动台") },
+                    supportingContent = {
+                        Text("从顶栏位置的左边缘向内轻扫唤出(部分界面暂未支持)，可快速切换到最近打开的窗口")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.flash_on),null)
+                    },
+                    trailingContent = {
+                        Switch(checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("交互学习") },
+                    supportingContent = {
+                        Text("学习APP的手势交互操作")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.gesture),null)
+                    },
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.GestureStudyScreen.route)
+                    }
+                )
+            }
+        }
+        DividerTextExpandedWith("对外") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("自定义Shortcut") },
                     supportingContent = {
@@ -354,22 +409,6 @@ fun APPScreen(
                     },
                     modifier = Modifier.clickable {
                         showToast("正在开发")
-                    }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text("任务台") },
-                    supportingContent = {
-                        Text("从顶栏位置的左边缘向内轻扫唤出(部分界面暂未支持)，可快速切换到最近打开的窗口\n注意:开启后上下滑动手势偶见变阻塞，正在优化")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.responsive_layout),null)
-                    },
-                    trailingContent = {
-                        Switch(checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
                     }
                 )
             }

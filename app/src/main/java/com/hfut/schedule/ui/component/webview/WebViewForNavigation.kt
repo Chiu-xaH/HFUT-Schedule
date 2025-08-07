@@ -12,6 +12,12 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.Spring.StiffnessMediumLow
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -27,6 +33,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -49,9 +57,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
@@ -78,6 +88,7 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
@@ -201,6 +212,8 @@ fun WebViewScreenForNavigation(
     navController : NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
+    drawerState: DrawerState,
+    onColor: (Color?) -> Unit
 ) {
     val isDark = isThemeDark()
     val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
@@ -214,6 +227,8 @@ fun WebViewScreenForNavigation(
     val isExist by produceState(initialValue = false, key1 = click) {
         value = DataBaseManager.webUrlDao.isExist(currentUrl)
     }
+    val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
+
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(true) }
     var on by remember { mutableStateOf<(String) -> Unit>({}) }
@@ -314,12 +329,31 @@ fun WebViewScreenForNavigation(
             showBottomSheet = true
         }) { Icon(
             painterResource(id = R.drawable.ios_share), contentDescription = "") }
+
+        if(enableControlCenter) {
+            IconButton(onClick = {
+                scope.launch {
+                    drawerState.animateTo(
+                        DrawerValue.Open,
+                        spring(
+                            dampingRatio = 0.8f,
+                            stiffness = 125f,
+                        )
+//                    tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing)
+                    )
+                }
+            }) { Icon(painterResource(id = R.drawable.flash_on), contentDescription = "") }
+        }
     }
     var topColor by remember { mutableStateOf<Color?>(null) }
     val topBarTitleColor = topColor?.let {
         if (it.luminance() < 0.5f) Color.White else Color.Black
     } ?: MaterialTheme.colorScheme.primary
     val route = remember { AppNavRoute.WebView.shareRoute(url) }
+    LaunchedEffect(topColor) {
+        onColor(topColor)
+    }
+
     BackHandler {
         if(fullScreen) {
             fullScreen = false
@@ -336,6 +370,7 @@ fun WebViewScreenForNavigation(
         }
     }
 
+
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             enablePredictive = false,
@@ -349,8 +384,6 @@ fun WebViewScreenForNavigation(
                     exit = AppAnimationManager.toTopAnimation.exit
                 ) {
                     TopAppBar(
-//                        modifier = Modifier.topBarBlur(hazeState, topColor ?: MaterialTheme.colorScheme.surface),
-//                        colors = topBarTransplantColor(),
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = topColor ?: MaterialTheme.colorScheme.surface,
                             titleContentColor = topBarTitleColor,
@@ -376,7 +409,6 @@ fun WebViewScreenForNavigation(
                                     getPureUrl(currentUrl),
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
-//                                    color = topBarTitleColor,
                                 )
                             }
                         },
@@ -396,8 +428,6 @@ fun WebViewScreenForNavigation(
                 ) {
                     VerticalFloatingToolbar (
                         expanded = true,
-//                        colors =  FloatingToolbarDefaults.standardFloatingToolbarColors(Color.Transparent),
-//                        modifier = Modifier.clip(MaterialTheme.shapes.extraLarge).containerBlur(hazeState,FloatingToolbarDefaults.standardFloatingToolbarColors().toolbarContainerColor)
                     ) {
                         tools()
                         IconButton(onClick = { visible = false }) { Icon(
@@ -471,61 +501,14 @@ fun WebViewScreenForNavigation(
                                     }
                                     webView = this@apply
                                     if (isDark && webViewDark) {
-                                        val css = """
-                                html, body {
-                                    background-color: #121212 !important;
-                                    color: #eeeeee !important;
-                                }
-                                * {
-                                    background-color: transparent !important;
-                                    color: #eeeeee !important;
-                                    border-color: #333333 !important;
-                                }
-                                a { color: #8ab4f8 !important; }
-                            """.trimIndent()
-
-                                        val js = """
-                                (function() {
-                                    let style = document.createElement('style');
-                                    style.type = 'text/css';
-                                    style.appendChild(document.createTextNode(`$css`));
-                                    document.head.appendChild(style);
-                                })();
-                            """.trimIndent()
-
+                                        val js = FORCE_DARK_JS.trimIndent()
                                         view?.evaluateJavascript(js, null)
                                     }
-                                    view?.postDelayed({
-                                        try {
-                                            val bitmap = createBitmap(view.width, view.height)
-                                            val canvas = Canvas(bitmap)
-                                            view.draw(canvas)
 
-                                            // 读取顶部某个位置的像素颜色，比如(10, 10)
-                                            val colors = (0 until 5).map { bitmap[0, it] }
-                                            val avgColorInt = colors.reduce { acc, c ->
-                                                val a = (android.graphics.Color.alpha(acc) + android.graphics.Color.alpha(c)) / 2
-                                                val r = (android.graphics.Color.red(acc) + android.graphics.Color.red(c)) / 2
-                                                val g = (android.graphics.Color.green(acc) + android.graphics.Color.green(c)) / 2
-                                                val b = (android.graphics.Color.blue(acc) + android.graphics.Color.blue(c)) / 2
-                                                android.graphics.Color.argb(a, r, g, b)
-                                            }
-                                            topColor =  Color(avgColorInt)
-                                        } catch (e: Exception) {
-                                            e.printStackTrace()
-                                        }
-                                    }, 100) // 延迟一点确保绘制完成
+                                    selectColor(view) { topColor = it }
                                     // document.body.style.paddingTop = '${top}px';
                                     // 注入 JS，为网页内容添加 padding（单位 px）
-                                    view?.evaluateJavascript(
-                                        """
-        (function() {
-            
-            document.body.style.paddingBottom = '${bottom}px';
-        })();
-        """.trimIndent(),
-                                        null
-                                    )
+                                    view?.evaluateJavascript(getPaddingPxJs(null,bottom), null)
                                     loading = false
                                 }
 
@@ -564,10 +547,68 @@ fun WebViewScreenForNavigation(
                     },
                     modifier = Modifier
                         .padding(innerPadding)
-//                        .hazeSource(hazeState)
                         .fillMaxSize()
                 )
             }
         }
     }
+}
+
+private const val FORCE_DARK_CSS = """
+                                html, body {
+                                    background-color: #121212 !important;
+                                    color: #eeeeee !important;
+                                }
+                                * {
+                                    background-color: transparent !important;
+                                    color: #eeeeee !important;
+                                    border-color: #333333 !important;
+                                }
+                                a { color: #8ab4f8 !important; }
+                            """
+
+const val FORCE_DARK_JS = """
+                                (function() {
+                                    let style = document.createElement('style');
+                                    style.type = 'text/css';
+                                    style.appendChild(document.createTextNode(`$FORCE_DARK_CSS`));
+                                    document.head.appendChild(style);
+                                })();
+                            """
+
+fun getPaddingPxJs(top : Int?,bottom : Int?) : String = """
+        (function() {
+            ${top?.let { "document.body.style.paddingTop = '${it}px';" }}
+            ${bottom?.let { "document.body.style.paddingBottom = '${it}px';" }}
+        })();
+""".trimIndent()
+
+// 从左取到右，传入step一定间距，最后选择取色中最多同色的那个
+fun selectColor(view : WebView?,step : Int = 3,onColor : (Color?) -> Unit) {
+    view?.postDelayed({
+        try {
+            val bitmap = createBitmap(view.width, view.height)
+            val canvas = Canvas(bitmap)
+            view.draw(canvas)
+
+            // 读取顶部某个位置的像素颜色，比如(10, 10)
+            // 取色从最左侧、最右侧、中间
+            val width = bitmap.width
+            val height = bitmap.height
+            // 从左取到右，传入step一定间距，最后选择取色中最多同色的那个
+            val y = 0
+            val colorMap = mutableMapOf<Int, Int>()
+            for (i in 0..step) {
+                val x = (i * width) / step
+                val color = bitmap[x.coerceAtMost(width - 1), y]
+                colorMap[color] = colorMap.getOrDefault(color, 0) + 1
+            }
+
+            val mostFrequentColor = colorMap.maxByOrNull { it.value }?.key
+            onColor(mostFrequentColor?.let { Color(it) })
+        } catch (e: Exception) {
+            e.printStackTrace()
+            onColor(null)
+        }
+    }, 100)
 }

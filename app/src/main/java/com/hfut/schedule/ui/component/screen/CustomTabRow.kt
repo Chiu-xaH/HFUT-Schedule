@@ -41,11 +41,10 @@ import kotlinx.coroutines.launch
 fun CustomTabRow(pagerState: PagerState, titles: List<String>
 //                 ,padding : Dp = 10.dp
 ) {
-    if(titles.toString().length >= 25) {
-        // 可滑动
-        CustomScrollTabRow(pagerState,titles)
-    } else {
+    if(titles.size <= 4 || titles.toString().length <= 25) {
         CustomSlidingTabRow(pagerState,titles)
+    } else {
+        CustomScrollTabRow(pagerState,titles)
     }
 }
 

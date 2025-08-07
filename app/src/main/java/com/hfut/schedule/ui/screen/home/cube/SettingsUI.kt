@@ -36,6 +36,7 @@ import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
+import com.hfut.schedule.ui.screen.home.cube.Screen.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
@@ -43,6 +44,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
+import com.hfut.schedule.ui.screen.home.cube.sub.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
@@ -158,6 +160,11 @@ fun SettingsScreen(vm : NetWorkViewModel,
                 composable(Screen.PasswordScreen.route) {
                     Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                         EditPasswordScreen(hazeState,innerPaddings,navController)
+                    }
+                }
+                composable(Screen.GestureStudyScreen.route) {
+                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                        GestureStudyScreen(hazeState,innerPaddings,navController)
                     }
                 }
             }

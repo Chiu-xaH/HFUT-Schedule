@@ -34,6 +34,7 @@ object AppAnimationManager {
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
     // 全局动画速度 毫秒
     var ANIMATION_SPEED = 400
+    const val CONTROL_CENTER_ANIMATION_SPEED = 550
     private suspend fun setAnimationSpeed() : Int {
         val speedCode = DataStoreManager.animationSpeedType.first()
         val speed = DataStoreManager.AnimationSpeed.entries.find { it.code == speedCode }?.speed ?: ANIMATION_SPEED

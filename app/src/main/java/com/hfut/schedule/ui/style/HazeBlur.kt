@@ -231,13 +231,15 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
     }
 
     // 蒙版
-    val backgroundColor by animateColorAsState(
-        targetValue = if(isExpanded) Color.Black.copy(.25f) else Color.Transparent,
+    val backgroundColor by animateFloatAsState(
+        targetValue = if(isExpanded) TransitionState.transitionBackgroundStyle.backgroundDark else 0f,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
-        label = "",
     )
     if(transition >= TransitionLevel.LOW.code)
-        Box(modifier = Modifier.fillMaxSize().background(backgroundColor).zIndex(2f))
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(backgroundColor))
+            .zIndex(2f))
     // 👍 LOW
     if(transition == TransitionLevel.LOW.code) {
         return Modifier
@@ -245,7 +247,7 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
 
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) MyApplication.BLUR_RADIUS else 0.dp, label = ""
+        targetValue = if (isExpanded && motionBlur) TransitionState.transitionBackgroundStyle.blurRadius else 0.dp, label = ""
         ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
     )
     // 👍 MEDIUM
@@ -255,7 +257,10 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
 
 
     val scale = animateFloatAsState(
-        targetValue = if (isExpanded) 0.825f else 1f, // 按下时为0.9，松开时为1
+        targetValue = if (isExpanded) {
+            if(motionBlur) TransitionState.transitionBackgroundStyle.scaleValue - TransitionState.transitionBackgroundStyle.scaleDiffer
+            else TransitionState.transitionBackgroundStyle.scaleValue
+        } else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
@@ -272,7 +277,9 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
     }
 
     // 👍 HIGH
-    return Modifier.blur(blurSize).scale(scale.value)
+    return Modifier
+        .blur(blurSize)
+        .scale(scale.value)
 }
 
 @Composable
@@ -359,7 +366,9 @@ fun SpringAnimationTimer() {
 
 
     Column (Modifier.fillMaxSize()) {
-        Spacer(Modifier.padding(APP_HORIZONTAL_DP*6).statusBarsPadding())
+        Spacer(Modifier
+            .padding(APP_HORIZONTAL_DP * 6)
+            .statusBarsPadding())
         RowHorizontal() {
             Box(
                 Modifier
@@ -368,7 +377,9 @@ fun SpringAnimationTimer() {
                     .clickable { trigger = !trigger }
             )
         }
-        Spacer(Modifier.padding(APP_HORIZONTAL_DP*1).statusBarsPadding())
+        Spacer(Modifier
+            .padding(APP_HORIZONTAL_DP * 1)
+            .statusBarsPadding())
 
         Column(modifier = Modifier.navigationBarsPadding()) {
             StyleCardListItem(

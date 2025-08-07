@@ -71,7 +71,10 @@ fun Modifier.transitionBackground(
         return this@transitionBackground.blur(blurSize)
     }
     val scale = animateFloatAsState( //.875f
-        targetValue = if (isExpanded) scaleValue else 1f,
+        targetValue = if (isExpanded) {
+            if(motionBlur) scaleValue-scaleDiffer
+            else scaleValue
+        } else 1f,
         animationSpec = tween(speed*4/3, easing = FastOutSlowInEasing)
     )
 

@@ -201,7 +201,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
                                 TextField(
                                     modifier = Modifier
                                         .weight(1f)
-                                        .padding(horizontal = APP_HORIZONTAL_DP),
+                                        .padding(horizontal = 25.dp),
                                     value = password2,
                                     onValueChange = { password2 = it },
                                     label = { Text("确认密码") },

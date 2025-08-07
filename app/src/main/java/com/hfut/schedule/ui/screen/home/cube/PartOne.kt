@@ -83,7 +83,7 @@ fun PartOne(navController: NavController) {
         PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = { Text(text = "应用行为") },
-            supportingContent = { Text(text = "偏好配置 缓存清理")},
+            supportingContent = { Text(text = "交互 缓存清理 偏好配置")},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
             },
@@ -92,7 +92,7 @@ fun PartOne(navController: NavController) {
         PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = { Text(text = "网络相关") },
-            supportingContent = { Text(text = "网络接口 请求范围")},
+            supportingContent = { Text(text = "预加载 一卡通密码")},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
             },
@@ -101,7 +101,7 @@ fun PartOne(navController: NavController) {
         PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = { Text(text = "维护关于") },
-            supportingContent = { Text(text = "疑难修复 联系反馈")},
+            supportingContent = { Text(text = "反馈 关于 疑难修复")},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
             },
@@ -123,6 +123,7 @@ sealed class Screen(val route: String) {
     data object FIxScreen : Screen(FixBarItems.Fix.name)
     data object DebugScreen : Screen("DEBUG")
     data object DeveloperScreen : Screen("Developer")
+    data object GestureStudyScreen : Screen("GestureStudyScreen")
 
     data object DownloadScreen : Screen("Download")
     data object CalendarScreen : Screen("Calendar")

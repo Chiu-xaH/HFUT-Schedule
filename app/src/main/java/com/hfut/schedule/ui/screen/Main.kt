@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -30,11 +31,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -86,9 +89,13 @@ import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpnScre
 import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
 import com.hfut.schedule.ui.screen.news.home.NewsScreen
 import com.hfut.schedule.ui.screen.other.NavigationExceptionScreen
+import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.state.TransitionState
+import com.xah.transition.util.currentRoute
+import com.xah.transition.util.isCurrentRoute
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
@@ -142,6 +149,7 @@ fun MainHost(
         }
     val drawerState =  rememberDrawerState(DrawerValue.Closed)
     val maxOffset = remember { -1000f }
+    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val blurDp by remember {
         derivedStateOf {
             val fraction = 1 - (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
@@ -151,39 +159,47 @@ fun MainHost(
     val scale by remember {
         derivedStateOf {
             val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-            0.9f * (1 - fraction) + fraction
+            (TransitionState.transitionBackgroundStyle.scaleValue - if(motionBlur) TransitionState.transitionBackgroundStyle.scaleDiffer else 0f) * (1 - fraction) + fraction
         }
     }
-    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
-
     val scope = rememberCoroutineScope()
+    val isWebView = navController.isCurrentRoute(AppNavRoute.WebView.route)
+    val enableGesture = enableControlCenter && !isWebView
+    var containerColor by remember { mutableStateOf<Color?>(null) }
     ModalNavigationDrawer  (
         scrimColor = MaterialTheme.colorScheme.surface.copy(if(motionBlur) .25f else 0.925f),
         drawerState = drawerState,
-        gesturesEnabled = enableControlCenter,
+        gesturesEnabled = enableGesture,
         drawerContent = {
             ControlCenterScreen(navController) {
                 scope.launch {
                     drawerState.animateTo(
                         DrawerValue.Closed,
-                        tween(AppAnimationManager.ANIMATION_SPEED)
+                        tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing)
                     )
                 }
             }
         },
-
     ) {
         Box(modifier = Modifier.fillMaxSize()
             .let {
-                if(enableControlCenter) it.limitDrawerSwipeArea(allowedArea = with(LocalDensity.current) { Rect(0f,0f,1000.dp.toPx(),150.dp.toPx()) })
+                if(enableGesture) it.limitDrawerSwipeArea(allowedArea = with(LocalDensity.current) { Rect(0f,0f,1000.dp.toPx(),150.dp.toPx()) })
                 else it
             }
         ) {
             // 磁钉体系
             SharedTransitionLayout(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surface)
+                    .let {
+                        if(isWebView) {
+                            containerColor?.let { color ->
+                                it.background(color)
+                            } ?: it
+                        }
+                        else
+                            it.background(MaterialTheme.colorScheme.surface)
+                    }
                     .let{ if(motionBlur) it.blur(blurDp) else it }
                     .scale(scale)
             ) {
@@ -496,7 +512,8 @@ fun MainHost(
                             navController,
                             this@SharedTransitionLayout,
                             this@composable,
-                        )
+                            drawerState
+                        ) { containerColor = it }
                     }
                     // Exception
                     composable(

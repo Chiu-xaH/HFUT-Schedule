@@ -17,11 +17,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -34,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,13 +50,17 @@ import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
@@ -67,6 +75,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
@@ -219,6 +228,9 @@ fun WebNavigationScreen(
             }
         }
     }
+    var input by rememberSaveable { mutableStateOf("https://") }
+    var inputCookies by remember { mutableStateOf("") }
+
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
@@ -253,10 +265,44 @@ fun WebNavigationScreen(
                     .fillMaxSize()
             ) {
                 InnerPaddingHeight(innerPadding,true)
+                DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
+                    Column(
+                        modifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(input)),
+                    ) {
+                        CustomTextField(
+                            input = input,
+                            label = { Text("输入合法链接") },
+                            singleLine = false,
+                            trailingIcon = {
+                                IconButton(
+                                    enabled = isValidWebUrl(input),
+                                    onClick = {
+                                        navController.navigateForTransition(
+                                            AppNavRoute.WebView,
+                                            AppNavRoute.WebView.withArgs(
+                                                url = input,
+                                                title = getPureUrl(input),
+                                                cookies = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
+                                            )
+                                        )
+                                    },
+                                ) {
+                                    Icon(Icons.Default.ArrowForward,null)
+                                }
+                            }
+                        ) { input = it }
+
+                        Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
+                        CustomTextField(
+                            input = inputCookies,
+                            label = { Text("输入Cookies(可选)") },
+                            singleLine = false,
+                        ) { inputCookies = it }
+                    }
+                }
                 DividerTextExpandedWith(text = "固定项") {
                     WebItem()
                 }
-
                 DividerTextExpandedWith(text = "实验室") {
                     LabUI()
                 }
