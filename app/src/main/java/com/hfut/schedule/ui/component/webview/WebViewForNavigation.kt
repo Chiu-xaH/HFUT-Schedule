@@ -86,6 +86,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.style.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
@@ -333,14 +334,7 @@ fun WebViewScreenForNavigation(
         if(enableControlCenter) {
             IconButton(onClick = {
                 scope.launch {
-                    drawerState.animateTo(
-                        DrawerValue.Open,
-                        spring(
-                            dampingRatio = 0.8f,
-                            stiffness = 125f,
-                        )
-//                    tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing)
-                    )
+                    drawerState.animationOpen()
                 }
             }) { Icon(painterResource(id = R.drawable.flash_on), contentDescription = "") }
         }

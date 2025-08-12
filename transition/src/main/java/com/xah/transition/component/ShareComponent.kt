@@ -2,8 +2,6 @@ package com.xah.transition.component
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.BoundsTransform
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.ScaleToBounds
@@ -12,17 +10,17 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import com.xah.transition.state.TransitionState
-import com.xah.transition.style.DefaultTransitionStyle
-import com.xah.transition.style.DefaultTransitionStyle.DEFAULT_ANIMATION_SPEED
-import com.xah.transition.style.DefaultTransitionStyle.defaultSpring
 
 // 容器共享元素 注意：主界面（TransitionScaffold）需要指定resize=false(已经在CustomScaffold指定了)，初始容器无需指定
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -32,8 +30,21 @@ fun SharedTransitionScope.containerShare(
     animatedContentScope: AnimatedContentScope,
     route : String,
     resize : Boolean = true,
+    roundShape : Shape = MaterialTheme.shapes.small,
 ) : Modifier {
-    return modifier.sharedBounds(
+//    val tilt = animatedContentScope.transition.animateFloat (
+//        transitionSpec = { spring() },
+//        label = "tilt"
+//    ){ state ->
+//        if (state == EnterExitState.Visible) {
+//            0f
+//        } else {
+//            -20f
+//        }
+//    }
+
+    return modifier
+        .sharedBounds(
         boundsTransform = BoundsTransform { _,_ ->
             spring(
                 dampingRatio = TransitionState.curveStyle.dampingRatio,
@@ -47,7 +58,17 @@ fun SharedTransitionScope.containerShare(
         animatedVisibilityScope = animatedContentScope,
         resizeMode = if(resize) SharedTransitionScope.ResizeMode.RemeasureToBounds else ScaleToBounds(ContentScale.FillWidth, Center)
     )
+        .let {
+            if(false) it.graphicsLayer {
+//                rotationX = tilt.value
+                cameraDistance = 12 * density // 防止透视太夸张
+                transformOrigin = TransformOrigin(0.5f, 0f) // 从顶部开始旋转
+            } else it
+        }
+        .clip(roundShape)
+
 }
+
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

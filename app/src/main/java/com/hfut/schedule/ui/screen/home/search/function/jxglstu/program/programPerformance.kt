@@ -93,6 +93,8 @@ fun ProgramCompetitionScreen(
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            roundShape = MaterialTheme.shapes.large,
+
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -181,7 +183,11 @@ private fun ProgramPerformance(
                             AnimationCustomCard(
                                 index = index,
                                 containerColor = cardNormalColor(),
-                                modifier = containerShare(animatedContentScope=animatedContentScope,route=route)
+                                modifier = containerShare(
+                                    animatedContentScope=animatedContentScope,
+                                    route=route,
+                                    roundShape = MaterialTheme.shapes.medium,
+                                )
                             ) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
@@ -230,7 +236,11 @@ private fun ProgramPerformance(
                     with(sharedTransitionScope) {
                         AnimationCustomCard(
                             containerColor = mixedCardNormalColor(),
-                            modifier = containerShare(animatedContentScope=animatedContentScope,route=route)
+                            modifier = containerShare(
+                                animatedContentScope=animatedContentScope,
+                                route=route,
+                                roundShape = MaterialTheme.shapes.medium,
+                            )
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -293,6 +303,7 @@ fun ProgramCompetitionDetailScreen(
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            roundShape = MaterialTheme.shapes.medium,
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,

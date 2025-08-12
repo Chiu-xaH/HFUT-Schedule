@@ -267,7 +267,8 @@ fun FocusCard(
                 hasElevation = false,
                 modifier = containerShare(
                     animatedContentScope = animatedContentScope,
-                    route = route
+                    route = route,
+                    roundShape = MaterialTheme.shapes.medium,
                 ),
             ) {
                 Column() {

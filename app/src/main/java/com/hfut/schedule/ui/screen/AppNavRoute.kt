@@ -184,6 +184,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
         )
     }
     object EmptyRoom : AppNavRoute("EMPTY_ROOM", "空教室",R.drawable.meeting_room)
+    object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner)
     object Exception : AppNavRoute("EXCEPTION","错误",R.drawable.warning) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             EXCEPTION("exception", NavType.StringType,"",false)

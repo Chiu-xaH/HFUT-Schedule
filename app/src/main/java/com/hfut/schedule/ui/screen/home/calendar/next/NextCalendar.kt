@@ -51,6 +51,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.datumResponse
@@ -94,7 +95,7 @@ fun JxglstuCourseTableUINext(
     vm: NetWorkViewModel,
     vmUI: UIViewModel,
     hazeState: HazeState,
-    navController: NavController,
+    navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     innerPadding : PaddingValues
@@ -456,7 +457,8 @@ fun JxglstuCourseTableUINext(
                                 }
                             } else {
                                 route
-                            }
+                            },
+                            roundShape = MaterialTheme.shapes.extraSmall,
                         )
                     ) {
                         Column(

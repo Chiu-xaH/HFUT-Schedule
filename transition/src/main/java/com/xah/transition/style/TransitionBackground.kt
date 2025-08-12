@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.xah.transition.state.TransitionState
-import com.xah.transition.util.isCurrentRoute
+import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 @Composable
 fun Modifier.transitionBackground(
@@ -41,7 +41,7 @@ fun Modifier.transitionBackground(
         return this@transitionBackground
     }
     val transplantBackground = TransitionState.transplantBackground
-    val isExpanded = !navHostController.isCurrentRoute(route)
+    val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
     val speed = TransitionState.curveStyle.speedMs
 
     val backgroundColor by animateFloatAsState(

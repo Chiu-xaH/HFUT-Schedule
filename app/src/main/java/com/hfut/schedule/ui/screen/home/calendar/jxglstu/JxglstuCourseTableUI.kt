@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
@@ -166,7 +167,7 @@ fun JxglstuCourseTableUI(
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
-    navController: NavController,
+    navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
@@ -785,7 +786,8 @@ fun JxglstuCourseTableUI(
                                                 }
                                             } else {
                                                 route
-                                            }
+                                            },
+                                            roundShape = MaterialTheme.shapes.extraSmall,
                                         )
 
                                     ) {

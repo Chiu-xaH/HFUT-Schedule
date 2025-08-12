@@ -19,7 +19,7 @@ class GotoInterceptor : Interceptor {
             if (response.headers.toString().contains("synjones")) {
             var key =   response.headers("Location").toString()
                 key = key.substringAfter("synjones-auth=")
-                key = key.substringBefore("]")
+                key = key.substringBefore("&")
                 SharedPrefs.saveString("auth",key)
                 if(num == 1) {
                     showToast("一卡通登录成功")

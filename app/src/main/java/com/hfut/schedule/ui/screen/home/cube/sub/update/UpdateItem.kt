@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-07") },
+                overlineContent = { Text(text = "2025-08-13") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,17 +57,20 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
+            UpdateItems("新增 班级同班同学，新增扫码登录CAS")
+            UpdateItems("新增 支持收藏时修改名称")
+            UpdateItems("修复 一卡通相关功能显示登陆状态无效的Bug", "用户仅需重新刷新登录状态即可")
+            UpdateItems("修复 课程详情检索教师的间距问题")
+            UpdateItems("修复 外地访问登录时持续加载的Bug")
+            UpdateItems("优化 启动台的背景效果和系统返回手势的适配")
+            UpdateItems("优化 层级转场时的圆角")
+            UpdateItems("优化 X86_64分包增量更新入口的显示")
+            // 启动台小图标最左边间距
+//            UpdateItems("新增 WebVpn全局代理，通过VPN接管全局网络，转换为WEBVPN链接，开启后，请先访问任意链接登录")
+//            UpdateItems("新增 转场时的形变动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 为部分场景适配新的转场动画")
-            UpdateItems("新增 交互学习","位于 选项-应用行为-其他")
-            UpdateItems("修复 大屏设备使用本APP时模糊的Bug","加入了根据屏幕宽度校准机制")
-            UpdateItems("修复 开启启动台时网页无法滑动的Bug")
-            UpdateItems("修复 启动台的一些逻辑Bug")
-            UpdateItems("修复 部分界面错位的Bug")
-            UpdateItems("修复 自定义学期时无法复位的Bug")
-            UpdateItems("优化 部分动效的数值细节")
-            UpdateItems("优化 选项-应用设置中部分项目的位置")
 
             /*
                         转专业二级界面
@@ -87,15 +90,13 @@ fun VersionInfo() {
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
-//        UpdateItems("优化 层级转场时的圆角", null, UpdateType.OPTIMIZE)
+//
             // 下版本规划
 //        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
 //        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
 //        UpdateItems("新增 学工系统/今日校园的登录")
-
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
             // v5.0 2025-07+ 远期规划
-//        UpdateItems("新增 磁钉体系", "位于 选项-应用行为，构建全局磁钉体系，任何支持的界面向边缘滑动即可缩放为磁钉最小化", UpdateType.ADD)
 //        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)
         }
     }

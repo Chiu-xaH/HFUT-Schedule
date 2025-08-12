@@ -288,7 +288,8 @@ private fun SharedTransitionScope.SurfaceUI(
                 animatedVisibilityScope = animatedContentScope,
                 boundsTransform = boundsTransform,
                 resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds
-            ),
+            )
+            .clip(FloatingActionButtonDefaults.shape),
         topBar = {
             Column {
                 TopAppBar(

@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -24,6 +26,7 @@ import com.xah.transition.style.transitionBackground
 @Composable
 fun SharedTransitionScope.CustomTransitionScaffold(
     animatedContentScope: AnimatedContentScope,
+    roundShape : Shape = MaterialTheme.shapes.small,
     route: String,
     navHostController : NavHostController,
     modifier: Modifier = containerShare(
@@ -33,7 +36,8 @@ fun SharedTransitionScope.CustomTransitionScaffold(
         ,
         animatedContentScope,
         route,
-        resize = false
+        resize = false,
+        roundShape = roundShape,
     ),
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
@@ -43,12 +47,11 @@ fun SharedTransitionScope.CustomTransitionScaffold(
     enablePredictive : Boolean = true,
     content: @Composable ((PaddingValues) -> Unit)
 ) {
-//    val blur by DataStoreManager.hazeBlurFlow.collectAsState(initial = true)
     val predictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-//    val hazeState = rememberHazeState(blurEnabled = blur)
     TransitionScaffold (
         route = route,
         animatedContentScope = animatedContentScope,
+        roundShape = roundShape,
         navHostController = navHostController,
         topBar = topBar,
         modifier = modifier,

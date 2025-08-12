@@ -4,30 +4,17 @@ import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,7 +23,6 @@ import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
-import com.hfut.schedule.ui.screen.home.cube.Screen.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
@@ -49,12 +35,9 @@ import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.RequestArrange
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 //import com.hfut.schedule.ui.screen.home.cube.sub.TEST
-import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.xah.transition.util.isCurrentRoute
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 
 

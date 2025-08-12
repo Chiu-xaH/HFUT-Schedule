@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.style
 
 import android.util.Log
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
@@ -62,7 +61,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
-import com.xah.transition.util.isCurrentRoute
+import com.xah.transition.util.isCurrentRouteWithoutArgs
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
@@ -291,7 +290,7 @@ fun Modifier.transitionBackgroundF(
         value = DataStoreManager.enableHazeBlur.first()
     }
 
-    val isExpanded = !navHostController.isCurrentRoute(route)
+    val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
     val speed = TransitionState.curveStyle.speedMs
 
     LaunchedEffect(isExpanded) {

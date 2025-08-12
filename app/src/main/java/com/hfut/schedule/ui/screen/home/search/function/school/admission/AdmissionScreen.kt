@@ -162,7 +162,7 @@ fun AdmissionListUI(
                                     modifier = containerShare(
                                         Modifier.padding(2.5.dp),
                                         animatedContentScope,
-                                        route
+                                        route,
                                     )
                                 ) {
                                     TransplantListItem(

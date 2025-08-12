@@ -16,30 +16,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.transitionBackground
 import com.xah.transition.util.TransitionPredictiveBackHandler
-import com.xah.transition.util.allRouteStack
-import com.xah.transition.util.currentRoute
-import com.xah.transition.util.isCurrentRoute
+import com.xah.transition.util.isCurrentRouteWithoutArgs
 import com.xah.transition.util.isInBottom
-import com.xah.transition.util.previousRoute
+import com.xah.transition.util.previousRouteWithArgWithoutValues
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.TransitionScaffold(
     animatedContentScope: AnimatedContentScope,
+    roundShape : Shape,
     route: String,
     navHostController : NavHostController,
     modifier: Modifier = containerShare(
@@ -49,7 +47,8 @@ fun SharedTransitionScope.TransitionScaffold(
             ,
         animatedContentScope,
         route,
-        resize = false
+        resize = false,
+        roundShape,
     ),
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
@@ -64,8 +63,8 @@ fun SharedTransitionScope.TransitionScaffold(
 
     val speed = TransitionState.curveStyle.speedMs
     // 当从CustomScaffold1向CustomScaffold2时，CustomScaffold2先showSurface=false再true，而CustomScaffold1一直为true
-    val isCurrentEntry = navHostController.isCurrentRoute(route)
-    val isPreviousEntry = navHostController.previousRoute() == route
+    val isCurrentEntry = navHostController.isCurrentRouteWithoutArgs(route)
+    val isPreviousEntry = navHostController.previousRouteWithArgWithoutValues() == route
     // 当回退时，即从CustomScaffold2回CustomScaffold1时，CustomScaffold2立刻showSurface=false，而CustomScaffold1一直为true
     var show by rememberSaveable(route) { mutableStateOf(false) }
 
@@ -99,6 +98,7 @@ fun SharedTransitionScope.TransitionScaffold(
             show = true
         }
     }
+
 
     Scaffold(
         containerColor = containerColor ?: if(TransitionState.transplantBackground) Color.Transparent else MaterialTheme.colorScheme.surface,

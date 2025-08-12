@@ -16,6 +16,15 @@ import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
+
+@Composable
+fun APIIcons(celebration: Boolean) {
+    when {
+        celebration -> Icon(painterResource(R.drawable.celebration), contentDescription = "Localized description",)
+        else -> Icon(painterResource(R.drawable.notifications), contentDescription = "Localized description",)
+    }
+}
+
 @Composable
 fun MyAPIItem(
     color : Color = cardNormalColor()
@@ -37,7 +46,7 @@ fun MyAPIItem(
                     { Text(text = content) }
                 } else null,
                 leadingContent = {
-                    Icon(painterResource(R.drawable.notifications), contentDescription = "Localized description",)
+                    APIIcons(data.celebration)
                 },
             )
         }

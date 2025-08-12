@@ -139,5 +139,66 @@ CREATE TABLE "user_app_usage" (
   "app_version_code" INTEGER NOT NULL
 );
 
+DROP FUNCTION IF EXISTS get_latest_user_versions();
+
+CREATE OR REPLACE FUNCTION get_latest_user_versions()
+RETURNS TABLE (
+    student_id TEXT,
+    user_name TEXT,
+    app_version_code INT,
+    app_version_name VARCHAR,
+    max_date_time_cst TIMESTAMP
+) AS $$
+    WITH usage_with_max_date AS (
+      SELECT
+        student_id,
+        user_name,
+        app_version_code,
+        app_version_name,
+        MAX(date_time) OVER (PARTITION BY student_id, app_version_code) AS max_date_time_utc
+      FROM user_app_usage
+      WHERE app_version_name IS NOT NULL
+    ),
+    latest_version_per_user AS (
+      SELECT DISTINCT ON (student_id)
+        student_id,
+        user_name,
+        app_version_code,
+        app_version_name,
+        max_date_time_utc AT TIME ZONE 'UTC' AT TIME ZONE 'Asia/Shanghai' AS max_date_time_cst
+      FROM usage_with_max_date
+      ORDER BY student_id, app_version_code DESC NULLS LAST
+    )
+    SELECT *
+    FROM latest_version_per_user
+    ORDER BY app_version_code DESC NULLS LAST, student_id;
+$$ LANGUAGE SQL STABLE;
 
 
+DROP FUNCTION IF EXISTS check_user_upgrade(INT);
+
+CREATE OR REPLACE FUNCTION check_user_upgrade(p_ver_code INT)
+RETURNS TABLE (
+    student_id TEXT,
+    user_name TEXT,
+    upgraded_to_higher BOOLEAN
+) AS $$
+    SELECT
+        base_users.student_id,
+        base_users.user_name,
+        CASE
+            WHEN higher_ver_users.student_id IS NOT NULL THEN TRUE
+            ELSE FALSE
+        END AS upgraded_to_higher
+    FROM (
+        SELECT DISTINCT student_id, user_name
+        FROM user_app_usage
+        WHERE app_version_code = $1
+    ) AS base_users
+    LEFT JOIN (
+        SELECT DISTINCT student_id
+        FROM user_app_usage
+        WHERE app_version_code > $1
+    ) AS higher_ver_users
+    ON base_users.student_id = higher_ver_users.student_id;
+$$ LANGUAGE SQL STABLE;

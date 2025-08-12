@@ -1,14 +1,9 @@
 package com.hfut.schedule.ui.screen.control
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.awaitHorizontalDragOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -28,7 +22,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,22 +35,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.consumePositionChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -65,22 +50,17 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
-import com.xah.transition.util.currentRoute
-import com.xah.transition.util.isCurrentRoute
-import com.xah.transition.util.navigateAndClear
+import com.xah.transition.util.currentRouteWithArgWithoutValues
+import com.xah.transition.util.isCurrentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -158,12 +138,26 @@ fun ControlCenterScreen(
     val currentStack by navController.currentBackStack.collectAsState()
     val stack = currentStack.reversed()
     val color = MaterialTheme.colorScheme.surface
-    val currentRoute = navController.currentRoute()?.substringBefore("?")
+    val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
     val state = rememberScrollState()
     var input by remember { mutableStateOf("") }
     var showSearch by remember { mutableStateOf(false) }
     // 项目到达底部
     val isAtStart by remember { derivedStateOf { state.value == 0 } }
+//    PredictiveBackHandler { progress: Flow<BackEventCompat> ->
+//        // code for gesture back started
+//        try {
+//            progress.collect { backEvent ->
+//                // code for progress
+////                onScale(1f - (targetScale * backEvent.progress))
+//            }
+//            // code for completion
+//            onExit()
+//        } catch (e: CancellationException) {
+//            // code for cancellation
+//
+//        }
+//    }
     Scaffold(
         modifier = Modifier,
         containerColor = Color.Transparent,
@@ -211,7 +205,7 @@ fun ControlCenterScreen(
                 .fillMaxSize()
         ) {
             InnerPaddingHeight(innerPadding,true)
-            if(navController.isCurrentRoute(AppNavRoute.WebView.route)) {
+            if(navController.isCurrentRouteWithoutArgs(AppNavRoute.WebView.route)) {
                 StyleCardListItem(
                     headlineContent = { Text("位于网页界面时暂时禁用手势轻扫呼出，可点击左上角退出")},
                     leadingContent = {
