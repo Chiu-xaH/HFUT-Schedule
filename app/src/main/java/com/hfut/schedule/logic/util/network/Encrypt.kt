@@ -93,6 +93,25 @@ object Encrypt {
         }
         return result.uppercase() // 转换为大写
     }
+    @JvmStatic
+    fun encryptTimestamp(): String {
+        // 1. 密钥
+        val keyStr = "b1o2s3s4s5o6f7t8"
+        val keyBytes = keyStr.toByteArray(Charsets.UTF_8)
+        val secretKey = SecretKeySpec(keyBytes, "AES")
+
+        // 2. 时间戳
+        val timestamp = System.currentTimeMillis().toString()
+        val dataBytes = timestamp.toByteArray(Charsets.UTF_8)
+
+        // 3. AES/ECB/PKCS5Padding 加密（Java 里 PKCS5Padding == CryptoJS 的 PKCS7）
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        val encryptedBytes = cipher.doFinal(dataBytes)
+
+        // 4. Base64 输出
+        return Base64.encodeToString(encryptedBytes, Base64.NO_WRAP)
+    }
 
     //用于生成和风天气密钥
     @JvmStatic

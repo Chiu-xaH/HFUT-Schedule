@@ -97,6 +97,8 @@ class MyApplication : Application() {
         const val ALUMNI_URL = "https://xypt.hfut.edu.cn/"
         // 体育平台
         const val PE_URL = "https://bdlp.hfut.edu.cn/"
+        // 指尖工大
+        const val WX_URL = "https://wx.hfut.edu.cn/"
         // 教务处
         const val ACADEMIC_URL = "https://jwc.hfut.edu.cn/"
         // 宣城校区 教务处

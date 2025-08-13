@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -49,6 +51,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -60,8 +63,10 @@ import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.coverBlur
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.containerShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -101,16 +106,23 @@ fun PersonScreen(
                     .fillMaxSize()
             ) {
                 InnerPaddingHeight(innerPadding,true)
-                PersonItems(vm)
+                PersonItems(vm,navController,sharedTransitionScope,animatedContentScope)
                 InnerPaddingHeight(innerPadding,false)
             }
         }
     }
 }
 @SuppressLint("SuspiciousIndentation")
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
+    ExperimentalSharedTransitionApi::class
+)
 @Composable
-private fun PersonItems(vm : NetWorkViewModel) {
+private fun PersonItems(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
 
     val photo = prefs.getString("photo",null)
     val info = getPersonInfo()
@@ -215,56 +227,67 @@ private fun PersonItems(vm : NetWorkViewModel) {
 
         }
 
+        val route = remember { AppNavRoute.Classmates.route }
         DividerTextExpandedWith(text = "就读信息") {
-            MyCustomCard(containerColor = cardNormalColor()) {
-                school?.let {
-                    TransplantListItem(
-                        headlineContent = { Text(text = it) },
-                        overlineContent = { Text(text = "校区")},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.near_me),
-                                contentDescription = "Localized description",
-                            )
-                        },
+            with(sharedTransitionScope) {
+                MyCustomCard(
+                    containerColor = mixedCardNormalColor(),
+                    modifier = containerShare(
+                        animatedContentScope=animatedContentScope,
+                        route = route,
+                        roundShape = MaterialTheme.shapes.medium
                     )
-                }
-                yuanxi?.let {
+                ) {
+                    school?.let {
+                        TransplantListItem(
+                            headlineContent = { Text(text = it) },
+                            overlineContent = { Text(text = "校区")},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.near_me),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                        )
+                    }
+                    yuanxi?.let {
+                        TransplantListItem(
+                            headlineContent = { Text(text = it)  },
+                            overlineContent = { Text(text = "学院")},
+                            leadingContent = {
+                                DepartmentIcons(name = it)
+                            },
+                            modifier = Modifier.clickable {
+                                ClipBoardUtils.copy(it)
+                            }
+                        )
+                    }
+
+
+                    major?.let {
+                        TransplantListItem(
+                            headlineContent = {
+                                Text(text = it)
+                            },
+                            overlineContent = { Text(text = "专业")},
+                            supportingContent = { majorDirection?.let { if(it != "") Text(text = "方向 $it") else null } },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.square_foot),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                ClipBoardUtils.copy(it)
+                            }
+                        )
+                    }
+
                     TransplantListItem(
-                        headlineContent = { Text(text = it)  },
-                        overlineContent = { Text(text = "学院")},
-                        leadingContent = {
-                            DepartmentIcons(name = it)
-                        },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
-                        }
-                    )
-                }
-
-
-                major?.let {
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(text = it)
+                            classes?.let { ClipBoardUtils.copy(it) }
                         },
-                        overlineContent = { Text(text = "专业")},
-                        supportingContent = { majorDirection?.let { if(it != "") Text(text = "方向 $it") else null } },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.square_foot),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
-                        }
-                    )
-                }
-
-                classes?.let {
-                    TransplantListItem(
-                        headlineContent = {  Text(text = it) },
+                        headlineContent = {  Text(text = classes ?: "") },
                         overlineContent = { Text(text = "班级")},
                         leadingContent = {
                             Icon(
@@ -272,14 +295,18 @@ private fun PersonItems(vm : NetWorkViewModel) {
                                 contentDescription = "Localized description",
                             )
                         },
-                        modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
-                        }
+                        trailingContent = {
+                            FilledTonalButton(
+                                onClick = {
+                                    navController.navigateForTransition(AppNavRoute.Classmates,route)
+                                }
+                            ) {
+                                Text(AppNavRoute.Classmates.label)
+                            }
+                        },
                     )
                 }
             }
-
-
         }
 
         DividerTextExpandedWith(text = "密码信息") {

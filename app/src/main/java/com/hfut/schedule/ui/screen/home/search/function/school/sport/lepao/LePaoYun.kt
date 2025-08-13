@@ -62,7 +62,7 @@ fun LePaoYun(hazeState: HazeState) {
                 StyleCardListItem(
                     headlineContent = { Text("体测平台") },
                     overlineContent = { Text("学校网站内测 接入校园网") },
-                    modifier = Modifier.clickable { Starter.startWebUrl(MyApplication.PE_URL) },
+                    modifier = Modifier.clickable { Starter.startWebUrl(MyApplication.PE_URL + "bdlp_h5_fitness_test/public/index.php/index/login/hfutLogin") },
                     trailingContent = {
                         Icon(Icons.Default.ArrowForward,null)
                     },

@@ -163,16 +163,17 @@ fun HomeSettingScreen(navController: NavController,
             DividerTextExpandedWith(text = "更新版本") {
                 UpdateUI(vm)
 
-                val patchItem = getPatchVersions().find { item ->
-                    currentVersion == item.oldVersion
-//                    true
-                }
-                if (patchItem != null) {
-                    PatchUpdateUI(patchItem,vm)
-                } else {
-                    // 清理
-                    if(!hasCleaned) {
-                        hasCleaned = BsdiffUpdate.deleteCache(context)
+                if(AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64) {
+                    val patchItem = getPatchVersions().find { item ->
+                        currentVersion == item.oldVersion
+                    }
+                    if (patchItem != null ) {
+                        PatchUpdateUI(patchItem,vm)
+                    } else {
+                        // 清理
+                        if(!hasCleaned) {
+                            hasCleaned = BsdiffUpdate.deleteCache(context)
+                        }
                     }
                 }
             }

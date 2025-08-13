@@ -270,9 +270,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                 },
             ) { innerPadding ->
                 Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     ApiToTeacherSearch(teacherTitle,vm,innerPadding)
                 }

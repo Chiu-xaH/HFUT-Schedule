@@ -64,6 +64,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWash
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.ClassmatesScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionDetailScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionScreen
@@ -83,6 +84,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatScree
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.scan.ScanScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayCampusScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpnScreen
@@ -468,6 +470,14 @@ fun MainHost(
                     // 通知公告
                     composable(AppNavRoute.News.route) {
                         NewsScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 同班同学
+                    composable(AppNavRoute.Classmates.route) {
+                        ClassmatesScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 扫码登录
+                    composable(AppNavRoute.Scan.route) {
+                        ScanScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
                     }
                     // 全校培养方案
                     composable(

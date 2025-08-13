@@ -2,7 +2,6 @@ package com.hfut.schedule.viewmodel.network
 
 import android.util.Base64
 import android.util.Log
-import androidx.camera.core.Logger.e
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,8 +25,6 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
-import com.hfut.schedule.logic.model.HaiLeTradeBean
-import com.hfut.schedule.logic.model.HaiLeTradeListRequestDTO
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
@@ -92,10 +89,11 @@ import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.model.jxglstu.result
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
+import com.hfut.schedule.logic.model.wx.WXClassmatesBean
+import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
 import com.hfut.schedule.logic.model.zjgd.BillBean
 import com.hfut.schedule.logic.model.zjgd.BillMonth
 import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
@@ -201,6 +199,24 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val lessonIds = StateHolder<lessonResponse>()
     val token = MutableLiveData<String>()
 
+    val wxLoginResponse = StateHolder<String>()
+    suspend fun wxLogin() = Repository.wxLogin(wxLoginResponse)
+
+    val wxPersonInfoResponse = StateHolder<WXPersonInfoBean>()
+    suspend fun wxGetPersonInfo(auth : String) = Repository.wxGetPersonInfo(auth,wxPersonInfoResponse)
+
+    val wxClassmatesResponse = StateHolder<WXClassmatesBean>()
+    suspend fun wxGetClassmates(auth : String) = onListenStateHolderForNetwork(wxPersonInfoResponse,wxClassmatesResponse) { person ->
+        Repository.wxGetClassmates(person.orgId,auth,wxClassmatesResponse)
+    }
+
+    val wxLoginCasResponse = StateHolder<Pair<String, Boolean>>()
+    suspend fun wxLoginCas(auth : String,url : String) = Repository.wxLoginCas(url,auth,wxLoginCasResponse)
+
+    val wxConfirmLoginResponse = StateHolder<String>()
+    suspend fun wxConfirmLogin(auth : String,uuid : String) = Repository.wxConfirmLogin(uuid,auth,wxConfirmLoginResponse)
+
+
 
     val haiLeNearPositionResp = StateHolder<List<HaiLeNearPositionBean>>()
     suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = Repository.getHaiLeNear(bean,haiLeNearPositionResp)
@@ -210,13 +226,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val giteePatchSizeResp = StateHolder<Double>()
     suspend fun getGiteePatchSize(patch: Patch) = Repository.getUpdateFileSize(parsePatch(patch),giteePatchSizeResp)
 
-
-
     val haiLeDeviceDetailResp = StateHolder<List<HaiLeDeviceDetailBean>>()
     suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequestBody) = Repository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)
-
-    val haiLeTradeListResp = StateHolder<List<HaiLeTradeBean>>()
-    suspend fun getHaiLeTradeList(bean : HaiLeTradeListRequestDTO) = Repository.getHaiLTradeList(bean,haiLeTradeListResp)
 
     val githubStarsData = StateHolder<Int>()
     suspend fun getStarNum() = Repository.getStarNum(githubStarsData)

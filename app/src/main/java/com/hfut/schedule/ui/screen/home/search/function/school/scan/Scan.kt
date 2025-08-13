@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.search.function.school
+package com.hfut.schedule.ui.screen.home.search.function.school.scan
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -13,12 +13,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
@@ -39,8 +37,7 @@ fun Scan(
             }
         },
         modifier = Modifier.clickable {
-            showToast("正在开发")
-//            navController.navigateForTransition(AppNavRoute.Scan,route)
+            navController.navigateForTransition(AppNavRoute.Scan,route)
         }
     )
 }

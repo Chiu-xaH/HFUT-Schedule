@@ -59,23 +59,23 @@ fun Modifier.transitionBackground(
         return this@transitionBackground
     }
 
-    // 稍微晚于运动结束
-    val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp,
-        label = "",
-        animationSpec = tween(speed*7/5, easing = FastOutSlowInEasing)
-    )
-
-    //👍 MEDIUM
-    if(level == TransitionLevel.MEDIUM) {
-        return this@transitionBackground.blur(blurSize)
-    }
     val scale = animateFloatAsState( //.875f
         targetValue = if (isExpanded) {
             if(motionBlur) scaleValue-scaleDiffer
             else scaleValue
         } else 1f,
         animationSpec = tween(speed*4/3, easing = FastOutSlowInEasing)
+    )
+    //👍 MEDIUM
+    if(level == TransitionLevel.MEDIUM) {
+        return this@transitionBackground.scale(scale.value)
+    }
+
+    // 稍微晚于运动结束
+    val blurSize by animateDpAsState(
+        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp,
+        label = "",
+        animationSpec = tween(speed*7/5, easing = FastOutSlowInEasing)
     )
 
     //👍 HIGH

@@ -8,6 +8,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
@@ -30,6 +31,14 @@ suspend fun getJxglstuCookie(vm: NetWorkViewModel) : String? {
         cookie =  prefs.getString("redirect", "")
     }
     return cookie
+}
+
+suspend fun getWxAuth() : String? {
+    val wx = DataStoreManager.wxAuth.first()
+    if(!wx.contains("Bearer")) {
+        return null
+    }
+    return wx
 }
 
 suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
@@ -113,8 +122,40 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
     if(DateTimeManager.Date_yyyy != getHolidayYear()) {
         launch { vm.downloadHoliday() }
     }
+    launch {
+        if(vm.wxPersonInfoResponse.state.first() is UiState.Success) {
+            return@launch
+        }
+        // 检查指尖工大是否失效
+        val auth = DataStoreManager.wxAuth.first()
+        if(auth.contains("Bearer")) {
+            vm.wxGetPersonInfo(auth)
+            val bean = (vm.wxPersonInfoResponse.state.value as? UiState.Success)?.data
+            if(bean == null) {
+                // 重新登陆
+                val newAuth = refreshWxAuth(vm) ?: return@launch
+                showToast("已登录指尖工大平台")
+                vm.wxGetPersonInfo(newAuth)
+            }
+            // 仍有效
+        } else {
+            // 第一次登陆
+            val newAuth = refreshWxAuth(vm) ?: return@launch
+            showToast("首次登录指尖工大平台成功")
+            vm.wxGetPersonInfo(newAuth)
+        }
+    }
 }
 
+
+private suspend fun refreshWxAuth(vm: NetWorkViewModel) : String? = withContext(Dispatchers.IO) {
+    vm.wxLoginResponse.clear()
+    vm.wxLogin()
+    when(vm.wxLoginResponse.state.first()) {
+        is UiState.Success<*> ->  return@withContext DataStoreManager.wxAuth.first()
+        else -> return@withContext null
+    }
+}
 
 //更新教务课表与课程汇总
 suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {
@@ -144,53 +185,6 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
     vm.getDatum(cookie,lessonResponse.lessonIds)
     val datum = (vm.datumData.state.value as? UiState.Success)?.data ?: return@withContext
     vmUI.refreshJxglstuCourseScheduleList(datum)
-//    val studentIdObserver = Observer<Int> { result ->
-//        if (result != 0) {
-//            SharedPrefs.saveString("studentId", result.toString())
-//            CoroutineScope(Job()).launch {
-//                async { vm.getBizTypeId(cookie!!) }.await()
-//            }
-//        }
-//    }
-//    val getBizTypeIdObserver = Observer<String?> { result ->
-//        if(result != null) {
-//            // 开始解析
-//            val bizTypeId = CasInHFUT.bizTypeId ?: CasInHFUT.getBizTypeId(result)
-//            if(bizTypeId != null) {
-//                vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
-//            }
-//        }
-//    }
-//    val lessonIdObserver = Observer<List<Int>> { result ->
-//        if (result.toString() != "") {
-//            val lessonIdsArray = JsonArray()
-//            result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-//            val jsonObject = JsonObject().apply {
-//                add("lessonIds", lessonIdsArray)//课程ID
-//                addProperty("studentId", vm.studentId.value)//学生ID
-//                addProperty("weekIndex", "")
-//            }
-//            vm.getDatum(cookie!!, jsonObject)
-//            vm.bizTypeIdResponse.removeObserver(getBizTypeIdObserver)
-//            vm.studentId.removeObserver(studentIdObserver)
-//        }
-//    }
-//    val datumObserver = Observer<String?> { result ->
-//        if (result != null) {
-//            if (result.contains("result")) {
-//                // 刷新缓存
-//                vmUI.refreshJxglstuCourseScheduleList(result)
-//                Handler(Looper.getMainLooper()).post { vm.lessonIds.removeObserver(lessonIdObserver) }
-//            }
-//        }
-//    }
-
-//    Handler(Looper.getMainLooper()).post {
-//        vm.studentId.observeForever(studentIdObserver)
-//        vm.bizTypeIdResponse.observeForever(getBizTypeIdObserver)
-//        vm.lessonIds.observeForever(lessonIdObserver)
-//        vm.datumData.observeForever(datumObserver)
-//    }
 }
 
 private fun getHoliday() : HolidayResponse? {

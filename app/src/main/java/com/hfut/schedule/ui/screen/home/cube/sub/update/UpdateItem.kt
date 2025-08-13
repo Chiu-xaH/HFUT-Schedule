@@ -57,14 +57,14 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
-            UpdateItems("新增 班级同班同学，新增扫码登录CAS")
-            UpdateItems("新增 支持收藏时修改名称")
-            UpdateItems("修复 一卡通相关功能显示登陆状态无效的Bug", "用户仅需重新刷新登录状态即可")
+            UpdateItems("新增 班级同班同学","位于 查询中心-个人信息")
+            UpdateItems("新增 扫码登录CAS","位于 查询中心")
+            UpdateItems("新增 支持收藏网页时修改名称")
+            UpdateItems("修复 一卡通相关功能显示登陆状态无效的Bug")
             UpdateItems("修复 课程详情检索教师的间距问题")
-            UpdateItems("修复 外地访问登录时持续加载的Bug")
             UpdateItems("优化 启动台的背景效果和系统返回手势的适配")
             UpdateItems("优化 层级转场时的圆角")
-            UpdateItems("优化 X86_64分包增量更新入口的显示")
+            UpdateItems("优化 转场动画三档调整为带缩放无模糊")
             // 启动台小图标最左边间距
 //            UpdateItems("新增 WebVpn全局代理，通过VPN接管全局网络，转换为WEBVPN链接，开启后，请先访问任意链接登录")
 //            UpdateItems("新增 转场时的形变动画")

@@ -275,7 +275,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
                         patch.newVersion.let{ if (it == getUpdates().version) "最新版本" else (""+ it) }
                 ) },
                 supportingContent = {
-                    Text(text = "开发者为一个月(动态调整)内的过去版本提供增量包，可节省至少40%的下载实现版本更新")
+                    Text(text = "开发者为一个月(动态调整)内的过去版本的ARM64分包提供增量包，可节省至少40%的下载实现版本更新")
                 },
                 leadingContent = { Icon(painterResource(R.drawable.package_2), contentDescription = "Localized description",) },
             )

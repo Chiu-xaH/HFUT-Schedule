@@ -244,16 +244,6 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
         return Modifier
     }
 
-    // 稍微晚于运动结束
-    val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) TransitionState.transitionBackgroundStyle.blurRadius else 0.dp, label = ""
-        ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
-    )
-    // 👍 MEDIUM
-    if(transition == TransitionLevel.MEDIUM.code) {
-        return Modifier.blur(blurSize)
-    }
-
 
     val scale = animateFloatAsState(
         targetValue = if (isExpanded) {
@@ -264,7 +254,7 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
         label = "" // 使用弹簧动画
     )
 
-    if(transition == TransitionLevel.HIGH.code) {
+    if(transition >= TransitionLevel.MEDIUM.code) {
         val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
         LaunchedEffect(isExpanded) {
             if(blur && transition == TransitionLevel.HIGH.code) {
@@ -274,6 +264,17 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
             }
         }
     }
+
+    // 👍 MEDIUM
+    if(transition == TransitionLevel.MEDIUM.code) {
+        return Modifier.scale(scale.value)
+    }
+
+    // 稍微晚于运动结束
+    val blurSize by animateDpAsState(
+        targetValue = if (isExpanded && motionBlur) TransitionState.transitionBackgroundStyle.blurRadius else 0.dp, label = ""
+        ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
+    )
 
     // 👍 HIGH
     return Modifier
@@ -294,7 +295,7 @@ fun Modifier.transitionBackgroundF(
     val speed = TransitionState.curveStyle.speedMs
 
     LaunchedEffect(isExpanded) {
-        if(blur && TransitionState.transitionBackgroundStyle.level == TransitionLevel.HIGH) {
+        if(blur && TransitionState.transitionBackgroundStyle.level >= TransitionLevel.MEDIUM) {
             DataStoreManager.saveHazeBlur(false)
             delay(speed*4/3*1L)
             DataStoreManager.saveHazeBlur(true)

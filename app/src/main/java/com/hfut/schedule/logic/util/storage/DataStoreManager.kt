@@ -86,6 +86,7 @@ object DataStoreManager {
     private val WEB_VIEW_DARK = booleanPreferencesKey("web_view_dark")
     private val PREDICTIVE = booleanPreferencesKey("predictive")
     private val CONTROL_CENTER = booleanPreferencesKey("control_center")
+    private val WX_AUTH = stringPreferencesKey("wx_auth")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -115,6 +116,7 @@ object DataStoreManager {
     suspend fun saveWebViewDark(value: Boolean) = saveValue(WEB_VIEW_DARK,value)
     suspend fun savePredict(value: Boolean) = saveValue(PREDICTIVE,value)
     suspend fun saveControlCenter(value: Boolean) = saveValue(CONTROL_CENTER,value)
+    suspend fun saveWxAuth(value: String) = saveValue(WX_AUTH, "Bearer $value")
 
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
@@ -142,6 +144,7 @@ object DataStoreManager {
     val enableForceWebViewDark = getFlow(WEB_VIEW_DARK,true)
     val enableControlCenter = getFlow(CONTROL_CENTER,false)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
+    val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
     val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))

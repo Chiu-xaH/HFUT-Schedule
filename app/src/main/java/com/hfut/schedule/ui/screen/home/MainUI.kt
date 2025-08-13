@@ -499,10 +499,14 @@ fun MainScreen(
                                     }
                                     SEARCH -> {
                                         if(!showSearch) {
+                                            IconButton (onClick = {
+                                                navHostTopController.navigateForTransition(AppNavRoute.Scan, AppNavRoute.Scan.route)
+                                            }) {
+                                                Icon(painter = painterResource(id =  R.drawable.qr_code_scanner), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                                            }
                                             IconButton(onClick = { showSearch = !showSearch }) {
                                                 Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                             }
-//                                            statusIcon()
                                             if(ifSaved) {
                                                 IconButton (onClick = { refreshLogin() }) {
                                                     Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)

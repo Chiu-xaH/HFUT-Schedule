@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.repo
 
+import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
@@ -23,9 +24,6 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailResponse
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeNearPositionResponse
-import com.hfut.schedule.logic.model.HaiLeTradeBean
-import com.hfut.schedule.logic.model.HaiLeTradeListRequestDTO
-import com.hfut.schedule.logic.model.HaiLeTradeListResponse
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
@@ -39,6 +37,13 @@ import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.guagua.UseCodeResponse
 import com.hfut.schedule.logic.model.toVercelForecastRequestBody
+import com.hfut.schedule.logic.model.wx.WXClassmatesBean
+import com.hfut.schedule.logic.model.wx.WXClassmatesResponse
+import com.hfut.schedule.logic.model.wx.WXLoginResponse
+import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
+import com.hfut.schedule.logic.model.wx.WXPersonInfoResponse
+import com.hfut.schedule.logic.model.wx.WXQrCodeLoginResponse
+import com.hfut.schedule.logic.model.wx.WXQrCodeResponse
 import com.hfut.schedule.logic.model.zjgd.BillBean
 import com.hfut.schedule.logic.network.api.AcademicService
 import com.hfut.schedule.logic.network.api.AcademicXCService
@@ -54,6 +59,7 @@ import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.VercelForecastService
+import com.hfut.schedule.logic.network.api.WXService
 import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.api.XuanChengService
 import com.hfut.schedule.logic.network.servicecreator.AcademicServiceCreator
@@ -72,6 +78,7 @@ import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.VercelForecastServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.WXServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
 import com.hfut.schedule.logic.util.network.Encrypt
@@ -79,6 +86,7 @@ import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
@@ -125,6 +133,7 @@ object Repository {
     private val academicXC = AcademicXCServiceCreator.create(AcademicXCService::class.java)
     private val haiLe = HaiLeWashingServiceCreator.create(HaiLeWashingService::class.java)
     private val admission = AdmissionServiceCreator.create(AdmissionService::class.java)
+    private val wx = WXServiceCreator.create(WXService::class.java)
 
     //引入接口
     // 通用的网络请求方法，支持自定义的操作
@@ -236,6 +245,107 @@ object Repository {
     } catch (e: Exception) {
         holder.emitError(e,null)
     }
+
+
+    suspend fun wxLogin(holder : StateHolder<String>) = launchRequestSimple(
+        holder = holder,
+        request = { wx.login().awaitResponse() },
+        transformSuccess = { _,json -> parseWxLogin(json) }
+    )
+    @JvmStatic
+    private suspend fun parseWxLogin(json : String) : String = try {
+        val bean = Gson().fromJson(json, WXLoginResponse::class.java)
+        val msg = bean.msg
+        if(msg.contains("success")) {
+            // 保存
+            val auth = bean.data.TGT
+            DataStoreManager.saveWxAuth(auth)
+            auth
+        } else {
+            throw Exception(msg)
+        }
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun wxGetPersonInfo(auth : String,holder : StateHolder<WXPersonInfoBean>) = launchRequestSimple(
+        holder = holder,
+        request = { wx.getMyInfo(auth).awaitResponse() },
+        transformSuccess = { _,json -> parseWxPersonInfo(json) }
+    )
+    @JvmStatic
+    private suspend fun parseWxPersonInfo(json : String) : WXPersonInfoBean = try {
+        val bean = Gson().fromJson(json, WXPersonInfoResponse::class.java)
+        val msg = bean.msg
+        if(msg.contains("success")) {
+            saveString("WX_PERSON_INFO", json)
+            bean.data
+        } else {
+            throw Exception(msg)
+        }
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun wxGetClassmates(nodeId : String,auth : String,holder : StateHolder<WXClassmatesBean>) = launchRequestSimple(
+        holder = holder,
+        request = { wx.getClassmates(nodeId,auth).awaitResponse() },
+        transformSuccess = { _,json -> parseWxClassmates(json) }
+    )
+    @JvmStatic
+    private suspend fun parseWxClassmates(json : String) : WXClassmatesBean = try {
+        val bean = Gson().fromJson(json, WXClassmatesResponse::class.java)
+        val msg = bean.msg
+        if(msg.contains("success")) {
+            bean.data
+        } else {
+            throw Exception(msg)
+        }
+    } catch (e : Exception) { throw e }
+
+    suspend fun wxLoginCas(url : String,auth : String,holder : StateHolder<Pair<String, Boolean>>) = launchRequestSimple(
+        holder = holder,
+        request = {
+            // 先解析原 URL
+            val originalUri = url.toUri()
+            // 用原路径和查询参数替换 host
+            val newUrl = originalUri.buildUpon()
+                .encodedAuthority(MyApplication.WX_URL.toUri().encodedAuthority)
+                .scheme(MyApplication.WX_URL.toUri().scheme)
+                .build()
+                .toString()
+            // 处理URL 将其HOST换成
+            // 然后发送网络请求 GET 携带 @Header("Authorization") auth : String
+            wx.loginCas(newUrl,auth).awaitResponse()
+         },
+        transformSuccess = { _,json -> parseWxLoginCas(json) }
+    )
+
+    @JvmStatic
+    private fun parseWxLoginCas(json : String) : Pair<String, Boolean> = try {
+        val bean = Gson().fromJson(json, WXQrCodeResponse::class.java)
+        val msg = bean.msg
+        if(msg.contains("success")) {
+            Pair("扫码成功",true)
+        } else {
+            Pair(msg,false)
+        }
+    } catch (e : Exception) { throw e }
+
+
+    suspend fun wxConfirmLogin(uuid : String,auth : String,holder : StateHolder<String>) = launchRequestSimple(
+        holder = holder,
+        request = { wx.confirmLogin(uuid,auth).awaitResponse() },
+        transformSuccess = { _,json -> parseWxConfirmLogin(json) }
+    )
+    @JvmStatic
+    private suspend fun parseWxConfirmLogin(json : String) : String = try {
+        val bean = Gson().fromJson(json, WXQrCodeLoginResponse::class.java)
+        val msg = bean.msg
+        if(msg.contains("success")) {
+            bean.data
+        } else {
+            throw Exception(msg)
+        }
+    } catch (e : Exception) { throw e }
 
     suspend fun loginSchoolNet(campus: Campus = getCampus(), loginSchoolNetResponse : StateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
@@ -353,7 +463,6 @@ object Repository {
         val resultFee = (fee1 / 10000).toString()
         val resultFlow : String = ((flow1 / 1024).toString() + flow3 + (flow0 / 1024)).substringBefore(".")
         val result = WebInfo(resultFee,resultFlow)
-//        vmUI.webValue.value = result
         saveString("memoryWeb", result.flow)
         result
     } catch (e : Exception) { throw e }
@@ -698,21 +807,6 @@ object Repository {
     private fun parseHaiLeDeviceDetail(result: String): List<HaiLeDeviceDetailBean> = try {
         if(result.contains("success")) {
             Gson().fromJson(result, HaiLeDeviceDetailResponse::class.java).data.items
-        } else {
-            throw Exception(result)
-        }
-    } catch (e: Exception) { throw e }
-
-    suspend fun getHaiLTradeList(bean : HaiLeTradeListRequestDTO,holder : StateHolder<List<HaiLeTradeBean>>) = launchRequestSimple(
-        holder = holder,
-        request = { haiLe.getTradeList(bean.toRequestBody()).awaitResponse() },
-        transformSuccess = { _, json -> parseHaiLeTradeList(json) }
-    )
-
-    @JvmStatic
-    private fun parseHaiLeTradeList(result: String): List<HaiLeTradeBean> = try {
-        if(result.contains("success")) {
-            Gson().fromJson(result, HaiLeTradeListResponse::class.java).data.items
         } else {
             throw Exception(result)
         }

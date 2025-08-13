@@ -23,6 +23,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -69,7 +71,9 @@ import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.style.CustomBottomSheet
@@ -171,36 +175,100 @@ fun WebViewScreenForActivity(
     }
     val scope = rememberCoroutineScope()
     var on by remember { mutableStateOf<(String) -> Unit>({}) }
+    var operationFavorite by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
-        if(currentUrl == url) {
-            on(url)
-        } else {
+        if(operationFavorite) {
+            var input by remember { mutableStateOf(currentTitle) }
+            suspend fun favorite(useCurrent : Boolean) {
+                val favoriteUrl = if(useCurrent) currentUrl else url
+                if(isExist) {
+                    DataBaseManager.webUrlDao.delFromUrl(favoriteUrl)
+                    showToast("已取消收藏")
+                } else {
+                    DataBaseManager.webUrlDao.insert(
+                        WebUrlDTO(
+                            name = input,
+                            type = WebURLType.COLLECTION,
+                            url = favoriteUrl
+                        ).toEntity()
+                    )
+                    showToast("收藏成功")
+                }
+                click = !click
+            }
             CustomBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
-                isFullExpand = false,
                 autoShape = false
             ) {
-                Column {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
                     HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
+                    CustomTextField(
+                        input = input,
+                        label = { Text("标题") },
+                        singleLine = false
+                    ) { input = it }
+                    Spacer(Modifier.height(CARD_NORMAL_DP))
                     StyleCardListItem(
                         headlineContent = { Text(currentUrl) },
                         overlineContent = { Text("现链接") },
                         modifier = Modifier.clickable {
-                            on(currentUrl)
-                            showBottomSheet = false
+                            scope.launch {
+                                favorite(true)
+                                showBottomSheet = false
+                            }
                         }
                     )
                     StyleCardListItem(
                         headlineContent = { Text(url) },
                         overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
                         modifier = Modifier.clickable {
-                            on(url)
-                            showBottomSheet = false
+                            scope.launch {
+                                favorite(false)
+                                showBottomSheet = false
+                            }
                         }
                     )
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
+                    Spacer(Modifier
+                        .height(APP_HORIZONTAL_DP)
+                        .navigationBarsPadding())
+                }
+            }
+        } else {
+            if(currentUrl == url) {
+                on(url)
+            } else {
+                CustomBottomSheet (
+                    onDismissRequest = { showBottomSheet = false },
+                    showBottomSheet = showBottomSheet,
+                    isFullExpand = false,
+                    autoShape = false
+                ) {
+                    Column {
+                        HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
+                        StyleCardListItem(
+                            headlineContent = { Text(currentUrl) },
+                            overlineContent = { Text("现链接") },
+                            modifier = Modifier.clickable {
+                                on(currentUrl)
+                                showBottomSheet = false
+                            }
+                        )
+                        StyleCardListItem(
+                            headlineContent = { Text(url) },
+                            overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
+                            modifier = Modifier.clickable {
+                                on(url)
+                                showBottomSheet = false
+                            }
+                        )
+                        Spacer(Modifier
+                            .height(APP_HORIZONTAL_DP)
+                            .navigationBarsPadding())
+                    }
                 }
             }
         }
@@ -236,24 +304,8 @@ fun WebViewScreenForActivity(
         }) { Icon(
             painterResource(id = if(!fullScreen)R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "") }
         IconButton(onClick = {
-            on = {
-                scope.launch {
-                    if(isExist) {
-                        DataBaseManager.webUrlDao.delFromUrl(it)
-                        showToast("已取消收藏")
-                    } else {
-                        DataBaseManager.webUrlDao.insert(
-                            WebUrlDTO(
-                                name = currentTitle,
-                                type = WebURLType.COLLECTION,
-                                url = it
-                            ).toEntity()
-                        )
-                        showToast("收藏成功")
-                    }
-                    click = !click
-                }
-            }
+            on = {}
+            operationFavorite = true
             showBottomSheet = true
         }) { Icon(
             painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = "") }

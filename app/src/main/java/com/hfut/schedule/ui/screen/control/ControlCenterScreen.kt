@@ -244,7 +244,7 @@ fun ControlCenterScreen(
                         if(queue.isNotEmpty()) {
                             DividerTextExpandedWith("最近记录") {
                                 LazyRow {
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
                                     items(queue.size) { index ->
                                         val item = queue[index]
                                         if(currentRoute == item.app.route && index == 0) {

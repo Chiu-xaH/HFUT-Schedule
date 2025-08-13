@@ -68,7 +68,7 @@ import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
-import com.hfut.schedule.ui.screen.home.search.function.school.Scan
+import com.hfut.schedule.ui.screen.home.search.function.school.scan.Scan
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreXuanCheng
 import com.hfut.schedule.ui.screen.home.search.function.school.ietp.IETP
@@ -149,7 +149,7 @@ fun SearchScreen(
             SearchAppBean("洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState,navController,sharedTransitionScope,animatedContentScope) }),
             SearchAppBean("本科招生 历年分数线 招生计划", { Admission(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Admission.route),
             SearchAppBean("WEBVPN 外地访问 内网", { WebVpn(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebVpn.route),
-            SearchAppBean("扫码 扫面二维码 指尖工大 CAS统一认证登录", { Scan(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Scan.route),
+            SearchAppBean("扫码 扫描二维码 指尖工大 CAS统一认证登录", { Scan(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Scan.route),
         )
     }
 
