@@ -214,10 +214,17 @@ fun ScanScreen(
                         TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Scan.icon)
                     },
                     actions = {
-                       IconButton(
-                            onClick = { resultText = "" }
-                        ) {
-                            Icon(painterResource(R.drawable.rotate_right),null, tint = MaterialTheme.colorScheme.primary)
+                        Row {
+                            IconButton(
+                                onClick = { showToast("正在开发") }
+                            ) {
+                                Icon(painterResource(R.drawable.image),null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                            IconButton(
+                                onClick = { resultText = "" }
+                            ) {
+                                Icon(painterResource(R.drawable.rotate_right),null, tint = MaterialTheme.colorScheme.primary)
+                            }
                         }
                     }
                 )

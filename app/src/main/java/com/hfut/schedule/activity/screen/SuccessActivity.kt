@@ -2,6 +2,7 @@ package com.hfut.schedule.activity.screen
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.background
@@ -96,6 +97,7 @@ class SuccessActivity : BaseActivity() {
             if(!webVpn) {
                 launch {
                     val cookie = prefs.getString("redirect", "")
+                    Log.d("测试4",cookie.toString())
                     networkVms.jxglstuLogin(cookie!!)
                 }
             }

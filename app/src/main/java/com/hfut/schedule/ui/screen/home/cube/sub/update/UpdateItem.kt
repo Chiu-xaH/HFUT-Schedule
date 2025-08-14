@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-13") },
+                overlineContent = { Text(text = "2025-08-14") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,14 +57,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
-            UpdateItems("新增 班级同班同学","位于 查询中心-个人信息")
-            UpdateItems("新增 扫码登录CAS","位于 查询中心")
-            UpdateItems("新增 支持收藏网页时修改名称")
-            UpdateItems("修复 一卡通相关功能显示登陆状态无效的Bug")
-            UpdateItems("修复 课程详情检索教师的间距问题")
-            UpdateItems("优化 启动台的背景效果和系统返回手势的适配")
-            UpdateItems("优化 层级转场时的圆角")
-            UpdateItems("优化 转场动画三档调整为带缩放无模糊")
+            UpdateItems("修复 无法登录教务系统的Bug")
+//            UpdateItems("新增 扫码可选择相册图片")
             // 启动台小图标最左边间距
 //            UpdateItems("新增 WebVpn全局代理，通过VPN接管全局网络，转换为WEBVPN链接，开启后，请先访问任意链接登录")
 //            UpdateItems("新增 转场时的形变动画")

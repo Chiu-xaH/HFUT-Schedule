@@ -96,6 +96,7 @@ if(__name__ == "__main__"):
 
     # 绘制图表
     plt.figure(figsize=(12, 6))
+    
     sns.lineplot(data=daily_visits, x='date', y='total_visits', marker='o')
     plt.title("Visitors")
     plt.xlabel("")
@@ -105,7 +106,7 @@ if(__name__ == "__main__"):
     plt.tight_layout()
 
     # 保存或展示图表
-    plt.savefig("visits.png")
+    plt.savefig("visits.png",dpi=300)
     # plt.show()
     # 从数据库中读取数据
     query = build_usage_query()  # 饼图数据源
@@ -157,10 +158,60 @@ if(__name__ == "__main__"):
         for ax in row:
             ax.set_ylabel("")
 
-
     plt.tight_layout()
     fig.text(0.5, -0.05, latest_time_str, ha='center', fontsize=10)
-    plt.savefig("pie_charts.png", bbox_inches="tight")
-    # plt.show()
+    plt.savefig("pie_charts.png", bbox_inches="tight",dpi=300)
+
+
+    # 从数据库中获取最新版本数据
+    query = """
+WITH usage_with_max_date AS (
+    SELECT
+        student_id,
+        user_name,
+        app_version_code,
+        app_version_name,
+        MAX(date_time) AS max_date_time_utc
+    FROM user_app_usage
+    WHERE app_version_name IS NOT NULL
+    GROUP BY student_id, app_version_code
+),
+latest_version_per_user AS (
+    SELECT u1.*
+    FROM usage_with_max_date u1
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM usage_with_max_date u2
+        WHERE u2.student_id = u1.student_id
+        AND u2.app_version_code > u1.app_version_code
+    )
+)
+SELECT *
+FROM latest_version_per_user
+ORDER BY app_version_code DESC, student_id;
+"""
+
+
+    df_latest = pd.read_sql_query(query, conn)
+
+    # 按版本名称统计
+    version_counts = df_latest['app_version_name'].value_counts()
+
+    # 合并小类（可选）
+    version_counts = merge_small_categories(version_counts, threshold=0.005)
+
+    # 放大图像
+    plt.figure(figsize=(14, 14))
+
+    version_counts.plot.pie(
+        labels=version_counts.index,  # 显示版本名称
+        autopct='%1.1f%%',
+        startangle=140
+    )
+
+    plt.ylabel("")
+    plt.title('应用版本分布', fontsize=20)  # 标题大一点
+    plt.tight_layout()
+    plt.savefig("app_version.png", bbox_inches="tight", dpi=300)  # 提高分辨率)
     # 关闭数据库连接
     conn.close()
