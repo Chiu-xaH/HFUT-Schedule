@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -195,7 +196,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             Text("转换结果")
                         },
                     )
-                    HorizontalDivider()
+                    PaddingHorizontalDivider()
                     Row(modifier = Modifier.align(Alignment.End)) {
                         Text(
                             text = "复制",

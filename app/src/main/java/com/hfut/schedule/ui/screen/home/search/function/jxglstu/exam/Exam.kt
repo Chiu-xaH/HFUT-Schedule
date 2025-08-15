@@ -68,7 +68,7 @@ fun Exam(
 
     TransplantListItem(
         headlineContent = { Text(text = AppNavRoute.Exam.label) },
-        overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
+//        overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))

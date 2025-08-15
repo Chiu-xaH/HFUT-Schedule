@@ -30,6 +30,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
 
@@ -41,14 +42,16 @@ fun RequestArrange(innerPadding : PaddingValues,navController: NavHostController
     }
     LazyColumn(modifier = Modifier.scale(scale)) {
         item { InnerPaddingHeight(innerPadding,true) }
-        item { ArrangeItem(title = "图书", icon = R.drawable.book, key = "BookRequest") }
+        item { ArrangeItem(title = AppNavRoute.Library.label, icon = AppNavRoute.Library.icon, key = "BookRequest") }
         item { ArrangeItem(title = "一卡通", icon = R.drawable.credit_card, key = "CardRequest") }
-        item { ArrangeItem(title = "挂科率", icon = R.drawable.monitoring, key = "FailRateRequest") }
-        item { ArrangeItem(title = "开课查询", icon = R.drawable.search, key = "CourseSearchRequest") }
-        item { ArrangeItem(title = "教师检索", icon = R.drawable.group, key = "TeacherSearchRequest") }
-        item { ArrangeItem(title = "就业信息", icon = R.drawable.work, key = "WorkSearchRequest") }
-        item { ArrangeItem(title = "好友课表列表", icon = R.drawable.calendar, key = "FriendRequest") }
-        item { ArrangeItem(title = "海乐生活-洗衣机", icon = R.drawable.local_laundry_service, key = "HaileRequest") }
+        item { ArrangeItem(title = AppNavRoute.FailRate.label, icon = AppNavRoute.FailRate.icon, key = "FailRateRequest") }
+        item { ArrangeItem(title = AppNavRoute.CourseSearch.label, icon = AppNavRoute.CourseSearch.icon, key = "CourseSearchRequest") }
+        item { ArrangeItem(title = AppNavRoute.TeacherSearch.label, icon = AppNavRoute.TeacherSearch.icon, key = "TeacherSearchRequest") }
+        item { ArrangeItem(title = AppNavRoute.Work.label, icon = AppNavRoute.Work.icon, key = "WorkSearchRequest") }
+        item { ArrangeItem(title = "好友课表列表", icon = AppNavRoute.NextCourse.icon, key = "FriendRequest") }
+        item { ArrangeItem(title = AppNavRoute.HaiLeWashing.label, icon = AppNavRoute.HaiLeWashing.icon, key = "HaileRequest") }
+        item { ArrangeItem(title = AppNavRoute.OfficeHall.label, icon = AppNavRoute.OfficeHall.icon, key = "OfficeHallRequest") }
+
 //        item { ArrangeItem(title = "通知公告", icon = R.drawable.stream, key = "NewsRequest",false) }
         item { InnerPaddingHeight(innerPadding,false) }
     }

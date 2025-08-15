@@ -385,6 +385,7 @@ fun WebViewScreenForNavigation(
         if(enableControlCenter) {
             IconButton(onClick = {
                 scope.launch {
+                    visible = false
                     drawerState.animationOpen()
                 }
             }) { Icon(painterResource(id = R.drawable.flash_on), contentDescription = "") }

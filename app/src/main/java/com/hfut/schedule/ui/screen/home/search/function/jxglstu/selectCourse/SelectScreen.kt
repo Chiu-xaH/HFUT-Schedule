@@ -756,8 +756,8 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             modifier = Modifier.weight(.5f)
         )
         TransplantListItem(
-            headlineContent = { Text(text = "挂科率查询") },
-            leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
+            headlineContent = { Text(text = AppNavRoute.FailRate.label) },
+            leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
             modifier = Modifier
                 .clickable {
                     permit = 1

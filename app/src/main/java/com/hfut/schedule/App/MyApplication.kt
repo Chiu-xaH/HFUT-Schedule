@@ -32,6 +32,8 @@ class MyApplication : Application() {
         const val JXGLSTU_WEBVPN_URL = WEBVPN_URL + "http/" + "77726476706e69737468656265737421faef469034247d1e760e9cb8d6502720ede479/eams5-student/"
         // 通知公告
         const val NEWS_URL = "https://news.hfut.edu.cn/"
+        // 办事大厅
+        const val OFFICE_HALL_URL = "https://ehall.hfut.edu.cn/"
         // 合工大教务 微信UNI-APP
         const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
         // 更新渠道
@@ -40,6 +42,8 @@ class MyApplication : Application() {
         const val COMMUNITY_URL = "https://community.hfut.edu.cn/"
         // 慧新易校
         const val HUIXIN_URL = "http://121.251.19.62/"
+        // 指间工大
+        const val ZJGD_URL = "https://zjgd.hfut.edu.cn:8181/"
         // 乐跑云运动
         const val LEPAO_URL = "http://210.45.246.53:8080/"
         // 支付宝打开URL
@@ -116,8 +120,6 @@ class MyApplication : Application() {
         const val PAY_FEE_URL = "http://pay.hfut.edu.cn/payment/mobileOnlinePay"
         // 学信网
         const val XUE_XIN_URL = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
-        // 校车
-        const val BUS_URL = "file:///android_asset/BusInfos.html"
         // U校园
         const val UNIPUS_URL = "https://u.unipus.cn/"
         const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"

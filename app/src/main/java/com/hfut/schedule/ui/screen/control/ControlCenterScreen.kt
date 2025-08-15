@@ -227,7 +227,7 @@ fun ControlCenterScreen(
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("搜索 查询中心功能") },
+                            label = { Text("搜索功能") },
                             leadingIcon = { Icon(painterResource(R.drawable.search),null) },
                             singleLine = true,
                             shape = MaterialTheme.shapes.medium,

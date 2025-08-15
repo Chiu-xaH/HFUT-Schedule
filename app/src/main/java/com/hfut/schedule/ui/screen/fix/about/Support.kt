@@ -142,7 +142,7 @@ private fun SupportItem(item : SupportItemBean) {
                     }
                 }
             )
-            HorizontalDivider()
+            PaddingHorizontalDivider()
             Row(modifier = Modifier.align(Alignment.End)) {
                 Text(
                     text = item.android,

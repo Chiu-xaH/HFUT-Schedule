@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +33,7 @@ fun Supabase(vm: NetWorkViewModel) {
     var loading by remember { mutableStateOf(false) }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "信息共建") },
+        headlineContent = { ScrollText(text = "共建平台") },
         leadingContent = {
             if(loading) {
                 LoadingIcon()

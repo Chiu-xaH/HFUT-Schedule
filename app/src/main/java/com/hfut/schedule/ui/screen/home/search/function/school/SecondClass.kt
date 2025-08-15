@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.search.function.school.scan
+package com.hfut.schedule.ui.screen.home.search.function.school
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -13,33 +13,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun Scan(
+fun SecondClass(
     navController : NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val route = remember { AppNavRoute.Scan.route }
+    val route = remember { AppNavRoute.SecondClass.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Scan.label) },
-        overlineContent = { ScrollText("CAS扫码登录")},
+        headlineContent = { Text(text = AppNavRoute.SecondClass.label) },
         leadingContent = {
             with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.Scan.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+                Icon(painterResource(AppNavRoute.SecondClass.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Scan,route)
+            showToast("正在开发")
+//            navController.navigateForTransition(AppNavRoute.OfficeHall,route)
         }
     )
 }

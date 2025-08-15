@@ -96,7 +96,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object HaiLeWashing : AppNavRoute("HAILE_WASHING","海乐生活",R.drawable.local_laundry_service)
     object Fee : AppNavRoute("Fee","学费",R.drawable.paid)
     object StuTodayCampus : AppNavRoute("STU","学工系统",R.drawable.handshake)
-    object TeacherSearch : AppNavRoute("TEACHER_SEARCH","教师检索",R.drawable.group)
+    object TeacherSearch : AppNavRoute("TEACHER_SEARCH","教师检索",R.drawable.group_search)
     object Work : AppNavRoute("WORK","就业",R.drawable.azm)
     object Person : AppNavRoute("PERSON","个人信息",R.drawable.person)
     object Exam : AppNavRoute("EXAM","考试",R.drawable.draw)
@@ -119,7 +119,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.ICON.argName to icon,
         )
     }
-    object FailRate : AppNavRoute("FAIL_RATE","挂科率",R.drawable.monitoring)
+    object FailRate : AppNavRoute("FAIL_RATE","挂科率",R.drawable.radio_button_partial)
     object Transfer : AppNavRoute("TRANSFER","转专业",R.drawable.compare_arrows)
     object Library : AppNavRoute("LIBRARY","图书馆",R.drawable.book_5)
     object ProgramSearch : AppNavRoute("PROGRAM_SEARCH","全校培养方案",R.drawable.conversion_path) {
@@ -183,7 +183,10 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.INDEX.argName to index
         )
     }
+    object SecondClass : AppNavRoute("SECOND_CLASS","第二课堂",R.drawable.kid_star)
+    object Bus : AppNavRoute("BUS","校车",R.drawable.directions_bus)
     object EmptyRoom : AppNavRoute("EMPTY_ROOM", "空教室",R.drawable.meeting_room)
+    object OfficeHall : AppNavRoute("OFFICE_HALL", "办事大厅",R.drawable.person_play)
     object Classmates : AppNavRoute("CLASSMATES", "同班同学",R.drawable.sensor_door)
     object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner)
     object Exception : AppNavRoute("EXCEPTION","错误",R.drawable.warning) {

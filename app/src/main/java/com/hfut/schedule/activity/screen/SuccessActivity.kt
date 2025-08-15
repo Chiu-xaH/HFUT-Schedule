@@ -43,50 +43,6 @@ class SuccessActivity : BaseActivity() {
             true,
             webVpn
         )
-//        val navController = rememberNavController()
-//        SharedTransitionLayout(
-//            modifier = Modifier.background(MaterialTheme.colorScheme.surface)
-//        ) {
-//            NavHost(
-//                navController = navController,
-//                startDestination = AppNavRoute.Home.route,
-//                enterTransition = { AppAnimationManager.fadeAnimation.enter },
-//                exitTransition = { AppAnimationManager.fadeAnimation.exit }
-//            ) {
-//                // 主UI
-//                composable(AppNavRoute.Home.route) {
-//                    MainScreen(
-//                        vm = networkVms,
-//                        vm2 = super.loginVm,
-//                        vmUI = super.uiVm,
-//                        celebrationText = getCelebration().str,
-//                        webVpn = webVpn,
-//                        isLogin = true,
-//                        navHostTopController = navController,
-//                        this@SharedTransitionLayout,
-//                        this@composable
-//                    )
-//                }
-//                // 成绩
-//                composable(
-//                    route = AppNavRoute.Grade.receiveRoute(),
-//                    arguments = listOf(
-//                        navArgument("ifSaved") {
-//                            type = NavType.BoolType
-//                        }
-//                    )
-//                ) { backStackEntry ->
-//                    val ifSaved = backStackEntry.arguments?.getBoolean("ifSaved") ?: true
-//                    GradeScreen(
-//                        ifSaved,
-//                        networkVm,
-//                        navController,
-//                        this@SharedTransitionLayout,
-//                        this@composable,
-//                    )
-//                }
-//            }
-//        }
     }
 
     @SuppressLint("MissingInflatedId")
@@ -97,7 +53,7 @@ class SuccessActivity : BaseActivity() {
             if(!webVpn) {
                 launch {
                     val cookie = prefs.getString("redirect", "")
-                    Log.d("测试4",cookie.toString())
+//                    Log.d("测试4",cookie.toString())
                     networkVms.jxglstuLogin(cookie!!)
                 }
             }

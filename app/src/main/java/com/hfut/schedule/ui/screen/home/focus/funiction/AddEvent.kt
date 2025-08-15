@@ -49,6 +49,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -573,6 +574,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                         headlineContent = { Text((if(isScheduleType)"开始 ${date.first + " " + time.first}\n" else "") + "结束 ${date.second + " " + time.second}") },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
+                    PaddingHorizontalDivider()
                     Row(modifier = Modifier.align(Alignment.End)) {
                         Text(
                             text = if(isScheduleType)"选择日期范围" else "选择截止日期",

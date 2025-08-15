@@ -37,8 +37,7 @@ fun HuiXin(
     val route = AppNavRoute.WebView.shareRoute(url)
 
     TransplantListItem(
-        headlineContent = { Text(text = "生活缴费") },
-        overlineContent = { Text(title) },
+        headlineContent = { Text(text = title) },
         leadingContent = {
             with(sharedTransitionScope) {
                 Icon(painterResource(icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))

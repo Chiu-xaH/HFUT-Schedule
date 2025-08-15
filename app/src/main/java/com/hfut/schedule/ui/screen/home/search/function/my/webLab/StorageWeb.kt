@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 
@@ -128,7 +129,7 @@ fun StorageWeb(hazeState : HazeState) {
                                     }
                                 )
                             )
-                            HorizontalDivider()
+                            PaddingHorizontalDivider()
                             Row(modifier = Modifier.align(Alignment.End)) {
                                 Text(
                                     text = "来源: " + when(t) {

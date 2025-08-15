@@ -26,6 +26,7 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.NewsResponse
+import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.model.PayResponse
 import com.hfut.schedule.logic.model.QWeatherNowBean
@@ -48,6 +49,8 @@ import com.hfut.schedule.logic.model.community.BookPositionBean
 import com.hfut.schedule.logic.model.community.BookPositionResponse
 import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BorrowResponse
+import com.hfut.schedule.logic.model.community.BusBean
+import com.hfut.schedule.logic.model.community.BusResponse
 import com.hfut.schedule.logic.model.community.DormitoryBean
 import com.hfut.schedule.logic.model.community.DormitoryInfoResponse
 import com.hfut.schedule.logic.model.community.DormitoryResponse
@@ -1801,6 +1804,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
+
+    val officeHallSearchResponse = StateHolder<List<OfficeHallSearchBean>>()
+
+    suspend fun officeHallSearch(text : String, page : Int) = Repository.officeHallSearch(text,page,officeHallSearchResponse)
+
     val stuAppsResponse = StateHolder<List<StuAppBean>>()
     suspend fun getStuApps(token : String) = launchRequestSimple(
         holder = stuAppsResponse,
@@ -1812,6 +1820,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             val list = Gson().fromJson(result, StuAppsResponse::class.java).result
             val totalList = list.flatMap { it.subList }
             totalList.filter { it.url?.startsWith(MyApplication.STU_URL) == true }
+        }
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
+
+    val busResponse = StateHolder<List<BusBean>>()
+    suspend fun getBus(token : String) = launchRequestSimple(
+        holder = busResponse,
+        request = { community.getBus(token).awaitResponse() },
+        transformSuccess = { _,json -> parseBus(json) }
+    )
+    private fun parseBus(result : String) : List<BusBean> = try {
+        if(result.contains("操作成功")) {
+            Gson().fromJson(result, BusResponse::class.java).result
         }
         else
             throw Exception(result)

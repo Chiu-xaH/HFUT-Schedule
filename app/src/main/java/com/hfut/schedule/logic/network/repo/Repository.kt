@@ -25,6 +25,8 @@ import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeNearPositionResponse
 import com.hfut.schedule.logic.model.NewsResponse
+import com.hfut.schedule.logic.model.OfficeHallSearchBean
+import com.hfut.schedule.logic.model.OfficeHallSearchResponse
 import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
 import com.hfut.schedule.logic.model.QWeatherWarnBean
@@ -56,6 +58,7 @@ import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.api.HaiLeWashingService
 import com.hfut.schedule.logic.network.api.LoginWebsService
 import com.hfut.schedule.logic.network.api.NewsService
+import com.hfut.schedule.logic.network.api.OfficeHallService
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.VercelForecastService
@@ -75,6 +78,7 @@ import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCrea
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebHefeiServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.OfficeHallServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.VercelForecastServiceCreator
@@ -134,6 +138,7 @@ object Repository {
     private val haiLe = HaiLeWashingServiceCreator.create(HaiLeWashingService::class.java)
     private val admission = AdmissionServiceCreator.create(AdmissionService::class.java)
     private val wx = WXServiceCreator.create(WXService::class.java)
+    private val hall = OfficeHallServiceCreator.create(OfficeHallService::class.java)
 
     //引入接口
     // 通用的网络请求方法，支持自定义的操作
@@ -245,6 +250,25 @@ object Repository {
     } catch (e: Exception) {
         holder.emitError(e,null)
     }
+
+
+    suspend fun officeHallSearch(
+        text : String,
+        page : Int,
+        holder : StateHolder<List<OfficeHallSearchBean>>
+    ) = launchRequestSimple(
+        holder = holder,
+        request = { hall.search(
+            name = text,
+            page = page,
+            pageSize = prefs.getString("OfficeHallRequest",MyApplication.PAGE_SIZE.toString())?.toInt() ?: MyApplication.PAGE_SIZE,
+        ).awaitResponse() },
+        transformSuccess = { _,json -> parseOfficeHallSearch(json) }
+    )
+    @JvmStatic
+    private suspend fun parseOfficeHallSearch(json : String) : List<OfficeHallSearchBean> = try {
+        Gson().fromJson(json, OfficeHallSearchResponse::class.java).data.records
+    } catch (e : Exception) { throw e }
 
 
     suspend fun wxLogin(holder : StateHolder<String>) = launchRequestSimple(

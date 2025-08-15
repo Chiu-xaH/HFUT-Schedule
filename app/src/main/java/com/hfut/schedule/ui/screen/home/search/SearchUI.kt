@@ -68,9 +68,11 @@ import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
+import com.hfut.schedule.ui.screen.home.search.function.school.SecondClass
 import com.hfut.schedule.ui.screen.home.search.function.school.scan.Scan
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreXuanCheng
+import com.hfut.schedule.ui.screen.home.search.function.school.hall.OfficeHall
 import com.hfut.schedule.ui.screen.home.search.function.school.ietp.IETP
 import com.hfut.schedule.ui.screen.home.search.function.school.news.News
 import com.hfut.schedule.ui.screen.home.search.function.school.repair.Repair
@@ -108,11 +110,11 @@ fun SearchScreen(
     val funcMaps : List<SearchAppBean>  =  remember(vm, ifSaved, vmUI, navController, hazeState, sharedTransitionScope, animatedContentScope) {
         listOf(
             SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校" , { SchoolCardItem(vmUI, true) }),
-            SearchAppBean("考试" , { Exam(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Exam.route),
+            SearchAppBean("扫码 扫描二维码 指尖工大 CAS统一认证登录", { Scan(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Scan.route),
             SearchAppBean("寝室电费 缴费 慧新易校" , { Electric(vm, false, vmUI,hazeState) }),
             SearchAppBean("校园网 慧新易校 缴费" , { LoginWeb(vmUI, false, vm,hazeState) }),
-            SearchAppBean("教育邮箱" , { Mail(vm,hazeState) }),
-            SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" , { HuiXin(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
+            SearchAppBean("教育邮箱 校园邮箱" , { Mail(vm,hazeState) }),
+            SearchAppBean("考试" , { Exam(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Exam.route),
             SearchAppBean("成绩", { Grade(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Grade.receiveRoute()),
             SearchAppBean("挂科率", { FailRate(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.FailRate.route),
             SearchAppBean("课程汇总 教材 课本", { CourseTotal(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.TotalCourse.receiveRoute()),
@@ -126,7 +128,7 @@ fun SearchScreen(
             SearchAppBean("通知公告 新闻 教务处", { News(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.News.route),
             SearchAppBean("培养方案", { Program(ifSaved,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Program.receiveRoute()),
             SearchAppBean("图书馆 座位预约 借阅", { LibraryItem(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Library.route),
-            SearchAppBean("校车", { SchoolBus(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.BUS_URL)),
+            SearchAppBean("校车", { SchoolBus(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Bus.route),
             SearchAppBean("报修 维修 后勤", { Repair(hazeState) }),
             SearchAppBean("下学期课程表 下学期课表", { NextCourse(ifSaved,vm,navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.NextCourse.receiveRoute()),
             SearchAppBean("热水机 趣智校园", { HotWater() }),
@@ -149,7 +151,9 @@ fun SearchScreen(
             SearchAppBean("洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState,navController,sharedTransitionScope,animatedContentScope) }),
             SearchAppBean("本科招生 历年分数线 招生计划", { Admission(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Admission.route),
             SearchAppBean("WEBVPN 外地访问 内网", { WebVpn(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebVpn.route),
-            SearchAppBean("扫码 扫描二维码 指尖工大 CAS统一认证登录", { Scan(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Scan.route),
+            SearchAppBean("办事大厅", { OfficeHall(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.OfficeHall.route),
+            SearchAppBean("一卡通 校园卡 账单 充值 缴费 慧新易校 合肥" , { HuiXin(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
+            SearchAppBean("第二课堂", { SecondClass(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.SecondClass.route),
         )
     }
 
@@ -171,7 +175,6 @@ fun SearchScreen(
                 SmallCard(
                     modifier = item.route?.let { containerShare(paddingModifier,animatedContentScope,it) } ?: paddingModifier,
                     color = mixedCardNormalColor()
-//                    color = Color.Red
                 ) {
                     item.ui()
                 }
@@ -180,6 +183,8 @@ fun SearchScreen(
         items(2) { InnerPaddingHeight(innerPaddings,false) }
     }
 }
+
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)

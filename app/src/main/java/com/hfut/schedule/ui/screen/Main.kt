@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.screen.control.limitDrawerSwipeArea
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.bus.BusScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
@@ -84,6 +85,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatScree
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.hall.OfficeHallScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.scan.ScanScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayCampusScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
@@ -188,6 +190,7 @@ fun MainHost(
     val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val isWebView = navController.isCurrentRouteWithoutArgs(AppNavRoute.WebView.route)
+    val isScan = navController.isCurrentRouteWithoutArgs(AppNavRoute.Scan.route)
     val enableGesture = enableControlCenter && !isWebView
     var containerColor by remember { mutableStateOf<Color?>(null) }
     LaunchedEffect(configuration,enableControlCenter) {
@@ -272,7 +275,7 @@ fun MainHost(
                         else
                             it.background(MaterialTheme.colorScheme.surface)
                     }
-                    .let{ if(motionBlur && enableControlCenter) it.blur(blurDp) else it }
+                    .let{ if(motionBlur && enableControlCenter && !isScan) it.blur(blurDp) else it }
                     .let { if(enableControlCenter) it.scale(scale) else it }
 
             ) {
@@ -478,6 +481,14 @@ fun MainHost(
                     // 扫码登录
                     composable(AppNavRoute.Scan.route) {
                         ScanScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 校车
+                    composable(AppNavRoute.Bus.route) {
+                        BusScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 办事
+                    composable(AppNavRoute.OfficeHall.route) {
+                        OfficeHallScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
                     }
                     // 全校培养方案
                     composable(

@@ -32,8 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
@@ -62,6 +64,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
             value = it
         }
     }
+    val wxAuth by DataStoreManager.wxAuth.collectAsState(initial = "")
     val cookieWebVpn by produceState(initialValue = "",key1 = showEditDialog) {
         getStorageJxglstuCookie(isWebVpn = true)?.let {
             value = it
@@ -105,7 +108,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
-        DividerTextExpandedWith("Cookies") {
+        DividerTextExpandedWith("Cookies & Authorization") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("教务系统") },
@@ -146,7 +149,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                 cookieCommunity?.let {
                     PaddingHorizontalDivider()
                     TransplantListItem(
-                        headlineContent = { Text("Community") },
+                        headlineContent = { Text("智慧社区") },
                         supportingContent = {
                             Text(it)
                         },
@@ -173,10 +176,23 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                         },
                     )
                 }
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("指尖工大") },
+                    supportingContent = {
+                        Text(wxAuth)
+                    },
+                    modifier = Modifier.clickable {
+                        ClipBoardUtils.copy(wxAuth)
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.cookie),null)
+                    },
+                )
                 cookieCAS?.let {
                     PaddingHorizontalDivider()
                     TransplantListItem(
-                        headlineContent = { Text("CAS") },
+                        headlineContent = { Text("CAS统一认证登录") },
                         supportingContent = {
                             Text(it)
                         },

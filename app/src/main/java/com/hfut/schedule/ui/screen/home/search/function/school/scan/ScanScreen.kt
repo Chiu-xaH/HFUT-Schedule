@@ -3,6 +3,9 @@ package com.hfut.schedule.ui.screen.home.search.function.school.scan
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.LocalActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.ImageAnalysis
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -23,6 +26,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -66,6 +71,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import com.hfut.schedule.logic.util.other.parseQRCode
+import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -83,6 +91,17 @@ fun ScanScreen(
     val activity = LocalActivity.current
     val showTip = resultText.isEmpty() || resultText.isBlank()
     val scope = rememberCoroutineScope()
+    val pickMultipleMedia = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let { imageUri ->
+            scope.launch {
+                parseQRCode(imageUri)?.let {
+                    resultText = it
+                } ?: showToast("未识别到二维码")
+            }
+        }
+    }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
@@ -92,122 +111,152 @@ fun ScanScreen(
                 val auth by produceState<String?>(initialValue = null) {
                     value = getWxAuth()
                 }
-                Box(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP).navigationBarsPadding()) {
-                    AnimatedVisibility(
-                        visible = showTip,
-                        exit = AppAnimationManager.toBottomAnimation.exit,
-                        enter = AppAnimationManager.toBottomAnimation.enter
-                    ) {
+                ShareTwoContainer2D(
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP).navigationBarsPadding(),
+                    !showTip,
+                    defaultContent = {
                         StyleCardListItem(
                             headlineContent = { Text("使用提示") },
                             supportingContent = {
-                                Text( "打开CAS统一认证登录页面，选择右上角的扫码登录；通过扫码登录，关闭网页后登录就会失效")
+                                Text("打开CAS统一认证登录页面，选择右上角的扫码登录；通过扫码登录的平台，关闭后登录就会失效")
                             },
-                            color = color.copy(.75f)
+                            color = color.copy(.8f),
                         )
-                    }
-                    AnimatedVisibility(
-                        visible = !showTip,
-                        exit = AppAnimationManager.toBottomAnimation.exit,
-                        enter = AppAnimationManager.toBottomAnimation.enter
-                    ) {
+                    },
+                    secondContent = {
                         val isCas = resultText.contains("cas/app/scanQrCodeLogin")
                         MyCustomCard(
-                            containerColor = color.copy(.75f),
-                            modifier = Modifier.clickable {
-                                if(!isCas) {
-                                    ClipBoardUtils.copy(resultText)
-                                } else {
-                                    // 跳转登录
-                                    if (auth == null) {
-                                        showToast("未登录或初始化指尖工大")
-                                        return@clickable
-                                    }
-                                    scope.launch {
-                                        vm.wxLoginCasResponse.clear()
-                                        vm.wxLoginCas(auth!!,resultText)
-                                        val loginResult = (vm.wxLoginCasResponse.state.value as? UiState.Success)?.data
-                                        if(loginResult == null) {
-                                            showToast("登陆失败")
-                                            resultText = ""
-                                        } else if(loginResult.second == true) {
-                                            // 解析uuid
-                                            val uuid = resultText.toUri().getQueryParameter("uuid")
-                                            if(uuid == null) {
-                                                showToast("解析UUID失败")
+                            containerColor = if(!isCas) MaterialTheme.colorScheme.primaryContainer.copy(.8f) else MaterialTheme.colorScheme.errorContainer.copy(.8f),
+                            modifier = Modifier
+                                .clickable {
+                                    if (!isCas) {
+                                        ClipBoardUtils.copy(resultText)
+                                    } else {
+                                        // 跳转登录
+                                        if (auth == null) {
+                                            showToast("未登录或初始化指尖工大")
+                                            return@clickable
+                                        }
+                                        scope.launch {
+                                            vm.wxLoginCasResponse.clear()
+                                            vm.wxLoginCas(auth!!, resultText)
+                                            val loginResult =
+                                                (vm.wxLoginCasResponse.state.value as? UiState.Success)?.data
+                                            if (loginResult == null) {
+                                                showToast("登陆失败")
                                                 resultText = ""
-                                            } else {
-                                                vm.wxConfirmLogin(auth!!,uuid)
-                                                val confirmResult = (vm.wxConfirmLoginResponse.state.value as? UiState.Success)?.data
-                                                if(confirmResult == null) {
-                                                    showToast("确认登陆失败")
+                                            } else if (loginResult.second == true) {
+                                                // 解析uuid
+                                                val uuid =
+                                                    resultText.toUri().getQueryParameter("uuid")
+                                                if (uuid == null) {
+                                                    showToast("解析UUID失败")
                                                     resultText = ""
                                                 } else {
-                                                    showToast(confirmResult)
-                                                    resultText = ""
+                                                    vm.wxConfirmLogin(auth!!, uuid)
+                                                    val confirmResult =
+                                                        (vm.wxConfirmLoginResponse.state.value as? UiState.Success)?.data
+                                                    if (confirmResult == null) {
+                                                        showToast("登陆中途失败")
+                                                        resultText = ""
+                                                    } else {
+                                                        showToast(confirmResult)
+                                                        navController.popBackStack()
+                                                    }
                                                 }
+                                            } else {
+                                                showToast(loginResult.first)
+                                                resultText = ""
                                             }
-                                        } else  {
-                                            showToast(loginResult.first)
-                                            resultText = ""
                                         }
                                     }
                                 }
-                            }
                         ) {
                             Column {
                                 TransplantListItem(
-                                    headlineContent = { Text("识别结果")},
-                                    supportingContent = { Text(if(!isCas) resultText else "点击进行CAS统一认证登录") },
-                                    trailingContent = if(isCas) {
+                                    headlineContent = { Text("识别结果") },
+                                    supportingContent = { Text(if (!isCas) resultText else "点击进行CAS统一认证登录") },
+                                    leadingContent = {
+                                        Icon(painterResource(
+                                            if(isCas) {
+                                                R.drawable.login
+                                            } else if(isValidWebUrl(resultText)) {
+                                                R.drawable.net
+                                            } else {
+                                                R.drawable.qr_code_2
+                                            }
+                                        ),null)
+                                    },
+                                    trailingContent = if (isCas) {
                                         {
-                                            FilledTonalIconButton(onClick = {
-                                                resultText = ""
-                                            }) {
-                                                Icon(painterResource(R.drawable.close),null)
+                                            FilledTonalIconButton(
+                                                onClick = { resultText = "" },
+                                                colors = IconButtonDefaults. filledTonalIconButtonColors(
+                                                    containerColor = MaterialTheme.colorScheme.errorContainer
+                                                )
+                                            ) {
+                                                Icon(painterResource(R.drawable.close), null)
                                             }
                                         }
                                     } else null
                                 )
-                                if(!isCas) {
-                                    HorizontalDivider()
+                                if (!isCas) {
+                                    PaddingHorizontalDivider()
                                     Row(modifier = Modifier.align(Alignment.End)) {
                                         Text(
                                             text = "复制",
                                             color = MaterialTheme.colorScheme.primary,
                                             fontSize = 14.sp,
-                                            modifier = Modifier.align(Alignment.Bottom).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
-                                                ClipBoardUtils.copy(resultText)
-                                            }
+                                            modifier = Modifier
+                                                .align(Alignment.Bottom)
+                                                .padding(
+                                                    horizontal = APP_HORIZONTAL_DP,
+                                                    vertical = APP_HORIZONTAL_DP - 5.dp
+                                                )
+                                                .clickable {
+                                                    ClipBoardUtils.copy(resultText)
+                                                }
                                         )
-                                        if(isValidWebUrl(resultText)) {
+                                        if (isValidWebUrl(resultText)) {
                                             Text(
                                                 text = "打开链接",
                                                 color = MaterialTheme.colorScheme.primary,
                                                 fontSize = 14.sp,
-                                                modifier = Modifier.align(Alignment.Bottom).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
-                                                    Starter.startWebView(resultText)
-                                                }
+                                                modifier = Modifier
+                                                    .align(Alignment.Bottom)
+                                                    .padding(
+                                                        horizontal = APP_HORIZONTAL_DP,
+                                                        vertical = APP_HORIZONTAL_DP - 5.dp
+                                                    )
+                                                    .clickable {
+                                                        Starter.startWebView(resultText)
+                                                    }
                                             )
                                         }
                                         Text(
                                             text = "隐藏",
                                             color = MaterialTheme.colorScheme.primary,
                                             fontSize = 14.sp,
-                                            modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
-                                                resultText = ""
-                                            }
+                                            modifier = Modifier
+                                                .align(Alignment.Top)
+                                                .padding(
+                                                    horizontal = APP_HORIZONTAL_DP,
+                                                    vertical = APP_HORIZONTAL_DP - 5.dp
+                                                )
+                                                .clickable {
+                                                    resultText = ""
+                                                }
                                         )
                                     }
                                 }
                             }
                         }
                     }
-                }
+                )
             },
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.background(color.copy(.75f)),
+                    modifier = Modifier.background(color.copy(.8f)),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Scan.label) },
                     navigationIcon = {
@@ -216,7 +265,9 @@ fun ScanScreen(
                     actions = {
                         Row {
                             IconButton(
-                                onClick = { showToast("正在开发") }
+                                onClick = {
+                                    pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                                }
                             ) {
                                 Icon(painterResource(R.drawable.image),null, tint = MaterialTheme.colorScheme.primary)
                             }

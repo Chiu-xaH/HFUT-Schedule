@@ -54,14 +54,17 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -395,7 +398,6 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                             )
                         }
                     }
-
                     Row {
                         var department = lessons.openDepartment.nameZh
                         if(department.contains("（")) department = department.substringBefore("（")
@@ -443,11 +445,11 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                                 .weight(.5f),
                         )
                         TransplantListItem(
-                            overlineContent = classes?.let{ { Text(it + "班") } },
-                            headlineContent = { Text("教学班对比") },
+                            overlineContent = classes?.let{ { Text("当前为" + it + "班") } },
+                            headlineContent = { Text("全部教学班") },
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.compare_arrows),
+                                    painterResource(R.drawable.group_search),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -460,11 +462,11 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                     }
                     Row {
                         TransplantListItem(
-                            headlineContent = { Text(text = "挂科率查询") },
+                            headlineContent = { Text(text = AppNavRoute.FailRate.label) },
 
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.monitoring),
+                                    painterResource(AppNavRoute.FailRate.icon),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -481,7 +483,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                             },
                             leadingContent = {
                                 Icon(
-                                    Icons.Filled.ArrowForward,
+                                    painterResource(R.drawable.groups),
                                     contentDescription = "Localized description",
                                 )
                             },

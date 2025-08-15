@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-14") },
+                overlineContent = { Text(text = "2025-08-15") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,15 +57,19 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
-            UpdateItems("修复 无法登录教务系统的Bug")
-//            UpdateItems("新增 扫码可选择相册图片")
+            UpdateItems("新增 扫码可选择相册图片")
+            UpdateItems("新增 办事大厅","位于 查询中心")
+            UpdateItems("重构 校车","为其设计了原生界面，不再使用网页")
+            UpdateItems("优化 扫码登录成功后自动关闭")
+            UpdateItems("优化 部分界面设计和布局排序")
+            UpdateItems("优化 扫码界面呼出启动台是背景模糊缺失")
+//            UpdateItems("新增 慧新易校的课表数据源")
             // 启动台小图标最左边间距
 //            UpdateItems("新增 WebVpn全局代理，通过VPN接管全局网络，转换为WEBVPN链接，开启后，请先访问任意链接登录")
 //            UpdateItems("新增 转场时的形变动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 为部分场景适配新的转场动画")
-
             /*
                         转专业二级界面
             就业二级界面 通知公告二级界面

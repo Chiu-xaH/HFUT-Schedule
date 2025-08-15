@@ -66,8 +66,8 @@ fun Mail(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     TransplantListItem(
-        headlineContent = { Text(text = "邮箱") },
-        overlineContent = { ScrollText(text = MyApplication.EMAIL) },
+        headlineContent = { Text(text = "校园邮箱") },
+//        overlineContent = { ScrollText(text = MyApplication.EMAIL) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
             showBottomSheet = true
@@ -94,31 +94,23 @@ fun Mail(
 @Composable
 fun MailUI(vm: NetWorkViewModel) {
     var used by remember { mutableStateOf(false) }
-    val webVpnCookie by produceState<String?>(initialValue = null) {
-        value = getWebVpnCookie(vm)
-    }
+
     val uiState by vm.mailData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-//        if(vm.webVpn) {
-//            vm.mailData.clear()
-//            vm.getMailURL(webVpnCookie!!)
-//        } else {
-            val token = prefs.getString("bearer","")
-            token?.let {
-                vm.mailData.clear()
-                vm.getMailURL(it)
-            }
-//        }
+        val token = prefs.getString("bearer","")
+        token?.let {
+            vm.mailData.clear()
+            vm.getMailURL(it)
+        }
     }
 
     LaunchedEffect(used) {
         refreshNetwork()
     }
-
-    CommonNetworkScreen(uiState, loadingText = "正在登录邮箱", isFullScreen = false, onReload = refreshNetwork) {
-        val response = (uiState as UiState.Success).data
-        Column {
-            DividerTextExpandedWith (getSchoolEmail() ?: "邮箱") {
+    DividerTextExpandedWith (getSchoolEmail() ?: MyApplication.EMAIL) {
+        CommonNetworkScreen(uiState, loadingText = "正在登录邮箱", isFullScreen = false, onReload = refreshNetwork) {
+            val response = (uiState as UiState.Success).data
+            Column {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                     LargeButton(
                         onClick = {
@@ -155,27 +147,26 @@ fun MailUI(vm: NetWorkViewModel) {
                     )
                 }
             }
-
-            DividerTextExpandedWith("使用说明") {
-                StyleCardListItem(
-                    headlineContent = {
-                        Text("一些邮件，可能在应用内无法跳转链接，需要选择右侧按钮以用浏览器打开")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.net),null)
-                    }
-                )
-                if(isSupabaseRegistering.value) {
-                    StyleCardListItem(
-                        headlineContent = {
-                            Text("共建平台注册激活请选择在浏览器使用，并检查最新收件箱 来自Supabase Auth的邮件 点击链接并Confirm")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.database),null)
-                        }
-                    )
-                }
+        }
+    }
+    DividerTextExpandedWith("使用说明") {
+        StyleCardListItem(
+            headlineContent = {
+                Text("一些邮件，可能在应用内无法跳转链接，需要选择右侧按钮以用浏览器打开")
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.net),null)
             }
+        )
+        if(isSupabaseRegistering.value) {
+            StyleCardListItem(
+                headlineContent = {
+                    Text("共建平台注册激活请选择在浏览器使用，并检查最新收件箱 来自Supabase Auth的邮件 点击链接并Confirm")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.database),null)
+                }
+            )
         }
     }
 }

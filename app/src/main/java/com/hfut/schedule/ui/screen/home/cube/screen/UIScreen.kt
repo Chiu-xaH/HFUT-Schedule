@@ -53,6 +53,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -190,6 +191,17 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                             else -> R.drawable.routine
                         }
                     ), contentDescription = "Localized description",) },
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "壁纸取色") },
+                    leadingContent = { Icon(painterResource(R.drawable.palette), contentDescription = "Localized description",) },
+                    trailingContent = {
+                        Switch(checked = true, onCheckedChange = {  }, enabled = false)
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+                    }
                 )
             }
 

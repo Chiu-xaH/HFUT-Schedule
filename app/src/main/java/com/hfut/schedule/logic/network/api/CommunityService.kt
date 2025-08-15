@@ -104,4 +104,11 @@ interface CommunityService {
     // 学工系统列表
     @GET("api//mobile/community/application/listApplication")
     fun getStuApps(@Header("X-Access-Token") token : String) : Call<ResponseBody>
+    // 校车
+    @GET("api/business/bus/list")
+    fun getBus(
+        @Header("X-Access-Token") token : String,
+//        @Query("xn") year : String,
+//        @Query("xq") term : String
+    ) : Call<ResponseBody>
 }

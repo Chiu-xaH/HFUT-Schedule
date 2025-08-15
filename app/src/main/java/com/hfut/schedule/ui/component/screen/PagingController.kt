@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.icons.Icons
@@ -44,7 +45,7 @@ fun BoxScope.PagingController(
     } }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
         exit = AppAnimationManager.centerFadeAnimation.exit,
         enter = AppAnimationManager.centerFadeAnimation.enter
     ){
@@ -61,7 +62,7 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
         exit = AppAnimationManager.centerFadeAnimation.exit,
         enter = AppAnimationManager.centerFadeAnimation.enter
     ){
@@ -74,7 +75,7 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
         exit = AppAnimationManager.centerFadeAnimation.exit,
         enter = AppAnimationManager.centerFadeAnimation.enter
     ){
@@ -88,7 +89,7 @@ fun BoxScope.PagingController(
         val scope = rememberCoroutineScope()
         AnimatedVisibility(
             visible = !shouldShowButton,
-            modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+            modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
             exit = AppAnimationManager.centerFadeAnimation.exit,
             enter = AppAnimationManager.centerFadeAnimation.enter
         ){

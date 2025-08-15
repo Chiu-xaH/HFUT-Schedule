@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,7 @@ import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.delay
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,7 +36,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
         Campus.HEFEI -> {
             TransplantListItem(
                 headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "登录") },
-                overlineContent = { if(!card) ScrollText(text = "登录") else Text(text = "校园网")},
+                overlineContent = { if(!card) ScrollText(text = "-- MB") else Text(text = "校园网")},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",
@@ -43,17 +45,25 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             )
         }
         Campus.XUANCHENG -> {
+            var showPercent by remember { mutableStateOf(true) }
+            LaunchedEffect(Unit) {
+                showPercent = true
+                delay(3000L)
+                showPercent = false
+            }
             val memoryWeb = prefs.getString("memoryWeb","0")
 
             val flow = vmUI.webValue.value?.flow?: memoryWeb
             val gB = (flow?.toDouble() ?: 0.0) / 1024
             val str = formatDecimal(gB,2)
 
-            val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,1)
+            val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,2)
 
             TransplantListItem(
-                headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "${str}GB") },
-                overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb}MB") else Text(text = "校园网 ${precent}%")},
+                headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text =
+                    if(showPercent) "${precent}%" else "${str} GB"
+                ) },
+                overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else Text(text = "校园网")},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",

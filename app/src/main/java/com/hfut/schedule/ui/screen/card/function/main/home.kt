@@ -533,15 +533,15 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         TransplantListItem(
                             headlineContent = { Text(text = "网电缴费") },
                             supportingContent = { Text(text = "查询网费、宿舍电费、洗浴使用情况并缴费")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Fee = true }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "慧新易校") },
                             supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.handshake), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校", icon = R.drawable.handshake) }
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
+                            modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校", icon = R.drawable.corporate_fare) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
