@@ -64,7 +64,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
         )
     }
     object Home : AppNavRoute("HOME","主页面",R.drawable.home)
-    object UseAgreement : AppNavRoute("USE_AGREEMENT","用户协议",R.drawable.home)
+    object UseAgreement : AppNavRoute("USE_AGREEMENT","用户协议",R.drawable.partner_exchange)
     object Admission : AppNavRoute("ADMISSION","本科招生",R.drawable.publics)
     object AdmissionRegionDetail : AppNavRoute("ADMISSION_REGION_DETAIL","本科招生详情",R.drawable.publics) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {

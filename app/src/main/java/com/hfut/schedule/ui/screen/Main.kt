@@ -50,6 +50,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
+import com.hfut.schedule.ui.component.screen.PartyPlace
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.control.ControlCenterScreen
@@ -189,8 +190,9 @@ fun MainHost(
     ) }
     val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
-    val isWebView = navController.isCurrentRouteWithoutArgs(AppNavRoute.WebView.route)
+    val isWebView = navController.isCurrentRouteWithoutArgs(AppNavRoute.WebView.route) || navController.isCurrentRouteWithoutArgs(AppNavRoute.UseAgreement.route)
     val isScan = navController.isCurrentRouteWithoutArgs(AppNavRoute.Scan.route)
+
     val enableGesture = enableControlCenter && !isWebView
     var containerColor by remember { mutableStateOf<Color?>(null) }
     LaunchedEffect(configuration,enableControlCenter) {
@@ -312,7 +314,12 @@ fun MainHost(
                                     this@SharedTransitionLayout,
                                     this@composable,
                                 )
-                            } else LoginScreen(loginVm)
+                            } else LoginScreen(
+                                loginVm,
+                                navController,
+                                this@SharedTransitionLayout,
+                                this@composable,
+                            )
                         }
                         // 如果庆祝为true则庆祝
                         getCelebration().let {
@@ -326,8 +333,8 @@ fun MainHost(
                     // 用户协议
                     composable(AppNavRoute.UseAgreement.route) {
                         Box() {
-                            Party(timeSecond = 3L)
-                            UseAgreementScreen(navController)
+                            Party(timeSecond = 2L)
+                            UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
                         }
                     }
                     // 成绩

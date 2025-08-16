@@ -8,14 +8,17 @@ import android.os.Looper
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -54,6 +57,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -73,6 +77,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.Encrypt
@@ -82,14 +87,21 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.URLImageWithOCR
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -98,7 +110,11 @@ import com.hfut.schedule.ui.style.bottomSheetRound
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
 import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
+import com.xah.transition.component.containerShare
+import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
@@ -106,6 +122,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.nio.file.WatchEvent
 
 //登录方法，auto代表前台调用
 private fun loginClick(
@@ -237,66 +254,107 @@ fun isAnonymity() : Boolean {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun LoginScreen(vm : LoginViewModel) {
+fun LoginScreen(
+    vm : LoginViewModel,
+    navController: NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     val context = LocalActivity.current
     var webVpn by remember { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
+    val Savedusername = prefs.getString("Username", "")
+    var username by remember { mutableStateOf(Savedusername ?: "") }
+
     Scaffold(
         topBar = {
             LargeTopAppBar(
                 colors = topBarTransplantColor(),
                 title = {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "教务登录  ",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.Center),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                    Text(
+                        text = "教务登录",
+                    )
                         },
                 actions = {
                     Row {
+                        val route = remember { AppNavRoute.Scan.route }
+                        IconButton(onClick = {
+                            navController.navigateForTransition(AppNavRoute.Scan, route, transplantBackground = true)
+                        }) {
+                            with(sharedTransitionScope) {
+                                Icon(
+                                    painterResource(id = R.drawable.qr_code_scanner),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = iconElementShare(animatedContentScope=animatedContentScope, route = route)
+                                )
+                            }
+                        }
                         IconButton(onClick = {
                             Starter.startFix()
                         }) {
                             Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
-                        IconButton(onClick = {
-                            context?.finish()
-                        }) {
-                            Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                        }
                     }
 
                 },
                 navigationIcon  = {
-                    AnimatedWelcomeScreen()
+                    IconButton(onClick = {
+                        context?.finish()
+                    }) {
+                        Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                    }
                 },
                 modifier = Modifier.topBarBlur(hazeState, )
             )
         },
         bottomBar = {
-            Box(modifier = Modifier.bottomBarBlur(hazeState, )) {
-                StyleCardListItem(
-                    headlineContent = { Text("外地访问") },
-                    overlineContent = { Text("WebVpn")},
-                    leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
-                    trailingContent = {
-                        Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
-                    },
-                    modifier = Modifier.clickable { webVpn = !webVpn },
-                    color = mixedCardNormalColor(),
+            Column (modifier = Modifier.bottomBarBlur(hazeState)) {
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                MyCustomCard(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(vertical = APP_HORIZONTAL_DP),
+                    containerColor = cardNormalColor(),
                     shape = MaterialTheme.shapes.large,
-                    cardModifier = Modifier.navigationBarsPadding().padding(vertical = APP_HORIZONTAL_DP)
-                )
+                ) {
+                    if(username.startsWith(DateTimeManager.Date_yyyy)) {
+                        TransplantListItem(
+                            supportingContent = { Text("新生需先在网页登录过，确认自己的账号已经可以使用，才能登录聚在工大，如您已登陆过可忽略") },
+                            headlineContent = { Text("点击跳转网页") },
+                            leadingContent = { Icon(painterResource(R.drawable.warning), null) },
+                            modifier = Modifier.clickable {
+                                Starter.startWebUrl(MyApplication.CAS_LOGIN_URL)
+                            },
+                        )
+                        PaddingHorizontalDivider()
+                    }
+                    TransplantListItem(
+                        headlineContent = { Text("重设密码") },
+                        leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
+                        modifier = Modifier.clickable { Starter.startWebView(MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
+                    )
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text("外地访问") },
+                        overlineContent = { Text("WebVpn")},
+                        leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
+                        trailingContent = {
+                            Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
+                        },
+                        modifier = Modifier.clickable { webVpn = !webVpn },
+                    )
+                }
             }
         }
     ) {innerPadding ->
-        Box (modifier = Modifier.fillMaxSize().hazeSource(hazeState)) {
-            TwoTextField(vm,webVpn,innerPadding)
+        Box (modifier = Modifier
+            .fillMaxSize()
+            .hazeSource(hazeState)) {
+            TwoTextField(vm,webVpn,innerPadding,username,sharedTransitionScope,animatedContentScope) {
+                username = it
+            }
         }
     }
 }
@@ -305,9 +363,9 @@ fun LoginScreen(vm : LoginViewModel) {
 @Composable
 fun AnimatedWelcomeScreen() {
     val welcomeTexts = listOf(
-        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "٩(ˊωˋ*)و✧","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)"
+        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "٩(ˊωˋ*)و✧","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)ﾉ"
     )
-    var currentIndex by remember { mutableStateOf(0) }
+    var currentIndex by remember { mutableIntStateOf(0) }
     LaunchedEffect(Unit) {
         while (true) {
             delay(2000) // 每3秒切换
@@ -318,12 +376,12 @@ fun AnimatedWelcomeScreen() {
     // 界面布局
 
     Column(modifier = Modifier
-        .padding(horizontal = 23.dp)) {
+        .padding(horizontal = APP_HORIZONTAL_DP)) {
         Spacer(modifier = Modifier.height(20.dp))
         AnimatedContent(
             targetState = welcomeTexts[currentIndex],
             transitionSpec = {
-                fadeIn(animationSpec = tween(500)) with fadeOut(animationSpec = tween(500))
+                fadeIn(animationSpec = tween(AppAnimationManager.ANIMATION_SPEED)) togetherWith(fadeOut(animationSpec = tween(AppAnimationManager.ANIMATION_SPEED)))
             }, label = ""
         ) { targetText ->
             Text(
@@ -338,20 +396,20 @@ fun AnimatedWelcomeScreen() {
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun TwoTextField(vm : LoginViewModel,webVpn: Boolean,innerPadding : PaddingValues) {
-
+fun TwoTextField(
+    vm : LoginViewModel,
+    webVpn: Boolean,
+    innerPadding : PaddingValues,
+    username : String,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+    onUsername : (String) -> Unit
+) {
     var hidden by rememberSaveable { mutableStateOf(true) }
-
-    val prefs = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
-    val Savedusername = prefs.getString("Username", "")
-    val Savedpassword = prefs.getString("Password","")
-
-    var username by remember { mutableStateOf(Savedusername ?: "") }
-    var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
-    var inputCode by remember { mutableStateOf( "") }
-    val switch_open = SharedPrefs.prefs.getBoolean("SWITCH_ML",false)
+    var inputAES by rememberSaveable { mutableStateOf(prefs.getString("Password","") ?: "") }
+    var inputCode by rememberSaveable { mutableStateOf( "") }
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -376,11 +434,7 @@ fun TwoTextField(vm : LoginViewModel,webVpn: Boolean,innerPadding : PaddingValue
         }
     }
     val jSession by vm.jSessionId.state.collectAsState()
-    // 跟随JSON
-
-//    val useCaptcha = if()
-
-    var onRefresh by remember { androidx.compose.runtime.mutableIntStateOf(1) }
+    var onRefresh by remember { mutableIntStateOf(1) }
     var loading by remember { mutableStateOf(false) }
     var status by remember { mutableStateOf<String?>(null) }
 
@@ -389,156 +443,187 @@ fun TwoTextField(vm : LoginViewModel,webVpn: Boolean,innerPadding : PaddingValue
     }
     val scope = rememberCoroutineScope()
 
-
-    Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
-        val interactionSource = remember { MutableInteractionSource() }
-        val interactionSource2 = remember { MutableInteractionSource() } // 创建一个
-        val isPressed by interactionSource.collectIsPressedAsState()
-        val isPressed2 by interactionSource2.collectIsPressedAsState()
-
-        val scale = animateFloatAsState(
-            targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            label = "" // 使用弹簧动画
-        )
-
-        val scale2 = animateFloatAsState(
-            targetValue = if (isPressed2) 0.9f else 1f, // 按下时为0.9，松开时为1
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            label = "" // 使用弹簧动画
-        )
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .verticalScroll(rememberScrollState())) {
 
         InnerPaddingHeight(innerPadding,true)
-        Spacer(modifier = Modifier.height(10.dp))
 
-        RowHorizontal {
-            TextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 25.dp),
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("学号" ) },
-                singleLine = true,
-                // placeholder = { Text("请输入正确格式")},
-                shape = MaterialTheme.shapes.medium,
-                colors = textFiledTransplant(),
-                leadingIcon = { Icon( painterResource(R.drawable.person), contentDescription = "Localized description") },
+        MyCustomCard(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(.75f)
+        ) {
+            Column (modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
 
-                trailingIcon = {
-                    IconButton(onClick = {
-                        username = ""
-                        inputAES = ""
-                    }) { Icon(painter = painterResource(R.drawable.close), contentDescription = "description") }
-                }
-            )
-        }
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP),
+                    value = username,
+                    onValueChange = onUsername,
+                    label = { Text("学号") },
+                    singleLine = true,
+                    // placeholder = { Text("请输入正确格式")},
+                    shape = MaterialTheme.shapes.medium,
+                    colors = textFiledTransplant(),
+                    leadingIcon = {
+                        Icon(
+                            painterResource(R.drawable.person),
+                            contentDescription = "Localized description"
+                        )
+                    },
 
-        Spacer(modifier = Modifier.height(20.dp))
-        RowHorizontal {
-            TextField(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 25.dp),
-                value = inputAES,
-                onValueChange = { inputAES = it },
-                label = { Text("信息门户密码") },
-                singleLine = true,
-                colors = textFiledTransplant(),
-                //  supportingText = { Text("密码为信息门户")},
-                visualTransformation = if (hidden) PasswordVisualTransformation()
-                else VisualTransformation.None,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                leadingIcon = { Icon(painterResource(R.drawable.key), contentDescription = "Localized description") },
-                trailingIcon = {
-                    IconButton(onClick = { hidden = !hidden }) {
-                        val icon =
-                            if (hidden) painterResource(R.drawable.visibility_off)
-                            else painterResource(R.drawable.visibility)
-                        val description =
-                            if (hidden) "展示密码"
-                            else "隐藏密码"
-                        Icon(painter = icon, contentDescription = description)
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            onUsername("")
+                            inputAES = ""
+                        }) {
+                            Icon(
+                                painter = painterResource(R.drawable.close),
+                                contentDescription = "description"
+                            )
+                        }
                     }
-                },
-                shape = MaterialTheme.shapes.medium
-            )
-        }
-        val captchaUI = @Composable {
-            Column {
-                Spacer(modifier = Modifier.height(20.dp))
-                RowHorizontal {
-                    TextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 25.dp),
-                        value = inputCode,
-                        onValueChange = { inputCode = it },
-                        label = { Text("图片验证码" ) },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
-                        leadingIcon = { Icon( painterResource(R.drawable.password), contentDescription = "Localized description") },
-                        trailingIcon = {
-                            Box(modifier = Modifier.padding(5.dp)) {
-                                ImageCodeUI(webVpn,vm, onRefresh =onRefresh ) {
-                                    inputCode = it
-                                }
+                )
+
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP),
+                    value = inputAES,
+                    onValueChange = { inputAES = it },
+                    label = { Text("密码(信息门户)") },
+                    singleLine = true,
+                    colors = textFiledTransplant(),
+                    visualTransformation = if (hidden) PasswordVisualTransformation()
+                    else VisualTransformation.None,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    leadingIcon = {
+                        Icon(
+                            painterResource(R.drawable.key),
+                            contentDescription = "Localized description"
+                        )
+                    },
+                    trailingIcon = {
+                        IconButton(onClick = { hidden = !hidden }) {
+                            val icon =
+                                if (hidden) painterResource(R.drawable.visibility_off)
+                                else painterResource(R.drawable.visibility)
+                            val description =
+                                if (hidden) "展示密码"
+                                else "隐藏密码"
+                            Icon(painter = icon, contentDescription = description)
+                        }
+                    },
+                    shape = MaterialTheme.shapes.medium
+                )
+                CommonNetworkScreen(
+                    jSession,
+                    isFullScreen = false,
+                    onReload = { },
+                    loadingText = "正在检查是否需要图片验证码"
+                ) {
+                    val useCaptcha = (jSession as UiState.Success).data.needCaptcha
+                    if (useCaptcha) {
+                        Column {
+                            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+                            RowHorizontal {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = APP_HORIZONTAL_DP),
+                                    value = inputCode,
+                                    onValueChange = { inputCode = it },
+                                    label = { Text("验证码(不区分大小写)") },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                    leadingIcon = {
+                                        Icon(
+                                            painterResource(R.drawable.password),
+                                            contentDescription = "Localized description"
+                                        )
+                                    },
+                                    trailingIcon = {
+                                        Box(modifier = Modifier.padding(5.dp)) {
+                                            ImageCodeUI(webVpn, vm, onRefresh = onRefresh) {
+                                                inputCode = it
+                                            }
+                                        }
+                                    },
+                                    supportingText = if (!prefs.getBoolean("SWITCH_ML", false)) {
+                                        {
+                                            Text(
+                                                "点击下载模型文件以启用自动填充",
+                                                modifier = Modifier.clickable {
+                                                    showBottomSheet = true
+                                                })
+                                        }
+                                    } else null
+                                )
                             }
-                        },
-                        supportingText = if(!switch_open) {
-                            {
-                                Text("点击下载模型文件以启用自动填充", modifier = Modifier.clickable {
-                                    showBottomSheet = true
-                                })
-                            }
-                        } else null
-                    )
+                        }
+                    }
                 }
             }
         }
-        CommonNetworkScreen(jSession,isFullScreen = false, onReload = { }, loadingText = "正在检查是否需要图片验证码") {
-            val useCaptcha = (jSession as UiState.Success).data.needCaptcha
-            if(useCaptcha) {
-                captchaUI()
-            }
-        }
 
+        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP*7/4))
 
-        Spacer(modifier = Modifier.height(25.dp))
 
         if(loading) {
             LoadingUI()
         } else {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP),
                 horizontalArrangement = Arrangement.Center
             ) {
-                Button(
-                    onClick = {
-                        val cookie = SharedPrefs.prefs.getString("LOGIN_FLAVORING", "")
-                        if (cookie != null) {
-                            loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth().scale(scale.value).let { if(isAnonymity()) it.weight(.5f) else it },
-                    interactionSource = interactionSource,
-                    shape = MaterialTheme.shapes.medium,
-                ) { Text( "登录") }
-
                 if(isAnonymity()) {
-                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                    FilledTonalButton(
+                    LargeButton(
                         onClick = {
-                            scope.launch {
-                                DataStoreManager.saveFastStart(true)
-                                Starter.goToMain()
+                            val cookie = prefs.getString("LOGIN_FLAVORING", "")
+                            if (cookie != null) {
+                                loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
                             }
                         },
-                        shape = MaterialTheme.shapes.medium,
-                        modifier = Modifier.fillMaxWidth().scale(scale2.value).weight(.5f),
-                        interactionSource = interactionSource2,
-                        ) { Text("游客") }
+                        modifier = Modifier.fillMaxWidth().weight(.5f),
+                        text = "登录",
+                        icon = R.drawable.login
+                    )
+                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
+                    with(sharedTransitionScope) {
+                        LargeButton(
+                            onClick = {
+                                scope.launch {
+                                    DataStoreManager.saveFastStart(true)
+                                    Starter.goToMain()
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f),
+                            text = "游客",
+                            icon = R.drawable.partner_exchange,
+                            iconModifier = iconElementShare(animatedContentScope=animatedContentScope, route = AppNavRoute.UseAgreement.route),
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
+                    }
+                } else {
+                    Button(
+                        onClick = {
+                            val cookie = prefs.getString("LOGIN_FLAVORING", "")
+                            if (cookie != null) {
+                                loginClick(vm,username,inputAES,inputCode,webVpn, onRefresh = { onRefresh++ }, onLoad = { loading = it }, onResult = { status = it})
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.medium
+                    ) {
+                        Text("登录")
+                    }
                 }
             }
         }

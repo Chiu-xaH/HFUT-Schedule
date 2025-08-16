@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.shower.login
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
@@ -16,19 +17,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,16 +59,24 @@ import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
+import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -74,35 +89,38 @@ import java.util.Locale
 @Composable
 fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
     val context = LocalActivity.current
-
+    var show by remember { mutableStateOf(false) }
+    val Savedusername = prefs.getString("PHONENUM", "")
+    var username by remember { mutableStateOf(Savedusername ?: "") }
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     Scaffold(
         topBar = {
             LargeTopAppBar(
-                colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
-        ),
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
                 title = {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "登录  ",
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                    Text(
+                        text = "登录", modifier = Modifier.padding(start = 10.dp)
+                    )
                 },
                 actions = {
                     Row {
+                        TextButton (onClick = {
+                            show = !show
+                        }) {
+                            Text("备用登录方式")
+                        }
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 },
                 navigationIcon  = {
                     Column(modifier = Modifier
-                        .padding(horizontal = 23.dp)) {
+                        .padding(horizontal = APP_HORIZONTAL_DP).padding(start = 3.5.dp)) {
                         Spacer(modifier = Modifier.height(20.dp))
                         Text(
                             text = "呱呱物联",
@@ -112,53 +130,72 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
                     }
                 }
             )
+        },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = show,
+                enter = AppAnimationManager.toBottomAnimation.enter,
+                exit = AppAnimationManager.toBottomAnimation.exit,
+                modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding().bottomBarBlur(hazeState)
+            ) {
+                Row(
+//                    modifier = Modifier.padding(horizontal = 5.dp)
+                ) {
+                    EditLoginCode(true,{
+                        saveString("PHONENUM",username)
+                        CoroutineScope(Job()).launch {
+                            async { netVm.getGuaGuaUserInfo() }.await()
+                            launch {
+                                Handler(Looper.getMainLooper()).post {
+                                    netVm.guaGuaUserInfo.observeForever { result ->
+                                        if (result?.contains("成功") == true) {
+                                            saveString("GuaGuaPersonInfo",result)
+                                            navHostController.navigateAndClear(ShowerScreen.HOME.name)
+                                        } else if(result?.contains("error") == true) {
+                                            showToast("登陆失败")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                }
+            }
         }
     ) {innerPadding ->
         Column(modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()) {
-            GuaGuaLoginUI(vm,netVm,navHostController)
+            GuaGuaLoginUI(vm,navHostController,username) {
+                username = it
+            }
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
+private fun GuaGuaLoginUI(vm : GuaGuaViewModel, navHostController: NavHostController,username : String,onUsername : (String) -> Unit) {
 
     var hidden by rememberSaveable { mutableStateOf(true) }
 
-    val Savedusername = prefs.getString("PHONENUM", "")
     val Savedpassword = prefs.getString("GuaGuaPsk","")
 
-    var username by remember { mutableStateOf(Savedusername ?: "") }
     var inputAES by remember { mutableStateOf(Savedpassword ?: "") }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
     val showTip by remember { mutableStateOf("请新用户先前往微信小程序-呱呱物联注册") }
     val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.fillMaxWidth()) {
-        val interactionSource = remember { MutableInteractionSource() }
-        val interactionSource2 = remember { MutableInteractionSource() } // 创建一个
-        val isPressed by interactionSource.collectIsPressedAsState()
-        val isPressed2 by interactionSource2.collectIsPressedAsState()
-
-        val scale = animateFloatAsState(
-            targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
-            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
-            label = "" // 使用弹簧动画
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
+    Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
             TextField(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 25.dp),
                 value = username,
-                onValueChange = { username = it },
+                onValueChange = onUsername,
                 label = { Text("手机号" ) },
                 singleLine = true,
                 // placeholder = { Text("请输入正确格式")},
@@ -168,7 +205,7 @@ private fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHos
 
                 trailingIcon = {
                     IconButton(onClick = {
-                        username = ""
+                        onUsername("")
                         inputAES = ""
                     }) { Icon(painter = painterResource(R.drawable.close), contentDescription = "description") }
                 }
@@ -207,42 +244,16 @@ private fun GuaGuaLoginUI(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHos
         }
 
 
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-        Row (modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center){
-
-            Button(
-                onClick = {
-                    scope.launch { loginGuaGuaClick(username,inputAES,vm,navHostController) }
-                }, modifier = Modifier.scale(scale.value),
-                interactionSource = interactionSource
-
-            ) { Text("登录") }
-        }
-        Spacer(modifier = Modifier.height(30.dp))
-        DividerTextExpandedWith(text = "备用登录方式") {
-            Row(
-                modifier = Modifier.padding(horizontal = 5.dp)
-            ) {
-                EditLoginCode(true,{
-                    saveString("PHONENUM",username)
-                    CoroutineScope(Job()).launch {
-                        async { netVm.getGuaGuaUserInfo() }.await()
-                        launch {
-                            Handler(Looper.getMainLooper()).post {
-                                netVm.guaGuaUserInfo.observeForever { result ->
-                                    if (result?.contains("成功") == true) {
-                                        saveString("GuaGuaPersonInfo",result)
-                                        navHostController.navigateAndClear(ShowerScreen.HOME.name)
-                                    } else if(result?.contains("error") == true) {
-                                        showToast("登陆失败")
-                                    }
-                                }
-                            }
-                        }
-                    }
-                })
-            }
+        Button(
+            onClick = {
+                scope.launch { loginGuaGuaClick(username,inputAES,vm,navHostController) }
+            },
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 25.dp),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text("登录")
         }
     }
 }

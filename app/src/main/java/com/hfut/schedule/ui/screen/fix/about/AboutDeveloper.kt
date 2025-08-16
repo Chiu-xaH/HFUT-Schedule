@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.fix.about
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,8 +40,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -51,7 +56,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.URLImage
- 
+import com.hfut.schedule.ui.screen.login.arguments
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -122,6 +128,7 @@ fun About(vm : NetWorkViewModel) {
         }
     }
     val userCount by vm.supabaseUserCountResp.state.collectAsState()
+    val activity = LocalActivity.current
     val todayVisitCount by vm.supabaseTodayVisitResp.state.collectAsState()
 
     Box() {
@@ -236,6 +243,30 @@ fun About(vm : NetWorkViewModel) {
                                 PaddingHorizontalDivider()
                         }
                     }
+                }
+
+                DividerTextExpandedWith("用户协议") {
+                    MyCustomCard (containerColor = MaterialTheme.colorScheme.surface) {
+                        for(index in arguments.indices) {
+                            val item = arguments[index]
+                            TransplantListItem(
+                                headlineContent = { Text(item) },
+                                leadingContent = { Text((index+1).toString()) }
+                            )
+                        }
+                    }
+                    LargeButton(
+                        onClick = {
+                            SharedPrefs.saveBoolean("canUse", default = false, save = false)
+                            showToast("已退出APP")
+                            activity?.finish()
+                        },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP).padding(top = 10.dp),
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.error,
+                        text = "撤销同意",
+                        icon = R.drawable.undo
+                    )
                 }
 
                 DividerTextExpandedWith("创作背景") {

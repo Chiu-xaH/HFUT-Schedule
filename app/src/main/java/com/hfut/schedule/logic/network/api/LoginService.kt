@@ -58,6 +58,12 @@ interface LoginService {
         @Query("service") service : String,
         @Header("Cookie") cookie : String
     ) : Call<ResponseBody>
+
+
+    @GET("cas/password/getContactInfo")
+    fun getUserInfo(
+        @Query("username") username : String
+    ) : Call<ResponseBody>
     // https://community.hfut.edu.cn/
     // https://stu.hfut.edu.cn/xsfw/sys/swmzhcptybbapp/*default/index.do
     // http://jxglstu.hfut.edu.cn/eams5-student/neusoft-sso/login

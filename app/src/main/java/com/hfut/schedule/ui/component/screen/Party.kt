@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.component.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -12,30 +11,65 @@ import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 import java.util.concurrent.TimeUnit
 
+enum class PartyPlace {
+    TOP_CENTER,CORNER,TOP_CORNER,CENTER,FULL
+}
 @Composable
 // 传0L则无限烟花
-fun BoxScope.Party(timeSecond : Long = 1L, show : Boolean = true,modifier: Modifier = Modifier.zIndex(1f)) {
+fun BoxScope.Party(
+    timeSecond : Long = 1L,
+    show : Boolean = timeSecond >= 1L,
+    count : Int = 50,
+    place : PartyPlace = PartyPlace.FULL,
+    modifier: Modifier = Modifier.zIndex(1f)
+) {
     if(show) {
         val partyTopStart = Party(
-            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(30),
+            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(count),
             position = Position.Relative(0.0,0.0)
         )
         val partyTopEnd = Party(
-            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(30),
+            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(count),
             position = Position.Relative(1.0,0.0)
         )
         val partyBottomStart = Party(
-            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(30),
+            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(count),
             position = Position.Relative(0.0,1.0)
         )
         val partyBottomEnd = Party(
-            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(30),
+            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(count),
             position = Position.Relative(1.0,1.0)
+        )
+        val partyCenter = Party(
+            emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(count),
+            position = Position.Relative(0.5,0.5)
         )
 
         KonfettiView(
             modifier = modifier.fillMaxSize(),
-            parties = listOf(partyTopStart,partyTopEnd,partyBottomStart,partyBottomEnd),
+            parties = when(place) {
+                PartyPlace.FULL -> listOf(
+                    partyTopStart,partyTopEnd,
+                    partyBottomStart,partyBottomEnd,
+                    partyCenter
+                )
+                PartyPlace.CENTER -> listOf(partyCenter)
+                PartyPlace.CORNER -> listOf(
+                    partyTopStart,partyTopEnd,
+                    partyBottomStart,partyBottomEnd,
+                )
+                PartyPlace.TOP_CENTER -> listOf(
+                    partyTopStart,
+                    Party(
+                        emitter = Emitter(duration = timeSecond, TimeUnit.SECONDS).perSecond(count),
+                        position = Position.Relative(0.5,0.0)
+                    ),
+                    partyTopEnd
+                )
+                PartyPlace.TOP_CORNER -> listOf(
+                    partyTopStart,partyTopEnd,
+                )
+            },
         )
     }
 }

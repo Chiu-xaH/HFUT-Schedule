@@ -102,20 +102,16 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
             LargeTopAppBar(
                 colors = topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.primary),
                 title = {
-                    Box(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "聚在工大信息平台  " ,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                        )
-                    }
+                    Text(
+                        text = "聚在工大信息平台" , modifier = Modifier.padding(start = 10.dp)
+                    )
                 },
                 actions = {
                     Row {
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(painterResource(id = R.drawable.logout), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 },
