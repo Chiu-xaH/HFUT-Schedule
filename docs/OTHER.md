@@ -1,11 +1,6 @@
 # HFUT-Schedule 聚在工大 P2
 ## [接口文档收集](/docs/API.md)
 
-## Material Design 3 设计参考 
-[组件](https://m3.material.io/)与[图标](https://fonts.google.com/icons)
-
-### [Material3 一些自己写的组件与动效](/src/material3)
-
 ## [工具](/tools)
 
 ## 开发纪实
@@ -14,11 +9,6 @@
 ## 功能兼容性
 并未所有功能在您的机型可用，但仅仅对UI层面造成差异，不影响任何实用性功能，详情查看位于APP-选项-维护关于-功能功能性支持
 
-## 统计
-2024-10-[supabase-kt-master](../../../../Github/Android/supabase-kt-master)07 ~ 2025-01-06、2025-02-14 ~ 2025-03-15
-
-![visitsChart](/src/img/visitsChart.png)
-![visitsChart2](/src/img/visitsChart_2.png)
 
 ## 适配
 

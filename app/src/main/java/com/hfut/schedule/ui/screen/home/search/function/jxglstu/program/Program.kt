@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.bottomBarBlur
@@ -121,8 +122,8 @@ fun ProgramScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val titles = remember { listOf("完成情况","教学计划") }
     val pageState = rememberPagerState(

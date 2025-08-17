@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -128,8 +130,8 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
                 }
             )
         }
-    ) {innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
             Spacer(modifier = Modifier.height(5.dp))
 
             Column(modifier = Modifier.padding(horizontal = 25.dp-APP_HORIZONTAL_DP)) {
@@ -146,7 +148,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
                 }
 
                 Scaffold {
-                    Column {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
 
                         Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
                             TextField(

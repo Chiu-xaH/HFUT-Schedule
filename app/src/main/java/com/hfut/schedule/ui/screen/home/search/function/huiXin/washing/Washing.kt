@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -118,8 +119,8 @@ fun HaiLeWashingScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
 
     val route = remember { AppNavRoute.HaiLeWashing.route }
     with(sharedTransitionScope) {

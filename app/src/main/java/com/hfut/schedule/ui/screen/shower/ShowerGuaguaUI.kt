@@ -44,6 +44,7 @@ import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.logic.enumeration.ShowerBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
@@ -65,9 +66,8 @@ import dev.chrisbanes.haze.rememberHazeState
 fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
-
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(ShowerBarItems.HOME) }
     // 保存上一页页码 用于决定左右动画

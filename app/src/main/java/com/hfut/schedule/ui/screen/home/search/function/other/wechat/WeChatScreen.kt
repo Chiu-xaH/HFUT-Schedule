@@ -45,6 +45,7 @@ import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
@@ -80,8 +81,8 @@ fun WeChatScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     var showedUrl by remember { mutableStateOf("") }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
 

@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.component.text.ScrollText
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.topBarBlur
@@ -111,8 +112,8 @@ fun NextCourseScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     var showAll by rememberSaveable { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     var next by remember { mutableStateOf(isNextOpen()) }
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
     with(sharedTransitionScope) {
@@ -142,7 +143,7 @@ fun NextCourseScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navController,sharedTransitionScope,animatedContentScope,innerPadding)
+                JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navController,sharedTransitionScope,animatedContentScope,innerPadding,null)
             }
         }
     }

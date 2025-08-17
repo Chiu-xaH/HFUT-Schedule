@@ -54,6 +54,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -95,12 +97,14 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJ
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -170,6 +174,7 @@ fun JxglstuCourseTableUI(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
+    backGroundHaze : HazeState?
 ) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
@@ -743,10 +748,17 @@ fun JxglstuCourseTableUI(
                                     val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
                                     Card(
                                         shape = MaterialTheme.shapes.extraSmall,
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
                                         modifier = containerShare(
                                             Modifier.height(125.dp)
                                                 .padding(if (showAll) 1.dp else 2.dp)
+                                                .let {
+                                                    backGroundHaze?.let { haze ->
+                                                        it
+                                                            .clip(MaterialTheme.shapes.extraSmall)
+                                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
+                                                    } ?: it
+                                                }
                                                 .clickable {
                                                     // 只有一节课
                                                     if (texts.size == 1) {

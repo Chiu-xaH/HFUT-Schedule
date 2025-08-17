@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -75,8 +76,8 @@ fun GradeScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val navController = rememberNavController()
 
     var showSearch by remember { mutableStateOf(false) }
@@ -144,13 +145,13 @@ fun GradeScreen(
                                 IconButton(onClick = {
                                     showSearch = !showSearch
                                 }) {
-                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")
+                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                 }
                             }
                             IconButton(onClick = {
                                 showBottomSheet = true
                             }) {
-                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")
+                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                             }
                         }
                     }

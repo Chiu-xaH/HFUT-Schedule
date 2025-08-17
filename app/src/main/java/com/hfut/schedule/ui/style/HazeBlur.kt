@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.container.largeCardColor
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
@@ -75,12 +76,12 @@ import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
-fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,2.5f,color,.5f)
+fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,1.5f,color,.5f, level = HazeBlurLevel.FULL)
 @Composable
 fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     return if(
-        blur
+        blur >= HazeBlurLevel.MID.code
         && CAN_HAZE_BLUR_BAR
         && !HAZE_BLUR_FOR_S
         ) {
@@ -116,8 +117,8 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.c
 
 @Composable
 fun Modifier.topBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(blur && CAN_HAZE_BLUR_BAR) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    return if(blur >= HazeBlurLevel.MID.code && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -154,10 +155,11 @@ private fun Modifier.blurStyle(
     hazeState: HazeState,
     radius : Float = 1f,
     tint : Color = MaterialTheme.colorScheme.surface,
-    alpha : Float = .3f
+    alpha : Float = .3f,
+    level : HazeBlurLevel
 ) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(blur) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    return if(blur >= level.code) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint.copy(alpha)),
             backgroundColor = tint,
@@ -165,15 +167,15 @@ private fun Modifier.blurStyle(
             noiseFactor = 0f
         ))
     } else {
-        this.background(tint)
+        this.background(tint.copy(.8f))
     }
 }
 
 @Composable
-fun Modifier.dialogBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState,2.5f, MaterialTheme.colorScheme.surface,0f)
+fun Modifier.dialogBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState,2.5f, MaterialTheme.colorScheme.surface,0f, level = HazeBlurLevel.MID)
 
 @Composable
-fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState, 3f, MaterialTheme.colorScheme.surface,.3f)
+fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState, 3f, MaterialTheme.colorScheme.surface,.3f, level = HazeBlurLevel.MID)
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -255,12 +257,13 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
     )
 
     if(transition >= TransitionLevel.MEDIUM.code) {
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
         LaunchedEffect(isExpanded) {
-            if(blur && transition == TransitionLevel.HIGH.code) {
-                DataStoreManager.saveHazeBlur(false)
+            val origin = blur
+            if(blur >= HazeBlurLevel.MID.code && transition == TransitionLevel.HIGH.code) {
+                DataStoreManager.saveHazeBlur(HazeBlurLevel.NONE)
                 delay((AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2)*1L)
-                DataStoreManager.saveHazeBlur(true)
+                DataStoreManager.saveHazeBlur(HazeBlurLevel.entries.find { it.code == origin } ?: HazeBlurLevel.MID)
             }
         }
     }
@@ -287,7 +290,7 @@ fun Modifier.transitionBackgroundF(
     navHostController: NavHostController,
     route : String,
 ) : Modifier = with(TransitionState.transitionBackgroundStyle) {
-    val blur by produceState(initialValue = true) {
+    val blur by produceState(initialValue = HazeBlurLevel.MID.code) {
         value = DataStoreManager.enableHazeBlur.first()
     }
 
@@ -295,10 +298,11 @@ fun Modifier.transitionBackgroundF(
     val speed = TransitionState.curveStyle.speedMs
 
     LaunchedEffect(isExpanded) {
-        if(blur && TransitionState.transitionBackgroundStyle.level >= TransitionLevel.MEDIUM) {
-            DataStoreManager.saveHazeBlur(false)
+        if(blur == HazeBlurLevel.FULL.code && TransitionState.transitionBackgroundStyle.level >= TransitionLevel.MEDIUM) {
+            val origin = blur
+            DataStoreManager.saveHazeBlur(HazeBlurLevel.NONE)
             delay(speed*4/3*1L)
-            DataStoreManager.saveHazeBlur(true)
+            DataStoreManager.saveHazeBlur(HazeBlurLevel.entries.find { it.code == origin } ?: HazeBlurLevel.MID)
         }
     }
     return transitionBackground(navHostController,route)

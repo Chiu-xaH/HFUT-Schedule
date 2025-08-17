@@ -248,7 +248,7 @@ fun MainHost(
     }
 
     ModalNavigationDrawer  (
-        scrimColor = MaterialTheme.colorScheme.surface.copy(if(motionBlur) 0.35f else 0.925f),
+        scrimColor = MaterialTheme.colorScheme.surface.copy(if(motionBlur && !isScan) 0.35f else 0.925f),
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {

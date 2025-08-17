@@ -45,6 +45,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -67,6 +68,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getC
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -82,7 +84,8 @@ fun CommunityCourseTableUI(
     onDateChange : (LocalDate) ->Unit,
     today: LocalDate,
     vm : NetWorkViewModel,
-    hazeState: HazeState
+    hazeState: HazeState,
+    backGroundHaze : HazeState?
 ) {
     var examList by remember { mutableStateOf(examToCalendar()) }
 
@@ -425,12 +428,18 @@ fun CommunityCourseTableUI(
                         val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                         val texts = transferSummaryCourseInfos(itemList).toMutableList()
                         Card(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
                             shape = MaterialTheme.shapes.extraSmall,
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
                             modifier = Modifier
                                 .height(125.dp)
                                 .padding(if (showAll) 1.dp else 2.dp)
+                                .let {
+                                    backGroundHaze?.let { haze ->
+                                        it
+                                            .clip(MaterialTheme.shapes.extraSmall)
+                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    } ?: it
+                                }
                                 .clickable {
                                     if (texts.size == 1) {
                                         // 如果是考试
@@ -595,7 +604,7 @@ fun CommunityCourseTableUI(
 }
 
 @Composable
-fun ScheduleTopDate(showAll: Boolean,today : LocalDate,isJxglstu : Boolean) {
+fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
     val todayDate = DateTimeManager.Date_yyyy_MM_dd
 
@@ -644,6 +653,7 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate,isJxglstu : Boolean) {
                 )
             }
         }
+        Spacer(modifier = Modifier.height(5.dp))
     }
 }
 

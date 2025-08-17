@@ -1,6 +1,9 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
 import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -21,9 +24,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -34,7 +41,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -42,25 +51,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.component.extractColor
+import com.hfut.schedule.ui.component.hsvToLong
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.longToHexColor
+import com.hfut.schedule.ui.component.longToHue
+import com.hfut.schedule.ui.component.parseColor
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.style.ColumnVertical
 import com.hfut.schedule.ui.style.InnerPaddingHeight
@@ -84,6 +106,9 @@ suspend fun initTransition() = withContext(Dispatchers.IO) {
     TransitionState.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
 }
 
+
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -95,10 +120,12 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
-        .padding(innerPaddings).scale(scale).alpha(scale)) {
+        .padding(innerPaddings)
+        .scale(scale)
+        .alpha(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
         val animationList = remember { DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed } }
 
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
@@ -107,8 +134,39 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val animationSpeed by DataStoreManager.animationSpeedType.collectAsState(initial = DataStoreManager.AnimationSpeed.NORMAL.code)
+        val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
+        val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+        val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
 
+        val scope = rememberCoroutineScope()
+
+        val pickMultipleMedia = rememberLauncherForActivityResult(
+            ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+            uri?.let { imageUri ->
+                scope.launch {
+                    DataStoreManager.saveCustomBackground(imageUri)
+                    showToast("已设置背景")
+                    extractColor(imageUri)?.let {
+                        DataStoreManager.saveCustomColor(it)
+                    }
+                }
+            }
+        }
+        val pickMultipleMediaForColor = rememberLauncherForActivityResult(
+            ActivityResultContracts.PickVisualMedia()
+        ) { uri ->
+            uri?.let { imageUri ->
+                scope.launch {
+                    extractColor(imageUri)?.let {
+                        DataStoreManager.saveCustomColor(it)
+                    }
+                }
+            }
+        }
         val transitionLevels = remember { TransitionLevel.entries }
+        val hazeBlurLevels = remember { HazeBlurLevel.entries }
+
         LaunchedEffect(animationSpeed) {
             AppAnimationManager.updateAnimationSpeed()
         }
@@ -118,31 +176,77 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         LaunchedEffect(motionBlur) {
             TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
         }
-        val cor = rememberCoroutineScope()
-
-        DividerTextExpandedWith("色彩") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = { Text(text = "层级实时模糊") },
-                    supportingContent = {
-                        Text(text = "开启后将会转换部分层级渲染为实时模糊,此过程会加大性能压力" )
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
-                    trailingContent = {  Switch(checked = blur, onCheckedChange = { cor.launch {  DataStoreManager.saveHazeBlur(!blur) } } ) },
-                    modifier = Modifier.clickable {
-                        cor.launch {  DataStoreManager.saveHazeBlur(!blur) }
+        val useDynamicColor = customColor == -1L
+        var hue by remember { mutableFloatStateOf(180f) }
+        LaunchedEffect(customColor) {
+            hue = customColor.let {
+                if(useDynamicColor) {
+                    180f
+                } else {
+                    longToHue(it)
+                }
+            }
+        }
+        var showColorDialog by remember { mutableStateOf(false) }
+        if(showColorDialog) {
+            Dialog(
+                onDismissRequest = { showColorDialog = false }
+            ) {
+                var input by remember { mutableStateOf(longToHexColor(customColor)) }
+                val parse = parseColor(input)
+                Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium).padding(vertical = APP_HORIZONTAL_DP)) {
+                    CustomTextField(
+                        label = { Text("输入 ARGB Hex 值") },
+                        input = input,
+                        trailingIcon = {
+                            parse?.let {
+                                FilledTonalIconButton(
+                                    onClick = {  },
+                                    colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor = Color(it) )
+                                ) { }
+                            }
+                        }
+                    ) { input = it }
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    DataStoreManager.saveCustomColor(parse!!)
+                                    showColorDialog = false
+                                }
+                            },
+                            enabled = parse != null,
+                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                        ) {
+                            Text("设置")
+                        }
+                        Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                        FilledTonalButton (
+                            onClick = {
+                                showColorDialog = false
+                            },
+                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                        ) {
+                            Text("取消")
+                        }
                     }
-                )
-                PaddingHorizontalDivider()
+
+                }
+            }
+        }
+
+        DividerTextExpandedWith("深浅色") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "纯黑深色背景") },
                     supportingContent = { Text(text = "OLED屏使用此模式在深色模式时可获得不发光的纯黑背景") },
                     leadingContent = { Icon(painterResource(R.drawable.contrast), contentDescription = "Localized description",) },
                     trailingContent = {
-                        Switch(checked = currentPureDark, onCheckedChange = { cor.launch { DataStoreManager.savePureDark(!currentPureDark) } })
+                        Switch(checked = currentPureDark, onCheckedChange = { scope.launch { DataStoreManager.savePureDark(!currentPureDark) } })
                     },
                     modifier = Modifier.clickable {
-                        cor.launch { DataStoreManager.savePureDark(!currentPureDark) }
+                        scope.launch { DataStoreManager.savePureDark(!currentPureDark) }
                     }
                 )
                 PaddingHorizontalDivider()
@@ -151,10 +255,10 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                     supportingContent = { Text(text = "将强制深色的代码注入到网页中，以尝试适配应用的深色模式，如有网页显示异常，请暂时关闭") },
                     leadingContent = { Icon(painterResource(R.drawable.syringe), contentDescription = "Localized description",) },
                     trailingContent = {
-                        Switch(checked = webViewDark, onCheckedChange = { cor.launch { DataStoreManager.saveWebViewDark(!webViewDark) } })
+                        Switch(checked = webViewDark, onCheckedChange = { scope.launch { DataStoreManager.saveWebViewDark(!webViewDark) } })
                     },
                     modifier = Modifier.clickable {
-                        cor.launch { DataStoreManager.saveWebViewDark(!webViewDark) }
+                        scope.launch { DataStoreManager.saveWebViewDark(!webViewDark) }
                     }
                 )
                 PaddingHorizontalDivider()
@@ -164,21 +268,21 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                         Row {
                             FilterChip(
                                 onClick = {
-                                    cor.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.LIGHT) }
+                                    scope.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.LIGHT) }
                                 },
                                 label = { Text(text = "浅色") }, selected = currentColorModeIndex == DataStoreManager.ColorMode.LIGHT.code
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             FilterChip(
                                 onClick = {
-                                    cor.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.DARK) }
+                                    scope.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.DARK) }
                                 },
                                 label = { Text(text = "深色") }, selected = currentColorModeIndex == DataStoreManager.ColorMode.DARK.code
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             FilterChip(
                                 onClick = {
-                                    cor.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.AUTO) }
+                                    scope.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.AUTO) }
                                 },
                                 label = { Text(text = "跟随系统") }, selected = currentColorModeIndex == DataStoreManager.ColorMode.AUTO.code
                             )
@@ -192,23 +296,154 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                         }
                     ), contentDescription = "Localized description",) },
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "壁纸取色") },
-                    leadingContent = { Icon(painterResource(R.drawable.palette), contentDescription = "Localized description",) },
-                    trailingContent = {
-                        Switch(checked = true, onCheckedChange = {  }, enabled = false)
-                    },
-                    modifier = Modifier.clickable {
-                        showToast("正在开发")
-                    }
-                )
             }
-
         }
+        DividerTextExpandedWith("主题色") {
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                RowHorizontal(modifier = Modifier.fillMaxWidth().padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP-10.dp)) {
+                    FilledTonalIconButton(
+                        onClick = { showToast("正在开发") },
+                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primary )
+                    ) { }
+                    FilledTonalIconButton(
+                        onClick = { showToast("正在开发") },
+                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.secondary )
+                    ) { }
+                    FilledTonalIconButton(
+                        onClick = { showToast("正在开发") },
+                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primaryContainer )
+                    ) { }
+                    FilledTonalIconButton(
+                        onClick = { showToast("正在开发") },
+                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.secondaryContainer )
+                    ) { }
+                    FilledTonalIconButton(
+                        onClick = { showToast("正在开发") },
+                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.surfaceVariant )
+                    ) { }
+                }
+                DividerTextExpandedWith("默认取色") {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "原生取色") },
+                        leadingContent = { Icon(painterResource(R.drawable.palette), contentDescription = "Localized description",) },
+                        trailingContent = {
+                            if(useDynamicColor) {
+                                Icon(painterResource(R.drawable.check),null)
+                            }
+                        },
+                        modifier = Modifier.clickable {
+                            scope.launch {
+                                DataStoreManager.saveCustomColor(-1L)
+                            }
+                        }
+                    )
+                }
+                DividerTextExpandedWith("自定义取色") {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "选择图片取色") },
+                        leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description",) },
 
+                        modifier = Modifier.clickable {
+                            scope.launch {
+                                pickMultipleMediaForColor.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                            }
+                        }
+                    )
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text(text = "色相带取色") },
+                        leadingContent = { Icon(painterResource(R.drawable.colorize), contentDescription = "Localized description",) },
+                        supportingContent = {
+                            Text("点击手动输入颜色值")
+                        },
+                        trailingContent = {
+                            if(!useDynamicColor) {
+                                val color = hsvToLong(hue,1f,1f)
+                                val text = longToHexColor(color)
+                                ColumnVertical {
+                                    FilledTonalIconButton(
+                                        onClick = { ClipBoardUtils.copy(text) },
+                                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor = Color(color) )
+                                    ) { }
+                                    Text(text)
+                                }
+                            }
+                        },
+                        modifier = Modifier.clickable {
+                            showColorDialog = true
+                        }
+                    )
+                    Slider(
+                        value = hue,
+                        onValueChange = {
+                            hue = it
+                            val color =  hsvToLong(hue,1f,1f)
+                            scope.launch {
+                                DataStoreManager.saveCustomColor(color)
+                            }
+                        },
+                        valueRange = 0f..360f,
+                        colors = SliderDefaults.colors(
+                            thumbColor = if(useDynamicColor) Color.Transparent else MaterialTheme.colorScheme.outline,
+                            activeTrackColor = Color.Transparent,
+                            inactiveTrackColor = Color.Transparent
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .padding(bottom = APP_HORIZONTAL_DP)
+                            .height(APP_HORIZONTAL_DP*2)
+                            .drawBehind {
+                                val trackHeight = (APP_HORIZONTAL_DP*2 - 5.dp).toPx() // 色相带高度
+                                val centerY = size.height / 2f // thumb 居中
+                                val top = centerY - trackHeight / 2f
+                                val rect = Rect(0f, top, size.width, top + trackHeight)
+
+                                // 在滑轨上绘制渐变（色相带）
+                                val colors = (0..360 step 10).map { hue -> Color.hsv(hue.toFloat(), 1f, 1f) }
+                                val gradient = Brush.horizontalGradient(colors = colors)
+                                drawRoundRect(
+                                    brush = gradient,
+                                    size = rect.size,
+                                    topLeft = rect.topLeft,
+                                    cornerRadius = CornerRadius(APP_HORIZONTAL_DP.value)
+                                )
+                            }
+                    )
+                }
+            }
+        }
         DividerTextExpandedWith("动效") {
             MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = {
+                        Column {
+                            Text(text = "层级实时模糊")
+                            Text("Level${blur+1} (${hazeBlurLevels.find { it.code == blur}?.title})")
+                        }
+                    },
+                    supportingContent = {
+                        Column {
+                            Text(text = "将部分层级渲染为实时模糊，等级越高，越可能会在某些设备上掉帧" )
+                            Slider(
+                                value = blur.toFloat(),
+                                onValueChange = { value ->
+                                    val level = hazeBlurLevels.find { it.code == value.toInt() } ?: return@Slider
+                                    scope.launch { DataStoreManager.saveHazeBlur(level) }
+                                },
+                                colors = SliderDefaults.colors(
+                                    thumbColor = MaterialTheme.colorScheme.secondary,
+                                    activeTrackColor = MaterialTheme.colorScheme.secondary,
+                                    inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                                ),
+                                steps = 1,
+                                valueRange = 0f..2f,
+                            )
+                        }
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
+                )
+                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "全局动画速率") },
                     leadingContent = { Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",) },
@@ -218,7 +453,7 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                         val item = animationList[i]
                         FilterChip(
                             onClick = {
-                                cor.launch { DataStoreManager.saveAnimationSpeed(item) }
+                                scope.launch { DataStoreManager.saveAnimationSpeed(item) }
                             },
                             label = {
                                 ColumnVertical {
@@ -253,10 +488,10 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                             }
                         },
                         leadingContent = { Icon(painterResource(R.drawable.motion_mode), contentDescription = "Localized description",) },
-                        trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { cor.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
+                        trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
                         modifier = Modifier.clickable {
                             if(AppVersion.CAN_MOTION_BLUR) {
-                                cor.launch { DataStoreManager.saveMotionBlur(!motionBlur) }
+                                scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) }
                             }
                         }
                     )
@@ -276,7 +511,7 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                                     value = transition.toFloat(),
                                     onValueChange = { value ->
                                         val level = transitionLevels.find { it.code == value.toInt() } ?: return@Slider
-                                        cor.launch { DataStoreManager.saveTransition(level) }
+                                        scope.launch { DataStoreManager.saveTransition(level) }
                                     },
                                     colors = SliderDefaults.colors(
                                         thumbColor = MaterialTheme.colorScheme.secondary,
@@ -305,15 +540,58 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
-//        DividerTextExpandedWith("新转场动画下的界面引导") {
-//            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-                // 下拉刷新
-                // 左上角返回
-                // 右上角操作区
-                // 底栏切换
-                // 顶栏TabRow滑动
-//            }
-//        }
+
+        DividerTextExpandedWith("背景") {
+            val useCustomBackground = customBackground != ""
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                 TransplantListItem(
+                     headlineContent = {
+                         Text("课程表背景图片")
+                     },
+                     supportingContent = {
+                         Text(if(!useCustomBackground) "选择图片，以作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
+                     },
+                     modifier = Modifier.clickable {
+                         pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                     },
+                     leadingContent = {
+                         Icon(painterResource(R.drawable.image),null)
+                     },
+                     trailingContent = {
+                         if(useCustomBackground) {
+                             FilledTonalButton(
+                                 onClick = {
+                                     scope.launch {
+                                         DataStoreManager.saveCustomBackground(null)
+                                     }
+                                 }
+                             ) {
+                                 Text("清除")
+                             }
+                         }
+                     }
+                 )
+                if(useCustomBackground) {
+                    var alpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
+                    Slider(
+                        value = alpha,
+                        onValueChange = {
+                            alpha = it
+                        },
+                        onValueChangeFinished =  {
+                            scope.launch { DataStoreManager.saveCustomBackgroundAlpha(alpha) }
+                        },
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP),
+                        colors = SliderDefaults.colors(
+                            thumbColor = MaterialTheme.colorScheme.secondary,
+                            activeTrackColor = MaterialTheme.colorScheme.secondary,
+                            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                        ),
+                        valueRange = 0f..1f,
+                    )
+                }
+            }
+        }
         InnerPaddingHeight(innerPaddings,false)
     }
 }
@@ -372,7 +650,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(boxSize+APP_HORIZONTAL_DP),
+            .height(boxSize + APP_HORIZONTAL_DP),
         contentAlignment = Alignment.Center
     ) {
         // 拖影
@@ -383,7 +661,8 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
             Box(
                 modifier = Modifier
                     .offset { IntOffset(trail.dp.roundToPx(), 0) }
-                    .size(boxSize
+                    .size(
+                        boxSize
 //                            * sizeFactor
                     )
                     .graphicsLayer {

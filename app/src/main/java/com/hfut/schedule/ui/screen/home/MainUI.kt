@@ -11,6 +11,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -60,8 +61,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -72,6 +75,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
@@ -105,6 +110,7 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
@@ -137,7 +143,9 @@ import kotlinx.coroutines.delay
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
+    ExperimentalGlideComposeApi::class
+)
 @Composable
 fun MainScreen(
     vm : NetWorkViewModel,
@@ -152,8 +160,8 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
 
     val showBadge by remember { mutableStateOf(getUpdates().version != AppVersion.getVersionName()) }
 
@@ -188,6 +196,7 @@ fun MainScreen(
 
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
+    val alpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
 
     if (showBottomSheet_multi) {
         HazeBottomSheet(
@@ -385,6 +394,7 @@ fun MainScreen(
             }
         }
     }
+    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
 //    val statusIcon = @Composable {
 //        if(ifSaved) {
 //            IconButton (onClick = { refreshLogin() }) {
@@ -527,7 +537,7 @@ fun MainScreen(
                         )
                     }
                     when(targetPage) {
-                        COURSES -> if(swapUI == CourseType.NEXT.code) null else ScheduleTopDate(showAll,today,swapUI == CourseType.JXGLSTU.code)
+                        COURSES -> if(swapUI == CourseType.NEXT.code) null else ScheduleTopDate(showAll,today)
                         FOCUS -> CustomTabRow(pagerState, titles)
                         else -> {}
                     }
@@ -605,34 +615,52 @@ fun MainScreen(
                 modifier = Modifier.hazeSource(state = hazeState)
             ) {
                 composable(COURSES.name) {
-                    Scaffold(
-                        modifier = Modifier.pointerInput(Unit) {
-                            detectTransformGestures { _, _, zoom, _ ->
-                                if (zoom >= 1f) {
-                                    showAll = false
-                                } else if (zoom < 1f) {
-                                    showAll = true
+                    val useCustomBackground = customBackground != ""
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        // 背景图层
+                        val backGroundHaze = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.FULL.code)
+                        if (useCustomBackground) {
+                            GlideImage(
+                                model = customBackground,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                alpha = alpha,
+                                modifier = Modifier.hazeSource(backGroundHaze).fillMaxSize()
+                            )
+                        }
+                        Scaffold(
+                            containerColor = if(!useCustomBackground) {
+                                MaterialTheme. colorScheme. background
+                            } else {
+                                Color.Transparent
+                            },
+                            modifier = Modifier.pointerInput(Unit) {
+                                detectTransformGestures { _, _, zoom, _ ->
+                                    if (zoom >= 1f) {
+                                        showAll = false
+                                    } else if (zoom < 1f) {
+                                        showAll = true
+                                    }
+                                }
+                            }) {
+                            val isFriend = CourseType.entries.all { swapUI > it.code }
+                            if(!isFriend) {
+                                // 非好友课表
+                                when (swapUI) {
+                                    // 下学期
+                                    CourseType.NEXT.code -> JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,innerPadding,backGroundHaze = if(useCustomBackground)backGroundHaze else null)
+                                    // 社区
+                                    CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState, backGroundHaze = if(useCustomBackground)backGroundHaze else null)
+                                    // 教务
+                                    CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,if(useCustomBackground)backGroundHaze else null)
+                                    // 自定义导入课表 数据库id+3=swapUI
+//                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
                                 }
                             }
-                        }) {
-                        val isFriend = CourseType.entries.all { swapUI > it.code }
-                        if(!isFriend) {
-                            // 非好友课表
-                            when (swapUI) {
-                                // 下学期
-                                CourseType.NEXT.code -> JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,innerPadding)
-                                // 社区
-                                CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState)
-                                // 教务
-                                CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope)
-                                // 自定义导入课表 数据库id+3=swapUI
-//                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
-                            }
+                            else // 好友课表 swapUI为学号
+                                CommunityCourseTableUI(showAll,innerPadding,vmUI,friendUserName = swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState, backGroundHaze = if(useCustomBackground)backGroundHaze else null)
                         }
-                        else // 好友课表 swapUI为学号
-                            CommunityCourseTableUI(showAll,innerPadding,vmUI,friendUserName = swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState)
                     }
-
                 }
                 composable(FOCUS.name) {
                     Scaffold {

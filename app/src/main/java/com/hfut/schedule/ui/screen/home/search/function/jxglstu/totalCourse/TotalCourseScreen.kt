@@ -43,7 +43,7 @@ fun TermFirstlyInfo(list: List<lessons>, isSearch : Boolean) {
             painterResource(R.drawable.category),
             contentDescription = "Localized description",
         ) },
-        color = MaterialTheme.colorScheme.secondaryContainer,
+        color = MaterialTheme.colorScheme.primaryContainer,
         trailingContent = {
             if(!isSearch)
                 Text(text = "学分 ${periodsSum(list)}")

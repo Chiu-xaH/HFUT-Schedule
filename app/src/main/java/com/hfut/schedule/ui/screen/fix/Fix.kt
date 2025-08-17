@@ -45,6 +45,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 
@@ -58,8 +59,8 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     var targetPage by remember { mutableStateOf(FixBarItems.Fix) }

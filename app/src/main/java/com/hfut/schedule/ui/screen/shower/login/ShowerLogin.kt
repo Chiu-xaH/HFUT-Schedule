@@ -67,6 +67,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.screen.shower.cube.EditLoginCode
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
@@ -92,8 +93,8 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
     var show by remember { mutableStateOf(false) }
     val Savedusername = prefs.getString("PHONENUM", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     Scaffold(
         topBar = {
             LargeTopAppBar(

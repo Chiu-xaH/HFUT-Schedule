@@ -102,6 +102,7 @@ import com.hfut.schedule.ui.component.network.URLImageWithOCR
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal
@@ -262,8 +263,8 @@ fun LoginScreen(
 ) {
     val context = LocalActivity.current
     var webVpn by remember { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val Savedusername = prefs.getString("Username", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
 

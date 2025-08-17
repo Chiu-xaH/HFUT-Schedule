@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-16") },
+                overlineContent = { Text(text = "2025-08-17") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,9 +57,14 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         MyCustomCard (containerColor = cardNormalColor()){
+//            UpdateItems("新增 自定义查询中心的排序")
             UpdateItems("新增 重设密码的入口和新生提示","位于 教务登录")
-            UpdateItems("新增 自定义查询中心的排序")
             UpdateItems("新增 撤销用户协议","位于 选项-维护关于-关于")
+            UpdateItems("新增 自定义取色","位于 选项-界面显示")
+            UpdateItems("新增 自定义课程表背景","位于 选项-界面显示")
+            UpdateItems("重构 层级实时模糊，支持分级调节")
+            UpdateItems("修复 手动切换深浅色模式时状态栏反色不正常的Bug")
+            UpdateItems("修复 共建平台登录界面无法上下滚动的Bug")
             UpdateItems("优化 部分界面的设计")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 WebVpn全局代理，通过VPN接管全局网络，转换为WEBVPN链接，开启后，请先访问任意链接登录")
@@ -67,7 +72,7 @@ fun VersionInfo() {
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 为部分场景适配新的转场动画")
-            // https://cas.hfut.edu.cn/cas/forget
+
             /*
                         转专业二级界面
             就业二级界面 通知公告二级界面

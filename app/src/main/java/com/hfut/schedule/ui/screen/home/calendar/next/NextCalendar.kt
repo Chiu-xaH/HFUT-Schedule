@@ -47,6 +47,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,6 +68,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.containerBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -98,7 +101,8 @@ fun JxglstuCourseTableUINext(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    innerPadding : PaddingValues
+    innerPadding : PaddingValues,
+    backGroundHaze : HazeState?
 ) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
@@ -425,11 +429,20 @@ fun JxglstuCourseTableUINext(
                     val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
                     Card(
                         shape = MaterialTheme.shapes.extraSmall,
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
+
+//                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                         modifier = containerShare(
                             Modifier
                                 .height(125.dp)
                                 .padding(if (showAll) 1.dp else 2.dp)
+                                .let {
+                                    backGroundHaze?.let { haze ->
+                                        it
+                                            .clip(MaterialTheme.shapes.extraSmall)
+                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
+                                    } ?: it
+                                }
                                 .clickable {
                                     // 只有一节课
                                     if (texts.size == 1) {

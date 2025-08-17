@@ -1,10 +1,13 @@
 package com.hfut.schedule.logic.util.storage
 
 import android.content.Context
+import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -14,6 +17,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.style.TransitionLevel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -63,7 +67,7 @@ object DataStoreManager {
     private val PURE_DARK = booleanPreferencesKey("pure_dark")
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
-    private val HAZE_BLUR = booleanPreferencesKey("haze_blur_2")
+    private val HAZE_BLUR = intPreferencesKey("haze_blur_3")
     private val TRANSITION = intPreferencesKey("transitions")
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
@@ -87,6 +91,9 @@ object DataStoreManager {
     private val PREDICTIVE = booleanPreferencesKey("predictive")
     private val CONTROL_CENTER = booleanPreferencesKey("control_center")
     private val WX_AUTH = stringPreferencesKey("wx_auth")
+    private val CUSTOM_COLOR = longPreferencesKey("custom_color")
+    private val CUSTOM_BACKGROUND = stringPreferencesKey("custom_background")
+    private val CUSTOM_BACKGROUND_ALPHA = floatPreferencesKey("custom_background_alpha")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -94,7 +101,7 @@ object DataStoreManager {
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
-    suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR,value)
+    suspend fun saveHazeBlur(value: HazeBlurLevel) = saveValue(HAZE_BLUR, value.code)
     suspend fun saveTransition(value: TransitionLevel) = saveValue(TRANSITION,value.code)
     suspend fun saveSupabaseJwt(value: String) = saveValue(SUPABASE_JWT,value)
     suspend fun saveSupabaseRefreshToken(value: String) = saveValue(SUPABASE_REFRESH_TOKEN,value)
@@ -117,14 +124,16 @@ object DataStoreManager {
     suspend fun savePredict(value: Boolean) = saveValue(PREDICTIVE,value)
     suspend fun saveControlCenter(value: Boolean) = saveValue(CONTROL_CENTER,value)
     suspend fun saveWxAuth(value: String) = saveValue(WX_AUTH, "Bearer $value")
-
+    suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
+    suspend fun saveCustomBackground(value: Uri?) = saveValue(CUSTOM_BACKGROUND, value?.toString() ?: EMPTY_STRING)
+    suspend fun saveCustomBackgroundAlpha(value: Float) = saveValue(CUSTOM_BACKGROUND_ALPHA,value)
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookies = getFlow(STU_COOKIE,EMPTY_STRING)
     val enablePureDark = getFlow(PURE_DARK,false)
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
-    val enableHazeBlur = getFlow(HAZE_BLUR,true)
+    val enableHazeBlur = getFlow(HAZE_BLUR, HazeBlurLevel.MID.code)
     val transitionLevel = getFlow(TRANSITION, TransitionLevel.NONE.code)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
@@ -145,6 +154,10 @@ object DataStoreManager {
     val enableControlCenter = getFlow(CONTROL_CENTER,false)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
+    val customColor = getFlow(CUSTOM_COLOR,-1)
+    val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
+    val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
+
     val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))

@@ -43,7 +43,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 207
-        versionName "4.17.4.1 Preview"
+        versionName "4.17.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -203,7 +203,10 @@ dependencies {
     // 协程 Room
     implementation libs.androidx.room.ktx
     // WebKit
-    implementation(libs.androidx.webkit)
+    implementation libs.androidx.webkit
+    // 取色
+    implementation libs.material.kolor
+    implementation libs.androidx.palette
     // 适配大屏 自适应布局
 //    implementation libs.androidx.window
 //    implementation libs.androidx.adaptive

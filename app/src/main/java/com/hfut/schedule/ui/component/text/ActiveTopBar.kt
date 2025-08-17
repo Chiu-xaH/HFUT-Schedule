@@ -72,7 +72,7 @@ fun HazeBottomSheetTopBar(
     rightContent : (@Composable () -> Unit)? = null
 ) {
     Column {
-        Spacer(Modifier.Companion.height(APP_HORIZONTAL_DP * if(isPaddingStatusBar) 1.5f else 0f))
+//        Spacer(Modifier.Companion.height(APP_HORIZONTAL_DP * if(isPaddingStatusBar) 1.5f else 0f))
         BottomSheetTopBar(
             title,
             singleLine,
