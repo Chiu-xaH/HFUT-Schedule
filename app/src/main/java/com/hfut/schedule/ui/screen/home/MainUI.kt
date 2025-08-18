@@ -110,7 +110,8 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
@@ -544,10 +545,11 @@ fun MainScreen(
                 }
             },
             bottomBar = {
-                Column {
-                    NavigationBar(containerColor = Color.Transparent ,
-                        modifier = Modifier.bottomBarBlur(hazeState)
-                    ) {
+                Column(
+                    modifier = Modifier.bottomBarBlur(hazeState)
+                ) {
+                    NavigationBarSpacer()
+                    NavigationBar(containerColor = Color.Transparent) {
                         val items = listOf(
                             NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
                             NavigationBarItemData(FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
@@ -596,13 +598,6 @@ fun MainScreen(
                         }
                     }
                 }
-//                AnimatedVisibility(
-//                    visible = !isAddUIExpanded,
-//                    enter = expandVertically(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED),expandFrom = Alignment.Top,),
-//                    exit = shrinkVertically(animationSpec = tween(durationMillis = MyAnimationManager.ANIMATION_SPEED),shrinkTowards = Alignment.Top,),
-//                ) {
-//
-//                }
             },
         ) { innerPadding ->
             innerPaddingValues = innerPadding

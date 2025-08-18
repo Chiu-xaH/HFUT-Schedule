@@ -87,6 +87,9 @@ IDE: Android Studio Meerkat
 
 [Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract (供识别图片验证码)
 
+[MaterialKolor](https://github.com/jordond/MaterialKolor) 自定义取色
+
+
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新(自己)
 
 [Compose-Transition-Sample](https://github.com/Chiu-xaH/Compose-Transition-Sample) 转场动画(自己)

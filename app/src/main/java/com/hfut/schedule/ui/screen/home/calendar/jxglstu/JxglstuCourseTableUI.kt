@@ -83,6 +83,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -854,7 +855,7 @@ fun JxglstuCourseTableUI(
                             exit = scaleOut(),
                             modifier = Modifier
                                 .align(Alignment.BottomStart)
-                                .padding(innerPadding)
+                                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
                                 .padding(
                                     horizontal = APP_HORIZONTAL_DP,
                                     vertical = APP_HORIZONTAL_DP
@@ -865,7 +866,6 @@ fun JxglstuCourseTableUI(
                                     onClick = {
                                         if (currentWeek > 1) {
                                             currentWeek-- - 1
-//                                            refreshUI(showAll)
                                             onDateChange(today.minusDays(7))
                                         }
                                     },
@@ -879,7 +879,7 @@ fun JxglstuCourseTableUI(
                             exit = scaleOut(),
                             modifier = Modifier
                                 .align(Alignment.BottomCenter)
-                                .padding(innerPadding)
+                                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
                                 .padding(
                                     horizontal = APP_HORIZONTAL_DP,
                                     vertical = APP_HORIZONTAL_DP
@@ -941,7 +941,7 @@ fun JxglstuCourseTableUI(
                             exit = scaleOut(),
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
-                                .padding(innerPadding)
+                                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
                                 .padding(
                                     horizontal = APP_HORIZONTAL_DP,
                                     vertical = APP_HORIZONTAL_DP
@@ -952,7 +952,6 @@ fun JxglstuCourseTableUI(
                                     onClick = {
                                         if (currentWeek < 20) {
                                             currentWeek++ + 1
-//                                            refreshUI(showAll)
                                             onDateChange(today.plusDays(7))
                                         }
                                     },

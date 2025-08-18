@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
 fun BoxScope.PagingController(
     listState : LazyListState,
     currentPage : Int,
-    showUp : Boolean = false,
+    paddingBottom : Boolean = true,
     nextPage : (Int) -> Unit,
     previousPage : (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -43,9 +43,11 @@ fun BoxScope.PagingController(
     val shouldShowButton by remember { derivedStateOf {
         listState.firstVisibleItemScrollOffset == 0
     } }
+    val scope = rememberCoroutineScope()
+
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
+        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
         exit = AppAnimationManager.centerFadeAnimation.exit,
         enter = AppAnimationManager.centerFadeAnimation.enter
     ){
@@ -62,7 +64,7 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
+        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
         exit = AppAnimationManager.centerFadeAnimation.exit,
         enter = AppAnimationManager.centerFadeAnimation.enter
     ){
@@ -75,7 +77,7 @@ fun BoxScope.PagingController(
     }
     AnimatedVisibility(
         visible = shouldShowButton,
-        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
+        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
         exit = AppAnimationManager.centerFadeAnimation.exit,
         enter = AppAnimationManager.centerFadeAnimation.enter
     ){
@@ -85,21 +87,18 @@ fun BoxScope.PagingController(
             },
         ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
     }
-    if(showUp) {
-        val scope = rememberCoroutineScope()
-        AnimatedVisibility(
-            visible = !shouldShowButton,
-            modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).navigationBarsPadding(),
-            exit = AppAnimationManager.centerFadeAnimation.exit,
-            enter = AppAnimationManager.centerFadeAnimation.enter
-        ){
-            FloatingActionButton(
-                onClick = {
-                    // 回到顶部
-                    scope.launch { listState.animateScrollToItem(0) }
-                },
-            ) { Icon(painterResource(R.drawable.arrow_upward), "Add Button") }
-        }
+    AnimatedVisibility(
+        visible = !shouldShowButton,
+        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
+        exit = AppAnimationManager.centerFadeAnimation.exit,
+        enter = AppAnimationManager.centerFadeAnimation.enter
+    ){
+        FloatingActionButton(
+            onClick = {
+                // 回到顶部
+                scope.launch { listState.animateScrollToItem(0) }
+            },
+        ) { Icon(painterResource(R.drawable.arrow_upward), "Add Button") }
     }
 }
 

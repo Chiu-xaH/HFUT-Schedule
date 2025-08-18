@@ -15,9 +15,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,7 +41,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +48,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
@@ -66,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -75,13 +74,14 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.extractColor
-import com.hfut.schedule.ui.component.hsvToLong
+import com.hfut.schedule.ui.util.extractColor
+import com.hfut.schedule.ui.util.hsvToLong
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.longToHexColor
-import com.hfut.schedule.ui.component.longToHue
-import com.hfut.schedule.ui.component.parseColor
+import com.hfut.schedule.ui.util.longToHexColor
+import com.hfut.schedule.ui.util.longToHue
+import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.style.ColumnVertical
@@ -107,6 +107,8 @@ suspend fun initTransition() = withContext(Dispatchers.IO) {
 }
 
 
+val animationList =  DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed }
+val styleList = DataStoreManager.ColorStyle.entries
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -117,16 +119,28 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
     TransitionPredictiveBackHandler(navController) {
         scale = it
     }
-    Column(modifier = Modifier
-        .verticalScroll(rememberScrollState())
-        .fillMaxSize()
-        .padding(innerPaddings)
-        .scale(scale)
-        .alpha(scale)) {
-        Spacer(modifier = Modifier.height(5.dp))
+    UISettingsScreen(
+        Modifier.verticalScroll(rememberScrollState()).scale(scale),
+        innerPaddings,
+        false
+    )
+}
+
+
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
+@Composable
+fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValues, isControlCenter : Boolean ) {
+    val backgroundColor = if(isControlCenter) {
+        cardNormalColor()
+    } else {
+        MaterialTheme.colorScheme.surface
+    }
+    Column(modifier = modifier) {
+        if(!isControlCenter) {
+            InnerPaddingHeight(innerPaddings,true)
+        }
 
         val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-        val animationList = remember { DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed } }
 
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
@@ -137,6 +151,7 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
         val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
+        val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
 
         val scope = rememberCoroutineScope()
 
@@ -237,7 +252,7 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         }
 
         DividerTextExpandedWith("深浅色") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            MyCustomCard(containerColor = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "纯黑深色背景") },
                     supportingContent = { Text(text = "OLED屏使用此模式在深色模式时可获得不发光的纯黑背景") },
@@ -299,27 +314,31 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
             }
         }
         DividerTextExpandedWith("主题色") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            MyCustomCard(containerColor = backgroundColor) {
                 RowHorizontal(modifier = Modifier.fillMaxWidth().padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP-10.dp)) {
                     FilledTonalIconButton(
-                        onClick = { showToast("正在开发") },
+                        onClick = { showToast("Primary") },
                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primary )
                     ) { }
                     FilledTonalIconButton(
-                        onClick = { showToast("正在开发") },
+                        onClick = { showToast("Secondary") },
                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.secondary )
                     ) { }
                     FilledTonalIconButton(
-                        onClick = { showToast("正在开发") },
+                        onClick = { showToast("PrimaryContainer") },
                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primaryContainer )
                     ) { }
                     FilledTonalIconButton(
-                        onClick = { showToast("正在开发") },
+                        onClick = { showToast("SecondaryContainer") },
                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.secondaryContainer )
                     ) { }
                     FilledTonalIconButton(
-                        onClick = { showToast("正在开发") },
+                        onClick = { showToast("SurfaceVariant") },
                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.surfaceVariant )
+                    ) { }
+                    FilledTonalIconButton(
+                        onClick = { showToast("SurfaceContainer") },
+                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.surfaceContainer )
                     ) { }
                 }
                 DividerTextExpandedWith("默认取色") {
@@ -339,6 +358,32 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                     )
                 }
                 DividerTextExpandedWith("自定义取色") {
+                    if(!useDynamicColor) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = "风格") },
+                            leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description",) },
+                            supportingContent = {
+                                Row {
+                                    for(i in styleList.indices) {
+                                        val item = styleList[i]
+                                        FilterChip(
+                                            onClick = {
+                                                scope.launch { DataStoreManager.saveCustomColorStyle(item) }
+                                            },
+                                            label = {
+                                                Text(text = item.description)
+                                            },
+                                            selected = customColorStyle == item.code
+                                        )
+                                        if(i != styleList.size-1) {
+                                            Spacer(modifier = Modifier.width(5.dp))
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                        PaddingHorizontalDivider()
+                    }
                     TransplantListItem(
                         headlineContent = { Text(text = "选择图片取色") },
                         leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description",) },
@@ -414,7 +459,7 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
             }
         }
         DividerTextExpandedWith("动效") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            MyCustomCard(containerColor = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Column {
@@ -543,34 +588,34 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
 
         DividerTextExpandedWith("背景") {
             val useCustomBackground = customBackground != ""
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-                 TransplantListItem(
-                     headlineContent = {
-                         Text("课程表背景图片")
-                     },
-                     supportingContent = {
-                         Text(if(!useCustomBackground) "选择图片，以作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
-                     },
-                     modifier = Modifier.clickable {
-                         pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                     },
-                     leadingContent = {
-                         Icon(painterResource(R.drawable.image),null)
-                     },
-                     trailingContent = {
-                         if(useCustomBackground) {
-                             FilledTonalButton(
-                                 onClick = {
-                                     scope.launch {
-                                         DataStoreManager.saveCustomBackground(null)
-                                     }
-                                 }
-                             ) {
-                                 Text("清除")
-                             }
-                         }
-                     }
-                 )
+            MyCustomCard(containerColor = backgroundColor) {
+                TransplantListItem(
+                    headlineContent = {
+                        Text("课程表背景图片")
+                    },
+                    supportingContent = {
+                        Text(if(!useCustomBackground) "选择图片，以作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
+                    },
+                    modifier = Modifier.clickable {
+                        pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.image),null)
+                    },
+                    trailingContent = {
+                        if(useCustomBackground) {
+                            FilledTonalButton(
+                                onClick = {
+                                    scope.launch {
+                                        DataStoreManager.saveCustomBackground(null)
+                                    }
+                                }
+                            ) {
+                                Text("清除")
+                            }
+                        }
+                    }
+                )
                 if(useCustomBackground) {
                     var alpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
                     Slider(
@@ -592,9 +637,15 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
                 }
             }
         }
-        InnerPaddingHeight(innerPaddings,false)
+        if(!isControlCenter) {
+            InnerPaddingHeight(innerPaddings,false)
+        } else {
+            Spacer(Modifier.navigationBarsPadding())
+        }
     }
 }
+
+
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable

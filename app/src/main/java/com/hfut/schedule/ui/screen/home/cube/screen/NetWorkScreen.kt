@@ -58,18 +58,12 @@ fun NetWorkScreen(navController: NavHostController,
         .padding(innerPaddings).scale(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
 
-//        val switch_api = SharedPrefs.prefs.getBoolean("SWITCHMYAPIS", isFocus())
-//        var showapi by remember { mutableStateOf(switch_api) }
-
-
-//        saveBoolean("SWITCHMYAPIS",false,showapi)
 
         val switch_upload = SharedPrefs.prefs.getBoolean("SWITCHUPLOAD",true )
         var upload by remember { mutableStateOf(switch_upload) }
         saveBoolean("SWITCHUPLOAD",true,upload)
 
 
-        // val deault = try { Gson().fromJson(my,MyAPIResponse::class.java).useNewAPI } catch (e : Exception) { true }
         val switch_server = SharedPrefs.prefs.getBoolean("SWITCHSERVER",false )
         var server by remember { mutableStateOf(switch_server) }
         saveBoolean("SWITCHSERVER",false,server)
@@ -96,14 +90,6 @@ fun NetWorkScreen(navController: NavHostController,
                     leadingContent = { Icon(painterResource(R.drawable.password), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.PasswordScreen.route) }
                 )
-                //        if(isFocus())
-//            TransplantListItem(
-//                headlineContent = { Text(text = "显示班级内部事件(旧接口)") },
-//                supportingContent = { Text(text = "为您提供除学校系统之外的聚焦信息\n(开发者同班同学仅可见此开关)") },
-//                leadingContent = { Icon(painterResource(R.drawable.api), contentDescription = "Localized description",) },
-//                trailingContent = { Switch(checked = showapi, onCheckedChange = {showapich -> showapi = showapich }) },
-//                modifier = Modifier.clickable { showapi = !showapi }
-//            )
             }
         }
 
@@ -131,12 +117,4 @@ fun NetWorkScreen(navController: NavHostController,
         InnerPaddingHeight(innerPaddings,false)
     }
 
-}
-
-private fun isFocus() : Boolean = try {
-    val personInfo = getPersonInfo()
-    val classInfo = personInfo.classes
-    personInfo.school!!.contains("宣城") && classInfo!!.contains("计算机") && classInfo.contains("23-3")
-} catch (_:Exception) {
-    false
 }

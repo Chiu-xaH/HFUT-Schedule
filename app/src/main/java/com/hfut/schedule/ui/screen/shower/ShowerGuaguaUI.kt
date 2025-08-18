@@ -44,7 +44,8 @@ import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.logic.enumeration.ShowerBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
@@ -100,10 +101,13 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
             }
         },
         bottomBar = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .bottomBarBlur(hazeState)
+            ) {
+                NavigationBarSpacer()
                 NavigationBar(containerColor = Color.Transparent,
-                    modifier = Modifier
-                        .bottomBarBlur(hazeState)) {
+                    ) {
 
                     val items = listOf(
                         NavigationBarItemData(

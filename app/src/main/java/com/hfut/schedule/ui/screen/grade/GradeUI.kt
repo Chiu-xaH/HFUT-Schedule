@@ -52,7 +52,8 @@ import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -158,9 +159,12 @@ fun GradeScreen(
                 )
             },
             bottomBar = {
-                Column {
+                Column(
+                    modifier = Modifier.bottomBarBlur(hazeState,)
+                ) {
+                    NavigationBarSpacer()
                     NavigationBar(containerColor = Color.Transparent ,
-                        modifier = Modifier.bottomBarBlur(hazeState,)
+
                     ) {
                         items.forEach { item ->
                             val interactionSource = remember { MutableInteractionSource() }

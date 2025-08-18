@@ -53,7 +53,7 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
     val listState = rememberLazyListState()
     val list = (uiState as UiState.Success).data
     Box(modifier = Modifier.fillMaxSize()) {
-        PagingController(listState,page, showUp = true,nextPage,previousPage,modifier = Modifier.zIndex(2f))
+        PagingController(listState,page,nextPage=nextPage,previousPage=previousPage,modifier = Modifier.zIndex(2f))
         LazyColumn(state = listState) {
             item { Spacer(Modifier.height(CARD_NORMAL_DP)) }
             item { InnerPaddingHeight(innerPadding,true) }

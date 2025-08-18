@@ -105,6 +105,7 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -215,7 +216,9 @@ private fun SharedTransitionScope.ButtonUI(
     if (isVisible) {
         FloatingActionButton(
             modifier = Modifier
-                .padding(innerPaddings)
+                .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
+
+//                .padding(innerPaddings)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 .sharedBounds(
                     boundsTransform = boundsTransform,

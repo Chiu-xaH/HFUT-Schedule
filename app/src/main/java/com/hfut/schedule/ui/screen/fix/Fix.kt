@@ -45,7 +45,8 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 
@@ -96,9 +97,12 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
             }
         },
         bottomBar = {
-            Column {
+            Column (
+                modifier = Modifier.bottomBarBlur(hazeState)
+            ){
+                NavigationBarSpacer()
                 NavigationBar(containerColor =  Color.Transparent,
-                    modifier = Modifier.bottomBarBlur(hazeState)) {
+                    ) {
 
                     val items = listOf(
                         NavigationBarItemData(

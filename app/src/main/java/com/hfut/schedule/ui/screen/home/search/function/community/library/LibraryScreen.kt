@@ -62,7 +62,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.HazeBottomSheet
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarBlur
@@ -278,7 +278,7 @@ fun BooksUI(vm: NetWorkViewModel, hazeState: HazeState) {
                     }
                     item { PaddingForPageControllerButton() }
                 }
-                PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it })
+                PagingController(listState,page,nextPage = { page = it }, previousPage = { page = it })
             }
         }
     }

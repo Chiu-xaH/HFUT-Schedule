@@ -102,7 +102,7 @@ import com.hfut.schedule.ui.component.network.URLImageWithOCR
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.RowHorizontal

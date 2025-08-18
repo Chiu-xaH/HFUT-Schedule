@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.InnerPaddingHeight
 import com.hfut.schedule.ui.style.topBarBlur
@@ -205,7 +205,7 @@ fun OfficeHallScreen(
                             item { PaddingForPageControllerButton() }
                             item { InnerPaddingHeight(innerPadding,false) }
                         }
-                        PagingController(listState,page,showUp = true, nextPage = { page = it }, previousPage = { page = it })
+                        PagingController(listState,page, nextPage = { page = it }, previousPage = { page = it })
                     }
                 }
             }

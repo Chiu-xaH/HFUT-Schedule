@@ -12,6 +12,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import com.hfut.schedule.ui.theme.AppTheme
+import com.hfut.schedule.ui.theme.DefaultAppTheme
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -34,7 +35,6 @@ abstract class BaseActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-//        enableEdgeToEdge()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         //竖屏
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.util.storage
 
+import android.content.ClipDescription
 import android.content.Context
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
@@ -12,13 +13,15 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.navigation.NavDestination
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.materialkolor.PaletteStyle
 import com.xah.transition.style.TransitionLevel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +43,13 @@ object DataStoreManager {
     enum class AnimationSpeed(val code : Int,val speed : Int,val title : String) {
         SLOW(3,550,"慢"),NORMAL(0,400,"正常"),FAST(1,250,"快"),NONE(2,0,"无")
     }
+    enum class ColorStyle(val code : Int,val description: String,val style : PaletteStyle) {
+        DEFAULT(0,"正常", PaletteStyle.TonalSpot),
+        LIGHT(2,"淡雅", PaletteStyle.Neutral),
+        DEEP(3,"饱和", PaletteStyle.Vibrant),
+        BLACK(1,"黑白", PaletteStyle.Monochrome),
+    }
+
     private const val EMPTY_STRING = ""
 
     private suspend fun <T> saveValue(key: Preferences.Key<T>, value: T) = dataStore.edit { it[key] = value }
@@ -93,6 +103,7 @@ object DataStoreManager {
     private val WX_AUTH = stringPreferencesKey("wx_auth")
     private val CUSTOM_COLOR = longPreferencesKey("custom_color")
     private val CUSTOM_BACKGROUND = stringPreferencesKey("custom_background")
+    private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style")
     private val CUSTOM_BACKGROUND_ALPHA = floatPreferencesKey("custom_background_alpha")
 
 
@@ -120,6 +131,7 @@ object DataStoreManager {
     suspend fun saveTodayCampusTip(value: Boolean) = saveValue(TODAY_CAMPUS_TIP,value)
     suspend fun saveCourseBook(value: String) = saveValue(COURSE_BOOK,value)
     suspend fun saveAnimationSpeed(value: AnimationSpeed) = saveValue(ANIMATION_SPEED,value.code)
+    suspend fun saveCustomColorStyle(value: ColorStyle) = saveValue(CUSTOM_COLOR_STYLE,value.code)
     suspend fun saveWebViewDark(value: Boolean) = saveValue(WEB_VIEW_DARK,value)
     suspend fun savePredict(value: Boolean) = saveValue(PREDICTIVE,value)
     suspend fun saveControlCenter(value: Boolean) = saveValue(CONTROL_CENTER,value)
@@ -157,7 +169,7 @@ object DataStoreManager {
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
-
+    val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
     val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))

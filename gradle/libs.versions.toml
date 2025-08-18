@@ -1,5 +1,5 @@
 [versions]
-materialKolor = "3.0.1"
+materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
 minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"

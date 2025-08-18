@@ -134,7 +134,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                 }
                                 item { PaddingForPageControllerButton() }
                             }
-                            PagingController(listState,currentPage,showUp = true, nextPage = { currentPage = it }, previousPage = { currentPage = it })
+                            PagingController(listState,currentPage, nextPage = { currentPage = it }, previousPage = { currentPage = it })
                         }
                     }
                 }

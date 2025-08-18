@@ -55,7 +55,8 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
 import com.hfut.schedule.ui.component.screen.CustomTabRow
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.bottomBarBlur
 import com.hfut.schedule.ui.style.topBarBlur
@@ -145,10 +146,13 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             }
         },
         bottomBar = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .bottomBarBlur(hazeState)
+            ) {
+                NavigationBarSpacer()
                 NavigationBar(containerColor = Color.Transparent ,
-                    modifier = Modifier
-                        .bottomBarBlur(hazeState)) {
+                   ) {
 
                     val items = listOf(
                         NavigationBarItemData(

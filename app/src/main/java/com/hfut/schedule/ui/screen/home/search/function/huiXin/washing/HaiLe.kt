@@ -166,7 +166,7 @@ fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
                     }
                     item { PaddingForPageControllerButton() }
                 }
-                PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it })
+                PagingController(listState,page,nextPage = { page = it }, previousPage = { page = it })
             }
         }
     }
@@ -249,7 +249,7 @@ fun HaiLeDetailScreen(vm : NetWorkViewModel,itemId : Long,onType : (HaiLeType) -
                     }
                     item { PaddingForPageControllerButton() }
                 }
-                PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it })
+                PagingController(listState,page,nextPage = { page = it }, previousPage = { page = it })
             }
         }
     }

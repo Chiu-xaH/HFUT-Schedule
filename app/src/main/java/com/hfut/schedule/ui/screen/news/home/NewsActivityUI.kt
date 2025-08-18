@@ -81,7 +81,9 @@ import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -218,10 +220,13 @@ fun NewsScreen(
                 }
             },
             bottomBar = {
-                Column {
+                Column(
+                    modifier = Modifier
+                        .bottomBarBlur(hazeState)
+                ){
+                    NavigationBarSpacer()
                     NavigationBar(containerColor = Color.Transparent,
-                        modifier = Modifier
-                            .bottomBarBlur(hazeState)) {
+                        ) {
 
                         val items = listOf(
                             NavigationBarItemData(
@@ -414,7 +419,15 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
             }
-            PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding))
+            PagingController(
+                listState,
+                page,
+                nextPage = { page = it },
+                previousPage = { page = it },
+//                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
+                paddingBottom = false
+            )
         }
     }
 }

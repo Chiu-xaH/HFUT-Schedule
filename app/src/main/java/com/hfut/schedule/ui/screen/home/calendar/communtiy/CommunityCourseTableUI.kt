@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
  
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
@@ -508,7 +509,7 @@ fun CommunityCourseTableUI(
                     exit = scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(innerPaddings)
+                        .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
                         .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ) {
                     if (shouldShowAddButton) {
@@ -530,7 +531,7 @@ fun CommunityCourseTableUI(
                     exit = scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(innerPaddings)
+                        .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
                         .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ) {
                     if (shouldShowAddButton) {
@@ -585,7 +586,7 @@ fun CommunityCourseTableUI(
                     exit = scaleOut(),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(innerPaddings)
+                        .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
                         .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 ) {
                     if (shouldShowAddButton) {

@@ -55,7 +55,8 @@ import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.screen.CustomTabRow
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
@@ -158,9 +159,12 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                 }
             },
             bottomBar = {
-                Column {
+                Column (
+                    modifier = Modifier.bottomBarBlur(hazeState)
+                ){
+                    NavigationBarSpacer()
                     NavigationBar(containerColor = Color.Transparent ,
-                        modifier = Modifier.bottomBarBlur(hazeState)) {
+                        ) {
 
                         val items = listOf(
                             NavigationBarItemData(

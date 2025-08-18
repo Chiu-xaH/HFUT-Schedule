@@ -56,7 +56,7 @@ private fun TotalGrade(vm : NetWorkViewModel) {
             headlineContent = {  Text("绩点(GPA)  $gpa") },
             supportingContent = { Text("班级排名: $classRanking   专业排名: $majorRanking") },
             leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
-            color = MaterialTheme.colorScheme.primaryContainer,
+            color = MaterialTheme.colorScheme.secondaryContainer,
             index = 0
         )
     }

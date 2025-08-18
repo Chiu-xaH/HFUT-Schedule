@@ -73,25 +73,25 @@ fun PartOne(navController: NavController) {
         containerColor = MaterialTheme.colorScheme.surface
     ){
         TransplantListItem(
-            headlineContent = { Text(text = "界面显示") },
+            headlineContent = { Text(text = "外观与效果") },
             supportingContent = { Text(text = "色彩 动效 动态模糊")},
             leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.stacks), contentDescription ="" )
+                Icon(painter = painterResource(id = R.drawable.format_paint), contentDescription ="" )
             },
             modifier = Modifier.clickable { navController.navigate(Screen.UIScreen.route)  }
         )
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "应用行为") },
+            headlineContent = { Text(text = "应用及配置") },
             supportingContent = { Text(text = "交互 缓存清理 偏好配置")},
             leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.empty_dashboard), contentDescription ="" )
+                Icon(painter = painterResource(id = R.drawable.joystick), contentDescription ="",  )
             },
             modifier = Modifier.clickable { navController.navigate(Screen.APPScreen.route)  }
         )
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "网络相关") },
+            headlineContent = { Text(text = "网络") },
             supportingContent = { Text(text = "预加载 一卡通密码")},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
@@ -100,10 +100,10 @@ fun PartOne(navController: NavController) {
         )
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "维护关于") },
+            headlineContent = { Text(text = "维护与关于") },
             supportingContent = { Text(text = "反馈 关于 疑难修复")},
             leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.responsive_layout), contentDescription ="" )
+                Icon(painter = painterResource(id = R.drawable.partner_exchange), contentDescription ="",modifier = Modifier.size(22.dp).padding(start = 1.dp) )
             },
             modifier = Modifier.clickable { navController.navigate(Screen.FIxAboutScreen.route)  }
         )

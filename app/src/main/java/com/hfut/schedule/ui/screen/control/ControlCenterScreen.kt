@@ -1,8 +1,9 @@
 package com.hfut.schedule.ui.screen.control
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -22,23 +24,27 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,8 +60,11 @@ import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
+import com.hfut.schedule.ui.screen.home.cube.screen.UISettingsScreen
 import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.normalTopBarBlur
 import com.hfut.schedule.ui.style.textFiledTransplant
 import com.hfut.schedule.ui.style.topBarTransplantColor
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
@@ -126,77 +135,105 @@ fun getLabel(route : String) : String? {
     }
     return null
 }
+private const val TAB_STACK = 0
+private const val TAB_SETTINGS = 1
+private const val TAB_SEARCH = 2
 
+@RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ControlCenterScreen(
     navController: NavHostController,
     onExit : () -> Unit
 ) {
+    val state = rememberScrollState()
+    // 项目到达底部
+    val isAtStart by remember { derivedStateOf { state.value == 0 } }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code && !isAtStart)
     val queue = GlobalUIStateHolder.routeQueue
     val currentStack by navController.currentBackStack.collectAsState()
     val stack = currentStack.reversed()
-    val color = MaterialTheme.colorScheme.surface
     val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
-    val state = rememberScrollState()
     var input by remember { mutableStateOf("") }
-    var showSearch by remember { mutableStateOf(false) }
-    // 项目到达底部
-    val isAtStart by remember { derivedStateOf { state.value == 0 } }
-//    PredictiveBackHandler { progress: Flow<BackEventCompat> ->
-//        // code for gesture back started
-//        try {
-//            progress.collect { backEvent ->
-//                // code for progress
-////                onScale(1f - (targetScale * backEvent.progress))
-//            }
-//            // code for completion
-//            onExit()
-//        } catch (e: CancellationException) {
-//            // code for cancellation
-//
-//        }
-//    }
+    var tab by remember { mutableIntStateOf(TAB_STACK) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
-        modifier = Modifier,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = Color.Transparent,
         topBar = {
-            TopAppBar(
+            Column(
                 modifier = Modifier.let {
-                    if(isAtStart) it
-                    else it.background(
-                        Brush.verticalGradient(
-                            colorStops = arrayOf(
-                                0.0f to color.copy(alpha = 1f),
-                                0.25f to color.copy(alpha = 0.95f),
-                                0.50f to color.copy(alpha = 0.80f),
-                                0.75f to color.copy(alpha = 0.65f),
-                                1.0f to color.copy(alpha = 0f),
-                            )
-                        )
-                    )
+                    if(isAtStart) {
+                        it
+                    } else {
+                        it.normalTopBarBlur(hazeState)
+                    }
                 },
-                colors = topBarTransplantColor(),
-                title = { Text("启动台") },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            showSearch = !showSearch
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(
+                        when(tab) {
+                            TAB_STACK -> "启动台"
+                            TAB_SEARCH -> "搜索"
+                            TAB_SETTINGS -> "外观设置"
+                            else -> "启动台"
                         }
-                    ) {
-                        Icon(painterResource(if(!showSearch) R.drawable.search else R.drawable.flash_on),null, tint = MaterialTheme.colorScheme.primary)
-                    }
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onExit
-                    ) {
-                        Icon(painterResource(R.drawable.menu),null, tint = MaterialTheme.colorScheme.primary)
-                    }
-                },
-            )
+                    ) },
+                    actions = {
+                        Row {
+                            IconButton(
+                                onClick = { tab = TAB_STACK },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = if(tab == TAB_STACK) {
+                                        MaterialTheme.colorScheme.secondaryContainer.copy(.85f)
+                                    } else {
+                                        Color. Unspecified
+                                    }
+                                ),
+                            ) {
+                                Icon(painterResource(R.drawable.flash_on),null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(25.5.dp))
+                            }
+                            IconButton(
+                                onClick = { tab = TAB_SETTINGS },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = if(tab == TAB_SETTINGS) {
+                                        MaterialTheme.colorScheme.secondaryContainer.copy(.85f)
+                                    } else {
+                                        Color. Unspecified
+                                    }
+                                ),
+                            ) {
+                                Icon(painterResource(R.drawable.format_paint),null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                            IconButton(
+                                onClick = { tab = TAB_SEARCH },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = if(tab == TAB_SEARCH) {
+                                        MaterialTheme.colorScheme.secondaryContainer.copy(.85f)
+                                    } else {
+                                        Color. Unspecified
+                                    }
+                                ),
+                            ) {
+                                Icon(painterResource(R.drawable.category_search),null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                            Spacer(Modifier.width(APP_HORIZONTAL_DP-8.dp))
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onExit
+                        ) {
+                            Icon(painterResource(R.drawable.menu),null, tint = MaterialTheme.colorScheme.primary)
+                        }
+                    },
+                )
+                ScrollHorizontalDivider(state, startPadding = false,endPadding = false)
+            }
         },
     ) { innerPadding ->
         Column(
@@ -217,7 +254,7 @@ fun ControlCenterScreen(
             }
             Box() {
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = showSearch,
+                    visible = tab == TAB_SEARCH,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
@@ -237,7 +274,16 @@ fun ControlCenterScreen(
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(
-                    visible = !showSearch,
+                    visible = tab == TAB_SETTINGS,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ){
+                    Column {
+                        UISettingsScreen(innerPaddings = innerPadding, isControlCenter = true)
+                    }
+                }
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = tab == TAB_STACK,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){

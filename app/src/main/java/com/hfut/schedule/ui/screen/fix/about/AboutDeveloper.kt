@@ -92,7 +92,9 @@ private val openSourceProjects = listOf(
     OpenSource("EdDSA Java" ,"加密(供和风天气API使用)","https://github.com/str4d/ed25519-java"),
     OpenSource("Konfetti" ,"礼花效果","https://github.com/DanielMartinus/Konfetti"),
     OpenSource("Tesseract4Android" ,"封装Tesseract4(供图片验证码OCR)","https://github.com/adaptech-cz/Tesseract4Android"),
-    OpenSource("Bsdiff-Lib" , "增量更新","https://github.com/Chiu-xaH/Bsdiff-Lib")
+    OpenSource("Bsdiff-Lib" , "增量更新","https://github.com/Chiu-xaH/Bsdiff-Lib"),
+    OpenSource("MaterialKolor" , "自定义取色","https://github.com/jordond/MaterialKolor")
+
 )
 private val dependencies = Build(
     jetpack = "Jetpack Compose",

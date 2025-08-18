@@ -60,6 +60,7 @@ import com.hfut.schedule.logic.model.jxglstu.datumResponse
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
@@ -500,7 +501,8 @@ fun JxglstuCourseTableUINext(
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
+
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP
@@ -523,7 +525,8 @@ fun JxglstuCourseTableUINext(
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
+
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP
@@ -554,7 +557,8 @@ fun JxglstuCourseTableUINext(
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(innerPadding)
+                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
+
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP

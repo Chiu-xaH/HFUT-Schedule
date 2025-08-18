@@ -40,7 +40,7 @@ import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionListUI

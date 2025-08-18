@@ -65,7 +65,7 @@ fun PersonPart() {
 //                shape = MaterialTheme.shapes.medium,
 //                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
 //            )
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.primaryContainer, hasElevation = false)
+            MyCustomCard(containerColor = MaterialTheme.colorScheme.secondaryContainer, hasElevation = false)
             {
 
 

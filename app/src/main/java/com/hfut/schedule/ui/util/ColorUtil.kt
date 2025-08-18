@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component
+package com.hfut.schedule.ui.util
 
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -9,7 +9,14 @@ import com.hfut.schedule.App.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.graphics.Color as AColor
-
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+import android.graphics.ImageDecoder
+import android.os.Build
+import android.provider.MediaStore
+import androidx.annotation.RequiresApi
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.materialkolor.ktx.themeColors
 
 fun parseColor(input: String): Long? {
     return try {
@@ -26,6 +33,24 @@ fun longToHexColor(colorLong: Long): String {
     return String.format("#%08X", colorInt)
 }
 
+@RequiresApi(Build.VERSION_CODES.P)
+fun uriToImageBitmap(uri: Uri): ImageBitmap? {
+    return try {
+        val bitmap = if (AppVersion.sdkInt >= Build.VERSION_CODES.P) {
+            // Android 9+
+            val source = ImageDecoder.createSource(MyApplication.context.contentResolver, uri)
+            ImageDecoder.decodeBitmap(source)
+        } else {
+            // Android 8 及以下
+            MediaStore.Images.Media.getBitmap(MyApplication.context.contentResolver, uri)
+        }
+        bitmap.asImageBitmap()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
 // 从URI图片取色
 suspend fun extractColor(uri: Uri): Long? {
     return withContext(Dispatchers.IO) {
@@ -36,6 +61,12 @@ suspend fun extractColor(uri: Uri): Long? {
         val palette = Palette.from(bitmap).generate()
         palette.getDominantColor(Color.Gray.toArgb()).toLong() // 提取主色（可设置默认值）
     }
+}
+@RequiresApi(Build.VERSION_CODES.P)
+suspend fun extractColor2(uri: Uri): Long? = withContext(Dispatchers.IO) {
+    val bitmap = uriToImageBitmap(uri)
+    val suitableColors = bitmap?.themeColors(fallback = Color.Blue)
+    suitableColors?.first()?.toArgb()?.toLong()
 }
 
 

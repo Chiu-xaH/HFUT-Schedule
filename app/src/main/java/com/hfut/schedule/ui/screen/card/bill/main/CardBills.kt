@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.HazeBottomSheet
@@ -120,7 +121,7 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                         leadingContent = { BillsIcons(name) },
                         color =
                             if(DateTimeManager.Date_yyyy_MM_dd == getTime)
-                                MaterialTheme.colorScheme.primaryContainer
+                                MaterialTheme.colorScheme.secondaryContainer
                             else null,
                         modifier = Modifier.clickable {
                             infoNum = item
@@ -135,7 +136,14 @@ fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVie
                 item { InnerPaddingHeight(innerPaddings,false) }
                 item { PaddingForPageControllerButton() }
             }
-            PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPaddings))
+            PagingController(
+                listState,
+                page,
+                nextPage = { page = it },
+                previousPage = { page = it },
+                modifier = Modifier.padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding),
+                paddingBottom = false
+            )
         }
 
     }

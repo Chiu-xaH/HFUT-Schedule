@@ -29,6 +29,7 @@ import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
@@ -101,7 +102,15 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         item { InnerPaddingHeight(innerPadding,false) }
                         item { PaddingForPageControllerButton() }
                     }
-                    PagingController(listState,page, showUp = true,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding))
+                    PagingController(
+                        listState,
+                        page,
+                        nextPage = { page = it },
+                        previousPage = { page = it },
+//                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
+
+                    )
                 }
             }
         }

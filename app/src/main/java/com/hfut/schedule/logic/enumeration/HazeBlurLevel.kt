@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.cube.screen
+package com.hfut.schedule.logic.enumeration
 
 enum class HazeBlurLevel(val code : Int, val title : String) {
     NONE(0,"无"),

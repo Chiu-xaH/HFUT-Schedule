@@ -98,19 +98,31 @@ private fun dividerColor(isAtStart : Boolean): Color {
 }
 // 默认隐藏，滚动时显示
 @Composable
-fun ScrollHorizontalDivider(state: LazyListState) {
+fun ScrollHorizontalDivider(
+    state: LazyListState,
+    startPadding : Boolean = true,
+    endPadding : Boolean = true,
+) {
     val isAtStart by remember { derivedStateOf { state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0 } }
-    PaddingHorizontalDivider(color = dividerColor(isAtStart))
+    PaddingHorizontalDivider(color = dividerColor(isAtStart),startPadding = startPadding, endPadding = endPadding)
 }
 
 @Composable
-fun ScrollHorizontalDivider(state: ScrollState) {
+fun ScrollHorizontalDivider(
+    state: ScrollState,
+    startPadding : Boolean = true,
+    endPadding : Boolean = true,
+) {
     val isAtStart by remember { derivedStateOf { state.value == 0 } }
-    PaddingHorizontalDivider(color = dividerColor(isAtStart))
+    PaddingHorizontalDivider(color = dividerColor(isAtStart), startPadding = startPadding, endPadding = endPadding)
 }
 
 @Composable
-fun ScrollHorizontalDivider(state: LazyGridState) {
+fun ScrollHorizontalDivider(
+    state: LazyGridState,
+    startPadding : Boolean = true,
+    endPadding : Boolean = true,
+) {
     val isAtStart by remember { derivedStateOf { state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0 } }
-    PaddingHorizontalDivider(color = dividerColor(isAtStart))
+    PaddingHorizontalDivider(color = dividerColor(isAtStart),startPadding = startPadding, endPadding = endPadding)
 }
