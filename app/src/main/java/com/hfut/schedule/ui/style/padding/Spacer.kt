@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component
+package com.hfut.schedule.ui.style.padding
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height

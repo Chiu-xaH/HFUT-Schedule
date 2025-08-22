@@ -38,9 +38,9 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 

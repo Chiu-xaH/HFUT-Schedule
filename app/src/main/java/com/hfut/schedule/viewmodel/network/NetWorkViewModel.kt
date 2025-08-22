@@ -1589,7 +1589,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _,json -> parsePayFee(json) }
     )
     private fun parsePayFee(result : String) : PayData = try {
-        Gson().fromJson(result,PayResponse::class.java).data
+        Gson().fromJson(result,PayResponse::class.java).data ?: throw Exception("数据为空")
     } catch (e : Exception) { throw e }
 
     val dormitoryResult = StateHolder<List<XuanquResponse>>()

@@ -77,6 +77,7 @@ fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAn
                     // 点击选择应用动画 标记selected=true selected只能存在一个true
                     cor.launch { DataStoreManager.saveAnimationType(index) }
                 },
+            colors =  CardDefaults. outlinedCardColors(containerColor = CardDefaults.outlinedCardColors().containerColor.copy(.6f)),
             border = CardDefaults.outlinedCardBorder(enabled =  isSelected),
             shape = RoundedCornerShape(16.dp),
         ) {

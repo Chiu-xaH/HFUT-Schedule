@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -44,6 +45,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
@@ -52,20 +54,23 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
+import com.hfut.schedule.logic.util.sys.AppDownloadManager.DownloadIds
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.noticeInstall
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
-import com.hfut.schedule.logic.util.sys.AppDownloadManager.refused
+import com.hfut.schedule.logic.util.sys.AppDownloadManager.removeDownload
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.component.button.BottomButton
-import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.component.container.MyCustomCard
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BottomButton
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.status.LoadingUI
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
@@ -94,10 +99,9 @@ fun UpdateUI(vm : NetWorkViewModel) {
     handler.post(runnable)
     // 下载完成后触发
     LaunchedEffect(pro) {
-        if(pro == 1f && !refused) {
+        if(pro == 1f) {
+            showToast("安装包已存在，可点击安装")
             noticeInstall()
-            refused = true
-            installApk()
         }
     }
 
@@ -118,9 +122,9 @@ fun UpdateUI(vm : NetWorkViewModel) {
         }
     }
 
-    MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.errorContainer) {
+    CustomCard(containerColor = MaterialTheme.colorScheme.errorContainer) {
         TransplantListItem(
-            headlineContent = { Text(text = "发现新版本") },
+            headlineContent = { Text(text = "最新版本") },
             supportingContent = { Text(text = "${AppVersion.getVersionName()} → ${version.version}") },
             leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
             trailingContent = {
@@ -149,8 +153,6 @@ fun UpdateUI(vm : NetWorkViewModel) {
                 supportingContent = {
                     getUpdates().text?.let { Text(text = it) }
                 },
-//                leadingContent = { Icon(painter = painterResource(id = R.drawable.hotel_class), contentDescription = "") },
-//                colors = MaterialTheme.colorScheme.errorContainer
             )
         }
         AnimatedVisibility(
@@ -177,47 +179,51 @@ fun UpdateUI(vm : NetWorkViewModel) {
         exit = AppAnimationManager.upDownAnimation.exit,
         enter = AppAnimationManager.upDownAnimation.enter
     ) {
-        Column(modifier = Modifier.padding(horizontal = 7.dp)) {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
+        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
+            // 下载完成 但是未安装
+            if(able && pro == 1f) {
+                FilledTonalButton(
+                    onClick = {
+                        openDownload()
+                    },
+                    modifier = Modifier.fillMaxWidth().weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
+                ) {
+                    Text(text = "下载管理" )
+                }
+            } else {
                 Button(
                     onClick = {
                         activity?.let { ac ->
                             getUpdates().version?.let { AppDownloadManager.update(it,ac) }
                         }
                     },
-                    modifier = Modifier
-                        .weight(.5f)
-                        .padding(horizontal = 8.dp),
+                    modifier = Modifier.fillMaxWidth().weight(.5f),
+                    shape = MaterialTheme.shapes.medium,
                     enabled = able
                 ) {
-                    Row {
-                        if(pro != 0f && pro != 1f) {
-                            CircularProgressIndicator(
-                                progress = { pro },
-                                modifier = Modifier
-                                    .size(20.dp)
-                                    .height(20.dp),
-                                color = MaterialTheme.colorScheme.error
-                            )
-                            Spacer(modifier = Modifier.width(20.dp))
-                        }
-                        Text(text = if(able && pro == 0f)"下载更新" else "${(pro*100).toInt()} %")
-
-                    }
-
+                    Text(text =
+                        if(able && pro == 0f) "下载"
+                        else "${(pro*100).toInt()} %"
+                    )
                 }
-                if(pro > 0)
-                    FilledTonalButton(onClick = {
+            }
+            if(pro > 0) {
+                Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
+                FilledTonalButton(
+                    onClick = {
                         if (pro == 1f) {
                             installApk()
                         } else {
                             openDownload()
                         }
-                    }, modifier = Modifier
-                        .weight(.5f)
-                        .padding(horizontal = 8.dp)) {
-                        Text(text = if(pro == 1f) "安装" else "管理下载任务")
-                    }
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    colors =if(pro != 1f)  ButtonDefaults. filledTonalButtonColors() else ButtonDefaults. buttonColors(),
+                    modifier = Modifier.fillMaxWidth().weight(.5f)
+                ) {
+                    Text(text = if(pro == 1f) "安装" else "下载管理")
+                }
             }
         }
     }
@@ -249,9 +255,8 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
     handler.post(runnable)
     // 下载完成后触发
     LaunchedEffect(pro) {
-        if(pro == 1f && !refused) {
-            showToast("补丁包下载完成，请点击安装按钮")
-            refused = true
+        if(pro == 1f ) {
+            showToast("补丁包下载完成，可点击安装按钮")
         }
     }
 
@@ -266,10 +271,10 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
 
 
     if(loadingPatch) {
-        LoadingUI()
+        LoadingUI("正在校验与合并")
     } else {
         Spacer(Modifier.height(CARD_NORMAL_DP))
-        MyCustomCard(hasElevation = false, containerColor = MaterialTheme.colorScheme.surface) {
+        CustomCard( containerColor = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
                 headlineContent = { Text(text = "增量更新至" +
                         patch.newVersion.let{ if (it == getUpdates().version) "最新版本" else (""+ it) }
@@ -298,7 +303,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
                                 if(uiStatePatch is UiState.Success) {
                                    " ("+ formatDecimal((uiStatePatch as UiState.Success).data,2) + "MB)"
                                 } else ""
-                    , color = MaterialTheme.colorScheme.surfaceVariant
+                    , color = MaterialTheme.colorScheme.outlineVariant.copy(.5f)
                 )
             }
         }
@@ -308,34 +313,37 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
             enter = AppAnimationManager.upDownAnimation.enter
         ) {
 
-            Column(modifier = Modifier.padding(horizontal = 7.dp)) {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center)  {
+            Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
+
+                if(able && pro == 1f) {
+                    FilledTonalButton(
+                        onClick = {
+                            openDownload()
+                        },
+                        modifier = Modifier.fillMaxWidth().weight(.5f),
+                        shape = MaterialTheme.shapes.medium,
+                    ) {
+                        Text(text = "下载管理" )
+                    }
+                } else {
                     Button(
                         onClick = {
                             activity?.let { AppDownloadManager.downloadPatch(patchFileName, it) }
                         },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .padding(horizontal = 8.dp),
+                        modifier = Modifier.fillMaxWidth().weight(.5f),
+                        shape = MaterialTheme.shapes.medium,
                         enabled = able
                     ) {
-                        Row {
-                            if(pro != 0f && pro != 1f) {
-                                CircularProgressIndicator(
-                                    progress = { pro },
-                                    modifier = Modifier
-                                        .size(20.dp)
-                                        .height(20.dp),
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                                Spacer(modifier = Modifier.width(20.dp))
-                            }
-                            Text(text = if(able && pro == 0f)"下载补丁包" else "${(pro*100).toInt()} %")
-
-                        }
+                        Text(text =
+                            if(able && pro == 0f) "下载"
+                            else "${(pro*100).toInt()} %"
+                        )
                     }
-                    if(pro > 0)
-                        FilledTonalButton(onClick = {
+                }
+                if(pro > 0) {
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP/3))
+                    FilledTonalButton(
+                        onClick = {
                             if (pro == 1f) {
                                 coroutineScope.launch {
                                     async { loadingPatch = true }.await()
@@ -345,11 +353,13 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
                             } else {
                                 openDownload()
                             }
-                        }, modifier = Modifier
-                            .weight(.5f)
-                            .padding(horizontal = 8.dp)) {
-                            Text(text = if(pro == 1f) "安装补丁包" else "管理下载任务")
-                        }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors =if(pro != 1f)  ButtonDefaults. filledTonalButtonColors() else ButtonDefaults. buttonColors(),
+                        modifier = Modifier.fillMaxWidth().weight(.5f)
+                    ) {
+                        Text(text = if(pro == 1f) "安装" else "管理下载任务")
+                    }
                 }
             }
         }

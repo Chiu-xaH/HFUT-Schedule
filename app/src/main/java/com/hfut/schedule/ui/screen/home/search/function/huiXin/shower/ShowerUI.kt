@@ -65,7 +65,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
@@ -73,7 +73,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -313,7 +313,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             if(loading) {
                 LoadingUI("正在核对登录")
             } else {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text("进入呱呱物联") },
                     modifier = Modifier.clickable {
                         getInGuaGua(vm) { loading = it }
@@ -331,7 +331,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                 when(page) {
                     HEFEI_TAB -> {
 //                        Spacer(Modifier.height(APP_HORIZONTAL_DP*3))
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
                                 Starter.startWebView(url = getUrl(HEFEI_TAB), title = "慧新易校")

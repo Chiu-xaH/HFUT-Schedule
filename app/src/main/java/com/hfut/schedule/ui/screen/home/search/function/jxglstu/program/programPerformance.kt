@@ -20,9 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +34,7 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -63,14 +66,14 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.containerShare
 import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
@@ -91,21 +94,23 @@ fun ProgramCompetitionScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             roundShape = MaterialTheme.shapes.large,
-
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.ProgramCompetition.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.ProgramCompetition.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.ProgramCompetition.icon)
                     }
                 )
             },
@@ -302,21 +307,25 @@ fun ProgramCompetitionDetailScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     var input by remember { mutableStateOf("") }
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             roundShape = MaterialTheme.shapes.medium,
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 Column(
                     modifier = Modifier.topBarBlur(hazeState),
                 ) {
-                    TopAppBar(
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
                         title = { Text(title) },
                         navigationIcon = {
-                            TopBarNavigateIcon(navController)
+                            com.xah.transition.component.TopBarNavigateIcon(navController)
                         },
                     )
                     Row(

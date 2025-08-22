@@ -11,24 +11,23 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
@@ -56,20 +56,22 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.NavigationBarSpacer
+import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
-import com.hfut.schedule.ui.style.bottomBarBlur
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.transitionBackground2
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.transitionBackground2
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -79,7 +81,13 @@ import dev.chrisbanes.haze.rememberHazeState
 fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI : UIViewModel) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-    var bottomBarItems by remember { mutableStateOf(SupabaseScreen.HOME) }
+    val bottomBarItems = when(navHostController.currentRouteWithoutArgs()) {
+        SupabaseScreen.HOME.name -> SupabaseScreen.HOME
+        SupabaseScreen.SETTINGS.name -> SupabaseScreen.SETTINGS
+        SupabaseScreen.STORAGE.name -> SupabaseScreen.STORAGE
+        SupabaseScreen.ME.name -> SupabaseScreen.ME
+        else -> SupabaseScreen.HOME
+    }
     val navController = rememberNavController()
     val titles = listOf("日程","网址导航")
 
@@ -103,6 +111,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
     var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
     var sortReversed by remember { mutableStateOf(false) }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
@@ -112,15 +121,20 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         }
 
         Scaffold(
-            modifier = transitionBackground2(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).fillMaxSize(),
+            modifier = transitionBackground2(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
-                    TopAppBar(
-                        colors = topAppBarColors(
-                            containerColor = Color.Transparent,
-                            titleContentColor = MaterialTheme.colorScheme.primary
-                        ),
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
+                        colors = topBarTransplantColor(),
                         title = { Text("信息共建") },
+                        navigationIcon = {
+                            IconButton(onClick = {
+                                context?.finish()
+                            }) {
+                                Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                            }
+                        },
                         actions = {
                             if(bottomBarItems == SupabaseScreen.HOME) {
                                 IconButton(onClick = {
@@ -144,12 +158,6 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                         }
                                     )
                                 }
-                            }
-
-                            IconButton(onClick = {
-                                context?.finish()
-                            }) {
-                                Icon(Icons.Filled.Close, contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                             }
                         }
                     )
@@ -199,12 +207,6 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                 modifier = Modifier.scale(scale.value),
                                 interactionSource = interactionSource,
                                 onClick = {
-                                    when(item) {
-                                        items[0] -> bottomBarItems = SupabaseScreen.HOME
-                                        items[1] -> bottomBarItems = SupabaseScreen.ME
-                                        items[2] -> bottomBarItems = SupabaseScreen.STORAGE
-                                        items[3] -> bottomBarItems = SupabaseScreen.SETTINGS
-                                    }
                                     if (!selected) {
                                         navController.navigateAndSave(route)
                                     }

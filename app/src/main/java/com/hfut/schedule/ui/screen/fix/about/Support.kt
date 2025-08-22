@@ -28,11 +28,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
@@ -46,34 +49,34 @@ private data class SupportItemBean(val title : String,val android : String,val u
 fun Support(innerPadding : PaddingValues) {
     val items = listOf(
         // 华为 小米 oppo vivo 荣耀 三星 魅族 类原生
-        SupportItemBean("开屏页面","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("开屏页面","Android 13+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             false,true,true,true,true,true,true,true
         )),
-        SupportItemBean("全局动态取色","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
+        SupportItemBean("全局动态取色","Android 12+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,true,true,false,true,null,true
         )),
-        SupportItemBean("图标动态取色","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
+        SupportItemBean("图标动态取色","Android 12+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%8A%A8%E6%80%81%E5%8F%96%E8%89%B2", listOf(
             false,true,null,false,false,true,false,true
         )),
-        SupportItemBean("层级实时模糊","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
+        SupportItemBean("层级实时模糊","Android 13+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E5%B1%82%E7%BA%A7%E5%AE%9E%E6%97%B6%E6%A8%A1%E7%B3%8A", listOf(
             true,true,true,true,true,true,true,true
         ),"Android 8-11 无顶栏、底栏模糊，且模糊渲染稍缓\nAndroid 12 无底栏模糊，且顶栏模糊渐变效果较差"),
-        SupportItemBean("预测式返回","Android 13+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
+        SupportItemBean("预测式返回","Android 13+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
             false,false,true,false,false,true,null,true
         )),
-        SupportItemBean("16KB页大小","Android 15+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#16kb%E9%A1%B5%E5%A4%A7%E5%B0%8F", listOf(
+        SupportItemBean("16KB页大小","Android 15+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#16kb%E9%A1%B5%E5%A4%A7%E5%B0%8F", listOf(
             false,false,null,null,null,null,null,true
         )),
-        SupportItemBean("进度实时通知","Android 16+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("进度实时通知","Android 16+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             false,null,null,null,null,null,null,true
         )),
-        SupportItemBean("运动模糊","Android 12+","https://github.com/Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("运动模糊","Android 12+","${MyApplication.GITHUB_URL}Chiu-xaH/HFUT-Schedule/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             true,true,true,true,true,true,true,true
         ),"Android 12在启动台静止时无实时模糊")
     )
     LazyColumn(modifier = Modifier.padding(innerPadding)) {
         item {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text("聚在工大致力于为每个用户提供平等的服务，但由于不同手机厂商对Android系统的定制，以及Android版本的不同，导致最终效果往往不同，但以下的特性均不影响APP的功能") },
                 leadingContent = {
                     Icon(painterResource(R.drawable.info),null)
@@ -108,7 +111,7 @@ private fun CanSupportChip(title : String) = SupportChip(title,isSupported = tru
 @Composable
 private fun SupportItem(item : SupportItemBean) {
     val list = item.list
-    MyCustomCard(containerColor = cardNormalColor()) {
+    CustomCard(containerColor = cardNormalColor()) {
         Column {
             TransplantListItem(
                 headlineContent = {
@@ -142,25 +145,14 @@ private fun SupportItem(item : SupportItemBean) {
                     }
                 }
             )
-            PaddingHorizontalDivider()
-            Row(modifier = Modifier.align(Alignment.End)) {
-                Text(
-                    text = item.android,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
-                    modifier = Modifier.align(Alignment.Bottom).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp)
+            CardBottomButtons(
+                listOf(
+                    CardBottomButton(item.android),
+                    CardBottomButton("预览效果",item.url != null) {
+                        item.url?.let { Starter.startWebView(it,"Github", icon = R.drawable.github) }
+                    }
                 )
-                item.url?.let {
-                    Text(
-                        text = "预览效果",
-                        color = MaterialTheme.colorScheme.primary,
-                        fontSize = 14.sp,
-                        modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
-                            Starter.startWebView(it,"Github", icon = R.drawable.github)
-                        }
-                    )
-                }
-            }
+            )
         }
     }
 }

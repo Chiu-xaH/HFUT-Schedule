@@ -17,7 +17,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import kotlinx.coroutines.flow.Flow
@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-18") },
+                overlineContent = { Text(text = "2025-08-22") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,13 +56,18 @@ fun VersionInfo() {
         VersionInfoCard()
     }
     DividerTextExpandedWith(text = "新特性") {
-        MyCustomCard (containerColor = cardNormalColor()){
-            UpdateItems("新增 取色风格","位于 界面显示-主题色-自定义取色")
-            UpdateItems("新增 启动台支持外观设置，可便捷调整APP的外观")
-            UpdateItems("修复 上版本的上推全屏界面顶部状态栏颜色不一的Bug")
-            UpdateItems("修复 上版本的启动台呼出回弹丢失的Bug")
-            UpdateItems("优化 部分界面的显示")
-//            UpdateItems("新增 自定义查询中心的排序")
+        CustomCard (containerColor = cardNormalColor()){
+            UpdateItems("新增 自定义查询中心的排序")
+            UpdateItems("新增 自定义宣城校区免费额度数据","位于 选项-应用及配置")
+            UpdateItems("重构 滑动条","使其更容易滑动")
+            UpdateItems("重构 顶栏的设计","使用大标题栏折叠")
+            UpdateItems("修复 学费因接口返回空数据而崩溃的Bug")
+            UpdateItems("修复 连点左上角返回时未消抖而导致触发白屏的Bug")
+            UpdateItems("修复 进入选项界面时因未及时删除安装包而自动跳转安装的Bug")
+            UpdateItems("修复 在带有底栏的界面中使用系统返回手势后顶栏未及时变化的Bug")
+            UpdateItems("移除 下载全量包更新时自动安装","改为与增量更新同样的手动点击安装")
+            UpdateItems("优化 部分界面的设计")
+
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")

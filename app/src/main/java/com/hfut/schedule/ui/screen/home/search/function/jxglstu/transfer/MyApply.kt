@@ -47,14 +47,14 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.status.StatusUI2
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -143,7 +143,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                     val data = applyList[index]
                     val info = data.changeMajorSubmit
 //                        MyCustomCard {
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text(info.major.nameZh) },
                         leadingContent = { DepartmentIcons(info.department.nameZh) },
                         trailingContent = {
@@ -188,7 +188,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
     val uiState2 by vm.myApplyInfoData.state.collectAsState()
 
-    var loading = uiState1 !is UiState.Success
+    var successLoad = uiState1 is UiState.Success
     val refreshNetwork2 : suspend () -> Unit = {
         onListenStateHolder(vm.myApplyData) { data ->
             val cookie = getJxglstuCookie(vm)
@@ -230,7 +230,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
                 else if(getApplyStatus(list,indexs) == true) "学籍尚未变更"
                 else if(getApplyStatus(list,indexs) == false) "未申请或申请不通过"
                 else "状态未知",
-                loading = loading
+                loading = !successLoad
             ) {
                 if(isSuccessTransfer) {
                     TransplantListItem(

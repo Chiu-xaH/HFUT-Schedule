@@ -54,8 +54,8 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -66,8 +66,8 @@ import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
 import kotlin.text.contains

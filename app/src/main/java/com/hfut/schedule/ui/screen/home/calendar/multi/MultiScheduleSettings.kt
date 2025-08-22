@@ -56,7 +56,7 @@ import com.hfut.schedule.logic.util.sys.delCourseEvents
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
@@ -492,25 +492,25 @@ fun shareTextFile(fileName: String) {
 @Composable
 fun InfoUI() {
 //    MyCustomCard {
-    StyleCardListItem(
+    CardListItem(
             headlineContent = { Text(text = "数据说明") },
             supportingContent = { Text(text = "每个课表都是独立的数据源,用户可以自行切换,也可自行导入好友分享或者自行从教务系统提取到的文件")}
         )
 //    }
 //    MyCustomCard{
-    StyleCardListItem(
+    CardListItem(
             headlineContent = { Text(text = "教务系统课表") },
             supportingContent = { Text(text = "此课表随用户每次登录更新,须由用户手动刷新(刷新登陆状态 选项),此课表的数据也是最权威的,选退调课后刷新教务课表会立刻变化")}
         )
 //    }
 //    MyCustomCard {
-    StyleCardListItem(
+    CardListItem(
             headlineContent = { Text(text = "智慧社区课表") },
             supportingContent = { Text(text = "此课表自动刷新,自动跟随学期,只要用户登陆过就会记住登陆状态,但是此课表的数据更新稍微有延迟,退选调课之后大概次日才会更新")}
         )
 //    }
 //    MyCustomCard {
-    StyleCardListItem(
+    CardListItem(
             headlineContent = { Text(text = "下学期课表") },
             supportingContent = { Text(text = "在每学期末尾时教务系统会排出下学期的课表,但此时学期仍未变化,可以从这里预先查看下学期安排")}
         )
@@ -534,7 +534,7 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
     if(loading) {
         LoadingUI("勿动稍等")
     } else {
-        StyleCardListItem(
+        CardListItem(
             overlineContent = {
                 Text("提醒时间")
             },
@@ -568,7 +568,7 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
                 time = 20
             }
         )
-        StyleCardListItem(
+        CardListItem(
             headlineContent = {
                 Text("更新日程(清空+导入)")
             },
@@ -584,7 +584,7 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
                 }
             }
         )
-        StyleCardListItem(
+        CardListItem(
             headlineContent = {
                 Text("导入")
             },
@@ -602,7 +602,7 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
                 }
             }
         )
-        StyleCardListItem(
+        CardListItem(
             headlineContent = {
                 Text("清空")
             },

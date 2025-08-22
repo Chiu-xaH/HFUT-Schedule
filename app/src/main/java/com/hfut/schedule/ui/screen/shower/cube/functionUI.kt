@@ -44,13 +44,13 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,7 +63,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
            .verticalScroll(rememberScrollState())) {
            InnerPaddingHeight(innerPadding,true)
            DividerTextExpandedWith("设置") {
-               MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+               CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                    TransplantListItem(
                        headlineContent = { Text(text = "刷新登录状态") },
                        supportingContent = { Text(text = "呱呱物联只允许登录一端，在使用小程序后需要重新登录") },

@@ -24,7 +24,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -32,12 +32,12 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState

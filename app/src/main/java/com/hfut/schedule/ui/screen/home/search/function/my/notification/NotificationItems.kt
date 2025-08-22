@@ -11,8 +11,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -27,16 +30,16 @@ import com.hfut.schedule.logic.model.Notifications
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -48,7 +51,7 @@ fun NotificationItems() {
     val list = getNotifications()
     if(list.isEmpty()) EmptyUI() else {
         for(item in list.indices) {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text(text = list[item].title) },
                 supportingContent = { Text(text = list[item].info) },
                 overlineContent = { Text(text = list[item].remark) },
@@ -75,18 +78,21 @@ fun NotificationsScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Notifications.route }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Notifications.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Notifications.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Notifications.icon)
                     },
                 )
             },

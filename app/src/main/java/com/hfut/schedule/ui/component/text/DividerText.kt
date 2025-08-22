@@ -33,8 +33,11 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
-
+val DIVIDER_TEXT_VERTICAL_PADDING = 9.dp
+//    10.dp - CARD_NORMAL_DP
+//    10.dp
 // 小标题
 @Composable
 fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
@@ -53,7 +56,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
         text = text,
         color = color,
         modifier = Modifier
-            .padding(horizontal = APP_HORIZONTAL_DP + 1.dp, vertical = 10.dp)
+            .padding(horizontal = APP_HORIZONTAL_DP , vertical = DIVIDER_TEXT_VERTICAL_PADDING)
             .clickable { onClick?.invoke() }
             .pointerInput(Unit) {
                 detectTapGestures(

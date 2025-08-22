@@ -42,9 +42,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 
-import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.align.RowHorizontal
 import kotlin.math.roundToInt
 
 @Composable

@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.login
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -12,17 +11,11 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,7 +35,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
@@ -63,9 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -73,7 +63,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,7 +72,6 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
@@ -91,30 +79,27 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.container.StyleCardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.network.URLImageWithOCR
+import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.ui.style.bottomBarBlur
-import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
-import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -123,7 +108,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.nio.file.WatchEvent
 
 //登录方法，auto代表前台调用
 private fun loginClick(
@@ -239,7 +223,7 @@ fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onRefresh: Int = 1, onResu
             // 点击重载
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
         }) {
-            URLImageWithOCR(url = imageUrl,cookie = cookies, width = 100.dp, height = 45.dp, onResult = onResult)
+            UrlImageWithAutoOcr(url = imageUrl,cookie = cookies, width = 100.dp, height = 45.dp, onResult = onResult)
         }
     }
 }
@@ -313,7 +297,7 @@ fun LoginScreen(
         bottomBar = {
             Column (modifier = Modifier.bottomBarBlur(hazeState)) {
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                MyCustomCard(
+                CustomCard(
                     modifier = Modifier
                         .navigationBarsPadding()
                         .padding(vertical = APP_HORIZONTAL_DP),
@@ -450,7 +434,7 @@ fun TwoTextField(
 
         InnerPaddingHeight(innerPadding,true)
 
-        MyCustomCard(
+        CustomCard(
             containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(.75f)
         ) {
             Column (modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {

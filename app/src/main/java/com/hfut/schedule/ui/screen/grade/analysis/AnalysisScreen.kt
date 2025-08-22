@@ -7,9 +7,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 
@@ -19,7 +19,7 @@ fun AnalysisScreen(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     Column(modifier = Modifier.verticalScroll(scrollState)) {
         InnerPaddingHeight(innerPadding,true)
         repeat (100){
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text("测") }
             )
         }

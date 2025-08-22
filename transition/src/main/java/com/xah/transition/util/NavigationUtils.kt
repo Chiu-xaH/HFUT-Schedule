@@ -76,6 +76,10 @@ fun NavController.previousRouteWithArgsWithValues(): String? {
 // 所有
 fun NavController.allRouteStack() : List<String> = this.currentBackStack.value.mapNotNull { it.destination.route }
 
+// 所有
+fun NavController.canPopBack(lastIndex : Int = 2) = this.allRouteStack().size >= lastIndex
+
+
 // 界面是否在栈底倒数
 fun NavController.isInBottom(route : String,lastIndex : Int = 2) : Boolean {
     val stack = this.allRouteStack()

@@ -56,7 +56,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.component.status.LoadingUI
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate

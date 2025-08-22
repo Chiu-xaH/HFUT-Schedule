@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.style.transitionBackgroundF
+import com.hfut.schedule.ui.style.special.transitionBackgroundF
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
 import com.xah.transition.style.transitionBackground
@@ -29,16 +29,7 @@ fun SharedTransitionScope.CustomTransitionScaffold(
     roundShape : Shape = MaterialTheme.shapes.small,
     route: String,
     navHostController : NavHostController,
-    modifier: Modifier = containerShare(
-        Modifier
-            .fillMaxSize()
-            .transitionBackgroundF(navHostController, route)
-        ,
-        animatedContentScope,
-        route,
-        resize = false,
-        roundShape = roundShape,
-    ),
+    modifier: Modifier = Modifier,
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
     floatingActionButton: @Composable (() -> Unit) = {},
@@ -54,7 +45,16 @@ fun SharedTransitionScope.CustomTransitionScaffold(
         roundShape = roundShape,
         navHostController = navHostController,
         topBar = topBar,
-        modifier = modifier,
+        modifier = containerShare(
+            modifier
+                .fillMaxSize()
+                .transitionBackgroundF(navHostController, route)
+            ,
+            animatedContentScope,
+            route,
+            resize = false,
+            roundShape = roundShape,
+        ),
         enablePredictive = predictive && enablePredictive,
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,

@@ -17,9 +17,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -43,12 +46,12 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
@@ -113,21 +116,24 @@ fun FailRateScreen(
         }
     }
     val scope = rememberCoroutineScope()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
                 Column (
                     modifier = Modifier.topBarBlur(hazeState),
                 ){
-                    TopAppBar(
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.FailRate.label) },
                         navigationIcon = {
-                            TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.FailRate.icon)
+                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.FailRate.icon)
                         }
                     )
                     Row(

@@ -39,8 +39,8 @@ import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
-import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 

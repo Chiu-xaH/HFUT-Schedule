@@ -66,8 +66,8 @@ import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.icon.LoadingIcon
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -84,9 +84,9 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebIn
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -148,14 +148,14 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = "打开开关则会在APP冷启动或刷新时自动获取数据,并显示在聚焦首页第一张卡片内") },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "",)},
             color = MaterialTheme.colorScheme.surface
         )
 
         DividerTextExpandedWith("预加载数据") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "一卡通")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
@@ -262,14 +262,15 @@ fun FocusCard(
 
     if(showCard || showEle || showToday || showWeb)
         with(sharedTransitionScope) {
-            MyCustomCard(
+            CustomCard(
                 containerColor = mixedCardNormalColor(),
-                hasElevation = false,
-                modifier = containerShare(
-                    animatedContentScope = animatedContentScope,
-                    route = route,
-                    roundShape = MaterialTheme.shapes.medium,
-                ),
+                modifier = if(showWeather) {
+                    containerShare(
+                        animatedContentScope = animatedContentScope,
+                        route = route,
+                        roundShape = MaterialTheme.shapes.medium,
+                    )
+                } else Modifier,
             ) {
                 Column() {
                     if(showCard || showToday)
@@ -555,12 +556,12 @@ fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
                 .fillMaxSize()
         ) {
             if(prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) != CourseType.JXGLSTU.code)
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text("检测到聚焦使用的是社区课表数据源，若需使聚焦首页显示调休课程功能生效，请在设置日期后，前往 选项-应用行为-默认课程表 切换为教务")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
             else
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text("设置完成后聚焦首页将会显示为设置日期的课程安排")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )

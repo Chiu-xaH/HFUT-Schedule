@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,25 +23,25 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.URLImage
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -55,20 +57,23 @@ fun ClassmatesScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Classmates.route }
     var nameSort by remember { mutableStateOf(true) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             roundShape = MaterialTheme.shapes.medium,
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navTopController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
                     title = { Text(getPersonInfo().classes ?: AppNavRoute.Classmates.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(
+                        TopBarNavigationIcon(
                             navTopController,
                             animatedContentScope,
                             route,
@@ -119,7 +124,7 @@ fun ClassmatesScreen(
                             val item = list[index]
                             with(item) {
                                 Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
-                                    StyleCardListItem(
+                                    CardListItem(
                                         headlineContent = { Text(name) },
                                         overlineContent = { Text(id) },
                                         supportingContent = {
@@ -134,12 +139,18 @@ fun ClassmatesScreen(
                                                 }
                                             }
                                         },
-//                                    trailingContent = {
-//                                        photoUrl?.let {
-//                                            if(isValidWebUrl(it)) URLImage(it)
-//                                        }
-//                                    },
-                                        leadingContent = { Text((index+1).toString())}
+                                        leadingContent = {
+                                            FilledTonalIconButton(
+                                                onClick = {},
+                                                shape = MaterialTheme.shapes.small
+                                            ) {
+                                                if(photoUrl != null && isValidWebUrl(photoUrl)) {
+                                                    UrlImage(photoUrl)
+                                                } else {
+                                                    Text(name.substring(0,1))
+                                                }
+                                            }
+                                        }
                                     )
                                 }
 

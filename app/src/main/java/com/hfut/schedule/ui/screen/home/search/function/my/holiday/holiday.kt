@@ -14,9 +14,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -44,12 +47,12 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionListUI
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
@@ -86,20 +89,23 @@ fun HolidayScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Holiday.route }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.label}") },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.Holiday.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route,AppNavRoute.Holiday.icon)
                     },
                     modifier = Modifier.topBarBlur(hazeState, )
                 )

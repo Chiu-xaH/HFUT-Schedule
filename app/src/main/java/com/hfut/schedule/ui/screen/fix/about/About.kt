@@ -49,8 +49,8 @@ import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
@@ -163,7 +163,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         }
 
         DividerTextExpandedWith("关于") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "本版本新特性") },
                     supportingContent = { Text(text = "查看此版本的更新内容")},
@@ -185,7 +185,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             }
         }
        DividerTextExpandedWith("支持") {
-           MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+           CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                TransplantListItem(
                    headlineContent = { Text(text = "推广应用") },
                    supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
@@ -217,7 +217,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
 
         if(cubeShow) {
             DividerTextExpandedWith("Develop") {
-                MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                     TransplantListItem(
                         headlineContent = { Text(text = "开发者选项") },
                         supportingContent = { Text(text = "一些可用于有经验用户的选项")},
@@ -236,7 +236,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 }
             }
             DividerTextExpandedWith("修复") {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = "疑难解答与修复") },
                     supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
                     leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },

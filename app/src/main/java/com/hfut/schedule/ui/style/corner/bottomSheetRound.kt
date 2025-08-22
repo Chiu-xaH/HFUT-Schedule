@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.style
+package com.hfut.schedule.ui.style.corner
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState

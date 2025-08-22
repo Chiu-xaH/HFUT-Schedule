@@ -14,8 +14,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -36,24 +38,24 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.URLImage
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -92,23 +94,25 @@ fun OfficeHallScreen(
         vm.officeHallSearchResponse.clear()
         vm.officeHallSearch(input,page)
     }
-
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val imageSize = remember { 25.dp }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
                 Column(
                     modifier = Modifier.topBarBlur(hazeState),
                 ) {
-                    TopAppBar(
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.OfficeHall.label) },
                         navigationIcon = {
-                            TopBarNavigateIcon(
+                            TopBarNavigationIcon(
                                 navController,
                                 animatedContentScope,
                                 route,
@@ -153,7 +157,7 @@ fun OfficeHallScreen(
                                 val item = list[index]
                                 with(item) {
                                     val needLogin = serviceMode == OfficeHallType.HANDLE.serviceMode
-                                    MyCustomCard (
+                                    CustomCard (
                                         containerColor = cardNormalColor(),
                                         modifier = Modifier.clickable {
                                             openDetail(item,needLogin)
@@ -167,14 +171,14 @@ fun OfficeHallScreen(
                                                 Text(serviceDpt)
                                             },
                                             leadingContent = {
-                                                URLImage(photoUrl, width = imageSize, height = imageSize, useCut = false, roundSize = 0.dp)
+                                                UrlImage(photoUrl, width = imageSize, height = imageSize, useCut = false, roundSize = 0.dp)
                                             },
                                             trailingContent = if(needLogin) {
                                                 { Text("需登录") }
                                             } else null
                                         )
                                         if(serviceTime == null && processingPlace == null) {
-                                            return@MyCustomCard
+                                            return@CustomCard
                                         }
                                         PaddingHorizontalDivider()
                                         serviceTime?.let {

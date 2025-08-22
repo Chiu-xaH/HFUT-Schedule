@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.style.ColumnVertical
+import com.hfut.schedule.ui.style.align.ColumnVertical
 
 @Composable
 fun BarChart(

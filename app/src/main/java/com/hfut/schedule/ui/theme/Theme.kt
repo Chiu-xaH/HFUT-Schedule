@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.style.TransparentSystemBars
+import com.hfut.schedule.ui.style.color.TransparentSystemBars
 import com.materialkolor.rememberDynamicColorScheme
 
 private val list = DataStoreManager.ColorStyle.entries

@@ -49,10 +49,10 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.xah.transition.util.navigateAndClear
-import com.hfut.schedule.ui.style.bottomBarBlur
-import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource

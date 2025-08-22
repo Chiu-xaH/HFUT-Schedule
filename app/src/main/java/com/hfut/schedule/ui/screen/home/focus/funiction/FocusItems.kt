@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
@@ -63,8 +63,8 @@ import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -121,7 +121,7 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
 
     val scope = rememberCoroutineScope()
     val itemUI = @Composable {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = {  Text(text = title) },
                 overlineContent = {Text(text = time)},
                 supportingContent = { Text(text = info)},
@@ -192,7 +192,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
 
             if(isFuture) {
                 if(nowTime < getEndTime) {
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
                             supportingContent = { Text(text = info)},
@@ -227,7 +227,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                 }
             } else {
                 if(nowTime == getEndTime) {
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = {  Text(text = title) },
                             overlineContent = { Text(text = time) },
                             supportingContent = { Text(text = info)},
@@ -291,7 +291,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
     }
 
     val itemUI = @Composable {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = list.name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = time, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { list.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
@@ -364,7 +364,7 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
         }
     }
 
-    StyleCardListItem(
+    CardListItem(
         headlineContent = { Text(text = list.name) },
         overlineContent = {Text(text = list.classTime)},
         supportingContent = { list.place?.let { Text(text = it) } },
@@ -440,7 +440,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
         )
 
 
-    StyleCardListItem(
+    CardListItem(
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
@@ -677,7 +677,7 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
     }
 
     val itemUI = @Composable {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { Text(text = item.place, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
@@ -747,7 +747,7 @@ fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState
         }
     }
 
-    StyleCardListItem(
+    CardListItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { Text(text = item.place) },

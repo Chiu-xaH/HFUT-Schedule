@@ -32,12 +32,12 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 
@@ -69,7 +69,7 @@ fun NetWorkScreen(navController: NavHostController,
         saveBoolean("SWITCHSERVER",false,server)
 
         DividerTextExpandedWith("配置") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "预加载数据") },
                     supportingContent = { Text(text = "APP首页聚焦第一张卡片显示的一些数据,冷启动或下拉刷新时会自动更新这些数据") },
@@ -94,7 +94,7 @@ fun NetWorkScreen(navController: NavHostController,
         }
 
         DividerTextExpandedWith("其它") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface){
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface){
                 TransplantListItem(
                     headlineContent = { Text(text = "用户统计数据") },
                     supportingContent = { Text(text = "允许上传非敏感数据,以帮助更好的改进体验") },

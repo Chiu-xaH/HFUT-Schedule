@@ -6,14 +6,24 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Image
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -24,8 +34,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -33,6 +47,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +57,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -53,18 +69,24 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,11 +105,13 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
@@ -96,8 +120,14 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -110,35 +140,38 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
+import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.bottomBarBlur
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
-import com.hfut.schedule.ui.style.transitionBackground2
-import com.hfut.schedule.ui.style.transitionBackgroundF
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.transitionBackground2
+import com.hfut.schedule.ui.style.special.transitionBackgroundF
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyGridState
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
@@ -160,6 +193,7 @@ fun MainScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
+
     var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -174,15 +208,24 @@ fun MainScreen(
                 false -> COURSES
             }
     ) }
+    val targetPage = when(navController.currentRouteWithoutArgs()) {
+        COURSES.name -> COURSES
+        FOCUS.name -> FOCUS
+        SEARCH.name -> SEARCH
+        SETTINGS.name -> SETTINGS
+        else -> first
+    }
+
+
 
     // 按下底栏按钮后，要准备去的导航
-    var targetPage by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(
-        if(isLogin) COURSES
-        else when (prefs.getBoolean("SWITCHFOCUS",true)) {
-            true -> FOCUS
-            false -> COURSES
-        }
-    ) }
+//    var targetPage by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(
+//        if(isLogin) COURSES
+//        else when (prefs.getBoolean("SWITCHFOCUS",true)) {
+//            true -> FOCUS
+//            false -> COURSES
+//        }
+//    ) }
     // 记录上一个
 
     var showAll by rememberSaveable { mutableStateOf(DateTimeManager.isOnWeekend()) }
@@ -231,9 +274,9 @@ fun MainScreen(
     val pagerState = rememberPagerState(pageCount = { titles.size })
 
 
-    var searchText by rememberSaveable(0) { mutableStateOf("") }
+    var searchText by rememberSaveable() { mutableStateOf("") }
 
-    var showSearch by rememberSaveable(0) { mutableStateOf(false) }
+    var showSearch by rememberSaveable() { mutableStateOf(false) }
 
 
     LaunchedEffect(Unit) {
@@ -299,7 +342,7 @@ fun MainScreen(
         ) {
             Column {
                 HazeBottomSheetTopBar("排序", isPaddingStatusBar = false)
-                StyleCardListItem(
+                CardListItem(
                     overlineContent = { Text("排序方式") },
                     headlineContent = {
                         Text(
@@ -396,40 +439,12 @@ fun MainScreen(
         }
     }
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-//    val statusIcon = @Composable {
-//        if(ifSaved) {
-//            IconButton (onClick = { refreshLogin() }) {
-//                Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-//            }
-//        } else {
-//            Spacer(modifier = Modifier.width(7.5.dp))
-//            Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
-//            Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-//        }
-//    }
+
     LaunchedEffect(ifSaved) {
         if(ifSaved == false) {
             isEnabled = true
         }
-        // 等待加载完毕可切换标签
-//        if(isLogin) {
-//            if(!webVpn) ifSaved = false
-//            val card = prefs.getString("card", "")
-//            val json = prefs.getString("json","")
-//            if (json != null) {
-//                if (card == "请登录刷新" || !json.contains("课")) {
-//                    showToast("正在后台登录其他接口，请稍作等待再切换界面")
-//                    delay(8000)
-//                    if(ifSaved)
-//                        isEnabled = true
-//                } else {
-//                    delay(3000)
-//                    isEnabled = true
-//                }
-//            }
-//        }
     }
-
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface).transitionBackgroundF(navHostTopController, AppNavRoute.Home.route)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
@@ -442,7 +457,7 @@ fun MainScreen(
 
         Scaffold(
             modifier = transitionBackground2(isAddUIExpanded).fillMaxSize().let {
-                if (targetPage == FOCUS) {
+                if (targetPage != COURSES) {
                     it.nestedScroll(scrollBehavior.nestedScrollConnection)
                 } else {
                     it
@@ -450,11 +465,11 @@ fun MainScreen(
             },
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
-                    if(targetPage == FOCUS) {
+                    if(targetPage != COURSES) {
                         MediumTopAppBar(
                             colors = topBarTransplantColor(),
                             navigationIcon = {
-                                if(isNavigationIconVisible && celebrationText != null) {
+                                if(targetPage == FOCUS && isNavigationIconVisible && celebrationText != null) {
                                     Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                         Text(
                                             text = celebrationText,
@@ -464,70 +479,33 @@ fun MainScreen(
                                     }
                                 }
                             },
-                            title = { ScrollText(texts(targetPage)) },
-                            actions = { focusActions() },
-                            scrollBehavior = scrollBehavior
-                        )
-                    } else {
-                        TopAppBar(
-                            colors = topBarTransplantColor(),
-                            title = {
-                                if(targetPage != SEARCH) {
-                                    ScrollText(texts(targetPage))
-                                } else {
-                                    if(!showSearch) {
-                                        ScrollText(texts(SEARCH))
-                                    } else {
-                                        SearchFuncs(ifSaved,searchText, onShow = {
-                                            searchText = ""
-                                            showSearch = it
-                                        }) {
-                                            searchText = it
-                                        }
-                                    }
-                                }
-                            },
+                            title = { Text(texts(targetPage)) },
                             actions = {
                                 when(targetPage){
-                                    COURSES -> {
-                                        val isFriend = CourseType.entries.all { swapUI > it.code }
-                                        if(isFriend) {
-                                            ApiForTimeTable(swapUI.toString(),hazeState)
-                                        } else {
-                                            CourseTotalForApi(vm=vm, isIconOrText = true, next = swapUI == CourseType.NEXT.code, onNextChange = {}, hazeState = hazeState, ifSaved = ifSaved)
-                                        }
-
-                                        IconButton(onClick = {
-                                            showBottomSheet_multi = true
-                                        }) {
-                                            Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                                        }
-                                        IconButton(onClick = { showAll = !showAll }) {
-                                            BadgedBox(badge = {
-                                                if (findCourse) Badge()
-                                            }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "", tint = MaterialTheme.colorScheme.primary) }
-                                        }
-                                    }
                                     SEARCH -> {
-                                        if(!showSearch) {
-//                                            IconButton (onClick = {
-//                                                navHostTopController.navigateForTransition(AppNavRoute.Scan, AppNavRoute.Scan.route)
-//                                            }) {
-//                                                Icon(painter = painterResource(id =  R.drawable.qr_code_scanner), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-//                                            }
-                                            IconButton(onClick = { showSearch = !showSearch }) {
-                                                Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                        val route = remember { AppNavRoute.SearchEdit.route }
+                                        IconButton(onClick = {
+                                            navHostTopController.navigateForTransition(AppNavRoute.SearchEdit, route, transplantBackground = true)
+                                        }) {
+                                            with(sharedTransitionScope) {
+                                                Icon(
+                                                    painterResource(id = R.drawable.edit),
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.primary,
+                                                    modifier = iconElementShare(animatedContentScope=animatedContentScope, route = route)
+                                                )
                                             }
-                                            if(ifSaved) {
-                                                IconButton (onClick = { refreshLogin() }) {
-                                                    Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                                                }
-                                            } else {
-                                                Spacer(modifier = Modifier.width(7.5.dp))
-                                                Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
-                                                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
+                                        }
+                                        IconButton(onClick = { showSearch = !showSearch }) {
+                                            Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                        }
+                                        if(ifSaved) {
+                                            IconButton (onClick = { refreshLogin() }) {
+                                                Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                                             }
                                         } else {
+                                            Spacer(modifier = Modifier.width(7.5.dp))
+                                            Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
                                             Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                         }
                                     }
@@ -535,12 +513,49 @@ fun MainScreen(
                                     else -> {}
                                 }
                             },
+                            scrollBehavior = scrollBehavior
                         )
-                    }
-                    when(targetPage) {
-                        COURSES -> if(swapUI == CourseType.NEXT.code) null else ScheduleTopDate(showAll,today)
-                        FOCUS -> CustomTabRow(pagerState, titles)
-                        else -> {}
+                        when(targetPage) {
+                            FOCUS -> CustomTabRow(pagerState, titles)
+                            SEARCH -> {
+                                if(showSearch) {
+                                    SearchFuncs(searchText, onShow = {
+                                        searchText = ""
+                                        showSearch = it
+                                    }) {
+                                        searchText = it
+                                    }
+                                }
+                            }
+                            else -> {}
+                        }
+                    } else {
+                        TopAppBar(
+                            colors = topBarTransplantColor(),
+                            title = {
+                                Text(texts(COURSES))
+                            },
+                            actions = {
+                                val isFriend = CourseType.entries.all { swapUI > it.code }
+                                if(isFriend) {
+                                    ApiForTimeTable(swapUI.toString(),hazeState)
+                                } else {
+                                    CourseTotalForApi(vm=vm, isIconOrText = true, next = swapUI == CourseType.NEXT.code, onNextChange = {}, hazeState = hazeState, ifSaved = ifSaved)
+                                }
+
+                                IconButton(onClick = {
+                                    showBottomSheet_multi = true
+                                }) {
+                                    Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                                }
+                                IconButton(onClick = { showAll = !showAll }) {
+                                    BadgedBox(badge = {
+                                        if (findCourse) Badge()
+                                    }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "", tint = MaterialTheme.colorScheme.primary) }
+                                }
+                            },
+                        )
+                        if(swapUI == CourseType.NEXT.code) null else ScheduleTopDate(showAll,today)
                     }
                 }
             },
@@ -573,12 +588,12 @@ fun MainScreen(
                                 interactionSource = interactionSource,
                                 onClick = {
                                     if(isLogin) saveString("tip","0000")
-                                    when(item) {
-                                        items[0] -> targetPage = COURSES
-                                        items[1] -> targetPage = FOCUS
-                                        items[2] -> targetPage = SEARCH
-                                        items[3] -> targetPage = SETTINGS
-                                    }
+//                                    when(item) {
+//                                        items[0] -> targetPage = COURSES
+//                                        items[1] -> targetPage = FOCUS
+//                                        items[2] -> targetPage = SEARCH
+//                                        items[3] -> targetPage = SETTINGS
+//                                    }
                                     if (!selected) {
                                         navController.navigateAndSave(route)
                                     }
@@ -710,6 +725,221 @@ fun texts(num : BottomBarItems) : String = when(num) {
             else -> ""
         }
         "$Date_MM_dd 第${weeksBetween}周 周$chineseNumber"
+    }
+}
+
+fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
+    if (index1 in indices && index2 in indices) {
+        val tmp = this[index1]
+        this[index1] = this[index2]
+        this[index2] = tmp
+    }
+}
+
+
+// 按 List<Int> 排序，并把未出现的新元素追加到末尾
+private fun MutableList<SearchAppBeanLite>.reorderByIds(idOrder: List<Int>): MutableList<SearchAppBeanLite> {
+    val map = this.associateBy { it.id }
+
+    // 按顺序取出原有元素
+    val sorted = idOrder.mapNotNull { map[it] }.toMutableList()
+
+    // 追加未在 idOrder 中的新元素
+    val remaining = this.filter { it.id !in idOrder }
+    sorted.addAll(remaining)
+
+    this.clear()
+    this.addAll(sorted)
+    return this
+}
+
+// 按字符串排序
+fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList<SearchAppBeanLite> {
+    return try {
+        val order = idOrder.split(",")
+            .mapNotNull { it.trim().toIntOrNull() }
+        reorderByIds(order)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        reorderByIds(GlobalUIStateHolder.funcDefault.map { it.id })
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun SearchEditScreen(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val route = remember { AppNavRoute.SearchEdit.route }
+    val funcMaps by produceState(initialValue = GlobalUIStateHolder.funcMaps, key1 = searchSort, key2 = GlobalUIStateHolder.funcMaps) {
+        if(searchSort.isNotEmpty() && searchSort.isNotBlank()) {
+            value = GlobalUIStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
+        }
+    }
+    val scope = rememberCoroutineScope()
+    var inEdit by remember { mutableStateOf(false) }
+    val hapticFeedback = LocalHapticFeedback.current
+    val state = rememberLazyGridState()
+    val reorderableLazyGridState = rememberReorderableLazyGridState(state,) { from, to ->
+        // 交换
+        funcMaps.swap(from.index, to.index)
+        // 保存
+        DataStoreManager.saveSearchSort(funcMaps.map { it.id })
+        hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+    }
+    val transition = rememberInfiniteTransition(label = "shake")
+
+    // 在 -3° 到 3° 之间来回旋转
+    val rotation by transition.animateFloat(
+        initialValue = -.75f,
+        targetValue = .75f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(100, easing = LinearEasing), // 越短越快
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "rotation"
+    )
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    var showDialog by remember { mutableStateOf(false) }
+    if(showDialog) {
+        LittleDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirmation = {
+                scope.launch {
+                    DataStoreManager.saveSearchSort(GlobalUIStateHolder.funcDefault.map { it.id })
+                    showDialog = false
+                    showToast("已恢复")
+                }
+            },
+            dialogText = "恢复为初始顺序",
+            hazeState = hazeState
+        )
+    }
+    var show by remember { mutableStateOf(false) }
+    Column (modifier = Modifier.fillMaxSize().hazeSource(hazeState)) {
+        MediumTopAppBar(
+            modifier = Modifier.let {
+                if(show) it
+                else {
+                    it.onSizeChanged {
+                        if(it.height != 0) {
+                            show = true
+                        }
+                    }
+                }
+            },
+            scrollBehavior = scrollBehavior,
+            colors = topBarTransplantColor(),
+            title = { Text(AppNavRoute.SearchEdit.label) },
+            navigationIcon = {
+                with(sharedTransitionScope) {
+                    TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.SearchEdit.icon)
+                }
+            },
+            actions = {
+                Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                    FilledTonalIconButton(
+                        onClick = {
+                            showDialog = true
+                        }
+                    ) {
+                        Icon(painterResource(R.drawable.rotate_right),null)
+                    }
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP/5))
+                    if(!inEdit) {
+                        FilledTonalButton(
+                            onClick = {
+                                inEdit = true
+                            }
+                        ) {
+                            Text("编辑")
+                        }
+                    } else {
+                        FilledTonalButton(
+                            onClick = {
+                                inEdit = false
+                            }
+                        ) {
+                            Text("完成")
+                        }
+                    }
+                }
+            }
+        )
+        ScrollHorizontalDivider(state,startPadding = false,endPadding = false)
+        AnimatedVisibility(
+            visible = show,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            LazyVerticalGrid (
+                columns = GridCells.Fixed(2),
+                state = state,
+                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).padding(horizontal = APP_HORIZONTAL_DP-3.dp),
+            ) {
+                items(funcMaps.size, key = { funcMaps[it].id }) { index->
+                    val item = funcMaps[index]
+                    ReorderableItem (reorderableLazyGridState, key = item.id, enabled = inEdit) { isDragging ->
+                        val elevation by animateDpAsState(
+                            targetValue = if (isDragging) APP_HORIZONTAL_DP else 0.dp,
+                        )
+                        Surface (
+                            shadowElevation = elevation,
+                            modifier = Modifier
+                                .padding(horizontal = 3.dp, vertical = 3.dp)
+                                .let {
+                                    if(inEdit) {
+                                        if(isDragging) it else it.graphicsLayer { rotationZ = rotation }
+                                    } else {
+                                        it
+                                    }
+                                },
+                            color = mixedCardNormalColor(),
+                            shape = MaterialTheme.shapes.small
+                        ) {
+                            TransplantListItem(
+                                headlineContent = { ScrollText(item.name) },
+                                leadingContent = {
+                                    Icon(painterResource(item.icon),null)
+                                },
+                                modifier = Modifier
+                                    .combinedClickable(
+                                        onClick = {
+                                            if(!inEdit) {
+                                                showToast("长按卡片开始编辑")
+                                            } else {
+                                                showToast("双击卡片结束编辑")
+                                            }
+                                        },
+                                        onDoubleClick = {
+                                            inEdit = false
+                                        },
+                                        onLongClick = {
+                                            inEdit = true
+                                        }
+                                    )
+                                    .longPressDraggableHandle(
+                                        enabled = inEdit,
+                                        onDragStarted = {
+                                            hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                        },
+                                        onDragStopped = {
+                                            hapticFeedback.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                        },
+                                    )
+                            )
+                        }
+                    }
+                }
+                items(2) { Spacer(Modifier.navigationBarsPadding().height(APP_HORIZONTAL_DP)) }
+            }
+        }
+
     }
 }
 

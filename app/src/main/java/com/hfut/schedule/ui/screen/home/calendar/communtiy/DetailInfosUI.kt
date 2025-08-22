@@ -19,9 +19,11 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -46,14 +49,14 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Deta
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.HazeState
@@ -81,7 +84,7 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 Column {
-                    MyCustomCard(hasElevation = false, containerColor = cardNormalColor()) {
+                    CustomCard( containerColor = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { sheet.place?.let { Text(it) } },
                             leadingContent = {
@@ -130,7 +133,7 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                         )
                     }
                     if(!isFriend)
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text( "更多信息") },
                             leadingContent = {
                                 Icon(
@@ -160,6 +163,7 @@ fun CourseDetailApiScreen(
     animatedContentScope: AnimatedContentScope,
     navController : NavHostController,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val isNext = remember { false }
     val hazeState = remember { HazeState() }
     //用法
@@ -185,12 +189,14 @@ fun CourseDetailApiScreen(
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             animatedContentScope = animatedContentScope,
             route = route,
             navHostController = navController,
             topBar = {
-                TopAppBar(
-                    title = { ScrollText(getTotalCourse(json)[numItem].course.nameZh) },
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    title = { Text(getTotalCourse(json)[numItem].course.nameZh) },
                     colors = topBarTransplantColor(),
                     navigationIcon = {
                         TopBarNavigateIcon(navController)

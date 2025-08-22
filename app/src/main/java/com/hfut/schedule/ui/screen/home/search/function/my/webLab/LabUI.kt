@@ -19,21 +19,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabUI() {
-    StyleCardListItem(
-        headlineContent = { Text(text = "选项会随云端发生变动,即使不更新软件") },
-        leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
-        color = Color.Transparent
-    )
     for(item in getLab()) {
 //        MyCustomCard {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text(text = item.title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {

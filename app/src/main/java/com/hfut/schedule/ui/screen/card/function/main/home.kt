@@ -63,13 +63,13 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
@@ -81,9 +81,9 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.ShowerUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.coverBlur
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -198,7 +198,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         .fillMaxSize()
                 ) {
 //                    MyCustomCard {
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = "电费") },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
@@ -207,7 +207,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         )
 //                    }
 //                    MyCustomCard{
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = "网费"  ) },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.net), contentDescription = "")
@@ -216,7 +216,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         )
 //                    }
 //                    MyCustomCard {
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = "洗浴" ) },
                             leadingContent = {
                                 Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
@@ -224,7 +224,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             modifier = Modifier.clickable { showBottomSheet_Shower = true }
                         )
 //                    }
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text(text = "洗衣机") },
                         leadingContent = {
                             Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
@@ -234,7 +234,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         }
                     )
 
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("慧新易校平台") },
                         leadingContent = {
                             Icon(Icons.Default.ArrowForward, contentDescription = "")
@@ -318,7 +318,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    StyleCardListItem(headlineContent = { Text(text = "实体卡芯片自带加密,复制后手机仅可在图书馆储物柜刷取，其余场景均不可用，包括但不限于宿舍门禁、寝室门禁、消费终端等") })
+                    CardListItem(headlineContent = { Text(text = "实体卡芯片自带加密,复制后手机仅可在图书馆储物柜刷取，其余场景均不可用，包括但不限于宿舍门禁、寝室门禁、消费终端等") })
                 }
             }
         }
@@ -473,7 +473,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                 }
 
                 DividerTextExpandedWith(text = "功能") {
-                    MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                    CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                         TransplantListItem(
                             headlineContent = { Text(text = "账单") },
                             supportingContent = { Text(text = "按消费先后查看交易记录")},
@@ -497,23 +497,16 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "搜索") },
-                            supportingContent = { Text(text = "仅检索标题")},
+                            supportingContent = { Text(text = "仅检索流水的标题")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.search), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Search = true }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text(text = "限额") },
-                            supportingContent = { Text(text = "超出设置的日额度后需在支付机输入密码")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.block), contentDescription = "")},
-                            modifier = Modifier.clickable { showBottomSheet_Settings = true }
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text(text = "卡状态") },
+                            headlineContent = { Text(text = "状态") },
                             supportingContent = { Text(text = "挂失 解挂 冻结")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                            modifier = Modifier.clickable { showToast("暂未开发") }
+                            modifier = Modifier.clickable { showToast("可前往下方慧新易校使用") }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -522,16 +515,10 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
                             modifier = Modifier.clickable { Starter.startWebView(url,"付款码", icon = R.drawable.barcode) }
                         )
+
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text(text = "范围支出") },
-                            supportingContent = { Text(text = "手动点选范围查询总消费")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
-                            modifier = Modifier.clickable { showBottomSheet_Range = true }
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text(text = "网电缴费") },
+                            headlineContent = { Text(text = "生活缴费") },
                             supportingContent = { Text(text = "查询网费、宿舍电费、洗浴使用情况并缴费")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Fee = true }
@@ -542,6 +529,20 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
                             modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校", icon = R.drawable.corporate_fare) }
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(text = "限额") },
+                            supportingContent = { Text(text = "超出设置的日额度后需在支付机输入密码")},
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.block), contentDescription = "")},
+                            modifier = Modifier.clickable { showBottomSheet_Settings = true }
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(text = "范围支出") },
+                            supportingContent = { Text(text = "手动点选范围查询总消费")},
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
+                            modifier = Modifier.clickable { showBottomSheet_Range = true }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(

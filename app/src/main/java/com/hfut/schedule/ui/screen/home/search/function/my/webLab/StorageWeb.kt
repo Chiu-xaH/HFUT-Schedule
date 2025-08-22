@@ -34,8 +34,10 @@ import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -84,7 +86,7 @@ fun StorageWeb(hazeState : HazeState) {
 
     Column {
         if(list.isEmpty()) {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text("开始添加你的网页收藏夹") },
                 supportingContent = {
                     Text("右下角手动添加 或 在打开网页时点击右侧星星按钮")
@@ -97,7 +99,7 @@ fun StorageWeb(hazeState : HazeState) {
             for(item in list) {
                 with(item) {
                     val t = types.find { type == it.name }!!
-                    MyCustomCard(containerColor = cardNormalColor()) {
+                    CustomCard(containerColor = cardNormalColor()) {
                         Column {
 
                             TransplantListItem(
@@ -117,9 +119,6 @@ fun StorageWeb(hazeState : HazeState) {
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
                                         Starter.startWebView(url,name, icon = AppNavRoute.WebNavigation.icon)
-//                                        selectedDelTitle = name
-//                                        selectedUrl = url
-//                                        showDialogWebView = true
                                     },
                                     onDoubleClick = {},
                                     onLongClick = {
@@ -129,45 +128,28 @@ fun StorageWeb(hazeState : HazeState) {
                                     }
                                 )
                             )
-                            PaddingHorizontalDivider()
-                            Row(modifier = Modifier.align(Alignment.End)) {
-                                Text(
-                                    text = "来源: " + when(t) {
-                                        WebURLType.ADDED -> "手动添加"
-                                        WebURLType.SUPABASE -> "云端导入"
-                                        WebURLType.COLLECTION -> "收藏"
-                                    },
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.align(Alignment.Bottom).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp)
-                                )
-                                Text(
-                                    text = "复制链接",
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.align(Alignment.Bottom).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
+                            CardBottomButtons(
+                                listOf(
+                                    CardBottomButton(
+                                        "来源: " + when(t) {
+                                            WebURLType.ADDED -> "手动添加"
+                                            WebURLType.SUPABASE -> "云端导入"
+                                            WebURLType.COLLECTION -> "收藏"
+                                        }
+                                    ),
+                                    CardBottomButton("复制") {
                                         ClipBoardUtils.copy(url)
-                                    }
-                                )
-                                Text(
-                                    text = "分享",
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
+                                    },
+                                    CardBottomButton("分享") {
                                         ShareTo.shareString(url)
-                                    }
-                                )
-                                Text(
-                                    text = "删除",
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.align(Alignment.Top).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP - 5.dp).clickable {
+                                    },
+                                    CardBottomButton("删除") {
                                         selectedDelTitle = name
                                         selectedDelId = id
                                         showDialogDel = true
                                     }
                                 )
-                            }
+                            )
                         }
                     }
                 }

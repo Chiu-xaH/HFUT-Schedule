@@ -49,6 +49,7 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
@@ -64,12 +65,12 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -101,6 +102,7 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeStat
 fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val auth = remember { prefs.getString("auth", "") }
     val zjgdUrl = remember { MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth }
+    val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
     // 支付用的变量
     var showDialog2 by remember { mutableStateOf(false) }
@@ -114,7 +116,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
     // 百分比
     val percent = try {
-        formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * MyApplication.MAX_FREE_FLOW)) * 100,2)
+        formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * maxFlow)) * 100,2)
     } catch (_:Exception) {
         "未知"
     }
@@ -352,7 +354,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                 }
             }
             Spacer(Modifier.height(APP_HORIZONTAL_DP/2- CARD_NORMAL_DP*(if(textLogin == "已登录")2 else 1)))
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = {
                     Text("一键校园网登录已支持磁贴，可在系统控制中心添加")
                 },
@@ -429,7 +431,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                                     modifier = Modifier.weight(.5f)
                                 )
                                 TransplantListItem(
-                                    overlineContent = { Text(text = "月免费额度 ${MyApplication.MAX_FREE_FLOW}GB") },
+                                    overlineContent = { Text(text = "月免费额度 ${maxFlow}GB") },
                                     headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
                                     leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
                                     modifier = Modifier.weight(.5f)
@@ -469,7 +471,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                             TransplantListItem(
                                 headlineContent = { Text(text = "免费时期") },
                                 supportingContent = {
-                                    Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${MyApplication.MAX_FREE_FLOW}GB，每日熄灯期间禁用；合肥校区不限额")
+                                    Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${maxFlow}GB，每日熄灯期间禁用；合肥校区不限额")
                                 },
                                 leadingContent = {
                                     Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")

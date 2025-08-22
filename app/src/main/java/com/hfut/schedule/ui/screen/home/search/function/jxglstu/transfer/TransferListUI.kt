@@ -29,10 +29,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,6 +45,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -61,7 +64,7 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.status.StatusUI2
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
@@ -70,13 +73,13 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.TransitionScaffold
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -92,20 +95,22 @@ fun TransferScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Transfer.route }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Transfer.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Transfer.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Transfer.icon)
                     }
                 )
             },
@@ -366,7 +371,7 @@ private fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeSta
                     Spacer(Modifier.height(5.dp))
                     personInfo.mobile?.let {
                         if(it.isNotEmpty()) {
-                            StyleCardListItem(
+                            CardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留手机号") },
                                     modifier = Modifier.clickable {
@@ -379,7 +384,7 @@ private fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeSta
                     }
                     personInfo.phone?.let {
                         if(it.isNotEmpty()) {
-                                StyleCardListItem(
+                                CardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("教务系统预留电话号") },
                                     modifier = Modifier.clickable {
@@ -392,7 +397,7 @@ private fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeSta
                     }
                     prefs.getString("PHONENUM","")?.let {
                         if(it.isNotEmpty()) {
-                                StyleCardListItem(
+                                CardListItem(
                                     headlineContent = { Text(it) },
                                     overlineContent = { Text("呱呱物联登录手机号") },
                                     modifier = Modifier.clickable {

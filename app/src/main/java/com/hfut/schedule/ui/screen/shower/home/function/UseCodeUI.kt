@@ -57,9 +57,9 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.ui.style.coverBlur
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
@@ -71,17 +71,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostController) {
     val uiState by vm.useCodeResult.state.collectAsState()
-    var loading = uiState !is UiState.Success
+    var successLoad = uiState is UiState.Success
     var useCode by remember { mutableStateOf("# # #") }
     var showButton = uiState !is UiState.Success
 
     val scale = animateFloatAsState(
-        targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
+        targetValue = if (!successLoad) 0.9f else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
     val scale2 = animateFloatAsState(
-        targetValue = if (loading) 0.97f else 1f, // 按下时为0.9，松开时为1
+        targetValue = if (!successLoad) 0.97f else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED / 2, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
@@ -151,7 +151,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                 }
             }
 
-            Column(modifier = coverBlur(loading).scale(scale.value)){
+            Column(modifier = coverBlur(!successLoad).scale(scale.value)){
                 TransplantListItem(
                     headlineContent = {
                         Text(

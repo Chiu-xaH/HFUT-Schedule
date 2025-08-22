@@ -18,10 +18,10 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 
 @Composable
@@ -46,7 +46,7 @@ fun Repair(hazeState : HazeState) {
             Column(){
                 HazeBottomSheetTopBar("选择校区", isPaddingStatusBar = false)
 
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = {
                         Text("宣城校区")
                     },
@@ -54,7 +54,7 @@ fun Repair(hazeState : HazeState) {
                         Starter.startWebUrl(MyApplication.REPAIR_XC_URL)
                     }
                 )
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = {
                         Text("合肥校区")
                     },

@@ -12,7 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.ParseJsons.getSettingInfo
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
@@ -37,7 +37,7 @@ fun MyAPIItem(
 
     if(show) {
         DividerTextExpandedWith(text = "重要通知") {
-            StyleCardListItem(
+            CardListItem(
                 color = color,
                 headlineContent = {
                     Text(text = title, fontWeight = FontWeight.Bold)

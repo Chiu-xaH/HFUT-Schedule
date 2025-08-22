@@ -20,7 +20,7 @@ import com.hfut.schedule.ui.screen.shower.login.getGuaGuaPersonInfo
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 

@@ -70,9 +70,10 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.slider.CustomSlider
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -84,9 +85,9 @@ import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
-import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
@@ -252,7 +253,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         }
 
         DividerTextExpandedWith("深浅色") {
-            MyCustomCard(containerColor = backgroundColor) {
+            CustomCard(containerColor = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "纯黑深色背景") },
                     supportingContent = { Text(text = "OLED屏使用此模式在深色模式时可获得不发光的纯黑背景") },
@@ -314,7 +315,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("主题色") {
-            MyCustomCard(containerColor = backgroundColor) {
+            CustomCard(containerColor = backgroundColor) {
                 RowHorizontal(modifier = Modifier.fillMaxWidth().padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP-10.dp)) {
                     FilledTonalIconButton(
                         onClick = { showToast("Primary") },
@@ -459,7 +460,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("动效") {
-            MyCustomCard(containerColor = backgroundColor) {
+            CustomCard(containerColor = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Column {
@@ -468,25 +469,19 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     },
                     supportingContent = {
-                        Column {
-                            Text(text = "将部分层级渲染为实时模糊，等级越高，越可能会在某些设备上掉帧" )
-                            Slider(
-                                value = blur.toFloat(),
-                                onValueChange = { value ->
-                                    val level = hazeBlurLevels.find { it.code == value.toInt() } ?: return@Slider
-                                    scope.launch { DataStoreManager.saveHazeBlur(level) }
-                                },
-                                colors = SliderDefaults.colors(
-                                    thumbColor = MaterialTheme.colorScheme.secondary,
-                                    activeTrackColor = MaterialTheme.colorScheme.secondary,
-                                    inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                                ),
-                                steps = 1,
-                                valueRange = 0f..2f,
-                            )
-                        }
+                        Text(text = "将部分层级渲染为实时模糊，等级越高，越可能会在某些设备上掉帧" )
                     },
                     leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
+                )
+                CustomSlider(
+                    value = blur.toFloat(),
+                    onValueChange = { value ->
+                        val level = hazeBlurLevels.find { it.code == value.toInt() } ?: return@CustomSlider
+                        scope.launch { DataStoreManager.saveHazeBlur(level) }
+                    },
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                    steps = 1,
+                    valueRange = 0f..2f,
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
@@ -550,27 +545,20 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                             }
                         },
                         supportingContent = {
-                            Column {
-                                Text(text = "转场动画伴随较高强度的模糊、缩放、压暗、回弹等效果，等级越高，越可能会在某些设备上掉帧")
-                                Slider(
-                                    value = transition.toFloat(),
-                                    onValueChange = { value ->
-                                        val level = transitionLevels.find { it.code == value.toInt() } ?: return@Slider
-                                        scope.launch { DataStoreManager.saveTransition(level) }
-                                    },
-                                    colors = SliderDefaults.colors(
-                                        thumbColor = MaterialTheme.colorScheme.secondary,
-                                        activeTrackColor = MaterialTheme.colorScheme.secondary,
-                                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                                    ),
-                                    steps = 2,
-                                    valueRange = 0f..3f,
-                                )
-                            }
+                            Text(text = "转场动画伴随较高强度的模糊、缩放、压暗、回弹等效果，等级越高，越可能会在某些设备上掉帧")
                         },
                         leadingContent = { Icon(painterResource(R.drawable.transition_fade), contentDescription = "Localized description",) },
                     )
-
+                    CustomSlider(
+                        value = transition.toFloat(),
+                        onValueChange = { value ->
+                            val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
+                            scope.launch { DataStoreManager.saveTransition(level) }
+                        },
+                        steps = 2,
+                        modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                        valueRange = 0f..3f,
+                    )
                     PaddingHorizontalDivider()
 
                     TransplantListItem(
@@ -588,7 +576,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
 
         DividerTextExpandedWith("背景") {
             val useCustomBackground = customBackground != ""
-            MyCustomCard(containerColor = backgroundColor) {
+            CustomCard(containerColor = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Text("课程表背景图片")
@@ -618,7 +606,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
                 if(useCustomBackground) {
                     var alpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
-                    Slider(
+                    CustomSlider(
                         value = alpha,
                         onValueChange = {
                             alpha = it
@@ -626,12 +614,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         onValueChangeFinished =  {
                             scope.launch { DataStoreManager.saveCustomBackgroundAlpha(alpha) }
                         },
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP),
-                        colors = SliderDefaults.colors(
-                            thumbColor = MaterialTheme.colorScheme.secondary,
-                            activeTrackColor = MaterialTheme.colorScheme.secondary,
-                            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                        ),
+                        modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                         valueRange = 0f..1f,
                     )
                 }

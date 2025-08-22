@@ -40,6 +40,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -49,15 +50,15 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -75,6 +76,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -95,8 +97,10 @@ import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
@@ -105,7 +109,7 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.navigationBarHeightPadding
+import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -114,9 +118,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCa
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
-import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -280,11 +284,12 @@ private fun SharedTransitionScope.SurfaceUI(
             showChange(false)
         }
     }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val scope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection)
             .sharedBounds(
                 enter = AppAnimationManager.fadeAnimation.enter,
                 exit = AppAnimationManager.fadeAnimation.exit,
@@ -296,7 +301,8 @@ private fun SharedTransitionScope.SurfaceUI(
             .clip(FloatingActionButtonDefaults.shape),
         topBar = {
             Column {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
                     title = { Text("添加") },
                     actions = {
@@ -316,7 +322,7 @@ private fun SharedTransitionScope.SurfaceUI(
                         IconButton(
                             onClick = { showChange(false) }
                         ) {
-                            Icon(Icons.Filled.Close,null,tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Filled.ArrowBack,null,tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )
@@ -536,7 +542,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
         }
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             DividerTextExpandedWith("预览") {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     leadingContent = typeIcon,
                     overlineContent = { Text(remark,maxLines = 1,overflow = TextOverflow.Ellipsis) },
@@ -552,7 +558,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 )
             }
             DividerTextExpandedWith("配置") {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text("类型: " + if(isScheduleType) "日程" else "网课" ) },
                     supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终；\n添加后，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine)；\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
                     leadingContent = {
@@ -572,42 +578,21 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
                 CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
                 Spacer(Modifier.height(5.dp ))
-                MyCustomCard(containerColor = cardNormalColor()) {
+                CustomCard(containerColor = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = { Text((if(isScheduleType)"开始 ${date.first + " " + time.first}\n" else "") + "结束 ${date.second + " " + time.second}") },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
-                    PaddingHorizontalDivider()
-                    Row(modifier = Modifier.align(Alignment.End)) {
-                        Text(
-                            text = if(isScheduleType)"选择日期范围" else "选择截止日期",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                )
-                                .clickable {
-                                    showSelectDateDialog = true
-                                }
+                    CardBottomButtons(
+                        listOf(
+                            CardBottomButton(if(isScheduleType)"选择日期范围" else "选择截止日期") {
+                                showSelectDateDialog = true
+                            },
+                            CardBottomButton(if(isScheduleType)"选择时间范围" else "选择截止时间") {
+                                showSelectTimeDialog = true
+                            },
                         )
-                        Text(
-                            text = if(isScheduleType)"选择时间范围" else "选择截止时间",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Top)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                )
-                                .clickable {
-                                    showSelectTimeDialog = true
-                                }
-                        )
-                    }
+                    )
                 }
                 Spacer(Modifier.height(5.dp))
                 CustomTextField(input = remark, label = { Text("自定义时间显示") }, singleLine = false) { remark = it }
@@ -688,7 +673,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     }
 
                     Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*2f))
-                    MyCustomCard(containerColor = cardNormalColor()) {
+                    CustomCard(containerColor = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { Text("适用范围" ) },
                             supportingContent = {
@@ -816,7 +801,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                         }
                     }
                     Spacer(Modifier.height(5.dp - CARD_NORMAL_DP))
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("同时克隆卡片至本地")},
                         supportingContent = { Text(if(isClone)"上传卡片时，同时添加入本地聚焦当中" else "仅共享卡片 自己无需使用")},
                         trailingContent = { Switch(checked = isClone, onCheckedChange = { ch -> isClone = ch }) },

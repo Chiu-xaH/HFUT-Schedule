@@ -68,7 +68,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.dialog.MenuChip
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
@@ -76,7 +76,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -364,7 +364,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
             when(page) {
                 HEFEI_TAB -> {
                     Column {
-                        StyleCardListItem(
+                        CardListItem(
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("本科生")},
                             modifier = Modifier.clickable {
@@ -378,7 +378,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             },
                             color = MaterialTheme.colorScheme.secondaryContainer
                         )
-                        StyleCardListItem(
+                        CardListItem(
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("研究生")},
                             modifier = Modifier.clickable {

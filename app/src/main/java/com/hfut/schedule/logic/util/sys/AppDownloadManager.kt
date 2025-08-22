@@ -91,6 +91,8 @@ object AppDownloadManager {
         }
     }
 
+    fun removeDownload(downloadId: Long)  = dlManager.remove(downloadId)
+
     @SuppressLint("Range")
     fun getDownloadProgress(downloadId: Long): Int {
         val query = DownloadManager.Query().setFilterById(downloadId)
@@ -232,5 +234,5 @@ object AppDownloadManager {
             intent = pendingIntent
         )
     }
-    var refused = false
+//    var refused = false
 }

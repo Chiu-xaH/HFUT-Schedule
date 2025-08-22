@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
@@ -181,7 +181,7 @@ private fun LifeUIS(vm : NetWorkViewModel) {
                 Column {
                     for(i in list) {
                         with(i) {
-                            StyleCardListItem(
+                            CardListItem(
                                 headlineContent = { Text(title) },
                                 supportingContent = { Text(text) },
                                 overlineContent = { Text(typeName) },

@@ -38,8 +38,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.container.StyleCardListItem
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,7 +78,7 @@ fun InfoSet() {
                 Column(modifier = Modifier.padding(innerPadding).fillMaxSize()
                 ) {
 //                    MyCustomCard{
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = "请通过抓包获取常用设备的token,多设备登录会带来风险,所以要手动填写")},
                             leadingContent = { Icon(painterResource(id = R.drawable.info), contentDescription = "")}
                         )

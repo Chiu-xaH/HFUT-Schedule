@@ -43,12 +43,12 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
@@ -268,7 +268,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                 }
             }
             DividerTextExpandedWith("日") {
-                MyCustomCard(containerColor = cardNormalColor()) {
+                CustomCard(containerColor = cardNormalColor()) {
                     if(today == 0.0) {
                         TransplantListItem(
                             overlineContent = {
@@ -368,7 +368,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                 }
             }
             DividerTextExpandedWith("月") {
-                MyCustomCard(containerColor = cardNormalColor()) {
+                CustomCard(containerColor = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = {
                             Text("本月")

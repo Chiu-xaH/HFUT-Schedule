@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ import com.hfut.schedule.ui.screen.control.ControlCenterScreen
 import com.hfut.schedule.ui.screen.control.limitDrawerSwipeArea
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
+import com.hfut.schedule.ui.screen.home.SearchEditScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.BusScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
@@ -248,13 +250,13 @@ fun MainHost(
             }
         }
     }
-
+    val alpha = if(motionBlur && !isScan) 0.35f else 0.925f
     ModalNavigationDrawer  (
-        scrimColor = MaterialTheme.colorScheme.surface.copy(if(motionBlur && !isScan) 0.35f else 0.925f),
+        scrimColor = MaterialTheme.colorScheme.surface.copy(alpha),
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {
-            ControlCenterScreen(navController) {
+            ControlCenterScreen(containerColor?.copy(alpha)?.compositeOver(MaterialTheme.colorScheme.surface),navController) {
                 scope.launch {
                     drawerState.animationClose()
                 }
@@ -498,6 +500,10 @@ fun MainHost(
                     // 办事
                     composable(AppNavRoute.OfficeHall.route) {
                         OfficeHallScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 查询中心编辑
+                    composable(AppNavRoute.SearchEdit.route) {
+                        SearchEditScreen(navController,this@SharedTransitionLayout, this@composable)
                     }
                     // 全校培养方案
                     composable(

@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.control
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -44,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
@@ -56,17 +59,20 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.container.SmallCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
+import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.cube.screen.UISettingsScreen
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.normalTopBarBlur
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.normalTopBarBlur
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.util.currentRouteWithArgWithoutValues
@@ -143,6 +149,7 @@ private const val TAB_SEARCH = 2
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ControlCenterScreen(
+    color : Color? = null,
     navController: NavHostController,
     onExit : () -> Unit
 ) {
@@ -168,7 +175,7 @@ fun ControlCenterScreen(
                     if(isAtStart) {
                         it
                     } else {
-                        it.normalTopBarBlur(hazeState)
+                        it.normalTopBarBlur(hazeState,color ?: MaterialTheme.colorScheme.surface)
                     }
                 },
             ) {
@@ -232,6 +239,28 @@ fun ControlCenterScreen(
                         }
                     },
                 )
+                if(tab == TAB_SEARCH) {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("搜索 查询中心") },
+                        leadingIcon = { Icon(painterResource(R.drawable.search),null) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(true,false),
+                    )
+                    val height by animateDpAsState(
+                        targetValue = if(isAtStart) {
+                            CARD_NORMAL_DP
+                        } else {
+                            APP_HORIZONTAL_DP
+                        }
+                    )
+                    Spacer(Modifier.height(height -DividerDefaults.Thickness))
+                }
                 ScrollHorizontalDivider(state, startPadding = false,endPadding = false)
             }
         },
@@ -243,34 +272,46 @@ fun ControlCenterScreen(
                 .fillMaxSize()
         ) {
             InnerPaddingHeight(innerPadding,true)
-            if(navController.isCurrentRouteWithoutArgs(AppNavRoute.WebView.route)) {
-                StyleCardListItem(
-                    headlineContent = { Text("位于网页界面时暂时禁用手势轻扫呼出，可点击左上角退出")},
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.info),null)
-                    }
-                )
-                Spacer(Modifier.height(CARD_NORMAL_DP))
-            }
             Box() {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = tab == TAB_SEARCH,
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
-                    Column {
-                        TextField(
-                            modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("搜索功能") },
-                            leadingIcon = { Icon(painterResource(R.drawable.search),null) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(true,false),
-                        )
+                    val list = GlobalUIStateHolder.funcMaps.filter { it.name.contains(input,ignoreCase = true) }
+                    Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
+                        for(i in list.indices) {
+                            val item = list[i]
+                            Row() {
+                                SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                    TransplantListItem(
+                                        headlineContent = { ScrollText(item.name) },
+                                        leadingContent = {
+                                            Icon(painterResource(item.icon),null)
+                                        },
+                                        modifier = Modifier.clickable {
+                                            showToast("正在开发")
+                                        }
+                                    )
+                                }
+                                if(i + 1 < list.size) {
+                                    val item2 = list[i+1]
+                                    SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                        TransplantListItem(
+                                            headlineContent = { ScrollText(item2.name) },
+                                            leadingContent = {
+                                                Icon(painterResource(item2.icon),null)
+                                            },
+                                            modifier = Modifier.clickable {
+                                                showToast("正在开发")
+                                            }
+                                        )
+                                    }
+                                } else {
+                                    Spacer(modifier = Modifier.weight(.5f))
+                                }
+                            }
+                        }
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(
@@ -321,7 +362,7 @@ fun ControlCenterScreen(
                                     val item = queue[index]
                                     val label = getLabel(item.route)
                                     val isCurrent = currentRoute == item.app.route && index == 0
-                                    StyleCardListItem(
+                                    CardListItem(
                                         headlineContent = {
                                             Text(item.app.label ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
                                         },
@@ -378,7 +419,7 @@ fun ControlCenterScreen(
                                 for(index in stack.indices) {
                                     val item = stack[index]
                                     val route = item.destination.route?.substringBefore("?") ?: continue
-                                    StyleCardListItem(
+                                    CardListItem(
                                         headlineContent = {
                                             Text(route, fontWeight = if(currentRoute == route) FontWeight.Bold else FontWeight.Normal)
                                         },
@@ -404,7 +445,7 @@ fun ControlCenterScreen(
                                         }
                                     )
                                 }
-                                StyleCardListItem(
+                                CardListItem(
                                     headlineContent = {
                                         Text("并不会真正的占用后台，当退出时，其界面已经销毁")
                                     },

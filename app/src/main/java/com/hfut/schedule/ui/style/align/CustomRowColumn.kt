@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.style
+package com.hfut.schedule.ui.style.align
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ fun RowHorizontal(modifier: Modifier = Modifier.fillMaxWidth(),content: @Composa
 
 @Composable
 fun ColumnVertical(modifier: Modifier = Modifier,content: @Composable () -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(modifier,horizontalAlignment = Alignment.CenterHorizontally) {
         content()
     }
 }

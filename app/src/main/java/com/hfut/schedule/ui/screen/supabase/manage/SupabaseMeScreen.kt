@@ -37,13 +37,13 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
   
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
@@ -142,7 +142,7 @@ private fun SupabaseMeScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,
             val nowTimeNum = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
             val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}" }.toLong()
             val isOutOfDate = nowTimeNum > endNum
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text(item.name, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
                 overlineContent = { Text(item.timeDescription, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
                 supportingContent = item.description?.let { { Text(it, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },

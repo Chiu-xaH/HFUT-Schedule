@@ -6,7 +6,6 @@ import android.content.Context
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.ui.screen.home.cube.screen.initTransition
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
 
 class MyApplication : Application() {
@@ -18,7 +17,7 @@ class MyApplication : Application() {
         // 全局模糊半径
         val BLUR_RADIUS = 20.dp
         // 宣城校区免费流量额度 GB
-        const val MAX_FREE_FLOW = 30
+        const val DEFAULT_MAX_FREE_FLOW = 30
         // 默认每页数量
         const val PAGE_SIZE = 30
         // 教务系统
@@ -129,6 +128,7 @@ class MyApplication : Application() {
             CampusDetail.TXL to Location(117.29597,31.843905),
             CampusDetail.XC to Location(118.710182,30.903593)
         )
+        const val GITHUB_URL = "https://github.com/"
         // Github常量池
         const val GITHUB_USER_ID = 116127902
         const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"

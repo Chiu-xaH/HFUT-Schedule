@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @Composable
 fun CustomTextField(

@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.style
+package com.hfut.schedule.ui.style.color
 
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults

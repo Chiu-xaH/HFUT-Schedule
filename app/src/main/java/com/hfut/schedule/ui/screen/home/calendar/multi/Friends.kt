@@ -43,11 +43,11 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -112,7 +112,7 @@ fun AddCourseUI(vm: NetWorkViewModel, hazeState: HazeState) {
 //    }
 
 //    MyCustomCard {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = "向他人申请好友课表") },
             supportingContent = {
                 Text(text = "输入学号,发送申请,对方同意后即可查看对方课表")
@@ -189,7 +189,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
     DividerTextExpandedWith(text = "好友列表(您目前可以查看的课表)") {
 //        MyCustomCard {
             for(i in friendList.indices) {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { friendList[i]?.let { Text(text = it.realname) } },
                     leadingContent = { Icon(painterResource(id = R.drawable.person), contentDescription = "")},
                     overlineContent = { friendList[i]?.let { Text(text = it.userId) }},
@@ -210,7 +210,7 @@ fun FriendsSetting(vm : NetWorkViewModel) {
             val applyList = (uiState as UiState.Success).data
             Column {
                 for(i in applyList.indices) {
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { applyList[i]?.let { ScrollText(text = it.applyUsername) } },
                         leadingContent = { Icon(painterResource(id = R.drawable.person_add), contentDescription = "")},
                         overlineContent = { applyList[i]?.let { Text(text = it.applyUserId) } },

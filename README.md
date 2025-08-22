@@ -1,14 +1,6 @@
 # 聚在工大
 ![封面](/src/img/cover.png)
 
-<p align="center">
-<img alt="API" src="https://img.shields.io/badge/Android%20-50f270?logo=android&logoColor=black&style=for-the-badge"/></a>
-  <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-a503fc?logo=kotlin&logoColor=white&style=for-the-badge"/></a>
- <img alt="material" src="https://custom-icon-badges.demolab.com/badge/material%20you-palegreen?style=for-the-badge&logoColor=black&logo=material-you"/></a>
-  <img alt="Jetpack Compose" src="https://img.shields.io/static/v1?style=for-the-badge&message=Jetpack+Compose&color=4285F4&logo=Jetpack+Compose&logoColor=FFFFFF&label="/></a> 
-
-</p>
-
 ## 下载
 
 <div align="center">
@@ -88,6 +80,8 @@ IDE: Android Studio Meerkat
 [Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract (供识别图片验证码)
 
 [MaterialKolor](https://github.com/jordond/MaterialKolor) 自定义取色
+
+[Reorderable](https://github.com/Calvin-LL/Reorderable) 列表拖拽
 
 
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新(自己)

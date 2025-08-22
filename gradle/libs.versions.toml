@@ -1,4 +1,5 @@
 [versions]
+composelevitation = "1.0.3"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
 minAndroidVersion = "26"
@@ -36,6 +37,7 @@ navigationCompose = "2.7.5" # 2.9.1 2.7.5
 okhttp = "4.9.0"
 palette = "1.0.0"
 profileinstaller = "1.4.1"
+reorderable = "3.0.0"
 roomRuntime = "2.6.1"
 tesseract4android = "4.8.0"
 uiautomator = "2.2.0"
@@ -94,6 +96,7 @@ androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", versi
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 bsdiff-lib = { module = "com.github.Chiu-xaH:Bsdiff-Lib", version.ref = "bsdiffLib" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
+composelevitation = { module = "com.github.GIGAMOLE:ComposeLevitation", version.ref = "composelevitation" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }
 core = { module = "com.google.zxing:core", version.ref = "coreVersion" }
@@ -106,6 +109,7 @@ konfetti-compose = { module = "nl.dionsegijn:konfetti-compose", version.ref = "k
 kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlinBom" }
 material-kolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "converterGson" }
 tesseract4android = { module = "cz.adaptech.tesseract4android:tesseract4android", version.ref = "tesseract4android" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }

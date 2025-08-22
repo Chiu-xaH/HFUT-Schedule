@@ -76,6 +76,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.ColorMode
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
@@ -84,19 +85,20 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
-import com.hfut.schedule.ui.style.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
+import com.xah.transition.util.canPopBack
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -119,11 +121,14 @@ private fun WebViewBackIcon(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val back : () -> Unit = {
         if(webView?.canGoBack() == true) {
             webView.goBack()
         } else {
-            navController.popBackStack()
+            if(navController.canPopBack()) {
+                navController.popBackStack()
+            }
         }
     }
     val cIcon = if(webView?.canGoBack() == true) {
@@ -137,7 +142,9 @@ private fun WebViewBackIcon(
                 .combinedClickable(
                     onClick = back,
                     onLongClick = {
-                        navController.popBackStack()
+                        if(navController.canPopBack()) {
+                            navController.popBackStack()
+                        }
                     }
                 )
         ) {
@@ -155,9 +162,9 @@ private fun WebViewBackIcon(
             LaunchedEffect(Unit) {
                 show = true
                 delay(speed*1L)
-                delay(1000L)
+                delay(1500L)
                 show = false
-                if(TransitionState.transplantBackground) {
+                if(!enablePredictive || TransitionState.transplantBackground) {
                     delay(3000L)
                     show = true
                 }
@@ -274,7 +281,7 @@ fun WebViewScreenForNavigation(
                         singleLine = false
                     ) { input = it }
                     Spacer(Modifier.height(CARD_NORMAL_DP))
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text(currentUrl) },
                         overlineContent = { Text("现链接") },
                         modifier = Modifier.clickable {
@@ -284,7 +291,7 @@ fun WebViewScreenForNavigation(
                             }
                         }
                     )
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text(url) },
                         overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
                         modifier = Modifier.clickable {
@@ -310,7 +317,7 @@ fun WebViewScreenForNavigation(
                 ) {
                     Column {
                         HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(currentUrl) },
                             overlineContent = { Text("现链接") },
                             modifier = Modifier.clickable {
@@ -318,7 +325,7 @@ fun WebViewScreenForNavigation(
                                 showBottomSheet = false
                             }
                         )
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(url) },
                             overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
                             modifier = Modifier.clickable {
@@ -433,6 +440,7 @@ fun WebViewScreenForNavigation(
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = topColor ?: MaterialTheme.colorScheme.surface,
                             titleContentColor = topBarTitleColor,
+                            scrolledContainerColor = Color.Transparent,
                         ),
                         actions = {
                             Row{

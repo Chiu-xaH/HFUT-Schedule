@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.xah.transition.R
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
+import com.xah.transition.util.canPopBack
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -32,21 +33,28 @@ fun SharedTransitionScope.TopBarNavigateIcon(
     animatedContentScope: AnimatedContentScope,
     route : String,
     icon : Int,
+    restoreIcon : Boolean = true
 ) {
     val speed = TransitionState.curveStyle.speedMs
     var show by remember { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
+    LaunchedEffect(restoreIcon) {
         show = true
         delay(speed*1L)
-        delay(1000L)
+        delay(1500L)
         show = false
-        if(TransitionState.transplantBackground) {
+        if(restoreIcon || TransitionState.transplantBackground) {
             delay(3000L)
             show = true
         }
     }
 
-    IconButton(onClick = { navController.popBackStack() }) {
+    IconButton(
+        onClick = {
+            if(navController.canPopBack()) {
+                navController.popBackStack()
+            }
+        },
+    ) {
         Box() {
             AnimatedVisibility(
                 visible = show,
@@ -69,7 +77,13 @@ fun SharedTransitionScope.TopBarNavigateIcon(
 
 @Composable
 fun TopBarNavigateIcon(navController : NavController) {
-    IconButton(onClick = { navController.popBackStack() }) {
+    IconButton(
+        onClick = {
+            if(navController.canPopBack()) {
+                navController.popBackStack()
+            }
+        },
+    ) {
         Icon(painterResource(R.drawable.arrow_back), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
     }
 }

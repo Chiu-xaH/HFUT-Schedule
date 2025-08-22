@@ -42,13 +42,13 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
-import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionPredictiveBackHandler
 
@@ -109,7 +109,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("Cookies & Authorization") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("教务系统") },
                     supportingContent = {
@@ -208,7 +208,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
 
         }
         DividerTextExpandedWith("教务系统 重要参数(修改Cookies后自动获取)") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 CommonNetworkScreen(studentId, onReload = null, isFullScreen = false) {
                     val data = (studentId as UiState.Success).data.toString()
                     TransplantListItem(

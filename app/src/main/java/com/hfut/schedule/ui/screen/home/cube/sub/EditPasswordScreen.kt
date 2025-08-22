@@ -29,13 +29,13 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -113,13 +113,13 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     }
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text("修改或重置密码可前往慧新易校(位于查询中心)")},
             leadingContent = { Icon(painterResource(R.drawable.info),null) },
             color = MaterialTheme.colorScheme.surface
         )
         DividerTextExpandedWith("一卡通密码") {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text("使用自定义密码") },
                 supportingContent = { Text( if(useEditedPwd) "现密码 $originPwd" else "初始密码 $originPwd")},
                 trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {

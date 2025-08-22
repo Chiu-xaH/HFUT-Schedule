@@ -27,10 +27,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +43,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -59,11 +61,11 @@ import com.hfut.schedule.ui.component.button.StartAppIcon
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.network.URLImage
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.LoadingUI
@@ -74,15 +76,14 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
-import com.hfut.schedule.ui.style.ColumnVertical
-import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -125,9 +126,11 @@ fun StuTodayCampusScreen(
     val route = remember { AppNavRoute.StuTodayCampus.route }
 
     val paperState = rememberPagerState(pageCount = { titles.size })
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -135,11 +138,12 @@ fun StuTodayCampusScreen(
                 Column (
                     modifier = Modifier.topBarBlur(hazeState, ),
                 ){
-                    TopAppBar(
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.StuTodayCampus.label) },
                         navigationIcon = {
-                            TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.StuTodayCampus.icon)
+                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.StuTodayCampus.icon)
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -191,7 +195,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
         HorizontalPager(state = paperState) { pager ->
             Column(modifier = Modifier.fillMaxSize()) {
                 if(todayCampusTip) {
-                    StyleCardListItem(
+                    CardListItem(
                         leadingContent = {
                             Icon(painterResource(R.drawable.info),null)
                         },
@@ -231,7 +235,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                     TAB_RIGHT -> {
                         if(input.isNotEmpty() || input.isNotBlank()) {
                             val data = localList.flatMap { it.apps }.filter { it.name.contains(input) }
-                            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 12.dp)) {
+                            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                 items(data.size, key = { it }) { index ->
                                     val item = data[index]
                                     with(item) {
@@ -239,7 +243,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                         SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
                                             TransplantListItem(
                                                 leadingContent = {
-                                                    URLImage(iconUrl, width = size, height = size)
+                                                    UrlImage(iconUrl, width = size, height = size)
                                                 },
                                                 headlineContent = { ScrollText(name, textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
                                                 modifier = Modifier.clickable {
@@ -264,13 +268,13 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                         DividerTextExpandedWith(i.categoryName) {
                                             for(j in list.indices step 2) {
                                                 val item1 = list[j]
-                                                Row(Modifier.padding(horizontal = 12.dp)) {
+                                                Row(Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                                     with(item1) {
                                                         val canUse = openUrl.startsWith(MyApplication.STU_URL)
                                                         SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
                                                             TransplantListItem(
                                                                 leadingContent = {
-                                                                    URLImage(iconUrl, width = size, height = size)
+                                                                    UrlImage(iconUrl, width = size, height = size)
                                                                 },
                                                                 headlineContent = { ScrollText(name,textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
                                                                 modifier = Modifier.clickable {
@@ -289,7 +293,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                             SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
                                                                 TransplantListItem(
                                                                     leadingContent = {
-                                                                        URLImage(iconUrl, width = size, height = size)
+                                                                        UrlImage(iconUrl, width = size, height = size)
                                                                     },
                                                                     headlineContent = { ScrollText(name, textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
                                                                     modifier = Modifier.clickable {
@@ -315,14 +319,14 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                     TAB_LEFT -> {
                         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
                             val data = (uiState as UiState.Success).data.filter { it.name.contains(input) }
-                            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = 12.dp)) {
+                            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                 items(data.size, key = { it }) { index ->
                                     val item = data[index]
                                     with(item) {
                                         SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
                                             TransplantListItem(
                                                 leadingContent = {
-                                                    URLImage(logo, width = size, height = size)
+                                                    UrlImage(logo, width = size, height = size)
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {

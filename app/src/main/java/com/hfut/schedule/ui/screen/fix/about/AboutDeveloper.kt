@@ -7,25 +7,19 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -45,17 +39,14 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.network.URLImage
+import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.screen.login.arguments
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -81,20 +72,20 @@ private val backgroundArticle = listOf(
     "开发者 Chiu-xaH"
 )
 private val openSourceProjects = listOf(
-    OpenSource("Okhttp","网络请求","https://github.com/square/okhttp"),
-    OpenSource("Retrofit","网络请求","https://github.com/square/retrofit"),
-    OpenSource("Gson", "JSON解析","https://github.com/google/gson"),
-    OpenSource("Jsoup", "XML/HTML解析","https://github.com/jhy/jsoup"),
-    OpenSource("Zxing", "二维码","https://github.com/zxing/zxing"),
-    OpenSource("Haze" ,"层级实时模糊","https://github.com/chrisbanes/haze"),
-    OpenSource("Accompanist" ,"用做实现透明状态栏","https://github.com/google/accompanist"),
-    OpenSource("Glide", "加载网络图片","https://github.com/bumptech/glide"),
-    OpenSource("EdDSA Java" ,"加密(供和风天气API使用)","https://github.com/str4d/ed25519-java"),
-    OpenSource("Konfetti" ,"礼花效果","https://github.com/DanielMartinus/Konfetti"),
-    OpenSource("Tesseract4Android" ,"封装Tesseract4(供图片验证码OCR)","https://github.com/adaptech-cz/Tesseract4Android"),
-    OpenSource("Bsdiff-Lib" , "增量更新","https://github.com/Chiu-xaH/Bsdiff-Lib"),
-    OpenSource("MaterialKolor" , "自定义取色","https://github.com/jordond/MaterialKolor")
-
+    OpenSource("Okhttp","网络请求","${MyApplication.GITHUB_URL}square/okhttp"),
+    OpenSource("Retrofit","网络请求","${MyApplication.GITHUB_URL}square/retrofit"),
+    OpenSource("Gson", "JSON解析","${MyApplication.GITHUB_URL}google/gson"),
+    OpenSource("Jsoup", "XML/HTML解析","${MyApplication.GITHUB_URL}jhy/jsoup"),
+    OpenSource("Zxing", "二维码","${MyApplication.GITHUB_URL}zxing/zxing"),
+    OpenSource("Haze" ,"层级实时模糊","${MyApplication.GITHUB_URL}chrisbanes/haze"),
+    OpenSource("Accompanist" ,"用做实现透明状态栏","${MyApplication.GITHUB_URL}google/accompanist"),
+    OpenSource("Glide", "加载网络图片","${MyApplication.GITHUB_URL}bumptech/glide"),
+    OpenSource("EdDSA Java" ,"加密(供和风天气API使用)","${MyApplication.GITHUB_URL}str4d/ed25519-java"),
+    OpenSource("Konfetti" ,"礼花效果","${MyApplication.GITHUB_URL}DanielMartinus/Konfetti"),
+    OpenSource("Tesseract4Android" ,"封装Tesseract4(供图片验证码OCR)","${MyApplication.GITHUB_URL}adaptech-cz/Tesseract4Android"),
+    OpenSource("Bsdiff-Lib" , "增量更新","${MyApplication.GITHUB_URL}Chiu-xaH/Bsdiff-Lib"),
+    OpenSource("MaterialKolor" , "自定义取色","${MyApplication.GITHUB_URL}jordond/MaterialKolor"),
+    OpenSource("Reorderable" , "列表拖拽","${MyApplication.GITHUB_URL}Calvin-LL/Reorderable")
 )
 private val dependencies = Build(
     jetpack = "Jetpack Compose",
@@ -150,7 +141,7 @@ fun About(vm : NetWorkViewModel) {
             bottomBar = {
                 Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
                     Button(
-                        onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
+                        onClick = { Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f)
@@ -160,7 +151,7 @@ fun About(vm : NetWorkViewModel) {
 
                     Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                     FilledTonalButton(
-                        onClick = { Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest") },
+                        onClick = { Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest") },
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(.5f)
@@ -176,11 +167,11 @@ fun About(vm : NetWorkViewModel) {
                 DividerTextExpandedWith("开发者") {
                     TransplantListItem(
                         modifier = Modifier.clickable {
-                            Starter.startWebUrl("https://github.com/${MyApplication.GITHUB_DEVELOPER_NAME}")
+                            Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
                         },
                         headlineContent = { ScrollText(MyApplication.GITHUB_DEVELOPER_NAME) },
                         leadingContent = {
-                            URLImage(url = MyApplication.GITHUB_USER_IMAGE_URL + MyApplication.GITHUB_USER_ID, width = 50.dp, height = 50.dp)
+                            UrlImage(url = MyApplication.GITHUB_USER_IMAGE_URL + MyApplication.GITHUB_USER_ID, width = 50.dp, height = 50.dp)
                         },
                         supportingContent = {
                             Text("一名热爱安卓的开发者,宣城校区23级本科生")
@@ -199,7 +190,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("构建") {
-                    MyCustomCard (containerColor = MaterialTheme.colorScheme.surface){
+                    CustomCard (containerColor = MaterialTheme.colorScheme.surface){
                         TransplantListItem(
                             headlineContent = { Text("Kotlin/Java,C") },
                             overlineContent = { Text("语言") }
@@ -222,7 +213,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("开源引用") {
-                    MyCustomCard (containerColor = MaterialTheme.colorScheme.surface){
+                    CustomCard (containerColor = MaterialTheme.colorScheme.surface){
                         for(index in openSourceProjects.indices step 2) {
                             Row {
                                 TransplantListItem(
@@ -248,7 +239,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("用户协议") {
-                    MyCustomCard (containerColor = MaterialTheme.colorScheme.surface) {
+                    CustomCard (containerColor = MaterialTheme.colorScheme.surface) {
                         for(index in arguments.indices) {
                             val item = arguments[index]
                             TransplantListItem(
@@ -272,7 +263,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("创作背景") {
-                    MyCustomCard (containerColor = MaterialTheme.colorScheme.surface) {
+                    CustomCard (containerColor = MaterialTheme.colorScheme.surface) {
                         for(i in backgroundArticle.indices) {
                             TransplantListItem(
                                 headlineContent = {

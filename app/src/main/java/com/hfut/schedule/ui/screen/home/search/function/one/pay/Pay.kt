@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.one.pay
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -19,17 +20,20 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -42,8 +46,8 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -53,16 +57,15 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.TransitionScaffold
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -99,20 +102,22 @@ fun FeeScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Fee.route }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Fee.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route,AppNavRoute.Fee.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route,AppNavRoute.Fee.icon)
                     },
                     actions = {
                         FilledTonalButton(
@@ -139,7 +144,7 @@ fun FeeScreen(
 @Composable
 fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     val uiState by vm.payFeeResponse.state.collectAsState()
-    var loading = uiState !is UiState.Success
+    var successLoad = uiState is UiState.Success
     var data by remember { mutableStateOf(PayData("0.00","0.00","0.00","0.00","0.00")) }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
 
@@ -161,32 +166,31 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             }
         }
     }
-    LaunchedEffect(uiState) {
-        if (uiState is UiState.Success) {
-            val response = (uiState as UiState.Success).data
-            data = response
-        }
-    }
     val refreshNetwork : suspend () -> Unit = {
         vm.payFeeResponse.clear()
         vm.getPay()
+    }
+    LaunchedEffect(uiState) {
+        if(successLoad) {
+            data = (uiState as UiState.Success).data
+        }
     }
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
     DividerTextExpandedWith(text = "欠缴费用",false) {
         LoadingLargeCard(
-            title = "￥${if(!loading) data.total else "0.0"}",
-            loading = loading
+            title = "￥${if(successLoad) data.total else "0.0"}",
+            loading = !successLoad
         ) {
             Row {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(!loading)data.xf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad)data.xf else "0.0"}") },
                     overlineContent = { Text("学费") },
                     modifier = Modifier.weight(.5f)
                 )
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(!loading) data.dstjf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.dstjf else "0.0"}") },
                     overlineContent = { Text("体检费") },
                     modifier = Modifier.weight(.5f)
                 )
@@ -194,12 +198,12 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             }
             Row {
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(!loading) data.zsf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.zsf else "0.0"}") },
                     overlineContent = { Text("住宿费") },
                     modifier = Modifier.weight(.5f)
                 )
                 TransplantListItem(
-                    headlineContent = { ScrollText(text = "￥${if(!loading) data.dsjxf else "0.0"}") },
+                    headlineContent = { ScrollText(text = "￥${if(successLoad) data.dsjxf else "0.0"}") },
                     overlineContent = { Text("军训费") },
                     modifier = Modifier.weight(.5f)
                 )
@@ -208,7 +212,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     }
 
     DividerTextExpandedWith(text = "缴费方式") {
-        MyCustomCard(containerColor = cardNormalColor()) {
+        CustomCard(containerColor = cardNormalColor()) {
             TransplantListItem(
                 headlineContent = { Text(text = "提前在中国农业银行卡预存费用,自动扣取") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},
@@ -225,7 +229,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             )
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text(text = "点击展示二维码，长按复制链接，在微信/支付宝等中即可支付") },
+                headlineContent = { Text(text = "点击展示二维码，长按复制链接，在微信/支付宝等扫码或打开链接后，即可支付") },
                 leadingContent = { Icon(
                     painter = painterResource(id = R.drawable.barcode),
                     contentDescription = ""
@@ -244,7 +248,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
 
     }
     DividerTextExpandedWith(text = "防骗警告") {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = "电子支付只能通过学校缴费平台官方链接(右上角按钮提供)发起,其余线上途径均需谨慎甄别!") },
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.error), contentDescription = "")

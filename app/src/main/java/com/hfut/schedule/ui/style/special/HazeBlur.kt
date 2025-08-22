@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.style
+package com.hfut.schedule.ui.style.special
 
 import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -52,12 +52,13 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
 import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
@@ -173,7 +174,7 @@ fun Modifier.normalTopBarBlur(
             ),
         )
     } else {
-        this.background(backgroundColor.copy(.95f))
+        this.background(backgroundColor.copy(.925f))
     }
 }
 
@@ -221,7 +222,7 @@ fun HazeBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         dragHandle = null,
-        shape = bottomSheetRound(sheetState,autoShape)
+        shape = bottomSheetRound(sheetState, autoShape)
     ) {
         Column(modifier = Modifier.bottomSheetBlur(hazeState)){
             Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
@@ -243,7 +244,7 @@ fun CustomBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        shape = bottomSheetRound(sheetState,autoShape)
+        shape = bottomSheetRound(sheetState, autoShape)
     ) {
         content()
     }
@@ -371,113 +372,4 @@ fun coverBlur(
 }
 
 
-@Composable
-@Preview
-fun SpringAnimationTimer() {
-    var startTime by remember { mutableStateOf(0L) }
-    var trigger by remember { mutableStateOf(false) }
-    var duration by remember { mutableStateOf(0L) }
-    var dampingRatio by remember { mutableStateOf(Spring.DampingRatioLowBouncy * 1.1f) }
-    var stiffness by remember { mutableStateOf(Spring.StiffnessLow) }
-    val animatedValue by animateFloatAsState(
-        targetValue = if (trigger) 350f else 75f,
-        animationSpec = spring(
-            dampingRatio = dampingRatio,
-            stiffness = stiffness,
-        ),
-        finishedListener = {
-            val endTime = System.currentTimeMillis()
-            duration = endTime - startTime
-            Log.d("Timer", "动画耗时: $duration ms")
-        }
-    )
 
-    LaunchedEffect(trigger) {
-        startTime = System.currentTimeMillis()
-    }
-
-
-    Column (Modifier.fillMaxSize()) {
-        Spacer(Modifier
-            .padding(APP_HORIZONTAL_DP * 6)
-            .statusBarsPadding())
-        RowHorizontal() {
-            Box(
-                Modifier
-                    .size(animatedValue.dp)
-                    .background(MaterialTheme.colorScheme.primary)
-                    .clickable { trigger = !trigger }
-            )
-        }
-        Spacer(Modifier
-            .padding(APP_HORIZONTAL_DP * 1)
-            .statusBarsPadding())
-
-        Column(modifier = Modifier.navigationBarsPadding()) {
-            StyleCardListItem(
-                headlineContent = {
-                    Text("时长 ${duration } ms")
-                },
-                color = MaterialTheme.colorScheme.surface
-            )
-            Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = {
-                        Text("dampingRatio $dampingRatio \n初始 ${Spring.DampingRatioLowBouncy * 1.1f}")
-                    },
-                    trailingContent = {
-                        Button(onClick = {
-                            dampingRatio = Spring.DampingRatioLowBouncy * 1.1f
-                        }) {
-                            Text("恢复")
-                        }
-                    }
-                )
-                Slider(
-                    value = dampingRatio,
-                    onValueChange = {
-                        dampingRatio = it
-                    },
-                    colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.secondary,
-                        activeTrackColor = MaterialTheme.colorScheme.secondary,
-                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                    ),
-                    valueRange = 0f..2f,
-
-                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                )
-            }
-            Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = {
-                        Text("stiffness $stiffness \n初始 ${Spring.StiffnessLow}")
-                    },
-                    trailingContent = {
-                        Button(onClick = {
-                            stiffness = Spring.StiffnessLow
-                        }) {
-                            Text("恢复")
-                        }
-                    }
-                )
-                Slider(
-                    value = stiffness,
-                    onValueChange = {
-                        stiffness = it
-                    },
-                    colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.secondary,
-                        activeTrackColor = MaterialTheme.colorScheme.secondary,
-                        inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
-                    ),
-                    valueRange = 0f..400f,
-
-                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                )
-            }
-        }
-    }
-}

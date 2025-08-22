@@ -72,11 +72,11 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.style.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
@@ -212,7 +212,7 @@ fun WebViewScreenForActivity(
                         singleLine = false
                     ) { input = it }
                     Spacer(Modifier.height(CARD_NORMAL_DP))
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text(currentUrl) },
                         overlineContent = { Text("现链接") },
                         modifier = Modifier.clickable {
@@ -222,7 +222,7 @@ fun WebViewScreenForActivity(
                             }
                         }
                     )
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text(url) },
                         overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
                         modifier = Modifier.clickable {
@@ -249,7 +249,7 @@ fun WebViewScreenForActivity(
                 ) {
                     Column {
                         HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(currentUrl) },
                             overlineContent = { Text("现链接") },
                             modifier = Modifier.clickable {
@@ -257,7 +257,7 @@ fun WebViewScreenForActivity(
                                 showBottomSheet = false
                             }
                         )
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text(url) },
                             overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
                             modifier = Modifier.clickable {
@@ -356,7 +356,9 @@ fun WebViewScreenForActivity(
                     TopAppBar(
                         colors = TopAppBarDefaults.topAppBarColors(
                             containerColor = topColor ?: MaterialTheme.colorScheme.surface,
-                            titleContentColor = topBarTitleColor
+                            titleContentColor = topBarTitleColor,
+                            scrolledContainerColor = Color.Transparent,
+
                         ),
                         actions = {
                             Row {

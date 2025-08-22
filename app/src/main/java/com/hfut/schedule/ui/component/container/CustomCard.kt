@@ -3,10 +3,15 @@ package com.hfut.schedule.ui.component.container
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -15,6 +20,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -24,28 +30,74 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.ui.style.coverBlur
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 
+
+data class CardBottomButton(
+    val text : String,
+    val show : Boolean = true,
+    val clickable :  (() -> Unit)? = null
+)
+private val CARD_BOTTOM_BUTTON_SIZE = 14.sp
 @Composable
-fun MyCustomCard(
+fun ColumnScope.CardBottomButtons(buttons : List<CardBottomButton>) {
+    PaddingHorizontalDivider()
+    LazyRow (modifier = Modifier.align(Alignment.End).padding(horizontal = APP_HORIZONTAL_DP)) {
+        items(buttons.size,key = { it }) { index ->
+            val bean = buttons[index]
+            with(bean) {
+                if(show) {
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                    Text(
+                        text = text,
+                        color =
+                            if(clickable == null)
+                                MaterialTheme.colorScheme.onSurface
+                            else {
+                                if(text.contains("删除")) {
+                                    MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.primary
+                                }
+                            },
+                        fontSize = CARD_BOTTOM_BUTTON_SIZE,
+                        modifier = Modifier
+                            .padding(vertical = APP_HORIZONTAL_DP - 5.dp)
+                            .let {
+                                clickable?.let { click ->
+                                    it.clickable { click() }
+                                } ?: it
+                            }
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+@Composable
+fun CustomCard(
     modifier: Modifier = Modifier,
     containerColor : Color? = null,
-    hasElevation : Boolean = false,
+    shadow : Dp = 0.dp,
     shape: Shape = MaterialTheme.shapes.medium,
     content: @Composable () -> Unit
 ) {
     Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = if(hasElevation) 1.75.dp else 0.dp),
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
         shape = shape,
+        elevation =  CardDefaults. cardElevation(shadow),
         colors = if(containerColor == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = containerColor)
     ) {
         content()
     }
 }
+
 
 @Composable
 fun mixedCardNormalColor(): Color {
@@ -55,16 +107,23 @@ fun mixedCardNormalColor(): Color {
 }
 // 小卡片
 @Composable
-fun SmallCard(modifier: Modifier = Modifier.fillMaxSize(), color : Color? = null,content: @Composable () -> Unit) {
+fun SmallCard(
+    modifier: Modifier = Modifier.fillMaxSize(),
+    color : Color? = null,
+    shadow : Dp = 0.dp,
+    content: @Composable () -> Unit
+) {
     Card(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
+        elevation = CardDefaults.cardElevation(shadow),
         colors = CardDefaults.cardColors(containerColor = color ?: cardNormalColor())
     ) {
         content()
     }
 }
 
+val SEARCH_FUC_CARD_HEIGHT = 72.dp
 @Composable
 fun TransplantListItem(
     headlineContent :  @Composable () -> Unit,
@@ -94,19 +153,19 @@ fun TransplantListItem(
 }
 
 @Composable
-private fun CardListItem(
+private fun PCardListItem(
     headlineContent :  @Composable () -> Unit,
     overlineContent  : @Composable() (() -> Unit)? = null,
     supportingContent : @Composable() (() -> Unit)? = null,
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
-    hasElevation : Boolean = false,
     containerColor : Color? = null,
     shape: Shape = MaterialTheme.shapes.medium,
+    shadow: Dp = 0.dp,
     modifier: Modifier = Modifier,
     cardModifier : Modifier = Modifier
 ) {
-    MyCustomCard(hasElevation = hasElevation, containerColor = containerColor, modifier = cardModifier, shape = shape) {
+    CustomCard( containerColor = containerColor, modifier = cardModifier, shape = shape, shadow = shadow) {
         TransplantListItem(
             headlineContent = headlineContent,
             overlineContent = overlineContent,
@@ -121,7 +180,7 @@ private fun CardListItem(
 
 
 @Composable
-fun StyleCardListItem(
+fun CardListItem(
     headlineContent :  @Composable () -> Unit,
     overlineContent  : @Composable() (() -> Unit)? = null,
     supportingContent : @Composable() (() -> Unit)? = null,
@@ -129,14 +188,14 @@ fun StyleCardListItem(
     leadingContent : @Composable() (() -> Unit)? = null,
     color : Color? = null,
     shape: Shape = MaterialTheme.shapes.medium,
+    shadow: Dp = 0.dp,
     modifier: Modifier = Modifier,
     cardModifier: Modifier = Modifier,
 ) {
-    CardListItem(
+    PCardListItem(
         headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
-        hasElevation = false,
         containerColor = color ?: cardNormalColor(),
-        shape = shape
+        shape = shape, shadow = shadow
     )
 }
 // 用在LazyColumn
@@ -162,7 +221,7 @@ fun AnimationCardListItem(
 //            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
 //        )
 //    }
-    StyleCardListItem(
+    CardListItem(
         headlineContent,
         overlineContent,
         supportingContent,
@@ -170,8 +229,8 @@ fun AnimationCardListItem(
         leadingContent,
         color,
         shape,
-        modifier,
-        cardModifier
+        modifier=modifier,
+        cardModifier=cardModifier
 //            .graphicsLayer {
 //            scaleX = animatedProgress.value
 //            scaleY = animatedProgress.value
@@ -183,7 +242,6 @@ fun AnimationCardListItem(
 fun AnimationCustomCard(
     modifier: Modifier = Modifier,
     containerColor : Color? = null,
-    hasElevation : Boolean = false,
     index : Int = 1,
     scale : Float = 0.8f,
     content: @Composable () -> Unit) {
@@ -196,7 +254,7 @@ fun AnimationCustomCard(
 //        )
 //    }
 
-    MyCustomCard(
+    CustomCard(
         modifier = modifier
 //            .graphicsLayer {
 //            scaleX = animatedProgress.value
@@ -204,7 +262,6 @@ fun AnimationCustomCard(
 //        }
         ,
         containerColor = containerColor,
-        hasElevation = hasElevation,
     ) {
         content()
     }
@@ -218,7 +275,7 @@ fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
 
 val CARD_NORMAL_DP : Dp = 2.5.dp
 
-val APP_HORIZONTAL_DP : Dp = 15.dp
+val APP_HORIZONTAL_DP : Dp = 16.25.dp
 
 @Composable
 fun LargeCard(

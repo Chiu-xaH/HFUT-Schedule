@@ -70,9 +70,9 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.status.StatusUI2
-import com.hfut.schedule.ui.style.RowHorizontal
-import com.hfut.schedule.ui.style.bottomSheetRound
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState

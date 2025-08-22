@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 //import androidx.compose.ui.viewinterop.AndroidView
 //import com.google.android.material.loadingindicator.LoadingIndicator
 //import com.hfut.schedule.R
-import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.align.RowHorizontal
 import kotlinx.coroutines.delay
 //
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

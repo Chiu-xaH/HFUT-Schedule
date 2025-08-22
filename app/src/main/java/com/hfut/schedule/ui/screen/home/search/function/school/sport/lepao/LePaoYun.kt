@@ -22,9 +22,9 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import dev.chrisbanes.haze.HazeState
 
 
@@ -51,7 +51,7 @@ fun LePaoYun(hazeState: HazeState) {
         ) {
             Column {
                 HazeBottomSheetTopBar("体育", isPaddingStatusBar = false)
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text("校园跑") },
                     modifier = Modifier.clickable { Starter.startAppLaunch(Starter.AppPackages.LEPAO) },
                     trailingContent = {
@@ -59,7 +59,7 @@ fun LePaoYun(hazeState: HazeState) {
                     },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.mode_of_travel), contentDescription = "") }
                 )
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text("体测平台") },
                     overlineContent = { Text("学校网站内测 接入校园网") },
                     modifier = Modifier.clickable { Starter.startWebUrl(MyApplication.PE_URL + "bdlp_h5_fitness_test/public/index.php/index/login/hfutLogin") },

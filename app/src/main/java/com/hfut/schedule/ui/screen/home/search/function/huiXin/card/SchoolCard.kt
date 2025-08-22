@@ -31,7 +31,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 
@@ -106,7 +106,7 @@ fun TodayInfo(bean : TodayResult) {
         }
         with(todayExam) {
             courseName?.let {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = it.toString()) },
                     overlineContent = { Text(text = "$startTime~$endTime") },
                     supportingContent = { Text(text = place.toString())},
@@ -116,7 +116,7 @@ fun TodayInfo(bean : TodayResult) {
         }
         with(todayCourse) {
             courseName?.let {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = it.toString()) },
                     overlineContent = { Text(text = "$startTime~$endTime  $place")},
                     supportingContent = { className?.let { Text(text = it) } },
@@ -126,7 +126,7 @@ fun TodayInfo(bean : TodayResult) {
         }
         with(bookLending) {
             bookName?.let {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = it.toString()) },
                     supportingContent = { Text(text = "归还时间 $returnTime") },
                     overlineContent = { Text(text = "借阅于 $outTime\n应还于 $dueTime")},
@@ -136,7 +136,7 @@ fun TodayInfo(bean : TodayResult) {
         }
         with(todayActivity) {
             activityName?.let {
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = it.toString()) },
                     overlineContent = { Text(text = startTime.toString()) },
                     leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},

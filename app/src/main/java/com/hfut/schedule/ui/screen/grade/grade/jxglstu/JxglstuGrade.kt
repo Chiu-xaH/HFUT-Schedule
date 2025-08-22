@@ -64,8 +64,8 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.chart.RadarChart
@@ -78,9 +78,9 @@ import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -189,7 +189,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
             val Item = @Composable { grade : GradeResponseJXGLSTU ->
                 val isFailed = grade.GPA.toFloatOrNull() == 0f
                 val needSurvey = grade.grade.contains("评教")
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = {  Text(grade.title) },
                     overlineContent = { Text(
                         if(!needSurvey)
@@ -395,7 +395,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
             }
         }
         DividerTextExpandedWith("其他信息") {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 Row {
                     TransplantListItem(
                         leadingContent = {
@@ -490,7 +490,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
 }
 @Composable
 fun GPAWithScore(index : Pair<Int, Int>? = null) {
-    MyCustomCard(containerColor = cardNormalColor()) {
+    CustomCard(containerColor = cardNormalColor()) {
 //        var boldIndex =
 //            if(index?.second == scoreWithGPA.size - 1) {
 //                index.first
@@ -533,7 +533,7 @@ fun GPAWithScore(index : Pair<Int, Int>? = null) {
             }
         }
     }
-    MyCustomCard(containerColor = cardNormalColor()) {
+    CustomCard(containerColor = cardNormalColor()) {
 //        var boldIndex =
 //             if(index?.second == ScoreGrade.entries.size - 1) {
 //                index.first

@@ -45,13 +45,13 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.GlobalUIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -150,7 +150,7 @@ fun MailUI(vm: NetWorkViewModel) {
         }
     }
     DividerTextExpandedWith("使用说明") {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = {
                 Text("一些邮件，可能在应用内无法跳转链接，需要选择右侧按钮以用浏览器打开")
             },
@@ -159,7 +159,7 @@ fun MailUI(vm: NetWorkViewModel) {
             }
         )
         if(isSupabaseRegistering.value) {
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = {
                     Text("共建平台注册激活请选择在浏览器使用，并检查最新收件箱 来自Supabase Auth的邮件 点击链接并Confirm")
                 },

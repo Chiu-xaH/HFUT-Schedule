@@ -22,8 +22,10 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -48,7 +51,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -60,13 +63,13 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.coverBlur
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.coverBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.containerShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -85,18 +88,22 @@ fun PersonScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Person.route }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Person.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Person.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Person.icon)
                     },
                 )
             },
@@ -172,7 +179,7 @@ private fun PersonItems(
     }
     Column() {
         DividerTextExpandedWith(text = "账号信息") {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 name?.let {
                     TransplantListItem(
                         headlineContent = { Text(text = it) },
@@ -231,7 +238,7 @@ private fun PersonItems(
         val route = remember { AppNavRoute.Classmates.route }
         DividerTextExpandedWith(text = "就读信息") {
             with(sharedTransitionScope) {
-                MyCustomCard(
+                CustomCard(
                     containerColor = mixedCardNormalColor(),
                     modifier = containerShare(
                         animatedContentScope=animatedContentScope,
@@ -311,7 +318,7 @@ private fun PersonItems(
         }
 
         DividerTextExpandedWith(text = "密码信息") {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 TransplantListItem(
                     headlineContent = { Text(text = "密码") },
                     leadingContent = {
@@ -366,7 +373,7 @@ private fun PersonItems(
         }
 
         DividerTextExpandedWith(text = "学籍信息") {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 studyType?.let {
                     TransplantListItem(
                         headlineContent = { Text(text = it)  },
@@ -484,7 +491,7 @@ private fun PersonItems(
         }
 
         DividerTextExpandedWith("私人信息") {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 info.gender?.let {
                     TransplantListItem(
                         headlineContent = {  Text(it)  },
@@ -594,7 +601,7 @@ private fun PersonItems(
         DividerTextExpandedWith("寝室信息") {
             CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
                 val data = (uiState as UiState.Success).data
-                MyCustomCard(containerColor = cardNormalColor()) {
+                CustomCard(containerColor = cardNormalColor()) {
                     Column {
                         TransplantListItem(
                             headlineContent = { Text(data.campus_dictText + " " + data.dormitory.substringBefore("（") + " " + data.room)},

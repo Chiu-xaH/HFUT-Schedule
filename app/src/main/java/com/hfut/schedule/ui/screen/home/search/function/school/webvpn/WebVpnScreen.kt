@@ -18,8 +18,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,8 +47,8 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -56,11 +59,13 @@ import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -76,19 +81,22 @@ fun WebVpnScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.WebVpn.route }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
-                TopAppBar(
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.WebVpn.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.WebVpn.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.WebVpn.icon)
                     },
                     actions = {
                         FilledTonalButton(
@@ -148,7 +156,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
     DividerTextExpandedWith("内网 to 外网") {
         var input by remember { mutableStateOf("") }
         var result by remember { mutableStateOf<String?>(null) }
-        StyleCardListItem(
+        CardListItem(
             headlineContent = {
                 Text("输入需要校园网才可访问的链接，将其转换为WebVpn链接后，可通过外网访问")
             },
@@ -162,7 +170,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                 input = MyApplication.LIBRARY_SEAT
             }
         )
-        MyCustomCard(containerColor = cardNormalColor()) {
+        CustomCard(containerColor = cardNormalColor()) {
             CustomTextField(
                 label = { Text("输入以http://或https://开头的合法链接")},
                 input = input,
@@ -187,7 +195,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
         }
 
         result?.let {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 Column {
                     TransplantListItem(
                         headlineContent = {
@@ -197,49 +205,24 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             Text("转换结果")
                         },
                     )
-                    PaddingHorizontalDivider()
-                    Row(modifier = Modifier.align(Alignment.End)) {
-                        Text(
-                            text = "复制",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                ).clickable { ClipBoardUtils.copy(it) }
-                        )
-                        Text(
-                            text = "打开",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                ).clickable {
-                                    if(vm.webVpn) {
-                                        Starter.startWebView(it, cookie = cookies)
-                                    } else {
-                                        showToast("先以外地访问模式登录")
-                                        Starter.refreshLogin()
-                                    }
+                    CardBottomButtons(
+                        listOf(
+                            CardBottomButton("复制") {
+                                ClipBoardUtils.copy(it)
+                            },
+                            CardBottomButton("打开") {
+                                if(vm.webVpn) {
+                                    Starter.startWebView(it, cookie = cookies)
+                                } else {
+                                    showToast("先以外地访问模式登录")
+                                    Starter.refreshLogin()
                                 }
+                            },
+                            CardBottomButton("清除") {
+                                result = null
+                            },
                         )
-                        Text(
-                            text = "清除",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                ).clickable { result = null }
-                        )
-                    }
+                    )
                 }
             }
         }
@@ -247,7 +230,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
     DividerTextExpandedWith("外网 to 内网") {
         var input by remember { mutableStateOf("") }
         var result by remember { mutableStateOf<String?>(null) }
-        StyleCardListItem(
+        CardListItem(
             headlineContent = {
                 Text("输入WebVpn链接，还原为原始链接")
             },
@@ -261,7 +244,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                 input = MyApplication.JXGLSTU_WEBVPN_URL
             }
         )
-        MyCustomCard(containerColor = cardNormalColor()) {
+        CustomCard(containerColor = cardNormalColor()) {
             CustomTextField(
                 label = { Text("输入以${WEBVPN_URL}开头的合法链接")},
                 input = input,
@@ -286,7 +269,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
         }
 
         result?.let {
-            MyCustomCard(containerColor = cardNormalColor()) {
+            CustomCard(containerColor = cardNormalColor()) {
                 Column {
                     TransplantListItem(
                         headlineContent = {

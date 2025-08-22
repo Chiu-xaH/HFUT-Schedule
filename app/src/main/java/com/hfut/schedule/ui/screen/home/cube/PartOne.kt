@@ -38,8 +38,11 @@ import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.Starter.startWebUrl
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
@@ -51,8 +54,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
 import dev.chrisbanes.haze.HazeState
@@ -69,7 +73,7 @@ fun apiCheck() : Boolean {
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun PartOne(navController: NavController) {
-    MyCustomCard (
+    CustomCard (
         containerColor = MaterialTheme.colorScheme.surface
     ){
         TransplantListItem(
@@ -145,10 +149,12 @@ fun HomeSettingScreen(navController: NavController,
    //
     val currentVersion = AppVersion.getVersionName()
     var hasCleaned by remember { mutableStateOf(false) }
+    val showUpdate = currentVersion != getUpdates().version
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
         .padding(innerPaddings)) {
+
 
         Spacer(modifier = Modifier.height(5.dp))
 
@@ -159,15 +165,17 @@ fun HomeSettingScreen(navController: NavController,
 
         MyAPIItem(color = MaterialTheme.colorScheme.surface)
 
-        if (currentVersion != getUpdates().version) {
+        if (showUpdate) {
             DividerTextExpandedWith(text = "更新版本") {
                 UpdateUI(vm)
-
                 if(AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64) {
                     val patchItem = getPatchVersions().find { item ->
                         currentVersion == item.oldVersion
                     }
+
                     if (patchItem != null ) {
+                        Spacer(Modifier.height(CARD_NORMAL_DP))
+                        PaddingHorizontalDivider(isDashed = true)
                         PatchUpdateUI(patchItem,vm)
                     } else {
                         // 清理
@@ -176,11 +184,17 @@ fun HomeSettingScreen(navController: NavController,
                         }
                     }
                 }
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+                PaddingHorizontalDivider(isDashed = true)
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+                CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                    GithubDownloadUI()
+                }
             }
         }
 
         DividerTextExpandedWith(text = "常驻项目") {
-            AlwaysItem(hazeState)
+            AlwaysItem(hazeState,showUpdate)
         }
 
 
@@ -193,9 +207,26 @@ fun HomeSettingScreen(navController: NavController,
 
 }
 
+
+@Composable
+fun GithubDownloadUI() {
+    TransplantListItem(
+        headlineContent = {
+            Text("备用更新通道")
+        },
+        supportingContent = {
+            Text("通过Github发行版下载最新版本,不会限速;\n请注意选择后缀'arm64-v8a'(即普通Android移动设备)的APK下载")
+        },
+        leadingContent = { Icon(painterResource(R.drawable.github),null)},
+        modifier = Modifier.clickable {
+            Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest")
+        }
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlwaysItem(hazeState: HazeState) {
+fun AlwaysItem(hazeState: HazeState,showUpdate : Boolean) {
     val version by remember { mutableStateOf(getUpdates()) }
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -227,7 +258,7 @@ fun AlwaysItem(hazeState: HazeState) {
             }
         }
     }
-    MyCustomCard(
+    CustomCard(
         containerColor = MaterialTheme.colorScheme.surface
     ) {
         TransplantListItem(
@@ -242,12 +273,16 @@ fun AlwaysItem(hazeState: HazeState) {
                 headlineContent = { Text(text = "本版本新特性") },
                 supportingContent = { Text(text = if(isPreview) "当前为内部测试版" else "当前已为最新版本 $currentVersion") },
                 leadingContent = {
-                    Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",)
+                    Icon(painterResource(R.drawable.info), contentDescription = "Localized description",)
                 },
                 modifier = Modifier.clickable{
                     showBottomSheet = true
                 }
             )
+        }
+        if(!showUpdate) {
+            PaddingHorizontalDivider()
+            GithubDownloadUI()
         }
     }
 }

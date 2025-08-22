@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.materialkolor.PaletteStyle
 import com.xah.transition.style.TransitionLevel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -49,6 +50,8 @@ object DataStoreManager {
         DEEP(3,"饱和", PaletteStyle.Vibrant),
         BLACK(1,"黑白", PaletteStyle.Monochrome),
     }
+
+    val SEARCH_DEFAULT_STR = GlobalUIStateHolder.funcDefault.map { it.id }.joinToString(",")
 
     private const val EMPTY_STRING = ""
 
@@ -105,6 +108,8 @@ object DataStoreManager {
     private val CUSTOM_BACKGROUND = stringPreferencesKey("custom_background")
     private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style")
     private val CUSTOM_BACKGROUND_ALPHA = floatPreferencesKey("custom_background_alpha")
+    private val SEARCH_SORT = stringPreferencesKey("search_sort")
+    private val MAX_FLOW = intPreferencesKey("max_flow")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -139,6 +144,8 @@ object DataStoreManager {
     suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
     suspend fun saveCustomBackground(value: Uri?) = saveValue(CUSTOM_BACKGROUND, value?.toString() ?: EMPTY_STRING)
     suspend fun saveCustomBackgroundAlpha(value: Float) = saveValue(CUSTOM_BACKGROUND_ALPHA,value)
+    suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
+    suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookies = getFlow(STU_COOKIE,EMPTY_STRING)
@@ -166,6 +173,7 @@ object DataStoreManager {
     val enableControlCenter = getFlow(CONTROL_CENTER,false)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
+    val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
@@ -173,4 +181,6 @@ object DataStoreManager {
     val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
+    val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
+
 }

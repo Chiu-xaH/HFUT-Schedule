@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.component.status.CenterScreen
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.status.DevelopingUI
 import com.hfut.schedule.ui.component.status.LoadingScreen
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -74,7 +74,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -205,7 +205,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
                 val isExpanded = expandedStates[index] ?: false
                 var downloaded by remember { mutableStateOf(false) }
                 Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
-                    MyCustomCard(containerColor = cardNormalColor()) {
+                    CustomCard(containerColor = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { Text(item.name) },
                             overlineContent = { Text(item.timeDescription) },

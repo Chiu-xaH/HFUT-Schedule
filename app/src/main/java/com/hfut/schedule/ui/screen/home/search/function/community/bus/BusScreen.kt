@@ -26,9 +26,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,8 +41,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,19 +56,19 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -87,8 +92,10 @@ fun BusScreen(
     val dates = remember { BusDate.entries }
     var startInput by remember { mutableStateOf("") }
     var endInput by remember { mutableStateOf("") }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navController,
@@ -96,11 +103,12 @@ fun BusScreen(
                 Column(
                     modifier = Modifier.topBarBlur(hazeState),
                 ) {
-                    TopAppBar(
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.Bus.label) },
                         navigationIcon = {
-                            TopBarNavigateIcon(
+                            TopBarNavigationIcon(
                                 navController,
                                 animatedContentScope,
                                 route,
@@ -177,7 +185,7 @@ fun BusScreen(
                                 pointList.add(0, from)
                                 pointList.add(to)
                                 // 用线路图显示
-                                MyCustomCard(containerColor = cardNormalColor()) {
+                                CustomCard(containerColor = cardNormalColor()) {
                                     TransplantListItem(
                                         headlineContent = {
                                             Text("$date $time")
@@ -205,31 +213,42 @@ fun BusScreen(
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Box {
-                                                val infiniteTransition = rememberInfiniteTransition(label = "scrollAnim")
-                                                val offsetX by infiniteTransition.animateFloat(
-                                                    initialValue = 0f,
-                                                    targetValue = 1f,
+                                                val transition = rememberInfiniteTransition(label = "scroll")
+                                                var barWidthPx by remember { mutableStateOf(0f) }
+
+                                                val offsetX by transition.animateFloat(
+                                                    initialValue = -1f,
+                                                    targetValue = 2f, // 扫完整条 + 额外一点
                                                     animationSpec = infiniteRepeatable(
-                                                        animation = tween(durationMillis = 1500, easing = LinearEasing),
+                                                        animation = tween(durationMillis = 3000, easing = LinearEasing),
                                                         repeatMode = RepeatMode.Restart
                                                     ),
                                                     label = "offsetX"
                                                 )
 
+
+
                                                 Box(
                                                     modifier = Modifier
                                                         .fillMaxWidth()
                                                         .height(10.dp)
+                                                        .onSizeChanged { barWidthPx = it.width.toFloat() }
                                                         .background(
+//                                                            Brush.linearGradient(
+//                                                                colors = listOf(
+//                                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+//                                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.45f),
+//                                                                ),
+//                                                            ),
                                                             Brush.linearGradient(
                                                                 colors = listOf(
-                                                                    MaterialTheme.colorScheme.primary.copy(
-                                                                        alpha = 0.2f
-                                                                    ),
-                                                                    MaterialTheme.colorScheme.primary.copy(
-                                                                        alpha = 0.6f
-                                                                    ),
+                                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
+                                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.55f),
+                                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
                                                                 ),
+                                                                start = Offset(barWidthPx * offsetX, 0f),
+                                                                // 0.5f为渐变宽度
+                                                                end = Offset(barWidthPx * (offsetX + 0.5f), 0f) // 始终保持横跨一段宽度
                                                             ),
                                                             shape = CircleShape
                                                         ),

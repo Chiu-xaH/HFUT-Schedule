@@ -1,9 +1,11 @@
 package com.hfut.schedule.ui.component.network
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -16,10 +18,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.util.other.loadImage
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 
 
 @Composable
-fun URLImage(
+fun UrlImage(
     url : String,
     cookie : String? = null,
     roundSize  : Dp =7.dp,
@@ -41,6 +45,9 @@ fun URLImage(
         modifierCut
             .clip(RoundedCornerShape(roundSize))
             .size(width = width,height= height)
+            .clickable {
+                Starter.startWebView(url,"图片",cookie)
+            }
     ) {
         val imageState = loadImage(url, cookie = cookie)
         imageState.value?.let { bitmap ->
@@ -55,7 +62,26 @@ fun URLImage(
 }
 
 @Composable
-fun URLImageWithOCR(
+fun UrlImageNoCrop(
+    url : String,
+    cookie : String? = null,
+    modifier: Modifier = Modifier.padding(APP_HORIZONTAL_DP)
+) {
+    val imageState = loadImage(url, cookie = cookie)
+    imageState.value?.let { bitmap ->
+        Image(
+            bitmap = bitmap.asImageBitmap(),
+            contentDescription = null,
+            modifier = modifier.clickable {
+                Starter.startWebView(url,"图片",cookie)
+            },
+            contentScale = ContentScale.Fit
+        )
+    }
+}
+
+@Composable
+fun UrlImageWithAutoOcr(
     url : String,
     cookie : String? = null,
     roundSize  : Dp =7.dp,

@@ -8,22 +8,21 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -56,10 +56,12 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.NavigationBarSpacer
+import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.util.navigateAndSave
-import com.hfut.schedule.ui.style.bottomBarBlur
-import com.hfut.schedule.ui.style.topBarBlur
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
@@ -96,7 +98,12 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val navController = rememberNavController()
-    var bottomBarItems by remember { mutableStateOf(CardBarItems.HOME) }
+    val bottomBarItems = when(navController.currentRouteWithoutArgs()) {
+        CardBarItems.HOME.name ->CardBarItems.HOME
+        CardBarItems.COUNT.name->CardBarItems.COUNT
+        CardBarItems.BILLS.name->CardBarItems.BILLS
+        else ->CardBarItems.HOME
+    }
     val titles = remember { listOf("概况", "日", "月","年") }
 
     val pagerState = rememberPagerState(pageCount = { titles.size })
@@ -120,23 +127,23 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             currentPage = bottomBarItems.page
         }
     }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val context = LocalActivity.current
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+//        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
-                TopAppBar(
-                    colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
-        ),
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
                     title = { Text("一卡通") },
-                    actions = {
+                    navigationIcon = {
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(Icons.Filled.Close, contentDescription = "")
+                            Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )
@@ -151,8 +158,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     .bottomBarBlur(hazeState)
             ) {
                 NavigationBarSpacer()
-                NavigationBar(containerColor = Color.Transparent ,
-                   ) {
+                NavigationBar(containerColor = Color.Transparent ,) {
 
                     val items = listOf(
                         NavigationBarItemData(
@@ -183,12 +189,6 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                             modifier = Modifier.scale(scale.value),
                             interactionSource = interactionSource,
                             onClick = {
-                                when(item) {
-                                    items[0] -> bottomBarItems = CardBarItems.HOME
-                                    items[1] -> bottomBarItems = CardBarItems.BILLS
-                                    items[2] -> bottomBarItems = CardBarItems.COUNT
-                                }
-                                //     atEnd = !atEnd
                                 if (!selected) {
                                     navController.navigateAndSave(route)
                                 }

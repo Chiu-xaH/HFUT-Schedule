@@ -35,12 +35,13 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -54,6 +55,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -73,7 +75,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
@@ -82,8 +84,8 @@ import com.hfut.schedule.ui.component.screen.PagingController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.NavigationBarSpacer
-import com.hfut.schedule.ui.component.navigationBarHeightPadding
+import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
+import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -91,17 +93,18 @@ import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
 import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.bottomBarBlur
-import com.hfut.schedule.ui.style.textFiledTransplant
-import com.hfut.schedule.ui.style.topBarBlur
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -122,7 +125,12 @@ fun NewsScreen(
 
     val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-    var targetPage by remember { mutableStateOf(NewsBarItems.News) }
+    val targetPage = when(navController.currentRouteWithoutArgs()) {
+        NewsBarItems.News.name -> NewsBarItems.News
+        NewsBarItems.Academic.name -> NewsBarItems.Academic
+        NewsBarItems.School.name -> NewsBarItems.School
+        else -> NewsBarItems.News
+    }
     // 保存上一页页码 用于决定左右动画
     if(currentAnimationIndex == 2) {
         LaunchedEffect(targetPage) {
@@ -146,7 +154,7 @@ fun NewsScreen(
             Column(){
                 HazeBottomSheetTopBar("选择校区", isPaddingStatusBar = false)
 
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = {
                         Text("宣城校区教务处")
                     },
@@ -154,7 +162,7 @@ fun NewsScreen(
                         autoWebVpnForNews(MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
                     }
                 )
-                StyleCardListItem(
+                CardListItem(
                     headlineContent = {
                         Text("总教务处")
                     },
@@ -166,20 +174,23 @@ fun NewsScreen(
             }
         }
     }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             animatedContentScope = animatedContentScope,
             navHostController = navTopController,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 Column(
                     Modifier.topBarBlur(hazeState)
                 ) {
-                    TopAppBar(
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.News.label) },
                         navigationIcon = {
-                            TopBarNavigateIcon(
+                            TopBarNavigationIcon(
                                 navTopController,
                                 animatedContentScope,
                                 route,
@@ -225,8 +236,7 @@ fun NewsScreen(
                         .bottomBarBlur(hazeState)
                 ){
                     NavigationBarSpacer()
-                    NavigationBar(containerColor = Color.Transparent,
-                        ) {
+                    NavigationBar(containerColor = Color.Transparent,) {
 
                         val items = listOf(
                             NavigationBarItemData(
@@ -258,12 +268,6 @@ fun NewsScreen(
                                 interactionSource = interactionSource,
                                 onClick = {
                                     //     atEnd = !atEnd
-                                    targetPage = when(item) {
-                                        items[0] -> NewsBarItems.News
-                                        items[1] -> NewsBarItems.Academic
-                                        items[2] -> NewsBarItems.School
-                                        else -> NewsBarItems.News
-                                    }
                                     if (!selected) { navController.navigateAndSave(route) }
 
 //                                if(route != NewsBarItems.Academic.name) {

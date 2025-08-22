@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -35,13 +37,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseterWithoutSuspend
 import com.hfut.schedule.logic.util.parse.SemseterParser.reverseGetSemester
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
@@ -51,18 +54,20 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
-import com.hfut.schedule.ui.style.InnerPaddingHeight
-import com.hfut.schedule.ui.style.RowHorizontal
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.align.RowHorizontal
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.slider.CustomSlider
 import com.hfut.schedule.ui.util.SaveComposeAsImage
 import kotlinx.coroutines.async
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun APPScreen(
     navController: NavHostController,
@@ -113,10 +118,14 @@ fun APPScreen(
         val scope = rememberCoroutineScope()
         val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
         val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemseterWithoutSuspend())
-
+        val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
+        var value by remember { mutableFloatStateOf(maxFlow.toFloat()) }
+        LaunchedEffect(maxFlow) {
+            value = maxFlow.toFloat()
+        }
 
         DividerTextExpandedWith("偏好") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "主页面") },
                     supportingContent = {
@@ -206,7 +215,10 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "聚焦展示今天已上完的课程") },
+                    headlineContent = { Text(text = "聚焦仍显示已上完的课程") },
+                    supportingContent = {
+                        Text("显示今天上完的课程")
+                    },
                     leadingContent = { Icon(
                         painterResource(R.drawable.search_activity),
                         contentDescription = "Localized description"
@@ -218,7 +230,7 @@ fun APPScreen(
 
         }
         DividerTextExpandedWith("配置") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "快速启动") },
                     supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
@@ -228,6 +240,31 @@ fun APPScreen(
                     ) },
                     trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
                     modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
+                )
+
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(value.toDouble(),0)}GB")},
+                    supportingContent = {
+                        Text("用于计算和显示使用百分比 (初始值为${MyApplication.DEFAULT_MAX_FREE_FLOW}GB)")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.net),null)
+                    },
+                )
+                CustomSlider(
+                    value = value,
+                    onValueChange = {
+                        value = it
+                    },
+                    onValueChangeFinished = {
+                        scope.launch {
+                            DataStoreManager.saveMaxFlow(formatDecimal(value.toDouble(),0).toInt())
+                        }
+                    },
+                    steps = 37,
+                    valueRange = 10f..200f,
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
@@ -305,7 +342,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("存储") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("备份与恢复") },
                     leadingContent = { Icon(painterResource(R.drawable.database),null)},
@@ -333,7 +370,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("交互") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 //                TransplantListItem(
 //                    headlineContent = { Text("长截图") },
 //                    leadingContent = { Icon(painterResource(R.drawable.screenshot_frame),null)},
@@ -398,7 +435,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("对外") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("自定义Shortcut") },
                     supportingContent = {

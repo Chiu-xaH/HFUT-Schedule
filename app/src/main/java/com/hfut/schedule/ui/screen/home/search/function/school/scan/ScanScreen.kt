@@ -58,20 +58,22 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.camera.CameraScan
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.style.topBarTransplantColor
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import com.hfut.schedule.logic.util.other.parseQRCode
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import kotlinx.coroutines.flow.first
@@ -115,7 +117,7 @@ fun ScanScreen(
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP).navigationBarsPadding(),
                     !showTip,
                     defaultContent = {
-                        StyleCardListItem(
+                        CardListItem(
                             headlineContent = { Text("使用提示") },
                             supportingContent = {
                                 Text("打开CAS统一认证登录页面，选择右上角的扫码登录；通过扫码登录的平台，关闭后登录就会失效")
@@ -125,7 +127,7 @@ fun ScanScreen(
                     },
                     secondContent = {
                         val isCas = resultText.contains("cas/app/scanQrCodeLogin")
-                        MyCustomCard(
+                        CustomCard(
                             containerColor = if(!isCas) MaterialTheme.colorScheme.primaryContainer.copy(.8f) else MaterialTheme.colorScheme.errorContainer.copy(.8f),
                             modifier = Modifier
                                 .clickable {
@@ -201,53 +203,19 @@ fun ScanScreen(
                                     } else null
                                 )
                                 if (!isCas) {
-                                    PaddingHorizontalDivider()
-                                    Row(modifier = Modifier.align(Alignment.End)) {
-                                        Text(
-                                            text = "复制",
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontSize = 14.sp,
-                                            modifier = Modifier
-                                                .align(Alignment.Bottom)
-                                                .padding(
-                                                    horizontal = APP_HORIZONTAL_DP,
-                                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                                )
-                                                .clickable {
-                                                    ClipBoardUtils.copy(resultText)
-                                                }
+                                    CardBottomButtons(
+                                        listOf(
+                                            CardBottomButton("复制") {
+                                                ClipBoardUtils.copy(resultText)
+                                            },
+                                            CardBottomButton("打开链接",isValidWebUrl(resultText)) {
+                                                Starter.startWebView(resultText)
+                                            },
+                                            CardBottomButton("隐藏") {
+                                                resultText = ""
+                                            },
                                         )
-                                        if (isValidWebUrl(resultText)) {
-                                            Text(
-                                                text = "打开链接",
-                                                color = MaterialTheme.colorScheme.primary,
-                                                fontSize = 14.sp,
-                                                modifier = Modifier
-                                                    .align(Alignment.Bottom)
-                                                    .padding(
-                                                        horizontal = APP_HORIZONTAL_DP,
-                                                        vertical = APP_HORIZONTAL_DP - 5.dp
-                                                    )
-                                                    .clickable {
-                                                        Starter.startWebView(resultText)
-                                                    }
-                                            )
-                                        }
-                                        Text(
-                                            text = "隐藏",
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontSize = 14.sp,
-                                            modifier = Modifier
-                                                .align(Alignment.Top)
-                                                .padding(
-                                                    horizontal = APP_HORIZONTAL_DP,
-                                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                                )
-                                                .clickable {
-                                                    resultText = ""
-                                                }
-                                        )
-                                    }
+                                    )
                                 }
                             }
                         }
@@ -260,7 +228,7 @@ fun ScanScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Scan.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController,animatedContentScope,route, AppNavRoute.Scan.icon)
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Scan.icon)
                     },
                     actions = {
                         Row {

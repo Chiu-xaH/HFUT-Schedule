@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.provider.MediaStore
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.materialkolor.ktx.themeColors
@@ -32,7 +33,14 @@ fun longToHexColor(colorLong: Long): String {
     val colorInt = colorLong.toInt()
     return String.format("#%08X", colorInt)
 }
-
+suspend fun extractColorFromRes(@DrawableRes resId: Int): Long? {
+    return withContext(Dispatchers.IO) {
+        val bitmap = BitmapFactory.decodeResource(MyApplication.context.resources, resId)
+            ?: return@withContext null
+        val palette = Palette.from(bitmap).generate()
+        palette.getDominantColor(android.graphics.Color.GRAY).toLong()
+    }
+}
 @RequiresApi(Build.VERSION_CODES.P)
 fun uriToImageBitmap(uri: Uri): ImageBitmap? {
     return try {

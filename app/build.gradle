@@ -42,8 +42,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 208
-        versionName "4.17.5.1"
+        versionCode 209
+        versionName "4.17.5.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -170,7 +170,6 @@ dependencies {
     // Material Design 1
     implementation libs.androidx.material
     // Material Design 3
-//    implementation libs.androidx.material3
     implementation(libs.androidx.material3) {
         version {
             // 锁死版本 新版本没有 Drawer回弹、BottomSheet界面问题
@@ -214,6 +213,10 @@ dependencies {
     // 取色
     implementation libs.material.kolor
     implementation libs.androidx.palette
+    // 3D卡片
+//    implementation libs.composelevitation
+    // 拖拽
+    implementation(libs.reorderable)
 //     适配大屏 自适应布局
 //    implementation libs.androidx.window
 //    implementation libs.androidx.adaptive

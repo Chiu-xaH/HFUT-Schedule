@@ -28,14 +28,14 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -72,27 +72,27 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                         leadingContent = { Icon(painterResource(R.drawable.info),null) }
                     )
 
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("本地检查") },
                         supportingContent = { Text("APP验证是否拥有教务个人信息，没有则证明用户没登陆过教务系统，不是在校生，直接不展示此功能") },
                         leadingContent = { Text("1") }
                     )
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("一人一号") },
                         supportingContent = { Text("APP登陆注册锁死为用户自己的校园邮箱，不允许自己输入") },
                         leadingContent = { Text("2") }
                     )
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("权限僭越") },
                         supportingContent = { Text("增删查改数据库的接口都要经过中间层验证，是否账户邮箱为校园邮箱，不是则直接禁止操作；有越界行为也会禁止操作，例如删除别人的记录") },
                         leadingContent = { Text("3") }
                     )
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("注册验证") },
                         supportingContent = { Text("注册需要激活账号，激活链接发送到注册邮箱，只有在校生才可以使用其自己的校园邮箱") },
                         leadingContent = { Text("4") }
                     )
-                    StyleCardListItem(
+                    CardListItem(
                         headlineContent = { Text("审核管理") },
                         supportingContent = { Text("开发者定期查看平台数据库，审核和清理") },
                         leadingContent = { Text("4") }
@@ -104,7 +104,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("账户") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("修改密码") },
                     leadingContent = { Icon(painterResource(R.drawable.password), null) },
@@ -126,7 +126,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
         }
 
         DividerTextExpandedWith("设置") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("刷新登陆状态") },
                     leadingContent = { Icon(painterResource(R.drawable.login), null) },

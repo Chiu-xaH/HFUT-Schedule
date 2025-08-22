@@ -52,16 +52,16 @@ import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.cube.apiCheck
-import com.hfut.schedule.ui.style.HazeBottomSheet
-import com.hfut.schedule.ui.style.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionPredictiveBackHandler
@@ -128,7 +128,7 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, hazeState: HazeStat
         Spacer(modifier = Modifier.height(5.dp))
 
 //        MyCustomCard{
-            StyleCardListItem(
+            CardListItem(
                 headlineContent = { Text(text = "版本信息") },
                 supportingContent = {Text("安卓版本 ${AppVersion.sdkInt} | 应用版本 ${AppVersion.getVersionName()} (${AppVersion.getVersionCode()})")},
                 leadingContent = { Icon(painterResource(R.drawable.info), contentDescription = "Localized description",) },
@@ -137,7 +137,7 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, hazeState: HazeStat
             )
 //        }
         DividerTextExpandedWith("行为1") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "下载最新版本") },
                     leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
@@ -163,7 +163,7 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, hazeState: HazeStat
             }
         }
         DividerTextExpandedWith("行为2") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "开发者接口") },
                     overlineContent = { getTimeStamp()?.let { Text(text = it) } },
@@ -308,7 +308,7 @@ fun questionUI() {
 fun questionItem(title : String,
                  info : String) {
 //    MyCustomCard {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = title) },
             supportingContent = { Text(text = info) }
         )
@@ -378,14 +378,14 @@ fun feedBackUI(vm : NetWorkViewModel) {
             }
             Spacer(modifier = Modifier.height(5.dp))
 //            MyCustomCard {
-            StyleCardListItem(
+            CardListItem(
                     headlineContent = { Text(text = "或者通过电子邮件联系") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription ="" )},
                     modifier = Modifier.clickable { emailMe() }
                 )
 //            }
 //            MyCustomCard {
-            StyleCardListItem(
+            CardListItem(
                     headlineContent = { Text(text = "提交时会自动提交当前APP版本、日期时间等信息，以协助开发者分析反馈内容") },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription ="" )},
                 )

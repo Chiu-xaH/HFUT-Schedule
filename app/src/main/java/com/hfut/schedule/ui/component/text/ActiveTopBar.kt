@@ -23,16 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.style.color.topBarTransplantColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActiveTopBar(title : String) {
     TopAppBar(
         title = { ScrollText(text = title) },
-        colors = topAppBarColors(
-        containerColor = Color.Transparent,
-        titleContentColor = MaterialTheme.colorScheme.primary
-        )
+        colors = topBarTransplantColor()
     )
 }
 // BottomSheet专用

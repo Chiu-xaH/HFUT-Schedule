@@ -36,11 +36,11 @@ import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.container.StyleCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
-import com.hfut.schedule.ui.style.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -122,7 +122,7 @@ fun TodayCount(item : records) = with(item) {
     val getTime = time.substringBefore(" ")
 
     if(DateTimeManager.Date_yyyy_MM_dd == getTime) {
-        StyleCardListItem(
+        CardListItem(
             headlineContent = { Text(text = name) },
             supportingContent = { Text(text = processTranamt(item)) },
             overlineContent = { Text(text = time) },

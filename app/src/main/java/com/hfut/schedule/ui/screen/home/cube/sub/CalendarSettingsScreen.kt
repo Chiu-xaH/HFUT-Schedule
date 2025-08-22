@@ -27,7 +27,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.queryCalendars
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.MyCustomCard
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.xah.transition.util.TransitionPredictiveBackHandler
@@ -53,7 +53,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostC
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.padding(innerPadding).scale(scale)) {
         DividerTextExpandedWith("日历账户") {
-            MyCustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
                 LazyColumn() {
 //        item {
 //            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))
