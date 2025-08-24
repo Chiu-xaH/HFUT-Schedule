@@ -1,10 +1,10 @@
 package com.hfut.schedule.logic.model.jxglstu
 
-data class datumResponse (val result: result)
+data class DatumResponse (val result: DatumBean)
 
-data class result(val lessonList : List<lessonList>,
-                  val scheduleList : List<scheduleList>,
-                  val scheduleGroupList: List<scheduleGroupList>)
+data class DatumBean(val lessonList : List<lessonList>,
+                     val scheduleList : List<scheduleList>,
+                     val scheduleGroupList: List<scheduleGroupList>)
 
 data class lessonList(val courseName : String,
                       val name : String,

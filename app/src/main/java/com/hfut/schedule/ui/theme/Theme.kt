@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.style.color.TransparentSystemBars
+import com.hfut.schedule.ui.util.deepen
 import com.materialkolor.rememberDynamicColorScheme
 
 private val list = DataStoreManager.ColorStyle.entries
@@ -91,54 +92,6 @@ fun AppTheme(
     )
     TransparentSystemBars(isInDark)
 }
-// 传入正数 变深
-// 传入负数 变浅
-fun Color.deepen(factor: Float = 0.1f, isInDark: Boolean): Color {
-    if (factor == 0f) return this
-
-    val f = kotlin.math.abs(factor)
-
-    return if (!isInDark) {
-        // 亮色模式
-        if (factor > 0) {
-            // 变深：乘 (1 - factor)
-            Color(
-                red = (this.red * (1f - f)).coerceIn(0f, 1f),
-                green = (this.green * (1f - f)).coerceIn(0f, 1f),
-                blue = (this.blue * (1f - f)).coerceIn(0f, 1f),
-                alpha = this.alpha
-            )
-        } else {
-            // 变浅：往白色插值
-            Color(
-                red = (this.red + (1f - this.red) * f).coerceIn(0f, 1f),
-                green = (this.green + (1f - this.green) * f).coerceIn(0f, 1f),
-                blue = (this.blue + (1f - this.blue) * f).coerceIn(0f, 1f),
-                alpha = this.alpha
-            )
-        }
-    } else {
-        // 深色模式
-        if (factor > 0) {
-            // 往白色插值
-            Color(
-                red = (this.red + (1f - this.red) * f).coerceIn(0f, 1f),
-                green = (this.green + (1f - this.green) * f).coerceIn(0f, 1f),
-                blue = (this.blue + (1f - this.blue) * f).coerceIn(0f, 1f),
-                alpha = this.alpha
-            )
-        } else {
-            // 往黑色插值
-            Color(
-                red = (this.red * (1f - f)).coerceIn(0f, 1f),
-                green = (this.green * (1f - f)).coerceIn(0f, 1f),
-                blue = (this.blue * (1f - f)).coerceIn(0f, 1f),
-                alpha = this.alpha
-            )
-        }
-    }
-}
-
 
 
 private val DarkColorScheme = darkColorScheme(

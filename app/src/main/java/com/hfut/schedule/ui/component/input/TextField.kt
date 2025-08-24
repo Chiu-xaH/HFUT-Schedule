@@ -38,7 +38,7 @@ fun CustomTextField(
             singleLine = singleLine,
             enabled = enabled,
             shape = shape,
-            colors = textFiledTransplant(),
+            colors = textFiledTransplant(isFocusColor = false),
         )
     }
 }

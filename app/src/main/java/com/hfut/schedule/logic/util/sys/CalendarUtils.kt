@@ -6,7 +6,7 @@ import android.content.ContentValues
 import android.provider.CalendarContract
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.logic.model.jxglstu.datumResponse
+import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -262,7 +262,7 @@ fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule
     val json = jstr ?: prefs.getString("json", "")
     val list = mutableListOf<JxglstuCourseSchedule>()
     try {
-        val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+        val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
         val scheduleList = datumResponse.result.scheduleList
         val lessonList = datumResponse.result.lessonList
         for (i in scheduleList.indices) {

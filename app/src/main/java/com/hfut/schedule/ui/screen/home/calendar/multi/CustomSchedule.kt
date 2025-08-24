@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.hfut.schedule.logic.model.jxglstu.datumResponse
+import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
@@ -243,7 +243,7 @@ fun CustomSchedules(showAll : Boolean,
         //////////////////////////////////////////////////////////////////////////////////
         try {
 
-            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+            val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
             val scheduleGroupList = datumResponse.result.scheduleGroupList
@@ -454,7 +454,7 @@ fun CustomSchedules(showAll : Boolean,
         //////////////////////////////////////////////////////////////////////////////////
 
         try {
-            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+            val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
             val scheduleGroupList = datumResponse.result.scheduleGroupList

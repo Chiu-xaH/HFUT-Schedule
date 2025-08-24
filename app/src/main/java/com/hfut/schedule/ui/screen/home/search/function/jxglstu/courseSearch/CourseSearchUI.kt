@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
@@ -40,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +74,9 @@ import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.util.navigateForTransition
+import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -89,10 +94,10 @@ fun CourseSearchScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.CourseSearch.route }
 
-    var showSearch by remember { mutableStateOf(true) }
-    var className by remember { mutableStateOf( getPersonInfo().classes ?: "") }
-    var courseName by remember { mutableStateOf("") }
-    var courseId by remember { mutableStateOf("") }
+    var showSearch by rememberSaveable() { mutableStateOf(true) }
+    var className by rememberSaveable { mutableStateOf( getPersonInfo().classes ?: "") }
+    var courseName by rememberSaveable { mutableStateOf("") }
+    var courseId by rememberSaveable { mutableStateOf("") }
 
 
     var semester by remember { mutableStateOf<Int?>(null) }
@@ -114,6 +119,9 @@ fun CourseSearchScreen(
     val scope = rememberCoroutineScope()
     val uiState by vm.courseSearchResponse.state.collectAsState()
     LaunchedEffect(Unit) {
+        if(uiState is UiState.Success) {
+            return@LaunchedEffect
+        }
         vm.courseSearchResponse.emitPrepare()
     }
     if(!firstSearch) {
@@ -142,25 +150,43 @@ fun CourseSearchScreen(
             topBar = {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
-//                    modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.CourseSearch.label) },
                     navigationIcon = {
                         TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.CourseSearch.icon)
                     },
                     actions = {
-                        AnimatedVisibility(
-                            visible = !showSearch,
-                            enter = AppAnimationManager.upDownAnimation.enter,
-                            exit = AppAnimationManager.upDownAnimation.exit,
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                        ) {
-                            FilledTonalButton(
+                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {
+                            val classNameNil = className.let { if(it.isEmpty()) null else it }
+                            val courseCodeNil = courseId.let { if(it.isEmpty()) null else it }
+                            val courseNameNil = courseName.let { if(it.isEmpty()) null else it }
+                            val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
+                            FilledTonalIconButton(
                                 onClick = {
-                                    showSearch = !showSearch
+                                    navController.navigateForTransition(AppNavRoute.CourseSearchCalendar,AppNavRoute.CourseSearchCalendar.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
                                 },
+                                enabled = uiState is UiState.Success && !canNotUse
                             ) {
-                                Text("显示搜索框")
+                                with(sharedTransitionScope) {
+                                    Icon(
+                                        painterResource(R.drawable.calendar),
+                                        null,
+                                        modifier = iconElementShare(animatedContentScope=animatedContentScope, route = AppNavRoute.CourseSearchCalendar.route)
+                                    )
+                                }
+                            }
+                            AnimatedVisibility(
+                                visible = !showSearch,
+                                enter = AppAnimationManager.upDownAnimation.enter,
+                                exit = AppAnimationManager.upDownAnimation.exit,
+                            ) {
+                                FilledTonalButton(
+                                    onClick = {
+                                        showSearch = !showSearch
+                                    },
+                                ) {
+                                    Text("显示搜索框")
+                                }
                             }
                         }
                     }
@@ -168,7 +194,9 @@ fun CourseSearchScreen(
             },
         ) { innerPadding ->
             Box(
-                Modifier.padding(innerPadding).fillMaxSize()
+                Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
             ) {
                 Column(modifier = Modifier.hazeSource(hazeState)) {
                     AnimatedVisibility(
@@ -180,7 +208,7 @@ fun CourseSearchScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = APP_HORIZONTAL_DP-3.dp),
+                                    .padding(horizontal = APP_HORIZONTAL_DP - 3.dp),
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 TextField(
@@ -195,17 +223,6 @@ fun CourseSearchScreen(
                                     singleLine = true,
                                     shape = MaterialTheme.shapes.medium,
                                     colors = textFiledTransplant(),
-                                    trailingIcon = if(courseId == "") {
-                                        {
-                                            IconButton(
-                                                onClick = {
-                                                    courseId = ClipBoardUtils.paste()
-                                                },
-                                            ) {
-                                                Icon(painterResource(R.drawable.content_paste),null)
-                                            }
-                                        }
-                                    } else null
                                 )
                                 TextField(
                                     modifier = Modifier
@@ -219,17 +236,6 @@ fun CourseSearchScreen(
                                     singleLine = true,
                                     shape = MaterialTheme.shapes.medium,
                                     colors = textFiledTransplant(),
-                                    trailingIcon = if(courseName == "") {
-                                        {
-                                            IconButton(
-                                                onClick = {
-                                                    courseName = ClipBoardUtils.paste()
-                                                },
-                                            ) {
-                                                Icon(painterResource(R.drawable.content_paste),null)
-                                            }
-                                        }
-                                    } else null
                                 )
                             }
 
@@ -238,7 +244,7 @@ fun CourseSearchScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(horizontal = APP_HORIZONTAL_DP-3.dp),
+                                    .padding(horizontal = APP_HORIZONTAL_DP - 3.dp),
                                 horizontalArrangement = Arrangement.Center
                             ) {
                                 val myClass = getPersonInfo().classes
@@ -254,25 +260,17 @@ fun CourseSearchScreen(
                                     singleLine = true,
                                     shape = MaterialTheme.shapes.medium,
                                     colors = textFiledTransplant(),
-                                    trailingIcon = {
-                                        if(myClass != className){
+                                    trailingIcon = if(myClass != className){
+                                        {
                                             IconButton(
                                                 onClick = {
                                                     myClass?.let { className = it }
                                                 },
                                             ) {
-                                                Icon(painterResource(R.drawable.person),null)
-                                            }
-                                        } else {
-                                            IconButton(
-                                                onClick = {
-                                                    className = ""
-                                                },
-                                            ) {
-                                                Icon(painterResource(R.drawable.close),null)
+                                                Icon(painterResource(R.drawable.person), null)
                                             }
                                         }
-                                    }
+                                    } else null
                                 )
                                 FilledTonalIconButton(
                                     onClick = {
@@ -291,7 +289,7 @@ fun CourseSearchScreen(
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(6.dp))
+                            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
                         }
                     }
 

@@ -76,6 +76,7 @@ import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseBookResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
+import com.hfut.schedule.logic.model.jxglstu.DatumBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
@@ -89,6 +90,7 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferPostResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
+import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
@@ -909,6 +911,27 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _, json -> parseLessonIds(json) }
     )
 
+    val timeTableLayoutIdResp = StateHolder<Int>()
+    suspend fun getTimeTableLayoutId(cookie : String,studentId : Int,bizTypeId : Int,semester: Int) = launchRequestSimple(
+        holder = timeTableLayoutIdResp,
+        request = {
+            jxglstuJSON.getLessonIds(
+                cookie,
+                bizTypeId.toString(),
+                semester.toString(),
+                studentId.toString()
+            ).awaitResponse()
+        },
+        transformSuccess = { _, json -> parseTimeTableLayoutId(json) }
+    )
+
+    private fun parseTimeTableLayoutId(json : String) : Int {
+        try {
+            return Gson().fromJson(json, lessonResponse::class.java).timeTableLayoutId
+        } catch (e : Exception) { throw e }
+    }
+
+
     private fun parseLessonIds(json : String) : lessonResponse {
         saveString("courses",json)
         try {
@@ -943,6 +966,26 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
         }
     }
+    val searchDatumData = StateHolder<DatumBean>()
+    suspend fun getDatumFromSearch(cookie : String,lessonIdList : List<Int>) = onListenStateHolderForNetwork(studentId,datumData){ sId ->
+        val lessonIdsArray = JsonArray()
+        lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+        val jsonObject = JsonObject().apply {
+            add("lessonIds", lessonIdsArray)//课程ID
+            addProperty("studentId",sId)//学生ID
+            addProperty("weekIndex", "")
+        }
+        launchRequestSimple(
+            holder = searchDatumData,
+            request = { jxglstuJSON.getDatum(cookie, jsonObject).awaitResponse() },
+            transformSuccess = { _, json -> parseDatumSearch(json) }
+        )
+    }
+    private fun parseDatumSearch(json : String) : DatumBean {
+        return try {
+            Gson().fromJson(json, DatumResponse::class.java).result
+        } catch (e : Exception) { throw e }
+    }
 
     suspend fun getInfo(cookie : String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
@@ -974,6 +1017,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         request = { jxglstuJSON.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
         transformSuccess = { _,json -> parseLessonTimes(json) }
     )
+
     val lessonTimesResponseNext = StateHolder<List<CourseUnitBean>>()
     suspend fun getLessonTimesNext(cookie: String,timeCampusId : Int) = launchRequestSimple(
         holder = lessonTimesResponseNext,

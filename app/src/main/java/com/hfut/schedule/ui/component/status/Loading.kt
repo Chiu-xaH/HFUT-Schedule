@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.scale
 //import androidx.compose.ui.graphics.Color
 //import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.ui.style.align.ColumnVertical
 //import androidx.compose.ui.viewinterop.AndroidView
 //import com.google.android.material.loadingindicator.LoadingIndicator
 //import com.hfut.schedule.R
@@ -63,20 +64,16 @@ fun LoadingUI(
     }
 
 
-    Column  {
-        RowHorizontal {
-            LoadingIndicator(
-                modifier = Modifier
-                    .size(LoadingIndicatorDefaults.IndicatorSize * sizeX)
-                    .scale(scale),
-                polygons = newList,
-            )
-        }
+    ColumnVertical {
+        LoadingIndicator(
+            modifier = Modifier
+                .size(LoadingIndicatorDefaults.IndicatorSize * sizeX)
+                .scale(scale),
+            polygons = newList,
+        )
         if(text != null) {
             Spacer(modifier = Modifier.height(2.dp))
-            RowHorizontal {
-                Text(text, color = MaterialTheme.colorScheme.primary)
-            }
+            Text(text, color = MaterialTheme.colorScheme.primary)
         }
     }
 }

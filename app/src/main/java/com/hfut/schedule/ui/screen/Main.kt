@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailR
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchCalendarScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
@@ -621,6 +622,31 @@ fun MainHost(
                             this@composable,
                             drawerState
                         ) { containerColor = it }
+                    }
+                    // 开课课程表
+                    composable(
+                        route = AppNavRoute.CourseSearchCalendar.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.CourseSearchCalendar.Args.entries)
+                    ) { backStackEntry ->
+                        val term = backStackEntry.arguments?.getInt(AppNavRoute.CourseSearchCalendar.Args.TERM.argName)
+                        if(term == null || term == -1) {
+                            return@composable
+                        }
+                        val name = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchCalendar.Args.COURSE_NAME.argName)
+                        val code = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchCalendar.Args.COURSE_CODE.argName)
+                        val classes = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchCalendar.Args.CLASSES.argName)
+
+                        CourseSearchCalendarScreen(
+                            term,
+                            name,
+                            code,
+                            classes,
+                            networkVm,
+                            uiVm,
+                            navController,
+                            this@SharedTransitionLayout,
+                            this@composable,
+                        )
                     }
                     // Exception
                     composable(

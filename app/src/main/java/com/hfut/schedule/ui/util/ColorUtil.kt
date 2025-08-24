@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.util
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
@@ -33,14 +35,7 @@ fun longToHexColor(colorLong: Long): String {
     val colorInt = colorLong.toInt()
     return String.format("#%08X", colorInt)
 }
-suspend fun extractColorFromRes(@DrawableRes resId: Int): Long? {
-    return withContext(Dispatchers.IO) {
-        val bitmap = BitmapFactory.decodeResource(MyApplication.context.resources, resId)
-            ?: return@withContext null
-        val palette = Palette.from(bitmap).generate()
-        palette.getDominantColor(android.graphics.Color.GRAY).toLong()
-    }
-}
+
 @RequiresApi(Build.VERSION_CODES.P)
 fun uriToImageBitmap(uri: Uri): ImageBitmap? {
     return try {
@@ -70,13 +65,23 @@ suspend fun extractColor(uri: Uri): Long? {
         palette.getDominantColor(Color.Gray.toArgb()).toLong() // 提取主色（可设置默认值）
     }
 }
-@RequiresApi(Build.VERSION_CODES.P)
-suspend fun extractColor2(uri: Uri): Long? = withContext(Dispatchers.IO) {
-    val bitmap = uriToImageBitmap(uri)
-    val suitableColors = bitmap?.themeColors(fallback = Color.Blue)
-    suitableColors?.first()?.toArgb()?.toLong()
+
+suspend fun extractColor(context: Context,@DrawableRes resId: Int): Long? {
+    return withContext(Dispatchers.IO) {
+        val bitmap = resToBitmap(context,resId)
+            ?: return@withContext null
+        val palette = Palette.from(bitmap).generate()
+        palette.getDominantColor(android.graphics.Color.GRAY).toLong()
+    }
 }
 
+
+fun resToBitmap(context: Context,@DrawableRes resId: Int) : Bitmap? = try {
+    BitmapFactory.decodeResource(context.resources, resId)
+} catch (e : Exception) {
+    e.printStackTrace()
+    null
+}
 
 fun hsvToLong(hue: Float, saturation: Float = 1f, value: Float = 1f): Long {
     return Color.hsv(hue, saturation, value).toArgb().toLong()
@@ -94,3 +99,52 @@ fun longToHue(colorLong: Long): Float {
 
     return hsv[0] // Hue
 }
+
+// 传入正数 变深
+// 传入负数 变浅
+fun Color.deepen(factor: Float = 0.1f, isInDark: Boolean): Color {
+    if (factor == 0f) return this
+
+    val f = kotlin.math.abs(factor)
+
+    return if (!isInDark) {
+        // 亮色模式
+        if (factor > 0) {
+            // 变深：乘 (1 - factor)
+            Color(
+                red = (this.red * (1f - f)).coerceIn(0f, 1f),
+                green = (this.green * (1f - f)).coerceIn(0f, 1f),
+                blue = (this.blue * (1f - f)).coerceIn(0f, 1f),
+                alpha = this.alpha
+            )
+        } else {
+            // 变浅：往白色插值
+            Color(
+                red = (this.red + (1f - this.red) * f).coerceIn(0f, 1f),
+                green = (this.green + (1f - this.green) * f).coerceIn(0f, 1f),
+                blue = (this.blue + (1f - this.blue) * f).coerceIn(0f, 1f),
+                alpha = this.alpha
+            )
+        }
+    } else {
+        // 深色模式
+        if (factor > 0) {
+            // 往白色插值
+            Color(
+                red = (this.red + (1f - this.red) * f).coerceIn(0f, 1f),
+                green = (this.green + (1f - this.green) * f).coerceIn(0f, 1f),
+                blue = (this.blue + (1f - this.blue) * f).coerceIn(0f, 1f),
+                alpha = this.alpha
+            )
+        } else {
+            // 往黑色插值
+            Color(
+                red = (this.red * (1f - f)).coerceIn(0f, 1f),
+                green = (this.green * (1f - f)).coerceIn(0f, 1f),
+                blue = (this.blue * (1f - f)).coerceIn(0f, 1f),
+                alpha = this.alpha
+            )
+        }
+    }
+}
+

@@ -7,7 +7,9 @@ data class lessonResponse(
     val weekIndices : List<Int>,
     val currentWeek : Int
 )
-data class lessons(val nameZh : String?,
+data class lessons(
+                    val id : Int,
+                    val nameZh : String?,
                    val remark : String?,
                    val scheduleText : scheduleText,
                    val stdCount : Int?,

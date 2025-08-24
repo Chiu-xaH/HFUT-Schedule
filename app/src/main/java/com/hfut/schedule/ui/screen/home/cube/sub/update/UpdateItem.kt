@@ -57,17 +57,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (containerColor = cardNormalColor()){
-            UpdateItems("新增 自定义查询中心的排序")
-            UpdateItems("新增 自定义宣城校区免费额度数据","位于 选项-应用及配置")
-            UpdateItems("重构 滑动条","使其更容易滑动")
-            UpdateItems("重构 顶栏的设计","使用大标题栏折叠")
-            UpdateItems("修复 学费因接口返回空数据而崩溃的Bug")
-            UpdateItems("修复 连点左上角返回时未消抖而导致触发白屏的Bug")
-            UpdateItems("修复 进入选项界面时因未及时删除安装包而自动跳转安装的Bug")
-            UpdateItems("修复 在带有底栏的界面中使用系统返回手势后顶栏未及时变化的Bug")
-            UpdateItems("移除 下载全量包更新时自动安装","改为与增量更新同样的手动点击安装")
-            UpdateItems("优化 部分界面的设计")
-
+            UpdateItems("新增 开课查询支持以课程表方格的形式显示","位于 查询中心-开课查询")
+            UpdateItems("修复 关闭网页后启动台顶栏取色为及时变回以及关闭运动模糊时颜色异常深的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")

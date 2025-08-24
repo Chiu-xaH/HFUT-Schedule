@@ -24,41 +24,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.SEARCH_DEFAULT_STR
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
-import com.hfut.schedule.ui.component.status.CenterScreen
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.reorderByIdsStr
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryItem
@@ -105,8 +93,8 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.ToadyCamp
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearch
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -285,23 +273,6 @@ fun SearchScreen(
         }
         items(2) { InnerPaddingHeight(innerPaddings,false) }
     }
-}
-
-
-@Composable
-fun Modifier.reportDpSize(
-    onSize: (Dp, Dp) -> Unit
-): Modifier {
-    val density = LocalDensity.current
-    val currentCallback = rememberUpdatedState(onSize)
-
-    return this.then(
-        Modifier.onSizeChanged { size ->
-            with(density) {
-                currentCallback.value(size.width.toDp(), size.height.toDp())
-            }
-        }
-    )
 }
 
 

@@ -68,7 +68,7 @@ import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
-import com.hfut.schedule.logic.model.jxglstu.datumResponse
+import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -246,7 +246,7 @@ fun JxglstuCourseTableUI(
         try {
             // 组装
             val json = prefs.getString("json", "")
-            val datumResponse = Gson().fromJson(json, datumResponse::class.java)
+            val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
 

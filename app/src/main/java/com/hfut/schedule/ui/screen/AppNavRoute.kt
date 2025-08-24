@@ -190,6 +190,21 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object Classmates : AppNavRoute("CLASSMATES", "同班同学",R.drawable.sensor_door)
     object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner)
     object SearchEdit : AppNavRoute("SEARCH_EDIT", "排序编辑",R.drawable.edit)
+    object CourseSearchCalendar : AppNavRoute("COURSE_SEARCH_Calendar", "开课课程表",R.drawable.calendar) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            CLASSES("classes", NavType.StringType,null,true),
+            COURSE_CODE("course_code", NavType.StringType,null,true),
+            COURSE_NAME("course_name", NavType.StringType,null,true),
+            TERM("term", NavType.IntType,-1,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(classes: String?,code : String?,name : String?,term : Int?): String = withArgs(
+            Args.CLASSES.argName to classes,
+            Args.COURSE_NAME.argName to name,
+            Args.COURSE_CODE.argName to code,
+            Args.TERM.argName to term
+        )
+    }
     object Exception : AppNavRoute("EXCEPTION","错误",R.drawable.warning) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             EXCEPTION("exception", NavType.StringType,"",false)

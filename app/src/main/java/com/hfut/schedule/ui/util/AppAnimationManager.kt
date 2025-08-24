@@ -21,12 +21,17 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.xah.transition.state.TransitionState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -237,5 +242,15 @@ object AppAnimationManager {
         LeftRightAnimation(2),
         FadeAnimation(3),
         NullAnimation(4)
+    }
+}
+@Composable
+fun toBottomExit(): ExitTransition {
+    val insets = WindowInsets.navigationBars
+    val density = LocalDensity.current
+    val navBarHeightPx = insets.getBottom(density)  // px 值
+    val appPaddingDp = with(density) { APP_HORIZONTAL_DP.toPx().toInt() }
+    return slideOutVertically { fullHeight ->
+        fullHeight + appPaddingDp + navBarHeightPx
     }
 }
