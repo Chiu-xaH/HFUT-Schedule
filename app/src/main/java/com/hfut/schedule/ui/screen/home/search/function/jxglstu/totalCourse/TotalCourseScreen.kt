@@ -29,6 +29,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 
 @Composable
@@ -154,7 +155,7 @@ fun CourseTotalForApi(
                         sortType,
                         vm,
                         hazeState,
-                        ifSaved
+                        ifSaved,
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                 }

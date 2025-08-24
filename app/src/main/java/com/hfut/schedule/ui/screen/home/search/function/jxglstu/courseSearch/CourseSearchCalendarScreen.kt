@@ -5,51 +5,44 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableSearch
-import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.flow.first
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -64,12 +57,14 @@ fun CourseSearchCalendarScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.CourseSearchCalendar.route }
     var showAll by remember { mutableStateOf(false) }
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             roundShape = MaterialTheme.shapes.medium,
             route = route,
             animatedContentScope = animatedContentScope,
@@ -78,8 +73,9 @@ fun CourseSearchCalendarScreen(
                 Column(
                     modifier = Modifier.topBarBlur(hazeState),
                 ) {
-                    TopAppBar(
+                    MediumTopAppBar(
                         colors = topBarTransplantColor(),
+                        scrollBehavior = scrollBehavior,
                         title = {
                             Column {
                                 Text(AppNavRoute.CourseSearchCalendar.label)
@@ -130,41 +126,10 @@ fun CourseSearchCalendarScreen(
                     .hazeSource(hazeState)
                     .fillMaxSize()
             ) {
-                val uiState by vm.searchDatumData.state.collectAsState()
-                var timeTable: List<CourseUnitBean>? by remember { mutableStateOf(null) }
-                val refreshNetwork = suspend m@ {
-                    vm.searchDatumData.clear()
-                    val cookies = getJxglstuCookie(vm) ?: return@m
-
-                    val uiState = vm.courseSearchResponse.state.first()
-                    if(uiState !is UiState.Success) {
-                        return@m
-                    }
-                    val data = uiState.data
-                    val lessonIds = data.map { it.id }
-
-                    val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@m
-                    val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@m
-                    // 先获取 timeTableLayoutId
-                    vm.timeTableLayoutIdResp.clear()
-                    vm.getTimeTableLayoutId(cookies,studentId,bizTypeId,term)
-                    val timeTableLayoutId = (vm.timeTableLayoutIdResp.state.value as? UiState.Success)?.data ?: return@m
-                    // 然后获取 作息表
-                    vm.lessonTimesResponse.clear()
-                    vm.getLessonTimes(cookies,timeTableLayoutId)
-                    val table = (vm.lessonTimesResponse.state.value as? UiState.Success)?.data ?: return@m
-                    timeTable = table
-                    // 最后获取课表
-                    vm.getDatumFromSearch(cookies,lessonIds)
-                }
-                LaunchedEffect(Unit) {
-                    refreshNetwork()
-                }
-                CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                    val data = (uiState as UiState.Success).data
-                    timeTable?.let {
-                        JxglstuCourseTableSearch(showAll,vm,vmUI,hazeState,innerPadding,it,data)
-                    }
+                val uiState by vm.courseSearchResponse.state.collectAsState()
+                CommonNetworkScreen(uiState, onReload = {}) {
+                    val list = (uiState as UiState.Success).data
+                    JxglstuCourseTableSearch(showAll,vm,vmUI,hazeState,innerPadding,list)
                 }
             }
         }

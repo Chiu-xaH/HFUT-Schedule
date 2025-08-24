@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.HazeState
@@ -260,8 +261,8 @@ fun CourseSearchScreen(
                                     singleLine = true,
                                     shape = MaterialTheme.shapes.medium,
                                     colors = textFiledTransplant(),
-                                    trailingIcon = if(myClass != className){
-                                        {
+                                    trailingIcon = {
+                                        if(myClass != className){
                                             IconButton(
                                                 onClick = {
                                                     myClass?.let { className = it }
@@ -269,8 +270,16 @@ fun CourseSearchScreen(
                                             ) {
                                                 Icon(painterResource(R.drawable.person), null)
                                             }
+                                        } else {
+                                            IconButton(
+                                                onClick = {
+                                                    className = ""
+                                                },
+                                            ) {
+                                                Icon(painterResource(R.drawable.close), null)
+                                            }
                                         }
-                                    } else null
+                                    }
                                 )
                                 FilledTonalIconButton(
                                     onClick = {
@@ -356,6 +365,7 @@ fun CourseSearchScreen(
 @Composable
 fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, hazeState: HazeState, onDismissRequest :  () -> Unit) {
     if(showBottomSheet) {
+
         var semester by remember { mutableStateOf<Int?>(null) }
         LaunchedEffect(Unit) {
             semester = getSemseter()
@@ -377,6 +387,40 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
         }
         val loading = uiState is UiState.Loading
         val scope = rememberCoroutineScope()
+
+        var showBottomSheetSchedule by remember { mutableStateOf(false) }
+
+        if(showBottomSheetSchedule) {
+            HazeBottomSheet (
+                onDismissRequest = { showBottomSheetSchedule = false },
+                showBottomSheet = showBottomSheetSchedule,
+                hazeState = hazeState
+            ) {
+                val t = (courseName ?: "") + (courseId.let { if(it == null)"" else " $it" })
+                var showAll by remember { mutableStateOf(false) }
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        HazeBottomSheetTopBar("开课课程表 $t") {
+                            FilledTonalIconButton (onClick = { showAll = !showAll }) {
+                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                            }
+                        }
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
+                        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                            val list = (uiState as UiState.Success).data
+                            JxglstuCourseTableSearch(showAll,vm,null,hazeState,innerPadding,list)
+                        }
+                    }
+                }
+            }
+        }
         HazeBottomSheet (
             onDismissRequest = onDismissRequest,
             showBottomSheet = showBottomSheet,
@@ -386,7 +430,20 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("开课查询 ${courseName ?: courseId}")
+                    HazeBottomSheetTopBar("开课查询 ${courseName ?: courseId}") {
+                        val canNotUse = courseName == null && courseId == null
+                        FilledTonalIconButton(
+                            onClick = {
+                                showBottomSheetSchedule = true
+                            },
+                            enabled = uiState is UiState.Success && !canNotUse
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.calendar),
+                                null,
+                            )
+                        }
+                    }
                 },
             ) { innerPadding ->
                 Box(

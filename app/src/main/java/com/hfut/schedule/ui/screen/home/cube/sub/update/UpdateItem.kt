@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-22") },
+                overlineContent = { Text(text = "2025-08-24") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,8 +57,10 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (containerColor = cardNormalColor()){
-            UpdateItems("新增 开课查询支持以课程表方格的形式显示","位于 查询中心-开课查询")
+            UpdateItems("新增 开课查询支持以课程表方格的形式显示","位于 查询中心-开课查询；同时也可以用此功能查看某个班级的课表、某门课程所有教学班的课表")
             UpdateItems("修复 关闭网页后启动台顶栏取色为及时变回以及关闭运动模糊时颜色异常深的Bug")
+//            UpdateItems("修复 登录教务时首次提示失败的Bug")
+
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")

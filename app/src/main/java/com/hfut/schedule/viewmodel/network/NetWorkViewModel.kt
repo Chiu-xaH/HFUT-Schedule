@@ -911,26 +911,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _, json -> parseLessonIds(json) }
     )
 
-    val timeTableLayoutIdResp = StateHolder<Int>()
-    suspend fun getTimeTableLayoutId(cookie : String,studentId : Int,bizTypeId : Int,semester: Int) = launchRequestSimple(
-        holder = timeTableLayoutIdResp,
-        request = {
-            jxglstuJSON.getLessonIds(
-                cookie,
-                bizTypeId.toString(),
-                semester.toString(),
-                studentId.toString()
-            ).awaitResponse()
-        },
-        transformSuccess = { _, json -> parseTimeTableLayoutId(json) }
-    )
-
-    private fun parseTimeTableLayoutId(json : String) : Int {
-        try {
-            return Gson().fromJson(json, lessonResponse::class.java).timeTableLayoutId
-        } catch (e : Exception) { throw e }
-    }
-
 
     private fun parseLessonIds(json : String) : lessonResponse {
         saveString("courses",json)
@@ -965,26 +945,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         } else {
             throw Exception(json)
         }
-    }
-    val searchDatumData = StateHolder<DatumBean>()
-    suspend fun getDatumFromSearch(cookie : String,lessonIdList : List<Int>) = onListenStateHolderForNetwork(studentId,datumData){ sId ->
-        val lessonIdsArray = JsonArray()
-        lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-        val jsonObject = JsonObject().apply {
-            add("lessonIds", lessonIdsArray)//课程ID
-            addProperty("studentId",sId)//学生ID
-            addProperty("weekIndex", "")
-        }
-        launchRequestSimple(
-            holder = searchDatumData,
-            request = { jxglstuJSON.getDatum(cookie, jsonObject).awaitResponse() },
-            transformSuccess = { _, json -> parseDatumSearch(json) }
-        )
-    }
-    private fun parseDatumSearch(json : String) : DatumBean {
-        return try {
-            Gson().fromJson(json, DatumResponse::class.java).result
-        } catch (e : Exception) { throw e }
     }
 
     suspend fun getInfo(cookie : String) {

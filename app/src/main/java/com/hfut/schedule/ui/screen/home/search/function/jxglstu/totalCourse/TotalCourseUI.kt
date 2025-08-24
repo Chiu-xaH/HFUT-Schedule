@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
@@ -44,6 +45,7 @@ import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
@@ -65,9 +67,12 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
 import kotlin.text.contains
@@ -80,6 +85,8 @@ enum class TotalCourseDataSource {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState,ifSaved : Boolean) {
+
+
     val courseBookJson by DataStoreManager.courseBookJson.collectAsState(initial = "")
     if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
         LaunchedEffect(Unit) {
@@ -224,7 +231,42 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,courseBookData : Map<Long, CourseBookBean>) {
+fun DetailItems(
+    lessons: lessons,
+    vm : NetWorkViewModel,
+    hazeState: HazeState,
+    courseBookData : Map<Long, CourseBookBean>,
+) {
+
+    var showBottomSheetSchedule by remember { mutableStateOf(false) }
+
+    if(showBottomSheetSchedule) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheetSchedule = false },
+            showBottomSheet = showBottomSheetSchedule,
+            hazeState = hazeState
+        ) {
+            var showAll by remember { mutableStateOf(false) }
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("开课课程表 ${lessons.course.nameZh}") {
+                        FilledTonalIconButton (onClick = { showAll = !showAll }) {
+                            Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
+                        }
+                    }
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    JxglstuCourseTableSearch(showAll,vm,null,hazeState,innerPadding,listOf(lessons))
+                }
+            }
+        }
+    }
 
     val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
@@ -251,6 +293,12 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                 }
             }
         }
+    }
+
+    var showBottomSheet_Search by remember { mutableStateOf(false) }
+
+    ApiForCourseSearch(vm,null, lessons.code.substringBefore("--"),showBottomSheet_Search, hazeState = hazeState) {
+        showBottomSheet_Search = false
     }
 
     val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -446,7 +494,7 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                         )
                         TransplantListItem(
                             overlineContent = classes?.let{ { Text("当前为" + it + "班") } },
-                            headlineContent = { Text("全部教学班") },
+                            headlineContent = { Text("教学班") },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.group_search),
@@ -455,7 +503,8 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                             },
                             modifier = Modifier
                                 .clickable {
-                                    showToast("正在开发")
+                                    showBottomSheet_Search = true
+//                                    ClipBoardUtils.copy(lessons.code.substringBefore("--"),"已将代码复制到剪切板，可前往开课查询粘贴检索")
                                 }
                                 .weight(.5f),
                         )
@@ -552,7 +601,9 @@ fun DetailItems(lessons: lessons, vm : NetWorkViewModel, hazeState: HazeState,co
                                     contentDescription = "Localized description",
                                 )
                             },
-                            modifier = Modifier.clickable {}
+                            modifier = Modifier.clickable {
+                                showBottomSheetSchedule = true
+                            }
                         )
                     }
                     lessons.remark?.let {

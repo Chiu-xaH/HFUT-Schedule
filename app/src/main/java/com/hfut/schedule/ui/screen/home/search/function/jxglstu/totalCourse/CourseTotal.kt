@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP

@@ -252,12 +252,19 @@ fun MainHost(
         }
     }
     val alpha = if(motionBlur && !isScan) 0.35f else 0.925f
+
     ModalNavigationDrawer  (
         scrimColor = MaterialTheme.colorScheme.surface.copy(alpha),
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {
-            ControlCenterScreen(containerColor?.copy(alpha)?.compositeOver(MaterialTheme.colorScheme.surface),navController) {
+            ControlCenterScreen(
+                if(isWebView) {
+                    containerColor?.copy(if(motionBlur) 0.35f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
+                } else {
+                    null
+                }
+                ,navController) {
                 scope.launch {
                     drawerState.animationClose()
                 }

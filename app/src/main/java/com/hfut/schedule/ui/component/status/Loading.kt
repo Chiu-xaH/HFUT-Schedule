@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 //import androidx.compose.material3.CircularProgressIndicator
@@ -64,7 +65,7 @@ fun LoadingUI(
     }
 
 
-    ColumnVertical {
+    ColumnVertical(modifier = Modifier.fillMaxWidth()) {
         LoadingIndicator(
             modifier = Modifier
                 .size(LoadingIndicatorDefaults.IndicatorSize * sizeX)

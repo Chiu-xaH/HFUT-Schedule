@@ -56,8 +56,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Observer
@@ -98,6 +102,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getT
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
+import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -733,7 +738,34 @@ fun JxglstuCourseTableUI(
                     Box(modifier = Modifier.fillMaxHeight()) {
                         val scrollState = rememberLazyGridState()
                         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-
+//                        val density = LocalDensity.current
+//                        val textMeasurer = rememberTextMeasurer()
+//                        var maxWidth by remember { mutableStateOf(0.dp) }
+//                        val fontSize = if (showAll) 12.sp else 14.sp
+//                        val maxHeight = remember(showAll,currentWeek) {
+//                            val l = if(showAll)tableAll else table
+//                            val r = l.flatMap { list ->
+//                                list.map { it }
+//                            }
+//
+//                            if (r.isEmpty() || r.all { it.isBlank() }) {
+//                                125.dp
+//                            } else {
+//                                r.maxOf { text ->
+//
+//                                    val result = textMeasurer.measure(
+//                                        text = AnnotatedString(text),
+//                                        style = androidx.compose.ui.text.TextStyle(fontSize = fontSize),
+//                                        constraints = Constraints(maxWidth = with(density) { maxWidth.toPx().toInt() })
+//                                    )
+//
+//                                    with(density) {
+//                                        val dp = result.size.height.toDp()
+//                                        maxOf(dp,125.dp)
+//                                    }
+//                                }
+//                            }
+//                        }
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(if(showAll)7 else 5),
                             modifier = Modifier.padding(10.dp),
@@ -748,7 +780,14 @@ fun JxglstuCourseTableUI(
                                         shape = MaterialTheme.shapes.extraSmall,
                                         colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
                                         modifier = containerShare(
-                                            Modifier.height(125.dp)
+                                            Modifier
+//                                                .measureDpSize { width,_ ->
+//                                                    if(cell == 0) {
+//                                                        maxWidth = width
+//                                                    }
+//                                                }
+//                                                .height(maxHeight)
+                                                .height(125.dp)
                                                 .padding(if (showAll) 1.dp else 2.dp)
                                                 .let {
                                                     backGroundHaze?.let { haze ->
@@ -1085,7 +1124,7 @@ fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: Ne
 
 }
 
-private fun numToChinese(num : Int) : String {
+fun numToChinese(num : Int) : String {
     return when(num) {
         1 -> "一"
         2 -> "二"

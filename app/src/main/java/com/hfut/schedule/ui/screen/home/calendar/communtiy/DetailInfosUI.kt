@@ -209,7 +209,7 @@ fun CourseDetailApiScreen(
                     .padding(innerPadding)
                     .fillMaxSize()
             ){
-                DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState,courseBookData )
+                DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState,courseBookData  )
             }
         }
     }
