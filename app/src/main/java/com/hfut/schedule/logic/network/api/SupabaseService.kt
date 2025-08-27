@@ -101,7 +101,7 @@ interface SupabaseService {
     // EVENT日程数量
     data class SupabaseEventCount(
         @SerializedName("class_text")
-        val classes : String? = getPersonInfo().classes,
+        val classes : String? = getPersonInfo().className,
         @SerializedName("campus_text")
         val campus : String = getEventCampus().name,
         @SerializedName("end_time_param")
@@ -116,7 +116,7 @@ interface SupabaseService {
 
     data class SupabaseEventLatest(
         @SerializedName("class_text")
-        val classes : String? = getPersonInfo().classes,
+        val classes : String? = getPersonInfo().className,
         @SerializedName("campus_text")
         val campus : String = getEventCampus().name,
     )

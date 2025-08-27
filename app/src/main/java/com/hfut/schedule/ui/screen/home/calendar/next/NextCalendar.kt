@@ -169,9 +169,9 @@ fun JxglstuCourseTableUINext(
                     startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(
                         startTime.length - 2
                     )
-                var room = item.room.nameZh
+                var room = item.room?.nameZh
                 var courseId = item.lessonId.toString()
-                room = room.replace("学堂","")
+                room = room?.replace("学堂","") ?: ""
 
 
                 for (j in lessonList.indices) {

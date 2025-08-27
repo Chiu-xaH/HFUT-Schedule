@@ -147,7 +147,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text("过滤不适用日程") },
-                    supportingContent = { Text("仅展示${if(!filter) "所有" else "包含 " + getPersonInfo().school  + getPersonInfo().classes + " 的"}日程" ) },
+                    supportingContent = { Text("仅展示${if(!filter) "所有" else "包含 " + getPersonInfo().campus  + getPersonInfo().className + " 的"}日程" ) },
                     leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },
                     trailingContent = {
                         Switch(checked = filter, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseFilterEvent(!filter) } })

@@ -106,7 +106,7 @@ fun PersonPart() {
                     exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                 ) {
                     Column {
-                        getPersonInfo().username?.let{
+                        getPersonInfo().studentId?.let{
                             Row {
                                 TransplantListItem(
                                     overlineContent = { Text(text = "学号") },
@@ -125,7 +125,7 @@ fun PersonPart() {
                         getPersonInfo().department?.let {
                             Row {
                                 TransplantListItem(
-                                    overlineContent = { getPersonInfo().school?.let { Text(text = it) } },
+                                    overlineContent = { getPersonInfo().campus?.let { Text(text = it) } },
                                     leadingContent = { DepartmentIcons(name = it) },
                                     headlineContent = {  ScrollText(text = it)  },
                                     modifier = Modifier.weight(0.5f),
@@ -133,7 +133,7 @@ fun PersonPart() {
                                 )
                             }
                         }
-                        getPersonInfo().classes?.let {
+                        getPersonInfo().className?.let {
                             Row {
                                 TransplantListItem(
                                     overlineContent = {  Text(text = it)  },

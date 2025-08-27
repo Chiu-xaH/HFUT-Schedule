@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 // 逻辑层
-fun getSchoolEmail() : String? = getPersonInfo().username?.let { it + MyApplication.EMAIL }
+fun getSchoolEmail() : String? = getPersonInfo().studentId?.let { it + MyApplication.EMAIL }
 
 suspend fun loginSupabaseWithPassword(password : String, vm: NetWorkViewModel, navHostController: NavHostController) = withContext(Dispatchers.IO) {
     vm.supabaseLoginResp.clear()

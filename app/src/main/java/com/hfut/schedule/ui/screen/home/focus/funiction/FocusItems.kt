@@ -680,7 +680,7 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
         CardListItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
-            supportingContent = { Text(text = item.place, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
+            supportingContent = { item.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -750,7 +750,7 @@ fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState
     CardListItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
-        supportingContent = { Text(text = item.place) },
+        supportingContent = { item.place?.let { Text(text = it) } },
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable {
             showBottomSheet = true

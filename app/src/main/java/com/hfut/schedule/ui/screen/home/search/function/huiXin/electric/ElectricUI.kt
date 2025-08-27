@@ -115,7 +115,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
             Campus.HEFEI -> HEFEI_TAB
         }
     )
-    var isUnderGraduate by remember { mutableStateOf(getPersonInfo().benshuo?.contains("本") == true) }
+    var isUnderGraduate by remember { mutableStateOf(getPersonInfo().educationLevel?.contains("本") == true) }
     val auth = prefs.getString("auth","")
 
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"

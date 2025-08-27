@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.model
 
-import android.os.Build
 import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -39,7 +38,7 @@ data class SupabaseEventEntity(
     @SerializedName("contributor_email")
     val email : String? = getSchoolEmail(),
     @SerializedName("contributor_class")
-    val myClass : String? = getPersonInfo().classes + when(getCampus()) {
+    val myClass : String? = getPersonInfo().className + when(getCampus()) {
         Campus.HEFEI -> "(肥)"
         Campus.XUANCHENG -> "(宣)"
     },
@@ -98,8 +97,8 @@ data class SupabaseEventForkOutput(
 data class SupabaseUsageEntity(
     @SerializedName("user_name") val username : String = getPersonInfo().name ?: "游客",
     @SerializedName("system_version") val systemVersion : Int = AppVersion.sdkInt,
-    @SerializedName("student_id") val studentID : String = getPersonInfo().username ?: "空",
-    @SerializedName("campus") val campus : String = getPersonInfo().school ?: "空",
+    @SerializedName("student_id") val studentID : String = getPersonInfo().studentId ?: "空",
+    @SerializedName("campus") val campus : String = getPersonInfo().campus ?: "空",
     @SerializedName("department") val department : String = getPersonInfo().department ?: "空",
     @SerializedName("app_version_name") val appVersionName : String = AppVersion.getVersionName(),
     @SerializedName("app_version_code") val appVersionCode : Int = AppVersion.getVersionCode(),

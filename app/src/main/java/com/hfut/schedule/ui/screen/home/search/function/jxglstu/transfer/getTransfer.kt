@@ -14,7 +14,7 @@ enum class CampusDetail(val description : String) {
 }
 
 fun getCampus() : Campus {
-    return if(getPersonInfo().school?.contains("宣城") == true) {
+    return if(getPersonInfo().campus?.contains("宣城") == true) {
         Campus.XUANCHENG
     } else {
         Campus.HEFEI

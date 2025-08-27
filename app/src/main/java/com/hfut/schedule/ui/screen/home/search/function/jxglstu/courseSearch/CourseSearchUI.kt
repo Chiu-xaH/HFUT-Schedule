@@ -92,7 +92,7 @@ fun CourseSearchScreen(
     val route = remember { AppNavRoute.CourseSearch.route }
 
     var showSearch by rememberSaveable() { mutableStateOf(true) }
-    var className by rememberSaveable { mutableStateOf( getPersonInfo().classes ?: "") }
+    var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: "") }
     var courseName by rememberSaveable { mutableStateOf("") }
     var courseId by rememberSaveable { mutableStateOf("") }
 
@@ -242,7 +242,7 @@ fun CourseSearchScreen(
                                     .padding(horizontal = APP_HORIZONTAL_DP - 3.dp),
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                val myClass = getPersonInfo().classes
+                                val myClass = getPersonInfo().className
                                 TextField(
                                     modifier = Modifier
                                         .weight(.5f)

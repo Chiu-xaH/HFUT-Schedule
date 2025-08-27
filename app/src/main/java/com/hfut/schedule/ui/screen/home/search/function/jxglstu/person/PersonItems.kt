@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,7 +108,8 @@ fun PersonScreen(
             },
         ) { innerPadding ->
             Column(
-                modifier = Modifier.hazeSource(hazeState)
+                modifier = Modifier
+                    .hazeSource(hazeState)
                     .verticalScroll(rememberScrollState())
                     .fillMaxSize()
             ) {
@@ -133,20 +135,20 @@ private fun PersonItems(
     val photo = prefs.getString("photo",null)
     val info = getPersonInfo()
 
-    val studentnumber = info.username
+    val studentnumber = info.studentId
     val name = info.name
     val chineseid = info.chineseID
 
 
-    val studyType = info.benshuo
+    val studyType = info.educationLevel
     var yuanxi = info.department
     if (yuanxi != null) {
         if(yuanxi.contains("("))yuanxi = yuanxi.substringBefore("(")
         if(yuanxi.contains("（"))yuanxi = yuanxi.substringBefore("（")
     }
     val major = info.major
-    val classes = info.classes
-    val school = info.school
+    val classes = info.className
+    val school = info.campus
     val home = info.home
     val xueJiStatus = info.status
     val program = info.program
@@ -155,8 +157,8 @@ private fun PersonItems(
     val majorDirection = info.majorDirection
     val studyTime = info.studyTime
 
-    var show by remember { mutableStateOf(false) }
-    var show2 by remember { mutableStateOf(false) }
+    var show by rememberSaveable { mutableStateOf(false) }
+    var show2 by rememberSaveable() { mutableStateOf(chineseid == null) }
     val cardPsk by produceState(initialValue = "") {
         value = getCardPsk() ?: ""
     }
@@ -171,62 +173,58 @@ private fun PersonItems(
             }
         }
     }
-    val state = rememberScrollState()
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
     Column() {
         DividerTextExpandedWith(text = "账号信息") {
             CustomCard(color = cardNormalColor()) {
-                name?.let {
-                    TransplantListItem(
-                        headlineContent = { Text(text = it) },
-                        overlineContent = { Text(text ="姓名" )},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.signature),
-                                contentDescription = "Localized description",
-                            )
-                        }
-                    )
-                }
+                TransplantListItem(
+                    headlineContent = { Text(text = name  ?: "---") },
+                    overlineContent = { Text(text ="姓名" )},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.signature),
+                            contentDescription = "Localized description",
+                        )
+                    }
+                )
 
-                studentnumber?.let {
-                    TransplantListItem(
-                        headlineContent = {   Text(text = it)  },
-                        overlineContent = { Text(text ="学号" )},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.tag),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
-                        }
-                    )
-                }
+                TransplantListItem(
+                    headlineContent = {   Text(text = studentnumber ?: "----------")  },
+                    overlineContent = { Text(text ="学号" )},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.tag),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        studentnumber?.let { ClipBoardUtils.copy(it) }
+                    }
+                )
 
                 Box() {
-                    FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier.zIndex(1f).align(Alignment.CenterEnd).padding(horizontal = APP_HORIZONTAL_DP)) {
+                    FilledTonalIconButton(onClick = { show2 = !show2 }, modifier = Modifier
+                        .zIndex(1f)
+                        .align(Alignment.CenterEnd)
+                        .padding(horizontal = APP_HORIZONTAL_DP)) {
                         Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
                     }
                     Column(modifier = coverBlur(!show2)) {
-                        chineseid?.let {
-                            TransplantListItem(
-                                headlineContent = { Text(text = it)  },
-                                overlineContent = { Text(text = "身份证号")},
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.person),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                modifier = Modifier.clickable {
-                                    ClipBoardUtils.copy(it)
-                                }
-                            )
-                        }
+                        TransplantListItem(
+                            headlineContent = { Text(text = chineseid ?: "------------------")  },
+                            overlineContent = { Text(text = "身份证号")},
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.person),
+                                    contentDescription = "Localized description",
+                                )
+                            },
+                            modifier = Modifier.clickable {
+                                chineseid?.let { ClipBoardUtils.copy(it) }
+                            }
+                        )
                     }
                 }
             }
@@ -244,56 +242,50 @@ private fun PersonItems(
                     roundShape = MaterialTheme.shapes.medium
                 )
             ) {
-                school?.let {
-                    TransplantListItem(
-                        headlineContent = { Text(text = it) },
-                        overlineContent = { Text(text = "校区")},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.near_me),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                    )
-                }
-                yuanxi?.let {
-                    TransplantListItem(
-                        headlineContent = { Text(text = it)  },
-                        overlineContent = { Text(text = "学院")},
-                        leadingContent = {
-                            DepartmentIcons(name = it)
-                        },
-                        modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
-                        }
-                    )
-                }
+                TransplantListItem(
+                    headlineContent = { Text(text = school ?: "----") },
+                    overlineContent = { Text(text = "校区")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.near_me),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                )
+                TransplantListItem(
+                    headlineContent = { Text(text = yuanxi ?: "--------")  },
+                    overlineContent = { Text(text = "学院")},
+                    leadingContent = {
+                        DepartmentIcons(name = yuanxi ?: "")
+                    },
+                    modifier = Modifier.clickable {
+                        yuanxi?.let { ClipBoardUtils.copy(it) }
+                    }
+                )
 
 
-                major?.let {
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(text = it)
-                        },
-                        overlineContent = { Text(text = "专业")},
-                        supportingContent = { majorDirection?.let { if(it != "") Text(text = "方向 $it") else null } },
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.square_foot),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
-                        }
-                    )
-                }
+                TransplantListItem(
+                    headlineContent = {
+                        Text(text = major ?: "--------")
+                    },
+                    overlineContent = { Text(text = "专业")},
+                    supportingContent = { majorDirection?.let { if(it != "") Text(text = "方向 $it") else null } },
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.square_foot),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        major?.let { ClipBoardUtils.copy(it) }
+                    }
+                )
 
                 TransplantListItem(
                     modifier = Modifier.clickable {
                         classes?.let { ClipBoardUtils.copy(it) }
                     },
-                    headlineContent = {  Text(text = classes ?: "") },
+                    headlineContent = {  Text(text = classes ?: "-------") },
                     overlineContent = { Text(text = "班级")},
                     leadingContent = {
                         Icon(
@@ -342,8 +334,8 @@ private fun PersonItems(
                             }
                         )
                     }
-                    chineseid?.let {
-                        val p = it.takeLast(6)
+                    chineseid.let {
+                        val p = it?.takeLast(6) ?: "------"
                         val d = "Hfut@#\$%${p}"
                         TransplantListItem(
                             headlineContent = {
@@ -358,7 +350,16 @@ private fun PersonItems(
                     cardPsk.let {
                         TransplantListItem(
                             headlineContent = {  Text(text = it) },
-                            overlineContent = { Text(text = "一卡通&校园网密码")},
+                            overlineContent = { Text(text = "一卡通&校园网初始密码")},
+                            trailingContent = {
+                                FilledTonalButton(
+                                    onClick = {
+                                        showToast("前往 查询中心-慧新易校 修改密码")
+                                    }
+                                ) {
+                                    Text("修改")
+                                }
+                            },
                             modifier = Modifier.clickable {
                                 ClipBoardUtils.copy(it)
                             }
@@ -371,30 +372,30 @@ private fun PersonItems(
 
         DividerTextExpandedWith(text = "学籍信息") {
             CustomCard(color = cardNormalColor()) {
-                studyType?.let {
+                TransplantListItem(
+                    headlineContent = { Text(text = studyType ?: "-----")  },
+                    overlineContent = { Text(text = "类型")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.school),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                )
+                xueJiStatus.let {
                     TransplantListItem(
-                        headlineContent = { Text(text = it)  },
-                        overlineContent = { Text(text = "类型")},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.school),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                    )
-                }
-                xueJiStatus?.let {
-                    TransplantListItem(
-                        headlineContent = {  Text(text = it) },
+                        headlineContent = {  Text(text = it ?: "--") },
                         overlineContent = { Text(text = "学籍状态")},
                         leadingContent = {
                             Icon(
                                 painterResource(
-                                    if(xueJiStatus.contains("正常")) {
+                                    if(it == null) {
+                                        R.drawable.help
+                                    } else if(it.contains("正常")) {
                                         R.drawable.check_circle
-                                    } else if(xueJiStatus.contains("转专业")) {
+                                    } else if(it.contains("转专业")) {
                                         R.drawable.compare_arrows
-                                    } else if(xueJiStatus.contains("毕业")) {
+                                    } else if(it.contains("毕业")) {
                                         R.drawable.verified
                                     } else {
                                         R.drawable.help
@@ -407,8 +408,8 @@ private fun PersonItems(
                 }
 
                 TransplantListItem(
-                    headlineContent = { Text(text = "$startDate\n$endDate") },
-                    overlineContent = { Text(text = "学制 $studyTime")},
+                    headlineContent = { Text(text = "${startDate ?: "YYYY-MM-DD"}\n${endDate ?: "YYYY-MM-DD"}") },
+                    overlineContent = { Text(text = "学制 ${studyTime ?: "-"} 年")},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.schedule),
@@ -425,7 +426,7 @@ private fun PersonItems(
                     }
                 )
                 TransplantListItem(
-                    headlineContent = { program?.let { Text(text = it) } },
+                    headlineContent = {  Text(text = program ?: "----------------")  },
                     overlineContent = { Text(text = "培养方案")},
                     leadingContent = {
                         Icon(
@@ -434,27 +435,33 @@ private fun PersonItems(
                         )
                     },
                     modifier = Modifier.clickable {
-                        showToast("前往 查询中心-培养方案查看详情")
+                        showToast("前往 查询中心-培养方案")
                     }
                 )
-                home?.let {
-                    TransplantListItem(
-                        headlineContent = {  Text(text = it)  },
-                        overlineContent = { Text(text = "来源")},
-                        leadingContent = {
-                            Icon(
-                                painterResource(R.drawable.location_on),
-                                contentDescription = "Localized description",
-                            )
-                        },
-                        modifier = Modifier.clickable {}
-                    )
-                }
-                photo?.let {
+                TransplantListItem(
+                    headlineContent = {  Text(text = home ?: "---省")  },
+                    overlineContent = { Text(text = "来源")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.location_on),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {}
+                )
+                photo.let {
                     var showPhoto by remember { mutableStateOf(false) }
                     TransplantListItem(
                         headlineContent = { Text(text = "学籍照") },
-                        trailingContent = {
+                        trailingContent = m@ {
+                            if(it == null) {
+                                FilledTonalButton(
+                                    onClick = { },
+                                ) {
+                                    Text("--")
+                                }
+                                return@m
+                            }
                             if(showPhoto) {
                                 val byteArray = Base64.decode(it, Base64.DEFAULT)
                                 val bitmap = BitmapFactory.decodeByteArray(byteArray , 0, byteArray.size)
@@ -479,7 +486,9 @@ private fun PersonItems(
                             )
                         },
                         modifier = Modifier.clickable {
-                            showPhoto = !showPhoto
+                            if(it != null) {
+                                showPhoto = !showPhoto
+                            }
                         }
                     )
                 }
@@ -489,9 +498,9 @@ private fun PersonItems(
 
         DividerTextExpandedWith("私人信息") {
             CustomCard(color = cardNormalColor()) {
-                info.gender?.let {
+                info.gender.let {
                     TransplantListItem(
-                        headlineContent = {  Text(it)  },
+                        headlineContent = {  Text(it ?: "-")  },
                         overlineContent = { Text("性别") },
                         leadingContent = {
                             Icon(painterResource(
@@ -504,9 +513,9 @@ private fun PersonItems(
                         },
                     )
                 }
-                info.politicalStatus?.let {
+                info.politicalStatus.let {
                     TransplantListItem(
-                        headlineContent = { Text(it)  },
+                        headlineContent = { Text(it ?: "--")  },
                         overlineContent = { Text("政治面貌") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.groups),null)
@@ -515,15 +524,15 @@ private fun PersonItems(
                 }
                 val mobile = info.mobile
                 val phone = info.phone
-                if(mobile != null && phone != null && mobile == phone) {
+                if(mobile == phone) {
                     TransplantListItem(
-                        headlineContent = {  Text(mobile) },
+                        headlineContent = {  Text(mobile ?: "-----------") },
                         overlineContent = { Text("手机号") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.call),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(mobile)
+                            mobile?.let { ClipBoardUtils.copy(it) }
                         }
                     )
                 } else {
@@ -553,40 +562,40 @@ private fun PersonItems(
                     }
                 }
 
-                info.email?.let {
+                info.email.let {
                     TransplantListItem(
-                        headlineContent = {  Text(it) },
+                        headlineContent = {  Text(it ?: "-------------") },
                         overlineContent = { Text("电子邮件") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.alternate_email),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            it?.let { str -> ClipBoardUtils.copy(str) }
                         }
                     )
                 }
-                info.address?.let {
+                info.address.let {
                     TransplantListItem(
-                        headlineContent = {  Text(it)  },
+                        headlineContent = {  Text(it ?: "----------------")  },
                         overlineContent = { Text("地址") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.home),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            it?.let { str -> ClipBoardUtils.copy(str) }
                         }
                     )
                 }
 
-                info.postalCode?.let {
+                info.postalCode.let {
                     TransplantListItem(
-                        headlineContent = { Text(it) } ,
+                        headlineContent = { Text(it ?: "------") } ,
                         overlineContent = { Text("邮编") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.mail),null)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            it?.let { str -> ClipBoardUtils.copy(str) }
                         }
                     )
                 }
@@ -618,7 +627,7 @@ private fun PersonItems(
                                         },
                                         overlineContent = { Text("寝室成员") },
                                         leadingContent = {
-                                            Icon(painterResource(R.drawable.group),null)
+                                            Icon(painterResource(R.drawable.person),null)
                                         }
                                     )
                                 }
@@ -632,13 +641,13 @@ private fun PersonItems(
 }
 
 data class PersonInfo(val name : String?,
-                      val username: String?,
+                      val studentId: String?,
                       val chineseID : String?,
-                      val classes : String?,
+                      val className : String?,
                       val major : String?,
                       val department : String?,
-                      val school : String?,
-                      val benshuo : String?,
+                      val campus : String?,
+                      val educationLevel : String?,
                       val home: String?,
                       val status : String?,
                       val program : String?,

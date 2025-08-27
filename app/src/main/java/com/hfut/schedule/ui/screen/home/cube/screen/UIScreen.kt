@@ -103,7 +103,7 @@ suspend fun initTransition() = withContext(Dispatchers.IO) {
     val transition = DataStoreManager.transitionLevel.first()
     val motionBlur = DataStoreManager.enableMotionBlur.first()
 //    TransitionState.firstStartRoute = AppNavRoute.Home.route
-    TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
+//    TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
     TransitionState.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
 }
 
@@ -189,9 +189,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         LaunchedEffect(transition) {
             TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
         }
-        LaunchedEffect(motionBlur) {
-            TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
-        }
+//        LaunchedEffect(motionBlur) {
+//            TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
+//        }
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
         LaunchedEffect(customColor) {
@@ -555,9 +555,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                             val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
                             scope.launch { DataStoreManager.saveTransition(level) }
                         },
-                        steps = 2,
+                        steps = transitionLevels.size-2,
                         modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                        valueRange = 0f..3f,
+                        valueRange = 0f..(transitionLevels.size-1).toFloat(),
                     )
                     PaddingHorizontalDivider()
 

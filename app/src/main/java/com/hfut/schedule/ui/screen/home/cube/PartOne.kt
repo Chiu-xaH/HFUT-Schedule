@@ -64,7 +64,7 @@ import dev.chrisbanes.haze.HazeState
 
 fun apiCheck() : Boolean {
     return try {
-        val classes = getPersonInfo().classes
+        val classes = getPersonInfo().className
         return classes!!.contains("计算机") && classes.contains("23")
     } catch (e : Exception) {
         false

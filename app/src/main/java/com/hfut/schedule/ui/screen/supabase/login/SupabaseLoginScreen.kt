@@ -77,7 +77,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
 
     var isReg by remember { mutableStateOf(false) }
 
-    val username by remember { mutableStateOf(getPersonInfo().username + MyApplication.EMAIL) }
+    val username by remember { mutableStateOf(getPersonInfo().studentId + MyApplication.EMAIL) }
     var password by remember { mutableStateOf(prefs.getString("SupabasePsk","") ?: "") }
     var password2 by remember { mutableStateOf("") }
 

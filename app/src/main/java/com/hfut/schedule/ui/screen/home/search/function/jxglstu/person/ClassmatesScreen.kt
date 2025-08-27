@@ -71,7 +71,7 @@ fun ClassmatesScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(getPersonInfo().classes ?: AppNavRoute.Classmates.label) },
+                    title = { Text(getPersonInfo().className ?: AppNavRoute.Classmates.label) },
                     navigationIcon = {
                         TopBarNavigationIcon(
                             navTopController,

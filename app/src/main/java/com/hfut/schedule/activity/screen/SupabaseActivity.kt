@@ -22,7 +22,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 class SupabaseActivity : BaseActivity() {
     @Composable
     override fun UI() {
-        if(getPersonInfo().username == null) {
+        if(getPersonInfo().studentId == null) {
             Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surface)) {
                 Box(modifier = Modifier.align(Alignment.Center)){
                     StatusUI(R.drawable.visibility_off,"请先刷新登录状态证明是合肥工业大学在校生")

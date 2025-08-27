@@ -306,7 +306,7 @@ private fun SharedTransitionScope.SurfaceUI(
                     colors = topBarTransplantColor(),
                     title = { Text("添加") },
                     actions = {
-                        if(getPersonInfo().username != null && !isSupabase)
+                        if(getPersonInfo().studentId != null && !isSupabase)
                             FilledTonalButton(onClick = {
                                 scope.launch {
                                     loading = true
@@ -666,7 +666,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                         }
                     }
 
-                    LaunchedEffect(Unit) { getPersonInfo().classes?.let { classList.add(it) } }
+                    LaunchedEffect(Unit) { getPersonInfo().className?.let { classList.add(it) } }
                     LaunchedEffect(showAddDialog) {
                         if(!showAddDialog)
                             input = ""

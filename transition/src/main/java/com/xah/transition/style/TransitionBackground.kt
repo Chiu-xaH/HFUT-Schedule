@@ -4,9 +4,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,7 +12,6 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.xah.transition.state.TransitionState
 import com.xah.transition.util.isCurrentRouteWithoutArgs
@@ -68,8 +64,7 @@ fun Modifier.transitionBackground(
 
     val scale = animateFloatAsState( //.875f
         targetValue = if (isExpanded) {
-            if(motionBlur) scaleValue-scaleDiffer
-            else scaleValue
+            scale
         } else 1f,
         animationSpec = tween(speed*4/3, easing = FastOutSlowInEasing)
     )
@@ -80,7 +75,9 @@ fun Modifier.transitionBackground(
 
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) blurRadius else 0.dp,
+        targetValue = if (isExpanded) {
+            blurRadius
+        } else 0.dp,
         label = "",
         animationSpec = tween(speed*7/5, easing = FastOutSlowInEasing)
     )

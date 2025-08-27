@@ -256,7 +256,7 @@ fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {
     return DateTimeBean(year,month,day,hour,minute)
 }
 
-data class JxglstuCourseSchedule(val time : DateTime, val place : String, val courseName : String)
+data class JxglstuCourseSchedule(val time : DateTime, val place : String?, val courseName : String)
 
 fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule>  {
     val json = jstr ?: prefs.getString("json", "")
@@ -272,7 +272,7 @@ fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule
 
             var endTime = item.endTime.toString()
             endTime = endTime.substring(0, endTime.length - 2) + ":" + endTime.substring(endTime.length - 2)
-            val room = item.room.nameZh
+            val room = item.room?.nameZh
             var courseId = item.lessonId.toString()
 
             for (j in lessonList.indices) {

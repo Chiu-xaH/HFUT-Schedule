@@ -57,9 +57,10 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 教室","位于 查询中心")
-            UpdateItems("优化 转场动画背景压暗的流畅度")
-            UpdateItems("修复 转场动画共享元素过渡时卡片未对齐的Bug")
+//            UpdateItems("新增 教务课表数据源2","如果有教务显示缺课的，可以用这个")
+            UpdateItems("修复 由于部分课程没有地点，导致课程表部分缺失的Bug")
+//            UpdateItems("新增 挂失、解挂","位于 查询中心-一卡通-卡包-状态")
+//            UpdateItems("新增 修改一卡通和校园网的密码","位于 查询中心-一卡通-卡包-密码修改，修改后自动同步记录在本APP的中，无需再前往选项修改")
 //            UpdateItems("修复 登录教务时首次提示失败的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")

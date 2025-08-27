@@ -254,7 +254,7 @@ fun CustomSchedules(showAll : Boolean,
                     starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
                         starttime.length - 2
                     )
-                var room = scheduleList[i].room.nameZh
+                var room = scheduleList[i].room?.nameZh
                 val person = scheduleList[i].personName
                 var date = scheduleList[i].date
                 var scheduleid = scheduleList[i].lessonId.toString()
@@ -262,7 +262,7 @@ fun CustomSchedules(showAll : Boolean,
                 var periods = scheduleList[i].periods
                 var lessonType = scheduleList[i].lessonType
 
-                room = room.replace("学堂","")
+                room = room?.replace("学堂","") ?: ""
 
                 for (k in 0 until scheduleGroupList.size) {
 
@@ -465,7 +465,7 @@ fun CustomSchedules(showAll : Boolean,
                     starttime.substring(0, starttime.length - 2) + ":" + starttime.substring(
                         starttime.length - 2
                     )
-                var room = scheduleList[i].room.nameZh
+                var room = scheduleList[i].room?.nameZh
                 val person = scheduleList[i].personName
                 var date = scheduleList[i].date
                 var scheduleid = scheduleList[i].lessonId.toString()
@@ -473,7 +473,7 @@ fun CustomSchedules(showAll : Boolean,
                 var periods = scheduleList[i].periods
                 var lessonType = scheduleList[i].lessonType
 
-                room = room.replace("学堂","")
+                room = room?.replace("学堂","") ?: ""
 
                 for (k in 0 until scheduleGroupList.size) {
 

@@ -160,7 +160,7 @@ private fun SupabaseScheduleUI(vm: NetWorkViewModel,sortType : SortType,sortReve
         val filterList = if(filter) list.filter {
             // 自己班
             (
-                    it.applicableClasses.toString().contains(getPersonInfo().classes!!) ||
+                    it.applicableClasses.toString().contains(getPersonInfo().className!!) ||
                             it.applicableClasses.contains("EMPTY") ||
                             it.applicableClasses.toString().replace("[","").replace("]","").let { t ->
                                 t.isBlank() || t.isEmpty() || t == "EMPTY"

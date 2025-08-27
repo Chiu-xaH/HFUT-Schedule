@@ -601,7 +601,7 @@ private data class Schedule(
     val weekRange : List<Int>,
     val weekday : Int,
     val periodRange : Pair<Int,Int>,
-    val place : String,
+    val place : String?,
     val teacher : String
 )
 
@@ -619,8 +619,14 @@ private fun parseScheduleText(text : String) : List<Schedule> {
             val weekText = parseWeek(tinyList[0])
             val weekday = parseWeekday(tinyList[1])
             val periodText = parsePeriod(tinyList[2])
-            val place = tinyList[4].substringBefore("(").let { if(it.contains("学堂")) it.replace("学堂","") else it }
-            val teacher = tinyList[5].replace(";","")
+            var place : String? = null
+            var teacher : String = ""
+            if(tinyList.size == 6) {
+                place = tinyList[4].substringBefore("(").let { if(it.contains("学堂")) it.replace("学堂","") else it }
+                teacher = tinyList[5].replace(";","")
+            } else if(tinyList.size == 5) {
+                teacher = tinyList[4].replace(";","")
+            }
             result.add(Schedule(weekText,weekday,periodText,place,teacher))
         }
         return result

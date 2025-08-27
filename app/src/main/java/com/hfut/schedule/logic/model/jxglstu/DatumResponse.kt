@@ -13,7 +13,7 @@ data class lessonList(val courseName : String,
                       val courseTypeName : String,val remark : String?,val teacherAssignmentList : List<teacherAssignmentList>)
 
 data class scheduleList(val lessonId: Int,
-                        val room : room,
+                        val room : room?,
                         val weekday : Int,
                         val personName : String,
                         val weekIndex : Int,

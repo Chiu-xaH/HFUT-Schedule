@@ -373,7 +373,7 @@ object Repository {
 
     suspend fun loginSchoolNet(campus: Campus = getCampus(), loginSchoolNetResponse : StateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
-            getPersonInfo().username?.let { uid ->
+            getPersonInfo().studentId?.let { uid ->
                 getCardPsk()?.let { pwd ->
                     when (campus) {
                         Campus.HEFEI -> {
@@ -414,7 +414,7 @@ object Repository {
         }
     suspend fun logoutSchoolNet(campus: Campus = getCampus(), loginSchoolNetResponse : StateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
-            getPersonInfo().username?.let { uid ->
+            getPersonInfo().studentId?.let { uid ->
                 getCardPsk()?.let { pwd ->
                     when (campus) {
                         Campus.HEFEI -> {

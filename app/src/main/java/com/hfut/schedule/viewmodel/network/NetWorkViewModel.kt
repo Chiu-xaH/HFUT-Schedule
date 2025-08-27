@@ -1613,7 +1613,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val payFeeResponse = StateHolder<PayData>()
     suspend fun getPay() = launchRequestSimple(
         holder = payFeeResponse,
-        request = {  one.getPay(getPersonInfo().username).awaitResponse()  },
+        request = {  one.getPay(getPersonInfo().studentId).awaitResponse()  },
         transformSuccess = { _,json -> parsePayFee(json) }
     )
     private fun parsePayFee(result : String) : PayData = try {

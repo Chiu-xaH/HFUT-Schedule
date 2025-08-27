@@ -21,7 +21,7 @@ import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 fun getCampusDetail() : CampusDetail? {
-    val campusText = getPersonInfo().school ?: return null
+    val campusText = getPersonInfo().campus ?: return null
     return if(campusText.contains(CampusDetail.XC.description) == true) {
         CampusDetail.XC
     } else if(campusText.contains(CampusDetail.FCH.description) == true) {

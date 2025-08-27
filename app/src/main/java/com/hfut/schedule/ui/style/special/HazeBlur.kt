@@ -1,40 +1,23 @@
 package com.hfut.schedule.ui.style.special
 
-import android.util.Log
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
@@ -43,7 +26,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -51,9 +33,6 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
 import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
@@ -281,8 +260,9 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
 
     val scale = animateFloatAsState(
         targetValue = if (isExpanded) {
-            if(motionBlur) TransitionState.transitionBackgroundStyle.scaleValue - TransitionState.transitionBackgroundStyle.scaleDiffer
-            else TransitionState.transitionBackgroundStyle.scaleValue
+            with(TransitionState.transitionBackgroundStyle) {
+                scale
+            }
         } else 1f, // 按下时为0.9，松开时为1
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
         label = "" // 使用弹簧动画
@@ -307,7 +287,11 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
 
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) TransitionState.transitionBackgroundStyle.blurRadius else 0.dp, label = ""
+        targetValue = if (isExpanded && motionBlur) {
+            with(TransitionState.transitionBackgroundStyle) {
+                blurRadius
+            }
+        } else 0.dp, label = ""
         ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
     )
 

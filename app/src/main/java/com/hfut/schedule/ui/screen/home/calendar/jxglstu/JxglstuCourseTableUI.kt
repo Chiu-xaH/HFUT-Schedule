@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
@@ -56,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -64,11 +66,13 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -77,8 +81,10 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -115,7 +121,7 @@ suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<Cours
     try {
         if(json.isEmpty()) {
             // 使用预置的作息表
-            val campus = getPersonInfo().school ?: return emptyList()
+            val campus = getPersonInfo().campus ?: return emptyList()
             if(campus.contains("宣城")) {
                 return MyApplication.XC_TXL1
             } else if(campus.contains("翡翠湖")) {
@@ -234,8 +240,10 @@ fun JxglstuCourseTableUI(
         value = parseTimeTable(times)
     }
 
+    var exception by remember { mutableStateOf<Exception?>(null) }
 
     fun refreshUI(showAll : Boolean,timeList : List<CourseUnitBean>) {
+        exception = null
         // 清空
         if(showAll) {
             clearUnit(tableAll)
@@ -257,9 +265,9 @@ fun JxglstuCourseTableUI(
                     startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(
                         startTime.length - 2
                     )
-                var room = item.room.nameZh
+                var room = item.room?.nameZh
                 var courseId = item.lessonId.toString()
-                room = room.replace("学堂","")
+                room = room?.replace("学堂","") ?: ""
 
 
                 for (j in lessonList.indices) {
@@ -492,7 +500,8 @@ fun JxglstuCourseTableUI(
                 distinctUnit(table)
             }
         } catch (e : Exception) {
-            e.printStackTrace()
+            showToast("解析出错")
+            exception = e
         }
     }
 
@@ -767,6 +776,15 @@ fun JxglstuCourseTableUI(
                             state = scrollState
                         ) {
                             items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
+                            exception?.let {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    TransplantListItem(
+                                        headlineContent = { Text("解析课表错误 请联系开发者") },
+                                        leadingContent = { Icon(painterResource(R.drawable.warning),null)},
+                                        supportingContent = { Text(getKeyStackTrace(it)) }
+                                    )
+                                }
+                            }
                             items(if(showAll)42 else 30) { cell ->
                                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                                 val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
