@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.chart
+package com.xah.uicommon.component.chart
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing

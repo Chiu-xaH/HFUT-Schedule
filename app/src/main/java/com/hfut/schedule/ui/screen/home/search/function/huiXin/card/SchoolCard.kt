@@ -30,7 +30,7 @@ import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -57,7 +57,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
 
     val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     TransplantListItem(
-        headlineContent = { if(cardBool) ScrollText(text = "￥$text") else Text(text = "一卡通 ￥$text") },
+        headlineContent = { if(cardBool) ScrollText(text = "￥$text") else ScrollText(text = "一卡通 ￥$text") },
         overlineContent = { if(cardBool) {
             ScrollText(
                 if (text != null && text != "未登录") {

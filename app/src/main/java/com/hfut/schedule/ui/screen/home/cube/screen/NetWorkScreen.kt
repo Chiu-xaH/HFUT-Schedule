@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -25,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -34,12 +32,10 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
-import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +65,7 @@ fun NetWorkScreen(navController: NavHostController,
         saveBoolean("SWITCHSERVER",false,server)
 
         DividerTextExpandedWith("配置") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "预加载数据") },
                     supportingContent = { Text(text = "APP首页聚焦第一张卡片显示的一些数据,冷启动或下拉刷新时会自动更新这些数据") },
@@ -94,7 +90,7 @@ fun NetWorkScreen(navController: NavHostController,
         }
 
         DividerTextExpandedWith("其它") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface){
+            CustomCard(color = MaterialTheme.colorScheme.surface){
                 TransplantListItem(
                     headlineContent = { Text(text = "用户统计数据") },
                     supportingContent = { Text(text = "允许上传非敏感数据,以帮助更好的改进体验") },

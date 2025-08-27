@@ -22,14 +22,14 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.pager.PagingController
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 //*******最新模范写法****

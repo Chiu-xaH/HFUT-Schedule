@@ -37,12 +37,12 @@ import com.hfut.schedule.logic.model.community.FriendsResopnse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
  
 import com.hfut.schedule.logic.util.sys.showToast

@@ -120,18 +120,18 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
+import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
@@ -153,7 +153,7 @@ import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.style.special.transitionBackground2
 import com.hfut.schedule.ui.style.special.transitionBackgroundF
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -431,9 +431,7 @@ fun MainScreen(
                     if (getNotifications().size.toString() != prefs.getString("Notifications",""))
                         Badge()
                 }) {
-                    with(sharedTransitionScope) {
-                        Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = iconRoute))
-                    }
+                    Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = iconRoute))
                 }
             }
         }
@@ -456,7 +454,7 @@ fun MainScreen(
         }
 
         Scaffold(
-            modifier = transitionBackground2(isAddUIExpanded).fillMaxSize().let {
+            modifier = Modifier.transitionBackground2(isAddUIExpanded).fillMaxSize().let {
                 if (targetPage != COURSES) {
                     it.nestedScroll(scrollBehavior.nestedScrollConnection)
                 } else {
@@ -487,14 +485,12 @@ fun MainScreen(
                                         IconButton(onClick = {
                                             navHostTopController.navigateForTransition(AppNavRoute.SearchEdit, route, transplantBackground = true)
                                         }) {
-                                            with(sharedTransitionScope) {
-                                                Icon(
-                                                    painterResource(id = R.drawable.edit),
-                                                    contentDescription = "",
-                                                    tint = MaterialTheme.colorScheme.primary,
-                                                    modifier = iconElementShare(animatedContentScope=animatedContentScope, route = route)
-                                                )
-                                            }
+                                            Icon(
+                                                painterResource(id = R.drawable.edit),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
+                                                modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = route)
+                                            )
                                         }
                                         IconButton(onClick = { showSearch = !showSearch }) {
                                             Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
@@ -871,7 +867,7 @@ fun SearchEditScreen(
                 }
             }
         )
-        ScrollHorizontalDivider(state,startPadding = false,endPadding = false)
+        ScrollHorizontalTopDivider(state,startPadding = false,endPadding = false)
         AnimatedVisibility(
             visible = show,
             enter = fadeIn(),

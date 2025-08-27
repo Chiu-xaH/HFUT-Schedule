@@ -19,12 +19,13 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 
@@ -34,7 +35,7 @@ fun LePaoYun(hazeState: HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     TransplantListItem(
-        headlineContent = { Text(text = "体育") },
+        headlineContent = { ScrollText(text = "体育") },
         leadingContent = { Icon(painterResource(R.drawable.directions_run),null) },
         modifier = Modifier.clickable {
             showBottomSheet = true

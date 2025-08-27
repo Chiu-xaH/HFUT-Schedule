@@ -47,7 +47,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -163,7 +163,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         }
 
         DividerTextExpandedWith("关于") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "本版本新特性") },
                     supportingContent = { Text(text = "查看此版本的更新内容")},
@@ -182,30 +182,37 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                         }),
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                 )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "推广应用") },
+                    supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.ios_share),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.combinedClickable(
+                        onClick = {
+                            showBottomSheet = true
+                        },
+                        onLongClick = { ShareTo.shareAPK() },
+                        onDoubleClick = {
+                            ClipBoardUtils.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
+                        }
+                    )
+                )
             }
         }
-       DividerTextExpandedWith("支持") {
-           CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
-               TransplantListItem(
-                   headlineContent = { Text(text = "推广应用") },
-                   supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
-                   leadingContent = {
-                       Icon(
-                           painterResource(R.drawable.ios_share),
-                           contentDescription = "Localized description",
-                       )
-                   },
-                   modifier = Modifier.combinedClickable(
-                       onClick = {
-                           showBottomSheet = true
-                       },
-                       onLongClick = { ShareTo.shareAPK() },
-                       onDoubleClick = {
-                           ClipBoardUtils.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
-                       }
-                   )
-               )
-               PaddingHorizontalDivider()
+       DividerTextExpandedWith("说明") {
+           CustomCard(color = MaterialTheme.colorScheme.surface) {
+//               TransplantListItem(
+//                   headlineContent = { Text(text = "使用技巧") },
+//                   supportingContent = { Text(text = "每")},
+//                   modifier = Modifier.clickable { showBottomSheet_support = true },
+//                   leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
+//               )
+//               PaddingHorizontalDivider()
                TransplantListItem(
                    headlineContent = { Text(text = "功能可用性支持") },
                    supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
@@ -216,8 +223,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
        }
 
         if(cubeShow) {
-            DividerTextExpandedWith("Develop") {
-                CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            DividerTextExpandedWith("开发") {
+                CustomCard(color = MaterialTheme.colorScheme.surface) {
                     TransplantListItem(
                         headlineContent = { Text(text = "开发者选项") },
                         supportingContent = { Text(text = "一些可用于有经验用户的选项")},

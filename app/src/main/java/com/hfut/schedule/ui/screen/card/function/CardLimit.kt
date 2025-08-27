@@ -24,13 +24,13 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.slider.CustomSlider
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.component.slider.CustomSlider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -91,7 +91,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
                     Icon(painterResource(R.drawable.info),null)
                 }
             )
-            CustomCard(containerColor = cardNormalColor()) {
+            CustomCard(color = cardNormalColor()) {
                 TransplantListItem(
                     headlineContent = { Text(text = "自主转账限额 ￥${limit}")},
                     leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "") }
@@ -120,7 +120,7 @@ fun CardLimit(vm : NetWorkViewModel, vmUI : UIViewModel) {
 
             }
 
-            CustomCard (containerColor = cardNormalColor()){
+            CustomCard (color = cardNormalColor()){
                 TransplantListItem(
                     headlineContent = { Text(text = "自主转账金额 ￥${amt}")},
                     leadingContent = { Icon(painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "") }

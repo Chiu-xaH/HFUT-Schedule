@@ -51,12 +51,12 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.component.status.LoadingUI
+import com.xah.uicommon.component.status.LoadingUI
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.time.LocalDate

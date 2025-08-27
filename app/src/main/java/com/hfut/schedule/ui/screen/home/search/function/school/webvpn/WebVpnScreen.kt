@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,12 +45,11 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -59,9 +57,9 @@ import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardBottomButton
@@ -170,7 +168,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                 input = MyApplication.LIBRARY_SEAT
             }
         )
-        CustomCard(containerColor = cardNormalColor()) {
+        CustomCard(color = cardNormalColor()) {
             CustomTextField(
                 label = { Text("输入以http://或https://开头的合法链接")},
                 input = input,
@@ -195,7 +193,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
         }
 
         result?.let {
-            CustomCard(containerColor = cardNormalColor()) {
+            CustomCard(color = cardNormalColor()) {
                 Column {
                     TransplantListItem(
                         headlineContent = {
@@ -244,7 +242,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                 input = MyApplication.JXGLSTU_WEBVPN_URL
             }
         )
-        CustomCard(containerColor = cardNormalColor()) {
+        CustomCard(color = cardNormalColor()) {
             CustomTextField(
                 label = { Text("输入以${WEBVPN_URL}开头的合法链接")},
                 input = input,
@@ -269,7 +267,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
         }
 
         result?.let {
-            CustomCard(containerColor = cardNormalColor()) {
+            CustomCard(color = cardNormalColor()) {
                 Column {
                     TransplantListItem(
                         headlineContent = {

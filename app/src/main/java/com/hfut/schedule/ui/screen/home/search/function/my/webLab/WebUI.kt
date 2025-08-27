@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.home.search.function.my.webLab
 
 import android.util.Patterns
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
@@ -29,12 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -53,11 +50,8 @@ import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
@@ -71,17 +65,15 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.Notifica
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -98,11 +90,9 @@ fun WebUI(
     val route = remember { AppNavRoute.WebNavigation.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.WebNavigation.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.WebNavigation.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.WebNavigation.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.WebNavigation.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.WebNavigation,route)
@@ -274,7 +264,7 @@ fun WebNavigationScreen(
                 InnerPaddingHeight(innerPadding,true)
                 DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
                     Column(
-                        modifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(input)),
+                        modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(input)),
                     ) {
                         CustomTextField(
                             input = input,

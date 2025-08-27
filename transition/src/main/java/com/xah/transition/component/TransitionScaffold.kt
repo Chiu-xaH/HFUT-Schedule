@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -37,19 +38,13 @@ import kotlinx.coroutines.delay
 @Composable
 fun SharedTransitionScope.TransitionScaffold(
     animatedContentScope: AnimatedContentScope,
-    roundShape : Shape,
+    roundShape : Shape= MaterialTheme.shapes.small,
     route: String,
     navHostController : NavHostController,
-    modifier: Modifier = containerShare(
-        Modifier
-            .fillMaxSize()
+    modifier: Modifier =
+        Modifier.clip(roundShape)
             .transitionBackground(navHostController, route)
-            ,
-        animatedContentScope,
-        route,
-        resize = false,
-        roundShape,
-    ),
+            .containerShare(this, animatedContentScope, route, resize = true, roundShape,),
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
     floatingActionButton: @Composable (() -> Unit) = {},

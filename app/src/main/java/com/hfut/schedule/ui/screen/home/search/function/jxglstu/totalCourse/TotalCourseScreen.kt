@@ -26,10 +26,9 @@ import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import dev.chrisbanes.haze.HazeState
 
 @Composable

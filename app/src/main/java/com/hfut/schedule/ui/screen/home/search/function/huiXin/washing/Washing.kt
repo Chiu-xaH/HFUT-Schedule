@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,10 +42,9 @@ import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -57,13 +55,13 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -92,19 +90,17 @@ fun Washing(
     }
 
     TransplantListItem(
-        headlineContent = { Text(text = "洗衣机") },
+        headlineContent = { ScrollText(text = "洗衣机") },
         leadingContent = {
             Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
         },
         trailingContent = {
-            with(sharedTransitionScope) {
                 FilledTonalIconButton(
-                    modifier = containerShare(Modifier.size(30.dp),animatedContentScope,route),
+                    modifier = Modifier.size(30.dp).containerShare(sharedTransitionScope,animatedContentScope,route),
                     onClick = {
                         navController.navigateForTransition(AppNavRoute.HaiLeWashing,route)
                     },
                 ) { Icon( painterResource(R.drawable.search), contentDescription = null, modifier = Modifier.size(20.dp)) }
-            }
         },
         modifier = Modifier.clickable {
             showBottomSheet = true
@@ -138,7 +134,7 @@ fun HaiLeWashingScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text("海乐生活") },
+                    title = { Text(AppNavRoute.HaiLeWashing.label) },
                     navigationIcon = {
                         TopBarNavigateIcon(navController)
                     }
@@ -172,7 +168,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("海乐生活")
+                    HazeBottomSheetTopBar(AppNavRoute.HaiLeWashing.label)
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -202,7 +198,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
             FilledTonalButton(onClick = {
                 showBottomSheet = true
             }) {
-                Text("海乐生活")
+                Text(AppNavRoute.HaiLeWashing.label)
             }
         }
         CustomTabRow(pagerState,titles)
@@ -225,7 +221,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         )
                     }
                     XUANCHENG_TAB -> {
-                        EmptyUI("请使用海乐生活")
+                        EmptyUI("请使用${AppNavRoute.HaiLeWashing.label}")
                     }
                 }
                 Spacer(Modifier.height(APP_HORIZONTAL_DP*3))

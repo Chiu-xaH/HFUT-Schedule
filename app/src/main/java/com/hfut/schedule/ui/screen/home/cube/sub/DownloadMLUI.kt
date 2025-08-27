@@ -10,8 +10,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -46,8 +44,8 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.text.ScrollText
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -95,7 +93,7 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
-        CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+        CustomCard(color = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
                 headlineContent = { Text("图片验证码自动填充") },
                 trailingContent = {
@@ -105,7 +103,7 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
         }
 
         DividerTextExpandedWith("模型") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { ScrollText("English OCR By Tesseract") },
                     supportingContent = { Text("约21MB" + if(isExistModule) " 长按删除" else "") },

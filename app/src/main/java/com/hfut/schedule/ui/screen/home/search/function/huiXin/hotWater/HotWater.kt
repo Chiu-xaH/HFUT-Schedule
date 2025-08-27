@@ -10,11 +10,12 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.xah.uicommon.component.text.ScrollText
 
 @Composable
 fun HotWater() {
     TransplantListItem(
-        headlineContent = { Text(text = "热水") },
+        headlineContent = { ScrollText(text = "热水") },
         leadingContent = { Icon(painterResource(R.drawable.water_voc), contentDescription = "")},
         modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.ALIPAY_HOT_WATER_URL) }
     )

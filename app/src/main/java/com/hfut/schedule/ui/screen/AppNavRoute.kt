@@ -4,6 +4,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.ui.screen.AppNavRoute.NavArg
 
 // 主导航
@@ -185,7 +186,18 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     }
     object SecondClass : AppNavRoute("SECOND_CLASS","第二课堂",R.drawable.kid_star)
     object Bus : AppNavRoute("BUS","校车",R.drawable.directions_bus)
-    object EmptyRoom : AppNavRoute("EMPTY_ROOM", "空教室",R.drawable.meeting_room)
+    object Classroom : AppNavRoute("CLASSROOM", "教室",R.drawable.meeting_room)
+    object ClassroomDetail : AppNavRoute("CLASSROOM_DETAIL","教室详情",R.drawable.meeting_room) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
+            CODE("code", NavType.StringType,"",false),
+            NAME("name", NavType.StringType,"教室",false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(bean : BuildingBean): String = withArgs(
+            Args.CODE.argName to bean.code,
+            Args.NAME.argName to bean.nameZh
+        )
+    }
     object OfficeHall : AppNavRoute("OFFICE_HALL", "办事大厅",R.drawable.person_play)
     object Classmates : AppNavRoute("CLASSMATES", "同班同学",R.drawable.sensor_door)
     object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner)

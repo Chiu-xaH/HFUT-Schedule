@@ -10,13 +10,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -53,7 +51,6 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.component.screen.PartyPlace
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.control.ControlCenterScreen
@@ -85,6 +82,8 @@ import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationsScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.NotificationBoxScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebNavigationScreen
+import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomDetailScreen
+import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatScreen
@@ -400,6 +399,27 @@ fun MainHost(
                             this@composable,
                             navController
                         )
+                    }
+                    // 教室 二级界面
+                    composable(
+                        route = AppNavRoute.ClassroomDetail.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.ClassroomDetail.Args.entries)
+                    ) { backStackEntry ->
+                        val code = backStackEntry.arguments?.getString(AppNavRoute.ClassroomDetail.Args.CODE.argName) ?: (AppNavRoute.ClassroomDetail.Args.CODE.default as String)
+                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomDetail.Args.NAME.argName) ?: (AppNavRoute.ClassroomDetail.Args.NAME.default as String)
+
+                        ClassroomDetailScreen(
+                            networkVm,
+                            this@SharedTransitionLayout,
+                            this@composable,
+                            navController,
+                            code,
+                            name,
+                        )
+                    }
+                    // 教室状态
+                    composable(route = AppNavRoute.Classroom.route) {
+                        ClassroomScreen(networkVm,navController, this@SharedTransitionLayout, this@composable,)
                     }
                     // 法定假日
                     composable(route = AppNavRoute.Holiday.route,) {

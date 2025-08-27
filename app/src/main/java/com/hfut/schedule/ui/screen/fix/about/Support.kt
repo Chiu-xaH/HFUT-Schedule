@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -111,7 +111,7 @@ private fun CanSupportChip(title : String) = SupportChip(title,isSupported = tru
 @Composable
 private fun SupportItem(item : SupportItemBean) {
     val list = item.list
-    CustomCard(containerColor = cardNormalColor()) {
+    CustomCard(color = cardNormalColor()) {
         Column {
             TransplantListItem(
                 headlineContent = {

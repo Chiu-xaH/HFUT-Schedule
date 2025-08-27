@@ -14,11 +14,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -35,9 +34,7 @@ fun CoursesSearch(
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.CourseSearch.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin()

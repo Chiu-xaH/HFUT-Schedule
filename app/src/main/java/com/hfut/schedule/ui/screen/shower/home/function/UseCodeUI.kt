@@ -46,8 +46,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.ErrorUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -58,7 +58,7 @@ import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
 import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateAndSave

@@ -62,8 +62,8 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.LoadingLargeCard

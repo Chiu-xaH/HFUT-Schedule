@@ -28,12 +28,12 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.component.status.CenterScreen
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.status.ErrorUI
 import com.hfut.schedule.ui.component.status.StatusUI
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.style.align.CenterScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

@@ -1,79 +1,42 @@
 package com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom
 
-import android.content.Context
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.sys.showToast
+import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import dev.chrisbanes.haze.HazeState
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.navigateForTransition
+import com.xah.transition.component.iconElementShare
+import com.xah.uicommon.component.text.ScrollText
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun EmptyRoom(vm : NetWorkViewModel, ifSaved : Boolean, hazeState: HazeState){
-    var showBottomSheet_EmptyRoom by remember { mutableStateOf(false) }
-
+fun Classroom(
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope
+){
+    val route = remember { AppNavRoute.Classroom.route }
     TransplantListItem(
-        headlineContent = { Text(text = "空教室") },
+        headlineContent = { ScrollText(text = AppNavRoute.Classroom.label) },
         leadingContent = {
             Icon(
-                painterResource(R.drawable.meeting_room),
+                painterResource(AppNavRoute.Classroom.icon),
                 contentDescription = "Localized description",
+                modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope, route)
             )
         },
         modifier = Modifier.clickable {
-            showToast("暂时关闭，后续版本重构")
-//            if(ifSaved) refreshLogin()
-//            else {
-//                val token = prefs.getString("bearer","")
-//                showBottomSheet_EmptyRoom = true
-//                token?.let { vm.searchEmptyRoom("XC001", it) }
-//                token?.let { vm.searchEmptyRoom("XC002", it) }
-//                // view = "待开发"
-//            }
+            navController.navigateForTransition(AppNavRoute.Classroom,route)
         }
     )
-
-    if (showBottomSheet_EmptyRoom) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet_EmptyRoom = false
-            },
-            showBottomSheet = showBottomSheet_EmptyRoom,
-            hazeState = hazeState
-        ) {
-            Column() {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    emptyRoomUI(vm)
-                }
-                Spacer(modifier = Modifier.height(20.dp))
-            }
-        }
-    }
 }

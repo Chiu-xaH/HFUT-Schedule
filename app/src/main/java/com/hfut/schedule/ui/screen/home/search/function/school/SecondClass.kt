@@ -17,6 +17,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.transition.component.iconElementShare
+import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
@@ -30,11 +31,9 @@ fun SecondClass(
     val route = remember { AppNavRoute.SecondClass.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.SecondClass.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.SecondClass.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.SecondClass.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.SecondClass.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             showToast("正在开发")

@@ -19,7 +19,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.util.other.loadImage
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 
 @Composable

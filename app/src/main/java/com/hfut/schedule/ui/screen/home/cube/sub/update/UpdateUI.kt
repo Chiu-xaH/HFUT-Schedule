@@ -63,13 +63,13 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.removeDownload
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.status.LoadingUI
+import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
@@ -122,7 +122,7 @@ fun UpdateUI(vm : NetWorkViewModel) {
         }
     }
 
-    CustomCard(containerColor = MaterialTheme.colorScheme.errorContainer) {
+    CustomCard(color = MaterialTheme.colorScheme.errorContainer) {
         TransplantListItem(
             headlineContent = { Text(text = "最新版本") },
             supportingContent = { Text(text = "${AppVersion.getVersionName()} → ${version.version}") },
@@ -274,7 +274,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
         LoadingUI("正在校验与合并")
     } else {
         Spacer(Modifier.height(CARD_NORMAL_DP))
-        CustomCard( containerColor = MaterialTheme.colorScheme.surface) {
+        CustomCard( color = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
                 headlineContent = { Text(text = "增量更新至" +
                         patch.newVersion.let{ if (it == getUpdates().version) "最新版本" else (""+ it) }

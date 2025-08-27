@@ -22,7 +22,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,18 +42,17 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.CenterScreen
+import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -71,12 +69,10 @@ fun Exam(
     val route = remember { AppNavRoute.Exam.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Exam.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.Exam.label) },
 //        overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved)  {

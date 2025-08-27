@@ -1,8 +1,5 @@
 package com.hfut.schedule.ui.component.text
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,15 +12,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,28 +72,6 @@ fun HazeBottomSheetTopBar(
             singleLine,
             textModifier,
             rightContent
-        )
-    }
-}
-
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun SharedTopBar(
-    title: String,
-    key: String,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
-) {
-    with(sharedTransitionScope) {
-        Text(
-            title,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.sharedBounds(
-                rememberSharedContentState(key = key),
-                animatedVisibilityScope = animatedContentScope
-            ).padding(APP_HORIZONTAL_DP +1.dp),
-            fontSize = 22.sp,
         )
     }
 }

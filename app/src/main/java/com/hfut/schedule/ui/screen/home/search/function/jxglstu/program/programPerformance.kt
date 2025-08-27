@@ -23,7 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
@@ -47,7 +47,7 @@ import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -58,28 +58,25 @@ import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.LoadingScreen
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.containerShare
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.status.LoadingScreen
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.flow.first
 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -185,64 +182,11 @@ private fun ProgramPerformance(
                     val summary = item.completionSummary
                     val route = AppNavRoute.ProgramCompetitionDetail.withArgs(item.nameZh,index)
                     DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                        with(sharedTransitionScope) {
-                            AnimationCustomCard(
-                                index = index,
-                                containerColor = cardNormalColor(),
-                                modifier = containerShare(
-                                    animatedContentScope=animatedContentScope,
-                                    route=route,
-                                    roundShape = MaterialTheme.shapes.medium,
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    TransplantListItem(
-                                        headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
-                                        overlineContent = { Text(text = "已通过") },
-                                        modifier = Modifier.weight(.5f)
-                                    )
-                                    TransplantListItem(
-                                        headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
-                                        overlineContent = { Text(text = "未通过") },
-                                        modifier = Modifier.weight(.5f)
-                                    )
-                                }
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    TransplantListItem(
-                                        headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
-                                        overlineContent = { Text(text = "本学期在修") },
-                                        modifier = Modifier.weight(1f),
-                                        trailingContent = {
-                                            Button(
-                                                onClick = {
-                                                    navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
-                                                },
-                                            ) {
-                                                Text(text = "查看详情")
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            if(outCourse.isNotEmpty()) {
-                val summary = data!!.outerCompletionSummary
-                item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
-                item {
-                    val route = AppNavRoute.ProgramCompetitionDetail.withArgs("培养方案外课程",999)
-                    with(sharedTransitionScope) {
                         AnimationCustomCard(
-                            containerColor = mixedCardNormalColor(),
-                            modifier = containerShare(
+                            index = index,
+                            containerColor = cardNormalColor(),
+                            modifier = Modifier.containerShare(
+                                sharedTransitionScope,
                                 animatedContentScope=animatedContentScope,
                                 route=route,
                                 roundShape = MaterialTheme.shapes.medium,
@@ -282,6 +226,57 @@ private fun ProgramPerformance(
                                     }
                                 )
                             }
+                        }
+                    }
+                }
+            }
+            if(outCourse.isNotEmpty()) {
+                val summary = data!!.outerCompletionSummary
+                item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
+                item {
+                    val route = AppNavRoute.ProgramCompetitionDetail.withArgs("培养方案外课程",999)
+                    AnimationCustomCard(
+                        containerColor = mixedCardNormalColor(),
+                        modifier = Modifier.containerShare(
+                            sharedTransitionScope,
+                            animatedContentScope=animatedContentScope,
+                            route=route,
+                            roundShape = MaterialTheme.shapes.medium,
+                        )
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            TransplantListItem(
+                                headlineContent = { Text(text = "${summary.passedCourseNum} 门 ${summary.passedCredits} 学分") },
+                                overlineContent = { Text(text = "已通过") },
+                                modifier = Modifier.weight(.5f)
+                            )
+                            TransplantListItem(
+                                headlineContent = { Text(text = "${summary.failedCourseNum} 门 ${summary.failedCredits} 学分") },
+                                overlineContent = { Text(text = "未通过") },
+                                modifier = Modifier.weight(.5f)
+                            )
+                        }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            TransplantListItem(
+                                headlineContent = { Text(text = "${summary.takingCourseNum} 门 ${summary.takingCredits} 学分") },
+                                overlineContent = { Text(text = "本学期在修") },
+                                modifier = Modifier.weight(1f),
+                                trailingContent = {
+                                    Button(
+                                        onClick = {
+                                            navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                                        },
+                                    ) {
+                                        Text(text = "查看详情")
+                                    }
+                                }
+                            )
                         }
                     }
                 }

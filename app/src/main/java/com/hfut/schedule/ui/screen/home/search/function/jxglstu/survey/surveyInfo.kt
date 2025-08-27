@@ -38,7 +38,7 @@ import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -47,7 +47,7 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

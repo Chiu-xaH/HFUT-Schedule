@@ -7,7 +7,8 @@ data class TransitionBackgroundStyle (
     var motionBlur : Boolean = true,
     var level : TransitionLevel = TransitionLevel.NONE,
     var blurRadius : Dp = 20.dp,
-    var backgroundDark : Float = 0.4f,
+    var backgroundDark : Float = 0.25f,
     var scaleValue : Float = 0.875f,//0.825f,
-    val scaleDiffer : Float = 0.015f
+    val scaleDiffer : Float = 0.015f,
+    val backgroundDarkDiffer : Float = 0.15f
 )

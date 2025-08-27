@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.search.function.one.pay
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -28,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -44,7 +42,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -53,18 +51,17 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -80,11 +77,9 @@ fun Pay(
     val route = remember { AppNavRoute.Fee.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Fee.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.Fee.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Fee,route)
@@ -212,7 +207,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     }
 
     DividerTextExpandedWith(text = "缴费方式") {
-        CustomCard(containerColor = cardNormalColor()) {
+        CustomCard(color = cardNormalColor()) {
             TransplantListItem(
                 headlineContent = { Text(text = "提前在中国农业银行卡预存费用,自动扣取") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.credit_card), contentDescription = "")},

@@ -47,10 +47,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
-import com.hfut.schedule.logic.model.ScoreWithGPA
 import com.hfut.schedule.logic.model.ScoreWithGPALevel
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.scoreWithGPA
@@ -58,7 +56,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -68,21 +66,21 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.chart.RadarChart
-import com.hfut.schedule.ui.component.chart.RadarData
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.component.chart.RadarChart
+import com.xah.uicommon.component.chart.RadarData
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -395,7 +393,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
             }
         }
         DividerTextExpandedWith("其他信息") {
-            CustomCard(containerColor = cardNormalColor()) {
+            CustomCard(color = cardNormalColor()) {
                 Row {
                     TransplantListItem(
                         leadingContent = {
@@ -490,7 +488,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
 }
 @Composable
 fun GPAWithScore(index : Pair<Int, Int>? = null) {
-    CustomCard(containerColor = cardNormalColor()) {
+    CustomCard(color = cardNormalColor()) {
 //        var boldIndex =
 //            if(index?.second == scoreWithGPA.size - 1) {
 //                index.first
@@ -533,7 +531,7 @@ fun GPAWithScore(index : Pair<Int, Int>? = null) {
             }
         }
     }
-    CustomCard(containerColor = cardNormalColor()) {
+    CustomCard(color = cardNormalColor()) {
 //        var boldIndex =
 //             if(index?.second == ScoreGrade.entries.size - 1) {
 //                index.first

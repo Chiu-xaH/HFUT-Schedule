@@ -32,12 +32,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+
 val DIVIDER_TEXT_VERTICAL_PADDING = 9.dp
-//    10.dp - CARD_NORMAL_DP
-//    10.dp
 // 小标题
 @Composable
 fun DividerText(text: String, onClick: (() -> Unit?)? = null) {

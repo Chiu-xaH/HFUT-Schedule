@@ -38,19 +38,19 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
-import com.hfut.schedule.ui.component.text.BottomTip
+import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.pager.PagingController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.card.bill.CardRow
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -157,7 +157,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
     val bills = data[Infonum]
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)
-        CustomCard( containerColor = cardNormalColor()){
+        CustomCard( color = cardNormalColor()){
             TransplantListItem(
                 headlineContent = { Text( bills.resume.substringBefore("-") ) },
                 leadingContent = {

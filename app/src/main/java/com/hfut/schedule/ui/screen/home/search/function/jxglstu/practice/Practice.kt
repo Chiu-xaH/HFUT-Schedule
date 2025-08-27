@@ -22,6 +22,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +31,7 @@ fun Practice(ifSaved : Boolean){
     var showBottomSheet by remember { mutableStateOf(false) }
 
     TransplantListItem(
-        headlineContent = { Text(text = "实习") },
+        headlineContent = { ScrollText(text = "实习") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.work), contentDescription = "") },
         modifier = Modifier.clickable {
             //if(ifSaved) Login() else

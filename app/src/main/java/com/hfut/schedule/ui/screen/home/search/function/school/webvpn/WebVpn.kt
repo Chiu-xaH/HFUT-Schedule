@@ -18,6 +18,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
@@ -31,11 +32,9 @@ fun WebVpn(
     val route = remember { AppNavRoute.WebVpn.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.WebVpn.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.WebVpn.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.WebVpn,route)

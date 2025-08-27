@@ -27,8 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
@@ -45,7 +43,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -79,7 +76,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -89,9 +86,9 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.CenterScreen
+import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.status.LoadingUI
+import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
@@ -102,21 +99,18 @@ import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiTo
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.screen.home.updateCourses
-import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -160,20 +154,18 @@ fun SelectCourseScreen(
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            with(sharedTransitionScope) {
-                                FilledTonalButton(onClick = {
-                                    navController.navigateForTransition(
-                                        AppNavRoute.WebView,
-                                        AppNavRoute.WebView.withArgs(
+                            FilledTonalButton(onClick = {
+                                navController.navigateForTransition(
+                                    AppNavRoute.WebView,
+                                    AppNavRoute.WebView.withArgs(
                                         url = url,
                                         title = "教务系统",
                                         cookies = cookie
                                     ))
-                                },
-                                    modifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url))
-                                ) {
-                                    Text(text = "冲突预览")
-                                }
+                            },
+                                modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url))
+                            ) {
+                                Text(text = "冲突预览")
                             }
                             Spacer(modifier = Modifier.width(CARD_NORMAL_DP))
                             FilledTonalButton(onClick = {

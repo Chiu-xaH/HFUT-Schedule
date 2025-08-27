@@ -43,7 +43,7 @@ import com.hfut.schedule.logic.enumeration.ShowerBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
+import com.xah.uicommon.style.padding.NavigationBarSpacer
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
@@ -55,7 +55,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource

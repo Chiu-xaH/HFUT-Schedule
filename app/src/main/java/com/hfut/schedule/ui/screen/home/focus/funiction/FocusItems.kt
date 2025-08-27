@@ -49,11 +49,11 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.NOT_S
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
-import com.hfut.schedule.ui.component.text.BottomTip
+import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.icon.ScheduleIcons
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
@@ -63,7 +63,7 @@ import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

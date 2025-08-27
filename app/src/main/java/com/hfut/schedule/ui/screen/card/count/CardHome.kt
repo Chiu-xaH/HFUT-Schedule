@@ -38,7 +38,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -48,7 +48,7 @@ import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
@@ -268,7 +268,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                 }
             }
             DividerTextExpandedWith("日") {
-                CustomCard(containerColor = cardNormalColor()) {
+                CustomCard(color = cardNormalColor()) {
                     if(today == 0.0) {
                         TransplantListItem(
                             overlineContent = {
@@ -368,7 +368,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                 }
             }
             DividerTextExpandedWith("月") {
-                CustomCard(containerColor = cardNormalColor()) {
+                CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         overlineContent = {
                             Text("本月")

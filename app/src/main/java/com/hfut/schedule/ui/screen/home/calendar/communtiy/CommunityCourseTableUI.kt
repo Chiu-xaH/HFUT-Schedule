@@ -54,8 +54,8 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
  
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel

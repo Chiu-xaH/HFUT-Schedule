@@ -54,9 +54,9 @@ import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.component.screen.CustomTabRow
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.padding.NavigationBarSpacer
+import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
@@ -64,7 +64,7 @@ import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.style.special.transitionBackground2
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
@@ -121,7 +121,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         }
 
         Scaffold(
-            modifier = transitionBackground2(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.transitionBackground2(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     MediumTopAppBar(

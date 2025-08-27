@@ -74,7 +74,7 @@ fun apiCheck() : Boolean {
 @Composable
 fun PartOne(navController: NavController) {
     CustomCard (
-        containerColor = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.surface
     ){
         TransplantListItem(
             headlineContent = { Text(text = "外观与效果") },
@@ -187,7 +187,7 @@ fun HomeSettingScreen(navController: NavController,
                 Spacer(Modifier.height(CARD_NORMAL_DP))
                 PaddingHorizontalDivider(isDashed = true)
                 Spacer(Modifier.height(CARD_NORMAL_DP))
-                CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+                CustomCard(color = MaterialTheme.colorScheme.surface) {
                     GithubDownloadUI()
                 }
             }
@@ -259,7 +259,7 @@ fun AlwaysItem(hazeState: HazeState,showUpdate : Boolean) {
         }
     }
     CustomCard(
-        containerColor = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.surface
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "刷新登录状态") },

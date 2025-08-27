@@ -42,7 +42,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.SEARCH_DEFAULT_STR
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -74,7 +74,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.holiday.Holiday
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationsCenter
 import com.hfut.schedule.ui.screen.home.search.function.my.supabase.Supabase
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebUI
-import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.EmptyRoom
+import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.Classroom
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.Mail
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
@@ -94,7 +94,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Tea
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -188,7 +188,7 @@ fun SearchScreen(
                 SearchAppBean(21,"报修 维修 后勤", { Repair(hazeState) }),
                 SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,vm,navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.NextCourse.receiveRoute()),
                 SearchAppBean(23,"热水机 趣智校园", { HotWater() }),
-                SearchAppBean(24,"${AppNavRoute.EmptyRoom.label}", { EmptyRoom(vm, ifSaved,hazeState) },AppNavRoute.EmptyRoom.route),
+                SearchAppBean(24,"${AppNavRoute.Classroom.label} 空教室", { Classroom(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.Classroom.route),
                 SearchAppBean(25,"体育 云运动 乐跑 校园跑 体测 体育测试 体检", { LePaoYun(hazeState) }),
                 SearchAppBean(26,"${AppNavRoute.TimeTable.label} 校历", { WorkAndRest(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.TimeTable.route),
                 SearchAppBean(27,"学信网", { XueXin(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL)),
@@ -247,7 +247,7 @@ fun SearchScreen(
             }
             with(sharedTransitionScope) {
                 SmallCard(
-                    modifier = (item.route?.let { containerShare(paddingModifier,animatedContentScope,it) } ?: paddingModifier),
+                    modifier = (item.route?.let { paddingModifier.containerShare(sharedTransitionScope,animatedContentScope,it) } ?: paddingModifier),
                     color = mixedCardNormalColor()
                 ) {
                     if(index % 2 == 0) {

@@ -1,5 +1,6 @@
-package com.hfut.schedule.ui.component.text
+package com.xah.uicommon.component.text
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
@@ -19,6 +20,7 @@ import androidx.compose.ui.platform.LocalDensity
 import kotlin.math.roundToInt
 
 //滚轮 组件
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun <T> WheelPicker(

@@ -22,6 +22,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 @Composable
@@ -29,7 +30,7 @@ fun Repair(hazeState : HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
 
     TransplantListItem(
-        headlineContent = { Text(text = "后勤报修") },
+        headlineContent = { ScrollText(text = "后勤报修") },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {
             showBottomSheet = true

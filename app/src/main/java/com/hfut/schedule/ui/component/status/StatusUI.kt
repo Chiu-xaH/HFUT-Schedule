@@ -25,7 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 @Composable
 fun EmptyUI(text: String = "结果为空") = StatusUI(R.drawable.upcoming,text)
@@ -37,14 +37,6 @@ fun SuccessUI() = StatusUI2(Icons.Filled.Check,"成功")
 fun ErrorUI(string: String) = StatusUI2(Icons.Filled.Close,string)
 @Composable
 fun PrepareSearchUI() = StatusUI(R.drawable.search,"开始搜索")
-@Composable
-fun CenterScreen(content : @Composable () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(modifier = Modifier.align(Alignment.Center)) {
-            content()
-        }
-    }
-}
 
 @Composable
 fun StatusUI(iconId : Int, text : String, padding : Dp = APP_HORIZONTAL_DP) {

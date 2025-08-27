@@ -4,29 +4,24 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.App.MyApplication
@@ -34,27 +29,21 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.GlobalUIStateHolder.isSupabaseRegistering
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 
@@ -66,7 +55,7 @@ fun Mail(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     TransplantListItem(
-        headlineContent = { Text(text = "校园邮箱") },
+        headlineContent = { ScrollText(text = "校园邮箱") },
 //        overlineContent = { ScrollText(text = MyApplication.EMAIL) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {
@@ -79,7 +68,7 @@ fun Mail(
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             autoShape = false,
-            isFullExpand = false,
+            isFullExpand = true,
             showBottomSheet = showBottomSheet
         ) {
             Column{
@@ -114,12 +103,12 @@ fun MailUI(vm: NetWorkViewModel) {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                     LargeButton(
                         onClick = {
-                            response?.data.let {
+                            response.data.let {
                                 if(it != null) {
                                     used = !used
                                     Starter.startWebView(it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
                                 } else {
-                                    showToast( "错误 " + response?.msg)
+                                    showToast( "错误 " + response.msg)
                                 }
                             }
                         },
@@ -130,12 +119,12 @@ fun MailUI(vm: NetWorkViewModel) {
                     Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
                     LargeButton (
                         onClick = {
-                            response?.data.let {
+                            response.data.let {
                                 if(it != null) {
                                     Starter.startWebUrl(it)
                                     used = !used
                                 } else {
-                                    showToast( "错误 " + response?.msg)
+                                    showToast( "错误 " + response.msg)
                                 }
                             }
                         },
@@ -156,6 +145,17 @@ fun MailUI(vm: NetWorkViewModel) {
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.net),null)
+            }
+        )
+        CardListItem(
+            headlineContent = {
+                Text("若为首次使用，请前往信息门户(点击此项)进入邮箱，进行激活")
+            },
+            modifier = Modifier.clickable {
+                Starter.startWebUrl(MyApplication.ONE_URL)
+            },
+            leadingContent = {
+                Icon(Icons.Default.ArrowForward,null)
             }
         )
         if(isSupabaseRegistering.value) {

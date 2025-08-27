@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component
+package com.hfut.schedule.ui.component.screen.pager
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

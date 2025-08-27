@@ -60,9 +60,9 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.text.BottomTip
+import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.camera.CameraScan
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -70,7 +70,7 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.status.StatusUI2
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.AppAnimationManager

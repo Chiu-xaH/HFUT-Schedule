@@ -27,6 +27,7 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -39,11 +40,10 @@ fun PersonUI(
     val route = remember { AppNavRoute.Person.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Person.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.Person.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.Person.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.Person.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Person,route)

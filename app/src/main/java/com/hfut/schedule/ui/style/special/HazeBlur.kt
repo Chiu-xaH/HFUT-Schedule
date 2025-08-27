@@ -50,7 +50,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
 import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -251,12 +251,12 @@ fun CustomBottomSheet(
 
 // isExpanded=true时，下层背景进入高斯模糊，并用黑色压暗，伴随缩放，上层背景展开
 @Composable
-fun transitionBackground2(isExpanded : Boolean) : Modifier {
+fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
     // 👍 NONE
     if(transition == TransitionLevel.NONE.code) {
-        return Modifier
+        return this
     }
 
     // 蒙版
@@ -264,14 +264,18 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
         targetValue = if(isExpanded) TransitionState.transitionBackgroundStyle.backgroundDark else 0f,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
     )
-    if(transition >= TransitionLevel.LOW.code)
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black.copy(backgroundColor))
-            .zIndex(2f))
+
+    val darkModifier = this.let {
+        if(transition >= TransitionLevel.LOW.code) {
+            it.drawWithContent {
+                drawContent()
+                drawRect(Color.Black.copy(alpha = backgroundColor))
+            }
+        } else it
+    }
     // 👍 LOW
     if(transition == TransitionLevel.LOW.code) {
-        return Modifier
+        return darkModifier
     }
 
 
@@ -298,7 +302,7 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
 
     // 👍 MEDIUM
     if(transition == TransitionLevel.MEDIUM.code) {
-        return Modifier.scale(scale.value)
+        return darkModifier.scale(scale.value)
     }
 
     // 稍微晚于运动结束
@@ -308,7 +312,7 @@ fun transitionBackground2(isExpanded : Boolean) : Modifier {
     )
 
     // 👍 HIGH
-    return Modifier
+    return darkModifier
         .blur(blurSize)
         .scale(scale.value)
 }

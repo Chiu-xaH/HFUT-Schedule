@@ -95,7 +95,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardBottomButtons
@@ -109,18 +109,18 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
-import com.hfut.schedule.ui.component.status.LoadingUI
-import com.hfut.schedule.ui.component.text.BottomTip
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -578,7 +578,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
                 CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
                 Spacer(Modifier.height(5.dp ))
-                CustomCard(containerColor = cardNormalColor()) {
+                CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
                         headlineContent = { Text((if(isScheduleType)"开始 ${date.first + " " + time.first}\n" else "") + "结束 ${date.second + " " + time.second}") },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
@@ -673,7 +673,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     }
 
                     Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*2f))
-                    CustomCard(containerColor = cardNormalColor()) {
+                    CustomCard(color = cardNormalColor()) {
                         TransplantListItem(
                             headlineContent = { Text("适用范围" ) },
                             supportingContent = {

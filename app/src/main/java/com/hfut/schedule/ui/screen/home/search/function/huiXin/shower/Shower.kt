@@ -20,6 +20,7 @@ import com.hfut.schedule.ui.component.icon.RotatingIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +42,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
 
 
     TransplantListItem(
-        headlineContent = { Text(text = "洗浴") },
+        headlineContent = { ScrollText(text = "洗浴") },
         leadingContent = {
             if(loading) {
                 LoadingIcon()

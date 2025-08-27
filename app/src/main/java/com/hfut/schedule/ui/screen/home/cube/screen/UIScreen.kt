@@ -70,8 +70,7 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.slider.CustomSlider
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -85,13 +84,14 @@ import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
-import com.hfut.schedule.ui.style.align.ColumnVertical
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.uicommon.component.slider.CustomSlider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -187,7 +187,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             AppAnimationManager.updateAnimationSpeed()
         }
         LaunchedEffect(transition) {
-            TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.LOW
+            TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
         }
         LaunchedEffect(motionBlur) {
             TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
@@ -253,7 +253,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         }
 
         DividerTextExpandedWith("深浅色") {
-            CustomCard(containerColor = backgroundColor) {
+            CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "纯黑深色背景") },
                     supportingContent = { Text(text = "OLED屏使用此模式在深色模式时可获得不发光的纯黑背景") },
@@ -315,7 +315,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("主题色") {
-            CustomCard(containerColor = backgroundColor) {
+            CustomCard(color = backgroundColor) {
                 RowHorizontal(modifier = Modifier.fillMaxWidth().padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP-10.dp)) {
                     FilledTonalIconButton(
                         onClick = { showToast("Primary") },
@@ -460,7 +460,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("动效") {
-            CustomCard(containerColor = backgroundColor) {
+            CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Column {
@@ -576,7 +576,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
 
         DividerTextExpandedWith("背景") {
             val useCustomBackground = customBackground != ""
-            CustomCard(containerColor = backgroundColor) {
+            CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Text("课程表背景图片")
@@ -616,6 +616,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         },
                         modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                         valueRange = 0f..1f,
+                        showProcessText = true
                     )
                 }
             }

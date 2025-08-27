@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -45,18 +46,24 @@ fun Modifier.transitionBackground(
     val speed = TransitionState.curveStyle.speedMs
 
     val backgroundColor by animateFloatAsState(
-        targetValue = if(isExpanded) backgroundDark else 0f,
+        targetValue = if(isExpanded) {
+            if(level.code == TransitionLevel.HIGH.code) backgroundDark else backgroundDark+backgroundDarkDiffer
+        } else 0f,
         animationSpec = tween(speed, easing = FastOutSlowInEasing),
     )
     // 蒙版 遮罩
-    if(!transplantBackground && level.code >= TransitionLevel.LOW.code)
-        Box(modifier = Modifier.fillMaxSize().background(
-            Color.Black.copy( if(level.code >= TransitionLevel.MEDIUM.code) backgroundColor else backgroundColor*0.75f)
-        ).zIndex(1f))
+    val darkModifier = this@transitionBackground.let {
+        if(!transplantBackground && level.code >= TransitionLevel.LOW.code) {
+            it.drawWithContent {
+                drawContent()
+                drawRect(Color.Black.copy(alpha = backgroundColor))
+            }
+        } else it
+    }
 
     //👍 LOW
     if(level == TransitionLevel.LOW) {
-        return this@transitionBackground
+        return darkModifier
     }
 
     val scale = animateFloatAsState( //.875f
@@ -68,7 +75,7 @@ fun Modifier.transitionBackground(
     )
     //👍 MEDIUM
     if(level == TransitionLevel.MEDIUM) {
-        return this@transitionBackground.scale(scale.value)
+        return darkModifier.scale(scale.value)
     }
 
     // 稍微晚于运动结束
@@ -79,5 +86,5 @@ fun Modifier.transitionBackground(
     )
 
     //👍 HIGH
-    return this@transitionBackground.blur(blurSize).scale(scale.value)
+    return darkModifier.blur(blurSize).scale(scale.value)
 }

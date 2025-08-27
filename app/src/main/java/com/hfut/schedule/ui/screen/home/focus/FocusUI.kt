@@ -21,7 +21,6 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +41,6 @@ import com.hfut.schedule.logic.util.network.ParseJsons.getSchedule
 import com.hfut.schedule.logic.util.network.toTimestampWithOutT
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
@@ -65,7 +63,7 @@ import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

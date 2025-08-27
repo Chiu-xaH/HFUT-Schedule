@@ -18,6 +18,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -29,11 +30,9 @@ fun News(
     val route = remember { AppNavRoute.News.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.News.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.News.label) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.News.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.News.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.News,route)

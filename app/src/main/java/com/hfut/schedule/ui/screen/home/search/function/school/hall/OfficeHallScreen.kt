@@ -46,14 +46,14 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.screen.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.pager.PagingController
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import dev.chrisbanes.haze.hazeSource
@@ -158,7 +158,7 @@ fun OfficeHallScreen(
                                 with(item) {
                                     val needLogin = serviceMode == OfficeHallType.HANDLE.serviceMode
                                     CustomCard (
-                                        containerColor = cardNormalColor(),
+                                        color = cardNormalColor(),
                                         modifier = Modifier.clickable {
                                             openDetail(item,needLogin)
                                         }

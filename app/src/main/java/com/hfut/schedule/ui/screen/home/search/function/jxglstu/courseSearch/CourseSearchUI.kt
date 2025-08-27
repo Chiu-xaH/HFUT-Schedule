@@ -10,7 +10,6 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +31,6 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,8 +53,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -69,8 +66,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Cour
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -168,13 +164,11 @@ fun CourseSearchScreen(
                                 },
                                 enabled = uiState is UiState.Success && !canNotUse
                             ) {
-                                with(sharedTransitionScope) {
-                                    Icon(
-                                        painterResource(R.drawable.calendar),
-                                        null,
-                                        modifier = iconElementShare(animatedContentScope=animatedContentScope, route = AppNavRoute.CourseSearchCalendar.route)
-                                    )
-                                }
+                                Icon(
+                                    painterResource(R.drawable.calendar),
+                                    null,
+                                    modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.CourseSearchCalendar.route)
+                                )
                             }
                             AnimatedVisibility(
                                 visible = !showSearch,

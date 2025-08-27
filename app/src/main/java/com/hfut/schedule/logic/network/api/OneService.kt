@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.logic.util.network.Encrypt.generateRandomHexString
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -30,17 +29,18 @@ interface OneService {
     // {01}屯溪路校区  {02}翡翠湖  {03}宣城
     //获取JSON，各个楼建筑的building_code，再用building_code去查空教室
     @GET ("api/operation/emptyClass/build")
-    fun selectBuilding(@Query("campus_code") campusID : String,
-        @Header("Authorization") Authorization : String) : Call<ResponseBody>
+    fun getBuildings(@Query("campus_code") campusID : String,
+        @Header("Authorization") authorization : String) : Call<ResponseBody>
 
     //api/operation/emptyClass/room?building_code=XC001&current=1
     //空教室
     @GET ("api/operation/emptyClass/room")
-    fun searchEmptyRoom(
-        @Query("building_code") building_code : String,
-        @Header("Authorization") Authorization : String,
+    fun getClassroomInfo(
+        @Query("building_code") buildingCode : String,
+        @Header("Authorization") authorization : String,
         @Query("current") page : Int = 1,
-        @Query("size") size : Int = 30) : Call<ResponseBody>
+        @Query("size") size : Int = 1000
+    ) : Call<ResponseBody>
     //欠交学费
     @GET("api/leaver/third/finance/arrearsForPortal?type=1")
     fun getPay(@Query("xh") username : String?) : Call<ResponseBody>

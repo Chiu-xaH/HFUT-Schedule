@@ -38,14 +38,17 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.Party
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalBottomDivider
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.screen.login.arguments
 
@@ -123,49 +126,56 @@ fun About(vm : NetWorkViewModel) {
     val userCount by vm.supabaseUserCountResp.state.collectAsState()
     val activity = LocalActivity.current
     val todayVisitCount by vm.supabaseTodayVisitResp.state.collectAsState()
-
+    val scrollState = rememberScrollState()
     Box() {
-
         Scaffold(
             containerColor = Color.Transparent,
             topBar = {
-                HazeBottomSheetTopBar("关于") {
-                    FilledTonalButton(
-                        enabled = userCount is UiState.Success && todayVisitCount is UiState.Success,
-                        onClick = { }
-                    ) {
-                        Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""} | 总用户 ${(userCount as? UiState.Success)?.data ?: ""}")
+                Column {
+                    HazeBottomSheetTopBar("关于") {
+                        FilledTonalButton(
+                            enabled = todayVisitCount is UiState.Success,
+                            onClick = { }
+                        ) {
+                            Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
+                        }
                     }
+                    ScrollHorizontalTopDivider(scrollState)
                 }
             },
             bottomBar = {
-                Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
-                    Button(
-                        onClick = { Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        Text("Stars ⭐ $starsNum")
-                    }
+                Column {
+                    ScrollHorizontalBottomDivider(scrollState)
+                    Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
+                        Button(
+                            onClick = { Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
+                        ) {
+                            Text("Github ⭐ $starsNum")
+                        }
 
-                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                    FilledTonalButton(
-                        onClick = { Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest") },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        Text("Github")
+                        Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
+                        FilledTonalButton(
+                            onClick = {},
+                            enabled = userCount is UiState.Success,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
+                        ) {
+                            Text("总用户 ${(userCount as? UiState.Success)?.data ?: ""}")
+                        }
                     }
                 }
             },
         ) { innerPadding ->
             Column(modifier = Modifier
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState())) {
+                .verticalScroll(scrollState)) {
                 DividerTextExpandedWith("开发者") {
-                    TransplantListItem(
+                    CardListItem(
+                        color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.clickable {
                             Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
                         },
@@ -186,11 +196,10 @@ fun About(vm : NetWorkViewModel) {
                             }
                         },
                     )
-
                 }
 
                 DividerTextExpandedWith("构建") {
-                    CustomCard (containerColor = MaterialTheme.colorScheme.surface){
+                    CustomCard (color = MaterialTheme.colorScheme.surface){
                         TransplantListItem(
                             headlineContent = { Text("Kotlin/Java,C") },
                             overlineContent = { Text("语言") }
@@ -213,7 +222,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("开源引用") {
-                    CustomCard (containerColor = MaterialTheme.colorScheme.surface){
+                    CustomCard (color = MaterialTheme.colorScheme.surface){
                         for(index in openSourceProjects.indices step 2) {
                             Row {
                                 TransplantListItem(
@@ -239,7 +248,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("用户协议") {
-                    CustomCard (containerColor = MaterialTheme.colorScheme.surface) {
+                    CustomCard (color = MaterialTheme.colorScheme.surface) {
                         for(index in arguments.indices) {
                             val item = arguments[index]
                             TransplantListItem(
@@ -263,7 +272,7 @@ fun About(vm : NetWorkViewModel) {
                 }
 
                 DividerTextExpandedWith("创作背景") {
-                    CustomCard (containerColor = MaterialTheme.colorScheme.surface) {
+                    CustomCard (color = MaterialTheme.colorScheme.surface) {
                         for(i in backgroundArticle.indices) {
                             TransplantListItem(
                                 headlineContent = {

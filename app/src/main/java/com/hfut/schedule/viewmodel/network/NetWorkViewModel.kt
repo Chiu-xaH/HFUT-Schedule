@@ -76,7 +76,6 @@ import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseBookResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.logic.model.jxglstu.DatumBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.MyApplyResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramBean
@@ -90,11 +89,14 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferPostResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferResponse
-import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.model.one.BorrowBooksResponse
+import com.hfut.schedule.logic.model.one.BuildingBean
+import com.hfut.schedule.logic.model.one.BuildingResponse
+import com.hfut.schedule.logic.model.one.ClassroomBean
+import com.hfut.schedule.logic.model.one.ClassroomResponse
 import com.hfut.schedule.logic.model.one.SubBooksResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
@@ -154,6 +156,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGr
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
@@ -1501,6 +1504,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                     if (data.msg == "success") {
                         token.value = data.data.access_token
                         saveString("bearer", data.data.access_token)
+                        showToast("信息门户(邮箱,教室)登陆成功")
                     }
                 } catch (e : Exception) {
                     e.printStackTrace()
@@ -1554,20 +1558,40 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         })
     }
 
-    fun searchEmptyRoom(buildingCode : String, token : String)  {
-
-        val call = one.searchEmptyRoom(buildingCode, "Bearer $token")
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("emptyjson", response.body()?.string())
+    val buildingsResponse = StateHolder<Pair<CampusDetail,List<BuildingBean>>>()
+    suspend fun getBuildings(campus : CampusDetail,token : String)  = launchRequestSimple(
+        holder = buildingsResponse,
+        request = {
+            val code = when(campus) {
+                CampusDetail.XC -> "03"
+                CampusDetail.FCH -> "02"
+                CampusDetail.TXL -> "01"
             }
+            one.getBuildings(code, "Bearer $token").awaitResponse()
+        },
+        transformSuccess = { _,json -> parseBuildings(campus,json) }
+    )
+    private fun parseBuildings(campus: CampusDetail,result: String) : Pair<CampusDetail, List<BuildingBean>> = try {
+        if(result.contains("success"))
+            Pair(campus,Gson().fromJson(result, BuildingResponse::class.java).data)
+        else
+            throw Exception(result)
+    } catch (e: Exception) { throw e }
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    val classroomResponse = StateHolder<List<ClassroomBean>>()
+    suspend fun getClassroomInfo(code : String,token : String)  = launchRequestSimple(
+        holder = classroomResponse,
+        request = { one.getClassroomInfo(code, "Bearer $token").awaitResponse() },
+        transformSuccess = { _,json -> parseClassroom(json) }
+    )
+    private fun parseClassroom(result: String) : List<ClassroomBean> = try {
+        if(result.contains("success"))
+            Gson().fromJson(result, ClassroomResponse::class.java).data.records
+        else
+            throw Exception(result)
+    } catch (e: Exception) { throw e }
 
-    val mailData = StateHolder<MailResponse?>()
+    val mailData = StateHolder<MailResponse>()
     suspend fun getMailURL(token : String)  = launchRequestSimple(
         holder = mailData,
         request = {
@@ -1579,7 +1603,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         },
         transformSuccess = { _,json -> parseMailUrl(json) }
     )
-    private fun parseMailUrl(result: String) : MailResponse? = try {
+    private fun parseMailUrl(result: String) : MailResponse = try {
         if(result.contains("success"))
             Gson().fromJson(result,MailResponse::class.java)
         else

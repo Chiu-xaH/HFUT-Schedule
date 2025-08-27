@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -35,25 +34,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -116,20 +111,19 @@ fun UseAgreementScreen(
                 val height = MaterialTheme.typography.headlineMedium.lineHeight.value.dp
                 Spacer(Modifier.height(height/2))
                 Row(modifier = Modifier.align(Alignment.End)) {
-                    with(sharedTransitionScope) {
-                        Icon(
-                            painterResource(R.drawable.partner_exchange),
-                            null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = iconElementShare(
-                                modifier = Modifier
-                                    .padding(end = APP_HORIZONTAL_DP*2)
-                                    .size(height),
-                                animatedContentScope = animatedContentScope,
-                                route = AppNavRoute.UseAgreement.route
-                            )
+                    Icon(
+                        painterResource(R.drawable.partner_exchange),
+                        null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier =  Modifier
+                            .padding(end = APP_HORIZONTAL_DP*2)
+                            .size(height)
+                            .iconElementShare(
+                                sharedTransitionScope,
+                            animatedContentScope = animatedContentScope,
+                            route = AppNavRoute.UseAgreement.route
                         )
-                    }
+                    )
                 }
                 Row(modifier = Modifier
                     .padding(APP_HORIZONTAL_DP)

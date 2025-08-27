@@ -24,6 +24,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -37,11 +38,9 @@ fun IETP(
     val icon = remember { R.drawable.groups }
     val title = remember { "大创系统" }
     TransplantListItem(
-        headlineContent = { Text(text = title) },
+        headlineContent = { ScrollText(text = title) },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(

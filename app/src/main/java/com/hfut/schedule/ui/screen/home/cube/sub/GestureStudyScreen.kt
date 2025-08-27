@@ -51,20 +51,19 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.divider.ScrollHorizontalDivider
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.login.isAnonymity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.allRouteStack
@@ -126,7 +125,7 @@ fun GestureStudyScreen(
                 topBar = {
                     Column {
                         HazeBottomSheetTopBar("标题")
-                        ScrollHorizontalDivider(state)
+                        ScrollHorizontalTopDivider(state)
                     }
                 },
             ) { innerPadding ->
@@ -194,7 +193,7 @@ fun GestureStudyScreen(
         .scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("顶栏及启动台") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
@@ -222,7 +221,7 @@ fun GestureStudyScreen(
                     }
                 )
             }
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("标题的左侧图标") },
                     supportingContent = {
@@ -244,7 +243,7 @@ fun GestureStudyScreen(
                     }
                 )
             }
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 MediumTopAppBar(
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
@@ -272,7 +271,7 @@ fun GestureStudyScreen(
                     }
                 )
             }
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("折叠") },
                     supportingContent = {
@@ -289,7 +288,7 @@ fun GestureStudyScreen(
             }
         }
         DividerTextExpandedWith("小标题") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 DividerTextExpandedWith("小标题 1") {
                     CardListItem(
                         headlineContent = { Text("内容1")},
@@ -308,7 +307,7 @@ fun GestureStudyScreen(
                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 }
             }
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("小标题") },
                     supportingContent = {
@@ -319,7 +318,7 @@ fun GestureStudyScreen(
 
         }
         DividerTextExpandedWith("预测式返回") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 RowHorizontal(modifier = Modifier.fillMaxWidth().padding(vertical = APP_HORIZONTAL_DP)) {
                     Box(modifier = Modifier
                         .size(100.dp)
@@ -358,7 +357,7 @@ fun GestureStudyScreen(
                     Spacer(Modifier.width(APP_HORIZONTAL_DP))
                 }
             }
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("现在你可以作出返回手势，但不要松手") },
                     supportingContent = {
@@ -369,7 +368,7 @@ fun GestureStudyScreen(
 
         }
         DividerTextExpandedWith("上推窗口") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("全屏上推窗口") },
                     supportingContent = {
@@ -396,7 +395,7 @@ fun GestureStudyScreen(
                     }
                 )
             }
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("全屏上推窗口的收起") },
                     supportingContent = {

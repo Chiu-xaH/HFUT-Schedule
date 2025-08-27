@@ -2,10 +2,8 @@ package com.hfut.schedule.ui.util
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 
@@ -42,7 +40,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(21,"报修",R.drawable.build),
         SearchAppBeanLite(22, AppNavRoute.NextCourse.label, AppNavRoute.NextCourse.icon),
         SearchAppBeanLite(23,"热水机",R.drawable.water_voc),
-        SearchAppBeanLite(24, AppNavRoute.EmptyRoom.label,AppNavRoute.EmptyRoom.icon),
+        SearchAppBeanLite(24, AppNavRoute.Classroom.label,AppNavRoute.Classroom.icon),
         SearchAppBeanLite(25,"体育",R.drawable.directions_run),
         SearchAppBeanLite(26, AppNavRoute.TimeTable.label, AppNavRoute.TimeTable.icon),
         SearchAppBeanLite(27,"学信网", R.drawable.school),

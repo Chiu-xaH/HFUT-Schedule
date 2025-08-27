@@ -18,7 +18,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
@@ -38,8 +38,8 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     when(getCampus()) {
         Campus.HEFEI -> {
             TransplantListItem(
-                headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text = "登录") },
-                overlineContent = { if(!card) ScrollText(text = "-- MB") else Text(text = "校园网")},
+                headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text = "登录") },
+                overlineContent = { if(!card) ScrollText(text = "-- MB") else ScrollText(text = "校园网")},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",
@@ -63,10 +63,10 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * maxFlow)) * 100,2)
 
             TransplantListItem(
-                headlineContent = { if(!card)Text(text = "校园网") else ScrollText(text =
+                headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text =
                     if(showPercent) "${precent}%" else "${str} GB"
                 ) },
-                overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else Text(text = "校园网")},
+                overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",

@@ -78,7 +78,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -86,17 +86,17 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.status.LoadingUI
+import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.color.topBarTransplantColor
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
@@ -267,14 +267,12 @@ fun LoginScreen(
                         IconButton(onClick = {
                             navController.navigateForTransition(AppNavRoute.Scan, route, transplantBackground = true)
                         }) {
-                            with(sharedTransitionScope) {
-                                Icon(
-                                    painterResource(id = R.drawable.qr_code_scanner),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = iconElementShare(animatedContentScope=animatedContentScope, route = route)
-                                )
-                            }
+                            Icon(
+                                painterResource(id = R.drawable.qr_code_scanner),
+                                contentDescription = "",
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = route)
+                            )
                         }
                         IconButton(onClick = {
                             Starter.startFix()
@@ -301,7 +299,7 @@ fun LoginScreen(
                     modifier = Modifier
                         .navigationBarsPadding()
                         .padding(vertical = APP_HORIZONTAL_DP),
-                    containerColor = cardNormalColor(),
+                    color = cardNormalColor(),
                     shape = MaterialTheme.shapes.large,
                 ) {
                     if(username.startsWith(DateTimeManager.Date_yyyy)) {
@@ -435,7 +433,7 @@ fun TwoTextField(
         InnerPaddingHeight(innerPadding,true)
 
         CustomCard(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer.copy(.75f)
+            color = MaterialTheme.colorScheme.surfaceContainer.copy(.75f)
         ) {
             Column (modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
 
@@ -578,24 +576,22 @@ fun TwoTextField(
                         icon = R.drawable.login
                     )
                     Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                    with(sharedTransitionScope) {
-                        LargeButton(
-                            onClick = {
-                                scope.launch {
-                                    DataStoreManager.saveFastStart(true)
-                                    Starter.goToMain()
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(.5f),
-                            text = "游客",
-                            icon = R.drawable.partner_exchange,
-                            iconModifier = iconElementShare(animatedContentScope=animatedContentScope, route = AppNavRoute.UseAgreement.route),
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                    }
+                    LargeButton(
+                        onClick = {
+                            scope.launch {
+                                DataStoreManager.saveFastStart(true)
+                                Starter.goToMain()
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        text = "游客",
+                        icon = R.drawable.partner_exchange,
+                        iconModifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.UseAgreement.route),
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
                 } else {
                     Button(
                         onClick = {

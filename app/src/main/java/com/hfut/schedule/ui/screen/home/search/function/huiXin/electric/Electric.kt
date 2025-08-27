@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -53,7 +53,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
     val memoryEle = prefs.getString("memoryEle","0")
 
     TransplantListItem(
-        headlineContent = { if(!card)Text(text = "寝室电费" ) else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
+        headlineContent = { if(!card)ScrollText(text = "寝室电费" ) else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
         overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room) },
         leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
         modifier = Modifier.clickable { showBottomSheet  = true }

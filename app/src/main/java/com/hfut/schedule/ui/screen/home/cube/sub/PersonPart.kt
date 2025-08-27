@@ -37,9 +37,9 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.text.ScrollText
+import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.xah.uicommon.style.align.ColumnVertical
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -65,7 +65,7 @@ fun PersonPart() {
 //                shape = MaterialTheme.shapes.medium,
 //                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
 //            )
-            CustomCard(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+            CustomCard(color = MaterialTheme.colorScheme.secondaryContainer)
             {
 
 

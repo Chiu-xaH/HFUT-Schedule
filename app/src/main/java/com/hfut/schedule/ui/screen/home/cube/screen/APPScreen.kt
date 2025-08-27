@@ -50,7 +50,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.storage.cleanCache
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -58,13 +58,13 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.slider.CustomSlider
 import com.hfut.schedule.ui.util.SaveComposeAsImage
+import com.xah.uicommon.component.slider.CustomSlider
 import kotlinx.coroutines.async
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -125,7 +125,7 @@ fun APPScreen(
         }
 
         DividerTextExpandedWith("偏好") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "主页面") },
                     supportingContent = {
@@ -230,7 +230,7 @@ fun APPScreen(
 
         }
         DividerTextExpandedWith("配置") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "快速启动") },
                     supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
@@ -264,7 +264,9 @@ fun APPScreen(
                     },
                     steps = 37,
                     valueRange = 10f..200f,
-                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+//                    showProcessText = true,
+//                    processText = formatDecimal(value.toDouble(),0).toString() + "GB"
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
@@ -342,7 +344,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("存储") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("备份与恢复") },
                     leadingContent = { Icon(painterResource(R.drawable.database),null)},
@@ -370,7 +372,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("交互") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 //                TransplantListItem(
 //                    headlineContent = { Text("长截图") },
 //                    leadingContent = { Icon(painterResource(R.drawable.screenshot_frame),null)},
@@ -435,7 +437,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("对外") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("自定义Shortcut") },
                     supportingContent = {

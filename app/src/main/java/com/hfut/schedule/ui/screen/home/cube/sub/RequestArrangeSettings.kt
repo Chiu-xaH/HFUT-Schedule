@@ -21,14 +21,14 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.slider.CustomSlider
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.uicommon.component.slider.CustomSlider
 
 @Composable
 fun RequestArrange(innerPadding : PaddingValues,navController: NavHostController) {
@@ -59,7 +59,7 @@ fun ArrangeItem(title : String, icon : Int, key : String) {
     val pageSize = prefs.getString(key,MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()
     var sliderPosition by remember { mutableFloatStateOf(pageSize.toFloat()) }
     val str = formatDecimal(sliderPosition.toDouble(),0)
-    CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+    CustomCard(color = MaterialTheme.colorScheme.surface) {
         TransplantListItem(
             overlineContent = { Text(text = title)},
             headlineContent = { Text("$str 条/页")},

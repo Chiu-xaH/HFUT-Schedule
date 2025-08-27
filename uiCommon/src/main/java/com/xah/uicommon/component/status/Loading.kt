@@ -1,16 +1,11 @@
-package com.hfut.schedule.ui.component.status
+package com.xah.uicommon.component.status
 
-//import android.view.ContextThemeWrapper
-//import android.view.LayoutInflater
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-//import androidx.compose.material3.CircularProgressIndicator
-//import com.hfut.schedule.ui.utils.components.LoadingUI
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.LoadingIndicatorDefaults
@@ -24,16 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-//import androidx.compose.ui.graphics.Color
-//import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.ui.style.align.ColumnVertical
-//import androidx.compose.ui.viewinterop.AndroidView
-//import com.google.android.material.loadingindicator.LoadingIndicator
-//import com.hfut.schedule.R
-import com.hfut.schedule.ui.style.align.RowHorizontal
+import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.align.ColumnVertical
 import kotlinx.coroutines.delay
-//
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoadingUI(

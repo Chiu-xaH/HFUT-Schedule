@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.chart
+package com.xah.uicommon.component.chart
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Canvas
@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.xah.uicommon.style.align.ColumnVertical
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable

@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.text
+package com.xah.uicommon.component.text
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState

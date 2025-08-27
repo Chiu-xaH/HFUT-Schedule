@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.home.calendar.next
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -15,11 +14,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -35,7 +32,6 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -60,26 +56,18 @@ import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
-import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -436,40 +424,40 @@ fun JxglstuCourseTableUINext(
             items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
             items(if(showAll)42 else 30) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                with(sharedTransitionScope) {
-                    val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
-                    Card(
-                        shape = MaterialTheme.shapes.extraSmall,
-                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
+                val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
+                Card(
+                    shape = MaterialTheme.shapes.extraSmall,
+                    colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
 
 //                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
-                        modifier = containerShare(
-                            Modifier
-                                .height(125.dp)
-                                .padding(if (showAll) 1.dp else 2.dp)
-                                .let {
-                                    backGroundHaze?.let { haze ->
-                                        it
-                                            .clip(MaterialTheme.shapes.extraSmall)
-                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
-                                    } ?: it
+                    modifier = Modifier
+                        .height(125.dp)
+                        .padding(if (showAll) 1.dp else 2.dp)
+                        .let {
+                            backGroundHaze?.let { haze ->
+                                it
+                                    .clip(MaterialTheme.shapes.extraSmall)
+                                    .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
+                            } ?: it
+                        }
+                        .clickable {
+                            // 只有一节课
+                            if (texts.size == 1) {
+                                val name =
+                                    parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                if (name != null) {
+                                    navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, cell))
                                 }
-                                .clickable {
-                                    // 只有一节课
-                                    if (texts.size == 1) {
-                                        val name =
-                                            parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
-                                        if (name != null) {
-                                            navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, cell))
-                                        }
-                                    } else if (texts.size > 1) {
-                                        multiWeekday =
-                                            if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                        multiWeek = currentWeek.toInt()
-                                        courses = texts
-                                        showBottomSheetMultiCourse = true
-                                    }
-                                },
+                            } else if (texts.size > 1) {
+                                multiWeekday =
+                                    if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                multiWeek = currentWeek.toInt()
+                                courses = texts
+                                showBottomSheetMultiCourse = true
+                            }
+                        }
+                        .containerShare(
+                            sharedTransitionScope,
                             animatedContentScope,
                             route = if (texts.size == 1) {
                                 val name =
@@ -484,21 +472,20 @@ fun JxglstuCourseTableUINext(
                             },
                             roundShape = MaterialTheme.shapes.extraSmall,
                         )
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Text(
-                                text =
-                                    if (texts.size == 1) texts[0]
-                                    else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                    else "",
-                                fontSize = if (showAll) 12.sp else 14.sp,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
+                        Text(
+                            text =
+                                if (texts.size == 1) texts[0]
+                                else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                else "",
+                            fontSize = if (showAll) 12.sp else 14.sp,
+                            textAlign = TextAlign.Center,
+                        )
                     }
                 }
             }

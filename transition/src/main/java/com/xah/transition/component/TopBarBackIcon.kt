@@ -61,7 +61,7 @@ fun SharedTransitionScope.TopBarNavigateIcon(
                 enter = DefaultTransitionStyle.centerAllAnimation.enter,
                 exit = DefaultTransitionStyle.centerAllAnimation.exit
             ) {
-                Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
+                Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(this@TopBarNavigateIcon,animatedContentScope = animatedContentScope, route = route))
             }
             AnimatedVisibility(
                 visible = !show,

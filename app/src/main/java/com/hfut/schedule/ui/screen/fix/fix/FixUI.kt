@@ -48,7 +48,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.emailMe
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -137,7 +137,7 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, hazeState: HazeStat
             )
 //        }
         DividerTextExpandedWith("行为1") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "下载最新版本") },
                     leadingContent = { Icon(painterResource(R.drawable.cloud_download), contentDescription = "Localized description",) },
@@ -163,7 +163,7 @@ fun FixUI(innerPadding : PaddingValues, vm : LoginViewModel, hazeState: HazeStat
             }
         }
         DividerTextExpandedWith("行为2") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "开发者接口") },
                     overlineContent = { getTimeStamp()?.let { Text(text = it) } },

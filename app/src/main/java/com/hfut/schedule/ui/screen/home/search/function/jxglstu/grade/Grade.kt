@@ -23,6 +23,7 @@ import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.component.titleElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -37,12 +38,10 @@ fun Grade(
     val route = remember { AppNavRoute.Grade.receiveRoute() }
     TransplantListItem(
         headlineContent = {
-            Text(text = AppNavRoute.Grade.label)
+            ScrollText(text = AppNavRoute.Grade.label)
         },
         leadingContent = {
-            with(sharedTransitionScope) {
-                Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-            }
+            Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Grade,AppNavRoute.Grade.withArgs(ifSaved))

@@ -53,7 +53,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostC
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.padding(innerPadding).scale(scale)) {
         DividerTextExpandedWith("日历账户") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 LazyColumn() {
 //        item {
 //            Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding()))

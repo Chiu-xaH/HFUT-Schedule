@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.style.color
+package com.xah.uicommon.style.color
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect

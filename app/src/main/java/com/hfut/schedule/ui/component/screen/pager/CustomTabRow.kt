@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.screen
+package com.hfut.schedule.ui.component.screen.pager
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.TabRow
@@ -20,7 +18,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,17 +27,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.zIndex
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun CustomTabRow(pagerState: PagerState, titles: List<String>
-//                 ,padding : Dp = 10.dp
-) {
+fun CustomTabRow(pagerState: PagerState, titles: List<String>) {
     if(titles.size <= 4 || titles.toString().length <= 25) {
         CustomSlidingTabRow(pagerState,titles)
     } else {
@@ -184,33 +176,3 @@ private fun CustomScrollTabRow(
         }
     }
 }
-
-
-private const val HEFEI_TAB = 0
-private const val XUANCHENG_TAB = 1
-@Composable
-fun CampusSelectTab(xuanChengContent : @Composable () -> Unit,heFeiContent : @Composable () -> Unit = {
-    EmptyUI("需要合肥校区在读生贡献数据源")
-}) {
-    val titles = remember { listOf("合肥","宣城") }
-
-    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
-        }
-    )
-
-    CustomTabRow(pagerState,titles)
-    HorizontalPager(state = pagerState) { page ->
-        when(page) {
-            HEFEI_TAB -> {
-                heFeiContent()
-            }
-            XUANCHENG_TAB -> {
-                xuanChengContent()
-            }
-        }
-    }
-}
-

@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -35,7 +33,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 @SuppressLint("SuspiciousIndentation")
@@ -85,7 +83,7 @@ fun AvgGrade(vm: NetWorkViewModel) {
     }
     CommonNetworkScreen(uiState, isFullScreen = false,onReload = refreshNetwork) {
         val resultAvg = (uiState as UiState.Success).data
-        CustomCard( containerColor = cardNormalColor()) {
+        CustomCard( color = cardNormalColor()) {
             Text(text = "我的水平", modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
 
             Row {
@@ -161,7 +159,7 @@ fun AllGrade(vm: NetWorkViewModel) {
             for (index in list.indices) {
                 val item = list[index]
                 if(item.myAvgGpa != null || item.myAvgScore != null || item.majorAvgGpa != null || item.majorAvgScore != null)
-                    CustomCard( containerColor = cardNormalColor()) {
+                    CustomCard( color = cardNormalColor()) {
                         Text(text = chineseList[index] + "学期", modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                         Text(text = "我的水平", modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = 8.dp), color = MaterialTheme.colorScheme.primary)
                         Row {

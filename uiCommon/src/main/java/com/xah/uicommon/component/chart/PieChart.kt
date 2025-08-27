@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.chart
+package com.xah.uicommon.component.chart
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Spacer
@@ -9,8 +9,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.style.align.ColumnVertical
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.ColumnVertical
 
 data class PieChartData(
     val label: String,

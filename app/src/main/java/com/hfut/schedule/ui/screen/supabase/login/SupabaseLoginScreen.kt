@@ -8,11 +8,9 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -46,16 +44,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.screen.CustomTabRow
-import com.hfut.schedule.ui.component.status.LoadingUI
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.xah.uicommon.component.status.LoadingUI
  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -85,7 +82,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
     var password2 by remember { mutableStateOf("") }
 
     // 创建一个动画值，根据按钮的按下状态来改变阴影的大小
-    val showTip by remember { mutableStateOf("如需共建分享信息，需要在开发者搭建的平台登录您的账号，首次使用请注册，注册之前需要激活校园邮箱才可收到邮件(位于信息门户)") }
+    val showTip by remember { mutableStateOf("如需共建分享信息，需要在开发者搭建的平台登录您的账号，首次使用请注册，注册之前需确认校园邮箱可用(首次使用校园邮箱请先取信息门户激活)才可收到邮件并完成注册") }
     val scope = rememberCoroutineScope()
 
 

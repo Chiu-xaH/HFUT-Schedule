@@ -36,6 +36,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 
 
@@ -50,7 +51,7 @@ fun NotificationsCenter(
     val route = remember { AppNavRoute.Notifications.route }
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Notifications.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.Notifications.label) },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Notifications,route)
             saveString("Notifications", getNotifications().size.toString())
@@ -60,9 +61,8 @@ fun NotificationsCenter(
                 if (prefs.getString("Notifications","0") != getNotifications().size.toString())
                 Badge { Text(text = getNotifications().size.toString())}
             }) {
-                with(sharedTransitionScope) {
-                    Icon(painterResource(AppNavRoute.Notifications.icon), contentDescription = null,modifier = iconElementShare(animatedContentScope = animatedContentScope, route = route))
-                }
+                Icon(painterResource(AppNavRoute.Notifications.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+
             }
         }
     )

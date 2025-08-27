@@ -33,6 +33,9 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+
+val CARD_NORMAL_DP : Dp = 2.5.dp
 
 
 data class CardBottomButton(
@@ -81,18 +84,20 @@ fun ColumnScope.CardBottomButtons(buttons : List<CardBottomButton>) {
 @Composable
 fun CustomCard(
     modifier: Modifier = Modifier,
-    containerColor : Color? = null,
+    color : Color? = null,
     shadow : Dp = 0.dp,
     shape: Shape = MaterialTheme.shapes.medium,
     content: @Composable () -> Unit
 ) {
+    val baseModifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP)
+
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
+        modifier = baseModifier.then(modifier),
         shape = shape,
         elevation =  CardDefaults. cardElevation(shadow),
-        colors = if(containerColor == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = containerColor)
+        colors = if(color == null) CardDefaults.cardColors() else CardDefaults.cardColors(containerColor = color)
     ) {
         content()
     }
@@ -159,13 +164,13 @@ private fun PCardListItem(
     supportingContent : @Composable() (() -> Unit)? = null,
     trailingContent : @Composable() (() -> Unit)? = null,
     leadingContent : @Composable() (() -> Unit)? = null,
-    containerColor : Color? = null,
+    color : Color? = null,
     shape: Shape = MaterialTheme.shapes.medium,
     shadow: Dp = 0.dp,
     modifier: Modifier = Modifier,
     cardModifier : Modifier = Modifier
 ) {
-    CustomCard( containerColor = containerColor, modifier = cardModifier, shape = shape, shadow = shadow) {
+    CustomCard( color = color, modifier = cardModifier, shape = shape, shadow = shadow) {
         TransplantListItem(
             headlineContent = headlineContent,
             overlineContent = overlineContent,
@@ -194,7 +199,7 @@ fun CardListItem(
 ) {
     PCardListItem(
         headlineContent, overlineContent, supportingContent, trailingContent,leadingContent, modifier = modifier, cardModifier = cardModifier,
-        containerColor = color ?: cardNormalColor(),
+        color = color ?: cardNormalColor(),
         shape = shape, shadow = shadow
     )
 }
@@ -261,7 +266,7 @@ fun AnimationCustomCard(
 //            scaleY = animatedProgress.value
 //        }
         ,
-        containerColor = containerColor,
+        color = containerColor,
     ) {
         content()
     }
@@ -273,9 +278,6 @@ fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.c
 @Composable
 fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
 
-val CARD_NORMAL_DP : Dp = 2.5.dp
-
-val APP_HORIZONTAL_DP : Dp = 16.25.dp
 
 @Composable
 fun LargeCard(
@@ -306,7 +308,6 @@ fun LargeCard(
             leadingContent = leftTop,
             usePadding = false
         )
-//        PaddingHorizontalDivider(isDashed = true)
         //下面的内容
         content()
     }
@@ -325,7 +326,6 @@ fun LoadingLargeCard(
     val speed = ANIMATION_SPEED / 2
     val scale = animateFloatAsState(
         targetValue = if (loading) 0.9f else 1f, // 按下时为0.9，松开时为1
-        //animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy),
         animationSpec = tween(speed, easing = LinearOutSlowInEasing),
         label = "" // 使用弹簧动画
     )
@@ -358,7 +358,6 @@ fun LoadingLargeCard(
                 leadingContent = leftTop,
                 usePadding = false
             )
-//            PaddingHorizontalDivider(isDashed = true)
             content()
         }
     }

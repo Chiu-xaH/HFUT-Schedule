@@ -45,14 +45,11 @@ fun SharedTransitionScope.CustomTransitionScaffold(
         roundShape = roundShape,
         navHostController = navHostController,
         topBar = topBar,
-        modifier = containerShare(
-            modifier
-                .fillMaxSize()
-                .transitionBackgroundF(navHostController, route)
-            ,
+        modifier = modifier.transitionBackgroundF(navHostController, route).containerShare(
+           this,
             animatedContentScope,
             route,
-            resize = false,
+            resize = true,
             roundShape = roundShape,
         ),
         enablePredictive = predictive && enablePredictive,

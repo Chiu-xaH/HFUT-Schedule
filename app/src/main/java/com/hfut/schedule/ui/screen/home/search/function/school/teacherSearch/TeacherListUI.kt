@@ -22,7 +22,7 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.UrlImage
    
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

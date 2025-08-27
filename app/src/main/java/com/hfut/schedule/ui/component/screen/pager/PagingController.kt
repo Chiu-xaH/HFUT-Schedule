@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.screen
+package com.hfut.schedule.ui.component.screen.pager
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.BoxScope
@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
 import kotlinx.coroutines.launch
 

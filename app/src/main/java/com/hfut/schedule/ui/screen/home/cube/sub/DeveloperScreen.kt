@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import android.app.Dialog
-import android.graphics.Color
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,12 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,14 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
-import com.hfut.schedule.ui.component.container.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -47,8 +41,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
-import com.hfut.schedule.ui.style.align.ColumnVertical
-import com.hfut.schedule.ui.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionPredictiveBackHandler
 
@@ -72,6 +66,9 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
     }
     val cookieCommunity by produceState<String?>(initialValue = null,key1 = showEditDialog) {
         value = prefs.getString("TOKEN","")
+    }
+    val cookieOne by produceState<String?>(initialValue = null,key1 = showEditDialog) {
+        value = prefs.getString("bearer","")
     }
     val cookieHuiXin by produceState<String?>(initialValue = null,key1 = showEditDialog) {
         value = prefs.getString("auth","")
@@ -109,7 +106,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("Cookies & Authorization") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text("教务系统") },
                     supportingContent = {
@@ -134,6 +131,32 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                     }
                 )
                 PaddingHorizontalDivider()
+                cookieOne?.let {
+                    TransplantListItem(
+                        headlineContent = { Text("信息门户") },
+                        supportingContent = {
+                            Text(it)
+                        },
+                        trailingContent = {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    label = "bearer"
+                                    input = it
+                                    showEditDialog = true
+                                }
+                            ) {
+                                Icon(painterResource(R.drawable.edit),null)
+                            }
+                        },
+                        modifier = Modifier.clickable {
+                            ClipBoardUtils.copy(it)
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.cookie),null)
+                        }
+                    )
+                    PaddingHorizontalDivider()
+                }
                 TransplantListItem(
                     headlineContent = { Text("WebVpn") },
                     supportingContent = {
@@ -208,7 +231,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
 
         }
         DividerTextExpandedWith("教务系统 重要参数(修改Cookies后自动获取)") {
-            CustomCard(containerColor = MaterialTheme.colorScheme.surface) {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 CommonNetworkScreen(studentId, onReload = null, isFullScreen = false) {
                     val data = (studentId as UiState.Success).data.toString()
                     TransplantListItem(
