@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-28") },
+                overlineContent = { Text(text = "2025-08-29") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,22 +57,12 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("重构 重写刷新登录状态时的慧新易校、信息门户及智慧社区的登录逻辑","本轮又对早期版本遗留的登录代码进行了重写,改善了登录过程的体验")
-            UpdateItems("新增 教务课表备用数据源")
-            UpdateItems("新增 挂失、解挂入口","位于 查询中心-一卡通-卡包-状态")
-            UpdateItems("新增 修改一卡通和校园网的密码入口","位于 查询中心-一卡通-卡包-修改密码 和 选项-网络-一卡通密码")
-            UpdateItems("修复 信息门户登录成功的提醒过于频繁的Bug")
-            UpdateItems("修复 有庆祝日时首页错位的Bug")
-            UpdateItems("优化 庆祝礼花的效果")
-            UpdateItems("优化 课程表方格课程过长的溢出显示")
-
-//            UpdateItems("修复 登录教务时首次提示失败的Bug")
+//            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 为部分场景适配新的转场动画")
-
             /*
                         转专业二级界面
             就业二级界面 通知公告二级界面
@@ -97,7 +87,7 @@ fun VersionInfo() {
 //        UpdateItems("新增 学工系统/今日校园的登录")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
             // v5.0 2025-07+ 远期规划
-//        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入，修复部分功能登陆失败的Bug、修复外地访问下无法使用邮箱等功能的Bug、修复偶见无法登录教务的Bug、优化刷新登陆状态后仍需等待较长时间才可操作的逻辑、支持对外开放API等", UpdateType.RENEW)
+//        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入、支持外地访问下使用邮箱等功能、支持对外开放API等", UpdateType.RENEW)
         }
     }
 }

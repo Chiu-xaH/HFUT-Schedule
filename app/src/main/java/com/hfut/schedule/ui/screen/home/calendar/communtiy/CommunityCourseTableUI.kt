@@ -708,7 +708,7 @@ private fun transferSummaryCourseInfo(text : courseDetailDTOList) : String {
     if (room != null) {
         room = room.replace("学堂","")
     }
-    return time + "\n" + name + "\n" + room
+    return time + "\n" + name + "\n" + (room ?: "")
 }
 
 private fun transferSummaryCourseInfos(text: List<courseDetailDTOList>): List<String> = text.map { item -> transferSummaryCourseInfo(item) }

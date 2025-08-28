@@ -97,6 +97,8 @@ IDE: Android Studio Meerkat
 
 ## [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
 
+## [统计报表](/docs/CHART.md)
+
 ## [其他内容(P2)](/docs/OTHER.md)
 
 [![Star history chart](https://api.star-history.com/svg?repos=Chiu-xaH/HFUT-SChedule&type=Date)](https://www.star-history.com/#Chiu-xaH/HFUT-Schedule&Date)

@@ -43,13 +43,22 @@ object Starter {
     }
     //传入应用URL打开
     @JvmStatic
-    fun startAppUrl(url : String) {
+    fun startAppUrl(url : String,appName : String? = null) {
         try {
             val intent = Intent(Intent.ACTION_DEFAULT, url.toUri())
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             MyApplication.context.startActivity(intent)
         } catch (e : Exception) {
-            showToast("打开失败")
+            val name = if(appName == null) {
+                val scheme = url.substringBefore("://")
+                 when(scheme) {
+                    "alipays" -> "支付宝"
+                    // ...
+                    else -> scheme
+                }
+            } else appName
+            
+            showToast("打开${name}失败")
         }
     }
     //传入网页URL打开
