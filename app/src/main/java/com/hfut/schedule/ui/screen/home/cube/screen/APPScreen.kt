@@ -244,9 +244,9 @@ fun APPScreen(
 
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(value.toDouble(),0)}GB")},
+                    headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(value.toDouble(),0)}GiB")},
                     supportingContent = {
-                        Text("用于计算和显示使用百分比 (初始值为${MyApplication.DEFAULT_MAX_FREE_FLOW}GB)")
+                        Text("用于计算和显示使用百分比 (初始值为${MyApplication.DEFAULT_MAX_FREE_FLOW}GiB)")
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.net),null)
@@ -266,7 +266,7 @@ fun APPScreen(
                     valueRange = 10f..200f,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
 //                    showProcessText = true,
-//                    processText = formatDecimal(value.toDouble(),0).toString() + "GB"
+//                    processText = formatDecimal(value.toDouble(),0).toString() + "GiB"
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(

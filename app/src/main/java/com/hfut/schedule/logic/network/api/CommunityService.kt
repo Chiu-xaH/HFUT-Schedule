@@ -10,7 +10,7 @@ import retrofit2.http.Query
 
 interface CommunityService {
     @GET("api/sys/cas/client/validateLogin?service=https:%2F%2Fcommunity.hfut.edu.cn%2F")
-    fun Login(@Query("ticket") ticket : String) : Call<ResponseBody>
+    fun login(@Query("ticket") ticket : String) : Call<ResponseBody>
     //平均成绩
     @GET("api/business/score/querytotalscore")
     fun getAvgGrade(@Header("X-Access-Token") token : String) : Call<ResponseBody>

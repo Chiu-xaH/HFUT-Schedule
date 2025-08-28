@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +68,9 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
@@ -394,45 +398,48 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     Column {
                         loginUi(Campus.HEFEI)
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
-                                supportingContent = {
-                                    Text("如您修改了一卡通默认密码，请前往 选项-网络相关-一卡通密码 填入新的密码才可登陆校园网")
-                                },
-                                leadingContent = {
-                                    Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
-                                }
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text(text = "部分内网必须连接校园网打开") },
-                                supportingContent = {
-                                    Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
-                                },
-                                leadingContent = {
-                                    Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
-                                }
-                            )
+                            CustomCard(color = cardNormalColor()) {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
+                                    supportingContent = {
+                                        Text("如您修改了一卡通默认密码，请前往 选项-网络-一卡通密码 填入新的密码才可登陆校园网")
+                                    },
+                                    leadingContent = {
+                                        Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+                                    }
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "部分内网需校园网或WebVpn打开") },
+                                    supportingContent = {
+                                        Text(text = "学校提供平台供外网访问内网网址,位于 查询中心-WebVpn")
+                                    },
+                                    leadingContent = {
+                                        Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+                                    }
+                                )
+                            }
                         }
                     }
                 }
                 XUANCHENG_TAB -> {
                     Column {
                         LoadingLargeCard(
-                            title = "已用 $str GB",
+                            title = "已用 $str GiB",
                             loading = loading,
                             rightTop =  {
-                                Text(text = "$flow MB")
+                                Text(text = "$flow MiB")
                             }
                         ) {
                             Row {
                                 TransplantListItem(
                                     headlineContent = { Text(text = "余额 ￥${fee}") },
-                                    overlineContent = { Text("1GB / ￥1") },
+                                    overlineContent = { Text("1GiB / ￥1") },
                                     leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
                                     modifier = Modifier.weight(.5f)
                                 )
                                 TransplantListItem(
-                                    overlineContent = { Text(text = "月免费额度 ${maxFlow}GB") },
+                                    overlineContent = { Text(text = "月免费 ${maxFlow}GiB") },
                                     headlineContent = { Text(text = "已用 $percent%", fontWeight = FontWeight.Bold)},
                                     leadingContent = { Icon(painterResource(R.drawable.percent), contentDescription = "Localized description",) },
                                     modifier = Modifier.weight(.5f)
@@ -451,33 +458,37 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         loginUi(Campus.XUANCHENG)
 
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
-                                supportingContent = {
-                                    Text("如您修改了一卡通默认密码，请前往 选项-网络相关-一卡通密码 填入新的密码才可登陆校园网")
-                                },
-                                leadingContent = {
-                                    Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
-                                }
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text(text = "部分内网必须连接校园网打开") },
-                                supportingContent = {
-                                    Text(text = "学校提供WEBVPN供外网访问部分内网地址,可在 查询中心-网址导航 打开")
-                                },
-                                leadingContent = {
-                                    Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
-                                }
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text(text = "免费时期") },
-                                supportingContent = {
-                                    Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${maxFlow}GB，每日熄灯期间禁用；合肥校区不限额")
-                                },
-                                leadingContent = {
-                                    Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
-                                }
-                            )
+                            CustomCard(color = cardNormalColor()) {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "认证初始密码位于 查询中心-个人信息-密码信息") },
+                                    supportingContent = {
+                                        Text("如您修改了一卡通默认密码，请前往 选项-网络-一卡通密码 填入新的密码才可登陆校园网")
+                                    },
+                                    leadingContent = {
+                                        Icon(painter = painterResource(id = R.drawable.key), contentDescription = "")
+                                    }
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "部分内网需校园网或WebVpn打开") },
+                                    supportingContent = {
+                                        Text(text = "学校提供平台供外网访问内网网址,位于 查询中心-WebVpn")
+                                    },
+                                    leadingContent = {
+                                        Icon(painter = painterResource(id = R.drawable.vpn_key), contentDescription = "")
+                                    }
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text(text = "免费时期") },
+                                    supportingContent = {
+                                        Text(text = "法定节假日与寒暑假不限额度不限时间，其余时间限额月${maxFlow}GiB，每日熄灯期间禁用；合肥校区不限额")
+                                    },
+                                    leadingContent = {
+                                        Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")
+                                    }
+                                )
+                            }
                         }
                     }
                 }

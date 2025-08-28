@@ -12,29 +12,32 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface ZJGDBillService {
+    //
+    @GET("berserker-base/user")
+    fun checkLogin(@Header("synjones-auth") auth : String ) : Call<ResponseBody>
     //一卡通基本信息 其中包括余额
-    @GET("berserker-app/ykt/tsm/getCampusCards?synAccessSource=h5")
+    @GET("berserker-app/ykt/tsm/getCampusCards")
     fun getYue(@Header("synjones-auth") auth : String, ) : Call<ResponseBody>
 
     //消费流水
-    @GET("berserker-search/search/personal/turnover?synAccessSource=h5")
+    @GET("berserker-search/search/personal/turnover")
     fun Cardget(@Header("synjones-auth") auth : String,
                 @Query("current") page : Int
                 ,@Query("size") size : String) : Call<ResponseBody>
 
     //查询一个月每天总消费
-    @GET("berserker-search/statistics/turnover/sum/user?dateType=month&statisticsDateStr=day&type=2&synAccessSource=h5")
+    @GET("berserker-search/statistics/turnover/sum/user?dateType=month&statisticsDateStr=day&type=2")
     fun getMonthYue(@Header("synjones-auth") auth : String,
                     @Query("dateStr") dateStr : String ) : Call<ResponseBody>
 
    //查询从哪天到哪天的消费
-    @GET("berserker-search/statistics/turnover/count?synAccessSource=h5")
+    @GET("berserker-search/statistics/turnover/count")
     fun searchDate(@Header("synjones-auth") auth : String,
                    @Query("timeFrom") timeForm : String,
                    @Query("timeTo") timeTo : String ) : Call<ResponseBody>
 
     //查询关键字
-    @GET("berserker-search/search/personal/turnover?highlightFieldsClass=text-primary&synAccessSource=h5")
+    @GET("berserker-search/search/personal/turnover")
     fun searchBills(@Header("synjones-auth") auth : String,
                    @Query("info") info : String,
                     @Query("current") page : Int

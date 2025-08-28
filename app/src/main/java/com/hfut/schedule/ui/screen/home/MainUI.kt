@@ -51,6 +51,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
@@ -119,6 +120,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
+import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -136,6 +138,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
+import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
+import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
@@ -148,6 +152,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -438,12 +443,6 @@ fun MainScreen(
     }
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
 
-    LaunchedEffect(ifSaved) {
-        if(ifSaved == false) {
-            isEnabled = true
-        }
-    }
-
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface).transitionBackgroundF(navHostTopController, AppNavRoute.Home.route)) {
         var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
 
@@ -468,10 +467,10 @@ fun MainScreen(
                             colors = topBarTransplantColor(),
                             navigationIcon = {
                                 if(targetPage == FOCUS && isNavigationIconVisible && celebrationText != null) {
-                                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
-                                        Text(
+                                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-7.dp)) {
+                                        ScrollText(
                                             text = celebrationText,
-                                            fontSize = 30.sp,
+                                            style = MaterialTheme.typography.headlineMedium,
                                             color = MaterialTheme.colorScheme.secondaryContainer
                                         )
                                     }
@@ -583,13 +582,6 @@ fun MainScreen(
                                 modifier = Modifier.scale(scale.value),
                                 interactionSource = interactionSource,
                                 onClick = {
-                                    if(isLogin) saveString("tip","0000")
-//                                    when(item) {
-//                                        items[0] -> targetPage = COURSES
-//                                        items[1] -> targetPage = FOCUS
-//                                        items[2] -> targetPage = SEARCH
-//                                        items[3] -> targetPage = SETTINGS
-//                                    }
                                     if (!selected) {
                                         navController.navigateAndSave(route)
                                     }
@@ -658,8 +650,11 @@ fun MainScreen(
                                     // 社区
                                     CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState, backGroundHaze = if(useCustomBackground)backGroundHaze else null)
                                     // 教务
-                                    CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,if(useCustomBackground)backGroundHaze else null)
-                                    // 自定义导入课表 数据库id+3=swapUI
+                                    CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,if(useCustomBackground)backGroundHaze else null) { isEnabled = it }
+                                    // 教务2
+                                    CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(showAll,vm,vmUI,hazeState,innerPadding,TotalCourseDataSource.MINE,onDateChange = { new -> today = new}, today = today,backGroundHaze = if(useCustomBackground)backGroundHaze else null )
+                                    // 慧新易校
+                                // 自定义导入课表 数据库id+3=swapUI
 //                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
                                 }
                             }

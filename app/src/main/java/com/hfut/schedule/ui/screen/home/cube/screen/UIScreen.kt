@@ -574,15 +574,15 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
 
-        DividerTextExpandedWith("背景") {
+        DividerTextExpandedWith("课程表背景") {
             val useCustomBackground = customBackground != ""
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
-                        Text("课程表背景图片")
+                        Text("自定义图片")
                     },
                     supportingContent = {
-                        Text(if(!useCustomBackground) "选择图片，以作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
+                        Text(if(!useCustomBackground) "选择图片，作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
                     },
                     modifier = Modifier.clickable {
                         pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -604,6 +604,23 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     }
                 )
+//                TransplantListItem(
+//                    headlineContent = {
+//                        Text("随机背景")
+//                    },
+//                    supportingContent = {
+//                        Text(if(!useCustomBackground) "以必应每日壁纸作为课程表的背景，同时也会改变色彩，每天会更换" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
+//                    },
+//                    modifier = Modifier.clickable {
+//
+//                    },
+//                    leadingContent = {
+//                        Icon(painterResource(R.drawable.image),null)
+//                    },
+//                    trailingContent = {
+//                        Switch(checked = false,)
+//                    }
+//                )
                 if(useCustomBackground) {
                     var alpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
                     CustomSlider(

@@ -2,4 +2,4 @@ package com.hfut.schedule.logic.network.servicecreator
 
 import com.hfut.schedule.App.MyApplication
 
-object CommunitySreviceCreator : BaseServiceCreator(MyApplication.COMMUNITY_URL)
+object CommunityServiceCreator : BaseServiceCreator(MyApplication.COMMUNITY_URL)

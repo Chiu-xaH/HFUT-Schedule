@@ -64,7 +64,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
 
             TransplantListItem(
                 headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text =
-                    if(showPercent) "${precent}%" else "${str} GB"
+                    if(showPercent) "${precent}%" else "$str GiB"
                 ) },
                 overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},
                 leadingContent = { Icon(

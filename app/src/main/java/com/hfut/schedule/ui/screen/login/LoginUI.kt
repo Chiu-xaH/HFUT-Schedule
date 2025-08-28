@@ -44,6 +44,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,6 +58,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -89,6 +91,7 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
@@ -101,6 +104,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.xah.transition.component.iconElementShare
+import com.xah.uicommon.component.text.BottomTip
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
@@ -251,29 +255,22 @@ fun LoginScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val Savedusername = prefs.getString("Username", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
         topBar = {
             LargeTopAppBar(
+                scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = {
                     Text(
-                        text = "教务登录",
+                        text = "CAS统一认证登录",
                     )
                         },
                 actions = {
                     Row {
-                        val route = remember { AppNavRoute.Scan.route }
-                        IconButton(onClick = {
-                            navController.navigateForTransition(AppNavRoute.Scan, route, transplantBackground = true)
-                        }) {
-                            Icon(
-                                painterResource(id = R.drawable.qr_code_scanner),
-                                contentDescription = "",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = route)
-                            )
-                        }
                         IconButton(onClick = {
                             Starter.startFix()
                         }) {
@@ -289,18 +286,17 @@ fun LoginScreen(
                         Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                     }
                 },
-                modifier = Modifier.topBarBlur(hazeState, )
+                modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer )
             )
         },
         bottomBar = {
-            Column (modifier = Modifier.bottomBarBlur(hazeState)) {
+            Column (modifier = Modifier.bottomBarBlur(hazeState, color = MaterialTheme.colorScheme.surfaceContainer)) {
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 CustomCard(
                     modifier = Modifier
                         .navigationBarsPadding()
                         .padding(vertical = APP_HORIZONTAL_DP),
-                    color = cardNormalColor(),
-                    shape = MaterialTheme.shapes.large,
+                    color = MaterialTheme.colorScheme.surface.copy(.9f),
                 ) {
                     if(username.startsWith(DateTimeManager.Date_yyyy)) {
                         TransplantListItem(
@@ -314,7 +310,8 @@ fun LoginScreen(
                         PaddingHorizontalDivider()
                     }
                     TransplantListItem(
-                        headlineContent = { Text("重设密码") },
+                        headlineContent = { Text("修改密码") },
+                        overlineContent = { Text("CAS统一认证")},
                         leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                         modifier = Modifier.clickable { Starter.startWebView(MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
                     )
@@ -328,6 +325,16 @@ fun LoginScreen(
                         },
                         modifier = Modifier.clickable { webVpn = !webVpn },
                     )
+                    PaddingHorizontalDivider()
+                    Spacer(Modifier.height(CARD_NORMAL_DP*2))
+                    BottomTip(
+                        if(webVpn)"外地访问下暂时仅支持以WebVpn登录教务系统(后续扩展)" else "将同时登录 慧新易校,智慧社区,信息门户,教务系统 四个平台"
+                    )
+                    Spacer(Modifier.height(CARD_NORMAL_DP*2))
+//                    TransplantListItem(
+//                        headlineContent = { Text() },
+//                        overlineContent = { Text("提示")},
+//                    )
                 }
             }
         }
@@ -433,7 +440,7 @@ fun TwoTextField(
         InnerPaddingHeight(innerPadding,true)
 
         CustomCard(
-            color = MaterialTheme.colorScheme.surfaceContainer.copy(.75f)
+            color = MaterialTheme.colorScheme.surface.copy(1f)
         ) {
             Column (modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
 
@@ -551,7 +558,7 @@ fun TwoTextField(
             }
         }
 
-        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP*7/4))
+        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
 
 
         if(loading) {

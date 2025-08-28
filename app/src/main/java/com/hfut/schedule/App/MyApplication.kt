@@ -16,7 +16,7 @@ class MyApplication : Application() {
         lateinit var context: Context
         // 全局模糊半径
         val BLUR_RADIUS = 20.dp
-        // 宣城校区免费流量额度 GB
+        // 宣城校区免费流量额度 GiB
         const val DEFAULT_MAX_FREE_FLOW = 30
         // 默认每页数量
         const val PAGE_SIZE = 30
@@ -119,6 +119,8 @@ class MyApplication : Application() {
         const val PAY_FEE_URL = "http://pay.hfut.edu.cn/payment/mobileOnlinePay"
         // 学信网
         const val XUE_XIN_URL = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
+        // 必应壁纸
+        const val BING_WALLPAPER_URL = "https://bing.img.run/"
         // U校园
         const val UNIPUS_URL = "https://u.unipus.cn/"
         const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"

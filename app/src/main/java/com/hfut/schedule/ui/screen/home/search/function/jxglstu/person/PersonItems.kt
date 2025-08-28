@@ -350,11 +350,11 @@ private fun PersonItems(
                     cardPsk.let {
                         TransplantListItem(
                             headlineContent = {  Text(text = it) },
-                            overlineContent = { Text(text = "一卡通&校园网初始密码")},
+                            overlineContent = { Text(text = "一卡通及校园网初始密码")},
                             trailingContent = {
                                 FilledTonalButton(
                                     onClick = {
-                                        showToast("前往 查询中心-慧新易校 修改密码")
+                                        showToast("前往 选项-网络-一卡通密码 修改")
                                     }
                                 ) {
                                     Text("修改")

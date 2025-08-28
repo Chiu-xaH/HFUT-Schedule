@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -48,19 +51,21 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.navigateAndClear
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
 val arguments = listOf(
-    "本应用所使用权限为：网络、日历(用于向日历写入聚焦日程)、存储(用于导入导出课程表文件)、相机(用于洗浴扫码)、通知(用于提醒更新包已准备好)，均由用户自由决定是否授予",
-    "本应用已在Github开源，F-Droid上架，无任何盈利、广告、恶意等行为",
-    "本应用不代表学校官方，如出现任何损失与开发者无责任，联系邮件为zsh0908@outlook.com",
+    "本应用所使用权限为：网络、日历(用于向日历写入日程提醒)、存储(用于导入导出一些文件)、相机(用于扫码)、通知(用于提醒更新包已准备好)，均由用户自由决定授予",
+    "本应用已在Github开源，F-Droid上架，无广告、恶意等行为",
     "本应用推荐但不限于合肥工业大学宣城校区在校生使用，不对未登录用户做强制要求",
-    "本应用存在开发者自己的服务端，会收集一些不敏感的数据帮助改善使用体验，开发者承诺不会泄露数据，且用户可自由选择开启与否",
-    "开发者只负责分发由自己签名的版本(签名为O=Chiu xaH,ST=Anhui,L=Xuancheng)，其他签名版本不对此负责",
-    "最后编辑于 2025-08-16 16:07 v5"
+    "本应用不代表学校官方，若因使用本应用而造成实际损失，概不负责",
+    "本应用存在开发者自己的服务端，会收集一些不敏感的数据帮助改善使用体验，开发者承诺不会泄露数据，且用户可自由决定开启",
+    "由于本应用为开源项目，欢迎其他开发者借鉴、指正或参与",
+    "欢迎用户向开发者反馈、建议或寻求帮助，个人的测试范围有限，需要大家发现问题",
+    "最后编辑于 2025-08-27 22:51 第6版"
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -82,7 +87,6 @@ fun UseAgreementScreen(
         titleContentColor = MaterialTheme.colorScheme.primary
         ),
                 title = {
-                    val local = LocalTextStyle.current
                     Row (
                         verticalAlignment = Alignment.CenterVertically
                     ){
@@ -90,13 +94,15 @@ fun UseAgreementScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        context?.finish()
-                    }) {
+                    val height = MaterialTheme.typography.headlineMedium.lineHeight.value.dp
+                    Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                         Icon(
-                            painterResource(id = R.drawable.close),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.primary
+                            painterResource(R.drawable.partner_exchange),
+                            null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier =  Modifier
+                                .size(height)
+                                .iconElementShare(sharedTransitionScope, animatedContentScope = animatedContentScope, route = AppNavRoute.UseAgreement.route)
                         )
                     }
                 },
@@ -107,50 +113,35 @@ fun UseAgreementScreen(
             )
         },
         bottomBar = {
-            Column (modifier = Modifier.bottomBarBlur(hazeState)) {
-                val height = MaterialTheme.typography.headlineMedium.lineHeight.value.dp
-                Spacer(Modifier.height(height/2))
-                Row(modifier = Modifier.align(Alignment.End)) {
-                    Icon(
-                        painterResource(R.drawable.partner_exchange),
-                        null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier =  Modifier
-                            .padding(end = APP_HORIZONTAL_DP*2)
-                            .size(height)
-                            .iconElementShare(
-                                sharedTransitionScope,
-                            animatedContentScope = animatedContentScope,
-                            route = AppNavRoute.UseAgreement.route
-                        )
-                    )
-                }
-                Row(modifier = Modifier
-                    .padding(APP_HORIZONTAL_DP)
-                    .navigationBarsPadding(),horizontalArrangement = Arrangement.Center) {
-                    Button(
-                        onClick = {
-                            SharedPrefs.saveBoolean("canUse", default = false, save = true)
-                            navController.navigateAndClear(AppNavRoute.Home.route)
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        Text("同意")
-                    }
-                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                    FilledTonalButton(
-                        onClick = {
-                            showToast("已关闭APP")
-                            context?.finish()
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f)
-                    ) {
-                        SharedPrefs.saveBoolean("canUse", default = false, save = false)
-                        Text("拒绝")
+            Column () {
+                Box(Modifier.bottomBarBlur(hazeState)) {
+                    Row(modifier = Modifier
+                        .padding(APP_HORIZONTAL_DP)
+                        .navigationBarsPadding(),horizontalArrangement = Arrangement.Center) {
+                        Button(
+                            onClick = {
+                                SharedPrefs.saveBoolean("canUse", default = false, save = true)
+                                navController.navigateAndClear(AppNavRoute.Home.route)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
+                        ) {
+                            Text("同意")
+                        }
+                        Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP*2/3))
+                        FilledTonalButton(
+                            onClick = {
+                                showToast("已关闭APP")
+                                context?.finish()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
+                        ) {
+                            SharedPrefs.saveBoolean("canUse", default = false, save = false)
+                            Text("拒绝")
+                        }
                     }
                 }
             }

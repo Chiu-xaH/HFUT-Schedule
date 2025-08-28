@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
@@ -153,8 +154,8 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var showBottomSheet_Shower by remember { mutableStateOf(false) }
     var showBottomSheet_Washing by remember { mutableStateOf(false) }
     var showBottomSheet_Fee by remember { mutableStateOf(false) }
-    var showBottomSheet_NFC by remember { mutableStateOf(false) }
     var showBottomSheet_Toady by remember { mutableStateOf(false) }
+    var showBottomSheet_Lost by remember { mutableStateOf(false) }
 
     val cardValue by remember { derivedStateOf { vmUI.cardValue } }
     val str by loadTodayPay(vm)
@@ -183,65 +184,57 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Fee,
-            isFullExpand = false
+            autoShape = false
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("缴费与查询", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
+            Column(
+            ) {
+                HazeBottomSheetTopBar("缴费与查询", isPaddingStatusBar = false)
+
 //                    MyCustomCard {
-                        CardListItem(
-                            headlineContent = { Text(text = "电费") },
-                            leadingContent = {
-                                Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
-                            },
-                            modifier = Modifier.clickable { showBottomSheet_ELectric = true }
-                        )
+                CardListItem(
+                    headlineContent = { Text(text = "电费") },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.flash_on), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable { showBottomSheet_ELectric = true }
+                )
 //                    }
 //                    MyCustomCard{
-                        CardListItem(
-                            headlineContent = { Text(text = "网费"  ) },
-                            leadingContent = {
-                                Icon(painterResource(id = R.drawable.net), contentDescription = "")
-                            },
-                            modifier = Modifier.clickable { showBottomSheet_Web= true }
-                        )
+                CardListItem(
+                    headlineContent = { Text(text = "网费"  ) },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.net), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable { showBottomSheet_Web= true }
+                )
 //                    }
 //                    MyCustomCard {
-                        CardListItem(
-                            headlineContent = { Text(text = "洗浴" ) },
-                            leadingContent = {
-                                Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
-                            },
-                            modifier = Modifier.clickable { showBottomSheet_Shower = true }
-                        )
+                CardListItem(
+                    headlineContent = { Text(text = "洗浴" ) },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable { showBottomSheet_Shower = true }
+                )
 //                    }
-                    CardListItem(
-                        headlineContent = { Text(text = "洗衣机") },
-                        leadingContent = {
-                            Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
-                        },
-                        modifier = Modifier.clickable {
-                            showBottomSheet_Washing = true
-                        }
-                    )
+                CardListItem(
+                    headlineContent = { Text(text = "洗衣机") },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable {
+                        showBottomSheet_Washing = true
+                    }
+                )
 
-                    CardListItem(
-                        headlineContent = { Text("慧新易校平台") },
-                        leadingContent = {
-                            Icon(Icons.Default.ArrowForward, contentDescription = "")
-                        },
-                        modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校") }
-                    )
-                }
+                CardListItem(
+                    headlineContent = { Text("慧新易校平台") },
+                    leadingContent = {
+                        Icon(Icons.Default.ArrowForward, contentDescription = "")
+                    },
+                    modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校") }
+                )
+                Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
             }
         }
     }
@@ -294,35 +287,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
         }
     }
 
-    if(showBottomSheet_NFC) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet_NFC = false
-            },
-
-            showBottomSheet = showBottomSheet_NFC,
-            hazeState = hazeState,
-            isFullExpand = false
-//            sheetState = sheetState_NFC,
-//            shape = bottomSheetRound(sheetState_NFC)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("NFC复制说明")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    CardListItem(headlineContent = { Text(text = "实体卡芯片自带加密,复制后手机仅可在图书馆储物柜刷取，其余场景均不可用，包括但不限于宿舍门禁、寝室门禁、消费终端等") })
-                }
-            }
-        }
-    }
 
     if(showBottomSheet_Range) {
         HazeBottomSheet (
@@ -371,6 +335,15 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             hazeState = hazeState
         ){
             TodayBills(vm)
+        }
+    }
+    if(showBottomSheet_Lost) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet_Lost = false },
+            showBottomSheet = showBottomSheet_Lost,
+            hazeState = hazeState
+        ){
+            CardLostScreen(vm)
         }
     }
 
@@ -442,7 +415,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                                 } else if (text == "00") {
                                                     refreshLogin()
                                                 } else {
-                                                    showToast("未检测出问题,若实体卡仍异常请咨询有关人士")
+                                                    showToast("未检测出问题,若卡仍异常请咨询有关人士")
                                                 }
                                             }
                                         },
@@ -504,9 +477,9 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "状态") },
-                            supportingContent = { Text(text = "挂失 解挂 冻结")},
+                            supportingContent = { Text(text = "挂失 解挂")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                            modifier = Modifier.clickable { showToast("可前往下方慧新易校使用") }
+                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUIXIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -515,7 +488,6 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
                             modifier = Modifier.clickable { Starter.startWebView(url,"付款码", icon = R.drawable.barcode) }
                         )
-
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "生活缴费") },
@@ -525,31 +497,31 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
+                            headlineContent = { Text(text = "修改密码") },
+                            supportingContent = { Text(text = "修改一卡通及其校园网的密码，初始密码为身份证后六位(末尾为X则为X的前六位)")},
+                            leadingContent = { Icon(painter = painterResource(id = R.drawable.lock_reset), contentDescription = "")},
+                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUIXIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset) }
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
                             headlineContent = { Text(text = "慧新易校") },
-                            supportingContent = { Text(text = "跳转到慧新易校平台进行充值、查询等")},
+                            supportingContent = { Text(text = "进入慧新易校平台进行更多操作")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
                             modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校", icon = R.drawable.corporate_fare) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text(text = "限额") },
+                            headlineContent = { Text(text = "限额(接口废弃)") },
                             supportingContent = { Text(text = "超出设置的日额度后需在支付机输入密码")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.block), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Settings = true }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text(text = "范围支出") },
+                            headlineContent = { Text(text = "范围支出(接口废弃)") },
                             supportingContent = { Text(text = "手动点选范围查询总消费")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.settings_ethernet), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Range = true }
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text(text = "实体卡复制") },
-                            supportingContent = { Text(text = "对实体卡使用设备NFC复制功能")},
-                            leadingContent = { Icon(painter = painterResource(id = R.drawable.contactless), contentDescription = "")},
-                            modifier = Modifier.clickable { showBottomSheet_NFC = true }
                         )
                     }
                 }
@@ -586,6 +558,20 @@ fun limitRow(vmUI : UIViewModel) {
             headlineContent = { Text(text = "￥${amt}") },
             overlineContent = { Text(text = "自动转账金额")},
             leadingContent = { Icon(painter = painterResource(id = R.drawable.do_not_disturb_on), contentDescription = "")})
+    }
+}
+
+@Composable
+fun CardLostScreen(vm : NetWorkViewModel) {
+    Scaffold(
+        containerColor = Color.Transparent,
+        topBar = {
+            HazeBottomSheetTopBar("挂失 解挂")
+        }
+    ) { innerPadding ->
+        Column(modifier = Modifier.padding(innerPadding)) {
+
+        }
     }
 }
 

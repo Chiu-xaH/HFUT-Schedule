@@ -36,14 +36,14 @@ interface LoginService {
    //信息门户登录
     @GET("cas/oauth2.0/authorize?response_type=code&client_id=BsHfutEduPortal&redirect_uri=https%3A//one.hfut.edu.cn/home/index")
     @Headers(MyApplication.PC_UA)
-    fun OneGoto(
-        @Header("Cookie") Cookie : String
+    fun oneGoto(
+        @Header("Cookie") cookiesWithTgc : String
     ) : Call<ResponseBody>
     //慧新易校
     @GET("cas/oauth2.0/authorize?response_type=code&client_id=Hfut2023Ydfwpt&redirect_uri=http%3A%2F%2F121.251.19.62%2Fberserker-auth%2Fcas%2Foauth2url%3Foauth2url%3Dhttp%3A%2F%2F121.251.19.62%2Fberserker-base%2Fredirect%3FappId%3D24%26type%3Dapp")
     @Headers(MyApplication.PC_UA)
-    fun OneGotoCard(
-        @Header("Cookie") Cookie : String
+    fun gotoHuiXin(
+        @Header("Cookie") cookiesWithTgc : String
     ) : Call<ResponseBody>
 
 //    @GET("cas/login")

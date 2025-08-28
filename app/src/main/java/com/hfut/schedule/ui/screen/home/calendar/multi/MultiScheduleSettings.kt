@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -79,7 +80,8 @@ import java.io.File
 enum class CourseType(val code : Int) {
     JXGLSTU(0),
     COMMUNITY(1),
-    NEXT(2)
+    JXGLSTU2(2),
+    NEXT(3)
 }
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -215,7 +217,7 @@ fun MultiScheduleSettings(
         val friendList = getFriendsList()
 
         LazyRow {
-            //教务课表
+            // 教务课表
             item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP)) }
             item {
                 Card (
@@ -233,7 +235,7 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-            //社区课表
+            // 社区课表
             item {
                 Card (
                     modifier = Modifier
@@ -251,7 +253,32 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-            //下学期课表
+            // 教务课表2
+            item {
+                Card (
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 70.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
+                        .clickable {
+                            onSelectedChange(CourseType.JXGLSTU2.code)
+                        },
+                    colors = if(select == CourseType.JXGLSTU2.code) selectedColor else normalColor
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()){
+                        ColumnVertical(modifier = Modifier.align(Alignment.Center)) {
+                            Text(
+                                "教务系统",
+                                fontWeight = if (select == CourseType.JXGLSTU2.code) FontWeight.Bold else FontWeight.Light
+                            )
+                            Text(
+                                "备用",
+                                fontWeight = if (select == CourseType.JXGLSTU2.code) FontWeight.Bold else FontWeight.Light
+                            )
+                        }
+                    }
+                }
+            }
+            // 下学期课表
             item {
                 Card (
                     modifier = Modifier
@@ -265,9 +292,9 @@ fun MultiScheduleSettings(
                                     else refreshLogin()
                                 } else onSelectedChange(CourseType.NEXT.code)
                             } else {
-                                if(!ifSaved) {
+                                if (!ifSaved) {
                                     Starter.startWebView(
-                                        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+                                        url = if (vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
                                         title = "教务系统",
                                         cookie = cookie,
                                         icon = AppNavRoute.NextCourse.icon
@@ -286,7 +313,7 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-            //好友课表
+            // 好友课表
             items(friendList.size) { item ->
                 Card (
                     modifier = Modifier

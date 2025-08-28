@@ -11,11 +11,13 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -50,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -58,6 +61,7 @@ import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -415,6 +419,7 @@ fun JxglstuCourseTableUINext(
     Box(modifier = Modifier.fillMaxHeight()) {
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
+        val textSize = if(showAll)12.sp else 14.sp
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(if(showAll)7 else 5),
@@ -428,8 +433,6 @@ fun JxglstuCourseTableUINext(
                 Card(
                     shape = MaterialTheme.shapes.extraSmall,
                     colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
-
-//                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
                     modifier = Modifier
                         .height(125.dp)
                         .padding(if (showAll) 1.dp else 2.dp)
@@ -473,20 +476,60 @@ fun JxglstuCourseTableUINext(
                             roundShape = MaterialTheme.shapes.extraSmall,
                         )
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        Text(
-                            text =
-                                if (texts.size == 1) texts[0]
-                                else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                else "",
-                            fontSize = if (showAll) 12.sp else 14.sp,
-                            textAlign = TextAlign.Center,
-                        )
+                    if(texts.size == 1) {
+                        val l = texts[0].split("\n")
+                        val time = l[0]
+                        val name = l[1]
+                        val place = l[2]
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = time,
+                                fontSize = textSize,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f) // 占据中间剩余的全部空间
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = name,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                            Text(
+                                text = place,
+                                fontSize = textSize,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    } else {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                        ) {
+                            Text(
+                                text =
+                                    if (texts.size == 1) texts[0]
+                                    else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                    else "",
+                                fontSize = textSize,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
+
                 }
             }
             item { InnerPaddingHeight(innerPadding,false) }

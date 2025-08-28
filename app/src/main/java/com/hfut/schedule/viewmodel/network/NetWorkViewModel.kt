@@ -66,6 +66,7 @@ import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.community.GradeResult
 import com.hfut.schedule.logic.model.community.LibRecord
 import com.hfut.schedule.logic.model.community.LibraryResponse
+import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.MapBean
 import com.hfut.schedule.logic.model.community.MapResponse
 import com.hfut.schedule.logic.model.community.StuAppBean
@@ -123,9 +124,11 @@ import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.network.repo.Repository
+import com.hfut.schedule.logic.network.repo.Repository.launchRequestNone
 import com.hfut.schedule.logic.network.repo.Repository.launchRequestSimple
-import com.hfut.schedule.logic.network.servicecreator.CommunitySreviceCreator
+import com.hfut.schedule.logic.network.servicecreator.CommunityServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuJSONServiceCreator
@@ -146,6 +149,7 @@ import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
@@ -194,7 +198,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val one = OneServiceCreator.create(OneService::class.java)
     private val huiXin = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)
-    private val community = CommunitySreviceCreator.create(CommunityService::class.java)
+    private val community = CommunityServiceCreator.create(CommunityService::class.java)
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
     private val myAPI = MyServiceCreator.create(MyService::class.java)
     private val stu = StuServiceCreator.create(StuService::class.java)
@@ -771,30 +775,26 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val academicXCResp = StateHolder<List<NewsResponse>>()
     suspend fun getAcademicXCNews(type: AcademicXCType, page: Int = 1) = Repository.getAcademicXC(type,page,academicXCResp)
 // 核心业务 ////////////////////////////////////////////////////////////////////////////////////////////////
-    fun gotoCommunity(cookie : String) {
-
-        val call = login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    suspend fun gotoCommunity(cookie : String) = launchRequestNone {
+        login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie).awaitResponse()
     }
 
-    val loginCommunityData = MutableLiveData<String?>()
-    fun loginCommunity(ticket : String) {
-
-        val call = community.Login(ticket)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                loginCommunityData.value = response.body()?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    val loginCommunityData = StateHolder<String>()
+    suspend fun loginCommunity(ticket : String) = launchRequestSimple(
+        holder = loginCommunityData,
+        request = { community.login(ticket).awaitResponse() },
+        transformSuccess = { _,json -> parseCommunity(json) }
+    )
+    private fun parseCommunity(json : String) : String = try {
+        if (json.contains("200")) {
+            val token = Gson().fromJson(json, LoginCommunityResponse::class.java).result.token!!
+            saveString("TOKEN", token)
+            showToast("智慧社区登陆成功")
+            token
+        } else {
+            throw Exception(json)
+        }
+    } catch (e : Exception) { throw e }
 
     val jxglstuGradeData = StateHolder<List<GradeJxglstuDTO>>()
     suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolderForNetwork(studentId,jxglstuGradeData) { sId ->
@@ -1191,26 +1191,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }.toMap()
     } catch (e : Exception) { emptyMap() }
 
-    fun goToOne(cookie : String)  {// 创建一个Call对象，用于发送异步请求
-
-        val call = oneGoto.OneGoto(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    suspend fun goToOne(cookie : String) = launchRequestNone {// 创建一个Call对象，用于发送异步请求
+        oneGoto.oneGoto(cookie).awaitResponse()
     }
 
-    fun goToHuiXin(cookie : String)  {
-
-        val call = oneGoto.OneGotoCard(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    suspend fun goToHuiXin(cookie : String) = launchRequestNone {
+        oneGoto.gotoHuiXin(cookie).awaitResponse()
     }
 
     val huiXinBillResult = StateHolder<BillBean>()
@@ -1246,6 +1232,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
+    val huiXinCheckLoginResp = StateHolder<Boolean>()
+    suspend fun checkHuiXinLogin(auth : String)= launchRequestSimple(
+        holder = huiXinCheckLoginResp,
+        request = { huiXin.checkLogin(auth).awaitResponse() },
+        transformSuccess = { _,json -> parseCheckLHuiXinLogin(json) }
+    )
+    private fun parseCheckLHuiXinLogin(json : String) : Boolean = try {
+        if(json.contains("操作成功")) {
+            true
+        } else {
+            throw Exception(json)
+        }
+    } catch (e : Exception) { throw  e }
 
     val cardPredictedResponse = StateHolder<ForecastAllBean>()
     suspend fun getCardPredicted(auth: String) = withContext(Dispatchers.IO) {
@@ -1485,25 +1485,17 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw e }
 
-    fun getToken()  {
+    fun getToken(code : String)  {
+        val call = one.getToken(code,code.substringAfter("code="))
 
-        val codeHttp = prefs.getString("code", "")
-        var code = codeHttp
-        if (code != null) { code = code.substringAfter("=") }
-        if (code != null) { code = code.substringBefore("]") }
-        val http = codeHttp?.substringAfter("[")?.substringBefore("]")
-
-
-        val call = http?.let { code?.let { it1 -> one.getToken(it, it1) } }
-
-        call?.enqueue(object : Callback<ResponseBody> {
+        call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val json = response.body()?.string()
                 try {
                     val data = Gson().fromJson(json, getTokenResponse::class.java)
-                    if (data.msg == "success") {
+                    if (data.msg.contains("success")) {
                         token.value = data.data.access_token
-                        saveString("bearer", data.data.access_token)
+                        saveString("bearer", "Bearer " + data.data.access_token)
                         showToast("信息门户(邮箱,教室)登陆成功")
                     }
                 } catch (e : Exception) {
@@ -1517,46 +1509,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     }
 
-    fun getBorrowBooks(token : String)  {
 
-        val call = one.getBorrowBooks(token)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                if (json.toString().contains("success")) {
-                    try {
-                        val data = Gson().fromJson(json, BorrowBooksResponse::class.java)
-                        val borrow = data.data.toString()
-                        saveString("borrow",borrow)
-                    } catch (_ : Exception) {}
-                } else saveString("borrow","未获取")
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-    fun getSubBooks(token : String)  {
-
-        val call = one.getSubBooks(token)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val json = response.body()?.string()
-                if (json.toString().contains("success")) {
-                    try {
-                        val data = Gson().fromJson(json, SubBooksResponse::class.java)
-                        val sub = data.data.toString()
-                        saveString("sub", sub)
-                    } catch (_ : Exception) {}
-                }
-                else saveString("borrow","0")
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
+    val checkOneLoginResp = StateHolder<Boolean>()
+    suspend fun checkOneLogin(token : String) = launchRequestSimple(
+        holder = checkOneLoginResp,
+        request = { one.checkLogin(token).awaitResponse() },
+        transformSuccess = { _,json -> parseCheckOneLogin(json) }
+    )
+    private fun parseCheckOneLogin(json : String) : Boolean = try {
+        if(json.contains("success")) {
+            true
+        } else {
+            throw Exception(json)
+        }
+    } catch (e : Exception) { throw  e }
 
     val buildingsResponse = StateHolder<Pair<CampusDetail,List<BuildingBean>>>()
     suspend fun getBuildings(campus : CampusDetail,token : String)  = launchRequestSimple(
@@ -1567,7 +1533,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 CampusDetail.FCH -> "02"
                 CampusDetail.TXL -> "01"
             }
-            one.getBuildings(code, "Bearer $token").awaitResponse()
+            one.getBuildings(code, token).awaitResponse()
         },
         transformSuccess = { _,json -> parseBuildings(campus,json) }
     )
@@ -1581,7 +1547,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val classroomResponse = StateHolder<List<ClassroomBean>>()
     suspend fun getClassroomInfo(code : String,token : String)  = launchRequestSimple(
         holder = classroomResponse,
-        request = { one.getClassroomInfo(code, "Bearer $token").awaitResponse() },
+        request = { one.getClassroomInfo(code, token).awaitResponse() },
         transformSuccess = { _,json -> parseClassroom(json) }
     )
     private fun parseClassroom(result: String) : List<ClassroomBean> = try {
@@ -1599,7 +1565,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             val email = getSchoolEmail() ?: ""
             val chipperText = Encrypt.encryptAesECB(email,secret)
             val cookie = "secret=$secret"
-            one.getMailURL(chipperText, "Bearer $token",cookie).awaitResponse()
+            one.getMailURL(chipperText, token,cookie).awaitResponse()
         },
         transformSuccess = { _,json -> parseMailUrl(json) }
     )
@@ -1636,21 +1602,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    val examCodeFromCommunityResponse = MutableLiveData<Int>()
-    fun getExamFromCommunity(token: String) {
-        val call = token.let { community.getExam(it) }
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val responses = response.body()?.string()
-                saveString("Exam", responses)
-                examCodeFromCommunityResponse.value = response.code()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-            }
-        })
-    }
+    val checkCommunityResponse = StateHolder<Boolean>()
+    suspend fun checkCommunityLogin(token: String) = launchRequestSimple(
+        holder = checkCommunityResponse,
+        request = { community.getExam(token).awaitResponse() },
+        transformSuccess = { _,_ -> true }
+    )
 
     val jxglstuExamCode = MutableLiveData<Int>()
     suspend fun getExamJXGLSTU(cookie: String) {

@@ -26,17 +26,25 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -95,6 +103,8 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
         }
     }
 
+    val auth = remember { prefs.getString("auth","") }
+
     LaunchedEffect(useEditedPwd) {
         if(useEditedPwd && !firstUse) {
             // 弹出设置密码界面
@@ -114,23 +124,49 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
-            headlineContent = { Text("修改或重置密码可前往慧新易校(位于查询中心)")},
-            leadingContent = { Icon(painterResource(R.drawable.info),null) },
-            color = MaterialTheme.colorScheme.surface
+            headlineContent = { Text("初始密码为身份证后6位(若以X结尾则为X前6位)")},
+            color = MaterialTheme.colorScheme.surface,
+            leadingContent = { Icon(painterResource(R.drawable.info),null) }
         )
-        DividerTextExpandedWith("一卡通密码") {
-            CardListItem(
-                headlineContent = { Text("使用自定义密码") },
-                supportingContent = { Text( if(useEditedPwd) "现密码 $originPwd" else "初始密码 $originPwd")},
-                trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
-                    click()
-                }) },
-                modifier = Modifier.clickable {
-                    click()
-                },
+        DividerTextExpandedWith("一卡通及校园网密码") {
+            CustomCard(
                 color = MaterialTheme.colorScheme.surface
-            )
+            ) {
+                TransplantListItem(
+                    headlineContent = { Text("修改密码")},
+                    supportingContent = {
+                        Text("前往慧新易校修改一卡通及其校园网的密码")
+                    },
+                    modifier = Modifier.clickable {
+                        Starter.startWebView("${MyApplication.HUIXIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("使用自定义密码") },
+                    supportingContent = {
+                        if(!useEditedPwd) {
+                            Text("若已不是初始密码,请打开开关并录入新密码,否则APP的校园网与一卡通相关功能默认以初始密码进行")
+                        } else {
+                            Text("若已不是当前密码,请重新切换开关以录入新密码,否则APP的校园网与一卡通相关功能默认以显示的密码进行")
+                        }
+                    },
+                    trailingContent = { Switch(checked = useEditedPwd, onCheckedChange = {
+                        click()
+                    }) },
+                    leadingContent = { Icon(painterResource(R.drawable.edit),null) },
+                    modifier = Modifier.clickable {
+                        click()
+                    },
+                )
+            }
         }
+        Spacer(Modifier.height(CARD_NORMAL_DP))
+        CardListItem(
+            color = MaterialTheme.colorScheme.surface,
+            headlineContent = { Text( "当前APP使用" + (if(useEditedPwd) "密码" else "初始密码") + " " + originPwd) },
+        )
         InnerPaddingHeight(innerPadding,false)
     }
 }

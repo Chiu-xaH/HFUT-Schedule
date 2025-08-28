@@ -49,6 +49,8 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
+import com.hfut.schedule.logic.util.sys.datetime.getUserAge
+import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
@@ -107,6 +109,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -145,12 +148,18 @@ fun MainHost(
     val startActivity by produceState<Boolean>(initialValue = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)) {
         value = DataStoreManager.enableQuickStart.first()
     }
+    val celebration = remember { getCelebration() }
     val navController = rememberNavController()
     val first by remember { mutableStateOf(if(prefs.getBoolean("canUse",false)) AppNavRoute.Home.route else AppNavRoute.UseAgreement.route) }
     var value by remember { mutableIntStateOf(0) }
     // 初始化网络请求
     if(!isSuccessActivity)
         LaunchedEffect(Unit) {
+            launch {
+                if(isUserBirthday()) {
+                    showToast("祝您${getUserAge()}周岁🎈生日快乐🎂")
+                }
+            }
             launch {
                 // 修正之前的Bug
                 val auth = prefs.getString("auth","") ?: return@launch
@@ -165,7 +174,6 @@ fun MainHost(
                 //从服务器获取信息
                 launch { loginVm.getMyApi() }
                 launch { loginVm.getCookie() }
-                launch { SharedPrefs.saveString("tip","0") }
                 launch {  loginVm.getKey() }
                 launch {
                     loginVm.getTicket()
@@ -276,6 +284,7 @@ fun MainHost(
                 else it
             }
         ) {
+            Party(show = celebration.use, timeSecond = celebration.time*500)
             // 磁钉体系
             SharedTransitionLayout(
                 modifier = Modifier
@@ -332,19 +341,12 @@ fun MainHost(
                                 this@composable,
                             )
                         }
-                        // 如果庆祝为true则庆祝
-                        getCelebration().let {
-                            Box() {
-                                mainUI(it.str)
-                                Party(show = it.use, timeSecond = it.time)
-                            }
-
-                        }
+                        mainUI(celebration.str)
                     }
                     // 用户协议
                     composable(AppNavRoute.UseAgreement.route) {
                         Box() {
-                            Party(timeSecond = 2L)
+                            Party()
                             UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
                         }
                     }

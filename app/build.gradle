@@ -42,8 +42,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 212
-        versionName "4.17.5.5"
+        versionCode 213
+        versionName "4.17.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -137,7 +137,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     // 测试
 //    testImplementation(libs.junit)
-//    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.junit)
 //    androidTestImplementation(libs.androidx.espresso.core)
 //    androidTestImplementation(libs.androidx.ui.test.junit4)
 //    androidTestImplementation platform(libs.androidx.compose.bom)

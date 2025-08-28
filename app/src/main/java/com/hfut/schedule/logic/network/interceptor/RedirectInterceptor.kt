@@ -13,7 +13,7 @@ class RedirectInterceptor() : Interceptor {
 //                Log.d("测试1",location)
             val ticket = location.substringAfter("=")
 
-            SharedPrefs.saveString("TICKET",ticket)
+            CasGoToInterceptorState.toCommunityTicket.value = ticket
             val newRequest = request.newBuilder()
                 .url(location)
                 .build()

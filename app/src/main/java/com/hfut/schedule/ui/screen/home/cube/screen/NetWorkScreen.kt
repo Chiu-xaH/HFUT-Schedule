@@ -82,8 +82,8 @@ fun NetWorkScreen(navController: NavHostController,
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "一卡通密码") },
-                    supportingContent = { Text(text = "若您已经修改过一卡通初始密码(身份证后6位),请在此录入新的密码以使用快速充值和校园网登录功能") },
-                    leadingContent = { Icon(painterResource(R.drawable.password), contentDescription = "Localized description",) },
+                    supportingContent = { Text(text = "若您已经修改过一卡通初始密码,请在此录入新的密码以使用快速充值和校园网登录功能") },
+                    leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.PasswordScreen.route) }
                 )
             }

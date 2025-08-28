@@ -10,6 +10,7 @@ import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+// 废弃
 fun getExam() : List<examArrangementList> {
     val json = prefs.getString("Exam","")
     try {

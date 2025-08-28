@@ -10,6 +10,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,31 +45,46 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.next.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
+import java.time.LocalDate
 import kotlin.collections.toMutableList
+import kotlin.text.split
 
 
 @Composable
@@ -143,6 +159,41 @@ private fun MultiCourseSheetUIForSearch(
 
 }
 
+
+// 传入lessons列表 显示课表 适用于课程汇总、开课查询
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun JxglstuCourseTableTwo(
+    showAll: Boolean,
+    vm: NetWorkViewModel,
+    vmUI: UIViewModel,
+    hazeState: HazeState,
+    innerPadding : PaddingValues,
+    dataSource : TotalCourseDataSource,
+    onDateChange: (LocalDate) ->Unit,
+    today: LocalDate,
+    backGroundHaze : HazeState?
+) {
+    val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
+        when(dataSource) {
+            TotalCourseDataSource.MINE -> {
+                prefs.getString("courses","")?.let { value = vm.parseDatumCourse(it) }
+            }
+            TotalCourseDataSource.SEARCH -> {
+                onListenStateHolder(vm.courseSearchResponse) { data ->
+                    value = data
+                }
+            }
+            TotalCourseDataSource.MINE_NEXT -> {
+                prefs.getString("coursesNext","")?.let { value = vm.parseDatumCourse(it) }
+            }
+        }
+    }
+
+    JxglstuCourseTableSearch(showAll,vm,vmUI,hazeState,innerPadding,list,onDateChange,today,backGroundHaze)
+}
+
+
 // 传入lessons列表 显示课表 适用于课程汇总、开课查询
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -152,7 +203,10 @@ fun JxglstuCourseTableSearch(
     vmUI: UIViewModel? = null,
     hazeState: HazeState,
     innerPadding : PaddingValues,
-    list : List<lessons>
+    list : List<lessons>,
+    onDateChange: ((LocalDate) ->Unit)? = null,
+    today: LocalDate? = null,
+    backGroundHaze : HazeState? = null
 ) {
     var numItem by remember { mutableIntStateOf(0) }
 
@@ -204,7 +258,20 @@ fun JxglstuCourseTableSearch(
     val table = rememberSaveable { List(30) { mutableStateListOf<CardBean>() } }
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<CardBean>() } }
 
-    var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+    var currentWeek by rememberSaveable { mutableLongStateOf(
+        if(onDateChange == null) {
+            1L
+        } else {
+            if(DateTimeManager.weeksBetweenJxglstu > 20) {
+                getNewWeek()
+            } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                onDateChange(getJxglstuStartDate())
+                1L
+            } else {
+                DateTimeManager.weeksBetweenJxglstu
+            }
+        }
+    ) }
 
     fun refreshUI() {
         // 清空
@@ -226,8 +293,8 @@ fun JxglstuCourseTableSearch(
 
                     val text =
                         "${item.periodRange.first}-${item.periodRange.second}节" +"\n" +
-                                lessonItem.course.nameZh + "(${lessonItem.code.substringAfter("--")}班)" +"\n"+
-                                item.place
+                                (if(onDateChange == null) "(${lessonItem.code.substringAfter("--")}班)" else "")+ lessonItem.course.nameZh +
+                                (item.place?.let { "\n" + it } ?: "")
                     val bean = CardBean(i,text)
                     val weekday = item.weekday
                     val weekRange = item.weekRange
@@ -466,10 +533,13 @@ fun JxglstuCourseTableSearch(
     }
     Box(modifier = Modifier.fillMaxHeight()) {
         val scrollState = rememberLazyGridState()
+        val padding = if (showAll) 1.dp else 2.dp
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
+        val textSize = if(showAll)12.sp else 14.sp
+
         LazyVerticalGrid(
             columns = GridCells.Fixed(if(showAll)7 else 5),
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP-padding*2, vertical = padding),
             state = scrollState
         ) {
             items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
@@ -477,12 +547,19 @@ fun JxglstuCourseTableSearch(
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                 Card(
                     shape = MaterialTheme.shapes.extraSmall,
-                    colors = CardDefaults.cardColors(containerColor =MaterialTheme.colorScheme.surfaceContainerHigh),
+                    colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
                     modifier = Modifier
                         .fillMaxWidth() // 填满列宽
                         // 高度由内容撑开
                         .height(125.dp)
-                        .padding(if (showAll) 1.dp else 2.dp)
+                        .padding(padding)
+                        .let {
+                            backGroundHaze?.let { haze ->
+                                it
+                                    .clip(MaterialTheme.shapes.extraSmall)
+                                    .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
+                            } ?: it
+                        }
                         .clickable {
                             // 只有一节课
                             if (texts.size == 1) {
@@ -497,21 +574,63 @@ fun JxglstuCourseTableSearch(
                             }
                         },
                 ) {
-                    Column (
-                        modifier = Modifier
+                    if(texts.size == 1) {
+                        val l = texts[0].text.split("\n")
+                        val time = l[0]
+                        val name = l[1]
+                        val place = if(l.size>=3) l[2] else null
+                        Column(
+                            modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                text = time,
+                                fontSize = textSize,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f) // 占据中间剩余的全部空间
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = name,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                            place?.let {
+                                Text(
+                                    text = it,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    } else {
+                        Column (
+                            modifier = Modifier
                                 .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
+                                .verticalScroll(rememberScrollState())
 //                        contentAlignment = Alignment.Center // 文字垂直水平居中
-                    ) {
-                        Text(
-                            text =
-                                if (texts.size == 1) texts[0].text
-                                else if (texts.size > 1) "${texts[0].text.substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                else "",
-                            fontSize = if (showAll) 12.sp else 14.sp,
-                            textAlign = TextAlign.Center,
-                        )
+                        ) {
+                            Text(
+                                text =
+                                    if (texts.size == 1) texts[0].text
+                                    else if (texts.size > 1) "${texts[0].text.substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                    else "",
+                                fontSize = textSize ,
+                                textAlign = TextAlign.Center,
+                            )
+                        }
                     }
+
                 }
             }
             item { InnerPaddingHeight(innerPadding,false) }
@@ -523,7 +642,7 @@ fun JxglstuCourseTableSearch(
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(bottom = innerPadding.calculateBottomPadding()).navigationBarsPadding()
+                .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
 
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
@@ -535,6 +654,7 @@ fun JxglstuCourseTableSearch(
                     onClick = {
                         if (currentWeek > 1) {
                             currentWeek-- - 1
+                            onDateChange?.let { today?.minusDays(7)?.let { p1 -> it(p1) } }
                         }
                     },
                 ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
@@ -547,7 +667,7 @@ fun JxglstuCourseTableSearch(
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = innerPadding.calculateBottomPadding()).navigationBarsPadding()
+                .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP
@@ -556,7 +676,13 @@ fun JxglstuCourseTableSearch(
             if (shouldShowAddButton) {
                 ExtendedFloatingActionButton(
                     onClick = {
-                        currentWeek = 1
+                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                            currentWeek = 1
+                            onDateChange?.let { it(getJxglstuStartDate()) }
+                        } else {
+                            currentWeek = DateTimeManager.weeksBetweenJxglstu
+                            onDateChange?.let { it(LocalDate.now()) }
+                        }
                     },
                 ) {
                     AnimatedContent(
@@ -578,7 +704,7 @@ fun JxglstuCourseTableSearch(
             exit = scaleOut(),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(bottom = innerPadding.calculateBottomPadding()).navigationBarsPadding()
+                .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP
@@ -589,6 +715,7 @@ fun JxglstuCourseTableSearch(
                     onClick = {
                         if (currentWeek < 20) {
                             currentWeek++ + 1
+                            onDateChange?.let { today?.plusDays(7)?.let { p1 -> it(p1) } }
                         }
                     },
                 ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
@@ -602,7 +729,7 @@ private data class Schedule(
     val weekday : Int,
     val periodRange : Pair<Int,Int>,
     val place : String?,
-    val teacher : String
+//    val teacher : String
 )
 
 private data class CardBean(
@@ -620,14 +747,13 @@ private fun parseScheduleText(text : String) : List<Schedule> {
             val weekday = parseWeekday(tinyList[1])
             val periodText = parsePeriod(tinyList[2])
             var place : String? = null
-            var teacher : String = ""
-            if(tinyList.size == 6) {
-                place = tinyList[4].substringBefore("(").let { if(it.contains("学堂")) it.replace("学堂","") else it }
-                teacher = tinyList[5].replace(";","")
-            } else if(tinyList.size == 5) {
-                teacher = tinyList[4].replace(";","")
+            tinyList[4].let {
+                if(it.contains("(")) {
+                    place = it.substringBefore("(")
+                    place = if(place.contains("学堂")) place.replace("学堂","") else it
+                }
             }
-            result.add(Schedule(weekText,weekday,periodText,place,teacher))
+            result.add(Schedule(weekText,weekday,periodText,place))
         }
         return result
     } catch (e : Exception) {

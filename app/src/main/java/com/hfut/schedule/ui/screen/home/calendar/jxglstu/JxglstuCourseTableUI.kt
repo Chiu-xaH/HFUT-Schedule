@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -14,12 +15,14 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -60,31 +63,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.LoginCommunityResponse
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -109,11 +110,11 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -163,6 +164,31 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
         t.clear()
     }
 }
+
+private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
+    val result = vm.gotoCommunity(cookies)
+    if (result == 200) {
+        CasGoToInterceptorState.toCommunityTicket
+            .filterNotNull()
+            .collect { value ->
+                vm.loginCommunity(value)
+            }
+    }
+}
+
+
+private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
+    vm.goToOne(cookies)
+    vm.goToOne(cookies)
+    // byd为啥发两次才给302
+    CasGoToInterceptorState.toOneCode
+        .filterNotNull()
+        .collect { value ->
+            vm.getToken(value)
+        }
+}
+
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun JxglstuCourseTableUI(
@@ -178,7 +204,8 @@ fun JxglstuCourseTableUI(
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
-    backGroundHaze : HazeState?
+    backGroundHaze : HazeState?,
+    onEnabled : (Boolean) -> Unit
 ) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
@@ -512,213 +539,117 @@ fun JxglstuCourseTableUI(
 
 //////////////////////////////////////////////////////////////////////////////////
    if(load) {
-        var num2 = 1
         val ONE = CasInHFUT.casCookies
         val TGC = prefs.getString("TGC", "")
         val cookies = "$ONE;$TGC"
-        val ticket = prefs.getString("TICKET", "")
-        val CommuityTOKEN = prefs.getString("TOKEN", "")
-        var a by rememberSaveable { mutableIntStateOf(0) }
-        val job = Job()
-        val job2 = Job()
-        val nextBoolean = isNextOpen()
+        val nextBoolean = remember { isNextOpen() }
 
 
-       //检测若登陆成功（200）则解析出CommunityTOKEN
-       val loginCommunityObserver = Observer<String?> { result ->
-           if (result != null) {
-               if (result.contains("200") && result.contains("token")) {
-                   try {
-                       val tokens = Gson().fromJson(result, LoginCommunityResponse::class.java).result.token
-                       SharedPrefs.saveString("TOKEN", tokens)
-                       if (num2 == 1) {
-                           showToast("Community登陆成功")
-                           num2++
-                       }
-                   }catch (_:Exception) {}
-               }
+       LaunchedEffect(Unit) {
+           launch {
+               if (nextBoolean) saveInt("FIRST", 1)
            }
-       }
+           // 等待读取本地Cookie
+           if(loading == false) return@LaunchedEffect
+           val cookie = getJxglstuCookie(vm)
 
-       //检测CommunityTOKEN的可用性
-       val examObserver = Observer<Int> { result ->
-           if (result == 500) {
-               CoroutineScope(Job()).launch {
-                   async { vm.gotoCommunity(cookies) }.await()
-                   async {
-                       delay(1000)
-                       ticket?.let { vm.loginCommunity(it) }
-                   }.await()
-                   launch {
-                       Handler(Looper.getMainLooper()).post {
-                           vm.loginCommunityData.observeForever(loginCommunityObserver)
+           // 信息门户 慧新易校 智慧社区
+           launch  {
+               onEnabled(false)
+               val job = async {
+                   if(!webVpn) {
+                       launch community@ {
+                           val communityAuth = prefs.getString("TOKEN", "")
+                           if(communityAuth == null || communityAuth.isEmpty()) {
+                               loginCommunity(cookies,vm)
+                           } else {
+                               // 检测智慧社区可用性
+                               vm.checkCommunityLogin(communityAuth)
+                               val result = (vm.checkCommunityResponse.state.value as? UiState.Success)?.data
+                               if(result == true) {
+//                                   showToast("无需刷新智慧社区")
+                                   return@community
+                               } else {
+                                   // 登录community
+                                   loginCommunity(cookies,vm)
+                               }
+                           }
                        }
+                       launch huiXin@ {
+                           //检测慧新易校可用性
+                           val auth = prefs.getString("auth", "")
+                           if(auth == null || auth.isEmpty()) {
+                               vm.goToHuiXin(cookies)
+                           } else {
+                               vm.checkHuiXinLogin(auth)
+                               val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
+                               if(result == true) {
+//                                   showToast("无需刷新慧新易校")
+                                   return@huiXin
+                               } else {
+                                   vm.goToHuiXin(cookies)
+                               }
+                           }
+                       }
+                       launch one@ {
+                           val token = prefs.getString("bearer","")
+                           if(token == null|| token.isEmpty()) {
+                               loginOne(cookies,vm)
+                           } else {
+                               vm.checkOneLogin(token)
+                               val result = (vm.checkOneLoginResp.state.value as? UiState.Success)?.data
+                               if(result == true) {
+//                                   showToast("无需刷新信息门户")
+                                   return@one
+                               } else {
+                                   loginOne(cookies,vm)
+                               }
+                           }
+                       }
+                   } else {
+                       showToast("外地访问下仅刷新教务的登录状态")
+                   }
+               }
+               withTimeoutOrNull(10000) { // 超时时间 10s
+                   job.await()
+               }
+               onEnabled(true)
+           }
+
+           // 教务系统
+           launch jxglstu@ {
+               cookie?: return@jxglstu
+               vm.getStudentId(cookie)
+               val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@jxglstu
+               launch { vm.getInfo(cookie) }
+               launch {
+                   if (prefs.getString("photo", "") == null || prefs.getString("photo", "") == "")
+                       vm.getPhoto(cookie)
+               }
+               vm.getBizTypeId(cookie,studentId)
+               val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@jxglstu
+               launch {
+                   vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
+                   val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@launch
+                   vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
+                   vm.getDatum(cookie,lessonResponse.lessonIds)
+                   val datum = (vm.datumData.state.value as? UiState.Success)?.data
+                   if(datum == null) {
+                       showToast("数据为空,尝试刷新")
+                   }
+                   loading = false
+               }
+
+               launch {
+                   if(nextBoolean) {
+                       vm.getLessonIdsNext(cookie, studentId = studentId, bizTypeId = bizTypeId)
+                       val lessonResponse = (vm.lessonIdsNext.state.value as? UiState.Success)?.data ?: return@launch
+                       vm.getLessonTimesNext(cookie,lessonResponse.timeTableLayoutId)
+                       vm.getDatumNext(cookie,lessonResponse.lessonIds)
                    }
                }
            }
        }
-
-        if(!webVpn) {
-//            val token = prefs.getString("bearer", "")
-            //检测慧新易校可用性
-            if (prefs.getString("auth", "") == "") vm.goToHuiXin(cookies)
-           CoroutineScope(job2).launch {
-               async { vm.goToHuiXin(cookies) }
-               async { CommuityTOKEN?.let { vm.getExamFromCommunity(it) } }
-
-               Handler(Looper.getMainLooper()).post { vm.examCodeFromCommunityResponse.observeForever(examObserver) }
-
-               //登录信息门户的接口,还没做重构（懒）
-               async {
-                   async { vm.goToOne(cookies) }.await()
-                   async {
-                       delay(500)
-                       vm.getToken()
-                   }.await()
-               }
-//               if (token != null) {
-//                   if (token.contains("AT") && cardvalue != "未获取") {
-//                   } else {
-//
-//                   }
-//               }
-           }
-       }
-
-        if (nextBoolean) saveInt("FIRST", 1)
-
-       LaunchedEffect(Unit) {
-           val cookie = getJxglstuCookie(vm)
-           // 等待读取本地Cookie
-           if(loading == false) return@LaunchedEffect
-           cookie?: return@LaunchedEffect
-           vm.getStudentId(cookie)
-           val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
-           launch { vm.getInfo(cookie) }
-           launch {
-               if (prefs.getString("photo", "") == null || prefs.getString("photo", "") == "")
-                   vm.getPhoto(cookie)
-           }
-           vm.getBizTypeId(cookie,studentId)
-           val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@LaunchedEffect
-           launch {
-               vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
-               val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@launch
-               vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
-               vm.getDatum(cookie,lessonResponse.lessonIds)
-               val datum = (vm.datumData.state.value as? UiState.Success)?.data
-               if(datum == null) {
-                   showToast("数据为空,尝试刷新")
-                   return@launch
-               }
-               async {
-                   delay(200)
-                   a++
-                   loading = false
-               }
-           }
-
-           launch {
-               if(nextBoolean) {
-                   vm.getLessonIdsNext(cookie, studentId = studentId, bizTypeId = bizTypeId)
-                   val lessonResponse = (vm.lessonIdsNext.state.value as? UiState.Success)?.data ?: return@launch
-                   vm.getLessonTimesNext(cookie,lessonResponse.timeTableLayoutId)
-                   vm.getDatumNext(cookie,lessonResponse.lessonIds)
-               }
-           }
-       }
-//        scope.launch {
-//加载其他教务信息////////////////////////////////////////////////////////////////////////////////////////////////////
-//            async {
-//                val studentIdObserver = Observer<Int> { result ->
-//                    if (result != 0) {
-//                        SharedPrefs.saveString("studentId", result.toString())
-//                        CoroutineScope(Job()).launch {
-//                            async { vm.getBizTypeId(cookie!!) }.await()
-//                            async { vm.getInfo(cookie!!) }
-//                            if(prefs.getString("photo","") == null || prefs.getString("photo","") == "")
-//                            async { cookie?.let { vm.getPhoto(it) } }
-//                        }
-//                    }
-//                }
-//                val getBizTypeIdObserver = Observer<String?> { result ->
-//                    if(result != null) {
-//                        // 开始解析
-//                        val bizTypeId = CasInHFUT.bizTypeId ?: CasInHFUT.getBizTypeId(result)
-//                        if(bizTypeId != null) {
-//                            vm.getLessonIds(cookie!!,bizTypeId,vm.studentId.value.toString())
-//                            if(nextBoolean) {
-//                                vm.getLessonIdsNext(cookie,bizTypeId,vm.studentId.value.toString())
-//                            }
-//                        }
-//                    }
-//                }
-//                val lessonIdObserver = Observer<List<Int>> { result ->
-//                    if (result.toString() != "") {
-//                        val lessonIdsArray = JsonArray()
-//                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-//                        val jsonObject = JsonObject().apply {
-//                            add("lessonIds", lessonIdsArray)//课程ID
-//                            addProperty("studentId", vm.studentId.value)//学生ID
-//                            addProperty("weekIndex", "")
-//                        }
-//                        vm.getDatum(cookie!!, jsonObject)
-//                        vm.bizTypeIdResponse.removeObserver(getBizTypeIdObserver)
-//                        vm.studentId.removeObserver(studentIdObserver)
-//                    }
-//                }
-//                val lessonIdObserverNext = Observer<List<Int>> { result ->
-//                    if (result.toString() != "") {
-//                        val lessonIdsArray = JsonArray()
-//                        result.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-//                        val jsonObject = JsonObject().apply {
-//                            add("lessonIds", lessonIdsArray)//课程ID
-//                            addProperty("studentId", vm.studentId.value)//学生ID
-//                            addProperty("weekIndex", "")
-//                        }
-//                        vm.getDatumNext(cookie!!, jsonObject)
-//                        // vm.lessonIdsNext.removeObserver(lessonIdObserver)
-//                    }
-//                }
-
-//                val datumObserver = Observer<String?> { result ->
-//                    if (result != null) {
-//                        if (result.contains("result")) {
-//                            CoroutineScope(Job()).launch {
-//                                async { if (showAll) updateAll() else update() }.await()
-//                                async {
-//                                    Handler(Looper.getMainLooper()).post {
-//                                        vm.lessonIds.removeObserver(
-//                                            lessonIdObserver
-//                                        )
-//                                    }
-//                                }
-//                                async {
-//                                    delay(200)
-//                                    a++
-//                                    loading = false
-//                                }
-//                            }
-//                        } else showToast("数据为空,尝试刷新")
-//                    }
-//                }
-
-//                async { vm.getStudentId(cookie!!) }.await()
-
-//                Handler(Looper.getMainLooper()).post {
-//                    vm.studentId.observeForever(studentIdObserver)
-//                    vm.bizTypeIdResponse.observeForever(getBizTypeIdObserver)
-//                    vm.lessonIds.observeForever(lessonIdObserver)
-//                    vm.datumData.observeForever(datumObserver)
-//                    if (nextBoolean)
-//                        vm.lessonIdsNext.observeForever(lessonIdObserverNext)
-//                }
-
-//            }
-//        }
-
-        if (a > 0) job.cancel()
-        if (prefs.getString("tip", "0") != "0") loading = false
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         Column(modifier = Modifier.fillMaxSize()) {
@@ -742,37 +673,12 @@ fun JxglstuCourseTableUI(
                     Box(modifier = Modifier.fillMaxHeight()) {
                         val scrollState = rememberLazyGridState()
                         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-//                        val density = LocalDensity.current
-//                        val textMeasurer = rememberTextMeasurer()
-//                        var maxWidth by remember { mutableStateOf(0.dp) }
-//                        val fontSize = if (showAll) 12.sp else 14.sp
-//                        val maxHeight = remember(showAll,currentWeek) {
-//                            val l = if(showAll)tableAll else table
-//                            val r = l.flatMap { list ->
-//                                list.map { it }
-//                            }
-//
-//                            if (r.isEmpty() || r.all { it.isBlank() }) {
-//                                125.dp
-//                            } else {
-//                                r.maxOf { text ->
-//
-//                                    val result = textMeasurer.measure(
-//                                        text = AnnotatedString(text),
-//                                        style = androidx.compose.ui.text.TextStyle(fontSize = fontSize),
-//                                        constraints = Constraints(maxWidth = with(density) { maxWidth.toPx().toInt() })
-//                                    )
-//
-//                                    with(density) {
-//                                        val dp = result.size.height.toDp()
-//                                        maxOf(dp,125.dp)
-//                                    }
-//                                }
-//                            }
-//                        }
+                        val padding = if (showAll) 1.dp else 2.dp
+                        val textSize = if(showAll)12.sp else 14.sp
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(if(showAll)7 else 5),
-                            modifier = Modifier.padding(10.dp),
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP- CARD_NORMAL_DP -padding*2, vertical = padding),
+
                             state = scrollState
                         ) {
                             items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
@@ -792,14 +698,8 @@ fun JxglstuCourseTableUI(
                                     shape = MaterialTheme.shapes.extraSmall,
                                     colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
                                     modifier = Modifier
-                                        //                                                .measureDpSize { width,_ ->
-//                                                    if(cell == 0) {
-//                                                        maxWidth = width
-//                                                    }
-//                                                }
-//                                                .height(maxHeight)
                                         .height(125.dp)
-                                        .padding(if (showAll) 1.dp else 2.dp)
+                                        .padding(padding)
                                         .let {
                                             backGroundHaze?.let { haze ->
                                                 it
@@ -877,20 +777,59 @@ fun JxglstuCourseTableUI(
                                             }
                                         }
                                     }
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .verticalScroll(rememberScrollState())
-                                    ) {
-                                        Text(
-                                            text =
-                                                if(texts.size == 1) texts[0]
-                                                else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                                else "",
-                                            fontSize = if(showAll)12.sp else 14.sp,
-                                            textAlign = TextAlign.Center,
-                                            fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-                                        )
+                                    if(texts.size == 1) {
+                                        val l = texts[0].split("\n")
+                                        val time = l[0]
+                                        val name = l[1]
+                                        val place = l[2]
+                                        Column(
+                                            modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                            verticalArrangement = Arrangement.SpaceBetween,
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = time,
+                                                fontSize = textSize,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                            Box(
+                                                modifier = Modifier
+                                                    .weight(1f) // 占据中间剩余的全部空间
+                                                    .fillMaxWidth(),
+                                                contentAlignment = Alignment.TopCenter
+                                            ) {
+                                                Text(
+                                                    text = name,
+                                                    fontSize = textSize,
+                                                    textAlign = TextAlign.Center,
+                                                    overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                                    modifier = Modifier.fillMaxWidth()
+                                                )
+                                            }
+                                            Text(
+                                                text = place,
+                                                fontSize = textSize,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        }
+                                    } else {
+                                        Column(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .verticalScroll(rememberScrollState())
+                                        ) {
+                                            Text(
+                                                text =
+                                                    if(texts.size == 1) texts[0]
+                                                    else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                                    else "",
+                                                fontSize = textSize,
+                                                textAlign = TextAlign.Center,
+                                                fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                            )
+                                        }
                                     }
                                 }
                             }

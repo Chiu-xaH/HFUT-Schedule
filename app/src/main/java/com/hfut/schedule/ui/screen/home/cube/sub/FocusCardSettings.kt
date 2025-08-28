@@ -437,8 +437,8 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
 
     if(isHoliday) {
         Row(modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .zIndex(2f)
+//            .background(MaterialTheme.colorScheme.surfaceContainer)
+//            .zIndex(2f)
             .clickable {
 
             }) {
@@ -453,9 +453,10 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
         LaunchedEffect(showBottomSheet) {
             targetDate = DataBaseManager.specialWorkDayDao.search(DateTimeManager.Date_yyyy_MM_dd)?.targetDate
         }
+        PaddingHorizontalDivider()
         Row(modifier = Modifier
-            .background(MaterialTheme.colorScheme.errorContainer)
-            .zIndex(2f)
+//            .background(MaterialTheme.colorScheme.errorContainer)
+//            .zIndex(2f)
             .clickable {
                 isTomorrow = false
                 showBottomSheet = true
@@ -476,9 +477,10 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
         LaunchedEffect(showBottomSheet) {
             targetDate = DataBaseManager.specialWorkDayDao.search(DateTimeManager.tomorrow_YYYY_MM_DD)?.targetDate
         }
+        PaddingHorizontalDivider()
         Row(modifier = Modifier
-            .background(MaterialTheme.colorScheme.surfaceContainer)
-            .zIndex(2f)
+//            .background(MaterialTheme.colorScheme.surfaceContainer)
+//            .zIndex(2f)
             .clickable {
                 isTomorrow = true
                 showBottomSheet = true

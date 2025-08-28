@@ -1,8 +1,7 @@
 package com.hfut.schedule.logic.util.sys.datetime
 
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.logic.util.network.ParseJsons.getAPICelebration
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import java.time.LocalDate
@@ -65,19 +64,19 @@ fun isSpecificWorkDay() : Boolean = getHolidays().any { !it.isOffDay && it.date 
 // 明天调休
 fun isSpecificWorkDayTomorrow() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeManager.tomorrow_YYYY_MM_DD }
 
-fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name
+fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name?.substringBefore("节")
 
 data class Celebration(val use : Boolean,val str : String?,val time : Long = 1L)
 
 fun getCelebration() : Celebration {
     if(isUserBirthday()) {
-        return Celebration(true,"${getUserAge()}岁生日快乐", 4L)
+        return Celebration(true,"生日快乐",2L)
     }
     if(isInGraduation()) {
-        return Celebration(true,"毕业季 前程似锦",2L)
+        return Celebration(true,"毕业季",1L)
     }
     if(isAppBirthday()) {
-        return Celebration(true,"聚在工大${getAppAge()}周年",1L)
+        return Celebration(true,"${getAppAge()}周年",1L)
     }
     getTodayHoliday()?.let {
         return Celebration(true,it,1L)

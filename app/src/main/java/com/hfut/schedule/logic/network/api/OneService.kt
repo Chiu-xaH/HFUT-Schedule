@@ -16,6 +16,9 @@ interface OneService {
     //一卡通余额
     @GET ("api/operation/thirdPartyApi/schoolcard/balance")
     fun getCard(@Header("Authorization") Authorization : String) : Call<ResponseBody>
+    //一卡通余额
+    @GET ("api/center/user/selectUserSimplifyInfoForHall")
+    fun checkLogin(@Header("Authorization") Authorization : String) : Call<ResponseBody>
 
 //&redirect=https%253A%2F%2Fone.hfut.edu.cn%2Fhome%2Findex%253Fcode%253DOC-1414541-a9LSJGgabm-wNkFjbIcAvtlUBHJyNTfN&code=OC-1414541-a9LSJGgabm-wNkFjbIcAvtlUBHJyNTfN
     @GET ("api/auth/oauth/getToken?type=portal")

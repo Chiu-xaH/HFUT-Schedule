@@ -251,6 +251,13 @@ object Repository {
         holder.emitError(e,null)
     }
 
+    @JvmStatic
+    suspend fun launchRequestNone(
+        request: suspend () -> Response<ResponseBody>,
+    ) : Int {
+        val response = request()
+        return response.code()
+    }
 
     suspend fun officeHallSearch(
         text : String,
