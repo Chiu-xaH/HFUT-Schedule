@@ -82,8 +82,9 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.Electric
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
@@ -109,11 +110,11 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetState = rememberModalBottomSheetState()
 
-    val switch_ele = prefs.getBoolean("SWITCHELE", getCampus() == Campus.XUANCHENG)
+    val switch_ele = prefs.getBoolean("SWITCHELE", getCampusRegion() == CampusRegion.XUANCHENG)
     var showEle by remember { mutableStateOf(switch_ele) }
     SharedPrefs.saveBoolean("SWITCHELE", true, showEle)
 
-    val switch_web = prefs.getBoolean("SWITCHWEB", getCampus() == Campus.XUANCHENG)
+    val switch_web = prefs.getBoolean("SWITCHWEB", getCampusRegion() == CampusRegion.XUANCHENG)
     var showWeb by remember { mutableStateOf(switch_web) }
     SharedPrefs.saveBoolean("SWITCHWEB", true, showWeb)
 
@@ -250,9 +251,9 @@ fun FocusCard(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val showEle = prefs.getBoolean("SWITCHELE",getCampus() == Campus.XUANCHENG)
+    val showEle = prefs.getBoolean("SWITCHELE",getCampusRegion() == CampusRegion.XUANCHENG)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
-    val showWeb = prefs.getBoolean("SWITCHWEB",getCampus() == Campus.XUANCHENG)
+    val showWeb = prefs.getBoolean("SWITCHWEB",getCampusRegion() == CampusRegion.XUANCHENG)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     var loading by remember { mutableStateOf(false) }
     val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)

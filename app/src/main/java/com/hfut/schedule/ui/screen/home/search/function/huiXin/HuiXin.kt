@@ -56,6 +56,6 @@ fun HuiXin(
 
 fun getHuiXinURL(): String {
     val auth = SharedPrefs.prefs.getString("auth","")
-    val urlHuixin = MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth
+    val urlHuixin = MyApplication.HUI_XIN_URL + "plat" + "?synjones-auth=" + auth
     return urlHuixin
 }

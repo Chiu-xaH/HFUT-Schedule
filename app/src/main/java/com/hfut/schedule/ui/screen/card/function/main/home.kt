@@ -166,9 +166,9 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
     var settles by remember { mutableStateOf(cardValue?.settle ?: prefs.getString("card_settle","00")) }
 
     val auth = remember { prefs.getString("auth","") }
-    val url by remember { mutableStateOf(MyApplication.HUIXIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
+    val url by remember { mutableStateOf(MyApplication.HUI_XIN_URL + "plat/pay" + "?synjones-auth=" + auth) }
 
-    val urlHuixin = remember { MyApplication.HUIXIN_URL + "plat" + "?synjones-auth=" + auth }
+    val urlHuixin = remember { MyApplication.HUI_XIN_URL + "plat" + "?synjones-auth=" + auth }
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
@@ -479,7 +479,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             headlineContent = { Text(text = "状态") },
                             supportingContent = { Text(text = "挂失 解挂")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUIXIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart) }
+                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -500,7 +500,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             headlineContent = { Text(text = "修改密码") },
                             supportingContent = { Text(text = "修改一卡通及其校园网的密码，初始密码为身份证后六位(末尾为X则为X的前六位)")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.lock_reset), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUIXIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset) }
+                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(

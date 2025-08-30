@@ -135,7 +135,7 @@ fun About(vm : NetWorkViewModel) {
                     HazeBottomSheetTopBar("关于") {
                         FilledTonalButton(
                             enabled = todayVisitCount is UiState.Success,
-                            onClick = { }
+                            onClick = { Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) }
                         ) {
                             Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
                         }
@@ -158,7 +158,7 @@ fun About(vm : NetWorkViewModel) {
 
                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
                         FilledTonalButton(
-                            onClick = {},
+                            onClick = { Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) },
                             enabled = userCount is UiState.Success,
                             modifier = Modifier
                                 .fillMaxWidth()

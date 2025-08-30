@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -138,7 +139,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
                         Text("前往慧新易校修改一卡通及其校园网的密码")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebView("${MyApplication.HUIXIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                        Starter.startWebView("${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                 )

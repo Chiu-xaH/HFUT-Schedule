@@ -20,8 +20,8 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -35,8 +35,8 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     var showBottomSheet by remember { mutableStateOf(false) }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
-    when(getCampus()) {
-        Campus.HEFEI -> {
+    when(getCampusRegion()) {
+        CampusRegion.HEFEI -> {
             TransplantListItem(
                 headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text = "登录") },
                 overlineContent = { if(!card) ScrollText(text = "-- MB") else ScrollText(text = "校园网")},
@@ -47,7 +47,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
                 modifier = Modifier.clickable { showBottomSheet = true }
             )
         }
-        Campus.XUANCHENG -> {
+        CampusRegion.XUANCHENG -> {
             var showPercent by remember { mutableStateOf(true) }
             LaunchedEffect(Unit) {
                 showPercent = true

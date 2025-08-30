@@ -92,6 +92,7 @@ import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal

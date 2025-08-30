@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.model
 
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
 
 data class WorkSearchResponse(
     val data : List<WorkBean>

@@ -12,8 +12,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -54,7 +54,7 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
 // 应用冷启动主界面时的网络请求
 suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean) = withContext(
     Dispatchers.IO) {
-    val isXuanCheng = getCampus() == Campus.XUANCHENG
+    val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
     val communityToken = prefs.getString("TOKEN","")
     val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
@@ -105,7 +105,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
     //检查更新
     launch { vm.getUpdate() }
     // 更新聚焦卡片
-    if(showWeb && getCampus() == Campus.XUANCHENG)
+    if(showWeb && getCampusRegion() == CampusRegion.XUANCHENG)
         launch { getWebInfoFromHuiXin(vm,vmUI) }
     if(showEle)
         launch { getElectricFromHuiXin(vm, vmUI) }
@@ -115,7 +115,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
         val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
         val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
         if(showWeather && state  !is UiState.Success) {
-            vm.getWeatherWarn(getCampus())
+            vm.getWeatherWarn(getCampusRegion())
         }
     }
     // 更新节假日信息

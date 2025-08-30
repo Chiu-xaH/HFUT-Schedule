@@ -1,28 +1,28 @@
 package com.hfut.schedule.logic.model
 
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
 
 data class HaiLeNearPositionRequestBody(
     val lng : Double,// 经度
     val lat : Double,// 纬度
-     val categoryCode : String? = null, // 01洗衣机 ,02烘干机，03洗鞋机，不加或00全部
-     val page : Int,
-     val pageSize : Int = prefs.getString("HaileRequest", MyApplication.PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.PAGE_SIZE,
+    val categoryCode : String? = null, // 01洗衣机 ,02烘干机，03洗鞋机，不加或00全部
+    val page : Int,
+    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
 )
 
 data class HaiLeDeviceDetailRequestBody(
     val positionId : String,
     val floorCode : String? = null,
-     val categoryCode : String? = null,
-     val page : Int,
-     val pageSize : Int = prefs.getString("HaileRequest", MyApplication.PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.PAGE_SIZE,
+    val categoryCode : String? = null,
+    val page : Int,
+    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
 )
 data class HaiLeTradeListRequestBody(
     val newOrderState : String? = null,
     val page : Int,
-    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.PAGE_SIZE,
+    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
 )
 
 enum class HaiLeType(val typeCode : String,val description: String) {
@@ -33,7 +33,7 @@ enum class HaiLeType(val typeCode : String,val description: String) {
 
 
 data class HaiLeNearPositionRequestDTO(
-    val campus : CampusDetail,
+    val campus : Campus,
     val categoryCode : HaiLeType? = null,
     val page: Int
 ) {

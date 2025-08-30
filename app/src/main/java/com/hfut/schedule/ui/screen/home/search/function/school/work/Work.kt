@@ -62,8 +62,8 @@ import com.hfut.schedule.ui.component.screen.pager.PagingController
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -108,7 +108,7 @@ fun WorkScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Work.route }
 
-    var campus by rememberSaveable { mutableStateOf(getCampus()) }
+    var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
 
     val types = remember { listOf(
         WorkSearchType.ALL,
@@ -142,8 +142,8 @@ fun WorkScreen(
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 val url = when(campus) {
-                                    Campus.HEFEI -> MyApplication.WORK_URL
-                                    Campus.XUANCHENG -> MyApplication.WORK_XC_URL
+                                    CampusRegion.HEFEI -> MyApplication.WORK_URL
+                                    CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
                                 }
                                 val iconRoute =  AppNavRoute.WebView.shareRoute(url)
                                 FilledTonalIconButton(
@@ -162,8 +162,8 @@ fun WorkScreen(
                                 FilledTonalButton(
                                     onClick = {
                                         campus = when(campus) {
-                                            Campus.HEFEI -> Campus.XUANCHENG
-                                            Campus.XUANCHENG -> Campus.HEFEI
+                                            CampusRegion.HEFEI -> CampusRegion.XUANCHENG
+                                            CampusRegion.XUANCHENG -> CampusRegion.HEFEI
                                         }
                                     }
                                 ) {
@@ -190,7 +190,7 @@ fun WorkScreen(
 @Composable
 private fun WorkSearchUI(
     vm : NetWorkViewModel,
-    campus: Campus,
+    campus: CampusRegion,
     pagerState : PagerState,
     innerPadding : PaddingValues,
     navController : NavHostController,
@@ -255,8 +255,8 @@ private fun WorkSearchUI(
                             }
                             with(sharedTransitionScope) {
                                 val url = when(campus) {
-                                    Campus.HEFEI -> MyApplication.WORK_URL
-                                    Campus.XUANCHENG -> MyApplication.WORK_XC_URL
+                                    CampusRegion.HEFEI -> MyApplication.WORK_URL
+                                    CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
                                 } + "detail/" + enumType.url +  id
                                 AnimationCardListItem(
                                     color = mixedCardNormalColor(),

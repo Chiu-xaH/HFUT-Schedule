@@ -62,16 +62,12 @@ private data class ItemBean(val name : String,val text : String?,val icon : Int)
 
 private val list1 = listOf(
     ItemBean("校务行","亮点功能: 官方成绩单",R.drawable.article),
-    ItemBean("第二课堂",null,R.drawable.school),
-    ItemBean("合工大智慧学生社区线上平台","亮点功能: 今日校园(学工平台)",R.drawable.handshake),
+    ItemBean("第二课堂","亮点功能: 二课成绩单",R.drawable.school),
     ItemBean("合工大校友服务平台","亮点功能: 校友卡回校",R.drawable.local_library),
-    ItemBean("呱呱物联","洗浴用，大多数接口已经被聚在工大集成",R.drawable.bathtub),
     ItemBean("海乐生活","洗衣机用，部分接口已经被聚在工大集成，支付相关功能仍需使用微信",R.drawable.laundry),
-    ItemBean("合工大信息查询","大多数接口已经被聚在工大集成",R.drawable.search)
 )
 private val list2 = listOf(
-    ItemBean2("合工大教务","亮点功能: 教室课表、同班同学",R.drawable.search,"https://jwglapp.hfut.edu.cn/uniapp/"),
-    ItemBean2("(多多买菜)宣城校区快递","亮点功能: 取件码汇总",R.drawable.package_2,"https://mdkd.pinduoduo.com/weixin/package"),
+    ItemBean2("合工大教务","亮点功能: 教室课表、同班同学、无需教评可查看成绩",R.drawable.search,"https://jwglapp.hfut.edu.cn/uniapp/"),
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -138,7 +134,7 @@ fun WeChatScreen(
             ) {
                 InnerPaddingHeight(innerPadding,true)
                 TransplantListItem(
-                    headlineContent = { Text("由于微信的垄断，以及一些功能只设计了微信登陆方式，无法接入，只能由用户操作")},
+                    headlineContent = { Text("由于微信的垄断，以及一些功能只设计了微信登陆方式，无法接入，只能由用户自己去微信使用")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
                 DividerTextExpandedWith("网页") {
@@ -166,7 +162,7 @@ fun WeChatScreen(
                 }
                 DividerTextExpandedWith("小程序") {
                     TransplantListItem(
-                        headlineContent = { Text("点击复制名称，自行搜索使用")},
+                        headlineContent = { Text("点击复制名称，自行搜索小程序使用")},
                         leadingContent = { Icon(painterResource(R.drawable.info),null)},
                     )
                     for(i in list1) {

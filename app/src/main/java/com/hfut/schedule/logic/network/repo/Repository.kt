@@ -97,8 +97,8 @@ import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
@@ -268,7 +268,7 @@ object Repository {
         request = { hall.search(
             name = text,
             page = page,
-            pageSize = prefs.getString("OfficeHallRequest",MyApplication.PAGE_SIZE.toString())?.toInt() ?: MyApplication.PAGE_SIZE,
+            pageSize = prefs.getString("OfficeHallRequest",MyApplication.DEFAULT_PAGE_SIZE.toString())?.toInt() ?: MyApplication.DEFAULT_PAGE_SIZE,
         ).awaitResponse() },
         transformSuccess = { _,json -> parseOfficeHallSearch(json) }
     )
@@ -378,12 +378,12 @@ object Repository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun loginSchoolNet(campus: Campus = getCampus(), loginSchoolNetResponse : StateHolder<Boolean>) =
+    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : StateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().studentId?.let { uid ->
                 getCardPsk()?.let { pwd ->
                     when (campus) {
-                        Campus.HEFEI -> {
+                        CampusRegion.HEFEI -> {
                             val location = "123"
                             launchRequestSimple(
                                 holder = loginSchoolNetResponse,
@@ -394,7 +394,7 @@ object Repository {
                             )
                         }
 
-                        Campus.XUANCHENG -> {
+                        CampusRegion.XUANCHENG -> {
                             val location = "宣州Login"
                             launch {
                                 launchRequestSimple(
@@ -419,12 +419,12 @@ object Repository {
                 }
             }
         }
-    suspend fun logoutSchoolNet(campus: Campus = getCampus(), loginSchoolNetResponse : StateHolder<Boolean>) =
+    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion(), loginSchoolNetResponse : StateHolder<Boolean>) =
         withContext(Dispatchers.IO) {
             getPersonInfo().studentId?.let { uid ->
                 getCardPsk()?.let { pwd ->
                     when (campus) {
-                        Campus.HEFEI -> {
+                        CampusRegion.HEFEI -> {
                             val location = "123"
                             launchRequestSimple(
                                 holder = loginSchoolNetResponse,
@@ -435,7 +435,7 @@ object Repository {
                             )
                         }
 
-                        Campus.XUANCHENG -> {
+                        CampusRegion.XUANCHENG -> {
                             launch {
                                 launchRequestSimple(
                                     holder = loginSchoolNetResponse,
@@ -500,7 +500,7 @@ object Repository {
 
     suspend fun searchTeacher(name: String = "", direction: String = "",teacherSearchData : StateHolder<TeacherResponse>) = launchRequestSimple(
         holder = teacherSearchData,
-        request = { teacher.searchTeacher(name=name, direction = direction, size = prefs.getString("TeacherSearchRequest",MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString() ).awaitResponse() },
+        request = { teacher.searchTeacher(name=name, direction = direction, size = prefs.getString("TeacherSearchRequest",MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString() ).awaitResponse() },
         transformSuccess = { _,json -> parseTeacherSearch(json) }
     )
 
@@ -597,15 +597,15 @@ object Repository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: Campus,workSearchResult : StateHolder<WorkSearchResponse>) = launchRequestSimple(
+    suspend fun searchWorks(keyword: String?, page: Int = 1, type: Int, campus: CampusRegion, workSearchResult : StateHolder<WorkSearchResponse>) = launchRequestSimple(
         holder = workSearchResult,
         request = {
             workSearch.search(
                 keyword = keyword,
                 page = page,
-                pageSize = prefs.getString("WorkSearchRequest",MyApplication.PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.PAGE_SIZE,
+                pageSize = prefs.getString("WorkSearchRequest",MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
                 type = type.let { if(it == 0) null else it },
-                token = "yxqqnn1700000" + if(campus == Campus.XUANCHENG) "119" else "002"
+                token = "yxqqnn1700000" + if(campus == CampusRegion.XUANCHENG) "119" else "002"
             ).awaitResponse() },
         transformSuccess = { _, json -> parseWorkResponse(json) },
     )
@@ -739,7 +739,7 @@ object Repository {
         data
     }  catch (e : Exception) { throw e }
 
-    suspend fun getWeatherWarn(campus: Campus,weatherWarningData : StateHolder<List<QWeatherWarnBean>>) = launchRequestSimple(
+    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : StateHolder<List<QWeatherWarnBean>>) = launchRequestSimple(
         holder = weatherWarningData,
         request = { qWeather.getWeatherWarn(locationID = getLocation(campus)).awaitResponse() },
         transformSuccess = { _,json -> parseWeatherWarn(json) }
@@ -750,7 +750,7 @@ object Repository {
         Gson().fromJson(json, QWeatherWarnResponse::class.java).warning
     } catch (e : Exception) { throw e }
 
-    suspend fun getWeather(campus: Campus,qWeatherResult : StateHolder<QWeatherNowBean>) = launchRequestSimple(
+    suspend fun getWeather(campus: CampusRegion, qWeatherResult : StateHolder<QWeatherNowBean>) = launchRequestSimple(
         holder = qWeatherResult,
         request = { qWeather.getWeather(locationID = getLocation(campus)).awaitResponse() },
         transformSuccess = { _, json -> parseWeatherNow(json) }

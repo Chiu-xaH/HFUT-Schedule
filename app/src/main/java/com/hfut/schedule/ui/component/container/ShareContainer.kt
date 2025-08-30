@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 // 容器共享切换
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun <S> ShareContainer2D(modifier: Modifier = Modifier, label: S, contents : Map<S,(@Composable () -> Unit)>) {
+fun <S> ShareContainer2D(modifier: Modifier = Modifier,label: S, contents : Map<S,(@Composable () -> Unit)>) {
     SharedTransitionLayout(modifier = modifier) {
         AnimatedContent(
             targetState = label,

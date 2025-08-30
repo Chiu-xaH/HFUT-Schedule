@@ -71,8 +71,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -85,7 +85,7 @@ import java.math.BigDecimal
 
 private fun getUrl(page : Int,) : String {
     val auth = prefs.getString("auth","")
-    return MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
+    return MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
 }
 fun getInGuaGua(vm: NetWorkViewModel,onResult : (Boolean) -> Unit) {
 
@@ -124,9 +124,9 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
     val titles = remember { listOf("合肥","宣城") }
 
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
+        when(getCampusRegion()) {
+            CampusRegion.XUANCHENG -> XUANCHENG_TAB
+            CampusRegion.HEFEI -> HEFEI_TAB
         }
     )
     val auth = prefs.getString("auth","")

@@ -76,8 +76,8 @@ import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -101,9 +101,9 @@ fun DormitoryScoreScreen(
 
     val titles = remember { listOf("合肥","宣城") }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
+        when(getCampusRegion()) {
+            CampusRegion.XUANCHENG -> XUANCHENG_TAB
+            CampusRegion.HEFEI -> HEFEI_TAB
         }
     )
     var code by remember { mutableStateOf(prefs.getString("Room","") ?: "") }

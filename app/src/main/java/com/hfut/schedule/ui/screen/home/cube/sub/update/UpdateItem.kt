@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import android.annotation.SuppressLint
-import androidx.activity.BackEventCompat
-import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -12,16 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import kotlinx.coroutines.flow.Flow
-import kotlin.coroutines.cancellation.CancellationException
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -57,6 +52,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("移除 全局动画速率","想完全适配比较麻烦，合适的动画速率由开发者来决定")
+            UpdateItems("优化 部分界面的显示")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")
@@ -135,4 +132,3 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
-

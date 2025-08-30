@@ -38,6 +38,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.navigateAndSave
 import com.hfut.schedule.ui.style.color.textFiledTransplant

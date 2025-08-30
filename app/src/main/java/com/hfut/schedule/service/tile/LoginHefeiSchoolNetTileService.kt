@@ -1,5 +1,5 @@
 package com.hfut.schedule.service.tile
 
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
 
-class LoginHefeiSchoolNetTileService : LoginSchoolNetTileService(campus = Campus.HEFEI)
+class LoginHefeiSchoolNetTileService : LoginSchoolNetTileService(campus = CampusRegion.HEFEI)

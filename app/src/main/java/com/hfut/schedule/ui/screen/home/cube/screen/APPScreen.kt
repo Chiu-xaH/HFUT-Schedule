@@ -63,6 +63,7 @@ import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.util.SaveComposeAsImage
 import com.xah.uicommon.component.slider.CustomSlider
 import kotlinx.coroutines.async

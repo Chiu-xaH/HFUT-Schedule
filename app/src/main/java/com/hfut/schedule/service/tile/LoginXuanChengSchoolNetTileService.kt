@@ -1,5 +1,5 @@
 package com.hfut.schedule.service.tile
 
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
 
-class LoginXuanChengSchoolNetTileService : LoginSchoolNetTileService(campus = Campus.XUANCHENG)
+class LoginXuanChengSchoolNetTileService : LoginSchoolNetTileService(campus = CampusRegion.XUANCHENG)

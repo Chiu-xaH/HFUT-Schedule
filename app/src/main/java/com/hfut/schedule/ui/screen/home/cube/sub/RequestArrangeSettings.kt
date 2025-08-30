@@ -56,7 +56,7 @@ fun RequestArrange(innerPadding : PaddingValues,navController: NavHostController
 
 @Composable
 fun ArrangeItem(title : String, icon : Int, key : String) {
-    val pageSize = prefs.getString(key,MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()
+    val pageSize = prefs.getString(key,MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString()
     var sliderPosition by remember { mutableFloatStateOf(pageSize.toFloat()) }
     val str = formatDecimal(sliderPosition.toDouble(),0)
     CustomCard(color = MaterialTheme.colorScheme.surface) {

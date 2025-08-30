@@ -11,12 +11,12 @@ import com.hfut.schedule.logic.network.repo.Repository
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-open class LoginSchoolNetTileService(private val campus : Campus) : TileService() {
+open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileService() {
 
     private val loginSchoolNetResponse = StateHolder<Boolean>()
 

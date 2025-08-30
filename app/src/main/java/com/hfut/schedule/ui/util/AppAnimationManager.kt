@@ -1,14 +1,9 @@
 package com.hfut.schedule.ui.util
 
-//import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
@@ -25,64 +20,16 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.transition.state.TransitionState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 
 object AppAnimationManager {
-    data class ControlCenterBackgroundStyle(
-        val blurRadius : Dp,
-        val scale : Float,
-        val alpha : Float
-    )
-    val blurControlCenterBackgroundStyle = ControlCenterBackgroundStyle(
-        blurRadius = 37.5.dp,
-        scale = 0.875f,
-        alpha = 0.35f
-    )
-    val noBlurControlCenterBackgroundStyle = ControlCenterBackgroundStyle(
-        blurRadius = 0.dp,
-        scale = blurControlCenterBackgroundStyle.scale - 0.025f,
-        alpha = 0.925f
-    )
-    fun getControlCenterBackgroundStyle(motionBlur : Boolean) : ControlCenterBackgroundStyle =
-        if(motionBlur) blurControlCenterBackgroundStyle else noBlurControlCenterBackgroundStyle
     data class TransferAnimation(val remark : String,val enter : EnterTransition, val exit : ExitTransition)
     // 全局动画速度 毫秒
-    var ANIMATION_SPEED = 400
+    const val ANIMATION_SPEED = 400
     const val CONTROL_CENTER_ANIMATION_SPEED = 550
-//    const val CONTROL_CENTER_BLUR_RADIUS = 37.5
-
-    private suspend fun setAnimationSpeed() : Int {
-        val speedCode = DataStoreManager.animationSpeedType.first()
-        val speed = DataStoreManager.AnimationSpeed.entries.find { it.code == speedCode }?.speed ?: ANIMATION_SPEED
-        return speed
-    }
-    @OptIn(ExperimentalSharedTransitionApi::class)
-    suspend fun updateAnimationSpeed() = withContext(Dispatchers.IO) {
-        ANIMATION_SPEED = setAnimationSpeed()
-//        if(ANIMATION_SPEED == DataStoreManager.AnimationSpeed.NORMAL.code) {
-//            TransitionState.curveStyle.speedMs = DefaultTransitionStyle.DEFAULT_ANIMATION_SPEED
-//            TransitionState.curveStyle.boundsTransform = DefaultTransitionStyle.defaultBoundsTransform
-//        } else {
-//            TransitionState.curveStyle.speedMs = ANIMATION_SPEED
-//            TransitionState.curveStyle.boundsTransform = getCenterBoundsTransform()
-//        }
-    }
-
-
-//    @OptIn(ExperimentalSharedTransitionApi::class)
-//    fun getCenterBoundsTransform() = BoundsTransform { _, _ ->//FastOutSlowInEasing
-//        tween(durationMillis = TransitionState.curveStyle.speedMs, easing = FastOutSlowInEasing)
-//    }
 
     private val enterAnimation1 =
         scaleIn(animationSpec = tween(durationMillis = ANIMATION_SPEED)) +

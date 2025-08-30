@@ -2,13 +2,13 @@ package com.hfut.schedule.logic.model
 
 import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.DateTime
 import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 
 data class SupabaseUserLoginBean(
@@ -38,9 +38,9 @@ data class SupabaseEventEntity(
     @SerializedName("contributor_email")
     val email : String? = getSchoolEmail(),
     @SerializedName("contributor_class")
-    val myClass : String? = getPersonInfo().className + when(getCampus()) {
-        Campus.HEFEI -> "(肥)"
-        Campus.XUANCHENG -> "(宣)"
+    val myClass : String? = getPersonInfo().className + when(getCampusRegion()) {
+        CampusRegion.HEFEI -> "(肥)"
+        CampusRegion.XUANCHENG -> "(宣)"
     },
     @SerializedName("applicable_classes")
     val applicableClasses : String,

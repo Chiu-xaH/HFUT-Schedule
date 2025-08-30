@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -26,6 +27,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
@@ -74,8 +77,11 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -92,7 +98,7 @@ private const val XUANCHENG_TAB = 1
 
 private fun getUrl(page : Int,isUnderGraduate : Boolean) : String {
     val auth = prefs.getString("auth","")
-    return  MyApplication.HUIXIN_URL +
+    return  MyApplication.HUI_XIN_URL +
             "charge-app/?name=pays&appsourse=ydfwpt&id=${
                 if(page == XUANCHENG_TAB)
                     FeeType.ELECTRIC_XUANCHENG.code else {
@@ -101,7 +107,7 @@ private fun getUrl(page : Int,isUnderGraduate : Boolean) : String {
                     else
                         FeeType.ELECTRIC_HEFEI_GRADUATE.code
                 }
-            }&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth
+            }&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
 }
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -110,9 +116,9 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     val titles = remember { listOf("合肥","宣城") }
 
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
+        when(getCampusRegion()) {
+            CampusRegion.XUANCHENG -> XUANCHENG_TAB
+            CampusRegion.HEFEI -> HEFEI_TAB
         }
     )
     var isUnderGraduate by remember { mutableStateOf(getPersonInfo().educationLevel?.contains("本") == true) }
@@ -177,11 +183,129 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         else -> "选择南北"
     }
 
+    var showDialog2 by remember { mutableStateOf(false) }
+    if(showDialog2)
+        Dialog(onDismissRequest = { showDialog2 = false }) {
+            Column {
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                    OutlinedCard{
+                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                            item {
+                                Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
+                            }
+                            item {
+                                LazyRow {
+                                    items(5) { items ->
+                                        IconButton(onClick = {
+                                            if (payNumber.length < 3)
+                                                payNumber += items.toString()
+                                            else Toast.makeText(
+                                                MyApplication.context,
+                                                "最高999元",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }) { Text(text = items.toString()) }
+                                    }
+                                }
+                            }
+                            item {
+                                LazyRow {
+                                    items(5) { items ->
+                                        val num = items + 5
+                                        IconButton(onClick = {
+                                            if (payNumber.length < 3)
+                                                payNumber += num
+                                            else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
+                                        }) { Text(text = num.toString()) }
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
+                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                    FilledTonalIconButton(
+                        onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
+                    }
+
+                    FilledTonalIconButton(
+                        onClick = {
+                            showDialog2 = false
+                            if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
+                                showBottomSheet = true
+                        },
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Icon(Icons.Filled.Check, contentDescription = "description")
+                    }
+
+                    FilledTonalButton(
+                        onClick = {
+                            showDialog2 = false
+                            payNumber = "0.01"
+                            showBottomSheet = true
+                        },
+                        modifier = Modifier.padding(horizontal = 5.dp)
+                    ) {
+                        Text("尝试充值0.01")
+                    }
+                }
+            }
+        }
+
 
 
     var menuOffset by remember { mutableStateOf<DpOffset?>(null) }
 
-    Column() {
+
+    menuOffset?.let {
+        DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {
+            DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
+                showitem = false})
+            DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
+                showitem = false})
+        }
+        DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = it) {
+            DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
+                showitem2 = false})
+            DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
+                showitem2 = false})
+            DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
+                showitem2 = false})
+            DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
+                showitem2 = false})
+        }
+        DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }, offset = it) {
+            DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
+                showitem3 = false })
+            DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
+                showitem3 = false })
+        }
+    }
+
+
+    Column(modifier = Modifier.animateContentSize()) {
         HazeBottomSheetTopBar("寝室电费" , isPaddingStatusBar = false) {
             if(pagerState.currentPage == XUANCHENG_TAB) {
                 Row() {
@@ -238,127 +362,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
             }
         }
-
-        menuOffset?.let {
-            DropdownMenu(expanded = showitem, onDismissRequest = { showitem = false }, offset = it) {
-                DropdownMenuItem(text = { Text(text = "北一号楼") }, onClick = { BuildingsNumber =  "1"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北二号楼") }, onClick = {  BuildingsNumber =  "2"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北三号楼") }, onClick = {  BuildingsNumber =  "3"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北四号楼") }, onClick = {  BuildingsNumber =  "4"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "北五号楼") }, onClick = {  BuildingsNumber =  "5"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南六号楼") }, onClick = {  BuildingsNumber =  "6"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南七号楼") }, onClick = {  BuildingsNumber =  "7"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南八号楼") }, onClick = {  BuildingsNumber =  "8"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南九号楼") }, onClick = {  BuildingsNumber =  "9"
-                    showitem = false})
-                DropdownMenuItem(text = { Text(text = "南十号楼") }, onClick = {  BuildingsNumber = "10"
-                    showitem = false})
-            }
-            DropdownMenu(expanded = showitem2, onDismissRequest = { showitem2 = false }, offset = it) {
-                DropdownMenuItem(text = { Text(text = "南边照明") }, onClick = { EndNumber = "11"
-                    showitem2 = false})
-                DropdownMenuItem(text = { Text(text = "南边空调") }, onClick = { EndNumber = "12"
-                    showitem2 = false})
-                DropdownMenuItem(text = { Text(text = "北边照明") }, onClick = { EndNumber = "21"
-                    showitem2 = false})
-                DropdownMenuItem(text = { Text(text = "北边空调") }, onClick = { EndNumber = "22"
-                    showitem2 = false})
-            }
-            DropdownMenu(expanded = showitem3, onDismissRequest = { showitem3 = false }, offset = it) {
-                DropdownMenuItem(text = { Text(text = "南边") }, onClick = { EndNumber = "11"
-                    showitem3 = false })
-                DropdownMenuItem(text = { Text(text = "北边") }, onClick = { EndNumber = "21"
-                    showitem3 = false })
-            }
-        }
-
         if (BuildingsNumber == "0") BuildingsNumber = ""
-
-        var showDialog2 by remember { mutableStateOf(false) }
-        if(showDialog2)
-            Dialog(onDismissRequest = { showDialog2 = false }) {
-                Column {
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                        OutlinedCard{
-                            LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                item {
-                                    Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
-                                }
-                                item {
-                                    LazyRow {
-                                        items(5) { items ->
-                                            IconButton(onClick = {
-                                                if (payNumber.length < 3)
-                                                    payNumber += items.toString()
-                                                else Toast.makeText(
-                                                    MyApplication.context,
-                                                    "最高999元",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
-                                            }) { Text(text = items.toString()) }
-                                        }
-                                    }
-                                }
-                                item {
-                                    LazyRow {
-                                        items(5) { items ->
-                                            val num = items + 5
-                                            IconButton(onClick = {
-                                                if (payNumber.length < 3)
-                                                    payNumber += num
-                                                else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
-                                            }) { Text(text = num.toString()) }
-                                        }
-                                    }
-                                }
-                            }
-                            Spacer(modifier = Modifier.height(10.dp))
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(10.dp))
-                    Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                        FilledTonalIconButton(
-                            onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        ) {
-                            Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
-                        }
-
-                        FilledTonalIconButton(
-                            onClick = {
-                                showDialog2 = false
-                                if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
-                                    showBottomSheet = true
-                            },
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        ) {
-                            Icon(Icons.Filled.Check, contentDescription = "description")
-                        }
-
-                        FilledTonalButton(
-                            onClick = {
-                                showDialog2 = false
-                                payNumber = "0.01"
-                                showBottomSheet = true
-                            },
-                            modifier = Modifier.padding(horizontal = 5.dp)
-                        ) {
-                            Text("尝试充值0.01")
-                        }
-                    }
-                }
-            }
-
-
-
         CustomTabRow(pagerState,titles)
         HorizontalPager(state = pagerState) { page ->
             when(page) {
@@ -522,25 +526,32 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP/2))
                         }
                         DividerTextExpandedWith("使用说明", defaultIsExpanded = false) {
-                            TransplantListItem(
-                                headlineContent = { Text("夜间透支") },
-                                supportingContent = { Text("每日23:00之前缴费，最迟23:00到账，23:00之后缴费，次日6点到账，在23:01-6:00时间段，账户如果欠费不会断电")},
-                                leadingContent = { Icon(painterResource(R.drawable.dark_mode),null)}
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text("最大功率") },
-                                supportingContent = { Text("超出800W将自动断电，5分钟后自动恢复")},
-                                leadingContent = { Icon(painterResource(R.drawable.hvac_max_defrost),null)}
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text("月末补贴") },
-                                supportingContent = { Text("照明空调各￥15，约下旬初到账")},
-                                leadingContent = { Icon(painterResource(R.drawable.paid),null)}
-                            )
-                            TransplantListItem(
-                                headlineContent = { Text("寝室缴费实测存在一定延迟") },
-                                leadingContent = { Icon(painterResource(R.drawable.schedule),null)}
-                            )
+                            CustomCard(
+                                color = cardNormalColor()
+                            ) {
+                                TransplantListItem(
+                                    headlineContent = { Text("夜间透支") },
+                                    supportingContent = { Text("每日23:00之前缴费，最迟23:00到账，23:00之后缴费，次日6点到账，在23:01-6:00时间段，账户如果欠费不会断电")},
+                                    leadingContent = { Icon(painterResource(R.drawable.dark_mode),null)}
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text("最大功率") },
+                                    supportingContent = { Text("超出800W将自动断电，5分钟后自动恢复")},
+                                    leadingContent = { Icon(painterResource(R.drawable.hvac_max_defrost),null)}
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text("月末补贴") },
+                                    supportingContent = { Text("照明空调各￥15，约下旬初到账")},
+                                    leadingContent = { Icon(painterResource(R.drawable.paid),null)}
+                                )
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    headlineContent = { Text("寝室缴费实测存在一定延迟") },
+                                    leadingContent = { Icon(painterResource(R.drawable.schedule),null)}
+                                )
+                            }
                         }
                     }
                 }

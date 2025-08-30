@@ -93,12 +93,10 @@ import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.logic.model.one.BorrowBooksResponse
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.BuildingResponse
 import com.hfut.schedule.logic.model.one.ClassroomBean
 import com.hfut.schedule.logic.model.one.ClassroomResponse
-import com.hfut.schedule.logic.model.one.SubBooksResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
@@ -124,7 +122,6 @@ import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
-import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.network.repo.Repository
 import com.hfut.schedule.logic.network.repo.Repository.launchRequestNone
 import com.hfut.schedule.logic.network.repo.Repository.launchRequestSimple
@@ -149,7 +146,6 @@ import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
 import com.hfut.schedule.logic.util.network.supabaseEventForkDtoToEntity
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
@@ -157,15 +153,15 @@ import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
+import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
+import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.bsdiffs.model.Patch
@@ -245,7 +241,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getStarNum() = Repository.getStarNum(githubStarsData)
 
     val workSearchResult = StateHolder<WorkSearchResponse>()
-    suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: Campus) = Repository.searchWorks(keyword,page,type,campus,workSearchResult)
+    suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: CampusRegion) = Repository.searchWorks(keyword,page,type,campus,workSearchResult)
 // Supabase ////////////////////////////////////////////////////////////////////////////////////////////////
     val supabaseTodayVisitResp = StateHolder<Int>()
     val supabaseUserCountResp = StateHolder<Int>()
@@ -404,7 +400,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 // 培养方案 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     var programList = StateHolder<List<ProgramListBean>>()
-    suspend fun getProgramList(campus : Campus) = launchRequestSimple(
+    suspend fun getProgramList(campus : CampusRegion) = launchRequestSimple(
         holder = programList,
         request = { myAPI.getProgramList(
             when(campus) {
@@ -420,7 +416,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { throw e }
 
     val programSearchData = StateHolder<ProgramSearchBean>()
-    suspend fun getProgramListInfo(id : Int,campus : Campus) = launchRequestSimple(
+    suspend fun getProgramListInfo(id : Int,campus : CampusRegion) = launchRequestSimple(
         holder = programSearchData,
         request = { myAPI.getProgram(
             id,
@@ -1061,8 +1057,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                     "1,${
                         prefs.getString(
                             "CourseSearchRequest",
-                            MyApplication.PAGE_SIZE.toString()
-                        ) ?: MyApplication.PAGE_SIZE
+                            MyApplication.DEFAULT_PAGE_SIZE.toString()
+                        ) ?: MyApplication.DEFAULT_PAGE_SIZE
                     }",
                     courseName,
                     courseId
@@ -1204,8 +1200,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         auth : String,
         page : Int,
         size : Int =
-            prefs.getString("CardRequest", MyApplication.PAGE_SIZE.toString())?.toIntOrNull()
-                ?: MyApplication.PAGE_SIZE
+            prefs.getString("CardRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull()
+                ?: MyApplication.DEFAULT_PAGE_SIZE
     ) = launchRequestSimple(
         holder = huiXinBillResult,
         request = { huiXin.Cardget(auth,page,size.toString() ).awaitResponse() },
@@ -1458,7 +1454,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val huiXinSearchBillsResult = StateHolder<BillBean>()
     suspend fun searchBills(auth : String, info: String,page : Int) = launchRequestSimple(
         holder = huiXinSearchBillsResult,
-        request = { huiXin.searchBills(auth,info,page, prefs.getString("CardRequest","30") ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        request = { huiXin.searchBills(auth,info,page, prefs.getString("CardRequest","30") ?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _, json -> parseHuiXinSearchBills(json) }
     )
     private fun parseHuiXinSearchBills(result : String) : BillBean = try {
@@ -1524,20 +1520,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
     } catch (e : Exception) { throw  e }
 
-    val buildingsResponse = StateHolder<Pair<CampusDetail,List<BuildingBean>>>()
-    suspend fun getBuildings(campus : CampusDetail,token : String)  = launchRequestSimple(
+    val buildingsResponse = StateHolder<Pair<Campus,List<BuildingBean>>>()
+    suspend fun getBuildings(campus : Campus, token : String)  = launchRequestSimple(
         holder = buildingsResponse,
         request = {
             val code = when(campus) {
-                CampusDetail.XC -> "03"
-                CampusDetail.FCH -> "02"
-                CampusDetail.TXL -> "01"
+                Campus.XC -> "03"
+                Campus.FCH -> "02"
+                Campus.TXL -> "01"
             }
             one.getBuildings(code, token).awaitResponse()
         },
         transformSuccess = { _,json -> parseBuildings(campus,json) }
     )
-    private fun parseBuildings(campus: CampusDetail,result: String) : Pair<CampusDetail, List<BuildingBean>> = try {
+    private fun parseBuildings(campus: Campus, result: String) : Pair<Campus, List<BuildingBean>> = try {
         if(result.contains("success"))
             Pair(campus,Gson().fromJson(result, BuildingResponse::class.java).data)
         else
@@ -1592,7 +1588,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val failRateData = StateHolder<List<FailRateRecord>>()
     suspend fun searchFailRate(token : String, name: String, page : Int) = launchRequestSimple(
         holder = failRateData,
-        request = { community.getFailRate(token,name,page.toString(), prefs.getString("FailRateRequest", MyApplication.PAGE_SIZE.toString()) ?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        request = { community.getFailRate(token,name,page.toString(), prefs.getString("FailRateRequest", MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _,json -> parseFailRate(json) }
     )
     private fun parseFailRate(json : String) : List<FailRateRecord> = try {
@@ -1670,7 +1666,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val libraryData = StateHolder<List<LibRecord>>()
     suspend fun searchBooks(token: String, name: String, page: Int) = launchRequestSimple(
         holder = libraryData,
-        request = { community.searchBooks(token,name,page.toString(),prefs.getString("BookRequest", MyApplication.PAGE_SIZE.toString())?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        request = { community.searchBooks(token,name,page.toString(),prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _,json -> parseSearchBooks(json) }
     )
     private fun parseSearchBooks(json : String) : List<LibRecord> = try {
@@ -1766,7 +1762,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val applyFriendsResponse = StateHolder<List<ApplyingLists?>>()
     suspend fun getApplying(token : String) = launchRequestSimple(
         holder = applyFriendsResponse,
-        request = { community.getApplyingList(token, prefs.getString("FriendRequest", MyApplication.PAGE_SIZE.toString())?: MyApplication.PAGE_SIZE.toString()).awaitResponse() },
+        request = { community.getApplyingList(token, prefs.getString("FriendRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _,json -> parseApplyFriends(json) }
     )
     private fun parseApplyFriends(result : String) : List<ApplyingLists?> = try {
@@ -1930,9 +1926,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val weatherWarningData = StateHolder<List<QWeatherWarnBean>>()
-    suspend fun getWeatherWarn(campus: Campus) = Repository.getWeatherWarn(campus,weatherWarningData)
+    suspend fun getWeatherWarn(campus: CampusRegion) = Repository.getWeatherWarn(campus,weatherWarningData)
     val qWeatherResult = StateHolder<QWeatherNowBean>()
-    suspend fun getWeather(campus: Campus) = Repository.getWeather(campus,qWeatherResult)
+    suspend fun getWeather(campus: CampusRegion) = Repository.getWeather(campus,qWeatherResult)
 // 学工系统/今日校园 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val goToStuResponse = MutableLiveData<String?>()
@@ -1973,8 +1969,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 // 宣城校园网 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val loginSchoolNetResponse = StateHolder<Boolean>()
-    suspend fun loginSchoolNet(campus: Campus = getCampus()) = Repository.loginSchoolNet(campus,loginSchoolNetResponse)
-    suspend fun logoutSchoolNet(campus: Campus = getCampus()) = Repository.logoutSchoolNet(campus,loginSchoolNetResponse)
+    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion()) = Repository.loginSchoolNet(campus,loginSchoolNetResponse)
+    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion()) = Repository.logoutSchoolNet(campus,loginSchoolNetResponse)
 
     val infoWebValue = StateHolder<WebInfo>()
     suspend fun getWebInfo() = Repository.getWebInfo(infoWebValue)

@@ -99,7 +99,6 @@ object DataStoreManager {
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
     private val TODAY_CAMPUS_TIP = booleanPreferencesKey("today_campus_tip")
     private val COURSE_BOOK = stringPreferencesKey("course_book")
-    private val ANIMATION_SPEED = intPreferencesKey("animation_speed")
     private val WEB_VIEW_DARK = booleanPreferencesKey("web_view_dark")
     private val PREDICTIVE = booleanPreferencesKey("predictive")
     private val CONTROL_CENTER = booleanPreferencesKey("control_center")
@@ -135,7 +134,6 @@ object DataStoreManager {
     suspend fun saveAutoTermValue(value: Int) = saveValue(AUTO_TERM_VALUE,value)
     suspend fun saveTodayCampusTip(value: Boolean) = saveValue(TODAY_CAMPUS_TIP,value)
     suspend fun saveCourseBook(value: String) = saveValue(COURSE_BOOK,value)
-    suspend fun saveAnimationSpeed(value: AnimationSpeed) = saveValue(ANIMATION_SPEED,value.code)
     suspend fun saveCustomColorStyle(value: ColorStyle) = saveValue(CUSTOM_COLOR_STYLE,value.code)
     suspend fun saveWebViewDark(value: Boolean) = saveValue(WEB_VIEW_DARK,value)
     suspend fun savePredict(value: Boolean) = saveValue(PREDICTIVE,value)
@@ -178,7 +176,6 @@ object DataStoreManager {
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
-    val animationSpeedType = getFlow(ANIMATION_SPEED, AnimationSpeed.NORMAL.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)

@@ -51,8 +51,8 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -183,9 +183,9 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
     val titles = remember { listOf("合肥","宣城") }
 
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
+        when(getCampusRegion()) {
+            CampusRegion.XUANCHENG -> XUANCHENG_TAB
+            CampusRegion.HEFEI -> HEFEI_TAB
         }
     )
     val auth = prefs.getString("auth","")
@@ -209,7 +209,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         CardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                Starter.startWebView(url = MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth, title = "慧新易校")
+                                Starter.startWebView(url = MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

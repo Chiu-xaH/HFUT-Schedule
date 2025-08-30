@@ -109,6 +109,7 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip

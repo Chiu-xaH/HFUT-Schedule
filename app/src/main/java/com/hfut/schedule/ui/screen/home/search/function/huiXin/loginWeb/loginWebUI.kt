@@ -73,8 +73,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.PayFor
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -106,7 +106,7 @@ fun LoginWebScaUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeStat
 @Composable
 fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) {
     val auth = remember { prefs.getString("auth", "") }
-    val zjgdUrl = remember { MyApplication.HUIXIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${MyApplication.HUIXIN_URL}plat&token=" + auth }
+    val zjgdUrl = remember { MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.NET_XUANCHENG.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth }
     val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
 
     // 支付用的变量
@@ -138,9 +138,9 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
     val titles = remember { listOf("合肥","宣城") }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
-        when(getCampus()) {
-            Campus.XUANCHENG -> XUANCHENG_TAB
-            Campus.HEFEI -> HEFEI_TAB
+        when(getCampusRegion()) {
+            CampusRegion.XUANCHENG -> XUANCHENG_TAB
+            CampusRegion.HEFEI -> HEFEI_TAB
     })
 
     fun refreshFlow() {
@@ -304,7 +304,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
         }
     }
-    val loginUi = @Composable { campus : Campus ->
+    val loginUi = @Composable { campus : CampusRegion ->
         DividerTextExpandedWith("登录") {
             if(loadingLogin) {
                 LoadingUI()
@@ -396,7 +396,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
             when(page) {
                 HEFEI_TAB -> {
                     Column {
-                        loginUi(Campus.HEFEI)
+                        loginUi(CampusRegion.HEFEI)
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             CustomCard(color = cardNormalColor()) {
                                 TransplantListItem(
@@ -455,7 +455,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                             )
                         }
 
-                        loginUi(Campus.XUANCHENG)
+                        loginUi(CampusRegion.XUANCHENG)
 
                         DividerTextExpandedWith(text = "使用说明", defaultIsExpanded = false) {
                             CustomCard(color = cardNormalColor()) {

@@ -3,13 +3,10 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleKsp)
-//    id 'kotlin-parcelize'
 }
 
 def moduleTransition = ":transition"
 def moduleUiCommon = ":uiCommon"
-def moduleLogicCommon = ":logicCommon"
-
 
 android {
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
@@ -219,7 +216,7 @@ dependencies {
     // 拖拽
     implementation(libs.reorderable)
     // 权限
-    implementation(libs.accompanist.permissions)
+//    implementation(libs.accompanist.permissions)
 //     适配大屏 自适应布局
 //    implementation(libs.androidx.window)
 //    implementation(libs.androidx.adaptive)

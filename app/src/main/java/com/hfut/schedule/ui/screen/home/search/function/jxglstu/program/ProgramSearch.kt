@@ -59,10 +59,10 @@ import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.HEFEI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus.XUANCHENG
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
+import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
@@ -86,7 +86,7 @@ fun ProgramSearchScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-    var campus by remember { mutableStateOf( getCampus() ) }
+    var campus by remember { mutableStateOf( getCampusRegion() ) }
     var input by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.ProgramSearch.receiveRoute() }
@@ -172,7 +172,7 @@ private fun ProgramSearch(
     vm : NetWorkViewModel,
     ifSaved: Boolean,
     hazeState: HazeState,
-    campus: Campus,
+    campus: CampusRegion,
     innerPadding : PaddingValues,
     input : String
 ) {
@@ -266,7 +266,7 @@ private fun ProgramSearch(
 }
 
 @Composable
-private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campus: Campus, ifSaved: Boolean, hazeState: HazeState) {
+private fun ProgramSearchInfo(vm: NetWorkViewModel, item: ProgramListBean, campus: CampusRegion, ifSaved: Boolean, hazeState: HazeState) {
     val uiState by vm.programSearchData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         vm.programSearchData.clear()

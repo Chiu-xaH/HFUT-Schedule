@@ -168,7 +168,6 @@ fun MainHost(
                     showToast("已自动修复一卡通登录状态无效的Bug")
                 }
             }
-            launch { AppAnimationManager.updateAnimationSpeed() }
             // 如果进入的是登陆界面 未登录做准备
             if(!(startActivity && login)) {
                 //从服务器获取信息

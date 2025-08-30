@@ -194,7 +194,7 @@ fun HomeSettingScreen(navController: NavController,
         }
 
         DividerTextExpandedWith(text = "常驻项目") {
-            AlwaysItem(hazeState,showUpdate)
+            AlwaysItem(hazeState)
         }
 
 
@@ -226,7 +226,7 @@ fun GithubDownloadUI() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlwaysItem(hazeState: HazeState,showUpdate : Boolean) {
+fun AlwaysItem(hazeState: HazeState) {
     val version by remember { mutableStateOf(getUpdates()) }
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -279,10 +279,6 @@ fun AlwaysItem(hazeState: HazeState,showUpdate : Boolean) {
                     showBottomSheet = true
                 }
             )
-        }
-        if(!showUpdate) {
-            PaddingHorizontalDivider()
-            GithubDownloadUI()
         }
     }
 }

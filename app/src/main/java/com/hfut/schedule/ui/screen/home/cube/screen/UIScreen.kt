@@ -7,6 +7,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -23,6 +29,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,13 +55,16 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
@@ -71,7 +81,6 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -84,6 +93,7 @@ import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
+import com.hfut.schedule.ui.screen.home.cube.sub.TransitionExample
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
@@ -121,7 +131,9 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
         scale = it
     }
     UISettingsScreen(
-        Modifier.verticalScroll(rememberScrollState()).scale(scale),
+        Modifier
+            .verticalScroll(rememberScrollState())
+            .scale(scale),
         innerPaddings,
         false
     )
@@ -148,7 +160,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
-        val animationSpeed by DataStoreManager.animationSpeedType.collectAsState(initial = DataStoreManager.AnimationSpeed.NORMAL.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
         val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
@@ -183,15 +194,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val transitionLevels = remember { TransitionLevel.entries }
         val hazeBlurLevels = remember { HazeBlurLevel.entries }
 
-        LaunchedEffect(animationSpeed) {
-            AppAnimationManager.updateAnimationSpeed()
-        }
         LaunchedEffect(transition) {
             TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
         }
-//        LaunchedEffect(motionBlur) {
-//            TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
-//        }
+
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
         LaunchedEffect(customColor) {
@@ -210,7 +216,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             ) {
                 var input by remember { mutableStateOf(longToHexColor(customColor)) }
                 val parse = parseColor(input)
-                Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium).padding(vertical = APP_HORIZONTAL_DP)) {
+                Column(modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
+                    .padding(vertical = APP_HORIZONTAL_DP)) {
                     CustomTextField(
                         label = { Text("输入 ARGB Hex 值") },
                         input = input,
@@ -233,7 +241,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                                 }
                             },
                             enabled = parse != null,
-                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
                         ) {
                             Text("设置")
                         }
@@ -242,7 +252,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                             onClick = {
                                 showColorDialog = false
                             },
-                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
                         ) {
                             Text("取消")
                         }
@@ -316,7 +328,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         }
         DividerTextExpandedWith("主题色") {
             CustomCard(color = backgroundColor) {
-                RowHorizontal(modifier = Modifier.fillMaxWidth().padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP-10.dp)) {
+                RowHorizontal(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP - 10.dp)) {
                     FilledTonalIconButton(
                         onClick = { showToast("Primary") },
                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primary )
@@ -438,15 +452,16 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                             .fillMaxWidth()
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .padding(bottom = APP_HORIZONTAL_DP)
-                            .height(APP_HORIZONTAL_DP*2)
+                            .height(APP_HORIZONTAL_DP * 2)
                             .drawBehind {
-                                val trackHeight = (APP_HORIZONTAL_DP*2 - 5.dp).toPx() // 色相带高度
+                                val trackHeight = (APP_HORIZONTAL_DP * 2 - 5.dp).toPx() // 色相带高度
                                 val centerY = size.height / 2f // thumb 居中
                                 val top = centerY - trackHeight / 2f
                                 val rect = Rect(0f, top, size.width, top + trackHeight)
 
                                 // 在滑轨上绘制渐变（色相带）
-                                val colors = (0..360 step 10).map { hue -> Color.hsv(hue.toFloat(), 1f, 1f) }
+                                val colors =
+                                    (0..360 step 10).map { hue -> Color.hsv(hue.toFloat(), 1f, 1f) }
                                 val gradient = Brush.horizontalGradient(colors = colors)
                                 drawRoundRect(
                                     brush = gradient,
@@ -462,16 +477,33 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         DividerTextExpandedWith("动效") {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
-                    headlineContent = {
-                        Column {
-                            Text(text = "层级实时模糊")
-                            Text("Level${blur+1} (${hazeBlurLevels.find { it.code == blur}?.title})")
+                    headlineContent = { Text(text = "运动模糊") },
+                    supportingContent = {
+                        if(AppVersion.CAN_MOTION_BLUR) {
+                            Text(text = "组件的运动过程伴随实时模糊效果\n平衡性能与美观,推荐开启")
+                        } else {
+                            Text(text = "需为 Android 12+")
                         }
                     },
-                    supportingContent = {
-                        Text(text = "将部分层级渲染为实时模糊，等级越高，越可能会在某些设备上掉帧" )
+                    leadingContent = { MotionBlurIcon(motionBlur) },
+                    trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
+                    modifier = Modifier.clickable {
+                        if(AppVersion.CAN_MOTION_BLUR) {
+                            scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) }
+                        }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text(text = "层级实时模糊" + " | " + "Level${blur+1} (${hazeBlurLevels.find { it.code == blur}?.title})")
                     },
-                    leadingContent = { Icon(painterResource(R.drawable.deblur), contentDescription = "Localized description",) },
+                    supportingContent = {
+                        Text(text = "层级使用实时模糊区分\n平衡性能与美观,推荐为Level2" )
+                    },
+                    leadingContent = {
+                        HazeBlurIcon(blur)
+                    },
                 )
                 CustomSlider(
                     value = blur.toFloat(),
@@ -484,92 +516,45 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     valueRange = 0f..2f,
                 )
                 PaddingHorizontalDivider()
+//                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+//                LoopingRectangleCenteredTrail2(it)
+//                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "全局动画速率") },
-                    leadingContent = { Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",) },
+                    headlineContent = {
+                        Column {
+                            Text(text = "转场背景特效" + " | " + "Level${transition+1} (${transitionLevels.find { it.code == transition}?.title})")
+                        }
+                    },
+                    supportingContent = {
+                        Text(text = "界面打开关闭时背景伴随特效\n平衡性能与美观,推荐为Level2")
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.transition_fade), contentDescription = "Localized description",) },
                 )
+                CustomSlider(
+                    value = transition.toFloat(),
+                    onValueChange = { value ->
+                        val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
+                        scope.launch { DataStoreManager.saveTransition(level) }
+                    },
+                    steps = transitionLevels.size-2,
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                    valueRange = 0f..(transitionLevels.size-1).toFloat(),
+                )
+//                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
                 RowHorizontal {
-                    for(i in animationList.indices) {
-                        val item = animationList[i]
-                        FilterChip(
-                            onClick = {
-                                scope.launch { DataStoreManager.saveAnimationSpeed(item) }
-                            },
-                            label = {
-                                ColumnVertical {
-                                    Spacer(Modifier.height(CARD_NORMAL_DP))
-                                    Text(text = item.title)
-                                    Text(text = "${item.speed}ms")
-                                    Spacer(Modifier.height(CARD_NORMAL_DP))
-                                }
-                            },
-                            selected = animationSpeed == item.code
-                        )
-                        if(i != animationList.size-1) {
-                            Spacer(modifier = Modifier.width(5.dp))
-                        }
-                    }
+                    TransitionExample()
                 }
-                val speed = animationList.find { it.code == animationSpeed }?.speed
-
-                speed?.let {
-                    if(it == 0) return@let
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                    LoopingRectangleCenteredTrail2(it)
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                    PaddingHorizontalDivider()
-                    TransplantListItem(
-                        headlineContent = { Text(text = "运动模糊") },
-                        supportingContent = {
-                            if(AppVersion.CAN_MOTION_BLUR) {
-                                Text(text = "部分UI的运动会伴随实时模糊效果,此过程会加大动画过程的压力")
-                            } else {
-                                Text(text = "需为 Android 12+")
-                            }
-                        },
-                        leadingContent = { Icon(painterResource(R.drawable.motion_mode), contentDescription = "Localized description",) },
-                        trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
-                        modifier = Modifier.clickable {
-                            if(AppVersion.CAN_MOTION_BLUR) {
-                                scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) }
-                            }
-                        }
-                    )
-                    PaddingHorizontalDivider()
-
-                    TransplantListItem(
-                        headlineContent = {
-                            Column {
-                                Text(text = "转场动画等级")
-                                Text("Level${transition+1} (${transitionLevels.find { it.code == transition}?.title})")
-                            }
-                        },
-                        supportingContent = {
-                            Text(text = "转场动画伴随较高强度的模糊、缩放、压暗、回弹等效果，等级越高，越可能会在某些设备上掉帧")
-                        },
-                        leadingContent = { Icon(painterResource(R.drawable.transition_fade), contentDescription = "Localized description",) },
-                    )
-                    CustomSlider(
-                        value = transition.toFloat(),
-                        onValueChange = { value ->
-                            val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
-                            scope.launch { DataStoreManager.saveTransition(level) }
-                        },
-                        steps = transitionLevels.size-2,
-                        modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                        valueRange = 0f..(transitionLevels.size-1).toFloat(),
-                    )
-                    PaddingHorizontalDivider()
-
-                    TransplantListItem(
-                        headlineContent = { Text(text = "底栏转场动画") },
-                        supportingContent = {
-                            Text("自定义底栏切换页面进行转场的动画")
-                        },
-                        leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
-                    )
-                    AnimationSetting(it)
-                }
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "底栏转场动画") },
+                    supportingContent = {
+                        Text("底栏切换时进行转场的动画\n平衡性能与美观,推荐为向中心运动或淡入淡出")
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
+                )
+                AnimationSetting()
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
@@ -618,7 +603,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
 //                        Icon(painterResource(R.drawable.image),null)
 //                    },
 //                    trailingContent = {
-//                        Switch(checked = false,)
+//                        CustomSwitch(checked = false,)
 //                    }
 //                )
                 if(useCustomBackground) {
@@ -732,6 +717,111 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
                 .size(boxSize)
                 .clip(MaterialTheme.shapes.medium)
                 .background(primary)
+        )
+    }
+}
+
+@Composable
+private fun MotionBlurIcon(motionBlur : Boolean) {
+    Box(modifier = Modifier.size(24.dp).background(MaterialTheme.colorScheme.surfaceContainer, shape = CircleShape)){
+        val infiniteTransition = rememberInfiniteTransition()
+        val scale by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = AppAnimationManager.ANIMATION_SPEED * 3,
+                    easing = FastOutSlowInEasing,
+                    delayMillis = AppAnimationManager.ANIMATION_SPEED
+                ),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+        // 模糊 2.5 ~ 0
+        val blur by infiniteTransition.animateFloat(
+            initialValue = 5f,
+            targetValue = 0f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = AppAnimationManager.ANIMATION_SPEED * 3,
+                    easing = FastOutSlowInEasing,
+                    delayMillis = AppAnimationManager.ANIMATION_SPEED
+                ),
+                repeatMode = RepeatMode.Reverse
+            )
+        )
+
+        // 旋转，每个周期旋转固定角度（累加效果）
+        val rotation by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 60f, // 一圈
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = AppAnimationManager.ANIMATION_SPEED * 3 / 2,
+                    easing = LinearEasing
+                ), // 线性旋转
+                repeatMode = RepeatMode.Restart
+            )
+        )
+
+        Icon(
+            painter = painterResource(R.drawable.filter_vintage),
+            contentDescription = "Localized description",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxSize()
+                .graphicsLayer {
+                    rotationZ = rotation
+                }
+                .blur(radius = if(motionBlur) blur.dp else 0.dp)
+                .scale(scale)
+        )
+        Icon(
+            painter = painterResource(R.drawable.filter_vintage),
+            contentDescription = "Localized description",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxSize()
+                .graphicsLayer {
+                    rotationZ = -rotation
+                }
+                .blur(radius = if(motionBlur) (2.5-blur).dp else 0.dp)
+                .scale(1-scale)
+        )
+    }
+}
+
+
+@Composable
+private fun HazeBlurIcon(blur : Int) {
+    val size = 24.dp
+    Box(modifier = Modifier.size(size)) {
+        Icon(
+            painter = painterResource(R.drawable.filter_vintage),
+            contentDescription = "Localized description",
+            modifier = Modifier
+                .matchParentSize()
+                .drawWithContent {
+                    // 只绘制左半部分原图
+                    val halfWidth = size.toPx() / 2
+                    clipRect(right = halfWidth) {
+                        this@drawWithContent.drawContent()
+                    }
+                }
+        )
+        Icon(
+            painter = painterResource(R.drawable.filter_vintage),
+            contentDescription = null,
+            modifier = Modifier
+                .matchParentSize()
+                .drawWithContent {
+                    val halfWidth = size.toPx() / 2
+                    // 只绘制右半部分，并加模糊
+                    clipRect(left = halfWidth) {
+                        this@drawWithContent.drawContent()
+                    }
+                }
+                .blur(if (blur >= HazeBlurLevel.MID.code) 2.5.dp else 0.dp) // 模糊半径
         )
     }
 }

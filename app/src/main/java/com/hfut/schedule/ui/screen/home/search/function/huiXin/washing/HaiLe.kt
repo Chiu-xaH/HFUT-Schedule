@@ -40,9 +40,9 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PagingController
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -57,11 +57,11 @@ private val d = mapOf<String, String>(
 
 @Composable
 fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
-    val t = remember { CampusDetail.entries }
+    val t = remember { Campus.entries }
     val titles = remember { t.map { it.description } }
-    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage = when(getCampus()) {
-        Campus.HEFEI -> 1
-        Campus.XUANCHENG -> t.lastIndex
+    val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage = when(getCampusRegion()) {
+        CampusRegion.HEFEI -> 1
+        CampusRegion.XUANCHENG -> t.lastIndex
     })
     val uiState by vm.haiLeNearPositionResp.state.collectAsState()
     var itemId: Long by remember { mutableLongStateOf(-1) }
@@ -131,9 +131,9 @@ fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
             val list = (uiState as UiState.Success).data
                 .filter {
                     when(campus) {
-                        CampusDetail.XC -> it.address.contains("宣州区薰化路301号")
-                        CampusDetail.TXL -> it.address.contains("合肥工业大学") || it.name.contains(CampusDetail.TXL.description)
-                        CampusDetail.FCH -> it.address.contains("合肥工业大学") || it.name.contains(CampusDetail.FCH.description)
+                        Campus.XC -> it.address.contains("宣州区薰化路301号")
+                        Campus.TXL -> it.address.contains("合肥工业大学") || it.name.contains(Campus.TXL.description)
+                        Campus.FCH -> it.address.contains("合肥工业大学") || it.name.contains(Campus.FCH.description)
                     }
                 }
                 .sortedBy { it.id }

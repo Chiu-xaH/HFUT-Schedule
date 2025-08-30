@@ -8,6 +8,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.model.community.NodeV
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -16,33 +17,21 @@ import com.hfut.schedule.ui.component.network.UrlImageNoCrop
 
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.CampusDetail
+import com.hfut.schedule.logic.enumeration.Campus
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
-fun getCampusDetail() : CampusDetail? {
-    val campusText = getPersonInfo().campus ?: return null
-    return if(campusText.contains(CampusDetail.XC.description) == true) {
-        CampusDetail.XC
-    } else if(campusText.contains(CampusDetail.FCH.description) == true) {
-        CampusDetail.FCH
-    } else if(campusText.contains(CampusDetail.TXL.description) == true) {
-        CampusDetail.TXL
-    } else {
-        null
-    }
-}
 
 @Composable
 fun SchoolMapScreen(vm : NetWorkViewModel) {
-    val t = remember { CampusDetail.entries }
+    val t = remember { Campus.entries }
     val titles = remember { t.map { it.description } }
-    val defaultCampus = remember { getCampusDetail() }
+    val defaultCampus = remember { getCampus() }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(defaultCampus) {
-            CampusDetail.TXL -> 0
-            CampusDetail.FCH -> 1
-            CampusDetail.XC -> 2
+            Campus.TXL -> 0
+            Campus.FCH -> 1
+            Campus.XC -> 2
             else -> 0
         }
     )

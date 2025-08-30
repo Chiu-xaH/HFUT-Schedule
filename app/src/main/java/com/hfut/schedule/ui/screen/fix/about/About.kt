@@ -58,6 +58,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -202,25 +203,15 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                         }
                     )
                 )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "功能可用性支持") },
+                    supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
+                    modifier = Modifier.clickable { showBottomSheet_support = true },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
+                )
             }
         }
-       DividerTextExpandedWith("说明") {
-           CustomCard(color = MaterialTheme.colorScheme.surface) {
-//               TransplantListItem(
-//                   headlineContent = { Text(text = "使用技巧") },
-//                   supportingContent = { Text(text = "每")},
-//                   modifier = Modifier.clickable { showBottomSheet_support = true },
-//                   leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
-//               )
-//               PaddingHorizontalDivider()
-               TransplantListItem(
-                   headlineContent = { Text(text = "功能可用性支持") },
-                   supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
-                   modifier = Modifier.clickable { showBottomSheet_support = true },
-                   leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
-               )
-           }
-       }
 
         if(cubeShow) {
             DividerTextExpandedWith("开发") {
@@ -243,13 +234,18 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 }
             }
             DividerTextExpandedWith("修复") {
-                CardListItem(
-                    headlineContent = { Text(text = "疑难解答与修复") },
-                    supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
-                    leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-                    modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
+                CustomCard(
                     color = MaterialTheme.colorScheme.surface
-                )
+                ) {
+                    GithubDownloadUI()
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text(text = "疑难解答与修复") },
+                        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
+                        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+                        modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
+                    )
+                }
             }
         }
     }

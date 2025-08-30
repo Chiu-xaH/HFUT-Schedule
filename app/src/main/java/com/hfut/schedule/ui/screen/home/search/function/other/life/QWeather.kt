@@ -35,17 +35,17 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.Campus
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getCampus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.MID
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
-fun getLocation(campus : Campus = getCampus()) : String = when(campus) {
-    Campus.XUANCHENG -> "101221401"
-    Campus.HEFEI -> "101220101"
+fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campus) {
+    CampusRegion.XUANCHENG -> "101221401"
+    CampusRegion.HEFEI -> "101220101"
 }
 var countFunc = 0
 
@@ -70,7 +70,7 @@ private fun WeatherScreen(vm: NetWorkViewModel) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LifeUIS(vm : NetWorkViewModel) {
-    var campus by remember { mutableStateOf(getCampus()) }
+    var campus by remember { mutableStateOf(getCampusRegion()) }
     val uiState by vm.qWeatherResult.state.collectAsState()
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
@@ -90,8 +90,8 @@ private fun LifeUIS(vm : NetWorkViewModel) {
     }
 
     val cityName = when (campus) {
-        Campus.HEFEI -> "合肥"
-        Campus.XUANCHENG -> "宣城"
+        CampusRegion.HEFEI -> "合肥"
+        CampusRegion.XUANCHENG -> "宣城"
     } + "市"
     var data by remember { mutableStateOf( QWeatherNowBean("XX","XX","晴","X风","X","XX","XXX")) }
 
@@ -144,8 +144,8 @@ private fun LifeUIS(vm : NetWorkViewModel) {
                     trailingContent = {
                         OutlinedButton (onClick = {
                             campus = when(campus) {
-                                Campus.HEFEI -> Campus.XUANCHENG
-                                Campus.XUANCHENG -> Campus.HEFEI
+                                CampusRegion.HEFEI -> CampusRegion.XUANCHENG
+                                CampusRegion.XUANCHENG -> CampusRegion.HEFEI
                             }
                         }) {
                             Row(
