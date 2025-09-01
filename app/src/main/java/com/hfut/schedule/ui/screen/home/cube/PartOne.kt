@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
@@ -48,6 +50,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
@@ -60,11 +63,19 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
+import com.xah.transition.component.containerShare
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
 
 
@@ -238,21 +249,37 @@ fun UpdateContents(vm : NetWorkViewModel) {
         vm.getUpdateContents()
     }
     LaunchedEffect(Unit) {
+        if(uiState is UiState.Success) {
+            return@LaunchedEffect
+        }
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val list = (uiState as UiState.Success).data
-        LazyColumn {
+        val list = (uiState as UiState.Success).data.sortedBy {
+            val tinyList = it.name.split(".")
+            val v1 = tinyList[0].toInt()
+            val v2 = tinyList[1].toInt()
+            v1 * 1000 + v2
+        }.reversed()
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP*2),
+        ) {
             items(list.size, key = { it }) { index ->
                 val item = list[index]
                 with(item) {
                     val versionName = name.replace(".md","")
-                    CardListItem(
-                        headlineContent = { Text(versionName) },
-                        modifier = Modifier.clickable {
-                            Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
-                        }
-                    )
+                    SmallCard (
+//                        color = mixedCardNormalColor(),
+                        modifier = Modifier.padding(CARD_NORMAL_DP)
+                    ) {
+                        TransplantListItem(
+                            headlineContent = { Text("v" + versionName) },
+                            modifier = Modifier.clickable {
+                                Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                            }
+                        )
+                    }
                 }
             }
         }

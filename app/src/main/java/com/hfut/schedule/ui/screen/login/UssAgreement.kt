@@ -1,9 +1,15 @@
 package com.hfut.schedule.ui.screen.login
 
+import android.icu.number.IntegerWidth
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,45 +23,69 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.cleanCache
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.navigateAndClear
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.cube.UpdateContents
+import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
-import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.measureDpSize
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.navigateAndClear
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+
 
 val arguments = listOf(
     "本应用所使用权限为：网络、日历(用于向日历写入日程提醒)、存储(用于导入导出一些文件)、相机(用于扫码)、通知(用于提醒更新包已准备好)，均由用户自由决定授予",
@@ -78,7 +108,7 @@ fun UseAgreementScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val context = LocalActivity.current
-
+    val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
             LargeTopAppBar(
@@ -120,8 +150,13 @@ fun UseAgreementScreen(
                         .navigationBarsPadding(),horizontalArrangement = Arrangement.Center) {
                         Button(
                             onClick = {
-                                SharedPrefs.saveBoolean("canUse", default = false, save = true)
-                                navController.navigateAndClear(AppNavRoute.Home.route)
+                                scope.launch {
+                                    async {
+                                        launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
+                                        launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
+                                    }.await()
+                                    navController.navigateAndClear(AppNavRoute.Home.route)
+                                }
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -163,6 +198,252 @@ fun UseAgreementScreen(
                 }
                 item { InnerPaddingHeight(innerPadding,false) }
             }
+        }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+fun UpdateSuccessScreen(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val oldVersion = prefs.getString("versionName","上版本")
+    val scope = rememberCoroutineScope()
+
+    var showBottomSheetUpdate by remember { mutableStateOf(false) }
+
+    if(showBottomSheetUpdate) {
+        HazeBottomSheet(
+            onDismissRequest = { showBottomSheetUpdate = false },
+            showBottomSheet = showBottomSheetUpdate,
+            hazeState = hazeState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("历史更新日志")
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    UpdateContents(vm)
+                }
+            }
+        }
+    }
+
+    var showBottomSheet_version by remember { mutableStateOf(false) }
+    if (showBottomSheet_version) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet_version = false },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_version
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("本版本新特性") {
+                        FilledTonalButton(onClick = { showBottomSheetUpdate = true }) {
+                            Text("历史更新日志")
+                        }
+                    }
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                        .fillMaxSize()
+                ) {
+                    VersionInfo()
+                }
+            }
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            LargeTopAppBar(
+                colors = topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                ),
+                title = {
+                    Row (
+                        verticalAlignment = Alignment.CenterVertically
+                    ){
+                        Text(text = "新版本已就绪", modifier = Modifier.padding(start = 3.5.dp),)
+                    }
+                },
+                actions = {
+                    FilledTonalButton(
+                        modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                        onClick = {
+                            showBottomSheet_version = true
+                        }
+                    ) {
+                        Text("本版本新特性")
+                    }
+                },
+                modifier = Modifier.topBarBlur(hazeState, )
+            )
+        },
+        bottomBar = {
+            Column () {
+                Box(Modifier.bottomBarBlur(hazeState)) {
+                    Button(
+                        onClick = {
+                            scope.launch {
+                                val result = async { cleanCache() }.await()
+                                showToast("已清理缓存 $result MB")
+                                async { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }.await()
+                                navController.navigateAndClear(AppNavRoute.Home.route)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(APP_HORIZONTAL_DP)
+                            .navigationBarsPadding()
+                    ) {
+                        Text(
+                            "开始使用",
+                            modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+                }
+            }
+        },
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            var rotated by remember { mutableStateOf(false) }
+
+            LaunchedEffect(Unit) {
+                rotated = true
+            }
+
+            val rotation by animateFloatAsState(
+                targetValue = if (rotated) 180f else 0f,
+                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED*2),
+                label = "rotationAnim"
+            )
+            val scale by animateFloatAsState(
+                targetValue = if (rotated) 1f else 0f,
+                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
+                label = "rotationAnim"
+            )
+            val blur by animateDpAsState(
+                targetValue = if (!rotated) MyApplication.BLUR_RADIUS else 0.dp,
+                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
+                label = "rotationAnim"
+            )
+
+            PhoneFrame(modifier = Modifier.fillMaxSize().padding(horizontal = APP_HORIZONTAL_DP*2-6.dp).padding(top = APP_HORIZONTAL_DP).align(Alignment.Center),50f,APP_HORIZONTAL_DP.value)
+
+            ColumnVertical(
+                modifier = Modifier
+                    .align(Alignment.Center)
+            ) {
+                Icon(
+                    painterResource(R.drawable.cached),
+                    null,
+                    modifier = Modifier
+                        .size(110.dp)
+                        .rotate(rotation)
+                        .scale(scale)
+                        .blur(blur)
+                    ,
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "$oldVersion → ${AppVersion.getVersionName()}",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = APP_HORIZONTAL_DP)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PhoneFrame(modifier: Modifier = Modifier,cornerRadius : Float,strokeWidth : Float) {
+    val color = MaterialTheme.colorScheme.secondaryContainer
+    var width by remember { mutableStateOf(0.dp) }
+
+    Box(
+        modifier = modifier.measureDpSize { w,_ -> width = w },
+        contentAlignment = Alignment.Center
+    ) {
+        val height = width*2
+
+        Canvas(
+            modifier = Modifier
+                .size(width, height)
+        ) {
+            val w = size.width
+            val h = size.height
+
+            val gradient = Brush.verticalGradient(
+                colors = listOf(color, Color.Transparent)
+            )
+
+            // 左边
+            drawLine(
+                brush = gradient,
+                start = Offset(0f, cornerRadius),
+                end = Offset(0f, h),
+                strokeWidth = strokeWidth
+            )
+            // 右边
+            drawLine(
+                brush = gradient,
+                start = Offset(w, cornerRadius),
+                end = Offset(w, h),
+                strokeWidth = strokeWidth
+            )
+            // 上边（横向渐变可选）
+            drawLine(
+                color = color,
+                start = Offset(cornerRadius, 0f),
+                end = Offset(w - cornerRadius, 0f),
+                strokeWidth = strokeWidth
+            )
+
+
+            // 左上圆角
+            drawArc(
+                color = color,
+                startAngle = 180f,
+                sweepAngle = 90f,
+                useCenter = false,
+                topLeft = Offset(0f, 0f),
+                size = androidx.compose.ui.geometry.Size(cornerRadius * 2, cornerRadius * 2),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+            )
+            // 右上圆角
+            drawArc(
+                color = color,
+                startAngle = 270f,
+                sweepAngle = 90f,
+                useCenter = false,
+                topLeft = Offset(w - cornerRadius*2, 0f),
+                size = androidx.compose.ui.geometry.Size(cornerRadius * 2, cornerRadius * 2),
+                style = androidx.compose.ui.graphics.drawscope.Stroke(width = strokeWidth)
+            )
         }
     }
 }

@@ -30,7 +30,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-08-29") },
+                overlineContent = { Text(text = "2025-09-01") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,7 +57,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 自动检测教务系统是否封网")
-            UpdateItems("新增 版本日志")
+            UpdateItems("新增 历史更新日志","位于 本版本新特性")
+            UpdateItems("新增 更新完成后的引导界面")
             UpdateItems("移除 全局动画速率","想完全适配比较麻烦，合适的动画速率由开发者来决定")
             UpdateItems("优化 部分界面的显示")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")

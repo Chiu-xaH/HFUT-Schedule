@@ -103,6 +103,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Tea
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpnScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
+import com.hfut.schedule.ui.screen.login.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
 import com.hfut.schedule.ui.screen.news.home.NewsScreen
 import com.hfut.schedule.ui.screen.other.NavigationExceptionScreen
@@ -156,7 +157,19 @@ fun MainHost(
     }
     val celebration = remember { getCelebration() }
     val navController = rememberNavController()
-    val first by remember { mutableStateOf(if(prefs.getBoolean("canUse",false)) AppNavRoute.Home.route else AppNavRoute.UseAgreement.route) }
+    val first by remember { mutableStateOf(
+        if(prefs.getBoolean("canUse",false)) {
+            if(
+//                AppVersion.isPreview() ||
+                prefs.getString("versionName", "上版本") == AppVersion.getVersionName()) {
+                AppNavRoute.Home.route
+            } else {
+                AppNavRoute.UpdateSuccess.route
+            }
+        } else {
+            AppNavRoute.UseAgreement.route
+        }
+    ) }
     var value by remember { mutableIntStateOf(0) }
     // 初始化网络请求
     if(!isSuccessActivity)
@@ -381,6 +394,10 @@ fun MainHost(
                             Party()
                             UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
                         }
+                    }
+                    // 更新完成
+                    composable(AppNavRoute.UpdateSuccess.route) {
+                        UpdateSuccessScreen(networkVm,navController)
                     }
                     // 成绩
                     composable(
