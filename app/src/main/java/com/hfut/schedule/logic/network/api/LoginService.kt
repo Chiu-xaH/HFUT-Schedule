@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.network.api
 
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.enumeration.LoginType
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -17,20 +18,23 @@ interface LoginService {
     fun getKey() : Call<ResponseBody>
 
     //获取登录POST所需要的Cookie
-    @GET ("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
-    fun getCookie() : Call<ResponseBody>
+    @GET ("cas/login")
+    fun getCookie(
+        @Query("service") url : String? = LoginType.JXGLSTU.service
+    ) : Call<ResponseBody>
 
     //教务系统附加AES登录
     @FormUrlEncoded
     @Headers(MyApplication.PC_UA)
-    @POST("cas/login?service=http%3A%2F%2Fjxglstu.hfut.edu.cn%2Feams5-student%2Fneusoft-sso%2Flogin")
-    fun login(
+    @POST("cas/login")
+    fun loginCas(
         @Header("Cookie") cookie : String,
         @Field("username") username: String,
         @Field("password") password: String,
         @Field("execution") execution: String,
         @Field("_eventId") eventId: String = "submit",
-        @Field("capcha") code : String
+        @Field("capcha") code : String,
+        @Query("service") url : String? = LoginType.JXGLSTU.service
     ) : Call<ResponseBody>
 
    //信息门户登录
@@ -55,7 +59,7 @@ interface LoginService {
     // 待重构 这个接口可以供教务、信息门户、学工系统等登录，传入不同的serviceURL，但是早期不会这些，写的时候没解耦合，懒得重构了，等有空的
     @GET("cas/login")
     fun loginGoTo(
-        @Query("service") service : String,
+        @Query("service") service : String?,
         @Header("Cookie") cookie : String
     ) : Call<ResponseBody>
 

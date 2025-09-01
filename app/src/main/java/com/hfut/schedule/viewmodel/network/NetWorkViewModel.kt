@@ -782,6 +782,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie).awaitResponse()
     }
 
+
     val loginCommunityData = StateHolder<String>()
     suspend fun loginCommunity(ticket : String) = launchRequestSimple(
         holder = loginCommunityData,

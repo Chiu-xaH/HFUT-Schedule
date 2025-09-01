@@ -56,11 +56,9 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 自动检测教务系统是否封网")
-            UpdateItems("新增 历史更新日志","位于 本版本新特性")
-            UpdateItems("新增 更新完成后的引导界面")
-            UpdateItems("移除 全局动画速率","想完全适配比较麻烦，合适的动画速率由开发者来决定")
-            UpdateItems("优化 部分界面的显示")
+            UpdateItems("新增 支持单独刷新信息门户及智慧社区平台","又将一部分陈年代码重写了")
+            UpdateItems("重构 登录界面","将功能区折叠起来，以规整界面")
+            UpdateItems("修复 检查教务封网部分情况说明错误的Bug")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")

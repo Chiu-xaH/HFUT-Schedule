@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.logic.enumeration.LoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.model.CasGetFlavorResponse
 import com.hfut.schedule.logic.network.api.LoginService
@@ -31,14 +32,14 @@ import retrofit2.awaitResponse
 
 // 8个函数 这里是一切的地基：致敬传奇屎山 当时技术力不够，写的太耦合了，想最大程度保留原代码进行重构，根本无从下手...
 class LoginViewModel : ViewModel() {
-    val sessionLiveData = MutableLiveData<String>() //SESSIONID
     val jSessionId = StateHolder<CasGetFlavorBean>() // JESSIONID
     val code = MutableLiveData<String?>()
     val location = MutableLiveData<String>()
-    val execution = MutableLiveData<String>()
+    //  execution,SESSIONID
+    val execution = StateHolder<Pair<String, String>>()
 
     private val LoginWebVpn = LoginWebVpnServiceCreator.create(WebVpnService::class.java)
-    private val Login = LoginServiceCreator.create(LoginService::class.java)
+    private val login = LoginServiceCreator.create(LoginService::class.java)
     private val GetCookie = GetCookieServiceCreator.create(LoginService::class.java)
     private val GetAESKey = GetAESKeyServiceCreator.create(LoginService::class.java)
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
@@ -48,18 +49,58 @@ class LoginViewModel : ViewModel() {
     var TICKET = MutableLiveData<String?>()
     suspend fun login(username : String, password : String, keys : String, imageCode : String, webVpn : Boolean) =
         onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->
-            if(webVpn) {
-                onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
-                    val call = execution.value?.let { LoginWebVpn.loginWebVpn(cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",username =username, password =password,execution= it, code = imageCode) }
+            onListenStateHolderForNetwork<Pair<String, String>,Unit>(execution,null) {
+                val execution = it.first
+                val session = it.second
+                val cookies : String = session + jId.jSession +";" + keys
+                CasInHFUT.casCookies = cookies
+                if(webVpn) {
+                    onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
+                        val call = LoginWebVpn.loginWebVpn(
+                            cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",
+                            username =username,
+                            password =password,
+                            execution= execution,
+                            code = imageCode
+                        )
 
-                    call?.enqueue(object : Callback<ResponseBody> {
+                        call.enqueue(object : Callback<ResponseBody> {
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                location.value = response.headers()["Location"].toString()
+                                code.value = response.code().toString()
+                                val tickets = response.headers()["Location"].toString().substringAfter("=")
+                                Log.d("CAS登录ticket",tickets)
+                                saveString("ticket", tickets)
+                                TICKET.value = tickets
+                            }
+
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                code.value = "XXX"
+                                t.printStackTrace()
+                            }
+                        })
+                    }
+                } else {
+                    val call = login.loginCas(
+                        cookie = cookies,
+                        username = username,
+                        password = password,
+                        execution = execution,
+                        code = imageCode,
+                        url =
+                            if(CasInHFUT.excludeJxglstu) LoginType.ONE.service
+                            else LoginType.JXGLSTU.service
+                    )
+                    call.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                             location.value = response.headers()["Location"].toString()
-                            val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
+                            val tgc = response.headers()["Set-Cookie"].toString().substringBefore(";")
                             code.value = response.code().toString()
                             val tickets = response.headers()["Location"].toString().substringAfter("=")
+                            Log.d("CAS登录ticket",tickets)
+                            Log.d("CAS登录tgc",tgc)
                             saveString("ticket", tickets)
-                            saveString("TGC", TGC)
+                            saveString("TGC", tgc)
                             TICKET.value = tickets
                         }
 
@@ -69,29 +110,6 @@ class LoginViewModel : ViewModel() {
                         }
                     })
                 }
-            } else {
-                val cookies : String = sessionLiveData.value  + jId.jSession +";" + keys
-                saveString("CAS_COOKIE",cookies)
-                CasInHFUT.casCookies = cookies
-
-                val call = execution.value?.let { Login.login(cookie = cookies,username = username, password = password,execution = it,code = imageCode) }
-
-                call?.enqueue(object : Callback<ResponseBody> {
-                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        location.value = response.headers()["Location"].toString()
-                        val TGC = response.headers()["Set-Cookie"].toString().substringBefore(";")
-                        code.value = response.code().toString()
-                        val tickets = response.headers()["Location"].toString().substringAfter("=")
-                        saveString("ticket", tickets)
-                        saveString("TGC", TGC)
-                        TICKET.value = tickets
-                    }
-
-                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        code.value = "XXX"
-                        t.printStackTrace()
-                    }
-                })
             }
         }
 
@@ -112,21 +130,6 @@ class LoginViewModel : ViewModel() {
             )
         } ?: throw Exception(headers.toString())
     }
-//    {
-//
-//        val call = GetAESKey.getKey()
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                if(response.isSuccessful){ jSessionId.value  = response.headers()["Set-Cookie"].toString() }
-//            }
-//
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                code.value = "XXX"
-//                t.printStackTrace()
-//            }
-//        })
-//    }
 
     val webVpnTicket = StateHolder<String>()
     suspend fun getKeyWebVpn() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
@@ -153,21 +156,7 @@ class LoginViewModel : ViewModel() {
         request = { LoginWebVpn.putKey(MyApplication.WEBVPN_COOKIE_HEADER + ticket).awaitResponse() },
         transformSuccess = { _,_ -> true }
     )
-//    {
-//
-//        val call =
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//                status.value = response.code()
-//            }
-//
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                code.value = "XXX"
-//                t.printStackTrace()
-//            }
-//        })
-//    }
+
 
     suspend fun getTicket() = launchRequestSimple(
         holder = webVpnTicket,
@@ -184,28 +173,7 @@ class LoginViewModel : ViewModel() {
 //            saveString("webVpnTicket",ticket)
         } catch (e : Exception) { throw e }
     }
-//    {
-//
-//        val call = LoginWebVpn.getTicket()
-//
-//        call.enqueue(object : Callback<ResponseBody> {
-//            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-//
-//                if(response.isSuccessful){
-//                    webVpnTicket.value = response.headers().toString()
-//                    val ticket = response.headers().toString().substringAfter("wengine_vpn_ticketwebvpn_hfut_edu_cn=")
-//                        .substringBefore(";")
-//                    DataStoreManager.saveWebVpnCookie(ticket)
-//                    saveString("webVpnTicket",ticket)
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-//                code.value = "XXX"
-//                t.printStackTrace()
-//            }
-//        })
-//    }
+
 
     suspend fun loginJxglstu() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
         Log.d("t",ticket)
@@ -222,24 +190,23 @@ class LoginViewModel : ViewModel() {
         })
     }
 
-    fun getCookie() {
-
-        val call = GetCookie.getCookie()
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val doc = response.body()?.string()?.let { Jsoup.parse(it) }
-                if (doc != null) {
-                    execution.value = doc.select("input[name=execution]").first()?.attr("value")
-                }
-                if(response.isSuccessful) { sessionLiveData.value  = response.headers()["Set-Cookie"].toString().substringBefore(";").plus(";") }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                code.value = "XXX"
-                t.printStackTrace()
-            }
-        })
+    suspend fun getCookie() = launchRequestSimple(
+        holder = execution,
+        request = {
+            GetCookie.getCookie(
+                if(CasInHFUT.excludeJxglstu) LoginType.ONE.service
+                else LoginType.JXGLSTU.service
+            ).awaitResponse()
+        },
+        transformSuccess = { headers,html -> parseCookie(headers,html) }
+    )
+    private fun parseCookie(headers: Headers,html : String) : Pair<String, String> {
+        try {
+            val doc = Jsoup.parse(html)
+            val execution = doc.select("input[name=execution]").first()?.attr("value") ?: "e1s1"
+            val sessionLiveData  = headers["Set-Cookie"].toString().substringBefore(";").plus(";")
+            return Pair(execution,sessionLiveData)
+        } catch (e : Exception) { throw e }
     }
 
     fun getMyApi() {

@@ -1,7 +1,10 @@
 package com.hfut.schedule.ui.util
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -9,6 +12,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 
 // 跨Activity的类似UIViewModel
 object GlobalUIStateHolder {
+    var refreshImageCode by mutableIntStateOf(1)
     var isSupabaseRegistering = mutableStateOf(false)
     val routeQueue = mutableStateListOf<RouteQueueBean>()
     fun pushToFront(route: String,app : AppNavRoute) {

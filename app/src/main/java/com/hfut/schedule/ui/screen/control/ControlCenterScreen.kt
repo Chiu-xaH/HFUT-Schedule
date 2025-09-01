@@ -79,38 +79,23 @@ import dev.chrisbanes.haze.rememberHazeState
 
 fun Modifier.limitDrawerSwipeArea(
     allowedArea: Rect,
-): Modifier {
-//    val overlayModifier = Modifier.drawWithContent {
-//        drawContent()
-//        drawRect(
-//            color = Color.Red,
-//            topLeft = Offset(allowedArea.left, allowedArea.top),
-//            size = Size(allowedArea.width, allowedArea.height)
-//        )
-//    }
+): Modifier = this
+    .pointerInput(allowedArea) {
+        awaitPointerEventScope {
+            while (true) {
+                val event = awaitPointerEvent()
 
-    return this
-//        .then(overlayModifier)
-        .pointerInput(allowedArea) {
-            awaitPointerEventScope {
-                while (true) {
-                    val event = awaitPointerEvent()
+                // 检测第一根手指是否在允许区域
+                val position = event.changes.first().position
+                val inAllowedArea = allowedArea.contains(position)
 
-                    // 检测第一根手指是否在允许区域
-                    val position = event.changes.first().position
-                    val inAllowedArea = allowedArea.contains(position)
-
-                    if (!inAllowedArea) {
-                        // 拦截并消费手势，不传递给 Drawer
-//                        Log.d("手势","FALSE")
-                        event.changes.forEach { it.consume() }
-                    } else {
-//                        Log.d("手势","TRUE")
-                    }
+                if (!inAllowedArea) {
+                    // 拦截并消费手势，不传递给 Drawer
+                    event.changes.forEach { it.consume() }
                 }
             }
         }
-}
+    }
 
 fun isAllChinese(str: String): Boolean = str.isNotEmpty() && str.all { it.isChinese() }
 
@@ -118,7 +103,6 @@ fun Char.isChinese(): Boolean = this in '\u4e00'..'\u9fff'
 
 
 fun containsChinese(str: String): Boolean = str.any { it.isChinese() }
-
 
 
 fun getLabel(route : String) : String? {
@@ -277,7 +261,7 @@ fun ControlCenterScreen(
                 ){
                     val list = GlobalUIStateHolder.funcMaps.filter { it.name.contains(input,ignoreCase = true) }
                     Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
-                        for(i in list.indices) {
+                        for(i in list.indices step 2) {
                             val item = list[i]
                             Row() {
                                 SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {

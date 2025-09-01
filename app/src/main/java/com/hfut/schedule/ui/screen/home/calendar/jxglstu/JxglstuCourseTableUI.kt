@@ -166,7 +166,7 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
 
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
-    if (result == 200) {
+    if (result == (if(CasInHFUT.excludeJxglstu) 302 else 200)) {
         CasGoToInterceptorState.toCommunityTicket
             .filterNotNull()
             .collect { value ->
@@ -174,7 +174,6 @@ private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
             }
     }
 }
-
 
 private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
     vm.goToOne(cookies)
@@ -547,7 +546,6 @@ fun JxglstuCourseTableUI(
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
         val tgcCookie = prefs.getString("TGC", "")
-        val cookies = "$casCookies;$tgcCookie"
         val nextBoolean = remember { isNextOpen() }
 
 
@@ -563,67 +561,83 @@ fun JxglstuCourseTableUI(
            launch  {
                onEnabled(false)
                val job = async {
-                   if(!webVpn) {
-                       launch community@ {
-                           val communityAuth = prefs.getString("TOKEN", "")
-                           if(communityAuth == null || communityAuth.isEmpty()) {
-                               loginCommunity(cookies,vm)
-                           } else {
-                               // 检测智慧社区可用性
-                               vm.checkCommunityLogin(communityAuth)
-                               val result = (vm.checkCommunityResponse.state.value as? UiState.Success)?.data
-                               if(result == true) {
+                   if(casCookies == null) {
+                       showToast("异常 中止登录其他平台")
+                       return@async
+                   }
+                   val cookies =  "$casCookies;$tgcCookie"
+                   if(webVpn && !CasInHFUT.excludeJxglstu) {
+                       showToast("外地访问下不支持其他平台的登录")
+                       return@async
+                   }
+
+                   launch community@ {
+                       val communityAuth = prefs.getString("TOKEN", "")
+                       if(communityAuth == null || communityAuth.isEmpty()) {
+                           loginCommunity(cookies,vm)
+                       } else {
+                           // 检测智慧社区可用性
+                           vm.checkCommunityLogin(communityAuth)
+                           val result = (vm.checkCommunityResponse.state.value as? UiState.Success)?.data
+                           if(result == true) {
 //                                   showToast("无需刷新智慧社区")
-                                   return@community
-                               } else {
-                                   // 登录community
-                                   loginCommunity(cookies,vm)
-                               }
+                               return@community
+                           } else {
+                               // 登录community
+                               loginCommunity(cookies,vm)
                            }
                        }
-                       launch huiXin@ {
-                           //检测慧新易校可用性
-                           val auth = prefs.getString("auth", "")
-                           if(auth == null || auth.isEmpty()) {
-                               vm.goToHuiXin(cookies)
-                           } else {
-                               vm.checkHuiXinLogin(auth)
-                               val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
-                               if(result == true) {
+                   }
+                   launch huiXin@ {
+                       //检测慧新易校可用性
+                       val auth = prefs.getString("auth", "")
+                       if(auth == null || auth.isEmpty()) {
+                           vm.goToHuiXin(cookies)
+                       } else {
+                           vm.checkHuiXinLogin(auth)
+                           val result = (vm.huiXinCheckLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
 //                                   showToast("无需刷新慧新易校")
-                                   return@huiXin
-                               } else {
-                                   vm.goToHuiXin(cookies)
-                               }
-                           }
-                       }
-                       launch one@ {
-                           val token = prefs.getString("bearer","")
-                           if(token == null|| token.isEmpty()) {
-                               loginOne(cookies,vm)
+                               return@huiXin
                            } else {
-                               vm.checkOneLogin(token)
-                               val result = (vm.checkOneLoginResp.state.value as? UiState.Success)?.data
-                               if(result == true) {
-//                                   showToast("无需刷新信息门户")
-                                   return@one
-                               } else {
-                                   loginOne(cookies,vm)
+                               if(CasInHFUT.excludeJxglstu) {
+                                   showToast("暂不支持慧新易校的刷新")
+                                   return@huiXin
                                }
+                               vm.goToHuiXin(cookies)
                            }
                        }
-                   } else {
-                       showToast("外地访问下仅刷新教务的登录状态")
+                   }
+                   launch one@ {
+                       val token = prefs.getString("bearer","")
+                       if(token == null|| token.isEmpty()) {
+                           loginOne(cookies,vm)
+                       } else {
+                           vm.checkOneLogin(token)
+                           val result = (vm.checkOneLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+//                                   showToast("无需刷新信息门户")
+                               return@one
+                           } else {
+                               loginOne(cookies,vm)
+                           }
+                       }
                    }
                }
                withTimeoutOrNull(10000) { // 超时时间 10s
                    job.await()
+               }
+               if(CasInHFUT.excludeJxglstu) {
+                   loadingJxglstu = false
                }
                onEnabled(true)
            }
 
            // 教务系统
            launch jxglstu@ {
+               if(CasInHFUT.excludeJxglstu) {
+                   return@jxglstu
+               }
                cookie?: return@jxglstu
                vm.getStudentId(cookie)
                val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@jxglstu

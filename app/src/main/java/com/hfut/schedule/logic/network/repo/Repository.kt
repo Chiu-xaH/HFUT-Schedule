@@ -268,11 +268,12 @@ object Repository {
         val response = request()
         response.code()
     } catch (e : Exception) {
+        e.printStackTrace()
         val eMsg = e.message
-        if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
-            CONNECTION_ERROR_CODE
-        } else if(eMsg?.contains("10000ms") == true) {
+        if(eMsg?.contains("10000ms") == true) {
             TIMEOUT_ERROR_CODE
+        } else if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
+            CONNECTION_ERROR_CODE
         } else if(eMsg?.contains("The coroutine scope") == true) {
             OPERATION_FAST_ERROR_CODE
         } else {

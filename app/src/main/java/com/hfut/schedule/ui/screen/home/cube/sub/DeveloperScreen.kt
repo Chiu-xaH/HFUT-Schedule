@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
@@ -74,7 +75,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
         value = prefs.getString("auth","")
     }
     val cookieCAS by produceState<String?>(initialValue = null,key1 = showEditDialog) {
-        value = prefs.getString("CAS_COOKIE","")
+        value = CasInHFUT.casCookies
     }
     val studentId by vm.studentId.state.collectAsState()
     val bizTypeId by vm.bizTypeIdResponse.state.collectAsState()

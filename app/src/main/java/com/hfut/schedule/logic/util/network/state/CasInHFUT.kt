@@ -1,5 +1,8 @@
 package com.hfut.schedule.logic.util.network.state
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import org.jsoup.Jsoup
 
 // HFUT Central Authentication Service 统一认证登录
@@ -9,6 +12,7 @@ object CasInHFUT {
     // studentId 模块
     // bizTypeId 模块
     // WEBVPN 模块
+    var excludeJxglstu by mutableStateOf(false)
     var studentId : Int? = null
     var bizTypeId : Int? = null
     var jSessionId : String? = null

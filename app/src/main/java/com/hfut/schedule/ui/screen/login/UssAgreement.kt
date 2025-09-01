@@ -294,42 +294,33 @@ fun UpdateSuccessScreen(
                         Text("本版本新特性")
                     }
                 },
-                modifier = Modifier.topBarBlur(hazeState, )
             )
         },
         bottomBar = {
-            Column () {
-                Box(Modifier.bottomBarBlur(hazeState)) {
-                    Button(
-                        onClick = {
-                            scope.launch {
-                                val result = async { cleanCache() }.await()
-                                showToast("已清理缓存 $result MB")
-                                async { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }.await()
-                                navController.navigateAndClear(AppNavRoute.Home.route)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(APP_HORIZONTAL_DP)
-                            .navigationBarsPadding()
-                    ) {
-                        Text(
-                            "开始使用",
-                            modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
+            Button(
+                onClick = {
+                    scope.launch {
+                        val result = async { cleanCache() }.await()
+                        showToast("已清理缓存 $result MB")
+                        async { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }.await()
+                        navController.navigateAndClear(AppNavRoute.Home.route)
                     }
-                }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(APP_HORIZONTAL_DP)
+                    .navigationBarsPadding()
+            ) {
+                Text(
+                    "开始使用",
+                    modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2),
+                    style = MaterialTheme.typography.titleMedium,
+                )
             }
         },
+        modifier = Modifier.hazeSource(hazeState)
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .hazeSource(hazeState)
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
+        Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             var rotated by remember { mutableStateOf(false) }
 
             LaunchedEffect(Unit) {
@@ -343,11 +334,6 @@ fun UpdateSuccessScreen(
             )
             val scale by animateFloatAsState(
                 targetValue = if (rotated) 1f else 0f,
-                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
-                label = "rotationAnim"
-            )
-            val blur by animateDpAsState(
-                targetValue = if (!rotated) MyApplication.BLUR_RADIUS else 0.dp,
                 animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
                 label = "rotationAnim"
             )
@@ -365,7 +351,6 @@ fun UpdateSuccessScreen(
                         .size(110.dp)
                         .rotate(rotation)
                         .scale(scale)
-                        .blur(blur)
                     ,
                     tint = MaterialTheme.colorScheme.primary
                 )
