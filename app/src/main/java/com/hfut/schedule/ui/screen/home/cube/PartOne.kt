@@ -297,8 +297,8 @@ fun AlwaysItem(vm: NetWorkViewModel,hazeState: HazeState) {
 
     if(showBottomSheetUpdate) {
         HazeBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
+            onDismissRequest = { showBottomSheetUpdate = false },
+            showBottomSheet = showBottomSheetUpdate,
             hazeState = hazeState
         ) {
             Scaffold(
@@ -320,8 +320,8 @@ fun AlwaysItem(vm: NetWorkViewModel,hazeState: HazeState) {
     }
     if (showBottomSheet) {
         HazeBottomSheet(
-            onDismissRequest = { showBottomSheetUpdate = false },
-            showBottomSheet = showBottomSheetUpdate,
+            onDismissRequest = { showBottomSheet = false },
+            showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ) {
 
