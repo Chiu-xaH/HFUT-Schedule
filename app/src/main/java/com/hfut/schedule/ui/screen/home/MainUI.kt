@@ -301,19 +301,6 @@ fun MainScreen(
         // 等待加载完毕可切换标签
         if(isLogin) {
             if(!webVpn) ifSaved = false
-            val card = prefs.getString("card", "")
-            val json = prefs.getString("json","")
-            if (json != null) {
-                if (card == "请登录刷新" || !json.contains("课")) {
-                    showToast("正在后台登录其他接口,请等待提示Community登录成功和一卡通登陆成功后,再切换界面")
-//                    delay(8000)
-//                        isEnabled = true
-//                } else {
-                    delay(3000)
-//                    isEnabled = true
-//                }
-            }
-                }
         }
     }
     // 保存上一页页码 用于决定左右动画

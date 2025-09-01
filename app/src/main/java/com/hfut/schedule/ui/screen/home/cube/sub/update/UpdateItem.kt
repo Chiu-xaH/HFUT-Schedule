@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -52,6 +56,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 自动检测教务系统是否封网")
+            UpdateItems("新增 版本日志")
             UpdateItems("移除 全局动画速率","想完全适配比较麻烦，合适的动画速率由开发者来决定")
             UpdateItems("优化 部分界面的显示")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
@@ -132,3 +138,5 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
+
+

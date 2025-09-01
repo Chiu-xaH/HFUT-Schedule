@@ -3,11 +3,15 @@ package com.hfut.schedule.ui.screen
 import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -107,6 +111,8 @@ import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SP
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.state.TransitionState
+import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -303,8 +309,34 @@ fun MainHost(
                 NavHost(
                     navController = navController,
                     startDestination = first,
-                    enterTransition = { AppAnimationManager.fadeAnimation.enter },
-                    exitTransition = { AppAnimationManager.fadeAnimation.exit },
+//                    enterTransition = {
+//                        if(TransitionState.transplantBackground || TransitionState.transitionBackgroundStyle.level == TransitionLevel.LOW) {
+//                            fadeIn(
+//                                animationSpec = tween(durationMillis = TransitionState.curveStyle.speedMs),
+//                            )
+//                        } else {
+//                            EnterTransition.None
+//                        }
+//                    },
+//                    exitTransition = {
+//                        if(TransitionState.transplantBackground || TransitionState.transitionBackgroundStyle.level == TransitionLevel.LOW) {
+//                            fadeOut(
+//                                animationSpec = tween(durationMillis = TransitionState.curveStyle.speedMs),
+//                            )
+//                        } else {
+//                            ExitTransition.None
+//                        }
+////                        ExitTransition.None
+////                        fadeOut(
+////                            animationSpec = tween(durationMillis = if(TransitionState.transplantBackground) TransitionState.curveStyle.speedMs else TransitionState.curveStyle.speedMs),
+////                        )
+//                    },
+                    enterTransition = {
+                        fadeIn(animationSpec = tween(durationMillis = TransitionState.curveStyle.speedMs),)
+                    },
+                    exitTransition = {
+                        fadeOut(animationSpec = tween(durationMillis = TransitionState.curveStyle.speedMs),)
+                    },
                 ) {
                     // 主UI
                     composable(AppNavRoute.Home.route) {
@@ -335,6 +367,7 @@ fun MainHost(
                                 )
                             } else LoginScreen(
                                 loginVm,
+                                networkVm,
                                 navController,
                                 this@SharedTransitionLayout,
                                 this@composable,

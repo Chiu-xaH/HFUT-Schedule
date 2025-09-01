@@ -53,7 +53,6 @@ import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
@@ -61,19 +60,20 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.status.LoadingScreen
+import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -184,8 +184,12 @@ private fun ProgramPerformance(
                     DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
                         AnimationCustomCard(
                             index = index,
-                            containerColor = cardNormalColor(),
-                            modifier = Modifier.containerShare(
+                            containerColor = mixedCardNormalColor(),
+                            modifier = Modifier
+                                .clickableWithScale() {
+                                    navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                                }
+                                .containerShare(
                                 sharedTransitionScope,
                                 animatedContentScope=animatedContentScope,
                                 route=route,
@@ -237,7 +241,11 @@ private fun ProgramPerformance(
                     val route = AppNavRoute.ProgramCompetitionDetail.withArgs("培养方案外课程",999)
                     AnimationCustomCard(
                         containerColor = mixedCardNormalColor(),
-                        modifier = Modifier.containerShare(
+                        modifier = Modifier
+                            .clickableWithScale() {
+                                navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                            }
+                            .containerShare(
                             sharedTransitionScope,
                             animatedContentScope=animatedContentScope,
                             route=route,

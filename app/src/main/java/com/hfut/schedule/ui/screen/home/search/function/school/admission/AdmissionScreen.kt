@@ -68,6 +68,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -156,7 +158,11 @@ fun AdmissionListUI(
                             val route = AppNavRoute.AdmissionRegionDetail.withArgs(index, pageList[page].description)
                             SmallCard (
                                 color = mixedCardNormalColor(),
-                                modifier = Modifier.padding(2.5.dp).containerShare(
+                                modifier = Modifier.padding(2.5.dp)
+                                    .clickableWithScale(ClickScale.SMALL.scale) {
+                                        navController.navigateForTransition(AppNavRoute.AdmissionRegionDetail,route)
+                                    }
+                                    .containerShare(
                                     sharedTransitionScope,
                                     animatedContentScope,
                                     route,
@@ -164,9 +170,7 @@ fun AdmissionListUI(
                             ) {
                                 TransplantListItem(
                                     headlineContent = { Text(item.key) },
-                                    modifier = Modifier.clickable {
-                                        navController.navigateForTransition(AppNavRoute.AdmissionRegionDetail,route)
-                                    }
+//                                    modifier = Modifier
                                 )
                             }
                         }

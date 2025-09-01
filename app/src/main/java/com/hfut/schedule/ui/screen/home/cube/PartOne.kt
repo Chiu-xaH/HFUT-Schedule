@@ -11,17 +11,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +39,7 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.App.MyApplication.Companion.context
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.FixBarItems
+import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.Starter.startWebUrl
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -56,6 +61,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
@@ -194,7 +200,7 @@ fun HomeSettingScreen(navController: NavController,
         }
 
         DividerTextExpandedWith(text = "常驻项目") {
-            AlwaysItem(hazeState)
+            AlwaysItem(vm,hazeState)
         }
 
 
@@ -224,27 +230,83 @@ fun GithubDownloadUI() {
     )
 }
 
+@Composable
+fun UpdateContents(vm : NetWorkViewModel) {
+    val uiState by vm.githubFolderResp.state.collectAsState()
+    val refreshNetwork = suspend {
+        vm.githubFolderResp.clear()
+        vm.getUpdateContents()
+    }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val list = (uiState as UiState.Success).data
+        LazyColumn {
+            items(list.size, key = { it }) { index ->
+                val item = list[index]
+                with(item) {
+                    val versionName = name.replace(".md","")
+                    CardListItem(
+                        headlineContent = { Text(versionName) },
+                        modifier = Modifier.clickable {
+                            Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlwaysItem(hazeState: HazeState) {
+fun AlwaysItem(vm: NetWorkViewModel,hazeState: HazeState) {
     val version by remember { mutableStateOf(getUpdates()) }
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     var showBottomSheet by remember { mutableStateOf(false) }
     val isPreview = remember { AppVersion.isPreview() }
+    var showBottomSheetUpdate by remember { mutableStateOf(false) }
 
-    if (showBottomSheet) {
+    if(showBottomSheetUpdate) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
-//            sheetState = sheetState,
-//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("本版本新特性")
+                    HazeBottomSheetTopBar("历史更新日志")
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    UpdateContents(vm)
+                }
+            }
+        }
+    }
+    if (showBottomSheet) {
+        HazeBottomSheet(
+            onDismissRequest = { showBottomSheetUpdate = false },
+            showBottomSheet = showBottomSheetUpdate,
+            hazeState = hazeState
+        ) {
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("本版本新特性") {
+                        FilledTonalButton(onClick = { showBottomSheetUpdate = true }) {
+                            Text("历史更新日志")
+                        }
+                    }
                 },
             ) { innerPadding ->
                 Column(

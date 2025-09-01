@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.util.sys
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.provider.Settings
 import android.webkit.CookieManager
 import androidx.core.net.toUri
 import com.hfut.schedule.App.MyApplication
@@ -40,6 +41,13 @@ object Starter {
         } catch (_: Exception) {
             showToast("启动外部应用失败")
         }
+    }
+
+    @JvmStatic
+    fun startWlanSettings() {
+        val intent = Intent(Settings.ACTION_WIFI_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        MyApplication.context.startActivity(intent)
     }
     //传入应用URL打开
     @JvmStatic

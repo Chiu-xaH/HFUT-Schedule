@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -48,6 +52,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -57,9 +63,12 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.DashedDivider
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -70,6 +79,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -92,13 +102,13 @@ fun MultiScheduleSettings(
     vm : NetWorkViewModel,
     vmUI : UIViewModel,
     hazeState: HazeState,
+//    currentWeek : Int,
+//    onWeekChange : (Int) -> Unit
 ) {
     val context = LocalActivity.current
     var customList by remember { mutableStateOf<List<CustomCourseTableSummary>>(emptyList()) }
     var showDialog by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-
     var showBottomSheet_add by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -135,27 +145,7 @@ fun MultiScheduleSettings(
             hazeState = hazeState
         )
     }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-            isFullExpand = false
-        ) {
-            Scaffold(
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("说明")
-                }
-            ) {innerPadding->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    InfoUI()
-                }
-            }
-        }
-    }
+
     if (showBottomSheet_add) {
         HazeBottomSheet (onDismissRequest = { showBottomSheet_add = false },
             showBottomSheet = showBottomSheet_add,
@@ -189,7 +179,7 @@ fun MultiScheduleSettings(
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
-                HazeBottomSheetTopBar("写入日历日程(以本学期教务课表为数据源)", isPaddingStatusBar = false)
+                HazeBottomSheetTopBar("上课提醒(以教务课表为数据源)", isPaddingStatusBar = false)
                 EventUI(vmUI,context)
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -202,15 +192,13 @@ fun MultiScheduleSettings(
 
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
+    var week by remember { mutableFloatStateOf(1f) }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        BottomSheetTopBar("多课表") {
+        HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
             Row() {
                 FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
                     Icon(painterResource(id = R.drawable.add), contentDescription = "")
-                }
-                FilledTonalIconButton(onClick = { showBottomSheet = true }) {
-                    Icon(painterResource(id = R.drawable.info), contentDescription = "")
                 }
             }
         }
@@ -218,7 +206,7 @@ fun MultiScheduleSettings(
 
         LazyRow {
             // 教务课表
-            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP)) }
+            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP*2)) }
             item {
                 Card (
                     modifier = Modifier
@@ -378,7 +366,7 @@ fun MultiScheduleSettings(
                 Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
                         .clickable {
                             showBottomSheet_add = true
                             //showDialog_Add = true
@@ -391,51 +379,85 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
+            item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP)) }
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(CARD_NORMAL_DP))
+        // 第${formatDecimal(week.toDouble(),0)}周
         DividerTextExpandedWith(text = "操作") {
-            TransplantListItem(
-                headlineContent = { Text(text = "导出教务课表") },
-                leadingContent = {
-                    Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
-                },
-                modifier = Modifier.clickable {
-                    prefs.getString("json","")?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
-                    shareTextFile("HFUT-Schedule-Share.txt")
+            CustomCard (color = cardNormalColor()){
+                CustomSlider(
+                    value = week,
+                    onValueChange = {
+                        week = it
+                    },
+                    onValueChangeFinished = {
+//                        onWeekChange(week)
+                        showToast("正在开发")
+                    },
+                    steps = 18,
+                    valueRange = 1f..20f,
+                    showProcessText = true,
+                    processText = "${formatDecimal(week.toDouble(),0)}周"
+                )
+                DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP))
+//                PaddingHorizontalDivider()
+                if(select == CourseType.JXGLSTU.code) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = "导出教务课表") },
+                        supportingContent = {  Text("以文件导出教务课表") },
+                        leadingContent = {
+                            Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
+                        },
+                        modifier = Modifier.clickable {
+                            prefs.getString("json","")?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
+                            shareTextFile("HFUT-Schedule-Share.txt")
+                        }
+                    )
+                    PaddingHorizontalDivider()
                 }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "刷新教务课表") },
-                leadingContent = {
-                    Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
-                },
-                modifier = Modifier.clickable {
-                    if(ifSaved)
-                        refreshLogin()
-                    else showToast("目前已是登陆状态")
+                val d =ifSaved && (select == CourseType.JXGLSTU.code || select == CourseType.JXGLSTU2.code)
+                TransplantListItem(
+                    headlineContent = { Text(text = if(d) "刷新教务课表" else "刷新课程表") },
+                    supportingContent = { Text(if(d) "教务登录会失效,无法自动刷新" else "回到聚焦,等待转圈完成即完成刷新") },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable {
+                        if(d)
+                            refreshLogin()
+                        else {
+                            showToast("请回到聚焦,等待转圈完成即刷新完成")
+                        }
+                    }
+                )
+                if(select == CourseType.JXGLSTU.code) {
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        supportingContent = { Text("将教务课表以日程写入到日历中") },
+                        headlineContent = { Text(text = "上课提醒") },
+                        leadingContent = {
+                            Icon(painterResource(id = R.drawable.calendar_add_on), contentDescription = "")
+                        },
+                        modifier = Modifier.clickable {
+                            showBottomSheet_loading = true
+                        }
+                    )
                 }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "写入日历日程") },
-                leadingContent = {
-                    Icon(painterResource(id = R.drawable.calendar), contentDescription = "")
-                },
-                modifier = Modifier.clickable {
-                    showBottomSheet_loading = true
-                }
-            )
-            TransplantListItem(
-                headlineContent = { Text(text = "恢复默认状态") },
-                leadingContent = {
-                    Icon(painterResource(id = R.drawable.delete), contentDescription = "")
-                },
-                modifier = Modifier.clickable {
-                    showDialog_Del = true
-                }
-            )
+//                if(AppVersion.isPreview()) {
+//                    PaddingHorizontalDivider()
+//                    TransplantListItem(
+//                        headlineContent = { Text(text = "恢复默认状态") },
+//                        leadingContent = {
+//                            Icon(painterResource(id = R.drawable.delete), contentDescription = "")
+//                        },
+//                        modifier = Modifier.clickable {
+//                            showDialog_Del = true
+//                        }
+//                    )
+//                }
+            }
         }
-
+//        Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
     }
 }
 
@@ -550,14 +572,7 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
     var time by remember { mutableIntStateOf(20) }
     val cor = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
-    TransplantListItem(
-        headlineContent = {
-            Text("可将课表导入系统日历，由日历定时提醒")
-        },
-        leadingContent = {
-            Icon(painterResource(R.drawable.info),null)
-        }
-    )
+
     if(loading) {
         LoadingUI("勿动稍等")
     } else {

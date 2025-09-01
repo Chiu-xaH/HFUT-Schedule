@@ -44,7 +44,7 @@ fun SharedTransitionScope.TransitionScaffold(
     modifier: Modifier =
         Modifier.clip(roundShape)
             .transitionBackground(navHostController, route)
-            .containerShare(this, animatedContentScope, route, resize = true, roundShape,),
+            .containerShare(this, animatedContentScope, route, roundShape,),
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
     floatingActionButton: @Composable (() -> Unit) = {},

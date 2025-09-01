@@ -52,6 +52,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -91,7 +92,10 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -104,6 +108,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.BottomTip
 import dev.chrisbanes.haze.hazeSource
@@ -246,6 +251,7 @@ fun isAnonymity() : Boolean {
 @Composable
 fun LoginScreen(
     vm : LoginViewModel,
+    networkVm : NetWorkViewModel,
     navController: NavHostController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
@@ -258,6 +264,11 @@ fun LoginScreen(
     var username by remember { mutableStateOf(Savedusername ?: "") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val jxglstuStatus by produceState<Int?>(initialValue = null) {
+        value = networkVm.checkJxglstuCanUse()
+    }
+
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
@@ -266,9 +277,7 @@ fun LoginScreen(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = {
-                    Text(
-                        text = "CAS统一认证登录",
-                    )
+                    Text(text = "CAS统一认证登录")
                         },
                 actions = {
                     Row {
@@ -299,7 +308,40 @@ fun LoginScreen(
                         .padding(vertical = APP_HORIZONTAL_DP),
                     color = MaterialTheme.colorScheme.surface.copy(.9f),
                 ) {
-                    if(username.startsWith(DateTimeManager.Date_yyyy)) {
+                    if(!webVpn && !(jxglstuStatus != null && jxglstuStatus!! < 400)) {
+                        val status: Pair<Color?,String> = if(jxglstuStatus == null) {
+                            Pair(null,"正在检查与教务系统的连接状态")
+                        } else if(jxglstuStatus!! < 400) {
+                            Pair(null,"与教务系统连接状态正常")
+                        } else if(jxglstuStatus!! in 500 until 600) {
+                            Pair(MaterialTheme.colorScheme.errorContainer,"无法连接到教务系统,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后")
+                        } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
+                            Pair(MaterialTheme.colorScheme.errorContainer,"检测到教务系统封网,请换为校园网重新使用或打开外地访问")
+                        } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
+                            Pair(MaterialTheme.colorScheme.errorContainer,"网络连接失败,是否连接了网络?")
+                        } else {
+                            Pair(MaterialTheme.colorScheme.errorContainer,"未知错误")
+                        }
+                        TransplantListItem(
+                            supportingContent = { Text(status.second) },
+                            headlineContent = { Text("教务系统连接状态 ${jxglstuStatus ?: ""}") },
+                            colors = status.first,
+                            modifier = Modifier.clickable {
+                                Starter.startWlanSettings()
+                            },
+                            leadingContent = {
+                                if(jxglstuStatus == null) {
+                                    LoadingIcon()
+                                } else {
+                                    Icon(painterResource(R.drawable.warning),null)
+                                }
+                            }
+                        )
+                        if(status.first == null) {
+                            PaddingHorizontalDivider()
+                        }
+                    }
+                    if(username.startsWith(DateTimeManager.Date_yyyy) && isAnonymity()) {
                         TransplantListItem(
                             supportingContent = { Text("新生需先在网页登录过，确认自己的账号已经可以使用，才能登录聚在工大，如您已登陆过可忽略") },
                             headlineContent = { Text("点击跳转网页") },
@@ -312,30 +354,19 @@ fun LoginScreen(
                     }
                     TransplantListItem(
                         headlineContent = { Text("修改密码") },
-                        overlineContent = { Text("CAS统一认证")},
                         leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                         modifier = Modifier.clickable { Starter.startWebView(MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
-                        headlineContent = { Text("外地访问") },
-                        overlineContent = { Text("WebVpn")},
+                        headlineContent = { Text("外地访问(WebVpn)") },
+                        supportingContent = { if(webVpn) Text("外地访问下暂时仅支持以WebVpn登录教务系统(后续扩展)")},
                         leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
                         trailingContent = {
                             Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
                         },
                         modifier = Modifier.clickable { webVpn = !webVpn },
                     )
-                    PaddingHorizontalDivider()
-                    Spacer(Modifier.height(CARD_NORMAL_DP*2))
-                    BottomTip(
-                        if(webVpn)"外地访问下暂时仅支持以WebVpn登录教务系统(后续扩展)" else "将同时登录 慧新易校,智慧社区,信息门户,教务系统 四个平台"
-                    )
-                    Spacer(Modifier.height(CARD_NORMAL_DP*2))
-//                    TransplantListItem(
-//                        headlineContent = { Text() },
-//                        overlineContent = { Text("提示")},
-//                    )
                 }
             }
         }

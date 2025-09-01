@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
@@ -43,32 +42,32 @@ import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
-import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.component.icon.DepartmentIcons
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
+import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
-import com.xah.uicommon.style.align.ColumnVertical
+import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
-import kotlin.text.contains
 
 enum class TotalCourseDataSource {
     MINE,MINE_NEXT,SEARCH
@@ -206,11 +205,11 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
                     leadingContent = {
                         data.openDepartment.nameZh.let { DepartmentIcons(name = it) }
                     },
+                    cardModifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                     modifier = Modifier.clickable {
                         showBottomSheet = true
                         numItem = item
                     },
-                    cardModifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null),
                     index = item
                 )
             }

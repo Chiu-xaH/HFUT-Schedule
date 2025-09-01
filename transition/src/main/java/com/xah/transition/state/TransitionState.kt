@@ -12,6 +12,7 @@ object TransitionState {
     val curveStyle = TransitionCurveStyle()
     // 从此处修改背景模糊/缩放情况
     val transitionBackgroundStyle = TransitionBackgroundStyle()
+    val useFade : Boolean = true
     val firstStartRoute : String? = "HOME"
     // 是否完成第一次启动 无需改
     // 第一次使用转场动画 需要预热 否则掉帧

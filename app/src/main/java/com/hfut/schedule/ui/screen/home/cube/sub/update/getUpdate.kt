@@ -24,7 +24,7 @@ fun getUpdates() : Update {
 fun getPatchVersions() : List<Patch> {
     val html = prefs.getString("versions","")
     return try {
-        val document = Jsoup.parse(html)
+        val document = Jsoup.parse(html!!)
         val versions = document.select("a[href]").mapNotNull { element ->
             // 只提取补丁包
             val text = element.text().trim()

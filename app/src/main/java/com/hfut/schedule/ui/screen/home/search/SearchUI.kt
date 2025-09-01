@@ -42,7 +42,6 @@ import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.SEARCH_DEFAULT_STR
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -94,11 +93,12 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Tea
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 
 data class SearchAppBean(

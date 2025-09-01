@@ -162,6 +162,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAn
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.bsdiffs.model.Patch
@@ -207,6 +208,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val lessonIds = StateHolder<lessonResponse>()
     val token = MutableLiveData<String>()
 
+    suspend fun checkJxglstuCanUse() = launchRequestNone {
+        jxglstuJSON.checkCanUse().awaitResponse()
+    }
+
     val wxLoginResponse = StateHolder<String>()
     suspend fun wxLogin() = Repository.wxLogin(wxLoginResponse)
 
@@ -224,8 +229,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val wxConfirmLoginResponse = StateHolder<String>()
     suspend fun wxConfirmLogin(auth : String,uuid : String) = Repository.wxConfirmLogin(uuid,auth,wxConfirmLoginResponse)
 
-
-
     val haiLeNearPositionResp = StateHolder<List<HaiLeNearPositionBean>>()
     suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = Repository.getHaiLeNear(bean,haiLeNearPositionResp)
 
@@ -239,6 +242,10 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val githubStarsData = StateHolder<Int>()
     suspend fun getStarNum() = Repository.getStarNum(githubStarsData)
+
+    val githubFolderResp = StateHolder<List<GithubFolderBean>>()
+    suspend fun getUpdateContents() = Repository.getUpdateContents(githubFolderResp)
+
 
     val workSearchResult = StateHolder<WorkSearchResponse>()
     suspend fun searchWorks(keyword: String?, page: Int = 1,type: Int,campus: CampusRegion) = Repository.searchWorks(keyword,page,type,campus,workSearchResult)

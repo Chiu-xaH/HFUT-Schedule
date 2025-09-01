@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -59,6 +60,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
+import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -97,6 +99,31 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 }
             }
         }
+        var showBottomSheetUpdate by remember { mutableStateOf(false) }
+
+        if(showBottomSheetUpdate) {
+            HazeBottomSheet(
+                onDismissRequest = { showBottomSheetUpdate = false },
+                showBottomSheet = showBottomSheetUpdate,
+                hazeState = hazeState
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    topBar = {
+                        HazeBottomSheetTopBar("历史更新日志")
+                    },
+                ) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
+                    ) {
+                        UpdateContents(vm)
+                    }
+                }
+            }
+        }
         var showBottomSheet_version by remember { mutableStateOf(false) }
         if (showBottomSheet_version) {
             HazeBottomSheet (
@@ -108,7 +135,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                     modifier = Modifier.fillMaxSize(),
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar("本版本新特性")
+                        HazeBottomSheetTopBar("本版本新特性") {
+                            FilledTonalButton(onClick = { showBottomSheetUpdate = true }) {
+                                Text("历史更新日志")
+                            }
+                        }
                     },
                 ) { innerPadding ->
                     Column(

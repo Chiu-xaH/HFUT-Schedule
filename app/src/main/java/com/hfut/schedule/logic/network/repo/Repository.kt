@@ -3,8 +3,10 @@ package com.hfut.schedule.logic.network.repo
 import androidx.core.net.toUri
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.App.MyApplication.Companion.ADMISSION_COOKIE_HEADER
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.model.AcademicNewsResponse
 import com.hfut.schedule.logic.model.AcademicType
@@ -99,6 +101,14 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardP
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramCompletionResponse
+import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.OPERATION_FAST_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.UNKNOWN_ERROR_CODE
+import com.hfut.schedule.ui.component.status.ErrorUI
+import com.hfut.schedule.ui.component.status.StatusUI
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
@@ -254,9 +264,20 @@ object Repository {
     @JvmStatic
     suspend fun launchRequestNone(
         request: suspend () -> Response<ResponseBody>,
-    ) : Int {
+    ) : Int = try {
         val response = request()
-        return response.code()
+        response.code()
+    } catch (e : Exception) {
+        val eMsg = e.message
+        if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
+            CONNECTION_ERROR_CODE
+        } else if(eMsg?.contains("10000ms") == true) {
+            TIMEOUT_ERROR_CODE
+        } else if(eMsg?.contains("The coroutine scope") == true) {
+            OPERATION_FAST_ERROR_CODE
+        } else {
+            UNKNOWN_ERROR_CODE
+        }
     }
 
     suspend fun officeHallSearch(
@@ -775,6 +796,20 @@ object Repository {
     private fun parseGithubStarNum(json : String) : Int = try {
         Gson().fromJson(json,GithubBean::class.java).stargazers_count
     } catch (e : Exception) { throw e }
+
+    suspend fun getUpdateContents(holder : StateHolder<List<GithubFolderBean>>) = launchRequestSimple(
+        holder = holder,
+        request = { github.getFolderContent().awaitResponse() },
+        transformSuccess = { _,json -> parseUpdateContents(json) }
+    )
+
+    @JvmStatic
+    private fun parseUpdateContents(json : String) : List<GithubFolderBean> = try {
+        val listType = object : TypeToken<List<GithubFolderBean>>() {}.type
+        val data : List<GithubFolderBean> = Gson().fromJson(json,listType)
+        data
+    } catch (e : Exception) { throw e }
+
 
     fun getUpdate() {
         val call = gitee.getUpdate()

@@ -2,15 +2,12 @@ package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
@@ -20,7 +17,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -66,14 +62,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.App.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
@@ -86,12 +83,9 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
@@ -103,15 +97,20 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
@@ -197,7 +196,7 @@ fun JxglstuCourseTableUI(
     innerPadding: PaddingValues,
     vmUI: UIViewModel,
     webVpn: Boolean,
-    load: Boolean,
+    refreshLogin: Boolean,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
@@ -240,7 +239,7 @@ fun JxglstuCourseTableUI(
         }
     }
 
-    var loading by rememberSaveable { mutableStateOf(load) }
+    var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
 
     val table = rememberSaveable { List(30) { mutableStateListOf<String>() } }
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<String>() } }
@@ -262,14 +261,16 @@ fun JxglstuCourseTableUI(
         )
     }
 
+
+
     val times by DataStoreManager.courseTableTimeValue.collectAsState(initial = "")
-    val timeTable by produceState(initialValue = emptyList<CourseUnitBean>()) {
+    val timeTable by produceState(initialValue = emptyList<CourseUnitBean>(), key1 = times) {
         value = parseTimeTable(times)
     }
 
     var exception by remember { mutableStateOf<Exception?>(null) }
 
-    fun refreshUI(showAll : Boolean,timeList : List<CourseUnitBean>) {
+    fun refreshUI() {
         exception = null
         // 清空
         if(showAll) {
@@ -281,6 +282,9 @@ fun JxglstuCourseTableUI(
         try {
             // 组装
             val json = prefs.getString("json", "")
+            if(json == null || json.isBlank() == true || json.isEmpty() == true) {
+                return
+            }
             val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
             val scheduleList = datumResponse.result.scheduleList
             val lessonList = datumResponse.result.lessonList
@@ -312,207 +316,207 @@ fun JxglstuCourseTableUI(
                     }
                     if(showAll) {
                         if (item.weekday == 1) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[0].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[7].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[14].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[21].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[28].add(text)
                             }
                         }
                         if (item.weekday == 2) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[1].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[8].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[15].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[22].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[29].add(text)
                             }
                         }
                         if (item.weekday == 3) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[2].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[9].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[16].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[23].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[30].add(text)
                             }
                         }
                         if (item.weekday == 4) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[3].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[10].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[17].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[24].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[31].add(text)
                             }
                         }
                         if (item.weekday == 5) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[4].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[11].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[18].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[25].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[32].add(text)
                             }
                         }
                         if (item.weekday == 6) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[5].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[12].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[19].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[26].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[33].add(text)
                             }
                         }
                         if (item.weekday == 7) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 tableAll[6].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 tableAll[13].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 tableAll[20].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 tableAll[27].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 tableAll[34].add(text)
                             }
                         }
                     } else {
                         if (item.weekday == 1) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 table[0].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 table[5].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 table[10].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 table[15].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 table[20].add(text)
                             }
                         }
                         if (item.weekday == 2) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 table[1].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 table[6].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 table[11].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 table[16].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 table[21].add(text)
                             }
                         }
                         if (item.weekday == 3) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 table[2].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 table[7].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 table[12].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 table[17].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 table[22].add(text)
                             }
                         }
                         if (item.weekday == 4) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 table[3].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 table[8].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 table[13].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 table[18].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 table[23].add(text)
                             }
                         }
                         if (item.weekday == 5) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (item.startTime == timeTable[0].startTime || item.startTime == timeTable[1].startTime) {
                                 table[4].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (item.startTime == timeTable[2].startTime || item.startTime == timeTable[3].startTime) {
                                 table[9].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (item.startTime == timeTable[4].startTime || item.startTime == timeTable[5].startTime) {
                                 table[14].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (item.startTime == timeTable[6].startTime || item.startTime == timeTable[7].startTime) {
                                 table[19].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (item.startTime == timeTable[8].startTime || item.startTime == timeTable[9].startTime || item.startTime == timeTable[10].startTime) {
                                 table[24].add(text)
                             }
                         }
@@ -532,16 +536,18 @@ fun JxglstuCourseTableUI(
         }
     }
 
-    LaunchedEffect(showAll,loading,currentWeek,times) {
-        refreshUI(showAll,timeTable)
+    LaunchedEffect(showAll,loadingJxglstu,currentWeek,times,timeTable) {
+        if(timeTable.isEmpty()) {
+            return@LaunchedEffect
+        }
+        refreshUI()
     }
 
 
-//////////////////////////////////////////////////////////////////////////////////
-   if(load) {
-        val ONE = CasInHFUT.casCookies
-        val TGC = prefs.getString("TGC", "")
-        val cookies = "$ONE;$TGC"
+    if(refreshLogin) {
+        val casCookies = CasInHFUT.casCookies
+        val tgcCookie = prefs.getString("TGC", "")
+        val cookies = "$casCookies;$tgcCookie"
         val nextBoolean = remember { isNextOpen() }
 
 
@@ -550,7 +556,7 @@ fun JxglstuCourseTableUI(
                if (nextBoolean) saveInt("FIRST", 1)
            }
            // 等待读取本地Cookie
-           if(loading == false) return@LaunchedEffect
+           if(loadingJxglstu == false) return@LaunchedEffect
            val cookie = getJxglstuCookie(vm)
 
            // 信息门户 慧新易校 智慧社区
@@ -637,7 +643,7 @@ fun JxglstuCourseTableUI(
                    if(datum == null) {
                        showToast("数据为空,尝试刷新")
                    }
-                   loading = false
+                   loadingJxglstu = false
                }
 
                launch {
@@ -651,305 +657,247 @@ fun JxglstuCourseTableUI(
            }
        }
     }
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        Column(modifier = Modifier.fillMaxSize()) {
-            AnimatedVisibility(
-                visible = loading,
-                enter = fadeIn(),
-                exit = fadeOut()
+
+    if(loadingJxglstu) {
+        CenterScreen {
+            LoadingUI(if(webVpn) "若加载时间过长，请重新刷新登陆状态" else null)
+        }
+    } else {
+        // 课程表布局
+        Box(modifier = Modifier.fillMaxSize()) {
+            val scrollState = rememberLazyGridState()
+            val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
+            val padding = if (showAll) 1.dp else 2.dp
+            val textSize = if(showAll) 12.sp else 14.sp
+            val count = if(showAll) 7 else 5
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(count),
+                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP- CARD_NORMAL_DP - padding*2, vertical = padding),
+                state = scrollState
             ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column() { LoadingUI(if(webVpn) "若加载时间过长，请重新刷新登陆状态" else null) }
+                item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
+                exception?.let {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        TransplantListItem(
+                            headlineContent = { Text("解析错误") },
+                            leadingContent = { Icon(painterResource(R.drawable.warning),null)},
+                            supportingContent = { Text(getKeyStackTrace(it)) }
+                        )
+                    }
                 }
-            }
+                items(count*6, key = { it }) { index ->
+                    val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
+                    val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,index)
+                    Card(
+                        shape = MaterialTheme.shapes.extraSmall,
+                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
+                        modifier = Modifier
+                            .height(125.dp)
+                            .padding(padding)
+                            .let {
+                                backGroundHaze?.let { haze ->
+                                    it
+                                        .clip(MaterialTheme.shapes.extraSmall)
+                                        .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
+                                } ?: it
+                            }
+                            .clickableWithScale(ClickScale.SMALL.scale) {
+                                // 只有一节课
+                                if (texts.size == 1) {
+                                    // 如果是考试
+                                    if (texts[0].contains("考试")) {
+                                        return@clickableWithScale
+                                    }
+                                    val name =
+                                        parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
+                                    if (name != null) {
+                                        navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name,index))
+                                    }
+                                } else if (texts.size > 1) {
+                                    multiWeekday =
+                                        if (showAll) (index + 1) % 7 else (index + 1) % 5
+                                    multiWeek = currentWeek.toInt()
+                                    courses = texts
+                                    showBottomSheetMultiCourse = true
+                                }
+                                // 空数据
+                            }
+                            .containerShare(
+                                sharedTransitionScope,
+                                animatedContentScope,
+                                route = if (texts.size == 1) {
+                                    // 如果是考试
+                                    if (texts[0].contains("考试")) {
+                                        route
+                                    } else {
+                                        val name =
+                                            parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
+                                        if (name != null) {
+                                            AppNavRoute.CourseDetail.withArgs(name,index)
+                                        } else {
+                                            route
+                                        }
+                                    }
+                                } else {
+                                    route
+                                },
+                                roundShape = MaterialTheme.shapes.extraSmall,
+                            )
+                    ) {
+                        //存在待考时
+                        if(examList.isNotEmpty()){
+                            val numa = if(showAll) 7 else 5
+                            val i = index % numa
+                            val j = index / numa
+                            val date = dateList[i]
+                            examList.forEach {
+                                if(date == it.day) {
+                                    val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
 
-            AnimatedVisibility(
-                visible = !loading,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                //在这里插入课程表布局
-                Column {
-                    Box(modifier = Modifier.fillMaxHeight()) {
-                        val scrollState = rememberLazyGridState()
-                        val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-                        val padding = if (showAll) 1.dp else 2.dp
-                        val textSize = if(showAll)12.sp else 14.sp
-                        LazyVerticalGrid(
-                            columns = GridCells.Fixed(if(showAll)7 else 5),
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP- CARD_NORMAL_DP -padding*2, vertical = padding),
-
-                            state = scrollState
-                        ) {
-                            items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
-                            exception?.let {
-                                item(span = { GridItemSpan(maxLineSpan) }) {
-                                    TransplantListItem(
-                                        headlineContent = { Text("解析课表错误 请联系开发者") },
-                                        leadingContent = { Icon(painterResource(R.drawable.warning),null)},
-                                        supportingContent = { Text(getKeyStackTrace(it)) }
+                                    if(hour in 7..9 && j == 0) {
+                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                    } else if(hour in 10..12 && j == 1) {
+                                        texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
+                                    } else if(hour in 14..15  && j == 2) {
+                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                    } else if(hour in 16..17  && j == 3) {
+                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                    } else if(hour >= 18  && j == 4) {
+                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                    }
+                                }
+                            }
+                        }
+                        if(texts.size == 1) {
+                            val l = texts[0].split("\n")
+                            val time = l[0]
+                            val name = l[1]
+                            val place = l[2]
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = time,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f) // 占据中间剩余的全部空间
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    Text(
+                                        text = name,
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                        modifier = Modifier.fillMaxWidth()
                                     )
                                 }
-                            }
-                            items(if(showAll)42 else 30) { cell ->
-                                val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                                val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
-                                Card(
-                                    shape = MaterialTheme.shapes.extraSmall,
-                                    colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
-                                    modifier = Modifier
-                                        .height(125.dp)
-                                        .padding(padding)
-                                        .let {
-                                            backGroundHaze?.let { haze ->
-                                                it
-                                                    .clip(MaterialTheme.shapes.extraSmall)
-                                                    .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
-                                            } ?: it
-                                        }
-                                        .clickable {
-                                            // 只有一节课
-                                            if (texts.size == 1) {
-                                                // 如果是考试
-                                                if (texts[0].contains("考试")) {
-                                                    return@clickable
-                                                }
-                                                val name =
-                                                    parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
-                                                if (name != null) {
-                                                    navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name,cell))
-//                                                    courseName = name
-//                                                    showBottomSheetTotalCourse = true
-                                                }
-                                            } else if (texts.size > 1) {
-                                                multiWeekday =
-                                                    if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                                multiWeek = currentWeek.toInt()
-                                                courses = texts
-                                                showBottomSheetMultiCourse = true
-                                            }
-                                            // 空数据
-                                        }
-                                        .containerShare(
-                                            sharedTransitionScope,
-                                            animatedContentScope,
-                                            route = if (texts.size == 1) {
-                                                // 如果是考试
-                                                if (texts[0].contains("考试")) {
-                                                    route
-                                                } else {
-                                                    val name =
-                                                        parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
-                                                    if (name != null) {
-                                                        AppNavRoute.CourseDetail.withArgs(name,cell)
-                                                    } else {
-                                                        route
-                                                    }
-                                                }
-                                            } else {
-                                                route
-                                            },
-                                            roundShape = MaterialTheme.shapes.extraSmall,
-                                        )
-
-                                ) {
-                                    //存在待考时
-                                    if(examList.isNotEmpty()){
-                                        val numa = if(showAll) 7 else 5
-                                        val i = cell % numa
-                                        val j = cell / numa
-                                        val date = dateList[i]
-                                        examList.forEach {
-                                            if(date == it.day) {
-                                                val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
-
-                                                if(hour in 7..9 && j == 0) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour in 10..12 && j == 1) {
-                                                    texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour in 14..15  && j == 2) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour in 16..17  && j == 3) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                } else if(hour >= 18  && j == 4) {
-                                                    texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                                }
-                                            }
-                                        }
-                                    }
-                                    if(texts.size == 1) {
-                                        val l = texts[0].split("\n")
-                                        val time = l[0]
-                                        val name = l[1]
-                                        val place = l[2]
-                                        Column(
-                                            modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
-                                            verticalArrangement = Arrangement.SpaceBetween,
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            Text(
-                                                text = time,
-                                                fontSize = textSize,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.fillMaxWidth()
-                                            )
-                                            Box(
-                                                modifier = Modifier
-                                                    .weight(1f) // 占据中间剩余的全部空间
-                                                    .fillMaxWidth(),
-                                                contentAlignment = Alignment.TopCenter
-                                            ) {
-                                                Text(
-                                                    text = name,
-                                                    fontSize = textSize,
-                                                    textAlign = TextAlign.Center,
-                                                    overflow = TextOverflow.Ellipsis, // 超出显示省略号
-                                                    modifier = Modifier.fillMaxWidth()
-                                                )
-                                            }
-                                            Text(
-                                                text = place,
-                                                fontSize = textSize,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.fillMaxWidth()
-                                            )
-                                        }
-                                    } else {
-                                        Column(
-                                            modifier = Modifier
-                                                .fillMaxSize()
-                                                .verticalScroll(rememberScrollState())
-                                        ) {
-                                            Text(
-                                                text =
-                                                    if(texts.size == 1) texts[0]
-                                                    else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                                    else "",
-                                                fontSize = textSize,
-                                                textAlign = TextAlign.Center,
-                                                fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            item {  InnerPaddingHeight(innerPadding,false) }
-                        }
-                        // 上一周
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP
+                                Text(
+                                    text = place,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
                                 )
-                        ) {
-                            if (shouldShowAddButton) {
-                                FloatingActionButton(
-                                    onClick = {
-                                        if (currentWeek > 1) {
-                                            currentWeek-- - 1
-                                            onDateChange(today.minusDays(7))
-                                        }
-                                    },
-                                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
                             }
-                        }
-                        // 中间
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                Text(
+                                    text =
+                                        if(texts.size == 1) texts[0]
+                                        else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                        else "",
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
                                 )
-                        ) {
-                            if (shouldShowAddButton) {
-                                ExtendedFloatingActionButton(
-                                    onClick = {
-                                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                                            currentWeek = 1
-                                            onDateChange(getJxglstuStartDate())
-                                        } else {
-                                            currentWeek = DateTimeManager.weeksBetweenJxglstu
-                                            onDateChange(LocalDate.now())
-                                        }
-                                    },
-                                ) {
-                                    AnimatedContent(
-                                        targetState = currentWeek,
-                                        transitionSpec = {
-                                            scaleIn(animationSpec = tween(500)
-                                            ) togetherWith(scaleOut(animationSpec = tween(500)))
-                                        }, label = ""
-                                    ){ n ->
-                                        Text(text = "第 $n 周")
-                                    }
-                                }
-                            }
-                        }
-                        // 学期显示
-//                        androidx.compose.animation.AnimatedVisibility(
-//                            visible = !shouldShowAddButton,
-//                            enter = scaleIn(),
-//                            exit = scaleOut(),
-//                            modifier = Modifier
-//                                .align(Alignment.BottomCenter)
-//                                .padding(innerPadding)
-//                                .padding(
-//                                    horizontal = APP_HORIZONTAL_DP,
-//                                    vertical = APP_HORIZONTAL_DP
-//                                )
-//                        ) {
-//                            TextButton(onClick = {  }) {
-//                                Text(
-//                                    text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
-//                                    style = TextStyle(shadow = Shadow(
-//                                        color = Color.Gray,
-//                                        offset = Offset(5.0f,5.0f),
-//                                        blurRadius = 10.0f
-//                                    )
-//                                    )
-//                                )
-//                            }
-//                        }
-                        // 下一周
-                        androidx.compose.animation.AnimatedVisibility(
-                            visible = shouldShowAddButton,
-                            enter = scaleIn(),
-                            exit = scaleOut(),
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                                .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP
-                                )
-                        ) {
-                            if (shouldShowAddButton) {
-                                FloatingActionButton(
-                                    onClick = {
-                                        if (currentWeek < 20) {
-                                            currentWeek++ + 1
-                                            onDateChange(today.plusDays(7))
-                                        }
-                                    },
-                                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(100.dp))
+                }
+                item(span = { GridItemSpan(maxLineSpan) }) {  InnerPaddingHeight(innerPadding,false) }
+            }
+            // 上一周
+            AnimatedVisibility(
+                visible = shouldShowAddButton,
+                enter = scaleIn(),
+                exit = scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
+                    .padding(APP_HORIZONTAL_DP,)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        if (currentWeek > 1) {
+                            currentWeek-- - 1
+                            onDateChange(today.minusDays(7))
+                        }
+                    },
+                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+            }
+            // 中间
+            AnimatedVisibility(
+                visible = shouldShowAddButton,
+                enter = scaleIn(),
+                exit = scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
+                    .padding(APP_HORIZONTAL_DP,)
+            ) {
+                ExtendedFloatingActionButton(
+                    onClick = {
+                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                            currentWeek = 1
+                            onDateChange(getJxglstuStartDate())
+                        } else {
+                            currentWeek = DateTimeManager.weeksBetweenJxglstu
+                            onDateChange(LocalDate.now())
+                        }
+                    },
+                ) {
+                    AnimatedContent(
+                        targetState = currentWeek,
+                        transitionSpec = {
+                            scaleIn(animationSpec = tween(500)
+                            ) togetherWith(scaleOut(animationSpec = tween(500)))
+                        }, label = ""
+                    ){ n ->
+                        Text(text = "第 $n 周")
+                    }
                 }
             }
+            // 下一周
+            AnimatedVisibility(
+                visible = shouldShowAddButton,
+                enter = scaleIn(),
+                exit = scaleOut(),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
+                    .padding(APP_HORIZONTAL_DP,)
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        if (currentWeek < 20) {
+                            currentWeek++ + 1
+                            onDateChange(today.plusDays(7))
+                        }
+                    },
+                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+            }
         }
+    }
 }
 
 fun getNewWeek() : Long {

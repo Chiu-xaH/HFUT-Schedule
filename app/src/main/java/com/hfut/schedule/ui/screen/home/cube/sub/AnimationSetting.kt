@@ -2,9 +2,14 @@ package com.hfut.schedule.ui.screen.home.cube.sub
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.ScaleToBounds
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -13,12 +18,17 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -41,16 +51,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.component.containerShare
@@ -88,7 +108,7 @@ fun AnimationSetting(speed : Int = AppAnimationManager.ANIMATION_SPEED) {
 }
 
 @Composable
-fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int,speed : Int) {
+private fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAnimationIndex : Int, index : Int,speed : Int) {
     val isSelected = currentAnimationIndex == index
 
     val cor = rememberCoroutineScope()
@@ -96,8 +116,8 @@ fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAn
         horizontalAlignment = Alignment.CenterHorizontally) {
         OutlinedCard (
             modifier = Modifier
-                .width(108.dp)
-                .height(190.dp)
+                .width(90.dp)
+                .height(160.dp)
                 .clickable {
                     // 点击选择应用动画 标记selected=true selected只能存在一个true
                     cor.launch { DataStoreManager.saveAnimationType(index) }
@@ -126,7 +146,7 @@ fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAn
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primaryContainer, shape = RoundedCornerShape(11.dp))
+                            .background(MaterialTheme.colorScheme.secondaryContainer, shape = RoundedCornerShape(11.dp))
                     ) {
                         Text("2", modifier = Modifier.align(Alignment.Center))
                     }
@@ -140,7 +160,7 @@ fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAn
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primaryContainer.copy(.5f), shape = RoundedCornerShape(11.dp))
+                            .background(MaterialTheme.colorScheme.secondaryContainer.copy(.5f), shape = RoundedCornerShape(11.dp))
                     ) {
                         Text("1", modifier = Modifier.align(Alignment.Center))
                     }
@@ -157,12 +177,11 @@ fun AnimationCard(animation :  AppAnimationManager. TransferAnimation, currentAn
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-//@Preview
 fun TransitionExample() {
     OutlinedCard (
         modifier = Modifier
             .width(108.dp)
-            .height(190.dp),
+            .height(204.dp),
         colors =  CardDefaults. outlinedCardColors(containerColor = CardDefaults.outlinedCardColors().containerColor.copy(.6f)),
         shape = RoundedCornerShape(14.dp),
     ) {
@@ -177,7 +196,7 @@ fun TransitionExample() {
                     isExpand = !isExpand
                     if(isExpand == false) {
                         delay(AppAnimationManager.ANIMATION_SPEED*2L)
-                        index = ((index+1) % 4)
+                        index = ((index+1) % 8)
                     }
                 }
             }
@@ -202,6 +221,7 @@ fun TransitionExample() {
     }
 }
 
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ScreenBackground(
@@ -218,7 +238,6 @@ private fun ScreenBackground(
         )
     )
 
-
     Box() {
         Box(
             modifier = Modifier
@@ -230,38 +249,111 @@ private fun ScreenBackground(
                 }
 
         ) {
-            Text("首页", modifier = Modifier.align(Alignment.Center), fontSize = 14.sp)
+//            Text("首页", modifier = Modifier.align(Alignment.Center), fontSize = 14.sp)
         }
+
         Icon(
             painterResource(R.drawable.menu),
             null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(end = 6.dp, top = 6.dp).align(Alignment.TopEnd).size(11.dp)
         )
-        Row (modifier = Modifier.padding(bottom = 4.dp).align(Alignment.BottomCenter)){
-            Spacer(Modifier.width(4.dp))
-            repeat(4) { i ->
+        Column(modifier = Modifier.align(Alignment.BottomCenter)) {
+            Row (modifier = Modifier.padding(bottom = 4.dp)){
+                Spacer(Modifier.width(4.dp))
                 Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.secondaryContainer,
                     modifier = Modifier
-                        .size(20.dp)
+                        .height(79.dp)
+                        .fillMaxWidth()
+                        .padding(end = 4.dp)
                         .clip(RoundedCornerShape(6.dp))
                         .let {
-                            if(i != index) {
+                            if(0 != index) {
                                 it.drawWithContent {
                                     drawContent()
                                     drawRect(Color.Black.copy(alpha = backgroundColor))
                                 }
                             } else it
                         }
-                        .containerShare(sharedTransitionScope,animatedContentScope,"test$i", roundShape = RoundedCornerShape(6.dp))
+                        .containerShare(sharedTransitionScope,animatedContentScope,"test${0}", roundShape = RoundedCornerShape(6.dp))
                 ) {
                 }
                 Spacer(Modifier.width(4.dp))
             }
+            Row (modifier = Modifier.padding(bottom = 4.dp)){
+                Spacer(Modifier.width(4.dp))
+                Surface(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    modifier = Modifier
+                        .height(40.dp)
+                        .fillMaxWidth()
+                        .padding(end = 4.dp)
+                        .clip(RoundedCornerShape(6.dp))
+                        .let {
+                            if(1 != index) {
+                                it.drawWithContent {
+                                    drawContent()
+                                    drawRect(Color.Black.copy(alpha = backgroundColor))
+                                }
+                            } else it
+                        }
+                        .containerShare(sharedTransitionScope,animatedContentScope,"test${1}", roundShape = RoundedCornerShape(6.dp))
+                ) {
+
+                }
+                Spacer(Modifier.width(4.dp))
+            }
+            Row (modifier = Modifier.padding(bottom = 4.dp)){
+                Spacer(Modifier.width(4.dp))
+                repeat(2) { i ->
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        modifier = Modifier
+                            .size(height = 20.dp, width = 44.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .let {
+                                if(i+2 != index) {
+                                    it.drawWithContent {
+                                        drawContent()
+                                        drawRect(Color.Black.copy(alpha = backgroundColor))
+                                    }
+                                } else it
+                            }
+                            .containerShare(sharedTransitionScope,animatedContentScope,"test${i+2}", roundShape = RoundedCornerShape(6.dp))
+                    ) {
+
+                    }
+                    Spacer(Modifier.width(4.dp))
+                }
+            }
+            Row (modifier = Modifier.padding(bottom = 4.dp)){
+                Spacer(Modifier.width(4.dp))
+                repeat(4) { i ->
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .let {
+                                if(i+4 != index) {
+                                    it.drawWithContent {
+                                        drawContent()
+                                        drawRect(Color.Black.copy(alpha = backgroundColor))
+                                    }
+                                } else it
+                            }
+                            .containerShare(sharedTransitionScope,animatedContentScope,"test${i+4}", roundShape = RoundedCornerShape(6.dp))
+                    ) {
+
+                    }
+                    Spacer(Modifier.width(4.dp))
+                }
+            }
         }
     }
 }
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun ScreenApp(
@@ -272,7 +364,7 @@ private fun ScreenApp(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
             .containerShare(sharedTransitionScope,animatedContentScope,"test$index", roundShape = RoundedCornerShape(6.dp))
     ) {
         Icon(
@@ -288,6 +380,15 @@ private fun ScreenApp(
             modifier = Modifier.padding(end = 6.dp, top = 6.dp).align(Alignment.TopEnd).size(11.dp)
         )
         Text((index+1).toString(), modifier = Modifier.align(Alignment.Center).titleElementShare(sharedTransitionScope,animatedContentScope,"test$index"))
+    }
+}
+
+
+@Composable
+//@Preview
+private fun BounceEffectDemo() {
+    CenterScreen {
+        TransitionExample()
     }
 }
 

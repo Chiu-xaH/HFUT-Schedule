@@ -37,12 +37,12 @@
 在启动时自动检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有下载提示(有三个通道供选择，分别为Gitee下载全量包、Gitee下载增量包、Github下载最新版本，选任意即可)(Gitee会存在限速约600KB/S，因为下载的人多)100%后点击安装，授权安装未知应用权限即可
 
 ### 不同系统上的差异
-并未所有功能在机型上可用，因Android版本、厂商定制UI差异而不同，主要是在UI层面，不影响任何实用性功能，详情查看APP的 选项-维护关于-功能功能性支持 或 [这里]((/docs/CHART.md))
+并未所有功能在机型上可用，因Android版本、厂商定制UI差异而不同，主要是在UI层面，不影响任何实用性功能，详情查看APP的 选项-维护关于-功能功能性支持 或 [这里](/docs/CONTRAST.md)
 
 ### 校区本土化差异
 由于开发者是宣城校区本科生，合肥校区也可使用，会缺失一小部分特定功能
 
-## [更新日志](docs/UPDATE.md)
+## [更新日志](docs/update)
 
 ## 构建
 OpenJDK v17.0.0.1
@@ -90,7 +90,7 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 [webvpn-dlut](https://github.com/ESWZY/webvpn-dlut) WENVPN URL转换
 
 ### APP
-早期参考了Space课表的一些功能设计，后期参考了一些使用Material You设计的开源App，在此不一一列举
+早期参考了Space课表的一些功能设计，后期参考了一些使用Material You设计的开源App，还有对系统UI的借鉴，在此不一一列举了
 
 ## [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
 

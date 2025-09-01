@@ -22,6 +22,10 @@ import retrofit2.http.Query
 
 
 interface JxglstuService {
+    @GET("/")
+    @Headers(MyApplication.PC_UA)
+    fun checkCanUse() : Call<ResponseBody>
+
     //带着Cookie登录教务系统主页
     @GET("neusoft-sso/login")
     @Headers(MyApplication.PC_UA)

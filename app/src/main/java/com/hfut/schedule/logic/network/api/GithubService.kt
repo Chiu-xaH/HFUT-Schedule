@@ -19,4 +19,12 @@ interface GithubService {
     fun getUserInfo(
         @Path("username") username : String = MyApplication.GITHUB_DEVELOPER_NAME,
     ) : Call<ResponseBody>
+
+    // 获取仓库文件夹内容
+    @GET("repos/{owner}/{repo}/contents/{path}")
+    fun getFolderContent(
+        @Path("owner") owner : String = MyApplication.GITHUB_DEVELOPER_NAME,
+        @Path("repo") repo : String = MyApplication.GITHUB_REPO_NAME,
+        @Path("path") path : String = "docs/update"
+    ) : Call<ResponseBody>
 }

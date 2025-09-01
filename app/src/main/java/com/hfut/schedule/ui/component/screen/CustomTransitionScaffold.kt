@@ -49,7 +49,6 @@ fun SharedTransitionScope.CustomTransitionScaffold(
            this,
             animatedContentScope,
             route,
-            resize = true,
             roundShape = roundShape,
         ),
         enablePredictive = predictive && enablePredictive,

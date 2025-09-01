@@ -44,6 +44,7 @@ class LoginViewModel : ViewModel() {
     private val MyAPI = MyServiceCreator.create(MyService::class.java)
 
 
+
     var TICKET = MutableLiveData<String?>()
     suspend fun login(username : String, password : String, keys : String, imageCode : String, webVpn : Boolean) =
         onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->
