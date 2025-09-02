@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.webvpn
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -31,13 +32,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.App.MyApplication.Companion.WEBVPN_URL
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.application.MyApplication.Companion.WEBVPN_URL
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.WebVpnUtil
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -80,6 +82,7 @@ fun WebVpnScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.WebVpn.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -100,7 +103,7 @@ fun WebVpnScreen(
                         FilledTonalButton(
                             onClick = {
                                 if(!vm.webVpn) {
-                                    Starter.refreshLogin()
+                                    Starter.refreshLogin(context)
                                 }
                             },
                             modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
@@ -134,15 +137,16 @@ suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
     }
 
 fun autoWebVpnForNews(
+    context: Context,
     url: String,
     title: String = getPureUrl(url),
     cookie: String? = null,
     icon: Int? = null
 ) {
     if(cookie == null) {
-        Starter.startWebView(url,title,null,icon)
+        Starter.startWebView(context,url,title,null,icon)
     } else {
-        Starter.startWebView(WebVpnUtil.getWebVpnUrl(url),title,cookie,icon)
+        Starter.startWebView(context,WebVpnUtil.getWebVpnUrl(url),title,cookie,icon)
     }
 }
 
@@ -151,6 +155,8 @@ fun WebVpnUI(vm: NetWorkViewModel) {
     val cookies by produceState<String?>(initialValue = null)  {
         value = getWebVpnCookie(vm)
     }
+    val context = LocalContext.current
+
     DividerTextExpandedWith("内网 to 外网") {
         var input by remember { mutableStateOf("") }
         var result by remember { mutableStateOf<String?>(null) }
@@ -210,10 +216,10 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             },
                             CardBottomButton("打开") {
                                 if(vm.webVpn) {
-                                    Starter.startWebView(it, cookie = cookies)
+                                    Starter.startWebView(context,it, cookie = cookies)
                                 } else {
                                     showToast("先以外地访问模式登录")
-                                    Starter.refreshLogin()
+                                    Starter.refreshLogin(context)
                                 }
                             },
                             CardBottomButton("清除") {
@@ -300,7 +306,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                                     horizontal = APP_HORIZONTAL_DP,
                                     vertical = APP_HORIZONTAL_DP - 5.dp
                                 ).clickable {
-                                    Starter.startWebView(it)
+                                    Starter.startWebView(context,it)
                                 }
                         )
                         Text(

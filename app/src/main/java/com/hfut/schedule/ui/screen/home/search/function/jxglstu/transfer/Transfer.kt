@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -28,6 +29,7 @@ fun Transfer(
     animatedContentScope: AnimatedContentScope,
 ){
     val route = remember { AppNavRoute.Transfer.route }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { Text(text = AppNavRoute.Transfer.label) },
@@ -35,7 +37,7 @@ fun Transfer(
             Icon(painterResource(AppNavRoute.Transfer.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin() else {
+            if(ifSaved) refreshLogin(context) else {
                 navController.navigateForTransition(AppNavRoute.Transfer,route)
             }
         }

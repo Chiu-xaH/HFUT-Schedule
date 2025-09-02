@@ -14,7 +14,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavDestination
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter

@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.shower
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
@@ -44,12 +45,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.Observer
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.ShowerFeeResponse
@@ -87,7 +89,7 @@ private fun getUrl(page : Int,) : String {
     val auth = prefs.getString("auth","")
     return MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${ if(page == XUANCHENG_TAB)FeeType.SHOWER_XUANCHENG.code else FeeType.SHOWER_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
 }
-fun getInGuaGua(vm: NetWorkViewModel,onResult : (Boolean) -> Unit) {
+fun getInGuaGua(vm: NetWorkViewModel,context : Context,onResult : (Boolean) -> Unit) {
 
     lateinit var guaguaUserInfoObserver: Observer<String?> // 延迟初始化观察者
 
@@ -97,10 +99,10 @@ fun getInGuaGua(vm: NetWorkViewModel,onResult : (Boolean) -> Unit) {
             if (result.contains("成功")) {
                 saveString("GuaGuaPersonInfo", result)
                 vm.guaGuaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-                startGuaGua()
+                startGuaGua(context)
             } else if (result.contains("error")) {
                 vm.guaGuaUserInfo.removeObserver(guaguaUserInfoObserver) // 正常移除观察者
-                loginGuaGua()
+                loginGuaGua(context)
             }
         }
     }
@@ -247,6 +249,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
             }
         }
 
+    val context = LocalContext.current
 
     var loading by remember { mutableStateOf(false) }
 
@@ -297,7 +300,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
 
                     FilledTonalButton(
                         onClick = {
-                            Starter.startWebView(url = getUrl(XUANCHENG_TAB), title = "慧新易校")
+                            Starter.startWebView(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
                         }
                     ) {
                         Text("官方充值")
@@ -316,7 +319,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                 CardListItem(
                     headlineContent = { Text("进入呱呱物联") },
                     modifier = Modifier.clickable {
-                        getInGuaGua(vm) { loading = it }
+                        getInGuaGua(vm,context) { loading = it }
                     },
                     trailingContent = {
                         Icon(Icons.Default.ArrowForward,null)
@@ -334,7 +337,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                         CardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                Starter.startWebView(url = getUrl(HEFEI_TAB), title = "慧新易校")
+                                Starter.startWebView(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
 
                             },
                             trailingContent = {
@@ -422,6 +425,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                     LoadingLargeCard(
                                         title = if(!show)"￥XX.XX" else {     "￥${tranamt(balance)}"},
                                         loading = !show,
+                                        prepare = true,
                                         rightTop = {
                                             if(show) {
                                                 if(showButton)

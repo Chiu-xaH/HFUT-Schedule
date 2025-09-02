@@ -24,9 +24,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
@@ -67,6 +68,7 @@ fun NextCourse(
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie(vm) ?: ""
     }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.NextCourse.label) },
@@ -78,11 +80,12 @@ fun NextCourse(
                 if(ifSaved) {
                     if(prefs.getInt("FIRST",0) != 0)
                         navController.navigateForTransition(AppNavRoute.NextCourse,AppNavRoute.NextCourse.withArgs(ifSaved))
-                    else refreshLogin()
+                    else refreshLogin(context)
                 } else navController.navigateForTransition(AppNavRoute.NextCourse,AppNavRoute.NextCourse.withArgs(ifSaved))
             } else {
                 if(!ifSaved) {
                     Starter.startWebView(
+                        context,
                         url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
                         title = "教务系统",
                         cookie = cookie,

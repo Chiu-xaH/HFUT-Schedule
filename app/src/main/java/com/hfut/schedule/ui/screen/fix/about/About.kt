@@ -42,7 +42,7 @@ import androidx.navigation.NavHostController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils

@@ -36,10 +36,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.PlanCoursesSearch
 import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
@@ -209,6 +210,7 @@ private fun ProgramSearch(
             }
         }
     }
+    val context = LocalContext.current
 
     Column {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "若加载过长 请搭外网") {
@@ -247,7 +249,7 @@ private fun ProgramSearch(
                             RowHorizontal {
                                 Button(
                                     onClick = {
-                                        Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
+                                        Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/blob/main/tools/All-Programs-Get-Python/README.md")
                                     }
                                 ) {
                                     Text("接入指南(Github)")

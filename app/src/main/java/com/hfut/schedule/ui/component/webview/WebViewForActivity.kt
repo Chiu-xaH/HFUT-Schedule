@@ -52,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -171,6 +172,7 @@ fun WebViewScreenForActivity(
         value = DataBaseManager.webUrlDao.isExist(currentUrl)
     }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     var on by remember { mutableStateOf<(String) -> Unit>({}) }
     var operationFavorite by remember { mutableStateOf(false) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -285,7 +287,7 @@ fun WebViewScreenForActivity(
             painterResource(id = R.drawable.rotate_right), contentDescription = "") }
 
         IconButton(onClick = {
-            on = { Starter.startWebUrl(it) }
+            on = { Starter.startWebUrl(context,it) }
             showBottomSheet = true
         }) { Icon(
             painterResource(id = R.drawable.net), contentDescription = "") }
@@ -509,7 +511,7 @@ fun WebViewScreenForActivity(
                                 val urlS = request?.url.toString()
 
                                 if (urlS.contains("download")) { // 识别下载链接
-                                    Starter.startWebUrl(urlS)
+                                    Starter.startWebUrl(context,urlS)
                                     return true // 拦截 WebView 处理
                                 }
 

@@ -15,8 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -41,6 +42,7 @@ fun LePaoYun(hazeState: HazeState) {
             showBottomSheet = true
         }
     )
+    val context = LocalContext.current
 
     if (showBottomSheet) {
         HazeBottomSheet(
@@ -54,7 +56,7 @@ fun LePaoYun(hazeState: HazeState) {
                 HazeBottomSheetTopBar("体育", isPaddingStatusBar = false)
                 CardListItem(
                     headlineContent = { Text("校园跑") },
-                    modifier = Modifier.clickable { Starter.startAppLaunch(Starter.AppPackages.LEPAO) },
+                    modifier = Modifier.clickable { Starter.startAppLaunch(Starter.AppPackages.LEPAO,context) },
                     trailingContent = {
                         Icon(Icons.Default.ArrowForward,null)
                     },
@@ -63,7 +65,7 @@ fun LePaoYun(hazeState: HazeState) {
                 CardListItem(
                     headlineContent = { Text("体测平台") },
                     overlineContent = { Text("学校网站内测 接入校园网") },
-                    modifier = Modifier.clickable { Starter.startWebUrl(MyApplication.PE_URL + "bdlp_h5_fitness_test/public/index.php/index/login/hfutLogin") },
+                    modifier = Modifier.clickable { Starter.startWebUrl(context,MyApplication.PE_URL + "bdlp_h5_fitness_test/public/index.php/index/login/hfutLogin") },
                     trailingContent = {
                         Icon(Icons.Default.ArrowForward,null)
                     },

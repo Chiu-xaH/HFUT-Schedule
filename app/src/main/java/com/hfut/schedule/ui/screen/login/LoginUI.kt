@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.login
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -63,6 +64,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -70,9 +72,10 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
@@ -117,7 +120,6 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -125,6 +127,7 @@ import kotlinx.coroutines.withContext
 
 //登录方法，auto代表前台调用
 private fun loginClick(
+    context: Context,
     vm : LoginViewModel,
     username : String,
     inputAES : String,
@@ -136,7 +139,7 @@ private fun loginClick(
 ) {
     val cookie = prefs.getString(if(!webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
-    val c = "LOGIN_FLAVORING=$cookie"
+    val loginFlavoring = "LOGIN_FLAVORING=$cookie"
 
 
     //登陆判定机制
@@ -151,7 +154,7 @@ private fun loginClick(
             if (username.length != 10)
                 showToast("请输入正确的账号")
             else
-                outputAES?.let { it1 -> vm.login(username, it1,c,code,webVpn) }
+                outputAES?.let { it1 -> vm.login(username, it1,loginFlavoring,code,webVpn) }
         }.await()
         async { onLoad(true) }.await()
         async {
@@ -165,34 +168,31 @@ private fun loginClick(
                                     onResult("可能是教务封网问题,请再次尝试登录")
                                     refresh(vm)
                                 }
-                                "401" -> {
+                                StatusCode.UNAUTHORIZED.code.toString() -> {
                                     scope.launch { refresh(vm) }
                                     refresh(vm)
                                 }
-                                "200" -> {
+                                StatusCode.OK.code.toString() -> {
                                     if(CasInHFUT.excludeJxglstu) {
                                         onResult("登陆成功")
-                                        Starter.loginSuccess()
-                                    } else if(!webVpn)
+                                        Starter.loginSuccess(context)
+                                    } else if(!webVpn) {
                                         onResult("请输入正确的账号")
-                                    else {
+                                        refresh(vm)
+                                    } else {
                                         onResult("登陆成功")
                                         vm.loginJxglstu()
-                                        Starter.loginSuccess()
+                                        Starter.loginSuccess(context)
                                     }
                                 }
-                                "302" -> {
+                                StatusCode.REDIRECT.code.toString() -> {
                                     when {
-                                        vm.location.value.toString() == MyApplication.REDIRECT_URL -> {
-                                            onResult("登陆失败")
-                                            refresh(vm)
-                                        }
                                         vm.location.value.toString().contains("ticket") -> {
                                             onResult("登陆成功")
-                                            Starter.loginSuccess(webVpn)
+                                            Starter.loginSuccess(context,webVpn)
                                         }
                                         else -> {
-                                            onResult("未知响应,登陆失败")
+                                            onResult("登陆失败")
                                             refresh(vm)
                                         }
                                     }
@@ -267,7 +267,7 @@ fun LoginScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     val scope = rememberCoroutineScope()
-    val context = LocalActivity.current
+    val activity = LocalActivity.current
     var webVpn by rememberSaveable { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -280,6 +280,7 @@ fun LoginScreen(
     val showTip = username.startsWith(DateTimeManager.Date_yyyy) && isAnonymity()
     val showTip2 = jxglstuStatus != null && jxglstuStatus!! >= 400
     var tab by remember { mutableIntStateOf(TAB_LOGIN) }
+    val context = LocalContext.current
 
     if(tab == TAB_SETTRINGS) {
         HazeBottomSheet (
@@ -318,7 +319,7 @@ fun LoginScreen(
                         TransplantListItem(
                             headlineContent = { Text(status.second ) },
                             modifier = Modifier.clickable {
-                                Starter.startWlanSettings()
+                                Starter.startWlanSettings(context)
                             },
                             leadingContent = {
                                 if(jxglstuStatus == null) {
@@ -384,7 +385,7 @@ fun LoginScreen(
                                     )
                                 },
                                 modifier = Modifier.clickable {
-                                    Starter.startWebUrl(MyApplication.CAS_LOGIN_URL)
+                                    Starter.startWebUrl(context,MyApplication.CAS_LOGIN_URL)
                                 },
                             )
                             PaddingHorizontalDivider()
@@ -403,7 +404,7 @@ fun LoginScreen(
                             headlineContent = { Text("修改密码") },
                             supportingContent = { Text("修改或重置CAS统一认证密码")},
                             leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
-                            modifier = Modifier.clickable { Starter.startWebView(MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
+                            modifier = Modifier.clickable { Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
                         )
                     }
                 }
@@ -467,7 +468,7 @@ fun LoginScreen(
                             )
                         }
                         IconButton(onClick = {
-                            Starter.startFix()
+                            Starter.startFix(context)
                         }) {
                             Icon(painterResource(id = R.drawable.build), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                         }
@@ -475,7 +476,7 @@ fun LoginScreen(
                 },
                 navigationIcon  = {
                     IconButton(onClick = {
-                        context?.finish()
+                        activity?.finish()
                     }) {
                         Icon(painterResource(id = R.drawable.close), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                     }
@@ -566,7 +567,7 @@ fun AnimatedWelcomeScreen() {
 
 private suspend fun refresh(vm: LoginViewModel) = withContext(Dispatchers.IO) {
     launch {
-        vm.execution.clear()
+        vm.executionAndSession.clear()
         vm.getCookie()
     }
     launch { GlobalUIStateHolder.refreshImageCode++ }
@@ -584,6 +585,7 @@ private fun TwoTextField(
     animatedContentScope: AnimatedContentScope,
     onUsername : (String) -> Unit
 ) {
+    val context = LocalContext.current
     var hidden by rememberSaveable { mutableStateOf(true) }
     var inputAES by rememberSaveable { mutableStateOf(prefs.getString("Password","") ?: "") }
     var inputCode by rememberSaveable { mutableStateOf( "") }
@@ -761,7 +763,7 @@ private fun TwoTextField(
                         onClick = {
                             val cookie = prefs.getString("LOGIN_FLAVORING", "")
                             if (cookie != null) {
-                                loginClick(vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it},scope)
+                                loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it},scope)
                             }
                         },
                         modifier = Modifier.fillMaxWidth().weight(.5f),
@@ -773,7 +775,7 @@ private fun TwoTextField(
                         onClick = {
                             scope.launch {
                                 DataStoreManager.saveFastStart(true)
-                                Starter.goToMain()
+                                Starter.goToMain(context)
                             }
                         },
                         modifier = Modifier
@@ -790,7 +792,7 @@ private fun TwoTextField(
                         onClick = {
                             val cookie = prefs.getString("LOGIN_FLAVORING", "")
                             if (cookie != null) {
-                                loginClick(vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it}, scope)
+                                loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it}, scope)
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),

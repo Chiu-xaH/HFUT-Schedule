@@ -14,7 +14,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel

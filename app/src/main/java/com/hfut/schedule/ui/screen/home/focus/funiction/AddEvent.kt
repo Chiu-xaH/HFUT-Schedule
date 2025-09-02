@@ -77,6 +77,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -286,6 +287,7 @@ private fun SharedTransitionScope.SurfaceUI(
         }
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
     Scaffold(
@@ -311,7 +313,7 @@ private fun SharedTransitionScope.SurfaceUI(
                             FilledTonalButton(onClick = {
                                 scope.launch {
                                     loading = true
-                                    loginSupabaseWithCheck(jwt,refreshToken,vm)
+                                    loginSupabaseWithCheck(jwt,refreshToken,vm,context)
                                     loading = false
                                 }
                             }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -541,6 +543,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             else
                 LoadingIcon()
         }
+        val context = LocalContext.current
+
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             DividerTextExpandedWith("预览") {
                 CardListItem(
@@ -555,7 +559,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                             }
                         }, enabled = enabled
                     ) { Icon(painterResource(R.drawable.event_upcoming),null) } },
-                    modifier = Modifier.clickable { openOperation(description) }
+                    modifier = Modifier.clickable { openOperation(description,context) }
                 )
             }
             DividerTextExpandedWith("配置") {

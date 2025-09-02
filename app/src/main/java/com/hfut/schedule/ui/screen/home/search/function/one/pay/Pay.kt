@@ -32,10 +32,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -95,6 +96,7 @@ fun FeeScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope
 ) {
+    val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -116,7 +118,7 @@ fun FeeScreen(
                     },
                     actions = {
                         FilledTonalButton(
-                            onClick = { Starter.startWebUrl(MyApplication.PAY_FEE_URL) },
+                            onClick = { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) },
                             modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                             ) { Text(text = "缴费") }
                     }
@@ -142,7 +144,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     var successLoad = uiState is UiState.Success
     var data by remember { mutableStateOf(PayData("0.00","0.00","0.00","0.00","0.00")) }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
     if (showBottomSheetQRCode) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheetQRCode = false },
@@ -175,6 +177,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
     }
     DividerTextExpandedWith(text = "欠缴费用",false) {
         LoadingLargeCard(
+            prepare = false,
             title = "￥${if(successLoad) data.total else "0.0"}",
             loading = !successLoad
         ) {
@@ -220,7 +223,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                     painter = painterResource(id = R.drawable.net),
                     contentDescription = ""
                 ) },
-                modifier = Modifier.clickable { Starter.startWebUrl(MyApplication.PAY_FEE_URL) }
+                modifier = Modifier.clickable { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) }
             )
             PaddingHorizontalDivider()
             TransplantListItem(

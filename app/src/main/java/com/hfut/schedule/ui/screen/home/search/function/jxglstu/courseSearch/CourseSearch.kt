@@ -10,6 +10,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -30,6 +31,7 @@ fun CoursesSearch(
     animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.CourseSearch.route }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.CourseSearch.label) },
@@ -37,7 +39,7 @@ fun CoursesSearch(
             Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin()
+            if(ifSaved) refreshLogin(context)
             else navController.navigateForTransition(AppNavRoute.CourseSearch,route)
         }
     )

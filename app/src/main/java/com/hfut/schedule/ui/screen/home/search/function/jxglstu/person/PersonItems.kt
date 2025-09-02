@@ -211,7 +211,7 @@ private fun PersonItems(
                         .padding(horizontal = APP_HORIZONTAL_DP)) {
                         Icon(painter = painterResource(id = if(show2)R.drawable.visibility else R.drawable.visibility_off), contentDescription = "")
                     }
-                    Column(modifier = coverBlur(!show2)) {
+                    Column(modifier = Modifier.coverBlur(!show2)) {
                         TransplantListItem(
                             headlineContent = { Text(text = chineseid ?: "------------------")  },
                             overlineContent = { Text(text = "身份证号")},
@@ -323,7 +323,7 @@ private fun PersonItems(
                     }
                 )
                 PaddingHorizontalDivider()
-                Column(modifier = coverBlur(!show)) {
+                Column(modifier = Modifier.coverBlur(!show)) {
                     val pwd= prefs.getString("Password","")
                     pwd?.let {
                         TransplantListItem(

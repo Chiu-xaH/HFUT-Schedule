@@ -23,9 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.records
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -52,6 +53,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
     val now = prefs.getString("card_now","00")
     val settle = prefs.getString("card_settle","00")
     val str by loadTodayPay(vm)
+    val context = LocalContext.current
 
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -76,7 +78,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(.5f)
-                    .clickable { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) },
+                    .clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
                 overlineContent = { ScrollText(text = "待圈存 ￥${cardValue?.settle ?: settle}") },
                 leadingContent = { Icon(painterResource(R.drawable.account_balance_wallet), contentDescription = "Localized description",) },
             )

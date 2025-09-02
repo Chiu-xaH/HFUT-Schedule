@@ -44,11 +44,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.getTodayCampusApps
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
@@ -122,6 +123,7 @@ fun StuTodayCampusScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.StuTodayCampus.route }
+    val context = LocalContext.current
 
     val paperState = rememberPagerState(pageCount = { titles.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -148,7 +150,7 @@ fun StuTodayCampusScreen(
                                 StartAppIcon(Starter.AppPackages.TODAY_CAMPUS,R.drawable.today_campus_icon)
                                 Spacer(Modifier.width(CARD_NORMAL_DP))
                                 FilledTonalButton(onClick = {
-                                    Starter.startWebUrl(MyApplication.STU_URL)
+                                    Starter.startWebUrl(context,MyApplication.STU_URL)
                                 }) {
                                     Text("学工系统")
                                 }
@@ -179,12 +181,13 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
             vm.getStuApps(it)
         }
     }
+    val context = LocalContext.current
     val todayCampusTip by DataStoreManager.showTodayCampusTip.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
     val size = remember { 30.dp }
     var input by remember { mutableStateOf("") }
     val uiState by vm.stuAppsResponse.state.collectAsState()
-    val localList = remember { getTodayCampusApps() }
+    val localList = remember { getTodayCampusApps(context) }
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
@@ -246,7 +249,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                 headlineContent = { ScrollText(name, textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
                                                 modifier = Modifier.clickable {
                                                     if(canUse)
-                                                        Starter.startWebUrl(openUrl)
+                                                        Starter.startWebUrl(context,openUrl)
                                                     else
                                                         showToast("暂不支持，请使用今日校园")
                                                 }
@@ -277,7 +280,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                                 headlineContent = { ScrollText(name,textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
                                                                 modifier = Modifier.clickable {
                                                                     if(canUse)
-                                                                        Starter.startWebUrl(openUrl)
+                                                                        Starter.startWebUrl(context,openUrl)
                                                                     else
                                                                         showToast("暂不支持，请使用今日校园")
                                                                 }
@@ -296,7 +299,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                                     headlineContent = { ScrollText(name, textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
                                                                     modifier = Modifier.clickable {
                                                                         if(canUse)
-                                                                            Starter.startWebUrl(openUrl)
+                                                                            Starter.startWebUrl(context,openUrl)
                                                                         else
                                                                             showToast("暂不支持，请使用今日校园")
                                                                     }
@@ -329,7 +332,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     url?.let {
-                                                        Starter.startWebUrl(it)
+                                                        Starter.startWebUrl(context,it)
                                                     }
                                                 }
                                             )

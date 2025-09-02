@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.enumeration.PostMode
@@ -59,6 +60,7 @@ fun Survey(
     animatedContentScope: AnimatedContentScope,
 ){
     val route = remember { AppNavRoute.Survey.route }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Survey.label)},
@@ -66,7 +68,7 @@ fun Survey(
             Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin() else {
+            if(ifSaved) refreshLogin(context) else {
                 navController.navigateForTransition(AppNavRoute.Survey,route)
             }
         }

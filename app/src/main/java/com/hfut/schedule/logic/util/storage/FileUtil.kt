@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.util.storage
 
 import android.os.Environment
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

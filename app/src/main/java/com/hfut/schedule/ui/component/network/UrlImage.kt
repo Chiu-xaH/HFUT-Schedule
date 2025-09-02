@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -31,6 +32,8 @@ fun UrlImage(
     height : Dp = 70.dp,
     useCut : Boolean = true
 ) {
+    val context = LocalContext.current
+
     val modifierCut = if(useCut) {
         Modifier
             .clip(RoundedCornerShape(roundSize))
@@ -46,7 +49,7 @@ fun UrlImage(
             .clip(RoundedCornerShape(roundSize))
             .size(width = width,height= height)
             .clickable {
-                Starter.startWebView(url,"图片",cookie)
+                Starter.startWebView(context,url,"图片",cookie)
             }
     ) {
         val imageState = loadImage(url, cookie = cookie)
@@ -67,13 +70,14 @@ fun UrlImageNoCrop(
     cookie : String? = null,
     modifier: Modifier = Modifier.padding(APP_HORIZONTAL_DP)
 ) {
+    val context = LocalContext.current
     val imageState = loadImage(url, cookie = cookie)
     imageState.value?.let { bitmap ->
         Image(
             bitmap = bitmap.asImageBitmap(),
             contentDescription = null,
             modifier = modifier.clickable {
-                Starter.startWebView(url,"图片",cookie)
+                Starter.startWebView(context,url,"图片",cookie)
             },
             contentScale = ContentScale.Fit
         )

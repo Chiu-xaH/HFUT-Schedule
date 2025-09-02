@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.servicecreator.Login
 
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory

@@ -68,6 +68,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object UseAgreement : AppNavRoute("USE_AGREEMENT","用户协议",R.drawable.partner_exchange)
     object UpdateSuccess : AppNavRoute("UPDATE_SUCCESSFUL","更新已完成",R.drawable.settings)
     object Admission : AppNavRoute("ADMISSION","本科招生",R.drawable.publics)
+    object InfoDetail : AppNavRoute("INFO_DETAIL","本版本新特性",R.drawable.info)
     object AdmissionRegionDetail : AppNavRoute("ADMISSION_REGION_DETAIL","本科招生详情",R.drawable.publics) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             INDEX("index", NavType.IntType,-1,false),

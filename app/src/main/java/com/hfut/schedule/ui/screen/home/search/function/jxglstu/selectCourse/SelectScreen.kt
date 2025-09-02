@@ -66,7 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo

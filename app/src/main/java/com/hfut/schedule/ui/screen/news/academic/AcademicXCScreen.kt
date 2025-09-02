@@ -21,7 +21,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.App.MyApplication
+import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
@@ -56,6 +57,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val cookies by produceState<String?>(initialValue = null) {
         value = getWebVpnCookie(vm)
     }
+    val context = LocalContext.current
 
     LaunchedEffect(page,pagerState.currentPage) {
         refreshNetwork()
@@ -89,7 +91,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                     } else {
                                         MyApplication.XC_ACADEMIC_URL + item.link
                                     }
-                                    autoWebVpnForNews(link,item.title,cookie = cookies)
+                                    autoWebVpnForNews(context,link,item.title,cookie = cookies)
                                 },
                                 index = index
                             )

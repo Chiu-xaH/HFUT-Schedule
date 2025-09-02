@@ -1,12 +1,13 @@
 package com.hfut.schedule.ui.screen.supabase.login
 
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.SupabaseLoginResponse
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -74,11 +75,11 @@ suspend fun regSupabase(password : String, vm: NetWorkViewModel, onResult : (Boo
 }
 
 // 一键登录
-suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWorkViewModel) = withContext(Dispatchers.IO) {
+suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWorkViewModel,context : Context) = withContext(Dispatchers.IO) {
 
     if(jwt.isEmpty() || jwt.isBlank()) {
 //        onResult(false)
-        loginSupabase()
+        loginSupabase(context)
         return@withContext
     }
 
@@ -141,13 +142,13 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
         val check2 = (vm.supabaseCheckResp.state.value as? UiState.Success)?.data ?: return@checkLogin
         if (check2) {
             // 登录有效
-            startSupabase()
+            startSupabase(context)
             return@checkLogin
         } else {
             // 需要刷新
             // 只能使用密码登录法
             if(refreshToken.isEmpty() || refreshToken.isBlank()) {
-                loginSupabase()
+                loginSupabase(context)
                 return@checkLogin
             }
             // 使用刷新登录
@@ -155,7 +156,7 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
             val login = (vm.supabaseLoginResp.state.value as? UiState.Success)?.data
             if(login == null) {
                 // 只能使用密码登录法
-                loginSupabase()
+                loginSupabase(context)
                 return@checkLogin
             } else {
                 // 登录成功 保存新的JWT与TOKEN
@@ -163,7 +164,7 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
                     launch { DataStoreManager.saveSupabaseRefreshToken(login.refreshToken) }
                     launch { DataStoreManager.saveSupabaseJwt(login.token) }
                 }.await()
-                launch { startSupabase() }
+                launch { startSupabase(context) }
                 return@checkLogin
             }
             return@checkLogin
@@ -172,7 +173,7 @@ suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWo
     val check = vm.supabaseCheckResp.state.first()
     if(check is UiState.Success) {
         if(check.data) {
-            startSupabase()
+            startSupabase(context)
             return@withContext
         } else {
             return@withContext checkLogin()

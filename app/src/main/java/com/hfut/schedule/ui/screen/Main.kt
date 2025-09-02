@@ -102,6 +102,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayC
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpnScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
+import com.hfut.schedule.ui.screen.login.InfoDetailScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.login.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.login.UseAgreementScreen
@@ -190,7 +191,7 @@ fun MainHost(
             // 如果进入的是登陆界面 未登录做准备
             if(!(startActivity && login)) {
                 //从服务器获取信息
-                launch { loginVm.getMyApi() }
+                launch { networkVm.getMyApi() }
                 launch { loginVm.getCookie() }
                 launch {  loginVm.getKey() }
                 launch {
@@ -397,7 +398,11 @@ fun MainHost(
                     }
                     // 更新完成
                     composable(AppNavRoute.UpdateSuccess.route) {
-                        UpdateSuccessScreen(networkVm,navController)
+                        UpdateSuccessScreen(navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 本版本新特性
+                    composable(AppNavRoute.InfoDetail.route) {
+                        InfoDetailScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
                     }
                     // 成绩
                     composable(

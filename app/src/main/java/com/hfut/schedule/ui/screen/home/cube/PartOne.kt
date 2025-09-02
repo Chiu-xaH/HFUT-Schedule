@@ -11,20 +11,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,23 +30,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.hfut.schedule.App.MyApplication
-import com.hfut.schedule.App.MyApplication.Companion.context
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.application.MyApplication.Companion.context
 import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
-import com.hfut.schedule.logic.util.sys.Starter.startWebUrl
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.SmallCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
@@ -59,23 +58,10 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
-import com.xah.transition.component.containerShare
-import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
 
 
@@ -227,6 +213,7 @@ fun HomeSettingScreen(navController: NavController,
 
 @Composable
 fun GithubDownloadUI() {
+    val context = LocalContext.current
     TransplantListItem(
         headlineContent = {
             Text("备用更新通道")
@@ -236,13 +223,14 @@ fun GithubDownloadUI() {
         },
         leadingContent = { Icon(painterResource(R.drawable.github),null)},
         modifier = Modifier.clickable {
-            Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest")
+            Starter.startWebView(context ,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest")
         }
     )
 }
 
 @Composable
 fun UpdateContents(vm : NetWorkViewModel) {
+    val context = LocalContext.current
     val uiState by vm.githubFolderResp.state.collectAsState()
     val refreshNetwork = suspend {
         vm.githubFolderResp.clear()
@@ -276,7 +264,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                         TransplantListItem(
                             headlineContent = { Text("v" + versionName) },
                             modifier = Modifier.clickable {
-                                Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
                             }
                         )
                     }
@@ -354,7 +342,7 @@ fun AlwaysItem(vm: NetWorkViewModel,hazeState: HazeState) {
             headlineContent = { Text(text = "刷新登录状态") },
             supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { refreshLogin() },
+            modifier = Modifier.clickable { refreshLogin(context) },
         )
         if (currentVersion == version.version || isPreview) {
             PaddingHorizontalDivider()

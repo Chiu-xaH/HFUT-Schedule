@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -175,6 +176,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
         DividerTextExpandedWith("详情",openBlurAnimation = false) {
             completion.let {
                 LoadingLargeCard(
+                    prepare = false,
                     title = "已修 ${it.total.actual}/${it.total.full}",
                     rightTop = {
                         val res = it.total.actual/it.total.full * 100.0
@@ -387,6 +389,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
 @Composable
 fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeState: HazeState, ifSaved: Boolean, onDismissRequest : () -> Unit) {
     var showBottomSheet_Search by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     ApiForCourseSearch(vm,null, courseInfo.code,showBottomSheet_Search, hazeState = hazeState) {
         showBottomSheet_Search = false
@@ -406,7 +409,7 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                             showBottomSheet_Search = true
                         } else {
                             showToast("登录教务后可查询开课")
-                            refreshLogin()
+                            refreshLogin(context)
                         }
                     }
                 ) {

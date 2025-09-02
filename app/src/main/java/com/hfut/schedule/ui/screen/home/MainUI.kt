@@ -87,6 +87,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -438,6 +439,7 @@ fun MainScreen(
             .zIndex(3f)) {
             innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && (targetPage == FOCUS),vmUI,it,vm) }
         }
+        val context = LocalContext.current
 
         Scaffold(
             modifier = Modifier.transitionBackground2(isAddUIExpanded).fillMaxSize().let {
@@ -482,7 +484,7 @@ fun MainScreen(
                                             Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                         }
                                         if(ifSaved) {
-                                            IconButton (onClick = { refreshLogin() }) {
+                                            IconButton (onClick = { refreshLogin(context) }) {
                                                 Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
                                             }
                                         } else {
@@ -676,7 +678,6 @@ fun MainScreen(
                             vm,
                             ifSaved,
                             innerPadding,
-                            vm2,
                             hazeState,
                         )
                     }

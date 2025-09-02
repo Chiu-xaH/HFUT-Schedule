@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
@@ -100,6 +101,8 @@ private fun CustomItemUI(item: CustomEventDTO,activity: Activity,hazeState: Haze
     var id by remember { mutableIntStateOf(-1) }
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     if(showDialog)
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -158,7 +161,7 @@ private fun CustomItemUI(item: CustomEventDTO,activity: Activity,hazeState: Haze
             }
         },
         modifier = Modifier.combinedClickable(
-            onClick = { description?.let { openOperation(it) } },
+            onClick = { description?.let { openOperation(it,context) } },
             onDoubleClick = {
                 //双击操作
             },

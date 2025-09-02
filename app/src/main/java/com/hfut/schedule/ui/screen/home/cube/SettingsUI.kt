@@ -58,7 +58,6 @@ fun BackButton(onBack : () -> Unit) {
 fun SettingsScreen(vm : NetWorkViewModel,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
-                   vm1 : LoginViewModel,
                    hazeState: HazeState,
 ) {
     val navController = rememberNavController()
@@ -102,7 +101,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
                 }
                 composable(FixBarItems.Fix.name) {
                     Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        FixUI(innerPadding = innerPaddings,vm1,hazeState,navController)
+                        FixUI(innerPadding = innerPaddings,vm,hazeState,navController)
                     }
                 }
                 composable("DEBUG") {

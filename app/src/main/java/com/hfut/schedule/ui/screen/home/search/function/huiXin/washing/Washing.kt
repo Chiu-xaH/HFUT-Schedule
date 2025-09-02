@@ -33,10 +33,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -190,6 +191,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
     )
     val auth = prefs.getString("auth","")
     val route = remember { AppNavRoute.HaiLeWashing.route }
+    val context = LocalContext.current
 
 
     //布局///////////////////////////////////////////////////////////////////////////
@@ -209,7 +211,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         CardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                Starter.startWebView(url = MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
+                                Starter.startWebView(context,url = MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

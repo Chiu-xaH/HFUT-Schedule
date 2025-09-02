@@ -46,12 +46,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -142,6 +143,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
             }
         }
     })
+    val context = LocalContext.current
 
     var showBottomSheet_Range by remember { mutableStateOf(false) }
     var showBottomSheet_Search by remember { mutableStateOf(false) }
@@ -232,7 +234,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                     leadingContent = {
                         Icon(Icons.Default.ArrowForward, contentDescription = "")
                     },
-                    modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校") }
+                    modifier = Modifier.clickable { Starter.startWebView(context,urlHuixin,"慧新易校") }
                 )
                 Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
             }
@@ -379,7 +381,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                         shape = MaterialTheme.shapes.medium,
                         colors = CardDefaults.cardColors(largeCardColor())
                     ) {
-                        Column(modifier = coverBlur(loading).scale(scale.value)
+                        Column(modifier = Modifier.coverBlur(loading).scale(scale.value)
                             ) {
                             TransplantListItem(
                                 headlineContent = { Text(text = "$name 校园一卡通") },
@@ -411,9 +413,9 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                                             if (text != null) {
                                                 //余额不足//未登录//正常
                                                 if (text != "00" && text!!.toDouble() < 10) {
-                                                    Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL)
+                                                    Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL)
                                                 } else if (text == "00") {
-                                                    refreshLogin()
+                                                    refreshLogin(context)
                                                 } else {
                                                     showToast("未检测出问题,若卡仍异常请咨询有关人士")
                                                 }
@@ -465,7 +467,7 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             headlineContent = { Text(text = "充值") },
                             supportingContent = { Text(text = "跳转至支付宝校园卡页面")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.add_card), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) }
+                            modifier = Modifier.clickable { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -479,14 +481,14 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             headlineContent = { Text(text = "状态") },
                             supportingContent = { Text(text = "挂失 解挂")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart) }
+                            modifier = Modifier.clickable { Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "付款码") },
                             supportingContent = { Text(text = "在支持扫码的食堂支付机使用以替代实体卡")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(url,"付款码", icon = R.drawable.barcode) }
+                            modifier = Modifier.clickable { Starter.startWebView(context,url,"付款码", icon = R.drawable.barcode) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -500,14 +502,14 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             headlineContent = { Text(text = "修改密码") },
                             supportingContent = { Text(text = "修改一卡通及其校园网的密码，初始密码为身份证后六位(末尾为X则为X的前六位)")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.lock_reset), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView("${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset) }
+                            modifier = Modifier.clickable { Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "慧新易校") },
                             supportingContent = { Text(text = "进入慧新易校平台进行更多操作")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(urlHuixin,"慧新易校", icon = R.drawable.corporate_fare) }
+                            modifier = Modifier.clickable { Starter.startWebView(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(

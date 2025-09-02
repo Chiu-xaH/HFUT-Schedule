@@ -11,9 +11,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -32,6 +33,7 @@ fun TeacherListUI(
 ) {
     val uiState by vm.teacherSearchData.state.collectAsState()
     val dataList = (uiState as UiState.Success).data.teacherData
+    val context = LocalContext.current
 
     LazyColumn() {
         item { InnerPaddingHeight(innerPadding,true) }
@@ -60,7 +62,7 @@ fun TeacherListUI(
                     },
                     modifier = Modifier.clickable {
 
-                        Starter.startWebView(it.url,it.name, icon = icon)
+                        Starter.startWebView(context,it.url,it.name, icon = icon)
                     }
                 )
             }

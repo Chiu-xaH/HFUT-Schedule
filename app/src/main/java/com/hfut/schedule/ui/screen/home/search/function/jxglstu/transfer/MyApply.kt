@@ -226,6 +226,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     DividerTextExpandedWith(text = "状态",false) {
         Box {
             LoadingLargeCard(
+                prepare = false,
                 title = if(isSuccessTransfer)"恭喜 已转入"
                 else if(getApplyStatus(list,indexs) == true) "学籍尚未变更"
                 else if(getApplyStatus(list,indexs) == false) "未申请或申请不通过"

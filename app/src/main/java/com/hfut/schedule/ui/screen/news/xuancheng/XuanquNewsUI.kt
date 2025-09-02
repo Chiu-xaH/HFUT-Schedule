@@ -18,7 +18,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.App.MyApplication
+import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
@@ -45,6 +46,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         vm.newsXuanChengResult.clear()
         vm.getXuanChengNews(page)
     }
+    val context = LocalContext.current
     LaunchedEffect(page) {
         refreshNetwork()
     }
@@ -63,7 +65,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         overlineContent = { Text(item.date) },
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
-                            autoWebVpnForNews(MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
+                            autoWebVpnForNews(context ,MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
                         },
                         index = index
                     )

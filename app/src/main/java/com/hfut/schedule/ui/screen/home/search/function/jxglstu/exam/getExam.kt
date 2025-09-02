@@ -52,12 +52,10 @@ fun getNewExam() : MutableList<examArrangementList> {
 
 
 fun getExamJXGLSTU() : List<Map<String,String>>{
-    //考试JSON解析
-
-    val examjson = prefs.getString("examJXGLSTU", "")
-
-    val doc = Jsoup.parse(examjson).select("tbody tr")
+    //考试解析
+    val html = prefs.getString("examJXGLSTU", "") ?: return emptyList()
     try {
+        val doc = Jsoup.parse(html).select("tbody tr")
         val data = doc.map { row ->
             val elements = row.select("td")
             val courseName = elements[0].text()

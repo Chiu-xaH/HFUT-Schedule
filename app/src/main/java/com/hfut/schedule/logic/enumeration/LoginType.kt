@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.enumeration
 
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 
 // 使用CAS统一认证登陆
 enum class LoginType(val service : String?,val description: String) {

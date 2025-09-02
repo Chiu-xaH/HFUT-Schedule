@@ -29,9 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
@@ -115,6 +116,7 @@ fun About(vm : NetWorkViewModel) {
             vm.getUserCount()
         }
     }
+    val context = LocalContext.current
     var starsNum by remember { mutableStateOf("") }
     val uiState by vm.githubStarsData.state.collectAsState()
     var loading = uiState is UiState.Loading
@@ -135,7 +137,7 @@ fun About(vm : NetWorkViewModel) {
                     HazeBottomSheetTopBar("关于") {
                         FilledTonalButton(
                             enabled = todayVisitCount is UiState.Success,
-                            onClick = { Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) }
+                            onClick = { Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) }
                         ) {
                             Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
                         }
@@ -148,7 +150,7 @@ fun About(vm : NetWorkViewModel) {
                     ScrollHorizontalBottomDivider(scrollState)
                     Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
                         Button(
-                            onClick = { Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
+                            onClick = { Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(.5f)
@@ -158,7 +160,7 @@ fun About(vm : NetWorkViewModel) {
 
                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
                         FilledTonalButton(
-                            onClick = { Starter.startWebView("${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) },
+                            onClick = { Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) },
                             enabled = userCount is UiState.Success,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -177,7 +179,7 @@ fun About(vm : NetWorkViewModel) {
                     CardListItem(
                         color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.clickable {
-                            Starter.startWebView("${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
+                            Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
                         },
                         headlineContent = { ScrollText(MyApplication.GITHUB_DEVELOPER_NAME) },
                         leadingContent = {
@@ -189,7 +191,7 @@ fun About(vm : NetWorkViewModel) {
                         trailingContent = {
                             FilledTonalIconButton(
                                 onClick = {
-                                    Starter.emailMe()
+                                    Starter.emailMe(context)
                                 }
                             ) {
                                 Icon(painterResource(R.drawable.mail),null)
@@ -229,7 +231,7 @@ fun About(vm : NetWorkViewModel) {
                                     headlineContent = { Text(openSourceProjects[index].name) },
                                     supportingContent = { Text(openSourceProjects[index].description) },
                                     modifier = Modifier.weight(.5f).clickable{
-                                        openSourceProjects[index].url?.let { Starter.startWebUrl(it) }
+                                        openSourceProjects[index].url?.let { Starter.startWebUrl(context,it) }
                                     }
                                 )
                                 if(index+1 < openSourceProjects.size)
@@ -237,7 +239,7 @@ fun About(vm : NetWorkViewModel) {
                                         headlineContent = { Text(openSourceProjects[index+1].name) },
                                         supportingContent = { Text(openSourceProjects[index+1].description) },
                                         modifier = Modifier.weight(.5f).clickable {
-                                            openSourceProjects[index+1].url?.let { Starter.startWebUrl(it) }
+                                            openSourceProjects[index+1].url?.let { Starter.startWebUrl(context,it) }
                                         }
                                     )
                             }

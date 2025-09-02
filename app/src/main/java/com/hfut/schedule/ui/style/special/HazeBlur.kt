@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
@@ -326,7 +326,7 @@ fun Modifier.transitionBackgroundF(
 
 // 用于遮挡的blur
 @Composable
-fun coverBlur(
+fun Modifier.coverBlur(
     showBlur: Boolean,
     radius: Dp = MyApplication.BLUR_RADIUS/2,
     tweenDuration: Int = AppAnimationManager.ANIMATION_SPEED / 2
@@ -346,15 +346,17 @@ fun coverBlur(
     )
     val color = largeCardColor()
 
-    return Modifier
-        .then(if (motionBlur) Modifier.blur(blurRadius) else Modifier)
-        .drawWithContent {
-            drawContent()
-            if (!motionBlur && overlayAlpha > 0f) {
-                drawRect(
-                    color = color.copy(alpha = overlayAlpha)
-                )
-            }
+    return this
+        .then(if (motionBlur) this.blur(blurRadius) else this)
+        .let {
+            if(!motionBlur) {
+                it.drawWithContent {
+                    drawContent()
+                    drawRect(
+                        color = color.copy(alpha = overlayAlpha)
+                    )
+                }
+            } else it
         }
 }
 

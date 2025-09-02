@@ -41,11 +41,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -203,6 +204,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
         }
     }
 
+    val context = LocalContext.current
 
     if(refresh) {
         refreshFlow()
@@ -352,7 +354,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         .padding(horizontal = APP_HORIZONTAL_DP),
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
-                        Starter.startWebView("https://www.hfut.edu.cn/")
+                        Starter.startWebView(context,"https://www.hfut.edu.cn/")
                     }
                 ) {
                     Text("测试连通性")
@@ -383,7 +385,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     }
                     FilledTonalButton(
                         onClick = {
-                            Starter.startWebView(url = zjgdUrl, title = "慧新易校")
+                            Starter.startWebView(context,url = zjgdUrl, title = "慧新易校")
                         },
                     ) {
                         Text("官方充值")
@@ -427,6 +429,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         LoadingLargeCard(
                             title = "已用 $str GiB",
                             loading = loading,
+                            prepare = false,
                             rightTop =  {
                                 Text(text = "$flow MiB")
                             }

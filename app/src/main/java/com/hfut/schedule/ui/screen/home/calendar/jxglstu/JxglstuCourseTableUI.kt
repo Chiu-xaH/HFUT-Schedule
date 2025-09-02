@@ -65,12 +65,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
+import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
@@ -166,7 +167,7 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
 
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
-    if (result == (if(CasInHFUT.excludeJxglstu) 302 else 200)) {
+    if (result == (if(CasInHFUT.excludeJxglstu) StatusCode.REDIRECT.code else StatusCode.OK.code)) {
         CasGoToInterceptorState.toCommunityTicket
             .filterNotNull()
             .collect { value ->

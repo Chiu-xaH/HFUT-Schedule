@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -65,6 +66,7 @@ fun Program(
 ) {
     val iconRoute = remember { AppNavRoute.ProgramSearch.receiveRoute() }
     val route = remember { AppNavRoute.Program.receiveRoute() }
+    val context = LocalContext.current
 
 
     TransplantListItem(
@@ -86,7 +88,7 @@ fun Program(
             if (prefs.getString("program","")?.contains("children") == true || !ifSaved) {
                 navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
             }
-            else refreshLogin()
+            else refreshLogin(context)
         }
     )
 }
@@ -114,6 +116,7 @@ fun ProgramScreen(
     ) { titles.size }
     val competitionRoute = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -133,7 +136,7 @@ fun ProgramScreen(
                             iconModifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = competitionRoute),
                             onClick = {
                                 if(prefs.getString("PROGRAM_PERFORMANCE","")?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
-                                else refreshLogin()
+                                else refreshLogin(context)
                             },
                             icon = AppNavRoute.ProgramCompetition.icon,
                             text = AppNavRoute.ProgramCompetition.label,

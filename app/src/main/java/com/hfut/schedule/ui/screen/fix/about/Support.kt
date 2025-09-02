@@ -24,11 +24,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -111,6 +112,7 @@ private fun CanSupportChip(title : String) = SupportChip(title,isSupported = tru
 @Composable
 private fun SupportItem(item : SupportItemBean) {
     val list = item.list
+    val context = LocalContext.current
     CustomCard(color = cardNormalColor()) {
         Column {
             TransplantListItem(
@@ -149,7 +151,7 @@ private fun SupportItem(item : SupportItemBean) {
                 listOf(
                     CardBottomButton(item.android),
                     CardBottomButton("预览效果",item.url != null) {
-                        item.url?.let { Starter.startWebView(it,"Github", icon = R.drawable.github) }
+                        item.url?.let { Starter.startWebView(context,it,"Github", icon = R.drawable.github) }
                     }
                 )
             )

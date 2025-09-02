@@ -151,7 +151,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
                 }
             }
 
-            Column(modifier = coverBlur(!successLoad).scale(scale.value)){
+            Column(modifier = Modifier.coverBlur(!successLoad).scale(scale.value)){
                 TransplantListItem(
                     headlineContent = {
                         Text(

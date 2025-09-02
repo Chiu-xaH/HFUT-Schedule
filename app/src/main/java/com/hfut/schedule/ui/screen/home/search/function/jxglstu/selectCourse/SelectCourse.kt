@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -29,6 +30,7 @@ fun SelectCourse(
     animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.SelectCourse.route }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.SelectCourse.label) },
@@ -37,7 +39,7 @@ fun SelectCourse(
         },
         modifier = Modifier.clickable {
             if(!ifSaved) navController.navigateForTransition(AppNavRoute.SelectCourse,route)
-            else refreshLogin()
+            else refreshLogin(context)
         }
     )
 }

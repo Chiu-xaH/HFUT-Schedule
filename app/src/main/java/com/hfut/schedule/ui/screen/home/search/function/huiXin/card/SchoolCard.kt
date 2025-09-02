@@ -22,9 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -54,6 +55,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
         text = cardValue?.balance ?: prefs.getString("card","00")
         if(text == "00") { text = "未登录" }
     }
+    val context = LocalContext.current
 
     val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     TransplantListItem(
@@ -77,7 +79,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
-                    onClick = { Starter.startAppUrl(MyApplication.ALIPAY_CARD_URL) },
+                    onClick = { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
                     colors =  if(text!!.length <= 4) {
                         IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
                     } else IconButtonDefaults.filledTonalIconButtonColors()
@@ -92,7 +94,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
             } else null
         ),
         modifier = Modifier.clickable {
-            Starter.startCard()
+            Starter.startCard(context)
         }
     )
 }

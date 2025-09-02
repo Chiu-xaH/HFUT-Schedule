@@ -105,6 +105,7 @@ private fun LifeUIS(vm : NetWorkViewModel) {
 
     DividerTextExpandedWith(text = "实时天气",false) {
         LoadingLargeCard(
+            prepare = false,
             title = data.text + " " + data.temp + "℃",
             loading = loading,
             leftTop = {

@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -74,6 +75,7 @@ fun StorageWeb(hazeState : HazeState) {
             hazeState = hazeState
         )
     }
+    val context = LocalContext.current
 
     Column {
         if(list.isEmpty()) {
@@ -109,7 +111,7 @@ fun StorageWeb(hazeState : HazeState) {
                                 },
                                 modifier = Modifier.combinedClickable(
                                     onClick = {
-                                        Starter.startWebView(url,name, icon = AppNavRoute.WebNavigation.icon)
+                                        Starter.startWebView(context,url,name, icon = AppNavRoute.WebNavigation.icon)
                                     },
                                     onDoubleClick = {},
                                     onLongClick = {

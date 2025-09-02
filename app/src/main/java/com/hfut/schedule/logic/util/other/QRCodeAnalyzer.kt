@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.util.other
 
+import android.content.Context
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -14,7 +15,7 @@ import com.google.zxing.MultiFormatReader
 import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.HybridBinarizer
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

@@ -1,6 +1,8 @@
 package com.hfut.schedule.logic.util.development
 
-import com.hfut.schedule.App.MyApplication
+import android.content.Context
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.other.AppVersion
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -12,7 +14,7 @@ fun getExceptionDetail(e: Throwable): String {
 }
 
 fun getKeyStackTrace(e: Throwable): String {
-    val appPackage = MyApplication.context.packageName
+    val appPackage = AppVersion.appPackageName
     val sw = StringWriter()
     val pw = PrintWriter(sw)
     e.printStackTrace(pw)

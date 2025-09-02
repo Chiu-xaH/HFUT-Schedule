@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -48,6 +49,8 @@ fun NetWorkScreen(navController: NavHostController,
     TransitionPredictiveBackHandler(navController) {
         scale = it
     }
+    val context = LocalContext.current
+
     // Design your second screen here
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
@@ -105,7 +108,7 @@ fun NetWorkScreen(navController: NavHostController,
                         supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
                         leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
                         modifier = Modifier.clickable {
-                            refreshLogin()
+                            refreshLogin(context)
                         }
                     )
                 }

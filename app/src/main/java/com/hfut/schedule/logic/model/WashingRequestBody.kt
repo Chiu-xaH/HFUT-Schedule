@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.model
 
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 

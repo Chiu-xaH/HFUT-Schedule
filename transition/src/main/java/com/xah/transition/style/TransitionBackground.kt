@@ -25,7 +25,7 @@ fun Modifier.transitionBackground(
     if(level == TransitionLevel.NONE) {
         return this@transitionBackground
     }
-    if(route == TransitionState.firstStartRoute && TransitionState.firstUse) {
+    if(route in TransitionState.firstStartRoute && TransitionState.firstUse) {
         return this@transitionBackground
     }
     // 禁用刚冷启动第一个界面模糊缩放

@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.os.Environment
 import android.util.Log
 
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import java.io.File
 
 //import com.google.mlkit.vision.common.InputImage

@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -43,6 +44,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun NotificationItems() {
+    val context = LocalContext.current
     val list = getNotifications()
     if(list.isEmpty()) EmptyUI() else {
         for(item in list.indices) {
@@ -53,7 +55,7 @@ fun NotificationItems() {
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
                 modifier = Modifier.clickable {
                     if(list[item].url != null) {
-                        list[item].url?.let { Starter.startWebView(it,list[item].title, icon = AppNavRoute.Notifications.icon) }
+                        list[item].url?.let { Starter.startWebView(context,it,list[item].title, icon = AppNavRoute.Notifications.icon) }
                     } else {
                         showToast("暂无点击操作")
                     }

@@ -25,7 +25,7 @@
     </queries>
 
     <application
-        android:name=".App.MyApplication"
+        android:name=".application.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"

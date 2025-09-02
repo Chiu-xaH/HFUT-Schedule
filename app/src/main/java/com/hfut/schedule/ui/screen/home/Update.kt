@@ -1,7 +1,7 @@
 package com.hfut.schedule.ui.screen.home
 
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -64,7 +64,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI
 
     val cookie =  getJxglstuCookie(vm)
     // 刷新个人接口
-    launch { vm2.getMyApi() }
+    launch { vm.getMyApi() }
     // 用于更新ifSaved
     launch {
         vm.getStudentId(cookie!!)

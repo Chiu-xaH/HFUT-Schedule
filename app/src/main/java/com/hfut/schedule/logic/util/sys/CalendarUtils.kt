@@ -5,7 +5,7 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.provider.CalendarContract
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission

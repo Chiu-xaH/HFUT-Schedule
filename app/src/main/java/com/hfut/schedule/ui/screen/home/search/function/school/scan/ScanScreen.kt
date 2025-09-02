@@ -194,7 +194,7 @@ fun ScanScreen(
                                                 ClipBoardUtils.copy(resultText)
                                             },
                                             CardBottomButton("打开链接",isValidWebUrl(resultText)) {
-                                                Starter.startWebView(resultText)
+                                                Starter.startWebView(context,resultText)
                                             },
                                             CardBottomButton("隐藏") {
                                                 resultText = ""

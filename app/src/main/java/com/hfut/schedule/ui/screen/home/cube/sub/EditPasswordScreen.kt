@@ -23,10 +23,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -105,6 +106,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     }
 
     val auth = remember { prefs.getString("auth","") }
+    val context = LocalContext.current
 
     LaunchedEffect(useEditedPwd) {
         if(useEditedPwd && !firstUse) {
@@ -139,7 +141,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
                         Text("前往慧新易校修改一卡通及其校园网的密码")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebView("${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                        Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                 )

@@ -28,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -138,7 +139,9 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                 leadingIcon = { Icon(painter = painterResource(R.drawable.search), contentDescription = "description") }
             )
         }
+
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+            val context = LocalContext.current
             val bean = (uiState as UiState.Success).data
             val list = bean.scoreInfoDTOList
             if(list.isEmpty()) EmptyUI()
@@ -166,7 +169,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                             supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
                             trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
                             modifier = Modifier.clickable {
-                                refreshLogin()
+                                refreshLogin(context)
                             },
                             index = 0
                         )

@@ -7,7 +7,7 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.palette.graphics.Palette
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.graphics.Color as AColor

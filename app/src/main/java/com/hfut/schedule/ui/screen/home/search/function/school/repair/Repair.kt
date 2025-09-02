@@ -12,9 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -28,6 +29,7 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun Repair(hazeState : HazeState) {
     var showBottomSheet by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = "后勤报修") },
@@ -52,7 +54,7 @@ fun Repair(hazeState : HazeState) {
                         Text("宣城校区")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(MyApplication.REPAIR_XC_URL)
+                        Starter.startWebUrl(context,MyApplication.REPAIR_XC_URL)
                     }
                 )
                 CardListItem(
@@ -60,7 +62,7 @@ fun Repair(hazeState : HazeState) {
                         Text("合肥校区")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebUrl(MyApplication.REPAIR_URL)
+                        Starter.startWebUrl(context,MyApplication.REPAIR_URL)
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))

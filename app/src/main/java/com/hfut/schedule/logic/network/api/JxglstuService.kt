@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.api
 
 import com.google.gson.JsonObject
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

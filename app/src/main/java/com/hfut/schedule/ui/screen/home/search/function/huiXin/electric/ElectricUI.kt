@@ -52,12 +52,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.gson.Gson
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zjgd.FeeResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
@@ -114,6 +115,7 @@ private fun getUrl(page : Int,isUnderGraduate : Boolean) : String {
 @Composable
 fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     val titles = remember { listOf("合肥","宣城") }
+    val context = LocalContext.current
 
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampusRegion()) {
@@ -354,7 +356,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
                     FilledTonalButton(
                         onClick = {
-                            Starter.startWebView(getUrl(XUANCHENG_TAB,true), title = "慧新易校")
+                            Starter.startWebView(context,getUrl(XUANCHENG_TAB,true), title = "慧新易校")
                         }
                     ) {
                         Text("官方充值")
@@ -372,7 +374,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("本科生")},
                             modifier = Modifier.clickable {
-                                Starter.startWebView(getUrl(HEFEI_TAB,true), title = "慧新易校")
+                                Starter.startWebView(context,getUrl(HEFEI_TAB,true), title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)
@@ -386,7 +388,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("研究生")},
                             modifier = Modifier.clickable {
-                                Starter.startWebView(getUrl(HEFEI_TAB,false), title = "慧新易校")
+                                Starter.startWebView(context,getUrl(HEFEI_TAB,false), title = "慧新易校")
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)
@@ -510,6 +512,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     else
                                         "￥${formatDecimal(Result2.substringAfter(" ").toDouble(),2)}",
                                     loading = !show ,
+                                    prepare = true,
                                     rightTop = {
                                         if(show) {
                                             if(showButton)

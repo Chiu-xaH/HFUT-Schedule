@@ -56,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -63,7 +64,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
@@ -137,6 +138,8 @@ fun NewsScreen(
             currentPage = targetPage.page
         }
     }
+    val context = LocalContext.current
+
     val newsTitles = listOf("总","宣城校区")
     val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -159,7 +162,7 @@ fun NewsScreen(
                         Text("宣城校区教务处")
                     },
                     modifier = Modifier.clickable {
-                        autoWebVpnForNews(MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
+                        autoWebVpnForNews(context,MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
                     }
                 )
                 CardListItem(
@@ -167,13 +170,14 @@ fun NewsScreen(
                         Text("总教务处")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebView(MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
+                        Starter.startWebView(context,MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -213,7 +217,7 @@ fun NewsScreen(
                                     FilledTonalButton(onClick = {
                                         if (!vm.webVpn) {
                                             showToast("请勾选外地访问后登录")
-                                            Starter.refreshLogin()
+                                            Starter.refreshLogin(context)
                                         }
                                     }) {
                                         Text(if (vm.webVpn) "已启用WebVpn" else "启用WebVpn")
@@ -337,6 +341,8 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     val cookies by produceState<String?>(initialValue = null) {
         value = getWebVpnCookie(vm)
     }
+    val context = LocalContext.current
+
     val words = remember { listOf(
         "放假","转专业","周考试安排","选课"
     ) }
@@ -415,7 +421,7 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 MyApplication.NEWS_URL + listItem.link
                             }
 
-                            autoWebVpnForNews(links,listItem.title, icon = R.drawable.stream, cookie = cookies)
+                            autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
                         },
                         index = item
                     )

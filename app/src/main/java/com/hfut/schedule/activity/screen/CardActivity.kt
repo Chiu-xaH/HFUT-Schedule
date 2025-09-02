@@ -12,7 +12,7 @@ class CardActivity : BaseActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        super.loginVm.getMyApi()
+        super.networkVm.getMyApi()
     }
 }
 

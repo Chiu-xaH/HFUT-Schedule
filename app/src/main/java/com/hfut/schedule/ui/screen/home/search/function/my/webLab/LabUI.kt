@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -26,13 +27,14 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabUI() {
+    val context = LocalContext.current
     for(item in getLab()) {
 //        MyCustomCard {
             CardListItem(
                 headlineContent = { Text(text = item.title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
-                    Starter.startWebView(item.info,item.title, icon=AppNavRoute.WebNavigation.icon)
+                    Starter.startWebView(context ,item.info,item.title, icon=AppNavRoute.WebNavigation.icon)
                 }
             )
 //        }

@@ -22,9 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -96,6 +97,7 @@ fun MailUI(vm: NetWorkViewModel) {
     LaunchedEffect(used) {
         refreshNetwork()
     }
+    val context = LocalContext.current
     DividerTextExpandedWith (getSchoolEmail() ?: MyApplication.EMAIL) {
         CommonNetworkScreen(uiState, loadingText = "正在登录邮箱", isFullScreen = false, onReload = refreshNetwork) {
             val response = (uiState as UiState.Success).data
@@ -106,7 +108,7 @@ fun MailUI(vm: NetWorkViewModel) {
                             response.data.let {
                                 if(it != null) {
                                     used = !used
-                                    Starter.startWebView(it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
+                                    Starter.startWebView(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
                                 } else {
                                     showToast( "错误 " + response.msg)
                                 }
@@ -121,7 +123,7 @@ fun MailUI(vm: NetWorkViewModel) {
                         onClick = {
                             response.data.let {
                                 if(it != null) {
-                                    Starter.startWebUrl(it)
+                                    Starter.startWebUrl(context,it)
                                     used = !used
                                 } else {
                                     showToast( "错误 " + response.msg)
@@ -152,7 +154,7 @@ fun MailUI(vm: NetWorkViewModel) {
                 Text("若为首次使用，请前往信息门户(点击此项)进入邮箱，进行激活")
             },
             modifier = Modifier.clickable {
-                Starter.startWebUrl(MyApplication.ONE_URL)
+                Starter.startWebUrl(context,MyApplication.ONE_URL)
             },
             leadingContent = {
                 Icon(Icons.Default.ArrowForward,null)

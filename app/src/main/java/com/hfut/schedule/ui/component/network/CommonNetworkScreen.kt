@@ -18,7 +18,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.util.development.getExceptionDetail
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE
@@ -58,6 +60,8 @@ fun CommonNetworkScreen(
             }
         }
     }
+    val context = LocalContext.current
+
     when (uiState) {
         // 准备状态UI 例如手动搜索时第一次什么也不显示
         UiState.Prepare -> {
@@ -98,7 +102,7 @@ fun CommonNetworkScreen(
                                 Button(onClick = {
                                     e?.let { ClipBoardUtils.copy(getExceptionDetail(it)) }
                                     showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
-                                    Starter.emailMe()
+                                    Starter.emailMe(context)
                                 }) {
                                     Text( "上报开发者")
                                 }
@@ -111,30 +115,30 @@ fun CommonNetworkScreen(
                             Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
                             Button(onClick = {
                                 showToast("请截图并注明功能，发送邮件")
-                                Starter.emailMe()
+                                Starter.emailMe(context)
                             }) {
                                 Text( "上报开发者")
                             }
                         }
-                        401 -> {
+                        StatusCode.UNAUTHORIZED.code -> {
                             StatusUI(R.drawable.login, "登录状态失效")
                             Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
                             Button(onClick = {
-                                Starter.refreshLogin()
+                                Starter.refreshLogin(context)
                             }) {
                                 Text("刷新登陆状态")
                             }
                         }
-                        403 -> {
+                        StatusCode.FORBIDDEN.code -> {
                             StatusUI(
                                 R.drawable.lock,
                                 "禁止操作 可能原因: 密码不正确或无权利进行操作"
                             )
                         }
-                        404 -> {
+                        StatusCode.NOT_FOUND.code -> {
                             EmptyUI("404 未找到")
                         }
-                        in 500..599 -> {
+                        in StatusCode.INTERNAL_SERVER_ERROR.code..599 -> {
                             StatusUI(
                                 R.drawable.net,
                                 "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)"
@@ -210,13 +214,13 @@ suspend fun <T> onListenStateHolder(
                     PARSE_ERROR_CODE -> {
                         "解析数据错误 ${e?.message?.substringBefore(":")}"
                     }
-                    401 -> {
+                    StatusCode.UNAUTHORIZED.code -> {
                         "登录状态失效"
                     }
-                    403 -> {
+                    StatusCode.FORBIDDEN.code -> {
                         "禁止操作 可能原因: 密码不正确或无权利进行操作"
                     }
-                    in 500..599 -> {
+                    in StatusCode.INTERNAL_SERVER_ERROR.code..599 -> {
                         "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)"
                     }
                     else -> {

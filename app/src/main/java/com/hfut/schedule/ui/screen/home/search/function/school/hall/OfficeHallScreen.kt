@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.hall
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -28,10 +29,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -65,16 +67,16 @@ private enum class OfficeHallType(val serviceMode : String,val description: Stri
     SEARCH("11","查找"),
     HANDLE("12","办理")
 }
-private fun openDetail(bean : OfficeHallSearchBean,needLogin : Boolean) = with(bean) {
+private fun openDetail(context: Context,bean : OfficeHallSearchBean,needLogin : Boolean) = with(bean) {
     val finalUrl = if(url != null && isValidWebUrl(url)) {
         url
     } else {
         MyApplication.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
     if(needLogin) {
-        Starter.startWebUrl(finalUrl)
+        Starter.startWebUrl(context,finalUrl)
     } else {
-        Starter.startWebView(finalUrl,name,null, AppNavRoute.OfficeHall.icon)
+        Starter.startWebView(context,finalUrl,name,null, AppNavRoute.OfficeHall.icon)
     }
 }
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -142,7 +144,7 @@ fun OfficeHallScreen(
                     .hazeSource(hazeState)
                     .fillMaxSize()
             ) {
-
+                val context = LocalContext.current
                 val uiState by vm.officeHallSearchResponse.state.collectAsState()
                 LaunchedEffect(page) {
                     refreshNetwork()
@@ -160,7 +162,7 @@ fun OfficeHallScreen(
                                     CustomCard (
                                         color = cardNormalColor(),
                                         modifier = Modifier.clickable {
-                                            openDetail(item,needLogin)
+                                            openDetail(context,item,needLogin)
                                         }
                                     ){
                                         TransplantListItem(

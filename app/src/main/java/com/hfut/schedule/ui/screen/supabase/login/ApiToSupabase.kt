@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -52,12 +53,13 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
             vm.supabaseGetEventLatestResp.emitPrepare()
         }
     }
+    val context = LocalContext.current
 
 
     IconButton(
         onClick = {
             scope.launch {
-                loginSupabaseWithCheck(jwt,refreshToken,vm)
+                loginSupabaseWithCheck(jwt,refreshToken,vm, context)
             }
         },
         colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)

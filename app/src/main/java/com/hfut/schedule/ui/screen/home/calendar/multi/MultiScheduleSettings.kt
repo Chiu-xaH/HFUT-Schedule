@@ -43,11 +43,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
@@ -105,7 +106,9 @@ fun MultiScheduleSettings(
 //    currentWeek : Int,
 //    onWeekChange : (Int) -> Unit
 ) {
-    val context = LocalActivity.current
+    val activity = LocalActivity.current
+    val context = LocalContext.current
+
     var customList by remember { mutableStateOf<List<CustomCourseTableSummary>>(emptyList()) }
     var showDialog by remember { mutableStateOf(false) }
     var showDialog_Del by remember { mutableStateOf(false) }
@@ -180,7 +183,7 @@ fun MultiScheduleSettings(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 HazeBottomSheetTopBar("上课提醒(以教务课表为数据源)", isPaddingStatusBar = false)
-                EventUI(vmUI,context)
+                EventUI(vmUI,activity)
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
@@ -277,11 +280,12 @@ fun MultiScheduleSettings(
                                 if (ifSaved) {
                                     if (prefs.getInt("FIRST", 0) != 0)
                                         onSelectedChange(CourseType.NEXT.code)
-                                    else refreshLogin()
+                                    else refreshLogin(context)
                                 } else onSelectedChange(CourseType.NEXT.code)
                             } else {
                                 if (!ifSaved) {
                                     Starter.startWebView(
+                                        context,
                                         url = if (vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
                                         title = "教务系统",
                                         cookie = cookie,
@@ -424,7 +428,7 @@ fun MultiScheduleSettings(
                     },
                     modifier = Modifier.clickable {
                         if(d)
-                            refreshLogin()
+                            refreshLogin(context)
                         else {
                             showToast("请回到聚焦,等待转圈完成即刷新完成")
                         }

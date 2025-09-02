@@ -1,16 +1,20 @@
 package com.hfut.schedule.logic.util.other
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
-import com.hfut.schedule.App.MyApplication
+import androidx.annotation.RequiresApi
+import com.hfut.schedule.application.MyApplication
+import java.security.MessageDigest
+import java.security.cert.CertificateFactory
+import java.security.cert.X509Certificate
 
 object AppVersion {
     enum class SplitType(val code : Int,val description: String) {
         COMMON(0,"通用"),ARM64(2,"ARM 64位"),ARM32(1,"ARM 32位"),X86(3,"X86 32位"),X86_64(4,"X86 64位"),
-//        COMMON_DEBUG(5),ARM64_DEBUG(6),ARM32_DEBUG(7),X86_DEBUG(8),X86_64_DEBUG(9)
     }
     private val packageName = MyApplication.context.packageManager.getPackageInfo(MyApplication.context.packageName,0)
-
+    val appPackageName = MyApplication.context.packageName
 
     private fun getSplitVersionCode() : Int {
         var versionCode = 0
@@ -46,9 +50,9 @@ object AppVersion {
         return versionName
     }
     // 获取当前系统的API级别
-    val sdkInt = android.os.Build.VERSION.SDK_INT
+    val sdkInt = Build.VERSION.SDK_INT
     // 获取当前系统的版本号
-    val release = android.os.Build.VERSION.RELEASE
+    val release = Build.VERSION.RELEASE
 
     val CAN_HAZE_BLUR_BAR = sdkInt >= 31
     val CAN_MOTION_BLUR = sdkInt >= 31
@@ -77,21 +81,40 @@ object AppVersion {
     * 安卓8 27
     * 安卓7 26
      */
+
+    @RequiresApi(Build.VERSION_CODES.P)
     @JvmStatic
-    fun androidVersionToSDK(androidVersion : String) : Int? {
-        return when(androidVersion) {
-            "16" -> 36
-            "15" -> 35
-            "14" -> 34
-            "13" -> 33
-            "12X" -> 32
-            "12" -> 31
-            "11" -> 30
-            "10" -> 29
-            "9" -> 28
-            "8.1" -> 27
-            "8" -> 26
-            else -> null
+    fun getAppSignInfo(): List<String> {
+        val pm = MyApplication.context.packageManager
+        val packageInfo = pm.getPackageInfo(
+            appPackageName,
+            PackageManager.GET_SIGNING_CERTIFICATES
+        )
+        val signingInfo = packageInfo.signingInfo
+        val signatures = signingInfo?.let {
+            if (it.hasMultipleSigners()) {
+                it.apkContentsSigners
+            } else {
+                it.signingCertificateHistory
+            }
+        } ?: return emptyList()
+
+        return signatures.map { sig ->
+            val certFactory = CertificateFactory.getInstance("X.509")
+            val cert = certFactory.generateCertificate(sig.toByteArray().inputStream()) as X509Certificate
+
+            buildString {
+                appendLine("SubjectDN: ${cert.subjectDN.name}")   // 证书持有人
+                appendLine("IssuerDN: ${cert.issuerDN.name}")     // 签发者
+                appendLine("Valid From: ${cert.notBefore}")       // 有效期开始
+                appendLine("Valid Until: ${cert.notAfter}")       // 有效期结束
+                appendLine("Serial Number: ${cert.serialNumber}") // 序列号
+
+                // SHA-256 指纹
+                val md = MessageDigest.getInstance("SHA-256")
+                val sha256 = md.digest(sig.toByteArray())
+                appendLine("SHA-256: ${sha256.joinToString(":") { "%02X".format(it) }}")
+            }
         }
     }
 }

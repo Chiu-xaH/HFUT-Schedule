@@ -59,7 +59,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
+fun Fix(vm : NetWorkViewModel) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val navController = rememberNavController()
@@ -164,7 +164,7 @@ fun Fix(vm : LoginViewModel, vm2 : NetWorkViewModel) {
             }
             composable(FixBarItems.About.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    AboutUI(innerPadding = innerPadding, vm2,false,navController,hazeState)
+                    AboutUI(innerPadding = innerPadding, vm,false,navController,hazeState)
                 }
             }
         }

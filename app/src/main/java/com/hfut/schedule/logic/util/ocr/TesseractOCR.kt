@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.util.ocr
 
 import android.graphics.Bitmap
 import com.googlecode.tesseract.android.TessBaseAPI
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import java.io.File
 
 class TesseractOCR {

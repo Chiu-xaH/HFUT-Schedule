@@ -58,6 +58,9 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 支持单独刷新信息门户及智慧社区平台","又将一部分陈年代码重写了")
             UpdateItems("重构 登录界面","将功能区折叠起来，以规整界面")
+            UpdateItems("重构 关于"
+            )
+            UpdateItems("重构 日志记录","现在 可以更好地手动记录崩溃日志了")
             UpdateItems("修复 检查教务封网部分情况说明错误的Bug")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")

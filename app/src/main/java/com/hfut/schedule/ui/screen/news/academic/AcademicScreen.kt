@@ -22,7 +22,8 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.App.MyApplication
+import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -57,6 +58,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         vm.academicResp.clear()
         vm.getAcademicNews(AcademicType.entries[pagerState.currentPage],page, totalPage = totalPage)
     }
+    val context = LocalContext.current
 
     LaunchedEffect(page) {
         // 如果pagerState.currentPage动，则执行某操作
@@ -108,7 +110,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                             item.link
                                         }
                                     }
-                                    autoWebVpnForNews(link,item.title, icon = R.drawable.stream, cookie = cookies)
+                                    autoWebVpnForNews(context,link,item.title, icon = R.drawable.stream, cookie = cookies)
                                 },
                                 index = index
                             )

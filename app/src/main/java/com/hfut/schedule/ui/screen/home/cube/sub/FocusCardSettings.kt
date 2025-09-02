@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -259,7 +260,7 @@ fun FocusCard(
     val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
     val route = remember { AppNavRoute.Life.route }
-
+    val context = LocalContext.current
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = mixedCardNormalColor(),
@@ -300,7 +301,7 @@ fun FocusCard(
                 if(DateTimeManager.Time_Hour.toInt() in 22 until 25 && showShower) {
                     Row(
                         modifier = Modifier.clickable {
-                            getInGuaGua(vm) { loading = it }
+                            getInGuaGua(vm, context) { loading = it }
                         }
                     ) {
                         if(loading) {

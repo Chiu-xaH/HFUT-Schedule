@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import okhttp3.ResponseBody
 import retrofit2.Call

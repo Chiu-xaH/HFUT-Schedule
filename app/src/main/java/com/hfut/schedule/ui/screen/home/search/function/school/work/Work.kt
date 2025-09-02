@@ -39,10 +39,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.util.fastMap
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.WorkSearchType
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -212,6 +213,7 @@ private fun WorkSearchUI(
             // 避免旧数据影响
             refreshNetwork()
         }
+        val context = LocalContext.current
 
         CommonNetworkScreen(uiState, onReload = { refreshNetwork() }) {
             val response = (uiState as UiState.Success).data
@@ -266,7 +268,7 @@ private fun WorkSearchUI(
                                     index = index,
                                     modifier = Modifier.clickable {
 //                                        navController.navigateForTransition(AppNavRoute.WebView,AppNavRoute.WebView.withArgs(url,title,null,AppNavRoute.Work.icon))
-                                    Starter.startWebView(url,title, icon = AppNavRoute.Work.icon)
+                                    Starter.startWebView(context,url,title, icon = AppNavRoute.Work.icon)
                                     },
                                     leadingContent = { Text((index+1).toString()) }
                                 )

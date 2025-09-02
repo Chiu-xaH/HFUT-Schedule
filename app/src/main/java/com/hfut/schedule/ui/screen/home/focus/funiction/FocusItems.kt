@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.zIndex
@@ -169,6 +170,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
     val info = listItem.info
     val title = listItem.title
     val showPublic = listItem.showPublic
+    val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
     val itemUI = @Composable {
@@ -222,7 +224,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                                         contentDescription = "Localized description",)
                                 }
                             },
-                            modifier = Modifier.clickable { openOperation(info) }
+                            modifier = Modifier.clickable { openOperation(info,context) }
                         )
                 }
             } else {
@@ -240,7 +242,7 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
                             trailingContent = {
                                 Text(text = "今日截止")
                             },
-                            modifier = Modifier.clickable { openOperation(info) }
+                            modifier = Modifier.clickable { openOperation(info,context) }
                         )
                 }
             }
@@ -421,6 +423,8 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
     var id by remember { mutableIntStateOf(-1) }
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
     if(showDialog)
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -498,7 +502,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
             }
         },
         modifier = Modifier.combinedClickable(
-            onClick = { description?.let { openOperation(it) } },
+            onClick = { description?.let { openOperation(it, context) } },
             onDoubleClick = {
                 //双击操作
             },

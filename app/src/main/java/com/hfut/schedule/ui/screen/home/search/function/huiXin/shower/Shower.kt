@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -40,6 +41,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
             ShowerUI(vm,hazeState = hazeState)
         }
     }
+    val context = LocalContext.current
 
 
     TransplantListItem(
@@ -56,7 +58,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
                 modifier = Modifier
                     .size(30.dp),
                 onClick = {
-                    getInGuaGua(vm) { loading = it }
+                    getInGuaGua(vm,context) { loading = it }
                 },
             ) { Icon( painterResource(R.drawable.shower), contentDescription = "Localized description",) }
         },

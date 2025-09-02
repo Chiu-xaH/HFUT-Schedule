@@ -46,9 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -109,7 +110,7 @@ fun UpdateUI(vm : NetWorkViewModel) {
 
 
     val version by remember { mutableStateOf(getUpdates()) }
-
+    val context = LocalContext.current
     var expandItems by remember { mutableStateOf(false) }
     val uiState by vm.giteeApkSizeResp.state.collectAsState()
 
@@ -134,7 +135,7 @@ fun UpdateUI(vm : NetWorkViewModel) {
                 ) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
                 }
             },
-            modifier = Modifier.clickable{ Starter.startWebUrl(MyApplication.GITEE_UPDATE_URL+ "/releases/tag/Android") },
+            modifier = Modifier.clickable{ Starter.startWebUrl(context,MyApplication.GITEE_UPDATE_URL+ "/releases/tag/Android") },
         )
 
         AnimatedVisibility(
@@ -269,6 +270,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
         vm.getGiteePatchSize(patch)
     }
 
+    val context = LocalContext.current
 
     if(loadingPatch) {
         LoadingUI("正在校验与合并")
@@ -347,7 +349,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
                             if (pro == 1f) {
                                 coroutineScope.launch {
                                     async { loadingPatch = true }.await()
-                                    async { BsdiffUpdate.mergePatchApk(MyApplication.context,patch) }.await()
+                                    async { BsdiffUpdate.mergePatchApk(context,patch) }.await()
                                     launch { loadingPatch = false }
                                 }
                             } else {

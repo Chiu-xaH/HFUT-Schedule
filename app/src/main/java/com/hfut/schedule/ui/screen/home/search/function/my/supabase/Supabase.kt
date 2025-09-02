@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -30,6 +31,7 @@ fun Supabase(vm: NetWorkViewModel) {
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = "共建平台") },
@@ -43,7 +45,7 @@ fun Supabase(vm: NetWorkViewModel) {
         trailingContent = {
             FilledTonalIconButton(
                 modifier = Modifier.size(30.dp),
-                onClick = { loginSupabase() }
+                onClick = { loginSupabase(context) }
             ) {
                 Icon(painterResource(R.drawable.refresh),null)
             }
@@ -51,7 +53,7 @@ fun Supabase(vm: NetWorkViewModel) {
         modifier = Modifier.clickable {
            scope.launch {
                loading = true
-               loginSupabaseWithCheck(jwt,refreshToken,vm)
+               loginSupabaseWithCheck(jwt,refreshToken,vm,context)
                loading = false
            }
         }

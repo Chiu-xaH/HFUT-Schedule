@@ -13,10 +13,10 @@ import com.hfut.schedule.ui.screen.fix.Fix
 class FixActivity : BaseActivity() {
     @Composable
     override fun UI() {
-        Fix(super.loginVm, super.networkVm)
+        Fix(super.networkVm)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        super.loginVm.getMyApi()
+        super.networkVm.getMyApi()
     }
 }

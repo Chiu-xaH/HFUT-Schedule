@@ -12,6 +12,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -53,7 +54,7 @@ open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileSe
         val job = Job()
         CoroutineScope(job).launch {
             loginSchoolNetResponse.clear()
-            Repository.loginSchoolNet(campus = campus,loginSchoolNetResponse = loginSchoolNetResponse)
+            LoginSchoolNetRepository.loginSchoolNet(campus = campus,loginSchoolNetResponse = loginSchoolNetResponse)
             onListenStateHolder(loginSchoolNetResponse, onError = { codeInt,e ->
                 val code = codeInt?.toString() ?: ""
                 val eMsg = e?.message

@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -45,6 +46,7 @@ import kotlinx.coroutines.launch
 fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,hazeState: HazeState) {
     val filter by DataStoreManager.enableSupabaseFilterEvent.collectAsState(initial = false)
     val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
+    val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -131,7 +133,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 TransplantListItem(
                     headlineContent = { Text("刷新登陆状态") },
                     leadingContent = { Icon(painterResource(R.drawable.login), null) },
-                    modifier = Modifier.clickable { Starter.loginSupabase() }
+                    modifier = Modifier.clickable { Starter.loginSupabase(context) }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(

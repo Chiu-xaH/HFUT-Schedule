@@ -37,7 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -96,10 +96,6 @@ fun APPScreen(
 
         val firstStart by DataStoreManager.enableQuickStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
         val controlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
-
-        val switch_startUri = prefs.getBoolean("SWITCHSTARTURI",true)
-        var showStartUri by remember { mutableStateOf(switch_startUri) }
-        saveBoolean("SWITCHSTARTURI",true,showStartUri)
 
         val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
         var showSUpdate by remember { mutableStateOf(switch_update) }
@@ -184,33 +180,6 @@ fun APPScreen(
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.calendar),
-                        contentDescription = "Localized description"
-                    ) },
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "打开网页链接方式") },
-                    supportingContent = {
-                        Column {
-                            Row {
-                                FilterChip(
-                                    onClick = {
-                                        showStartUri = true
-                                        saveBoolean("SWITCHSTARTURI",true,showStartUri)
-                                    },
-                                    label = { Text(text = "应用内部") }, selected = showStartUri)
-                                Spacer(modifier = Modifier.width(10.dp))
-                                FilterChip(
-                                    onClick = {
-                                        showStartUri = false
-                                        saveBoolean("SWITCHSTARTURI",false,showStartUri)
-                                    },
-                                    label = { Text(text = "外部浏览器") }, selected = !showStartUri)
-                            }
-                        }
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.net),
                         contentDescription = "Localized description"
                     ) },
                 )

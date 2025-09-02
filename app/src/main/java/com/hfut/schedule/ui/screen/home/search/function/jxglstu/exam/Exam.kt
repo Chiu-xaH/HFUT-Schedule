@@ -31,6 +31,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.navigation.NavHostController
@@ -67,6 +68,7 @@ fun Exam(
     animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Exam.route }
+    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Exam.label) },
@@ -76,7 +78,7 @@ fun Exam(
         },
         modifier = Modifier.clickable {
             if(ifSaved)  {
-                refreshLogin()
+                refreshLogin(context)
             } else {
                 navController.navigateForTransition(AppNavRoute.Exam,route)
             }

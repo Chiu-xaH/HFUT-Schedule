@@ -10,7 +10,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
@@ -123,8 +123,8 @@ import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.api.ZJGDBillService
 import com.hfut.schedule.logic.network.repo.Repository
-import com.hfut.schedule.logic.network.repo.Repository.launchRequestNone
-import com.hfut.schedule.logic.network.repo.Repository.launchRequestSimple
+import com.hfut.schedule.logic.network.repo.launchRequestNone
+import com.hfut.schedule.logic.network.repo.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.CommunityServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
@@ -163,6 +163,13 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.network.repo.GithubRepository
+import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
+import com.hfut.schedule.logic.network.repo.NewsRepository
+import com.hfut.schedule.logic.network.repo.QWeatherRepository
+import com.hfut.schedule.logic.network.repo.WxRepository
+import com.hfut.schedule.logic.network.repo.makeRequest
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.bsdiffs.model.Patch
@@ -213,38 +220,38 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val wxLoginResponse = StateHolder<String>()
-    suspend fun wxLogin() = Repository.wxLogin(wxLoginResponse)
+    suspend fun wxLogin() = WxRepository.wxLogin(wxLoginResponse)
 
     val wxPersonInfoResponse = StateHolder<WXPersonInfoBean>()
-    suspend fun wxGetPersonInfo(auth : String) = Repository.wxGetPersonInfo(auth,wxPersonInfoResponse)
+    suspend fun wxGetPersonInfo(auth : String) = WxRepository.wxGetPersonInfo(auth,wxPersonInfoResponse)
 
     val wxClassmatesResponse = StateHolder<WXClassmatesBean>()
     suspend fun wxGetClassmates(auth : String) = onListenStateHolderForNetwork(wxPersonInfoResponse,wxClassmatesResponse) { person ->
-        Repository.wxGetClassmates(person.orgId,auth,wxClassmatesResponse)
+        WxRepository.wxGetClassmates(person.orgId,auth,wxClassmatesResponse)
     }
 
     val wxLoginCasResponse = StateHolder<Pair<String, Boolean>>()
-    suspend fun wxLoginCas(auth : String,url : String) = Repository.wxLoginCas(url,auth,wxLoginCasResponse)
+    suspend fun wxLoginCas(auth : String,url : String) = WxRepository.wxLoginCas(url,auth,wxLoginCasResponse)
 
     val wxConfirmLoginResponse = StateHolder<String>()
-    suspend fun wxConfirmLogin(auth : String,uuid : String) = Repository.wxConfirmLogin(uuid,auth,wxConfirmLoginResponse)
+    suspend fun wxConfirmLogin(auth : String,uuid : String) = WxRepository.wxConfirmLogin(uuid,auth,wxConfirmLoginResponse)
 
     val haiLeNearPositionResp = StateHolder<List<HaiLeNearPositionBean>>()
     suspend fun getHaiLeNearPosition(bean : HaiLeNearPositionRequestDTO) = Repository.getHaiLeNear(bean,haiLeNearPositionResp)
 
     val giteeApkSizeResp = StateHolder<Double>()
-    suspend fun getGiteeApkSize(version : String) = Repository.getUpdateFileSize("$version.apk",giteeApkSizeResp)
+    suspend fun getGiteeApkSize(version : String) = GithubRepository.getUpdateFileSize("$version.apk",giteeApkSizeResp)
     val giteePatchSizeResp = StateHolder<Double>()
-    suspend fun getGiteePatchSize(patch: Patch) = Repository.getUpdateFileSize(parsePatch(patch),giteePatchSizeResp)
+    suspend fun getGiteePatchSize(patch: Patch) = GithubRepository.getUpdateFileSize(parsePatch(patch),giteePatchSizeResp)
 
     val haiLeDeviceDetailResp = StateHolder<List<HaiLeDeviceDetailBean>>()
     suspend fun getHaiLeDeviceDetail(bean : HaiLeDeviceDetailRequestBody) = Repository.getHaiLDeviceDetail(bean,haiLeDeviceDetailResp)
 
     val githubStarsData = StateHolder<Int>()
-    suspend fun getStarNum() = Repository.getStarNum(githubStarsData)
+    suspend fun getStarNum() = GithubRepository.getStarNum(githubStarsData)
 
     val githubFolderResp = StateHolder<List<GithubFolderBean>>()
-    suspend fun getUpdateContents() = Repository.getUpdateContents(githubFolderResp)
+    suspend fun getUpdateContents() = GithubRepository.getUpdateContents(githubFolderResp)
 
 
     val workSearchResult = StateHolder<WorkSearchResponse>()
@@ -270,7 +277,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 
     val supabaseRegResp = MutableLiveData<String?>()
-    fun supabaseReg(password: String) = Repository.makeRequest(supabase.reg(user = SupabaseUserLoginBean(password = password)),supabaseRegResp)
+    fun supabaseReg(password: String) = makeRequest(supabase.reg(user = SupabaseUserLoginBean(password = password)),supabaseRegResp)
 
     val supabaseLoginResp = StateHolder<SupabaseLoginResponse>()
     suspend fun supabaseLoginWithPassword(password : String) = launchRequestSimple(
@@ -332,7 +339,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     // 默认 展示未过期日程&&符合自己班级的日程
     val supabaseGetEventsResp = MutableLiveData<String?>()
-    fun supabaseGetEvents(jwt: String) = Repository.makeRequest(supabase.getEvents(authorization = "Bearer $jwt"),supabaseGetEventsResp)
+    fun supabaseGetEvents(jwt: String) = makeRequest(supabase.getEvents(authorization = "Bearer $jwt"),supabaseGetEventsResp)
 
     private val _eventForkCountCache = mutableStateMapOf<Int, String>()
     val eventForkCountCache: Map<Int, String> get() = _eventForkCountCache
@@ -422,6 +429,16 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         data
     } catch (e : Exception) { throw e }
 
+    fun getMyApi() {
+        val call = myAPI.my()
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString("my", response.body()?.string())
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
     val programSearchData = StateHolder<ProgramSearchBean>()
     suspend fun getProgramListInfo(id : Int,campus : CampusRegion) = launchRequestSimple(
         holder = programSearchData,
@@ -438,7 +455,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         Gson().fromJson(json,ProgramSearchResponse::class.java).data
     } catch (e : Exception) { throw e }
 
-    fun downloadHoliday()  = Repository.downloadHoliday()
+    fun downloadHoliday()  = GithubRepository.downloadHoliday()
 
     val postTransferResponse = StateHolder<String>()
     suspend fun postTransfer(cookie: String, batchId: String, id : String, phoneNumber : String) {
@@ -766,17 +783,17 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
 // 新闻 ////////////////////////////////////////////////////////////////////////////////////////////////
     val newsResult = StateHolder<List<NewsResponse>>()
-    suspend fun searchNews(title : String,page: Int = 1) = Repository.searchNews(title,page,newsResult)
+    suspend fun searchNews(title : String,page: Int = 1) = NewsRepository.searchNews(title,page,newsResult)
 
     val newsXuanChengResult = StateHolder<List<NewsResponse>>()
-    fun searchXuanChengNews(title : String, page: Int = 1) = Repository.searchXuanChengNews(title,page)
-    suspend fun getXuanChengNews(page: Int) = Repository.getXuanChengNews(page,newsXuanChengResult)
+    fun searchXuanChengNews(title : String, page: Int = 1) = NewsRepository.searchXuanChengNews(title,page)
+    suspend fun getXuanChengNews(page: Int) = NewsRepository.getXuanChengNews(page,newsXuanChengResult)
 
     val academicResp = StateHolder<AcademicNewsResponse>()
-    suspend fun getAcademicNews(type: AcademicType, page: Int = 1,totalPage : Int? = null) = Repository.getAcademic(type,totalPage,page,academicResp)
+    suspend fun getAcademicNews(type: AcademicType, page: Int = 1,totalPage : Int? = null) = NewsRepository.getAcademic(type,totalPage,page,academicResp)
 
     val academicXCResp = StateHolder<List<NewsResponse>>()
-    suspend fun getAcademicXCNews(type: AcademicXCType, page: Int = 1) = Repository.getAcademicXC(type,page,academicXCResp)
+    suspend fun getAcademicXCNews(type: AcademicXCType, page: Int = 1) = NewsRepository.getAcademicXC(type,page,academicXCResp)
 // 核心业务 ////////////////////////////////////////////////////////////////////////////////////////////////
     suspend fun gotoCommunity(cookie : String) = launchRequestNone {
         login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie).awaitResponse()
@@ -790,7 +807,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         transformSuccess = { _,json -> parseCommunity(json) }
     )
     private fun parseCommunity(json : String) : String = try {
-        if (json.contains("200")) {
+        if (json.contains(StatusCode.OK.code.toString())) {
             val token = Gson().fromJson(json, LoginCommunityResponse::class.java).result.token!!
             saveString("TOKEN", token)
             showToast("智慧社区登陆成功")
@@ -1622,7 +1639,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     val code = response.code()
                     jxglstuExamCode.value = code
-                    if(code == 200) {
+                    if(code == StatusCode.OK.code) {
                         saveString("examJXGLSTU", response.body()?.string())
                     }
                 }
@@ -1934,9 +1951,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val weatherWarningData = StateHolder<List<QWeatherWarnBean>>()
-    suspend fun getWeatherWarn(campus: CampusRegion) = Repository.getWeatherWarn(campus,weatherWarningData)
+    suspend fun getWeatherWarn(campus: CampusRegion) = QWeatherRepository.getWeatherWarn(campus,weatherWarningData)
     val qWeatherResult = StateHolder<QWeatherNowBean>()
-    suspend fun getWeather(campus: CampusRegion) = Repository.getWeather(campus,qWeatherResult)
+    suspend fun getWeather(campus: CampusRegion) = QWeatherRepository.getWeather(campus,qWeatherResult)
 // 学工系统/今日校园 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val goToStuResponse = MutableLiveData<String?>()
@@ -1947,7 +1964,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val statusCode = response.code()
-                if(statusCode == 302) {
+                if(statusCode == StatusCode.REDIRECT.code) {
                     goToStuResponse.value = response.headers()["Location"]
                 }
             }
@@ -1970,20 +1987,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     }
 
     val stuInfoResponse = MutableLiveData<String?>()
-    fun getStuInfo(cookie: String) = Repository.makeRequest(
+    fun getStuInfo(cookie: String) = makeRequest(
         call = stu.getStudentInfo(cookie),
         liveData = stuInfoResponse
     )
 // 宣城校园网 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val loginSchoolNetResponse = StateHolder<Boolean>()
-    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion()) = Repository.loginSchoolNet(campus,loginSchoolNetResponse)
-    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion()) = Repository.logoutSchoolNet(campus,loginSchoolNetResponse)
+    suspend fun loginSchoolNet(campus: CampusRegion = getCampusRegion()) = LoginSchoolNetRepository.loginSchoolNet(campus,loginSchoolNetResponse)
+    suspend fun logoutSchoolNet(campus: CampusRegion = getCampusRegion()) = LoginSchoolNetRepository.logoutSchoolNet(campus,loginSchoolNetResponse)
 
     val infoWebValue = StateHolder<WebInfo>()
-    suspend fun getWebInfo() = Repository.getWebInfo(infoWebValue)
-    suspend fun getWebInfo2() = Repository.getWebInfo2(infoWebValue)
+    suspend fun getWebInfo() = LoginSchoolNetRepository.getWebInfo(infoWebValue)
+    suspend fun getWebInfo2() = LoginSchoolNetRepository.getWebInfo2(infoWebValue)
 
-    fun getUpdate() = Repository.getUpdate()
+    fun getUpdate() = GithubRepository.getUpdate()
 }
 

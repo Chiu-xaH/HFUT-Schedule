@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.xah.uicommon.component.text.ScrollText
@@ -41,6 +42,8 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
         "http://jsxy.hfut.edu.cn/" to "技师学院",
         "http://jxjy.hfut.edu.cn/" to "继续教育学院"
     )
+    val context = LocalContext.current
+
     LazyColumn {
         item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
         items(maps.entries.toList().size) { index ->
@@ -54,7 +57,7 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
                     leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
-                        Starter.startWebView(url, icon = icon )
+                        Starter.startWebView(context,url, icon = icon )
                     }, index = index
                 )
 //            }

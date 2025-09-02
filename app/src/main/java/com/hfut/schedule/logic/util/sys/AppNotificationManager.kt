@@ -9,7 +9,7 @@ import android.graphics.Color
 import android.graphics.drawable.Icon
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getPassedMinutesInRange

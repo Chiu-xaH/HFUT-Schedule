@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.database
 import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.dao.CustomCourseTableDao
 import com.hfut.schedule.logic.database.dao.CustomEventDao
 import com.hfut.schedule.logic.database.dao.ShowerLabelDao

@@ -34,6 +34,8 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.shimmerEffect
+
 
 val CARD_NORMAL_DP : Dp = 2.5.dp
 
@@ -318,6 +320,7 @@ fun LargeCard(
 fun LoadingLargeCard(
     title: String,
     loading : Boolean,
+    prepare : Boolean ,
     rightTop: @Composable() (() -> Unit)? = null,
     leftTop: @Composable() (() -> Unit)? = null,
     color : CardColors = CardDefaults.cardColors(containerColor = largeCardColor()),
@@ -343,7 +346,11 @@ fun LoadingLargeCard(
         colors = color
     ) {
         //下面的内容
-        Column (modifier = coverBlur(loading).scale(scale.value)) {
+        Column (modifier = Modifier
+            .coverBlur(loading)
+            .let { if(!prepare && loading) it.shimmerEffect() else it }
+            .scale(scale.value)
+        ) {
             TransplantListItem(
                 headlineContent = {
                     Text(
@@ -362,5 +369,8 @@ fun LoadingLargeCard(
         }
     }
 }
+
+
+
 
 

@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -211,6 +212,7 @@ fun TimeTableScreen(
             null
         }
     }
+    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TimeTable.route }
     with(sharedTransitionScope) {
@@ -234,7 +236,7 @@ fun TimeTableScreen(
                                 if(url == null) {
                                     showToast("正在从云端获取数据")
                                 } else {
-                                    Starter.startWebView(url!!,"校历", icon = R.drawable.schedule)
+                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
                                     showToast("即将打开网页链接,可自行下载或保存图片")
                                 }
                             },

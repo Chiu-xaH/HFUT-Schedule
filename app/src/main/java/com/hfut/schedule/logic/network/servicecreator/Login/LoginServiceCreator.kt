@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.servicecreator.Login
 
-import com.hfut.schedule.App.MyApplication
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.servicecreator.BaseServiceCreator
 import com.hfut.schedule.logic.network.interceptor.RedirectInterceptor
 import okhttp3.OkHttpClient
