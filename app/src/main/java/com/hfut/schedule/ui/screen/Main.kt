@@ -239,7 +239,7 @@ fun MainHost(
                 0.dp // 未校准前不模糊
             } else {
                 val fraction = 1 - (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-                (fraction * 37.5).dp
+                (fraction * 42.5).dp//37.5
             }
         }
     }
@@ -249,7 +249,7 @@ fun MainHost(
                 1f
             } else {
                 val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-                (if(motionBlur) 0.85f else 0.8875f) * (1 - fraction) + fraction
+                (if(motionBlur) 0.85f else 0.9f) * (1 - fraction) + fraction// 0.85f else 0.8875
             }
         }
     }
@@ -273,7 +273,7 @@ fun MainHost(
             }
         }
     }
-    val alpha = if(motionBlur && !isScan) 0.35f else 0.925f
+    val alpha = if(motionBlur && !isScan) 0.45f else 1f//0.35f
 
     ModalNavigationDrawer  (
         scrimColor = MaterialTheme.colorScheme.surface.copy(alpha),
@@ -282,7 +282,7 @@ fun MainHost(
         drawerContent = {
             ControlCenterScreen(
                 if(isWebView) {
-                    containerColor?.copy(if(motionBlur) 0.35f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
+                    containerColor?.copy(if(motionBlur) 0.45f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
                 } else {
                     null
                 }
@@ -354,7 +354,6 @@ fun MainHost(
                             if(isSuccessActivity) {
                                 MainScreen(
                                     vm = networkVm,
-                                    vm2 = loginVm,
                                     vmUI = uiVm,
                                     celebrationText = celebrationText,
                                     webVpn = isSuccessActivityWebVpn,
@@ -366,7 +365,6 @@ fun MainHost(
                             } else if(startActivity && login) {
                                 MainScreen(
                                     networkVm,
-                                    loginVm,
                                     uiVm,
                                     celebrationText,
                                     false,
@@ -387,7 +385,10 @@ fun MainHost(
                     }
                     // 用户协议
                     composable(AppNavRoute.UseAgreement.route) {
-                        UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
+                        Box {
+                            UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
+                            Party()
+                        }
                     }
                     // 更新完成引导
                     composable(AppNavRoute.UpdateSuccess.route) {

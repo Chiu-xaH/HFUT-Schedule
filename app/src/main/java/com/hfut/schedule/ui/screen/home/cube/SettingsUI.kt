@@ -70,93 +70,91 @@ fun SettingsScreen(vm : NetWorkViewModel,
                    animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
-    Box {
-        Scaffold { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = Screen.HomeScreen.route,
-                enterTransition = {
-                    AppAnimationManager.centerAnimation.enter
-                },
-                exitTransition = {
-                    AppAnimationManager.centerAnimation.exit
-                },
-            ) {
+    Scaffold() { _ ->
+        NavHost(
+            navController = navController,
+            startDestination = Screen.HomeScreen.route,
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
+        ) {
 
-                composable(Screen.HomeScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        HomeSettingScreen(navController, innerPaddings,vm,navHostTopController,sharedTransitionScope,animatedContentScope)
-                    }
+            composable(Screen.HomeScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    HomeSettingScreen(navController, innerPaddings,vm,navHostTopController,sharedTransitionScope,animatedContentScope)
                 }
-                composable(Screen.UIScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        UIScreen(innerPaddings,navController)
-                    }
+            }
+            composable(Screen.UIScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    UIScreen(innerPaddings,navController)
                 }
-                composable(Screen.APPScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer)  {
-                        APPScreen(navController, innerPaddings)
-                    }
+            }
+            composable(Screen.APPScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer)  {
+                    APPScreen(navController, innerPaddings)
                 }
-                composable(Screen.FIxAboutScreen.route) {
-                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
-                        AboutUI(innerPadding = innerPaddings, vm,true,navController,hazeState)
-                    }
+            }
+            composable(Screen.FIxAboutScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
+                    AboutUI(innerPadding = innerPaddings, vm,true,navController,hazeState)
                 }
-                composable(Screen.NetWorkScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        NetWorkScreen(navController, innerPaddings,ifSaved)
-                    }
+            }
+            composable(Screen.NetWorkScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    NetWorkScreen(navController, innerPaddings,ifSaved)
                 }
-                composable(FixBarItems.Fix.name) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        FixUI(innerPadding = innerPaddings,vm,hazeState,navController)
-                    }
+            }
+            composable(FixBarItems.Fix.name) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    FixUI(innerPadding = innerPaddings,vm,hazeState,navController)
                 }
-                composable("DEBUG") {
-                    Scaffold {
-                        TEST(innerPaddings,navController)
-                    }
+            }
+            composable("DEBUG") {
+                Scaffold {
+                    TEST(innerPaddings,navController)
                 }
-                composable(Screen.DownloadScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        DownloadMLUI(innerPaddings,navController)
-                    }
+            }
+            composable(Screen.DownloadScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    DownloadMLUI(innerPaddings,navController)
                 }
-                composable(Screen.DeveloperScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        DeveloperScreen(vm,innerPaddings,navController)
-                    }
+            }
+            composable(Screen.DeveloperScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    DeveloperScreen(vm,innerPaddings,navController)
                 }
-                composable(Screen.CalendarScreen.route) {
-                    Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        CalendarSettingsScreen(innerPaddings,navController)
-                    }
+            }
+            composable(Screen.CalendarScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    CalendarSettingsScreen(innerPaddings,navController)
                 }
-                composable(Screen.LockScreen.route) {
-                    Scaffold {
-                        LockUI(innerPaddings,hazeState,navController)
-                    }
+            }
+            composable(Screen.LockScreen.route) {
+                Scaffold {
+                    LockUI(innerPaddings,hazeState,navController)
                 }
-                composable(Screen.FocusCardScreen.route) {
-                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
-                        FocusCardSettings(innerPaddings,navController)
-                    }
+            }
+            composable(Screen.FocusCardScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
+                    FocusCardSettings(innerPaddings,navController)
                 }
-                composable(Screen.RequestRangeScreen.route) {
-                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
-                        RequestArrange(innerPaddings,navController)
-                    }
+            }
+            composable(Screen.RequestRangeScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
+                    RequestArrange(innerPaddings,navController)
                 }
-                composable(Screen.PasswordScreen.route) {
-                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        EditPasswordScreen(hazeState,innerPaddings,navController)
-                    }
+            }
+            composable(Screen.PasswordScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    EditPasswordScreen(hazeState,innerPaddings,navController)
                 }
-                composable(Screen.GestureStudyScreen.route) {
-                    Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        GestureStudyScreen(hazeState,innerPaddings,navController)
-                    }
+            }
+            composable(Screen.GestureStudyScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    GestureStudyScreen(hazeState,innerPaddings,navController)
                 }
             }
         }

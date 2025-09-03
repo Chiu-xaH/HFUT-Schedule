@@ -238,6 +238,10 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.EXCEPTION.argName to exception
         )
     }
+    object UiSettings : AppNavRoute("UI_SETTINGS","设置-外观与效果",R.drawable.format_paint)
+    object ConfigSettings : AppNavRoute("CONFIG_SETTINGS","设置-应用及配置",R.drawable.joystick)
+    object NetworkSettings : AppNavRoute("NETWORK_SETTINGS","设置-网络",R.drawable.net)
+    object AboutSettings : AppNavRoute("ABOUT_SETTINGS","设置-维护与关于",R.drawable.partner_exchange)
 }
 
 fun getArgs(args : Iterable<NavArg>) : List<NamedNavArgument> = args.map { item ->

@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,13 +78,10 @@ private const val TAB_RIGHT = 1
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class,
-    ExperimentalSharedTransitionApi::class
-)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun TodayScreen(
     vm : NetWorkViewModel,
-    vm2 : LoginViewModel,
     innerPadding : PaddingValues,
     vmUI : UIViewModel,
     ifSaved : Boolean,
@@ -97,7 +95,7 @@ fun TodayScreen(
 ) {
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
-    var refreshing by remember { mutableStateOf(false) }
+    var refreshing by rememberSaveable { mutableStateOf(true) }
     var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
@@ -105,7 +103,7 @@ fun TodayScreen(
         scope.launch {
             async { refreshing = true }.await()
             async { DateTimeManager.updateTime { timeNow = it } }.await()
-            async { initNetworkRefresh(vm,vm2,vmUI,ifSaved) }.await()
+            async { initNetworkRefresh(vm,vmUI,ifSaved) }.await()
             launch { netCourseList = getNetCourse() }
             launch { scheduleList = getSchedule() }
             launch { refreshing = false }
@@ -171,13 +169,16 @@ fun TodayScreen(
     LaunchedEffect(Unit) {
         // 冷启动
         launch {
-            refreshing = true
-            initNetworkRefresh(vm,vm2,vmUI,ifSaved)
+            // 避免重复加载
+            if(refreshing == false) {
+                return@launch
+            }
+            initNetworkRefresh(vm,vmUI,ifSaved)
             refreshing = false
         }
         // 加载数据库
         launch {
-            launch { customScheduleList = getCustomEvent() }
+            customScheduleList = getCustomEvent()
         }
         // 一分钟更新时间 触发重组
         launch {
@@ -204,6 +205,7 @@ fun TodayScreen(
             SortType.CREATE_TIME -> customScheduleList.sortedBy { it.id }
         }.let { if (sortReversed) it.reversed() else it }
     }
+
 
     Box(modifier = Modifier.fillMaxSize().pullRefresh(states)) {
         //lastTime字符串一定得到HH:MM格式，封装一个函数获取本地时间，再写代码比较两者

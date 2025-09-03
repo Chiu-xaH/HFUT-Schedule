@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
@@ -26,7 +25,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -34,7 +32,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +44,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Badge
@@ -59,7 +55,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.NavigationBar
@@ -74,7 +69,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -85,7 +79,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -99,8 +92,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -124,16 +115,12 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
-import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -143,12 +130,10 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
-import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
@@ -156,7 +141,6 @@ import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
-import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
@@ -168,9 +152,6 @@ import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.style.special.transitionBackground2
-import com.hfut.schedule.ui.style.special.transitionBackgroundF
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
@@ -181,13 +162,13 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.allRouteStack
 import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.transition.util.isCurrentRouteWithoutArgs
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.NavigationBarSpacer
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
@@ -204,7 +185,6 @@ private val titles = listOf("重要安排","其他事项")
 @Composable
 fun MainScreen(
     vm : NetWorkViewModel,
-    vm2 : LoginViewModel,
     vmUI : UIViewModel,
     celebrationText : String?,
     webVpn : Boolean,
@@ -226,9 +206,9 @@ fun MainScreen(
     val first  by rememberSaveable { mutableStateOf(
         if(isLogin) COURSES
         else when (prefs.getBoolean("SWITCHFOCUS",true)) {
-                true -> FOCUS
-                false -> COURSES
-            }
+            true -> FOCUS
+            false -> COURSES
+        }
     ) }
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         COURSES.name -> COURSES
@@ -364,6 +344,7 @@ fun MainScreen(
             }
         }
     }
+    val scope = rememberCoroutineScope()
     val focusActions = @Composable {
         Row {
             val show = isNavigationIconVisible && celebrationText == null
@@ -816,7 +797,6 @@ fun MainScreen(
                     Scaffold {
                         TodayScreen(
                             vm,
-                            vm2,
                             innerPadding,
                             vmUI,
                             ifSaved,
@@ -826,7 +806,7 @@ fun MainScreen(
                             sortReversed,
                             navHostTopController,
                             sharedTransitionScope,
-                            animatedContentScope
+                            animatedContentScope,
                         )
                     }
                 }

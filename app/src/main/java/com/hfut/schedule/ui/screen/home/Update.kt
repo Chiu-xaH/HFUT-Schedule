@@ -52,7 +52,7 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     return cookie
 }
 // 应用冷启动主界面时的网络请求
-suspend fun initNetworkRefresh(vm : NetWorkViewModel, vm2 : LoginViewModel, vmUI : UIViewModel, ifSaved : Boolean) = withContext(
+suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean) = withContext(
     Dispatchers.IO) {
     val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
     val communityToken = prefs.getString("TOKEN","")

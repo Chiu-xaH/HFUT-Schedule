@@ -4,9 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridItemSpanScope
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +17,6 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -30,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-01") },
+                overlineContent = { Text(text = "2025-09-03") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,6 +52,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 更新完成及用户协议的进入动画")
             UpdateItems("新增 支持单独刷新信息门户及智慧社区平台","又将一部分陈年代码重写了")
             UpdateItems("新增 为选项适配了新的转场动画")
             UpdateItems("新增 CAS扫码的快捷方式(控制中心磁贴与长按图标菜单)")
@@ -65,8 +62,8 @@ fun VersionInfo() {
             UpdateItems("修复 检查教务封网部分情况说明错误的Bug")
             UpdateItems("修复 转场动画结束后仍裁切圆角的Bug")
             UpdateItems("修复 启动台跳转时动画并行导致的卡顿问题")
-            UpdateItems("优化 更新完成后的进入动画")
             UpdateItems("优化 部分界面的显示")
+            UpdateItems("优化 聚焦首页网络请求的刷新机制","现在，改为冷启动刷新完成后，回到首页不再自动触发，除非手动下拉，用于节约网络请求")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
 //            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 转场时的形变动画")

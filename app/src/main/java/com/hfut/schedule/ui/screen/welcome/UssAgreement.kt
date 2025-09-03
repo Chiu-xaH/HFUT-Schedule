@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +48,7 @@ import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.navigateAndClear
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -99,11 +101,6 @@ fun UseAgreementScreen(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier =  Modifier
                                 .size(height)
-                                .iconElementShare(
-                                    sharedTransitionScope,
-                                    animatedContentScope = animatedContentScope,
-                                    route = AppNavRoute.UseAgreement.route
-                                )
                         )
                     }
                 },
@@ -118,6 +115,7 @@ fun UseAgreementScreen(
             )
         },
         bottomBar = {
+            val route = remember { AppNavRoute.Empty.withArgs(AppNavRoute.Home.route) }
             Column () {
                 Box(Modifier.bottomBarBlur(hazeState)) {
                     Row(modifier = Modifier
@@ -130,12 +128,14 @@ fun UseAgreementScreen(
                                         launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
                                         launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
                                     }.await()
-                                    navController.navigateAndClear(AppNavRoute.Home.route)
+                                    navController.navigateAndClear(route)
                                 }
                             },
+                            shape = MaterialTheme.shapes.extraLarge,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(.5f)
+                                .containerShare(sharedTransitionScope,animatedContentScope,route, MaterialTheme.shapes.extraLarge)
                         ) {
                             Text("同意")
                         }

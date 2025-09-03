@@ -750,7 +750,6 @@ private fun TwoTextField(
                             .weight(.5f),
                         text = "游客",
                         icon = R.drawable.partner_exchange,
-                        iconModifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.UseAgreement.route),
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer
                     )
