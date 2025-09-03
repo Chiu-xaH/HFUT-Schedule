@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -34,6 +36,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -41,7 +44,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
@@ -72,10 +77,15 @@ import com.hfut.schedule.ui.style.special.normalTopBarBlur
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.ui.util.navigateForTransition
+import com.xah.transition.state.TransitionState
 import com.xah.transition.util.currentRouteWithArgWithoutValues
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 fun Modifier.limitDrawerSwipeArea(
     allowedArea: Rect,
@@ -140,13 +150,13 @@ fun ControlCenterScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code && !isAtStart)
     val queue = GlobalUIStateHolder.routeQueue
-    val currentStack by navController.currentBackStack.collectAsState()
-    val stack = currentStack.reversed()
+//    val currentStack by navController.currentBackStack.collectAsState()
+//    val stack = currentStack.reversed()
     val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
     var input by remember { mutableStateOf("") }
     var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    val scope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = Color.Transparent,
@@ -172,7 +182,34 @@ fun ControlCenterScreen(
                         }
                     ) },
                     actions = {
-                        Row {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            var height by remember { mutableStateOf(0.dp) }
+                            if(tab == TAB_STACK && currentRoute !in TransitionState.firstStartRoute){
+                                IconButton (
+                                    onClick = {
+                                        scope.launch {
+                                            navController.navigate(AppNavRoute.Home.route) {
+                                                popUpTo(0) {
+                                                    inclusive = true
+                                                }
+                                            }
+                                            showToast("已回到首页")
+                                            delay(TransitionState.curveStyle.speedMs*1L)
+                                            onExit()
+                                        }
+                                    },
+                                    modifier = Modifier.measureDpSize { _,h -> height = h },
+                                    colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.errorContainer.copy(.75f))
+                                ) {
+                                    Icon(
+                                        painterResource(R.drawable.home),
+                                        null,
+                                        tint = MaterialTheme.colorScheme.error,
+                                        modifier = Modifier.size(25.5.dp)
+                                    )
+                                }
+                                VerticalDivider(modifier = Modifier.height(height/2))
+                            }
                             IconButton(
                                 onClick = { tab = TAB_STACK },
                                 colors = IconButtonDefaults.iconButtonColors(
@@ -216,13 +253,15 @@ fun ControlCenterScreen(
                         IconButton(
                             onClick = onExit
                         ) {
-                            Icon(painterResource(R.drawable.menu),null, tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Filled.ArrowBack,null, tint = MaterialTheme.colorScheme.primary)
                         }
                     },
                 )
                 if(tab == TAB_SEARCH) {
                     TextField(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = APP_HORIZONTAL_DP),
                         value = input,
                         onValueChange = {
                             input = it
@@ -264,7 +303,9 @@ fun ControlCenterScreen(
                         for(i in list.indices step 2) {
                             val item = list[i]
                             Row() {
-                                SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                SmallCard(modifier = Modifier
+                                    .padding(horizontal = 3.dp, vertical = 3.dp)
+                                    .weight(.5f)) {
                                     TransplantListItem(
                                         headlineContent = { ScrollText(item.name) },
                                         leadingContent = {
@@ -277,7 +318,9 @@ fun ControlCenterScreen(
                                 }
                                 if(i + 1 < list.size) {
                                     val item2 = list[i+1]
-                                    SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                    SmallCard(modifier = Modifier
+                                        .padding(horizontal = 3.dp, vertical = 3.dp)
+                                        .weight(.5f)) {
                                         TransplantListItem(
                                             headlineContent = { ScrollText(item2.name) },
                                             leadingContent = {
@@ -328,8 +371,11 @@ fun ControlCenterScreen(
                                         } else {
                                             FilledTonalIconButton(
                                                 onClick = {
-                                                    navController.navigateForTransition(item.app,item.route)
-                                                    onExit()
+                                                    scope.launch {
+                                                        navController.navigateForTransition(item.app,item.route)
+                                                        delay(TransitionState.curveStyle.speedMs*1L)
+                                                        onExit()
+                                                    }
                                                 },
                                             ) {
                                                 Icon(painterResource(item.app.icon),null)
@@ -368,73 +414,15 @@ fun ControlCenterScreen(
                                             if(isCurrent) {
                                                 onExit()
                                             } else {
-                                                navController.navigateForTransition(item.app,item.route)
-                                                onExit()
+                                                scope.launch {
+                                                    navController.navigateForTransition(item.app,item.route)
+                                                    delay(TransitionState.curveStyle.speedMs*1L)
+                                                    onExit()
+                                                }
                                             }
                                         }
                                     )
                                 }
-                            }
-                        }
-                        if(stack.size > 2) {
-                            DividerTextExpandedWith("窗口栈") {
-                                Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                    LargeButton(
-                                        onClick = {
-                                            navController.navigate(AppNavRoute.Home.route){
-                                                popUpTo(0) {
-                                                    inclusive = true
-                                                }
-                                            }
-                                        },
-                                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.75f),
-                                        contentColor = MaterialTheme.colorScheme.secondary,
-                                        icon = R.drawable.home,
-                                        modifier = Modifier
-                                            .fillMaxWidth(),
-                                        text = "清空并回到主界面"
-                                    )
-                                }
-                                Spacer(Modifier.height(CARD_NORMAL_DP))
-
-                                for(index in stack.indices) {
-                                    val item = stack[index]
-                                    val route = item.destination.route?.substringBefore("?") ?: continue
-                                    CardListItem(
-                                        headlineContent = {
-                                            Text(route, fontWeight = if(currentRoute == route) FontWeight.Bold else FontWeight.Normal)
-                                        },
-                                        trailingContent = if(index == 0 && stack.size > 2) {
-                                            {
-                                                FilledTonalIconButton (
-                                                    onClick = { navController.popBackStack() },
-                                                ) {
-                                                    Icon(painterResource(R.drawable.close),null)
-                                                }
-                                            }
-                                        } else null,
-                                        leadingContent = {
-                                            Text("${stack.size - index - 1}")
-                                        },
-                                        color = cardNormalColor(),
-                                        modifier = Modifier.clickable {
-                                            if(currentRoute == route) {
-                                                onExit()
-                                            } else {
-                                                showToast("暂不支持越栈切换")
-                                            }
-                                        }
-                                    )
-                                }
-                                CardListItem(
-                                    headlineContent = {
-                                        Text("并不会真正的占用后台，当退出时，其界面已经销毁")
-                                    },
-                                    leadingContent = {
-                                        Icon(painterResource(R.drawable.info),null)
-                                    },
-                                    cardModifier = Modifier.navigationBarsPadding()
-                                )
                             }
                         }
                     }

@@ -66,9 +66,19 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     }
     object Home : AppNavRoute("HOME","主页面",R.drawable.home)
     object UseAgreement : AppNavRoute("USE_AGREEMENT","用户协议",R.drawable.partner_exchange)
-    object UpdateSuccess : AppNavRoute("UPDATE_SUCCESSFUL","更新已完成",R.drawable.settings)
+    object Empty : AppNavRoute("EMPTY","导航中转空白页",R.drawable.near_me) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
+            TARGET_ROUTE("target", NavType.StringType, route,true)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(targetRoute : String): String = withArgs(
+            Args.TARGET_ROUTE.argName to targetRoute,
+        )
+    }
+    object UpdateSuccess : AppNavRoute("UPDATE_SUCCESSFUL","更新完成引导",R.drawable.settings)
+    object AddEvent : AppNavRoute("ADD_EVENT","添加",R.drawable.add)
     object Admission : AppNavRoute("ADMISSION","本科招生",R.drawable.publics)
-    object InfoDetail : AppNavRoute("INFO_DETAIL","本版本新特性",R.drawable.info)
+    object VersionInfo : AppNavRoute("VERSION_INFO","本版本新特性",R.drawable.info)
     object AdmissionRegionDetail : AppNavRoute("ADMISSION_REGION_DETAIL","本科招生详情",R.drawable.publics) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             INDEX("index", NavType.IntType,-1,false),
@@ -202,7 +212,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     }
     object OfficeHall : AppNavRoute("OFFICE_HALL", "办事大厅",R.drawable.person_play)
     object Classmates : AppNavRoute("CLASSMATES", "同班同学",R.drawable.sensor_door)
-    object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner)
+    object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner_shortcut)
     object SearchEdit : AppNavRoute("SEARCH_EDIT", "排序编辑",R.drawable.edit)
     object CourseSearchCalendar : AppNavRoute("COURSE_SEARCH_Calendar", "开课课程表",R.drawable.calendar) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {

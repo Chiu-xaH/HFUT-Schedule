@@ -303,7 +303,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
                             show = true
                         }
                     }) {
-                    Icon(painter = painterResource(R.drawable.qr_code_scanner), contentDescription = "description")
+                    Icon(painter = painterResource(R.drawable.qr_code_scanner_shortcut), contentDescription = "description")
                 }
             },
             shape = MaterialTheme.shapes.medium,

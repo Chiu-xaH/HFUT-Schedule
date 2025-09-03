@@ -15,6 +15,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,6 +42,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -80,6 +82,7 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -102,6 +105,7 @@ import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.style.clickableWithScale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -328,33 +332,49 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         }
         DividerTextExpandedWith("主题色") {
             CustomCard(color = backgroundColor) {
-                RowHorizontal(modifier = Modifier
+                RowHorizontal(
+                    modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP - 10.dp)) {
-                    FilledTonalIconButton(
-                        onClick = { showToast("Primary") },
-                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primary )
-                    ) { }
-                    FilledTonalIconButton(
-                        onClick = { showToast("Secondary") },
-                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.secondary )
-                    ) { }
-                    FilledTonalIconButton(
-                        onClick = { showToast("PrimaryContainer") },
-                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.primaryContainer )
-                    ) { }
-                    FilledTonalIconButton(
-                        onClick = { showToast("SecondaryContainer") },
-                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.secondaryContainer )
-                    ) { }
-                    FilledTonalIconButton(
-                        onClick = { showToast("SurfaceVariant") },
-                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.surfaceVariant )
-                    ) { }
-                    FilledTonalIconButton(
-                        onClick = { showToast("SurfaceContainer") },
-                        colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.surfaceContainer )
-                    ) { }
+                    val size = 40.dp
+                    val padding = APP_HORIZONTAL_DP/2
+                    val shadow = if(isControlCenter) 0.dp else APP_HORIZONTAL_DP
+                    Surface(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = CircleShape,
+                        shadowElevation = shadow,
+                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("Primary") }
+                    ) {}
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondary,
+                        shape = CircleShape,
+                        shadowElevation = shadow,
+                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("Secondary") }
+                    ) {}
+                    Surface(
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = CircleShape,
+                        shadowElevation = shadow,
+                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("PrimaryContainer") }
+                    ) {}
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        shape = CircleShape,
+                        shadowElevation = shadow,
+                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("SecondaryContainer") }
+                    ) {}
+                    Surface(
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = CircleShape,
+                        shadowElevation = shadow,
+                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("SurfaceVariant") }
+                    ) {}
+                    Surface(
+                        color = if(isControlCenter) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainer,
+                        shape = CircleShape,
+                        shadowElevation = shadow,
+                        modifier = Modifier.size(size).clickableWithScale { showToast(if(isControlCenter) "Surface" else "SurfaceContainer") }
+                    ) {}
                 }
                 DividerTextExpandedWith("默认取色") {
                     TransplantListItem(

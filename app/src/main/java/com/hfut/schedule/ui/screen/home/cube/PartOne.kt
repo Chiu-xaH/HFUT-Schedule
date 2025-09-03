@@ -3,6 +3,9 @@ package com.hfut.schedule.ui.screen.home.cube
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,6 +53,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
 import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
@@ -59,8 +63,11 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
+import com.xah.transition.component.containerShare
+import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
@@ -142,12 +149,15 @@ sealed class Screen(val route: String) {
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun HomeSettingScreen(navController: NavController,
                       innerPaddings : PaddingValues,
-                      hazeState: HazeState,
-                      vm : NetWorkViewModel
+                      vm : NetWorkViewModel,
+                      navHostTopController : NavController,
+                      sharedTransitionScope: SharedTransitionScope,
+                      animatedContentScope: AnimatedContentScope,
 ) {
    //
     val currentVersion = AppVersion.getVersionName()
@@ -197,7 +207,7 @@ fun HomeSettingScreen(navController: NavController,
         }
 
         DividerTextExpandedWith(text = "常驻项目") {
-            AlwaysItem(vm,hazeState)
+            AlwaysItem(navHostTopController,sharedTransitionScope,animatedContentScope)
         }
 
 
@@ -274,69 +284,21 @@ fun UpdateContents(vm : NetWorkViewModel) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun AlwaysItem(vm: NetWorkViewModel,hazeState: HazeState) {
+fun AlwaysItem(
+    navHostTopController : NavController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     val version by remember { mutableStateOf(getUpdates()) }
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-    val isPreview = remember { AppVersion.isPreview() }
-    var showBottomSheetUpdate by remember { mutableStateOf(false) }
-
-    if(showBottomSheetUpdate) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheetUpdate = false },
-            showBottomSheet = showBottomSheetUpdate,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("历史更新日志")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    UpdateContents(vm)
-                }
-            }
-        }
-    }
-    if (showBottomSheet) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("本版本新特性") {
-                        FilledTonalButton(onClick = { showBottomSheetUpdate = true }) {
-                            Text("历史更新日志")
-                        }
-                    }
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    VersionInfo()
-                }
-            }
-        }
-    }
+    val isPreview = AppVersion.isPreview()
+    val route = remember { AppNavRoute.VersionInfo.route }
+    val show = currentVersion == version.version || isPreview
     CustomCard(
-        color = MaterialTheme.colorScheme.surface
+        color = MaterialTheme.colorScheme.surface,
+        modifier = Modifier.let{ if(show) it.containerShare(sharedTransitionScope,animatedContentScope,route) else it }
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "刷新登录状态") },
@@ -344,16 +306,20 @@ fun AlwaysItem(vm: NetWorkViewModel,hazeState: HazeState) {
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { refreshLogin(context) },
         )
-        if (currentVersion == version.version || isPreview) {
+        if (show) {
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text(text = "本版本新特性") },
+                headlineContent = { Text(text = AppNavRoute.VersionInfo.label) },
                 supportingContent = { Text(text = if(isPreview) "当前为内部测试版" else "当前已为最新版本 $currentVersion") },
                 leadingContent = {
-                    Icon(painterResource(R.drawable.info), contentDescription = "Localized description",)
+                    Icon(
+                        painterResource(AppNavRoute.VersionInfo.icon),
+                        contentDescription = "Localized description",
+                        modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope,route)
+                    )
                 },
                 modifier = Modifier.clickable{
-                    showBottomSheet = true
+                    navHostTopController.navigateForTransition(AppNavRoute.VersionInfo,route)
                 }
             )
         }

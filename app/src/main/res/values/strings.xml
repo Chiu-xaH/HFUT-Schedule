@@ -10,6 +10,7 @@
     <string name="login_web_hefei">校园网(肥)</string>
     <string name="login_web_xuancheng">校园网(宣)</string>
     <string name="recharge">一卡通充值</string>
+    <string name="scan">CAS扫码</string>
     <string name="title_activity_grade">成绩</string>
     <string name="title_activity_fix">修复与检测</string>
     <string name="title_activity_shower_login">呱呱物联登录</string>

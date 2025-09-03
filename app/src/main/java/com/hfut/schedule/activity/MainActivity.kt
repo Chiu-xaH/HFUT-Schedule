@@ -25,7 +25,8 @@ class MainActivity : BaseActivity() {
         super.uiVm,
         intent.getBooleanExtra("nologin",true),
         false,
-        false
+        false,
+        intent.getStringExtra("route"),
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

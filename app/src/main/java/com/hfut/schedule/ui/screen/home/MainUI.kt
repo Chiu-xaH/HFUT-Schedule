@@ -4,6 +4,9 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -21,6 +24,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -42,6 +47,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Badge
@@ -49,6 +55,8 @@ import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -132,6 +140,7 @@ import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.xah.uicommon.component.text.ScrollText
@@ -170,14 +179,20 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.util.allRouteStack
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.transition.util.isCurrentRouteWithoutArgs
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
+
+private val titles = listOf("重要安排","其他事项")
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
@@ -199,12 +214,13 @@ fun MainScreen(
     animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
-
     var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
 
-    val showBadge by remember { mutableStateOf(getUpdates().version != AppVersion.getVersionName()) }
+    val showBadge by produceState(initialValue = false) {
+        value = getUpdates().version != AppVersion.getVersionName()
+    }
 
 //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(
@@ -222,18 +238,6 @@ fun MainScreen(
         else -> first
     }
 
-
-
-    // 按下底栏按钮后，要准备去的导航
-//    var targetPage by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(
-//        if(isLogin) COURSES
-//        else when (prefs.getBoolean("SWITCHFOCUS",true)) {
-//            true -> FOCUS
-//            false -> COURSES
-//        }
-//    ) }
-    // 记录上一个
-
     var showAll by rememberSaveable { mutableStateOf(DateTimeManager.isOnWeekend()) }
     var findCourse by remember { mutableStateOf(false) }
 
@@ -243,7 +247,6 @@ fun MainScreen(
     var swapUI by rememberSaveable { mutableIntStateOf(if(ifSaved) defaultCalendar else CourseType.JXGLSTU.code) }
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
-
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val alpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
@@ -275,13 +278,8 @@ fun MainScreen(
     }
 
     var today by rememberSaveable(0) { mutableStateOf(DateTimeManager.getToday()) }
-    val titles = listOf("重要安排","其他事项")
-
     val pagerState = rememberPagerState(pageCount = { titles.size })
-
-
     var searchText by rememberSaveable() { mutableStateOf("") }
-
     var showSearch by rememberSaveable() { mutableStateOf(false) }
 
 
@@ -310,7 +308,6 @@ fun MainScreen(
             currentPage = targetPage.page
         }
     }
-    val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpanded } }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var isNavigationIconVisible by rememberSaveable { mutableStateOf(true) }
@@ -321,10 +318,10 @@ fun MainScreen(
                 .collect { collapsedFraction -> isNavigationIconVisible = collapsedFraction < 0.5f }
         }
     }
+
     var sortReversed by rememberSaveable { mutableStateOf(false) }
     var sortType by rememberSaveable { mutableStateOf(SortType.TIME_LINE) }
     var showDialog by remember { mutableStateOf(false) }
-
     if(showDialog) {
         HazeBottomSheet(
             showBottomSheet = showDialog,
@@ -429,34 +426,68 @@ fun MainScreen(
             }
         }
     }
-    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+    val context = LocalContext.current
+    val activity = LocalActivity.current
 
-    Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface).transitionBackgroundF(navHostTopController, AppNavRoute.Home.route)) {
-        var innerPaddingValues by remember { mutableStateOf<PaddingValues?>(null) }
-
-        Box(modifier = Modifier
-            .align(Alignment.BottomEnd)
-            .zIndex(3f)) {
-            innerPaddingValues?.let { AddEventFloatButton(isSupabase = false,isVisible = isNavigationIconVisible && (targetPage == FOCUS),vmUI,it,vm) }
-        }
-        val context = LocalContext.current
-
-        Scaffold(
-            modifier = Modifier.transitionBackground2(isAddUIExpanded).fillMaxSize().let {
+    BackHandler {
+        activity?.finish()
+    }
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold(
+            navHostController = navHostTopController,
+            animatedContentScope = animatedContentScope,
+            route = AppNavRoute.Home.route,
+            roundShape = MaterialTheme.shapes.extraLarge,
+            modifier = Modifier.let {
                 if (targetPage != COURSES) {
                     it.nestedScroll(scrollBehavior.nestedScrollConnection)
                 } else {
                     it
                 }
             },
+            floatingActionButton = {
+                val addRoute = remember { AppNavRoute.AddEvent.route }
+                AnimatedVisibility(
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                    visible = isNavigationIconVisible && (targetPage == FOCUS)
+                ) {
+                    FloatingActionButton(
+                        modifier = Modifier
+                            .containerShare(
+                                sharedTransitionScope,
+                                animatedContentScope,
+                                addRoute,
+                                FloatingActionButtonDefaults.shape
+                            ),
+                        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
+                        onClick = {
+                            navHostTopController.navigateForTransition(
+                                AppNavRoute.AddEvent,
+                                AppNavRoute.AddEvent.route
+                            )
+                        },
+                    ) {
+                        Icon(
+                            painterResource(AppNavRoute.AddEvent.icon),
+                            "Add Button",
+                            modifier = Modifier.iconElementShare(
+                                sharedTransitionScope,
+                                animatedContentScope,
+                                addRoute
+                            )
+                        )
+                    }
+                }
+            },
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
-                    if(targetPage != COURSES) {
+                    if (targetPage != COURSES) {
                         MediumTopAppBar(
                             colors = topBarTransplantColor(),
                             navigationIcon = {
-                                if(targetPage == FOCUS && isNavigationIconVisible && celebrationText != null) {
-                                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-7.dp)) {
+                                if (targetPage == FOCUS && isNavigationIconVisible && celebrationText != null) {
+                                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - 7.dp)) {
                                         ScrollText(
                                             text = celebrationText,
                                             style = MaterialTheme.typography.headlineMedium,
@@ -467,42 +498,62 @@ fun MainScreen(
                             },
                             title = { Text(texts(targetPage)) },
                             actions = {
-                                when(targetPage){
+                                when (targetPage) {
                                     SEARCH -> {
                                         val route = remember { AppNavRoute.SearchEdit.route }
                                         IconButton(onClick = {
-                                            navHostTopController.navigateForTransition(AppNavRoute.SearchEdit, route, transplantBackground = true)
+                                            navHostTopController.navigateForTransition(
+                                                AppNavRoute.SearchEdit,
+                                                route,
+                                                transplantBackground = true
+                                            )
                                         }) {
                                             Icon(
                                                 painterResource(id = R.drawable.edit),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = route)
+                                                modifier = Modifier.iconElementShare(
+                                                    sharedTransitionScope,
+                                                    animatedContentScope = animatedContentScope,
+                                                    route = route
+                                                )
                                             )
                                         }
                                         IconButton(onClick = { showSearch = !showSearch }) {
-                                            Icon(painter = painterResource(id =  R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.search),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
                                         }
-                                        if(ifSaved) {
-                                            IconButton (onClick = { refreshLogin(context) }) {
-                                                Icon(painter = painterResource(id =  R.drawable.login), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                                        if (ifSaved) {
+                                            IconButton(onClick = { refreshLogin(context) }) {
+                                                Icon(
+                                                    painter = painterResource(id = R.drawable.login),
+                                                    contentDescription = "",
+                                                    tint = MaterialTheme.colorScheme.primary
+                                                )
                                             }
                                         } else {
                                             Spacer(modifier = Modifier.width(7.5.dp))
-                                            Text(text = if(webVpn)"WEBVPN" else "已登录", color = MaterialTheme.colorScheme.primary)
+                                            Text(
+                                                text = if (webVpn) "WEBVPN" else "已登录",
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
                                             Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                         }
                                     }
+
                                     FOCUS -> focusActions()
                                     else -> {}
                                 }
                             },
                             scrollBehavior = scrollBehavior
                         )
-                        when(targetPage) {
+                        when (targetPage) {
                             FOCUS -> CustomTabRow(pagerState, titles)
                             SEARCH -> {
-                                if(showSearch) {
+                                if (showSearch) {
                                     SearchFuncs(searchText, onShow = {
                                         searchText = ""
                                         showSearch = it
@@ -511,6 +562,7 @@ fun MainScreen(
                                     }
                                 }
                             }
+
                             else -> {}
                         }
                     } else {
@@ -521,25 +573,45 @@ fun MainScreen(
                             },
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
-                                if(isFriend) {
-                                    ApiForTimeTable(swapUI.toString(),hazeState)
+                                if (isFriend) {
+                                    ApiForTimeTable(swapUI.toString(), hazeState)
                                 } else {
-                                    CourseTotalForApi(vm=vm, isIconOrText = true, next = swapUI == CourseType.NEXT.code, onNextChange = {}, hazeState = hazeState, ifSaved = ifSaved)
+                                    CourseTotalForApi(
+                                        vm = vm,
+                                        isIconOrText = true,
+                                        next = swapUI == CourseType.NEXT.code,
+                                        onNextChange = {},
+                                        hazeState = hazeState,
+                                        ifSaved = ifSaved
+                                    )
                                 }
 
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
-                                    Icon(painter = painterResource(id =  R.drawable.tab_inactive), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.tab_inactive),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
                                 }
                                 IconButton(onClick = { showAll = !showAll }) {
                                     BadgedBox(badge = {
                                         if (findCourse) Badge()
-                                    }) { Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "", tint = MaterialTheme.colorScheme.primary) }
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
                             },
                         )
-                        if(swapUI == CourseType.NEXT.code) null else ScheduleTopDate(showAll,today)
+                        if (swapUI == CourseType.NEXT.code) null else ScheduleTopDate(
+                            showAll,
+                            today
+                        )
                     }
                 }
             },
@@ -550,21 +622,45 @@ fun MainScreen(
                     NavigationBarSpacer()
                     NavigationBar(containerColor = Color.Transparent) {
                         val items = listOf(
-                            NavigationBarItemData(COURSES.name, "课程表", painterResource(R.drawable.calendar ), painterResource(R.drawable.calendar_month_filled)),
-                            NavigationBarItemData(FOCUS.name,"聚焦", painterResource(R.drawable.lightbulb), painterResource(R.drawable.lightbulb_filled)),
-                            NavigationBarItemData(SEARCH.name,"查询中心", painterResource(R.drawable.category_search),painterResource(R.drawable.category_search_filled)),
-                            NavigationBarItemData(SETTINGS.name,"选项", painterResource(if (getUpdates().version == AppVersion.getVersionName())R.drawable.deployed_code else R.drawable.deployed_code_update), painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled ))
+                            NavigationBarItemData(
+                                COURSES.name,
+                                "课程表",
+                                painterResource(R.drawable.calendar),
+                                painterResource(R.drawable.calendar_month_filled)
+                            ),
+                            NavigationBarItemData(
+                                FOCUS.name,
+                                "聚焦",
+                                painterResource(R.drawable.lightbulb),
+                                painterResource(R.drawable.lightbulb_filled)
+                            ),
+                            NavigationBarItemData(
+                                SEARCH.name,
+                                "查询中心",
+                                painterResource(R.drawable.category_search),
+                                painterResource(R.drawable.category_search_filled)
+                            ),
+                            NavigationBarItemData(
+                                SETTINGS.name,
+                                "选项",
+                                painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code else R.drawable.deployed_code_update),
+                                painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled)
+                            )
                         )
                         items.forEach { item ->
                             val interactionSource = remember { MutableInteractionSource() }
                             val isPressed by interactionSource.collectIsPressedAsState()
                             val scale = animateFloatAsState(
                                 targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                ),
                                 label = "" // 使用弹簧动画
                             )
                             val route = item.route
-                            val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
+                            val selected =
+                                navController.currentBackStackEntryAsState().value?.destination?.route == route
                             NavigationBarItem(
                                 selected = selected,
                                 enabled = isEnabled,
@@ -578,13 +674,22 @@ fun MainScreen(
                                 label = { Text(text = item.label) },
                                 icon = {
                                     BadgedBox(badge = {
-                                        if (item == items[3]){
+                                        if (item == items[3]) {
                                             if (showBadge)
-                                                Badge{ Text(text = "1")}
+                                                Badge { Text(text = "1") }
                                         }
-                                    }) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
+                                    }) {
+                                        Icon(
+                                            if (selected) item.filledIcon else item.icon,
+                                            contentDescription = item.label
+                                        )
+                                    }
                                 },
-                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
+                                colors = NavigationBarItemDefaults.colors(
+                                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(
+                                        alpha = .9f
+                                    )
+                                )
 
                             )
                         }
@@ -592,8 +697,7 @@ fun MainScreen(
                 }
             },
         ) { innerPadding ->
-            innerPaddingValues = innerPadding
-            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)
             NavHost(
                 navController = navController,
                 startDestination = first.name,
@@ -602,22 +706,26 @@ fun MainScreen(
                 modifier = Modifier.hazeSource(state = hazeState)
             ) {
                 composable(COURSES.name) {
+                    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
                     val useCustomBackground = customBackground != ""
                     Box(modifier = Modifier.fillMaxSize()) {
                         // 背景图层
-                        val backGroundHaze = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.FULL.code)
+                        val backGroundHaze =
+                            rememberHazeState(blurEnabled = blur >= HazeBlurLevel.FULL.code)
                         if (useCustomBackground) {
                             GlideImage(
                                 model = customBackground,
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 alpha = alpha,
-                                modifier = Modifier.hazeSource(backGroundHaze).fillMaxSize()
+                                modifier = Modifier
+                                    .hazeSource(backGroundHaze)
+                                    .fillMaxSize()
                             )
                         }
                         Scaffold(
-                            containerColor = if(!useCustomBackground) {
-                                MaterialTheme. colorScheme. background
+                            containerColor = if (!useCustomBackground) {
+                                MaterialTheme.colorScheme.background
                             } else {
                                 Color.Transparent
                             },
@@ -631,30 +739,95 @@ fun MainScreen(
                                 }
                             }) {
                             val isFriend = CourseType.entries.all { swapUI > it.code }
-                            if(!isFriend) {
+                            if (!isFriend) {
                                 // 非好友课表
                                 when (swapUI) {
                                     // 下学期
-                                    CourseType.NEXT.code -> JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,innerPadding,backGroundHaze = if(useCustomBackground)backGroundHaze else null)
+                                    CourseType.NEXT.code -> JxglstuCourseTableUINext(
+                                        showAll,
+                                        vm,
+                                        vmUI,
+                                        hazeState,
+                                        navHostTopController,
+                                        sharedTransitionScope,
+                                        animatedContentScope,
+                                        innerPadding,
+                                        backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                    )
                                     // 社区
-                                    CourseType.COMMUNITY.code -> CommunityCourseTableUI(showAll, innerPadding,vmUI, onDateChange = { new -> today = new}, today = today, vm = vm, hazeState = hazeState, backGroundHaze = if(useCustomBackground)backGroundHaze else null)
+                                    CourseType.COMMUNITY.code -> CommunityCourseTableUI(
+                                        showAll,
+                                        innerPadding,
+                                        vmUI,
+                                        onDateChange = { new -> today = new },
+                                        today = today,
+                                        vm = vm,
+                                        hazeState = hazeState,
+                                        backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                    )
                                     // 教务
-                                    CourseType.JXGLSTU.code -> JxglstuCourseTableUI(showAll,vm,innerPadding,vmUI,if(isLogin) webVpn else false,isLogin,{ newDate -> today = newDate},today,hazeState,navHostTopController,sharedTransitionScope,animatedContentScope,if(useCustomBackground)backGroundHaze else null) { isEnabled = it }
+                                    CourseType.JXGLSTU.code -> JxglstuCourseTableUI(
+                                        showAll,
+                                        vm,
+                                        innerPadding,
+                                        vmUI,
+                                        if (isLogin) webVpn else false,
+                                        isLogin,
+                                        { newDate -> today = newDate },
+                                        today,
+                                        hazeState,
+                                        navHostTopController,
+                                        sharedTransitionScope,
+                                        animatedContentScope,
+                                        if (useCustomBackground) backGroundHaze else null
+                                    ) { isEnabled = it }
                                     // 教务2
-                                    CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(showAll,vm,vmUI,hazeState,innerPadding,TotalCourseDataSource.MINE,onDateChange = { new -> today = new}, today = today,backGroundHaze = if(useCustomBackground)backGroundHaze else null )
+                                    CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(
+                                        showAll,
+                                        vm,
+                                        vmUI,
+                                        hazeState,
+                                        innerPadding,
+                                        TotalCourseDataSource.MINE,
+                                        onDateChange = { new -> today = new },
+                                        today = today,
+                                        backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                    )
                                     // 慧新易校
-                                // 自定义导入课表 数据库id+3=swapUI
+                                    // 自定义导入课表 数据库id+3=swapUI
 //                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
                                 }
-                            }
-                            else // 好友课表 swapUI为学号
-                                CommunityCourseTableUI(showAll,innerPadding,vmUI,friendUserName = swapUI.toString(),onDateChange = { new -> today = new}, today = today,vm,hazeState, backGroundHaze = if(useCustomBackground)backGroundHaze else null)
+                            } else // 好友课表 swapUI为学号
+                                CommunityCourseTableUI(
+                                    showAll,
+                                    innerPadding,
+                                    vmUI,
+                                    friendUserName = swapUI.toString(),
+                                    onDateChange = { new -> today = new },
+                                    today = today,
+                                    vm,
+                                    hazeState,
+                                    backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                )
                         }
                     }
                 }
                 composable(FOCUS.name) {
                     Scaffold {
-                        TodayScreen(vm,vm2,innerPadding,vmUI,ifSaved,pagerState, hazeState = hazeState,sortType,sortReversed,navHostTopController,sharedTransitionScope,animatedContentScope)
+                        TodayScreen(
+                            vm,
+                            vm2,
+                            innerPadding,
+                            vmUI,
+                            ifSaved,
+                            pagerState,
+                            hazeState = hazeState,
+                            sortType,
+                            sortReversed,
+                            navHostTopController,
+                            sharedTransitionScope,
+                            animatedContentScope
+                        )
                     }
                 }
                 composable(SEARCH.name) {
@@ -679,13 +852,15 @@ fun MainScreen(
                             ifSaved,
                             innerPadding,
                             hazeState,
+                            navHostTopController,
+                            sharedTransitionScope,
+                            animatedContentScope
                         )
                     }
                 }
             }
         }
     }
-
 }
 
 
@@ -800,7 +975,9 @@ fun SearchEditScreen(
         )
     }
     var show by remember { mutableStateOf(false) }
-    Column (modifier = Modifier.fillMaxSize().hazeSource(hazeState)) {
+    Column (modifier = Modifier
+        .fillMaxSize()
+        .hazeSource(hazeState)) {
         MediumTopAppBar(
             modifier = Modifier.let {
                 if(show) it
@@ -859,7 +1036,9 @@ fun SearchEditScreen(
             LazyVerticalGrid (
                 columns = GridCells.Fixed(2),
                 state = state,
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection).padding(horizontal = APP_HORIZONTAL_DP-3.dp),
+                modifier = Modifier
+                    .nestedScroll(scrollBehavior.nestedScrollConnection)
+                    .padding(horizontal = APP_HORIZONTAL_DP - 3.dp),
             ) {
                 items(funcMaps.size, key = { funcMaps[it].id }) { index->
                     val item = funcMaps[index]
@@ -889,7 +1068,7 @@ fun SearchEditScreen(
                                 modifier = Modifier
                                     .combinedClickable(
                                         onClick = {
-                                            if(!inEdit) {
+                                            if (!inEdit) {
                                                 showToast("长按卡片开始编辑")
                                             } else {
                                                 showToast("双击卡片结束编辑")
@@ -915,7 +1094,9 @@ fun SearchEditScreen(
                         }
                     }
                 }
-                items(2) { Spacer(Modifier.navigationBarsPadding().height(APP_HORIZONTAL_DP)) }
+                items(2) { Spacer(Modifier
+                    .navigationBarsPadding()
+                    .height(APP_HORIZONTAL_DP)) }
             }
         }
 

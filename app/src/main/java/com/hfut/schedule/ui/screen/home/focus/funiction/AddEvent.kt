@@ -84,11 +84,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -96,6 +98,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
@@ -110,11 +113,16 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.cube.UpdateContents
+import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -122,10 +130,15 @@ import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -209,6 +222,73 @@ fun AddEventFloatButton(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@Composable
+fun AddEventScreen(
+    vm : NetWorkViewModel,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+//    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+//    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val route = remember { AppNavRoute.AddEvent.route }
+
+    val isSupabase = false
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+
+    var loading by remember { mutableStateOf(false) }
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val context = LocalContext.current
+
+    val scope = rememberCoroutineScope()
+
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            roundShape = FloatingActionButtonDefaults.shape,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+//                    modifier = Modifier.topBarBlur(hazeState, ),
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.AddEvent.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.AddEvent.icon)
+                    },
+                    actions = {
+                        if(getPersonInfo().studentId != null && !isSupabase)
+                            FilledTonalButton(onClick = {
+                                scope.launch {
+                                    loading = true
+                                    loginSupabaseWithCheck(jwt,refreshToken,vm,context)
+                                    loading = false
+                                }
+                            }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                                Text("云端共建")
+                            }
+                    }
+                )
+            },
+        ) { innerPadding ->
+            Column(modifier = Modifier.padding(innerPadding)) {
+                if(loading) {
+                    LoadingUI("正在核对登录")
+                } else {
+                    AddEventUI(vm,isSupabase) {
+                        navController.popBackStack()
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -223,8 +303,6 @@ private fun SharedTransitionScope.ButtonUI(
         FloatingActionButton(
             modifier = Modifier
                 .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
-
-//                .padding(innerPaddings)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 .sharedBounds(
                     boundsTransform = boundsTransform,
@@ -351,23 +429,6 @@ private fun SharedTransitionScope.SurfaceUI(
                 }
             }
         }
-//        if(showSurface) {
-//            AnimatedVisibility(
-//                visible = true,
-//                enter  = fadeIn(),
-//                exit = fadeOut()
-//            ) {
-//                Column(modifier = Modifier
-//                    .padding(innerPadding)
-//                    .background(Color.Transparent)) {
-//                    if(loading) {
-//                        LoadingUI("正在核对登录")
-//                    } else {
-//                        AddEventUI(vm,isSupabase,showChange)
-//                    }
-//                }
-//            }
-//        }
     }
 }
 

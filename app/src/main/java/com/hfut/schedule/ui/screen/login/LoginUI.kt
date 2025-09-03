@@ -503,8 +503,8 @@ fun LoginScreen(
                         TAB_LOGIN -> R.drawable.settings
                         else -> R.drawable.login
                     },
-                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(.9f),
-                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
         }
@@ -531,39 +531,6 @@ fun LoginScreen(
     }
 }
 
-@OptIn(ExperimentalAnimationApi::class)
-@Composable
-fun AnimatedWelcomeScreen() {
-    val welcomeTexts = listOf(
-        "你好", "(｡･ω･)ﾉﾞ", "欢迎使用", "ヾ(*ﾟ▽ﾟ)ﾉ","Hello", "٩(ˊωˋ*)و✧","Hola", "(⸝•̀֊•́⸝)", "Bonjour","＼(≧▽≦)ﾉ"
-    )
-    var currentIndex by remember { mutableIntStateOf(0) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(2000) // 每3秒切换
-            currentIndex = (currentIndex + 1) % welcomeTexts.size
-        }
-    }
-
-    // 界面布局
-
-    Column(modifier = Modifier
-        .padding(horizontal = APP_HORIZONTAL_DP)) {
-        Spacer(modifier = Modifier.height(20.dp))
-        AnimatedContent(
-            targetState = welcomeTexts[currentIndex],
-            transitionSpec = {
-                fadeIn(animationSpec = tween(AppAnimationManager.ANIMATION_SPEED)) togetherWith(fadeOut(animationSpec = tween(AppAnimationManager.ANIMATION_SPEED)))
-            }, label = ""
-        ) { targetText ->
-            Text(
-                text = targetText,
-                fontSize = 38.sp,
-                color = MaterialTheme.colorScheme.secondaryContainer
-            )
-        }
-    }
-}
 
 private suspend fun refresh(vm: LoginViewModel) = withContext(Dispatchers.IO) {
     launch {

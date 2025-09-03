@@ -46,6 +46,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.shortcut.AppShortcutManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.camera.CameraScan
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -236,6 +237,7 @@ fun ScanScreen(
         ) { innerPadding ->
 
             LaunchedEffect(activity) {
+                AppShortcutManager.createScanShortcut(context)
                 activity?.let { PermissionSet.checkAndRequestCameraPermission(it) }
             }
             val imageAnalysis = ImageAnalysis

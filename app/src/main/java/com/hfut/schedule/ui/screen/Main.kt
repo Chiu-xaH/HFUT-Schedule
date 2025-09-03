@@ -3,8 +3,6 @@ package com.hfut.schedule.ui.screen
 import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -65,6 +63,7 @@ import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.BusScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
@@ -102,22 +101,19 @@ import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayC
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.TeacherSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpnScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.work.WorkScreen
-import com.hfut.schedule.ui.screen.login.InfoDetailScreen
+import com.hfut.schedule.ui.screen.welcome.VersionInfoScreen
 import com.hfut.schedule.ui.screen.login.LoginScreen
-import com.hfut.schedule.ui.screen.login.UpdateSuccessScreen
-import com.hfut.schedule.ui.screen.login.UseAgreementScreen
+import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
+import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.news.home.NewsScreen
 import com.hfut.schedule.ui.screen.other.NavigationExceptionScreen
-import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.state.TransitionState
-import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -150,7 +146,8 @@ fun MainHost(
     uiVm : UIViewModel,
     login : Boolean,
     isSuccessActivity: Boolean,
-    isSuccessActivityWebVpn : Boolean
+    isSuccessActivityWebVpn : Boolean,
+    startRoute : String? = null
 ) {
     val switchUpload by remember { mutableStateOf(prefs.getBoolean("SWITCHUPLOAD",true )) }
     val startActivity by produceState<Boolean>(initialValue = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)) {
@@ -160,13 +157,12 @@ fun MainHost(
     val navController = rememberNavController()
     val first by remember { mutableStateOf(
         if(prefs.getBoolean("canUse",false)) {
-            if(
-//                AppVersion.isPreview() ||
-                prefs.getString("versionName", "上版本") == AppVersion.getVersionName()) {
-                AppNavRoute.Home.route
-            } else {
-                AppNavRoute.UpdateSuccess.route
-            }
+            startRoute
+                ?: if(prefs.getString("versionName", "上版本") == AppVersion.getVersionName()) {
+                    AppNavRoute.Home.route
+                } else {
+                    AppNavRoute.UpdateSuccess.route
+                }
         } else {
             AppNavRoute.UseAgreement.route
         }
@@ -391,18 +387,27 @@ fun MainHost(
                     }
                     // 用户协议
                     composable(AppNavRoute.UseAgreement.route) {
-                        Box() {
-                            Party()
-                            UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
-                        }
+                        UseAgreementScreen(navController,this@SharedTransitionLayout, this@composable,)
                     }
-                    // 更新完成
+                    // 更新完成引导
                     composable(AppNavRoute.UpdateSuccess.route) {
                         UpdateSuccessScreen(navController,this@SharedTransitionLayout, this@composable)
                     }
                     // 本版本新特性
-                    composable(AppNavRoute.InfoDetail.route) {
-                        InfoDetailScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    composable(AppNavRoute.VersionInfo.route) {
+                        VersionInfoScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 添加聚焦日程
+                    composable(AppNavRoute.AddEvent.route) {
+                        AddEventScreen(networkVm,navController,this@SharedTransitionLayout, this@composable)
+                    }
+                    // 导航中转空白页
+                    composable(
+                        route = AppNavRoute.Empty.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.Empty.Args.entries)
+                    ) { backStackEntry ->
+                        val targetRoute = backStackEntry.arguments?.getString(AppNavRoute.Empty.Args.TARGET_ROUTE.argName) ?: return@composable
+                        EmptyScreen(targetRoute,navController,this@SharedTransitionLayout, this@composable)
                     }
                     // 成绩
                     composable(

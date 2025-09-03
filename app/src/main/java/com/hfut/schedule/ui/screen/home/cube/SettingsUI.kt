@@ -4,6 +4,9 @@ import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +19,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -52,6 +57,7 @@ fun BackButton(onBack : () -> Unit) {
         Text("返回上一级", fontSize = 17.sp)
     }
 }
+@OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -59,6 +65,9 @@ fun SettingsScreen(vm : NetWorkViewModel,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
                    hazeState: HazeState,
+                   navHostTopController : NavController,
+                   sharedTransitionScope: SharedTransitionScope,
+                   animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
     Box {
@@ -76,7 +85,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
 
                 composable(Screen.HomeScreen.route) {
                     Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                        HomeSettingScreen(navController, innerPaddings,hazeState,vm)
+                        HomeSettingScreen(navController, innerPaddings,vm,navHostTopController,sharedTransitionScope,animatedContentScope)
                     }
                 }
                 composable(Screen.UIScreen.route) {
