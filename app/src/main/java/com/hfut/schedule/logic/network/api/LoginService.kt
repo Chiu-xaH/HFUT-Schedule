@@ -38,17 +38,18 @@ interface LoginService {
     ) : Call<ResponseBody>
 
    //信息门户登录
-    @GET("cas/oauth2.0/authorize?response_type=code&client_id=BsHfutEduPortal&redirect_uri=https%3A//one.hfut.edu.cn/home/index")
-    @Headers(MyApplication.PC_UA)
-    fun oneGoto(
-        @Header("Cookie") cookiesWithTgc : String
-    ) : Call<ResponseBody>
-    //慧新易校
-    @GET("cas/oauth2.0/authorize?response_type=code&client_id=Hfut2023Ydfwpt&redirect_uri=http%3A%2F%2F121.251.19.62%2Fberserker-auth%2Fcas%2Foauth2url%3Foauth2url%3Dhttp%3A%2F%2F121.251.19.62%2Fberserker-base%2Fredirect%3FappId%3D24%26type%3Dapp")
-    @Headers(MyApplication.PC_UA)
-    fun gotoHuiXin(
-        @Header("Cookie") cookiesWithTgc : String
-    ) : Call<ResponseBody>
+//    @GET("cas/oauth2.0/authorize?response_type=code&client_id=BsHfutEduPortal&redirect_uri=https%3A//one.hfut.edu.cn/home/index")
+//    @Headers(MyApplication.PC_UA)
+//    fun oneGoto(
+//        @Header("Cookie") cookiesWithTgc : String
+//    ) : Call<ResponseBody>
+//    //慧新易校
+//    @GET("cas/oauth2.0/authorize?response_type=code&client_id=Hfut2023Ydfwpt&redirect_uri=http%3A%2F%2F121.251.19.62%2Fberserker-auth%2Fcas%2Foauth2url%3Foauth2url%3Dhttp%3A%2F%2F121.251.19.62%2Fberserker-base%2Fredirect%3FappId%3D24%26type%3Dapp")
+//    @Headers(MyApplication.PC_UA)
+//    fun gotoHuiXin(
+//        @Header("Cookie") cookiesWithTgc : String
+//    ) : Call<ResponseBody>
+
 
 //    @GET("cas/login")
 //    fun loginStu(
@@ -58,9 +59,19 @@ interface LoginService {
 
     // 待重构 这个接口可以供教务、信息门户、学工系统等登录，传入不同的serviceURL，但是早期不会这些，写的时候没解耦合，懒得重构了，等有空的
     @GET("cas/login")
+    @Headers(MyApplication.PC_UA)
     fun loginGoTo(
         @Query("service") service : String?,
         @Header("Cookie") cookie : String
+    ) : Call<ResponseBody>
+
+    @GET("cas/oauth2.0/authorize")
+    @Headers(MyApplication.PC_UA)
+    fun loginGoToOauth(
+        @Query("client_id") clientId : String,
+        @Query("redirect_uri") url : String,
+        @Header("Cookie") cookiesWithTgc : String,
+        @Query("response_type") code : String = "code",
     ) : Call<ResponseBody>
 
 

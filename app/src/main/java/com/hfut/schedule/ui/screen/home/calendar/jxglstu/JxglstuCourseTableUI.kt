@@ -94,6 +94,7 @@ import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
@@ -163,6 +164,13 @@ fun <T>clearUnit(list : List<SnapshotStateList<T>>) {
     for(t in list) {
         t.clear()
     }
+}
+
+suspend fun loginHuiXin(vm: NetWorkViewModel) {
+    val username = getPersonInfo().studentId ?: return
+    val password = getCardPsk() ?: return
+    vm.huiXinLoginResp.clear()
+    vm.huiXinSingleLogin(username,password)
 }
 
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
@@ -602,10 +610,10 @@ fun JxglstuCourseTableUI(
                                return@huiXin
                            } else {
                                if(CasInHFUT.excludeJxglstu) {
-                                   showToast("暂不支持慧新易校的刷新")
-                                   return@huiXin
+                                   loginHuiXin(vm)
+                               } else {
+                                   vm.goToHuiXin(cookies)
                                }
-                               vm.goToHuiXin(cookies)
                            }
                        }
                    }

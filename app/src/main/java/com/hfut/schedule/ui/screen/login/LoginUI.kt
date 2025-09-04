@@ -346,7 +346,7 @@ fun LoginScreen(
                     ) {
                         if(!webVpn) {
                             TransplantListItem(
-                                supportingContent = { Text("打开开关后,将跳过封网的教务系统,只对信息门户和智慧社区刷新(慧新易校后续支持),用于您离校且在封网的情况下需要刷新其他平台") },
+                                supportingContent = { Text("打开开关后,将跳过教务系统,只对信息门户、智慧社区及慧新易校刷新登录,用于您离校且在封网的情况下需要刷新其他平台") },
                                 headlineContent = { Text("跳过教务系统") },
                                 modifier = Modifier.clickable {
                                     scope.launch {

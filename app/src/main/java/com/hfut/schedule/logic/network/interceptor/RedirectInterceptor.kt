@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.interceptor
 
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -11,9 +12,9 @@ class RedirectInterceptor() : Interceptor {
         if (response.isRedirect) {
             val location = response.header("Location").toString()
 //                Log.d("测试1",location)
-            val ticket = location.substringAfter("=")
-
+            val ticket = location.substringAfter("ticket=")
             CasGoToInterceptorState.toCommunityTicket.value = ticket
+
             val newRequest = request.newBuilder()
                 .url(location)
                 .build()

@@ -8,7 +8,7 @@ enum class LoginType(val service : String?,val description: String) {
     ONE(null,"信息门户"),
     STU(MyApplication.STU_URL + "xsfw/sys/swmzhcptybbapp/*default/index.do","学工系统"),
     COMMUNITY(MyApplication.COMMUNITY_URL,"智慧社区"),
-    HUI_XIN(MyApplication.HUI_XIN_URL,"慧新易校"),
+    HUI_XIN(MyApplication.HUI_XIN_URL + "/plat","慧新易校"),
     LIBRARY(MyApplication.NEW_LIBRARY_URL,"图书馆"),
     // 二课
     // 校友

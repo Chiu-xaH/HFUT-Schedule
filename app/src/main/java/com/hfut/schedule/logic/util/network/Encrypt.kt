@@ -22,6 +22,8 @@ object Encrypt {
         }
     }
     @JvmStatic
+    fun getHuiXinAuth() = "Basic " + encodeToBase64("mobile_service_platform:mobile_service_platform_secret")
+    @JvmStatic
     fun encodeToBase64(input: String): String =java.util.Base64.getEncoder().encodeToString(input.toByteArray(Charsets.UTF_8))
 
     @JvmStatic

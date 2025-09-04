@@ -35,6 +35,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -73,10 +74,12 @@ import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.screen.card.bill.TodayBills
 import com.hfut.schedule.ui.screen.card.function.CardLimit
 import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.SelecctDateRange
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.loginHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.EleUI
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWebScaUI
@@ -496,6 +499,26 @@ fun HomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navControlle
                             supportingContent = { Text(text = "查询网费、宿舍电费、洗浴使用情况并缴费")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.paid), contentDescription = "")},
                             modifier = Modifier.clickable { showBottomSheet_Fee = true }
+                        )
+                        PaddingHorizontalDivider()
+                        var loading by remember { mutableStateOf(false) }
+                        TransplantListItem(
+                            headlineContent = { Text(text = "刷新登陆状态") },
+                            supportingContent = { Text(text = "若慧新易校(一卡通)相关功能(包括缴费)登录失效,可一键刷新")},
+                            leadingContent = {
+                                if(loading) {
+                                    LoadingIcon()
+                                } else {
+                                    Icon(painter = painterResource(id = R.drawable.rotate_right), contentDescription = "")
+                                }
+                            },
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    loading = true
+                                    loginHuiXin(vm)
+                                    loading = false
+                                }
+                            }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(

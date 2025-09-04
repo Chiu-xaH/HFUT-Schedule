@@ -121,7 +121,7 @@ import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
-import com.hfut.schedule.logic.network.api.ZJGDBillService
+import com.hfut.schedule.logic.network.api.HuiXinService
 import com.hfut.schedule.logic.network.repo.Repository
 import com.hfut.schedule.logic.network.repo.launchRequestNone
 import com.hfut.schedule.logic.network.repo.launchRequestSimple
@@ -135,7 +135,7 @@ import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.ZJGDBillServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.HuiXinServiceCreator
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
@@ -163,6 +163,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.model.zjgd.HuiXinLoginResponse
 import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
@@ -170,6 +171,8 @@ import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.WxRepository
 import com.hfut.schedule.logic.network.repo.makeRequest
+import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.bsdiffs.model.Patch
@@ -200,7 +203,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private var jxglstuHTML = createHTMLService()
     private val oneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val one = OneServiceCreator.create(OneService::class.java)
-    private val huiXin = ZJGDBillServiceCreator.create(ZJGDBillService::class.java)
+    private val huiXin = HuiXinServiceCreator.create(HuiXinService::class.java)
     private val login = LoginServiceCreator.create(LoginService::class.java)
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
@@ -799,7 +802,6 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie).awaitResponse()
     }
 
-
     val loginCommunityData = StateHolder<String>()
     suspend fun loginCommunity(ticket : String) = launchRequestSimple(
         holder = loginCommunityData,
@@ -1213,11 +1215,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     } catch (e : Exception) { emptyMap() }
 
     suspend fun goToOne(cookie : String) = launchRequestNone {// 创建一个Call对象，用于发送异步请求
-        oneGoto.oneGoto(cookie).awaitResponse()
+        oneGoto.loginGoToOauth("BsHfutEduPortal", MyApplication.ONE_URL + "home/index",cookie).awaitResponse()
     }
 
     suspend fun goToHuiXin(cookie : String) = launchRequestNone {
-        oneGoto.gotoHuiXin(cookie).awaitResponse()
+        oneGoto.loginGoToOauth("Hfut2023Ydfwpt", MyApplication.HUI_XIN_URL + "berserker-auth/cas/oauth2url?oauth2url=${MyApplication.HUI_XIN_URL}berserker-base/redirect",cookie).awaitResponse()
     }
 
     val huiXinBillResult = StateHolder<BillBean>()
@@ -1267,6 +1269,25 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             throw Exception(json)
         }
     } catch (e : Exception) { throw  e }
+
+
+    val huiXinLoginResp = StateHolder<String>()
+    suspend fun huiXinSingleLogin(studentId : String,password: String) {
+        launchRequestSimple(
+            holder = huiXinLoginResp,
+            request = { huiXin.login(studentId = studentId, password = password).awaitResponse() },
+            transformSuccess = { _,json -> parseHuiXinLogin(json) }
+        )
+    }
+    private fun parseHuiXinLogin(json : String) : String = try {
+        val token = Gson().fromJson(json, HuiXinLoginResponse::class.java).token
+        saveString("auth",token)
+        showToast("一卡通登陆成功")
+        token
+    } catch (e : Exception) {
+        showToast("一卡通登陆失败 ${e.message}")
+        throw  e
+    }
 
     val cardPredictedResponse = StateHolder<ForecastAllBean>()
     suspend fun getCardPredicted(auth: String) = withContext(Dispatchers.IO) {
