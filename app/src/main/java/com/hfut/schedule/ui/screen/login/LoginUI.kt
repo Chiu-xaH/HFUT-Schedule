@@ -9,6 +9,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -30,9 +31,11 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -61,7 +64,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +76,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
@@ -88,6 +94,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -281,146 +288,17 @@ fun LoginScreen(
     val showTip2 = jxglstuStatus != null && jxglstuStatus!! >= 400
     var tab by remember { mutableIntStateOf(TAB_LOGIN) }
     val context = LocalContext.current
-
-    if(tab == TAB_SETTRINGS) {
-        HazeBottomSheet (
-            onDismissRequest = { tab = TAB_LOGIN },
-            showBottomSheet = true,
-            autoShape = false,
-            hazeState = hazeState
-        ) {
-            Column(
-                modifier = Modifier
-//                        .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-//                        .fillMaxSize()
-            ) {
-                HazeBottomSheetTopBar("登录选项", isPaddingStatusBar = false)
-//                    InnerPaddingHeight(innerPadding,true)
-                DividerTextExpandedWith("状态") {
-                    CustomCard(
-                        modifier = Modifier,
-                        color = cardNormalColor()
-//                            color = MaterialTheme.colorScheme.surface,
-                    ) {
-                        val status: Pair<Color?,String> = if(jxglstuStatus == null) {
-                            Pair(null,"正在检查与教务系统的连接状态")
-                        } else if(jxglstuStatus!! < 400) {
-                            Pair(null,"教务系统连接状态正常,可直接登录")
-                        } else if(jxglstuStatus!! in 500 until 600) {
-                            Pair(MaterialTheme.colorScheme.errorContainer,"教务系统拒绝响应,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后刷新教务")
-                        } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
-                            Pair(MaterialTheme.colorScheme.errorContainer,"教务系统封网,请换为校园网重新使用或打开外地访问以刷新教务")
-                        } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
-                            Pair(MaterialTheme.colorScheme.errorContainer,"网络连接失败,是否连接了网络?")
-                        } else {
-                            Pair(MaterialTheme.colorScheme.errorContainer,"未知错误")
-                        }
-                        TransplantListItem(
-                            headlineContent = { Text(status.second ) },
-                            modifier = Modifier.clickable {
-                                Starter.startWlanSettings(context)
-                            },
-                            leadingContent = {
-                                if(jxglstuStatus == null) {
-                                    LoadingIcon()
-                                } else {
-                                    BadgedBox(
-                                        badge = {
-                                            Badge()
-                                        },
-                                        content = {
-                                            Icon(painterResource(R.drawable.warning),null)
-                                        }
-                                    )
-                                }
-                            }
-                        )
-                    }
-                }
-                DividerTextExpandedWith("选项") {
-                    CustomCard(
-                        modifier = Modifier,
-                        color = cardNormalColor()
-//                            color = MaterialTheme.colorScheme.surface,
-                    ) {
-                        if(!webVpn) {
-                            TransplantListItem(
-                                supportingContent = { Text("打开开关后,将跳过教务系统,只对信息门户、智慧社区及慧新易校刷新登录,用于您离校且在封网的情况下需要刷新其他平台") },
-                                headlineContent = { Text("跳过教务系统") },
-                                modifier = Modifier.clickable {
-                                    scope.launch {
-                                        CasInHFUT.excludeJxglstu = !CasInHFUT.excludeJxglstu
-                                        refresh(vm)
-                                    }
-                                },
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.arrow_split),null)
-                                },
-                                trailingContent = {
-                                    Switch(checked = CasInHFUT.excludeJxglstu,onCheckedChange = { ch ->
-                                        scope.launch {
-                                            CasInHFUT.excludeJxglstu = !CasInHFUT.excludeJxglstu
-                                            refresh(vm)
-                                        }
-                                    })
-                                },
-                            )
-                            PaddingHorizontalDivider()
-                        }
-
-                        //
-                        if(showTip) {
-                            TransplantListItem(
-                                supportingContent = { Text("新生需先在网页教务系统或信息门户登录过(点击跳转网页),确认账号已可以使用,如您已登陆过可忽略") },
-                                headlineContent = { Text("新生提示") },
-                                leadingContent = {
-                                    BadgedBox(
-                                        badge = {
-                                            Badge()
-                                        },
-                                        content = {
-                                            Icon(painterResource(R.drawable.info), null)
-                                        }
-                                    )
-                                },
-                                modifier = Modifier.clickable {
-                                    Starter.startWebUrl(context,MyApplication.CAS_LOGIN_URL)
-                                },
-                            )
-                            PaddingHorizontalDivider()
-                        }
-                        TransplantListItem(
-                            headlineContent = { Text("外地访问(WebVpn)") },
-                            supportingContent = { Text("外地访问下暂时仅支持刷新教务系统,不受教务封网限制")},
-                            leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
-                            trailingContent = {
-                                Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
-                            },
-                            modifier = Modifier.clickable { webVpn = !webVpn },
-                        )
-                        PaddingHorizontalDivider()
-                        TransplantListItem(
-                            headlineContent = { Text("修改密码") },
-                            supportingContent = { Text("修改或重置CAS统一认证密码")},
-                            leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
-                            modifier = Modifier.clickable { Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
-                        )
-                    }
-                }
-                Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
-//                    InnerPaddingHeight(innerPadding,false)
-            }
-//            Scaffold(
-//                modifier = Modifier.fillMaxSize(),
-//                containerColor = Color.Transparent,
-//                topBar = {
 //
-//                },) { innerPadding ->
+//    if(tab == TAB_SETTRINGS) {
+//        HazeBottomSheet (
+//            onDismissRequest = { tab = TAB_LOGIN },
+//            showBottomSheet = true,
+//            autoShape = false,
+//            hazeState = hazeState
+//        ) {
 //
-//            }
-        }
-    }
+//        }
+//    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -446,27 +324,35 @@ fun LoginScreen(
                         ) {
                             Icon(painterResource(R.drawable.login),null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(25.5.dp))
                         }
-                        IconButton(
-                            onClick = { tab = TAB_SETTRINGS },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                containerColor = if(tab == TAB_SETTRINGS) {
-                                    MaterialTheme.colorScheme.secondaryContainer
-                                } else {
-                                    Color. Unspecified
+                        val hasNotice = showTip || showTip2
+                        Box() {
+                            if(hasNotice) {
+                                Badge(
+//                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.zIndex(1f).align(Alignment.TopEnd).padding(1.5.dp)
+                                ) {
+                                    val l = listOf(showTip,showTip2)
+                                    Text(l.filter { it==true }.size.toString())
                                 }
-                            ),
-                        ) {
-                            BadgedBox(
-                                badge = {
-                                    if(showTip || showTip2) {
-                                        Badge()
-                                    }
-                                },
-                                content = {
-                                    Icon(painterResource(R.drawable.settings), null,tint = MaterialTheme.colorScheme.primary)
-                                }
-                            )
+                            }
+                            IconButton(
+                                onClick = { tab = TAB_SETTRINGS },
+                                colors = IconButtonDefaults.iconButtonColors(
+                                    containerColor = if(tab == TAB_SETTRINGS) {
+                                        MaterialTheme.colorScheme.secondaryContainer
+                                    } else {
+                                        Color. Unspecified
+                                    },
+                                ),
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.settings),
+                                    null,
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
+
                         IconButton(onClick = {
                             Starter.startFix(context)
                         }) {
@@ -484,7 +370,23 @@ fun LoginScreen(
                 modifier = Modifier.topBarBlur(hazeState, MaterialTheme.colorScheme.surfaceContainer )
             )
         },
-        bottomBar = {
+        bottomBar = bottom@ {
+            if(tab == TAB_SETTRINGS) {
+                return@bottom
+            }
+
+            val text =
+
+            if(showTip && showTip2) {
+                "两条重要提示"
+            } else if(showTip) {
+                "新生登录前须知"
+            } else if(showTip2) {
+                "教务系统无法联通"
+            } else {
+                "选项"
+            }
+
             Column (modifier = Modifier.bottomBarBlur(hazeState, color = MaterialTheme.colorScheme.surfaceContainer)) {
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 LargeButton(
@@ -494,15 +396,9 @@ fun LoginScreen(
                             else -> TAB_LOGIN
                         }
                     },
-                    text = when(tab) {
-                        TAB_LOGIN -> "选项" + (if(showTip || showTip2) " (发现重要提示)" else "")
-                        else -> "主界面"
-                    },
+                    text = text,
                     modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
-                    icon = when(tab) {
-                        TAB_LOGIN -> R.drawable.settings
-                        else -> R.drawable.login
-                    },
+                    icon = if(!showTip && !showTip2) R.drawable.settings else R.drawable.notifications,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
@@ -512,21 +408,183 @@ fun LoginScreen(
         Box (modifier = Modifier
             .fillMaxSize()
             .hazeSource(hazeState)) {
-            Column {
-                TwoTextField(vm,webVpn,innerPadding,username,sharedTransitionScope,animatedContentScope) {
-                    username = it
+            AnimatedVisibility(
+                visible = tab == TAB_LOGIN,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    TwoTextField(vm,webVpn,innerPadding,username) {
+                        username = it
+                    }
                 }
             }
-//            when(tab) {
-//                TAB_LOGIN -> {
-//
-//                }
-//                TAB_SETTRINGS -> {
-//                    Column (modifier = Modifier.verticalScroll(rememberScrollState())) {
-//
-//                    }
-//                }
-//            }
+            AnimatedVisibility(
+                visible = tab == TAB_SETTRINGS,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Column (modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    InnerPaddingHeight(innerPadding,true)
+                    DividerTextExpandedWith("状态") {
+                        CustomCard(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surface,
+                        ) {
+                            val status: Pair<Color?,String> = if(jxglstuStatus == null) {
+                                Pair(null,"正在检查")
+                            } else if(jxglstuStatus!! < 400) {
+                                Pair(null,"状态正常,可直接登录")
+                            } else if(jxglstuStatus!! in 500 until 600) {
+                                Pair(MaterialTheme.colorScheme.errorContainer,"教务系统拒绝响应,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后,或打开跳过教务系统")
+                            } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
+                                Pair(MaterialTheme.colorScheme.errorContainer,"教务系统封网,请换为校园网重新使用或打开外地访问")
+                            } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
+                                Pair(MaterialTheme.colorScheme.errorContainer,"网络连接失败,是否连接了网络?")
+                            } else {
+                                Pair(MaterialTheme.colorScheme.errorContainer,"未知错误")
+                            }
+                            TransplantListItem(
+                                supportingContent = { Text(status.second ) },
+                                modifier = Modifier.clickable {
+                                    Starter.startWlanSettings(context)
+                                },
+                                headlineContent = {
+                                    Text("教务系统联通状态")
+                                },
+                                leadingContent = {
+                                    if(jxglstuStatus == null) {
+                                        LoadingIcon()
+                                    } else {
+                                        BadgedBox(
+                                            badge = {
+                                                if(jxglstuStatus!! >= 400) {
+                                                    Badge()
+                                                }
+                                            },
+                                            content = {
+                                                Icon(painterResource(R.drawable.net),null)
+                                            }
+                                        )
+                                    }
+                                }
+                            )
+                            if(showTip) {
+                                PaddingHorizontalDivider()
+                                TransplantListItem(
+                                    supportingContent = { Text("新生需先在网页教务系统或信息门户登录过(点击跳转网页),确认账号已可以使用,如您已登陆过可忽略") },
+                                    headlineContent = { Text("致新生") },
+                                    leadingContent = {
+                                        BadgedBox(
+                                            badge = {
+                                                Badge()
+                                            },
+                                            content = {
+                                                Icon(painterResource(R.drawable.check_circle), null)
+                                            }
+                                        )
+                                    },
+                                    modifier = Modifier.clickable {
+                                        Starter.startWebUrl(context,MyApplication.CAS_LOGIN_URL)
+                                    },
+                                )
+                            }
+                        }
+                    }
+                    DividerTextExpandedWith("选项") {
+                        CustomCard(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surface,
+                        ) {
+                            if(!webVpn) {
+                                TransplantListItem(
+                                    supportingContent = { Text("打开开关后,将跳过教务系统而登录,用于离校且教务封网的情况下需刷新其他平台") },
+                                    headlineContent = { Text("跳过教务系统") },
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            CasInHFUT.excludeJxglstu = !CasInHFUT.excludeJxglstu
+                                            refresh(vm)
+                                        }
+                                    },
+                                    leadingContent = {
+                                        Icon(painterResource(R.drawable.arrow_split),null)
+                                    },
+                                    trailingContent = {
+                                        Switch(checked = CasInHFUT.excludeJxglstu,onCheckedChange = { ch ->
+                                            scope.launch {
+                                                CasInHFUT.excludeJxglstu = !CasInHFUT.excludeJxglstu
+                                                refresh(vm)
+                                            }
+                                        })
+                                    },
+                                )
+                                PaddingHorizontalDivider()
+                            }
+
+                            //
+                            TransplantListItem(
+                                headlineContent = { Text("外地访问(WebVpn)") },
+                                supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制")},
+                                leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
+                                trailingContent = {
+                                    Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
+                                },
+                                modifier = Modifier.clickable { webVpn = !webVpn },
+                            )
+                            PaddingHorizontalDivider()
+                            TransplantListItem(
+                                headlineContent = { Text("修改密码") },
+                                supportingContent = { Text("修改或重置CAS统一认证密码")},
+                                leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
+                                modifier = Modifier.clickable { Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
+                            )
+                        }
+                    }
+                    DividerTextExpandedWith("范围") {
+                        CustomCard(
+                            modifier = Modifier,
+                            color = MaterialTheme.colorScheme.surface,
+                        ) {
+                            Text("当前登录将刷新如下平台", modifier = Modifier.padding(start = APP_HORIZONTAL_DP, top = APP_HORIZONTAL_DP-CARD_NORMAL_DP))
+                            val list = listOf("教务系统","信息门户","智慧社区","学工系统","慧新易校","WebVpn")
+                            LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP/2)) {
+                                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                items(list.size) { index ->
+                                    val item = list[index]
+                                    val enabled =
+                                        if(webVpn) {
+                                            index == 0 || index == 5
+                                        } else if(CasInHFUT.excludeJxglstu) {
+                                            index != 0 && index != 5
+                                        } else {
+                                            index != 5
+                                        }
+                                    AssistChip(
+                                        onClick = {},
+                                        enabled = enabled,
+                                        leadingIcon = {
+                                            Icon(
+                                                painterResource(
+                                                    if(enabled) R.drawable.check
+                                                    else R.drawable.close
+                                                ),
+                                                null,
+                                            )
+                                        },
+                                        label = { Text(item) }
+                                    )
+                                    if(index != list.size-1) {
+                                        Spacer(Modifier.width(CARD_NORMAL_DP*2))
+                                    }
+                                }
+                                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            }
+                        }
+                    }
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
+                    InnerPaddingHeight(innerPadding,false)
+                }
+            }
         }
     }
 }
@@ -548,8 +606,6 @@ private fun TwoTextField(
     webVpn: Boolean,
     innerPadding : PaddingValues,
     username : String,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     onUsername : (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -588,188 +644,187 @@ private fun TwoTextField(
     }
     val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .verticalScroll(rememberScrollState())) {
+    InnerPaddingHeight(innerPadding,true)
 
-        InnerPaddingHeight(innerPadding,true)
+    CustomCard(
+        color = MaterialTheme.colorScheme.surface.copy(1f)
+    ) {
+        Column (modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
 
-        CustomCard(
-            color = MaterialTheme.colorScheme.surface.copy(1f)
-        ) {
-            Column (modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
-
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = APP_HORIZONTAL_DP),
-                    value = username,
-                    onValueChange = onUsername,
-                    label = { Text("学号") },
-                    singleLine = true,
-                    // placeholder = { Text("请输入正确格式")},
-                    shape = MaterialTheme.shapes.medium,
-                    colors = textFiledTransplant(),
-                    leadingIcon = {
-                        Icon(
-                            painterResource(R.drawable.person),
-                            contentDescription = "Localized description"
-                        )
-                    },
-
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            onUsername("")
-                            inputAES = ""
-                        }) {
-                            Icon(
-                                painter = painterResource(R.drawable.close),
-                                contentDescription = "description"
-                            )
-                        }
-                    }
-                )
-
-                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-                TextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = APP_HORIZONTAL_DP),
-                    value = inputAES,
-                    onValueChange = { inputAES = it },
-                    label = { Text("密码(信息门户)") },
-                    singleLine = true,
-                    colors = textFiledTransplant(),
-                    visualTransformation = if (hidden) PasswordVisualTransformation()
-                    else VisualTransformation.None,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    leadingIcon = {
-                        Icon(
-                            painterResource(R.drawable.key),
-                            contentDescription = "Localized description"
-                        )
-                    },
-                    trailingIcon = {
-                        IconButton(onClick = { hidden = !hidden }) {
-                            val icon =
-                                if (hidden) painterResource(R.drawable.visibility_off)
-                                else painterResource(R.drawable.visibility)
-                            val description =
-                                if (hidden) "展示密码"
-                                else "隐藏密码"
-                            Icon(painter = icon, contentDescription = description)
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium
-                )
-                CommonNetworkScreen(
-                    jSession,
-                    isFullScreen = false,
-                    onReload = { },
-                    loadingText = "正在检查是否需要图片验证码"
-                ) {
-                    val useCaptcha = (jSession as UiState.Success).data.needCaptcha
-                    if (useCaptcha) {
-                        Column {
-                            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-                            RowHorizontal {
-                                TextField(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .padding(horizontal = APP_HORIZONTAL_DP),
-                                    value = inputCode,
-                                    onValueChange = { inputCode = it },
-                                    label = { Text("验证码(不区分大小写)") },
-                                    singleLine = true,
-                                    shape = MaterialTheme.shapes.medium,
-                                    colors = textFiledTransplant(),
-                                    leadingIcon = {
-                                        Icon(
-                                            painterResource(R.drawable.password),
-                                            contentDescription = "Localized description"
-                                        )
-                                    },
-                                    trailingIcon = {
-                                        Box(modifier = Modifier.padding(5.dp)) {
-                                            ImageCodeUI(webVpn, vm,) {
-                                                inputCode = it
-                                            }
-                                        }
-                                    },
-                                    supportingText = if (!prefs.getBoolean("SWITCH_ML", false)) {
-                                        {
-                                            Text(
-                                                "点击下载模型文件以启用自动填充",
-                                                modifier = Modifier.clickable {
-                                                    showBottomSheet = true
-                                                })
-                                        }
-                                    } else null
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-
-
-        if(loading) {
-            LoadingUI()
-        } else {
-            Row(
+            TextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP),
-                horizontalArrangement = Arrangement.Center
+                value = username,
+                onValueChange = onUsername,
+                label = { Text("学号") },
+                singleLine = true,
+                // placeholder = { Text("请输入正确格式")},
+                shape = MaterialTheme.shapes.medium,
+                colors = textFiledTransplant(),
+                leadingIcon = {
+                    Icon(
+                        painterResource(R.drawable.person),
+                        contentDescription = "Localized description"
+                    )
+                },
+
+                trailingIcon = {
+                    IconButton(onClick = {
+                        onUsername("")
+                        inputAES = ""
+                    }) {
+                        Icon(
+                            painter = painterResource(R.drawable.close),
+                            contentDescription = "description"
+                        )
+                    }
+                }
+            )
+
+            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP),
+                value = inputAES,
+                onValueChange = { inputAES = it },
+                label = { Text("密码(信息门户)") },
+                singleLine = true,
+                colors = textFiledTransplant(),
+                visualTransformation = if (hidden) PasswordVisualTransformation()
+                else VisualTransformation.None,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                leadingIcon = {
+                    Icon(
+                        painterResource(R.drawable.key),
+                        contentDescription = "Localized description"
+                    )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { hidden = !hidden }) {
+                        val icon =
+                            if (hidden) painterResource(R.drawable.visibility_off)
+                            else painterResource(R.drawable.visibility)
+                        val description =
+                            if (hidden) "展示密码"
+                            else "隐藏密码"
+                        Icon(painter = icon, contentDescription = description)
+                    }
+                },
+                shape = MaterialTheme.shapes.medium
+            )
+            CommonNetworkScreen(
+                jSession,
+                isFullScreen = false,
+                onReload = { },
+                loadingText = "正在检查是否需要图片验证码"
             ) {
-                if(isAnonymity()) {
-                    LargeButton(
-                        onClick = {
-                            val cookie = prefs.getString("LOGIN_FLAVORING", "")
-                            if (cookie != null) {
-                                loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it},scope)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        text = "登录",
-                        icon = R.drawable.login
-                    )
-                    Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
-                    LargeButton(
-                        onClick = {
-                            scope.launch {
-                                DataStoreManager.saveFastStart(true)
-                                Starter.goToMain(context)
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(.5f),
-                        text = "游客",
-                        icon = R.drawable.partner_exchange,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer
-                    )
-                } else {
-                    Button(
-                        onClick = {
-                            val cookie = prefs.getString("LOGIN_FLAVORING", "")
-                            if (cookie != null) {
-                                loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it}, scope)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = MaterialTheme.shapes.medium
-                    ) {
-                        Text("登录")
+                val useCaptcha = (jSession as UiState.Success).data.needCaptcha
+                if (useCaptcha) {
+                    Column {
+                        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+                        RowHorizontal {
+                            TextField(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(horizontal = APP_HORIZONTAL_DP),
+                                value = inputCode,
+                                onValueChange = { inputCode = it },
+                                label = { Text("验证码(不区分大小写)") },
+                                singleLine = true,
+                                shape = MaterialTheme.shapes.medium,
+                                colors = textFiledTransplant(),
+                                leadingIcon = {
+                                    Icon(
+                                        painterResource(R.drawable.password),
+                                        contentDescription = "Localized description"
+                                    )
+                                },
+                                trailingIcon = {
+                                    Box(modifier = Modifier.padding(5.dp)) {
+                                        ImageCodeUI(webVpn, vm,) {
+                                            inputCode = it
+                                        }
+                                    }
+                                },
+                                supportingText = if (!prefs.getBoolean("SWITCH_ML", false)) {
+                                    {
+                                        Text(
+                                            "点击下载模型文件以启用自动填充",
+                                            modifier = Modifier.clickable {
+                                                showBottomSheet = true
+                                            })
+                                    }
+                                } else null
+                            )
+                        }
                     }
                 }
             }
         }
-        InnerPaddingHeight(innerPadding,false)
     }
+
+    Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+
+
+    if(loading) {
+        LoadingUI()
+    } else {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = APP_HORIZONTAL_DP),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            if(isAnonymity()) {
+                LargeButton(
+                    onClick = {
+                        val cookie = prefs.getString("LOGIN_FLAVORING", "")
+                        if (cookie != null) {
+                            loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it},scope)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().weight(.5f),
+                    text = "登录",
+                    icon = R.drawable.login
+                )
+                Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
+                LargeButton(
+                    onClick = {
+                        scope.launch {
+                            DataStoreManager.saveFastStart(true)
+                            Starter.goToMain(context)
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    text = "游客",
+                    icon = R.drawable.partner_exchange,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                )
+            } else {
+                Button(
+                    onClick = {
+                        val cookie = prefs.getString("LOGIN_FLAVORING", "")
+                        if (cookie != null) {
+                            loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it}, scope)
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(
+                        "登录",
+                        modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 1),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+            }
+        }
+    }
+    InnerPaddingHeight(innerPadding,false)
 }
 

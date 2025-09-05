@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -62,7 +63,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
@@ -172,6 +172,7 @@ suspend fun loginHuiXin(vm: NetWorkViewModel) {
     vm.huiXinLoginResp.clear()
     vm.huiXinSingleLogin(username,password)
 }
+
 
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
@@ -576,7 +577,7 @@ fun JxglstuCourseTableUI(
                    }
                    val cookies =  "$casCookies;$tgcCookie"
                    if(webVpn && !CasInHFUT.excludeJxglstu) {
-                       showToast("外地访问下不支持其他平台的登录")
+                       showToast("外地访问下仅支持刷新教务系统")
                        return@async
                    }
 
@@ -631,6 +632,24 @@ fun JxglstuCourseTableUI(
                                loginOne(cookies,vm)
                            }
                        }
+                   }
+                   launch stu@ {
+                       vm.goToStu(cookies)
+//                       val auth = prefs.getString("stu", "")
+//                       if(auth == null || auth.isEmpty()) {
+//                           loginStu(cookies,vm)
+//                       } else {
+//                           // 检测学工系统可用性
+//                           vm.checkStuLogin(auth)
+//                           val result =  (vm.checkStuLoginResp.state.value as? UiState.Success)?.data
+//                           if(result == true) {
+////                               showToast("无需刷新学工平台")
+//                               return@stu
+//                           } else {
+//                               // 登录
+//                               loginStu(cookies,vm)
+//                           }
+//                       }
                    }
                }
                withTimeoutOrNull(10000) { // 超时时间 10s

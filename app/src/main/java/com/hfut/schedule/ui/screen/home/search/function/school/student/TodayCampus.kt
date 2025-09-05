@@ -181,6 +181,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
             vm.getStuApps(it)
         }
     }
+    val cookie = remember { prefs.getString("stu","") }
     val context = LocalContext.current
     val todayCampusTip by DataStoreManager.showTodayCampusTip.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
@@ -206,7 +207,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                     "本使用源由开发者从今日校园APP整理的功能，若有新增的功能请联系开发者"
                                 }
                                 TAB_LEFT -> {
-                                    "本使用源自动托给Community源动态获取，但是功能不是特别全..."
+                                    "本使用源自动托给智慧社区源动态获取，但是功能不是特别全..."
                                 }
                                 else -> ""
                             }
@@ -332,7 +333,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     url?.let {
-                                                        Starter.startWebUrl(context,it)
+                                                        Starter.startWebView(context,it, title = name, cookie =cookie)
                                                     }
                                                 }
                                             )
@@ -352,160 +353,3 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun TodayCampusUI(vm : NetWorkViewModel) {
-
-    val stuCookie by DataStoreManager.stuCookies.collectAsState(initial = null)
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    var r by remember { mutableStateOf("") }
-
-
-
-    fun refresh() {
-        loading = true
-        CoroutineScope(Job()).launch {
-            async { stuCookie?.let { vm.getStuInfo(it) } }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.stuInfoResponse.observeForever { result ->
-                        if (result != null) {
-                            countFunc++
-                            r = result
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-    if(refresh && countFunc == 0) {
-        refresh()
-    }
-    if(loading) {
-        LoadingUI()
-    } else {
-        Text(r)
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginStu(vm : NetWorkViewModel) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = Color.Transparent,
-        topBar = {
-            BottomSheetTopBar("学工系统登录")
-        },
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            countFunc = 0
-            LoginStuUI(vm)
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginStuUI(vm : NetWorkViewModel) {
-    val ONE = CasInHFUT.casCookies
-    val TGC = prefs.getString("TGC", "")
-    val cookies = "$ONE;$TGC"
-
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("学工系统")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    countFunc = 0
-                    TodayCampusUI(vm)
-                }
-            }
-        }
-    }
-
-
-    LaunchedEffect(Unit) {
-        if(loading && countFunc == 0) {
-            async { countFunc++ }.await()
-            async { vm.loginToStu(cookies) }.await()
-            launch {
-                Handler(Looper.getMainLooper()).post{
-                    vm.goToStuResponse.observeForever { result ->
-                        if (result != null) {
-                            if(result.contains("ticket")) {
-                                // 提取ticket
-                                vm.stuTicket.value = result.substringAfter("ticket=")
-                            }
-                        }
-                    }
-                }
-            }
-            launch {
-                Handler(Looper.getMainLooper()).post{
-                    vm.stuTicket.observeForever { result ->
-                        if (result != null) {
-                            CoroutineScope(Job()).launch { vm.loginRefreshStu(ticket = result, cookie = null) }
-                        }
-                    }
-                }
-            }
-            launch {
-                Handler(Looper.getMainLooper()).post{
-                    vm.loginStuResponse.observeForever { result ->
-                        if (result != null) {
-                            val strs = result.split(";")
-                            strs.forEach { item->
-                                if(item.contains("_WEU")) {
-                                    CoroutineScope(Job()).launch {
-                                        async { DataStoreManager.saveStuCookie(item) }.await()
-                                        async { loading = false }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    if(loading) {
-        LoadingUI(text = "正在登录中 请勿关闭")
-    } else {
-        ColumnVertical {
-            StatusUI2(Icons.Filled.Check, text = "登录成功")
-            Button(
-                onClick = {
-                    showBottomSheet = true
-                }
-            ) {
-                Text("进入")
-            }
-        }
-    }
-}

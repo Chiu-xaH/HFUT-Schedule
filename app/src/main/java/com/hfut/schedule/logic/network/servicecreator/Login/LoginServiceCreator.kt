@@ -11,6 +11,7 @@ object LoginServiceCreator {
 
     val Client = OkHttpClient.Builder()
         .followRedirects(false)
+        .followSslRedirects(false)
         .addInterceptor(RedirectInterceptor())
         .build()
 

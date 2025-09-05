@@ -40,7 +40,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 215
-        versionName "4.17.6.2 Preview"
+        versionName "4.17.7 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -211,8 +211,6 @@ dependencies {
     // 取色
     implementation(libs.material.kolor)
     implementation(libs.androidx.palette)
-    // 3D卡片
-//    implementation(libs.composelevitation)
     // 拖拽
     implementation(libs.reorderable)
     // 权限

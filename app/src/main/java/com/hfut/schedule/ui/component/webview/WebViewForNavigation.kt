@@ -5,7 +5,10 @@ import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebView.enableSlowWholeDocumentDraw
+import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContentScope
@@ -492,7 +495,10 @@ fun WebViewScreenForNavigation(
                             settings.domStorageEnabled = true
                             settings.builtInZoomControls = true
                             settings.displayZoomControls = false
-
+                            settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                            enableSlowWholeDocumentDraw()
+                            setWebContentsDebuggingEnabled(true)
+                            settings.safeBrowsingEnabled = false
                             // 深色模式
                             if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
                                 // Android 13+

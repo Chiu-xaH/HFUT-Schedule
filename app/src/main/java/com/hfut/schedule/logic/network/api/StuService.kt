@@ -12,12 +12,10 @@ import retrofit2.http.Query
 // 学工系统 今日校园
 interface StuService {
     // 刷新cookie 或登录用
-    @GET("xsfw/sys/swmzhcptybbapp/*default/index.do")
-    fun login(
-        @Header("Cookie") cookie : String?,
-        @Query("ticket") ticket : String?,
-//        @Query("wxType") wxType : Int = 1,
-    ) : Call<ResponseBody>
+    @GET("xsfw/sys/jbxxapp/*default/index.do")
+    fun login(@Query("ticket") ticket : String?, ) : Call<ResponseBody>
+    @POST("xsfw/sys/xgutilapp/userinfo/getConfigUserInfo.do")
+    fun checkLogin(@Header("Cookie") cookie : String) : Call<ResponseBody>
     // 获取综测
     // Urlencoded data={"CPXN":"2023","CPXQ":"3"}
     @FormUrlEncoded
@@ -26,7 +24,7 @@ interface StuService {
     // 学生信息
     // Urlencoded data={}
     @FormUrlEncoded
-    @POST("/xsfw/sys/swmjbxxapp/StudentBasicInfo/queryStudentBasicInfo.do")
+    @POST("xsfw/sys/swmjbxxapp/StudentBasicInfo/queryStudentBasicInfo.do")
     fun getStudentInfo(@Header("Cookie") cookie : String,@FieldMap data: Map<String, String> = mapOf()) : Call<ResponseBody>
 }
 

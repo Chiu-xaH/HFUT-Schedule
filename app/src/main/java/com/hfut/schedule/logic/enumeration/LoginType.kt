@@ -2,11 +2,13 @@ package com.hfut.schedule.logic.enumeration
 
 import com.hfut.schedule.application.MyApplication
 
-// 使用CAS统一认证登陆
+// 使用CAS统一认证登陆 还有一种OAuth2登录，慧新易校用
 enum class LoginType(val service : String?,val description: String) {
     JXGLSTU(MyApplication.JXGLSTU_URL + "neusoft-sso/login","教务系统"),
     ONE(null,"信息门户"),
-    STU(MyApplication.STU_URL + "xsfw/sys/swmzhcptybbapp/*default/index.do","学工系统"),
+    // xsfw/sys/xggzptapp/index.do xsfw/sys/xggzptapp/index.do
+    //
+    STU(MyApplication.STU_URL + "xsfw/sys/xgutilapp/userinfo/getConfigUserInfo.do","学工系统"),
     COMMUNITY(MyApplication.COMMUNITY_URL,"智慧社区"),
     HUI_XIN(MyApplication.HUI_XIN_URL + "/plat","慧新易校"),
     LIBRARY(MyApplication.NEW_LIBRARY_URL,"图书馆"),

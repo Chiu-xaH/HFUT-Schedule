@@ -1,9 +1,7 @@
 # 特性对比
 
 ## 层级实时模糊
-![1](/src/img/blur.jpg)
 ![2](/src/img/blur2.jpg)
-![3](/src/img/blur3.jpg)
 
 ## 动态取色
 ![1](/src/img/dynamic_color.jpg)

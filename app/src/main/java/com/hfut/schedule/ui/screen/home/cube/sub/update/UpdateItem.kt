@@ -54,6 +54,8 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 更新完成及用户协议的进入动画")
             UpdateItems("新增 慧新易校一键单独刷新登陆状态","位于 查询中心-一卡通-卡包")
+            UpdateItems("新增 教务系统单独刷新登陆状态")
+            UpdateItems("新增 学工平台的登录")
             UpdateItems("新增 支持单独刷新信息门户及智慧社区平台","又将一部分陈年代码重写了")
             UpdateItems("新增 CAS扫码的快捷方式(控制中心磁贴与长按图标菜单)")
             UpdateItems("重构 登录界面","将功能区折叠起来，以规整界面")

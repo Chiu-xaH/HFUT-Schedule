@@ -1,11 +1,15 @@
 package com.hfut.schedule.ui.component.webview
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
 import android.webkit.WebView
+import android.webkit.WebView.enableSlowWholeDocumentDraw
+import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
@@ -283,7 +287,11 @@ fun WebViewScreenForActivity(
             }) { Icon(Icons.Default.Close, contentDescription = "") }
         }
 
-        IconButton(onClick = { webView?.reload() }) { Icon(
+        IconButton(onClick = {
+            webView?.clearCache(true)
+            webView?.clearHistory()
+            webView?.reload()
+        }) { Icon(
             painterResource(id = R.drawable.rotate_right), contentDescription = "") }
 
         IconButton(onClick = {
@@ -432,6 +440,11 @@ fun WebViewScreenForActivity(
                         settings.domStorageEnabled = true
                         settings.builtInZoomControls = true
                         settings.displayZoomControls = false
+//                        settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+                        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        enableSlowWholeDocumentDraw()
+                        setWebContentsDebuggingEnabled(true)
+                        settings.safeBrowsingEnabled = false
 
                         // 深色模式
                         if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
@@ -459,6 +472,7 @@ fun WebViewScreenForActivity(
                         // **异步设置 Cookie，并确保生效后再加载 URL**
                         cookies?.let {
                             cookieManager.setCookie(url, it) {
+                                Log.d("cookie断点","2")
                                 cookieManager.flush()
                                 post {
                                     loadUrl(url)

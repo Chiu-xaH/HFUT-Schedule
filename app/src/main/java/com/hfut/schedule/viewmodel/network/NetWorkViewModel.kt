@@ -172,7 +172,6 @@ import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.WxRepository
 import com.hfut.schedule.logic.network.repo.makeRequest
 import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.bsdiffs.model.Patch
@@ -801,6 +800,20 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun gotoCommunity(cookie : String) = launchRequestNone {
         login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie).awaitResponse()
     }
+
+
+
+    val checkStuLoginResp = StateHolder<Boolean>()
+    suspend fun checkStuLogin(cookie : String) = launchRequestSimple(
+        request = { stu.checkLogin(cookie).awaitResponse() },
+        holder = checkStuLoginResp,
+        transformSuccess = { _,json -> parseCheckStuLogin(json) }
+    )
+    private fun parseCheckStuLogin(json : String) = try {
+        val sId = getPersonInfo().studentId ?: throw Exception("无学号")
+        json.contains(sId)
+    } catch (e : Exception) { throw e }
+
 
     val loginCommunityData = StateHolder<String>()
     suspend fun loginCommunity(ticket : String) = launchRequestSimple(
@@ -1977,41 +1990,11 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getWeather(campus: CampusRegion) = QWeatherRepository.getWeather(campus,qWeatherResult)
 // 学工系统/今日校园 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    val goToStuResponse = MutableLiveData<String?>()
-    val stuTicket = MutableLiveData<String?>(null)
-    fun loginToStu(cookie : String) {
-        val call = login.loginGoTo(service = LoginType.STU.service, cookie = cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                val statusCode = response.code()
-                if(statusCode == StatusCode.REDIRECT.code) {
-                    goToStuResponse.value = response.headers()["Location"]
-                }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    suspend fun goToStu(cookie : String) = launchRequestNone {
+        login.loginGoTo(service = LoginType.STU.service, cookie = cookie).awaitResponse()
     }
 
-    val loginStuResponse = MutableLiveData<String?>()
-    fun loginRefreshStu(ticket : String?,cookie: String?) {
-        val call = stu.login(cookie,ticket)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if(response.isSuccessful) {
-                    loginStuResponse.value = response.headers()["Set-Cookie"]
-                }
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
-    val stuInfoResponse = MutableLiveData<String?>()
-    fun getStuInfo(cookie: String) = makeRequest(
-        call = stu.getStudentInfo(cookie),
-        liveData = stuInfoResponse
-    )
+//    fun getStuInfo(cookie: String) = stu.getStudentInfo(cookie)
 // 宣城校园网 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     val loginSchoolNetResponse = StateHolder<Boolean>()
