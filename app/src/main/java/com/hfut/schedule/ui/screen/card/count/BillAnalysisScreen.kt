@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.screen.card.bill.TodayCount
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.align.CenterScreen
 import kotlinx.coroutines.launch
 
 private const val TAB_ALL = 0
@@ -60,43 +61,44 @@ private const val TAB_TERM = 3
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
-
 @Composable
-fun CardHome(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : PagerState) {
-    val uiState by vm.huiXinBillResult.state.collectAsState()
+fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : PagerState) =
     Column {
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 when(page) {
-                    TAB_DAY -> {
-                        LazyColumn() {
-                            item { InnerPaddingHeight(innerPadding,true) }
-                            if(uiState is UiState.Success) {
-                                val list = (uiState as UiState.Success).data.records
-                                if(list.isEmpty()) item { EmptyUI() }
-                                else { items(list.size) { item -> TodayCount(list[item]) } }
-                            }
-                            item { InnerPaddingHeight(innerPadding,false) }
-                        }
-                    }
-                    TAB_MONTH -> {
-//                        MonthBillUI(vm,innerPadding)
-                        MonthBillNewScreen(vm,innerPadding)
-                    }
-                    TAB_TERM -> {
-                        YearBillNewScreen(vm,innerPadding)
-                    }
-                    TAB_ALL -> {
-                        PredictedScreen(vm,innerPadding,pagerState)
-                    }
+                    TAB_DAY -> TodayBillScreen(vm,innerPadding)
+                    TAB_MONTH -> MonthBillNewScreen(vm,innerPadding)
+                    TAB_TERM -> YearBillNewScreen(vm,innerPadding)
+                    TAB_ALL -> PredictedScreen(vm,innerPadding,pagerState)
                 }
+            }
+        }
+    }
+
+@Composable
+private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
+    val uiState by vm.huiXinBillResult.state.collectAsState()
+    CommonNetworkScreen(uiState, onReload = null) {
+        val list = (uiState as UiState.Success).data.records
+        if(list.isEmpty()) {
+            CenterScreen {
+                EmptyUI()
+            }
+        } else {
+            LazyColumn() {
+                item { InnerPaddingHeight(innerPadding,true) }
+                items(list.size) { item ->
+                    TodayCount(list[item])
+                }
+                item { InnerPaddingHeight(innerPadding,false) }
             }
         }
     }
 }
 
 @Composable
-fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
+private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
     val uiState by vm.cardPredictedResponse.state.collectAsState()
 
     var refreshNetwork : suspend () -> Unit = rN@ {
@@ -113,7 +115,7 @@ fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val data = (uiState as UiState.Success).data
         val day = data.day
-        val dayList = day.statisticalData.reversed()
+        val dayList = day.analyzeData.statisticalData.toList()
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
             modifier = Modifier.padding(11.dp),
@@ -132,25 +134,24 @@ fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.padding(14.dp,6.dp)){
                         drawLineChart(
-                            dayList.reversed().map { BillMonth(it.date,it.amount) }
+                            dayList.reversed().map { BillMonth(it.first,it.second) }
                         )
                     }
                 }
             }
-            items(dayList.size, key = { dayList[it].date }) { index ->
-                with(dayList[index]) {
-                    SmallCard (
-                        modifier = Modifier.padding(CARD_NORMAL_DP),
-                    ){
-                        TransplantListItem(
-                            headlineContent = {
-                                Text("￥${amount}")
-                            },
-                            overlineContent = {
-                                Text(date)
-                            },
-                        )
-                    }
+            items(dayList.size, key = { it }) { index ->
+                val item = dayList[index]
+                SmallCard (
+                    modifier = Modifier.padding(CARD_NORMAL_DP),
+                ){
+                    TransplantListItem(
+                        headlineContent = {
+                            Text("￥${formatDecimal(item.second,2)}")
+                        },
+                        overlineContent = {
+                            Text(item.first)
+                        },
+                    )
                 }
             }
             items(2) {
@@ -161,7 +162,7 @@ fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
 }
 
 @Composable
-fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
+private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
     val uiState by vm.cardPredictedResponse.state.collectAsState()
 
     var refreshNetwork : suspend () -> Unit = rN@ {
@@ -178,7 +179,7 @@ fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val data = (uiState as UiState.Success).data
         val month = data.month
-        val monthList = month.statisticalData
+        val monthList = month.analyzeData.statisticalData.toList()
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -198,25 +199,24 @@ fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(modifier = Modifier.padding(14.dp,6.dp)){
                         drawLineChart(
-                            monthList.reversed().map { BillMonth(it.date,it.amount) }
+                            monthList.reversed().map { BillMonth(it.first,it.second) }
                         )
                     }
                 }
             }
-            items(monthList.size, key = { monthList[it].date }) { index ->
-                with(monthList[index]) {
-                    SmallCard(
-                        modifier = Modifier.padding(CARD_NORMAL_DP),
-                    ) {
-                        TransplantListItem(
-                            headlineContent = {
-                                Text("￥${amount}")
-                            },
-                            overlineContent = {
-                                Text(date)
-                            }
-                        )
-                    }
+            items(monthList.size, key = { it }) { index ->
+                val item = monthList[index]
+                SmallCard(
+                    modifier = Modifier.padding(CARD_NORMAL_DP),
+                ) {
+                    TransplantListItem(
+                        headlineContent = {
+                            Text("￥${formatDecimal(item.second,2)}")
+                        },
+                        overlineContent = {
+                            Text(item.first)
+                        }
+                    )
                 }
             }
             items(2) { InnerPaddingHeight(innerPadding,false) }
@@ -225,9 +225,8 @@ fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues) {
 }
 
 @Composable
-fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState : PagerState) {
+private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState : PagerState) {
     val uiState by vm.cardPredictedResponse.state.collectAsState()
-
     var refreshNetwork : suspend () -> Unit = rN@ {
         if(uiState is UiState.Success) {
             return@rN
@@ -244,11 +243,12 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
         val data = (uiState as UiState.Success).data
         val day = data.day
         val month = data.month
-        val dayList = day.statisticalData.reversed()
-        val monthList = month.statisticalData
-        val dailyAvg = day.averageData
+        val dayList = day.analyzeData.statisticalData.toList()
+        val monthList = month.analyzeData.statisticalData.toList()
+        val dailyAvg = day.analyzeData.average
+        val monthAvg = month.analyzeData.average
         val today = dayList.first().let {
-            if(it.date != DateTimeManager.Date_yyyy_MM_dd) 0.0 else it.amount
+            if(it.first != DateTimeManager.Date_yyyy_MM_dd) 0.0 else it.second
         }
         val difference = dailyAvg-today
         Column {
@@ -263,7 +263,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.padding(14.dp,6.dp)){
                     drawLineChart(
-                        dayList.reversed().map { BillMonth(it.date,it.amount) }
+                        dayList.reversed().map { BillMonth(it.first,it.second) }
                     )
                 }
             }
@@ -304,7 +304,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                                 Text("今日(${t})")
                             },
                             headlineContent = {
-                                Text("￥${today}", fontWeight = FontWeight.Bold)
+                                Text("￥${formatDecimal(today,2)}", fontWeight = FontWeight.Bold)
                             },
                             leadingContent = {
                                 Icon(
@@ -345,7 +345,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                                 Text("日平均")
                             },
                             headlineContent = {
-                                Text("￥${dailyAvg}")
+                                Text("￥${formatDecimal(dailyAvg,2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.filter_vintage),null)
@@ -357,7 +357,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                                 Text("明日预计")
                             },
                             headlineContent = {
-                                Text("￥${day.predictedData}")
+                                Text("￥${formatDecimal(day.predictData.predict,2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.azm),null)
@@ -374,7 +374,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                             Text("本月")
                         },
                         headlineContent = {
-                            Text("￥${monthList.first().amount}", fontWeight = FontWeight.Bold)
+                            Text("￥${formatDecimal(monthList.first().second,2)}", fontWeight = FontWeight.Bold)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.send_money),null)
@@ -396,7 +396,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                                 Text("月平均")
                             },
                             headlineContent = {
-                                Text("￥${month.averageData}")
+                                Text("￥${formatDecimal(monthAvg,2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.filter_vintage),null)
@@ -408,7 +408,7 @@ fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pagerState 
                                 Text("下月预计")
                             },
                             headlineContent = {
-                                Text("￥${month.predictedData}")
+                                Text("￥${formatDecimal(month.predictData.predict,2)}")
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.azm),null)

@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.zjgd.records
+import com.xah.shared.model.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -116,7 +116,7 @@ fun TodayBills(vm: NetWorkViewModel) {
     }
 }
 @Composable
-fun TodayCount(item : records) = with(item) {
+fun TodayCount(item : BillRecordBean) = with(item) {
     var name = resume
     if (name.contains("有限公司")) name = name.replace("有限公司","")
 

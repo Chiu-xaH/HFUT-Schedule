@@ -100,11 +100,11 @@ import com.hfut.schedule.logic.model.one.ClassroomResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
-import com.hfut.schedule.logic.model.zjgd.BillBean
+import com.xah.shared.model.BillBean
 import com.hfut.schedule.logic.model.zjgd.BillMonth
 import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
-import com.hfut.schedule.logic.model.zjgd.BillResponse
+import com.xah.shared.model.BillResponse
 import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC_XUANCHENG
@@ -171,11 +171,13 @@ import com.hfut.schedule.logic.network.repo.NewsRepository
 import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.WxRepository
 import com.hfut.schedule.logic.network.repo.makeRequest
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
+import com.xah.shared.getConsumptionResult
+import com.xah.shared.model.TotalResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -1302,7 +1304,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         throw  e
     }
 
-    val cardPredictedResponse = StateHolder<ForecastAllBean>()
+    val cardPredictedResponse = StateHolder<TotalResult>()
     suspend fun getCardPredicted(auth: String) = withContext(Dispatchers.IO) {
         suspend fun reloadAllBills(origin: BillBean) {
             huiXinBillResult.clear()
@@ -1310,7 +1312,12 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
             val newState = huiXinBillResult.state.first()
             if (newState is UiState.Success) {
-                Repository.getCardPredicted(newState.data, cardPredictedResponse)
+                try {
+                    val data = getConsumptionResult(newState.data)
+                    cardPredictedResponse.emitData(data)
+                } catch (e : Exception) {
+                    cardPredictedResponse.emitError(e, PARSE_ERROR_CODE)
+                }
             }
         }
 

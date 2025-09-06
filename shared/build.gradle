@@ -1,13 +1,12 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.composeCompiler)
 }
 
 android {
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
 
-    namespace 'com.xah.uicommon'
+    namespace 'com.xah.shared'
     compileSdk maxAndroidVersion
 
     defaultConfig {
@@ -31,10 +30,4 @@ android {
     }
 }
 
-dependencies {
-    implementation libs.androidx.material3
-//    implementation libs.androidx.material
-    // 透明状态栏
-    implementation libs.accompanist.systemuicontroller
-    implementation libs.androidx.activity.compose
-}
+dependencies {}

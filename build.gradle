@@ -19,6 +19,7 @@ plugins {
     // Kotlin版本
     alias(libs.plugins.kotlinAndroid) apply false
     alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.jetbrainsKotlinJvm) apply false
 
 //    alias(libs.plugins.testAndroid) apply false
 }

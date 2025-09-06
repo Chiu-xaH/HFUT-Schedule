@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.zjgd.records
+import com.xah.shared.model.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -59,7 +59,7 @@ import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun CardBills(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState) {
+fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState) {
     val auth = prefs.getString("auth","")
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.huiXinBillResult.state.collectAsState()
@@ -202,7 +202,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
 }
 
 
-fun processTranamt(bills : records) : String {
+fun processTranamt(bills : BillRecordBean) : String {
     var num =( bills.tranamt ?: 1000 ).toString()
     //优化0.0X元Bug
     if(num.length == 1)

@@ -9,6 +9,7 @@
 [![F-Droid](https://img.shields.io/github/v/release/Chiu-xaH/HFUT-Schedule?logo=gitee&label=Gitee&style=for-the-badge)](https://gitee.com/chiu-xah/HFUT-Schedule/releases/tag/Android)
 
 </div>
+
 ## ✨ 亮点
 界面: 使用现代化技术栈开发，将实时模糊元素与Material Design 3融合，既符合设计规范，又不死板；统一的设计风格，无论是对齐、间距。
 

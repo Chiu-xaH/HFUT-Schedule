@@ -45,9 +45,9 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.screen.card.function.main.HomeScreen
-import com.hfut.schedule.ui.screen.card.bill.main.CardBills
-import com.hfut.schedule.ui.screen.card.count.CardHome
+import com.hfut.schedule.ui.screen.card.function.main.CardHomeScreen
+import com.hfut.schedule.ui.screen.card.bill.main.BillScreen
+import com.hfut.schedule.ui.screen.card.count.BillAnalysisScreen
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -218,17 +218,17 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         ) {
             composable(CardBarItems.HOME.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    HomeScreen(innerPadding,vm,navController,vmUI,hazeState)
+                    CardHomeScreen(innerPadding,vm,navController,vmUI,hazeState)
                 }
             }
             composable(CardBarItems.BILLS.name) {
                 Scaffold {
-                    CardBills(vm,innerPadding,vmUI, hazeState)
+                    BillScreen(vm,innerPadding,vmUI, hazeState)
                 }
             }
             composable(CardBarItems.COUNT.name) {
                 Scaffold {
-                    CardHome(innerPadding,vm,pagerState)
+                    BillAnalysisScreen(innerPadding,vm,pagerState)
                 }
             }
         }

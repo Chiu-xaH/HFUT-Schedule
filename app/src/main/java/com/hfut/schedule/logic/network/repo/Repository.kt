@@ -25,8 +25,7 @@ import com.hfut.schedule.logic.model.SearchEleResponse
 import com.hfut.schedule.logic.model.TeacherResponse
 import com.hfut.schedule.logic.model.WorkSearchResponse
 import com.hfut.schedule.logic.model.XuanquResponse
-import com.hfut.schedule.logic.model.toVercelForecastRequestBody
-import com.hfut.schedule.logic.model.zjgd.BillBean
+import com.xah.shared.model.BillBean
 import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.api.AdmissionService
 import com.hfut.schedule.logic.network.api.DormitoryScore
@@ -239,7 +238,7 @@ object Repository {
 
     suspend fun getCardPredicted(bean : BillBean,cardPredictedData : StateHolder<ForecastAllBean>) = launchRequestSimple(
         holder = cardPredictedData,
-        request = { forecast.getData(toVercelForecastRequestBody(bean)).awaitResponse() },
+        request = { forecast.getData(bean.toVercelForecastRequestBody()).awaitResponse() },
         transformSuccess = { _,json -> parseCardPredicted(json) }
     )
 

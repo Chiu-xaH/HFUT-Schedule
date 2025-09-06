@@ -52,6 +52,7 @@ test = "8.9.2"
 materialVersion = "1.12.0"
 webkit = "1.14.0"
 accompanistPermissions = "0.34.0"
+jetbrainsKotlinJvm = "2.1.21"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -128,5 +129,6 @@ kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 googleKsp = { id = "com.google.devtools.ksp" ,version.ref = "ksp" }
 testAndroid = {id = "com.android.test", version.ref = "test"}
+jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 
 

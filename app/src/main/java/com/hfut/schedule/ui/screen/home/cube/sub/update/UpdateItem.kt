@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-03") },
+                overlineContent = { Text(text = "2025-09-08") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -60,6 +60,7 @@ fun VersionInfo() {
             UpdateItems("新增 CAS扫码的快捷方式(控制中心磁贴与长按图标菜单)")
             UpdateItems("重构 登录界面","将功能区折叠起来，以规整界面")
             UpdateItems("重构 日志记录","现在 可以更好地手动记录崩溃日志了")
+            UpdateItems("重构 一卡通-统计中消费预测与统计功能改为本地分析")
             UpdateItems("修复 检查教务封网部分情况说明错误的Bug")
             UpdateItems("修复 转场动画结束后仍裁切圆角的Bug")
             UpdateItems("修复 启动台跳转时动画并行导致的卡顿问题")
@@ -92,9 +93,6 @@ fun VersionInfo() {
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
 //
             // 下版本规划
-//        UpdateItems("重构 网络请求层，重新进行封装，使用Flow代替LiveData，优化潜在的内存泄漏问题，增加不同状态下的展示", "进度: 剩余29")
-//        UpdateItems("新增 一卡通-统计中消费预测与统计功能的本地化分析")
-//        UpdateItems("新增 学工系统/今日校园的登录")
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
             // v5.0 2025-07+ 远期规划
 //        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入、支持外地访问下使用邮箱等功能、支持对外开放API等", UpdateType.RENEW)
