@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -45,9 +46,9 @@ object AppAnimationManager {
             shrinkVertically(shrinkTowards = Alignment.Bottom,animationSpec = tween(durationMillis = ANIMATION_SPEED))
     val downUpAnimation = TransferAnimation("向上吸附",enterAnimation11, exitAnimation11)
 
-    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = 0.9f) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
+    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = 0.9f, ) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_SPEED-100,easing = LinearOutSlowInEasing))
 
-    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = 0.9f) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED/2))
+    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = 0.9f, ) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_SPEED-100,easing = LinearOutSlowInEasing))
 
     val centerAnimation = TransferAnimation("向中心运动",enterAnimation2, exitAnimation2)
 

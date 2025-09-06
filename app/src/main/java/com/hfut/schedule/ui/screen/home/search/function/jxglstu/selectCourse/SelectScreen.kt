@@ -94,6 +94,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
@@ -155,13 +156,14 @@ fun SelectCourseScreen(
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             FilledTonalButton(onClick = {
-                                navController.navigateForTransition(
-                                    AppNavRoute.WebView,
-                                    AppNavRoute.WebView.withArgs(
+                                scope.launch {
+                                    Starter.startWebView(
+                                        navController,
                                         url = url,
                                         title = "教务系统",
-                                        cookies = cookie
-                                    ))
+                                        cookie = cookie
+                                    )
+                                }
                             },
                                 modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url))
                             ) {

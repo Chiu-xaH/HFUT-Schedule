@@ -15,6 +15,8 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -112,13 +114,13 @@ private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, loadingText = "正在拉取全部账单") {
         val data = (uiState as UiState.Success).data
         val day = data.day
         val dayList = day.analyzeData.statisticalData.toList()
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(11.dp),
+            modifier = Modifier.padding(horizontal = 11.dp),
         ) {
             items(2) {
                 InnerPaddingHeight(innerPadding,true)
@@ -127,7 +129,7 @@ private fun MonthBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding( vertical = CARD_NORMAL_DP),
+                        .padding( bottom = CARD_NORMAL_DP),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(containerColor = cardNormalColor())
                 ){
@@ -176,14 +178,14 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork,loadingText = "正在拉取全部账单") {
         val data = (uiState as UiState.Success).data
         val month = data.month
         val monthList = month.analyzeData.statisticalData.toList()
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            modifier = Modifier.padding(11.dp),
+            modifier = Modifier.padding(horizontal = 11.dp),
         ) {
             items(2) {
                 InnerPaddingHeight(innerPadding,true)
@@ -192,7 +194,7 @@ private fun YearBillNewScreen(vm : NetWorkViewModel,innerPadding: PaddingValues)
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding( vertical = CARD_NORMAL_DP),
+                        .padding( bottom = CARD_NORMAL_DP),
                     shape = MaterialTheme.shapes.medium,
                     colors = CardDefaults.cardColors(containerColor = cardNormalColor())
                 ){
@@ -239,7 +241,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
         refreshNetwork()
     }
     val scope = rememberCoroutineScope()
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+    CommonNetworkScreen(uiState, onReload = refreshNetwork,loadingText = "正在拉取全部账单") {
         val data = (uiState as UiState.Success).data
         val day = data.day
         val month = data.month
@@ -251,7 +253,7 @@ private fun PredictedScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,pag
             if(it.first != DateTimeManager.Date_yyyy_MM_dd) 0.0 else it.second
         }
         val difference = dailyAvg-today
-        Column {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             InnerPaddingHeight(innerPadding,true)
             Card(
                 modifier = Modifier

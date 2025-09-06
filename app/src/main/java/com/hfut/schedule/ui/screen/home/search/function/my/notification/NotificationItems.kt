@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -39,11 +40,13 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun NotificationItems() {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val list = getNotifications()
     if(list.isEmpty()) EmptyUI() else {
@@ -55,7 +58,9 @@ fun NotificationItems() {
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
                 modifier = Modifier.clickable {
                     if(list[item].url != null) {
-                        list[item].url?.let { Starter.startWebView(context,it,list[item].title, icon = AppNavRoute.Notifications.icon) }
+                        scope.launch {
+                            list[item].url?.let { Starter.startWebView(context,it,list[item].title, icon = AppNavRoute.Notifications.icon) }
+                        }
                     } else {
                         showToast("暂无点击操作")
                     }

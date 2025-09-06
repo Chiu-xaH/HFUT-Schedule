@@ -332,8 +332,10 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
-                                                    url?.let {
-                                                        Starter.startWebView(context,it, title = name, cookie =cookie)
+                                                    scope.launch {
+                                                        url?.let {
+                                                            Starter.startWebView(context,it, title = name, cookie =cookie)
+                                                        }
                                                     }
                                                 }
                                             )

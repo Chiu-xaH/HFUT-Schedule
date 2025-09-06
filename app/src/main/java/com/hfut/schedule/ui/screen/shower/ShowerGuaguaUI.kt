@@ -43,6 +43,7 @@ import com.hfut.schedule.logic.enumeration.ShowerBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 //import com.hfut.schedule.ui.activity.card.function.main.turnToBottomBar
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
@@ -52,7 +53,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -106,55 +107,21 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
             }
         },
         bottomBar = {
-            Column(
-                modifier = Modifier
-                    .bottomBarBlur(hazeState)
-            ) {
-                NavigationBarSpacer()
-                NavigationBar(containerColor = Color.Transparent,) {
-
-                    val items = listOf(
-                        NavigationBarItemData(
-                            ShowerBarItems.HOME.name,"开始", painterResource(R.drawable.bathtub), painterResource(
-                                R.drawable.bathtub_filled)
-                        ),
-                        NavigationBarItemData(
-                            ShowerBarItems.BILLS.name,"账单", painterResource(R.drawable.receipt_long), painterResource(
-                                R.drawable.receipt_long_filled)
-                        ),
-                        NavigationBarItemData(
-                            ShowerBarItems.FUNCTION.name,"选项", painterResource(R.drawable.deployed_code),
-                            painterResource(R.drawable.deployed_code_filled)
-                        )
-                    )
-                    items.forEach { item ->
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-                        val scale = animateFloatAsState(
-                            targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                            label = "" // 使用弹簧动画
-                        )
-                        val route = item.route
-                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                        NavigationBarItem(
-                            selected = selected,
-                            modifier = Modifier.scale(scale.value),
-                            interactionSource = interactionSource,
-                            onClick = {
-                                if (!selected) { navController.navigateAndSave(route) }
-                            },
-                            label = { Text(text = item.label) },
-                            icon = {
-                                BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                            },
-                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-
-                        )
-                    }
-                }
-            }
-
+            val items = listOf(
+                NavigationBarItemData(
+                    ShowerBarItems.HOME.name,"开始", painterResource(R.drawable.bathtub), painterResource(
+                        R.drawable.bathtub_filled)
+                ),
+                NavigationBarItemData(
+                    ShowerBarItems.BILLS.name,"账单", painterResource(R.drawable.receipt_long), painterResource(
+                        R.drawable.receipt_long_filled)
+                ),
+                NavigationBarItemData(
+                    ShowerBarItems.FUNCTION.name,"选项", painterResource(R.drawable.deployed_code),
+                    painterResource(R.drawable.deployed_code_filled)
+                )
+            )
+            HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->
         val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)

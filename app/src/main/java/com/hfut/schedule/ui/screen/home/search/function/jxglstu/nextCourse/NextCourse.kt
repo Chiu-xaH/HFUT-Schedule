@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -53,6 +54,7 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -69,7 +71,7 @@ fun NextCourse(
         value = getJxglstuCookie(vm) ?: ""
     }
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.NextCourse.label) },
         leadingContent = {
@@ -84,13 +86,15 @@ fun NextCourse(
                 } else navController.navigateForTransition(AppNavRoute.NextCourse,AppNavRoute.NextCourse.withArgs(ifSaved))
             } else {
                 if(!ifSaved) {
-                    Starter.startWebView(
-                        context,
-                        url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
-                        title = "教务系统",
-                        cookie = cookie,
-                        icon = AppNavRoute.NextCourse.icon
-                    )
+                    scope.launch {
+                        Starter.startWebView(
+                            context,
+                            url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+                            title = "教务系统",
+                            cookie = cookie,
+                            icon = AppNavRoute.NextCourse.icon
+                        )
+                    }
                 } else {
                     showToast("入口暂未开放")
                 }

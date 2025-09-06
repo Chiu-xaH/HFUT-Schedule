@@ -85,6 +85,7 @@ import com.hfut.schedule.ui.component.screen.pager.PagingController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
@@ -102,7 +103,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -139,7 +140,7 @@ fun NewsScreen(
         }
     }
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     val newsTitles = listOf("总","宣城校区")
     val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -162,7 +163,9 @@ fun NewsScreen(
                         Text("宣城校区教务处")
                     },
                     modifier = Modifier.clickable {
-                        autoWebVpnForNews(context,MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
+                        scope.launch {
+                            autoWebVpnForNews(context,MyApplication.XC_ACADEMIC_URL, title = "宣城校区教务处", cookie = cookies)
+                        }
                     }
                 )
                 CardListItem(
@@ -170,7 +173,9 @@ fun NewsScreen(
                         Text("总教务处")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebView(context,MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
+                        scope.launch {
+                            Starter.startWebView(context,MyApplication.ACADEMIC_URL, title = "总教务处", cookie = cookies)
+                        }
                     }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
@@ -212,17 +217,6 @@ fun NewsScreen(
                                         Icon(painterResource(R.drawable.net), null)
                                     }
                                 }
-                                Spacer(Modifier.width(APP_HORIZONTAL_DP / 3))
-                                if (targetPage != NewsBarItems.School) {
-                                    FilledTonalButton(onClick = {
-                                        if (!vm.webVpn) {
-                                            showToast("请勾选外地访问后登录")
-                                            Starter.refreshLogin(context)
-                                        }
-                                    }) {
-                                        Text(if (vm.webVpn) "已启用WebVpn" else "启用WebVpn")
-                                    }
-                                }
                             }
                         }
                     )
@@ -235,61 +229,21 @@ fun NewsScreen(
                 }
             },
             bottomBar = {
-                Column(
-                    modifier = Modifier
-                        .bottomBarBlur(hazeState)
-                ){
-                    NavigationBarSpacer()
-                    NavigationBar(containerColor = Color.Transparent,) {
-
-                        val items = listOf(
-                            NavigationBarItemData(
-                                NewsBarItems.News.name,"通知公告", painterResource(R.drawable.star), painterResource(
-                                    R.drawable.star_filled)
-                            ),
-                            NavigationBarItemData(
-                                NewsBarItems.Academic.name,"教务处", painterResource(R.drawable.star_half), painterResource(
-                                    R.drawable.star_filled)
-                            ),
-                            NavigationBarItemData(
-                                NewsBarItems.School.name,"各级学院", painterResource(R.drawable.school),
-                                painterResource(R.drawable.school_filled)
-                            )
-                        )
-                        items.forEach { item ->
-                            val interactionSource = remember { MutableInteractionSource() }
-                            val isPressed by interactionSource.collectIsPressedAsState()
-                            val scale = animateFloatAsState(
-                                targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                                label = "" // 使用弹簧动画
-                            )
-                            val route = item.route
-                            val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                            NavigationBarItem(
-                                selected = selected,
-                                modifier = Modifier.scale(scale.value),
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    //     atEnd = !atEnd
-                                    if (!selected) { navController.navigateAndSave(route) }
-
-//                                if(route != NewsBarItems.Academic.name) {
-//                                } else {
-//                                    /
-//                                }
-                                },
-                                label = { Text(text = item.label) },
-                                icon = {
-                                    BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                                },
-                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-
-                            )
-                        }
-                    }
-                }
-
+                val items = listOf(
+                    NavigationBarItemData(
+                        NewsBarItems.News.name,"通知公告", painterResource(R.drawable.star), painterResource(
+                            R.drawable.star_filled)
+                    ),
+                    NavigationBarItemData(
+                        NewsBarItems.Academic.name,"教务处", painterResource(R.drawable.star_half), painterResource(
+                            R.drawable.star_filled)
+                    ),
+                    NavigationBarItemData(
+                        NewsBarItems.School.name,"各级学院", painterResource(R.drawable.school),
+                        painterResource(R.drawable.school_filled)
+                    )
+                )
+                HazeBottomBar(hazeState,items,navController)
             }
         ) { innerPadding ->
             val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
@@ -415,13 +369,15 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         headlineContent = { Text(listItem.title) },
                         leadingContent = { Text(text = (item + 1).toString()) },
                         modifier = Modifier.clickable {
-                            val links = if(isValidWebUrl(listItem.link)) {
-                                listItem.link
-                            } else {
-                                MyApplication.NEWS_URL + listItem.link
-                            }
+                            scope.launch {
+                                val links = if(isValidWebUrl(listItem.link)) {
+                                    listItem.link
+                                } else {
+                                    MyApplication.NEWS_URL + listItem.link
+                                }
 
-                            autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
+                                autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
+                            }
                         },
                         index = item
                     )

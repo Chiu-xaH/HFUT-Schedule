@@ -109,6 +109,7 @@ object DataStoreManager {
     private val CUSTOM_BACKGROUND_ALPHA = floatPreferencesKey("custom_background_alpha")
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
+    private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -144,6 +145,7 @@ object DataStoreManager {
     suspend fun saveCustomBackgroundAlpha(value: Float) = saveValue(CUSTOM_BACKGROUND_ALPHA,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
+    suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookies = getFlow(STU_COOKIE,EMPTY_STRING)
@@ -179,5 +181,5 @@ object DataStoreManager {
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
-
+    val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
 }

@@ -25,7 +25,7 @@ fun WebItem() {
     data class WebItemData(val url : String,val icon : Int,val title : String,val remark : String? = null)
     val webs = listOf(
         WebItemData(title = "信息门户", icon = R.drawable.person, url = MyApplication.ONE_URL),
-        WebItemData(title = "WEBVPN", icon = R.drawable.vpn_key, url = MyApplication.WEBVPN_URL),
+        WebItemData(title = "WebVpn", icon = R.drawable.vpn_key, url = MyApplication.WEBVPN_URL),
     )
     val context = LocalContext.current
     Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

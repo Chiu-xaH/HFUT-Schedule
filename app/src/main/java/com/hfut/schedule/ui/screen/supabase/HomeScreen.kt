@@ -56,6 +56,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
@@ -68,7 +69,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.style.special.transitionBackground2
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -167,61 +168,25 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                 }
             },
             bottomBar = {
-                Column (
-                    modifier = Modifier.bottomBarBlur(hazeState)
-                ){
-                    NavigationBarSpacer()
-                    NavigationBar(containerColor = Color.Transparent ,
-                        ) {
-
-                        val items = listOf(
-                            NavigationBarItemData(
-                                SupabaseScreen.HOME.name,"源", painterResource(R.drawable.cloud), painterResource(
-                                    R.drawable.cloud_filled)
-                            ),
-                            NavigationBarItemData(
-                                SupabaseScreen.ME.name,"已贡献", painterResource(R.drawable.database), painterResource(
-                                    R.drawable.database_filled)
-                            ),
-                            NavigationBarItemData(
-                                SupabaseScreen.STORAGE.name,"已下载", painterResource(R.drawable.lightbulb),
-                                painterResource(R.drawable.lightbulb_filled)
-                            ),
-                            NavigationBarItemData(
-                                SupabaseScreen.SETTINGS.name,"选项", painterResource(R.drawable.deployed_code),
-                                painterResource(R.drawable.deployed_code_filled)
-                            )
-                        )
-                        items.forEach { item ->
-                            val interactionSource = remember { MutableInteractionSource() }
-                            val isPressed by interactionSource.collectIsPressedAsState()
-                            val scale = animateFloatAsState(
-                                targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                                label = "" // 使用弹簧动画
-                            )
-                            val route = item.route
-                            val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                            NavigationBarItem(
-                                selected = selected,
-                                modifier = Modifier.scale(scale.value),
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    if (!selected) {
-                                        navController.navigateAndSave(route)
-                                    }
-                                },
-                                label = { Text(text = item.label) },
-                                icon = {
-                                    Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
-                                },
-                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-
-                            )
-                        }
-                    }
-                }
-
+                val items = listOf(
+                    NavigationBarItemData(
+                        SupabaseScreen.HOME.name,"源", painterResource(R.drawable.cloud), painterResource(
+                            R.drawable.cloud_filled)
+                    ),
+                    NavigationBarItemData(
+                        SupabaseScreen.ME.name,"已贡献", painterResource(R.drawable.database), painterResource(
+                            R.drawable.database_filled)
+                    ),
+                    NavigationBarItemData(
+                        SupabaseScreen.STORAGE.name,"已下载", painterResource(R.drawable.lightbulb),
+                        painterResource(R.drawable.lightbulb_filled)
+                    ),
+                    NavigationBarItemData(
+                        SupabaseScreen.SETTINGS.name,"选项", painterResource(R.drawable.deployed_code),
+                        painterResource(R.drawable.deployed_code_filled)
+                    )
+                )
+                HazeBottomBar(hazeState,items,navController)
             }
         ) { innerPadding ->
             innerPaddingValues = innerPadding

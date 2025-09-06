@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
@@ -62,7 +63,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -124,16 +125,7 @@ fun GradeScreen(
             }
         }
     }
-    val items = listOf(
-        NavigationBarItemData(
-            GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
-                R.drawable.article_filled)
-        ),
-        NavigationBarItemData(
-            GradeBarItems.COUNT.name,"计算", painterResource(R.drawable.leaderboard),
-            painterResource(R.drawable.leaderboard_filled)
-        )
-    )
+
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {
@@ -170,40 +162,17 @@ fun GradeScreen(
                 )
             },
             bottomBar = {
-                Column(
-                    modifier = Modifier.bottomBarBlur(hazeState,)
-                ) {
-                    NavigationBarSpacer()
-                    NavigationBar(containerColor = Color.Transparent) {
-                        items.forEach { item ->
-                            val interactionSource = remember { MutableInteractionSource() }
-                            val isPressed by interactionSource.collectIsPressedAsState()
-                            val scale = animateFloatAsState(
-                                targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                                label = "" // 使用弹簧动画
-                            )
-                            val route = item.route
-                            val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                            NavigationBarItem(
-                                selected = selected,
-                                modifier = Modifier.scale(scale.value),
-                                interactionSource = interactionSource,
-                                onClick = {
-
-                                    if (!selected) {
-                                        navController.navigateAndSave(route)
-                                    }
-                                },
-                                label = { Text(text = item.label) },
-                                icon = {
-                                    Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
-                                },
-                                colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-                            )
-                        }
-                    }
-                }
+                val items = listOf(
+                    NavigationBarItemData(
+                        GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
+                            R.drawable.article_filled)
+                    ),
+                    NavigationBarItemData(
+                        GradeBarItems.COUNT.name,"计算", painterResource(R.drawable.leaderboard),
+                        painterResource(R.drawable.leaderboard_filled)
+                    )
+                )
+                HazeBottomBar(hazeState,items,navController)
             }
         ) { innerPadding ->
             val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)

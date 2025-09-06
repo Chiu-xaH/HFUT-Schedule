@@ -44,11 +44,13 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.BottomBarContent
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -100,52 +102,17 @@ fun Fix(vm : NetWorkViewModel) {
             }
         },
         bottomBar = {
-            Column (
-                modifier = Modifier.bottomBarBlur(hazeState)
-            ){
-                NavigationBarSpacer()
-                NavigationBar(containerColor =  Color.Transparent,) {
-
-                    val items = listOf(
-                        NavigationBarItemData(
-                            FixBarItems.Fix.name,"修复", painterResource(R.drawable.build), painterResource(
-                                R.drawable.build_filled)
-                        ),
-                        NavigationBarItemData(
-                            FixBarItems.About.name,"关于", painterResource(R.drawable.info), painterResource(
-                                R.drawable.info_filled)
-                        )
-                    )
-                    items.forEach { item ->
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-                        val scale = animateFloatAsState(
-                            targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                            label = "" // 使用弹簧动画
-                        )
-                        val route = item.route
-                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                        NavigationBarItem(
-                            selected = selected,
-                            modifier = Modifier.scale(scale.value),
-                            interactionSource = interactionSource,
-                            onClick = {
-                                if (!selected) {
-                                    navController.navigateAndSave(route)
-                                }
-                            },
-                            label = { Text(text = item.label) },
-                            icon = {
-                                Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label)
-                            },
-                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-
-                        )
-                    }
-                }
-            }
-
+            val items = listOf(
+                NavigationBarItemData(
+                    FixBarItems.Fix.name,"修复", painterResource(R.drawable.build), painterResource(
+                        R.drawable.build_filled)
+                ),
+                NavigationBarItemData(
+                    FixBarItems.About.name,"关于", painterResource(R.drawable.info), painterResource(
+                        R.drawable.info_filled)
+                )
+            )
+            HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->
         val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.sys.Starter
@@ -13,6 +14,7 @@ import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import kotlinx.coroutines.launch
 
 @Composable
 fun SchoolsUI(innerPadding : PaddingValues? = null) {
@@ -43,7 +45,7 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
         "http://jxjy.hfut.edu.cn/" to "继续教育学院"
     )
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     LazyColumn {
         item { if(innerPadding != null) InnerPaddingHeight(innerPadding,true) }
         items(maps.entries.toList().size) { index ->
@@ -57,7 +59,9 @@ fun SchoolsUI(innerPadding : PaddingValues? = null) {
                     leadingContent = { DepartmentIcons(title) },
                     overlineContent = { ScrollText(text = url) },
                     modifier = Modifier.clickable {
-                        Starter.startWebView(context,url, icon = icon )
+                        scope.launch {
+                            Starter.startWebView(context,url, icon = icon )
+                        }
                     }, index = index
                 )
 //            }

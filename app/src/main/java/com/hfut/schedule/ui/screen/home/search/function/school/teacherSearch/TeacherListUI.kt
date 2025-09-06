@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +25,7 @@ import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.UrlImage
    
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +36,7 @@ fun TeacherListUI(
     val uiState by vm.teacherSearchData.state.collectAsState()
     val dataList = (uiState as UiState.Success).data.teacherData
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     LazyColumn() {
         item { InnerPaddingHeight(innerPadding,true) }
         item { Spacer(modifier = Modifier.height(4.dp)) }
@@ -61,8 +63,9 @@ fun TeacherListUI(
                         Text(jobList.toString().replace("[","").replace("]",""))
                     },
                     modifier = Modifier.clickable {
-
-                        Starter.startWebView(context,it.url,it.name, icon = icon)
+                        scope.launch {
+                            Starter.startWebView(context,it.url,it.name, icon = icon)
+                        }
                     }
                 )
             }

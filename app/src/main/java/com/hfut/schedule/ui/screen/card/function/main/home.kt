@@ -88,7 +88,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
@@ -235,7 +235,11 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                     leadingContent = {
                         Icon(Icons.Default.ArrowForward, contentDescription = "")
                     },
-                    modifier = Modifier.clickable { Starter.startWebView(context,urlHuixin,"慧新易校") }
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            Starter.startWebView(context,urlHuixin,"慧新易校")
+                        }
+                    }
                 )
                 Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
             }
@@ -454,14 +458,14 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             headlineContent = { Text(text = "账单") },
                             supportingContent = { Text(text = "按消费先后查看交易记录")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.receipt_long), contentDescription = "") },
-                            modifier = Modifier.clickable { navController.navigateAndSave(CardBarItems.BILLS.name) }
+                            modifier = Modifier.clickable { navController.navigateForBottomBar(CardBarItems.BILLS.name) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "统计") },
                             supportingContent = { Text(text = "按时间段归纳统计消费")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.leaderboard), contentDescription = "") },
-                            modifier = Modifier.clickable { navController.navigateAndSave(CardBarItems.COUNT.name) }
+                            modifier = Modifier.clickable { navController.navigateForBottomBar(CardBarItems.COUNT.name) }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -482,14 +486,22 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             headlineContent = { Text(text = "状态") },
                             supportingContent = { Text(text = "挂失 解挂")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.pie_chart), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart) }
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardOperation" + "?synjones-auth=" + auth,"挂失 解挂", icon = R.drawable.pie_chart)
+                                }
+                            }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "付款码") },
                             supportingContent = { Text(text = "在支持扫码的食堂支付机使用以替代实体卡")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.barcode), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(context,url,"付款码", icon = R.drawable.barcode) }
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,url,"付款码", icon = R.drawable.barcode)
+                                }
+                            }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
@@ -523,14 +535,22 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             headlineContent = { Text(text = "修改密码") },
                             supportingContent = { Text(text = "修改一卡通及其校园网的密码，初始密码为身份证后六位(末尾为X则为X的前六位)")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.lock_reset), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset) }
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                                }
+                            }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "慧新易校") },
                             supportingContent = { Text(text = "进入慧新易校平台进行更多操作")},
                             leadingContent = { Icon(painter = painterResource(id = R.drawable.corporate_fare), contentDescription = "")},
-                            modifier = Modifier.clickable { Starter.startWebView(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare) }
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,urlHuixin,"慧新易校", icon = R.drawable.corporate_fare)
+                                }
+                            }
                         )
                         PaddingHorizontalDivider()
                         TransplantListItem(

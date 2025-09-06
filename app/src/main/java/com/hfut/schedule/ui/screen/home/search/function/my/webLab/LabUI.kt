@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,11 +23,13 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LabUI() {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     for(item in getLab()) {
 //        MyCustomCard {
@@ -34,7 +37,9 @@ fun LabUI() {
                 headlineContent = { Text(text = item.title) },
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
-                    Starter.startWebView(context ,item.info,item.title, icon=AppNavRoute.WebNavigation.icon)
+                    scope.launch {
+                        Starter.startWebView(context ,item.info,item.title, icon=AppNavRoute.WebNavigation.icon)
+                    }
                 }
             )
 //        }

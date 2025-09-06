@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +33,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnC
 
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.launch
 
 //*******最新模范写法****
 @OptIn(ExperimentalMaterial3Api::class)
@@ -50,7 +52,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
     LaunchedEffect(page) {
         refreshNetwork()
     }
-
+    val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
         val listState = rememberLazyListState()
@@ -65,7 +67,9 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         overlineContent = { Text(item.date) },
                         leadingContent = { Text((index+1).toString()) },
                         modifier = Modifier.clickable {
-                            autoWebVpnForNews(context ,MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
+                            scope.launch {
+                                autoWebVpnForNews(context ,MyApplication.NEWS_XC_URL + item.link,item.title,icon = R.drawable.stream, cookie = cookies)
+                            }
                         },
                         index = index
                     )

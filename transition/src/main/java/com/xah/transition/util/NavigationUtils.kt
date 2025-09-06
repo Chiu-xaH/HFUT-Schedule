@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.xah.transition.state.TransitionState
-
+// 导航后 当前界面就是唯一界面 上一级被清除
 fun NavController.navigateAndClear(route: String) {
     navigate(route) {
         popUpTo(graph.startDestinationId) { inclusive = true } // 清除所有历史记录

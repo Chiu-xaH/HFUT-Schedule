@@ -9,8 +9,10 @@ import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
@@ -21,10 +23,13 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -79,9 +84,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -120,6 +127,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -153,9 +161,10 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -163,6 +172,7 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.transition.util.previousRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -518,7 +528,7 @@ fun MainScreen(
                                         } else {
                                             Spacer(modifier = Modifier.width(7.5.dp))
                                             Text(
-                                                text = if (webVpn) "WEBVPN" else "已登录",
+                                                text = if (webVpn) "WebVpn" else "已登录",
                                                 color = MaterialTheme.colorScheme.primary
                                             )
                                             Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
@@ -597,88 +607,42 @@ fun MainScreen(
                 }
             },
             bottomBar = {
-                Column(
-                    modifier = Modifier.bottomBarBlur(hazeState)
-                ) {
-                    NavigationBarSpacer()
-                    NavigationBar(containerColor = Color.Transparent) {
-                        val items = listOf(
-                            NavigationBarItemData(
-                                COURSES.name,
-                                "课程表",
-                                painterResource(R.drawable.calendar),
-                                painterResource(R.drawable.calendar_month_filled)
-                            ),
-                            NavigationBarItemData(
-                                FOCUS.name,
-                                "聚焦",
-                                painterResource(R.drawable.lightbulb),
-                                painterResource(R.drawable.lightbulb_filled)
-                            ),
-                            NavigationBarItemData(
-                                SEARCH.name,
-                                "查询中心",
-                                painterResource(R.drawable.category_search),
-                                painterResource(R.drawable.category_search_filled)
-                            ),
-                            NavigationBarItemData(
-                                SETTINGS.name,
-                                "选项",
-                                painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code else R.drawable.deployed_code_update),
-                                painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled)
-                            )
-                        )
-                        items.forEach { item ->
-                            val interactionSource = remember { MutableInteractionSource() }
-                            val isPressed by interactionSource.collectIsPressedAsState()
-                            val scale = animateFloatAsState(
-                                targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                ),
-                                label = "" // 使用弹簧动画
-                            )
-                            val route = item.route
-                            val selected =
-                                navController.currentBackStackEntryAsState().value?.destination?.route == route
-                            NavigationBarItem(
-                                selected = selected,
-                                enabled = isEnabled,
-                                modifier = Modifier.scale(scale.value),
-                                interactionSource = interactionSource,
-                                onClick = {
-                                    if (!selected) {
-                                        navController.navigateAndSave(route)
-                                    }
-                                },
-                                label = { Text(text = item.label) },
-                                icon = {
-                                    BadgedBox(badge = {
-                                        if (item == items[3]) {
-                                            if (showBadge)
-                                                Badge { Text(text = "1") }
-                                        }
-                                    }) {
-                                        Icon(
-                                            if (selected) item.filledIcon else item.icon,
-                                            contentDescription = item.label
-                                        )
-                                    }
-                                },
-                                colors = NavigationBarItemDefaults.colors(
-                                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(
-                                        alpha = .9f
-                                    )
-                                )
-
-                            )
-                        }
-                    }
-                }
+                val items = listOf(
+                    NavigationBarItemData(
+                        COURSES.name,
+                        "课程表",
+                        painterResource(R.drawable.calendar),
+                        painterResource(R.drawable.calendar_month_filled)
+                    ),
+                    NavigationBarItemData(
+                        FOCUS.name,
+                        "聚焦",
+                        painterResource(R.drawable.lightbulb),
+                        painterResource(R.drawable.lightbulb_filled)
+                    ),
+                    NavigationBarItemData(
+                        SEARCH.name,
+                        "查询中心",
+                        painterResource(R.drawable.category_search),
+                        painterResource(R.drawable.category_search_filled)
+                    ),
+                    NavigationBarItemData(
+                        SETTINGS.name,
+                        "选项",
+                        painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code else R.drawable.deployed_code_update),
+                        painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled)
+                    )
+                )
+                HazeBottomBar(hazeState,items,navController,isEnabled,listOf(
+                    null,
+                    null,
+                    null,
+                    { if (showBadge) Badge { Text("1") } }
+                ))
             },
         ) { innerPadding ->
             val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)
+
             NavHost(
                 navController = navController,
                 startDestination = first.name,

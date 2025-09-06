@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,9 +68,12 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -128,6 +133,10 @@ fun WebVpnScreen(
     }
 }
 
+suspend fun getWebVpnCookie() : String? {
+    val webVpnCookie = DataStoreManager.webVpnCookies.first()
+    return MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+}
 suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
     if(vm.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
@@ -136,7 +145,7 @@ suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
         null
     }
 
-fun autoWebVpnForNews(
+suspend fun autoWebVpnForNews(
     context: Context,
     url: String,
     title: String = getPureUrl(url),
@@ -156,24 +165,56 @@ fun WebVpnUI(vm: NetWorkViewModel) {
         value = getWebVpnCookie(vm)
     }
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     DividerTextExpandedWith("内网 to 外网") {
         var input by remember { mutableStateOf("") }
         var result by remember { mutableStateOf<String?>(null) }
-        CardListItem(
-            headlineContent = {
-                Text("输入需要校园网才可访问的链接，将其转换为WebVpn链接后，可通过外网访问")
-            },
-            supportingContent = {
-                Text("例如 " + MyApplication.LIBRARY_SEAT + " 点击粘贴到输入框")
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.info),null)
-            },
-            modifier = Modifier.clickable {
-                input = MyApplication.LIBRARY_SEAT
-            }
-        )
+        CustomCard(color = cardNormalColor()) {
+            TransplantListItem(
+                headlineContent = {
+                    Text("输入需校园网才可访问的链接(或目前封网的平台),将其转换为WebVpn链接后,在登录WebVpn的前提下,可通过外网访问并直接登录")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.info),null)
+                },
+                modifier = Modifier.clickable {
+                    input = MyApplication.LIBRARY_SEAT
+                }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = {
+                    Text("当使用外地访问登录后，可查看通知公告中外网无法查看的内容")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.stream),null)
+                },
+                modifier = Modifier.clickable {
+                }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = {
+                    Text("(座位预约) " + MyApplication.LIBRARY_SEAT)
+                },
+                overlineContent = { Text("点击粘贴到输入框")},
+                leadingContent = { Text("例1")},
+                modifier = Modifier.clickable {
+                    input = MyApplication.LIBRARY_SEAT
+                }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                leadingContent = { Text("例2")},
+                headlineContent = {
+                    Text("(图书馆) " + MyApplication.NEW_LIBRARY_URL)
+                },
+                overlineContent = { Text("点击粘贴到输入框")},
+                modifier = Modifier.clickable {
+                    input = MyApplication.NEW_LIBRARY_URL
+                }
+            )
+        }
         CustomCard(color = cardNormalColor()) {
             CustomTextField(
                 label = { Text("输入以http://或https://开头的合法链接")},
@@ -215,11 +256,13 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                                 ClipBoardUtils.copy(it)
                             },
                             CardBottomButton("打开") {
-                                if(vm.webVpn) {
-                                    Starter.startWebView(context,it, cookie = cookies)
-                                } else {
-                                    showToast("先以外地访问模式登录")
-                                    Starter.refreshLogin(context)
+                                scope.launch {
+                                    if(vm.webVpn) {
+                                        Starter.startWebView(context,it, cookie = cookies)
+                                    } else {
+                                        showToast("先以外地访问模式登录")
+                                        Starter.refreshLogin(context)
+                                    }
                                 }
                             },
                             CardBottomButton("清除") {
@@ -230,24 +273,52 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                 }
             }
         }
+        CardListItem(
+            headlineContent = { Text("全局WebVpn")},
+            supportingContent = { Text("打开后,App内所有打开网页的场景都将自动转换为WebVpn链接;\n仅登录WebVpn时可打开,退出App后自动关闭")},
+            trailingContent = {
+                Switch(checked = GlobalUIStateHolder.globalWebVpn, enabled = vm.webVpn, onCheckedChange = { GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn})
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.multiple_stop),null)
+            },
+            modifier = Modifier.clickable {
+                if(vm.webVpn) {
+                    GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn
+                } else {
+                    showToast("先以外地访问模式登录")
+                    Starter.refreshLogin(context)
+                }
+            }
+        )
     }
     DividerTextExpandedWith("外网 to 内网") {
         var input by remember { mutableStateOf("") }
         var result by remember { mutableStateOf<String?>(null) }
-        CardListItem(
-            headlineContent = {
-                Text("输入WebVpn链接，还原为原始链接")
-            },
-            supportingContent = {
-                Text("例如 " + MyApplication.JXGLSTU_WEBVPN_URL + " 点击粘贴到输入框")
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.info),null)
-            },
-            modifier = Modifier.clickable {
-                input = MyApplication.JXGLSTU_WEBVPN_URL
-            }
-        )
+        CustomCard(color = cardNormalColor()) {
+            TransplantListItem(
+                headlineContent = {
+                    Text("输入WebVpn链接，还原为原始链接")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.info),null)
+                },
+                modifier = Modifier.clickable {
+                    input = MyApplication.LIBRARY_SEAT
+                }
+            )
+            PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = {
+                    Text("(教务系统) " + MyApplication.JXGLSTU_WEBVPN_URL)
+                },
+                overlineContent = { Text("点击粘贴到输入框")},
+                leadingContent = { Text("例")},
+                modifier = Modifier.clickable {
+                    input = MyApplication.JXGLSTU_WEBVPN_URL
+                }
+            )
+        }
         CustomCard(color = cardNormalColor()) {
             CustomTextField(
                 label = { Text("输入以${WEBVPN_URL}开头的合法链接")},
@@ -283,44 +354,21 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             Text("转换结果")
                         },
                     )
-                    HorizontalDivider()
-                    Row(modifier = Modifier.align(Alignment.End)) {
-                        Text(
-                            text = "复制",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                ).clickable { ClipBoardUtils.copy(it) }
-                        )
-                        Text(
-                            text = "打开",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                ).clickable {
+                    CardBottomButtons(
+                        listOf(
+                            CardBottomButton("复制") {
+                                ClipBoardUtils.copy(it)
+                            },
+                            CardBottomButton("打开") {
+                                scope.launch {
                                     Starter.startWebView(context,it)
                                 }
+                            },
+                            CardBottomButton("清除") {
+                                result = null
+                            },
                         )
-                        Text(
-                            text = "清除",
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            modifier = Modifier
-                                .align(Alignment.Bottom)
-                                .padding(
-                                    horizontal = APP_HORIZONTAL_DP,
-                                    vertical = APP_HORIZONTAL_DP - 5.dp
-                                ).clickable { result = null }
-                        )
-                    }
+                    )
                 }
             }
         }

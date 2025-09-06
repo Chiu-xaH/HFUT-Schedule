@@ -13,6 +13,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 // 跨Activity的类似UIViewModel
 object GlobalUIStateHolder {
     var refreshImageCode by mutableIntStateOf(1)
+    var globalWebVpn by mutableStateOf(false)
     var isSupabaseRegistering = mutableStateOf(false)
     val routeQueue = mutableStateListOf<RouteQueueBean>()
     fun pushToFront(route: String,app : AppNavRoute) {

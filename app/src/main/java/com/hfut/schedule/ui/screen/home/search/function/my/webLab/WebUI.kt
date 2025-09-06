@@ -60,6 +60,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
@@ -225,6 +226,7 @@ fun WebNavigationScreen(
     var input by rememberSaveable { mutableStateOf("https://") }
     var inputCookies by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val scope = rememberCoroutineScope()
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -274,14 +276,14 @@ fun WebNavigationScreen(
                                 IconButton(
                                     enabled = isValidWebUrl(input),
                                     onClick = {
-                                        navController.navigateForTransition(
-                                            AppNavRoute.WebView,
-                                            AppNavRoute.WebView.withArgs(
+                                        scope.launch {
+                                            Starter.startWebView(
+                                                navController=navController,
                                                 url = input,
                                                 title = getPureUrl(input),
-                                                cookies = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
+                                                cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
                                             )
-                                        )
+                                        }
                                     },
                                 ) {
                                     Icon(Icons.Default.ArrowForward,null)

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.launch
 
 private data class SupportItemBean(val title : String,val android : String,val url : String?,val list: List<Boolean?>,val remark : String? = null)
 
@@ -111,6 +113,7 @@ private fun CanSupportChip(title : String) = SupportChip(title,isSupported = tru
 
 @Composable
 private fun SupportItem(item : SupportItemBean) {
+    val scope = rememberCoroutineScope()
     val list = item.list
     val context = LocalContext.current
     CustomCard(color = cardNormalColor()) {
@@ -151,7 +154,9 @@ private fun SupportItem(item : SupportItemBean) {
                 listOf(
                     CardBottomButton(item.android),
                     CardBottomButton("预览效果",item.url != null) {
-                        item.url?.let { Starter.startWebView(context,it,"Github", icon = R.drawable.github) }
+                        scope.launch {
+                            item.url?.let { Starter.startWebView(context,it,"Github", icon = R.drawable.github) }
+                        }
                     }
                 )
             )

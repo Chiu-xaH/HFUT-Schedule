@@ -11,6 +11,7 @@ import android.provider.Settings
 import android.webkit.CookieManager
 import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.core.net.toUri
+import androidx.navigation.NavController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
@@ -22,10 +23,13 @@ import com.hfut.schedule.activity.screen.SupabaseActivity
 import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
+import com.hfut.schedule.logic.util.network.WebVpnUtil
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigateForTransition
 
 object Starter {
     enum class AppPackages(val packageName : String,val appName : String) {
@@ -142,14 +146,64 @@ object Starter {
         }
         context.startActivity(it)
     }
-    fun startWebView(
+    @JvmStatic
+    suspend fun startWebView(
         context: Context,
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
         icon : Int? = null
     ) {
-        goToWebView(context,url, title, cookie,icon)
+        if(GlobalUIStateHolder.globalWebVpn) {
+            val cookieWebVpn = getWebVpnCookie()
+            if(url.contains(MyApplication.WEBVPN_URL)) {
+                goToWebView(context, url, title, cookieWebVpn,icon)
+            } else {
+                goToWebView(context, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon)
+            }
+        } else {
+            goToWebView(context,url, title, cookie,icon)
+        }
+    }
+    @JvmStatic
+    suspend fun startWebView(
+        navController: NavController,
+        url : String,
+        title : String = getPureUrl(url),
+        cookie :String? = null,
+        icon : Int = R.drawable.net,
+        transplantBackground: Boolean = false
+    ) {
+        if(GlobalUIStateHolder.globalWebVpn) {
+            val cookieWebVpn = getWebVpnCookie()
+            if(url.contains(MyApplication.WEBVPN_URL)) {
+                goToWebViewNavigation(navController, url, title, cookieWebVpn,icon,transplantBackground)
+            } else {
+                goToWebViewNavigation(navController, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon,transplantBackground)
+            }
+        } else {
+            goToWebViewNavigation(navController,url, title, cookie,icon,transplantBackground)
+        }
+    }
+    @JvmStatic
+    private fun goToWebViewNavigation(
+        navController: NavController,
+        url : String,
+        title : String = getPureUrl(url),
+        cookie :String? = null,
+        icon : Int = R.drawable.net,
+        transplantBackground: Boolean = false
+    ) {
+        navController.navigateForTransition(
+            AppNavRoute.WebView,
+            AppNavRoute.WebView.withArgs(
+                url = url,
+                title = title,
+                cookies = cookie,
+                icon = icon,
+            ),
+            transplantBackground
+        )
     }
     @JvmStatic
     private fun goToWebView(

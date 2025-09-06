@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -46,6 +47,7 @@ import com.hfut.schedule.ui.util.GlobalUIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,6 +95,7 @@ fun MailUI(vm: NetWorkViewModel) {
             vm.getMailURL(it)
         }
     }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(used) {
         refreshNetwork()
@@ -105,12 +108,14 @@ fun MailUI(vm: NetWorkViewModel) {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                     LargeButton(
                         onClick = {
-                            response.data.let {
-                                if(it != null) {
-                                    used = !used
-                                    Starter.startWebView(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
-                                } else {
-                                    showToast( "错误 " + response.msg)
+                            scope.launch {
+                                response.data.let {
+                                    if(it != null) {
+                                        used = !used
+                                        Starter.startWebView(context,it,getSchoolEmail() ?: "邮箱", icon = R.drawable.mail)
+                                    } else {
+                                        showToast( "错误 " + response.msg)
+                                    }
                                 }
                             }
                         },

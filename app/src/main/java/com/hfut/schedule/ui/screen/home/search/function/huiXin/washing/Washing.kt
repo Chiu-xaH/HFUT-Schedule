@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -66,6 +67,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -192,6 +194,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
     val auth = prefs.getString("auth","")
     val route = remember { AppNavRoute.HaiLeWashing.route }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
 
     //布局///////////////////////////////////////////////////////////////////////////
@@ -211,7 +214,9 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         CardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                Starter.startWebView(context,url = MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
+                               scope.launch {
+                                   Starter.startWebView(context,url = MyApplication.HUI_XIN_URL + "charge-app/?name=pays&appsourse=ydfwpt&id=${FeeType.WASHING_HEFEI.code}&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth, title = "慧新易校")
+                               }
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

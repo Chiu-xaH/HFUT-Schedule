@@ -17,6 +17,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.uicommon.component.text.BottomTip
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -56,16 +57,19 @@ fun VersionInfo() {
             UpdateItems("新增 慧新易校一键单独刷新登陆状态","位于 查询中心-一卡通-卡包")
             UpdateItems("新增 教务系统单独刷新登陆状态")
             UpdateItems("新增 学工平台的登录")
+            UpdateItems("新增 全局WebVpn","位于 查询中心-WebVpn，打开后将应用内所有打开网页将重写到WebVpn通道，进而实现了大创系统、图书馆等平台的登录")
             UpdateItems("新增 支持单独刷新信息门户及智慧社区平台","又将一部分陈年代码重写了")
             UpdateItems("新增 CAS扫码的快捷方式(控制中心磁贴与长按图标菜单)")
             UpdateItems("重构 登录界面","将功能区折叠起来，以规整界面")
             UpdateItems("重构 日志记录","现在 可以更好地手动记录崩溃日志了")
             UpdateItems("重构 一卡通-统计中消费预测与统计功能改为本地分析")
+            UpdateItems("回归 底栏标签开关","位于 选项-外观显示")
             UpdateItems("修复 检查教务封网部分情况说明错误的Bug")
             UpdateItems("修复 转场动画结束后仍裁切圆角的Bug")
             UpdateItems("修复 启动台跳转时动画并行导致的卡顿问题")
             UpdateItems("优化 聚焦首页网络请求的刷新机制","现在，改为冷启动刷新完成后，回到首页不再自动触发，除非手动下拉，用于节约网络请求")
             UpdateItems("优化 部分界面的显示")
+//            UpdateItems("新增 图书馆的登录")
 //            UpdateItems("重构 关于")
 //            UpdateItems("新增 为选项适配了新的转场动画")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")

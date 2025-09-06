@@ -269,9 +269,6 @@ private val TAB_SETTRINGS = 1
 fun LoginScreen(
     vm : LoginViewModel,
     networkVm : NetWorkViewModel,
-    navController: NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val scope = rememberCoroutineScope()
     val activity = LocalActivity.current
@@ -288,17 +285,6 @@ fun LoginScreen(
     val showTip2 = jxglstuStatus != null && jxglstuStatus!! >= 400
     var tab by remember { mutableIntStateOf(TAB_LOGIN) }
     val context = LocalContext.current
-//
-//    if(tab == TAB_SETTRINGS) {
-//        HazeBottomSheet (
-//            onDismissRequest = { tab = TAB_LOGIN },
-//            showBottomSheet = true,
-//            autoShape = false,
-//            hazeState = hazeState
-//        ) {
-//
-//        }
-//    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -524,7 +510,7 @@ fun LoginScreen(
                             //
                             TransplantListItem(
                                 headlineContent = { Text("外地访问(WebVpn)") },
-                                supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制")},
+                                supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
                                 leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
                                 trailingContent = {
                                     Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
@@ -536,7 +522,11 @@ fun LoginScreen(
                                 headlineContent = { Text("修改密码") },
                                 supportingContent = { Text("修改或重置CAS统一认证密码")},
                                 leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
-                                modifier = Modifier.clickable { Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset) },
+                                modifier = Modifier.clickable {
+                                    scope.launch {
+                                        Starter.startWebView(context,MyApplication.CAS_LOGIN_URL + "cas/forget","忘记密码",null,R.drawable.lock_reset)
+                                    }
+                                },
                             )
                         }
                     }
@@ -546,18 +536,27 @@ fun LoginScreen(
                             color = MaterialTheme.colorScheme.surface,
                         ) {
                             Text("当前登录将刷新如下平台", modifier = Modifier.padding(start = APP_HORIZONTAL_DP, top = APP_HORIZONTAL_DP-CARD_NORMAL_DP))
-                            val list = listOf("教务系统","信息门户","智慧社区","学工系统","慧新易校","WebVpn")
+                            val list = listOf(
+                                CasPlatform("教务系统",canWebVpn = true,canWithoutJxglstu = false, canWithJxglstu = true,maybeUnlinked = true),
+                                CasPlatform("信息门户", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                CasPlatform("智慧社区", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                CasPlatform("学工系统", canWebVpn = false, canWithoutJxglstu = true,canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                CasPlatform("慧新易校",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
+                                CasPlatform("WebVpn",canWebVpn = true, canWithoutJxglstu = false,canWithJxglstu = false, maybeUnlinked = false),
+                                CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
+                                CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true)
+                            )
                             LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP/2)) {
                                 item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                 items(list.size) { index ->
                                     val item = list[index]
                                     val enabled =
                                         if(webVpn) {
-                                            index == 0 || index == 5
+                                            item.canWebVpn
                                         } else if(CasInHFUT.excludeJxglstu) {
-                                            index != 0 && index != 5
+                                            item.canWithoutJxglstu
                                         } else {
-                                            index != 5
+                                            item.canWithJxglstu
                                         }
                                     AssistChip(
                                         onClick = {},
@@ -571,7 +570,7 @@ fun LoginScreen(
                                                 null,
                                             )
                                         },
-                                        label = { Text(item) }
+                                        label = { Text(item.name) }
                                     )
                                     if(index != list.size-1) {
                                         Spacer(Modifier.width(CARD_NORMAL_DP*2))
@@ -828,3 +827,11 @@ private fun TwoTextField(
     InnerPaddingHeight(innerPadding,false)
 }
 
+
+data class CasPlatform(
+    val name : String,
+    val canWebVpn : Boolean,
+    val canWithoutJxglstu : Boolean,
+    val canWithJxglstu : Boolean,
+    val maybeUnlinked : Boolean
+)

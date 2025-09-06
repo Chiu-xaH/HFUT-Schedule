@@ -48,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -306,7 +307,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         }
     }
 
-
+    val scope = rememberCoroutineScope()
     Column(modifier = Modifier.animateContentSize()) {
         HazeBottomSheetTopBar("寝室电费" , isPaddingStatusBar = false) {
             if(pagerState.currentPage == XUANCHENG_TAB) {
@@ -356,7 +357,9 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
 
                     FilledTonalButton(
                         onClick = {
-                            Starter.startWebView(context,getUrl(XUANCHENG_TAB,true), title = "慧新易校")
+                            scope.launch {
+                                Starter.startWebView(context,getUrl(XUANCHENG_TAB,true), title = "慧新易校")
+                            }
                         }
                     ) {
                         Text("官方充值")
@@ -374,7 +377,9 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("本科生")},
                             modifier = Modifier.clickable {
-                                Starter.startWebView(context,getUrl(HEFEI_TAB,true), title = "慧新易校")
+                                scope.launch {
+                                    Starter.startWebView(context,getUrl(HEFEI_TAB,true), title = "慧新易校")
+                                }
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)
@@ -388,7 +393,9 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                             overlineContent = { Text("官方充值查询入口") },
                             headlineContent = { Text("研究生")},
                             modifier = Modifier.clickable {
-                                Starter.startWebView(context,getUrl(HEFEI_TAB,false), title = "慧新易校")
+                                scope.launch {
+                                    Starter.startWebView(context,getUrl(HEFEI_TAB,false), title = "慧新易校")
+                                }
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

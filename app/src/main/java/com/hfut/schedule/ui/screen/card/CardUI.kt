@@ -7,7 +7,9 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -35,6 +37,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -56,12 +59,16 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.BottomBarContent
+import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.xah.uicommon.style.padding.NavigationBarSpacer
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.ui.style.special.bottomBarBlur
+import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.transition.util.isCurrentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.async
@@ -153,56 +160,21 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             }
         },
         bottomBar = {
-            Column(
-                modifier = Modifier
-                    .bottomBarBlur(hazeState)
-            ) {
-                NavigationBarSpacer()
-                NavigationBar(containerColor = Color.Transparent ,) {
-
-                    val items = listOf(
-                        NavigationBarItemData(
-                            CardBarItems.HOME.name,"卡包", painterResource(R.drawable.credit_card), painterResource(
-                                R.drawable.credit_card_filled)
-                        ),
-                        NavigationBarItemData(
-                            CardBarItems.BILLS.name,"账单", painterResource(R.drawable.receipt_long), painterResource(
-                                R.drawable.receipt_long_filled)
-                        ),
-                        NavigationBarItemData(
-                            CardBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
-                            painterResource(R.drawable.leaderboard_filled)
-                        )
-                    )
-                    items.forEach { item ->
-                        val interactionSource = remember { MutableInteractionSource() }
-                        val isPressed by interactionSource.collectIsPressedAsState()
-                        val scale = animateFloatAsState(
-                            targetValue = if (isPressed) 0.8f else 1f, // 按下时为0.9，松开时为1
-                            animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                            label = "" // 使用弹簧动画
-                        )
-                        val route = item.route
-                        val selected = navController.currentBackStackEntryAsState().value?.destination?.route == route
-                        NavigationBarItem(
-                            selected = selected,
-                            modifier = Modifier.scale(scale.value),
-                            interactionSource = interactionSource,
-                            onClick = {
-                                if (!selected) {
-                                    navController.navigateAndSave(route)
-                                }
-                            },
-                            label = { Text(text = item.label) },
-                            icon = {
-                                BadgedBox(badge = {}) { Icon(if(selected)item.filledIcon else item.icon, contentDescription = item.label) }
-                            },
-                            colors = NavigationBarItemDefaults.colors(indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f))
-                        )
-                    }
-                }
-            }
-
+            val items = listOf(
+                NavigationBarItemData(
+                    CardBarItems.HOME.name,"卡包", painterResource(R.drawable.credit_card), painterResource(
+                        R.drawable.credit_card_filled)
+                ),
+                NavigationBarItemData(
+                    CardBarItems.BILLS.name,"账单", painterResource(R.drawable.receipt_long), painterResource(
+                        R.drawable.receipt_long_filled)
+                ),
+                NavigationBarItemData(
+                    CardBarItems.COUNT.name,"统计", painterResource(R.drawable.leaderboard),
+                    painterResource(R.drawable.leaderboard_filled)
+                )
+            )
+            HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->
         val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
@@ -234,3 +206,4 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         }
     }
 }
+

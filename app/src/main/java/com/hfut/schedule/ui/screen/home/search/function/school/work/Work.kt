@@ -122,7 +122,7 @@ fun WorkScreen(
     ) }
     val pagerState = rememberPagerState(pageCount = { types.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    val scope = rememberCoroutineScope()
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
@@ -149,13 +149,15 @@ fun WorkScreen(
                                 val iconRoute =  AppNavRoute.WebView.shareRoute(url)
                                 FilledTonalIconButton(
                                     onClick = {
-                                        navController.navigateForTransition(
-                                            AppNavRoute.WebView,
-                                            AppNavRoute.WebView.withArgs(
-                                            url = url,
-                                            title = "就业网(${campus.description})",
-                                            icon = R.drawable.net,
-                                        ),transplantBackground = true)
+                                        scope.launch {
+                                            Starter.startWebView(
+                                                navController,
+                                                url = url,
+                                                title = "就业网(${campus.description})",
+                                                icon = R.drawable.net,
+                                                transplantBackground = true
+                                            )
+                                        }
                                     },
                                 ) {
                                     Icon(painterResource(R.drawable.net), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = iconRoute))
@@ -267,8 +269,9 @@ private fun WorkSearchUI(
                                     overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
                                     index = index,
                                     modifier = Modifier.clickable {
-//                                        navController.navigateForTransition(AppNavRoute.WebView,AppNavRoute.WebView.withArgs(url,title,null,AppNavRoute.Work.icon))
-                                    Starter.startWebView(context,url,title, icon = AppNavRoute.Work.icon)
+                                        scope.launch {
+                                            Starter.startWebView(context,url,title, icon = AppNavRoute.Work.icon)
+                                        }
                                     },
                                     leadingContent = { Text((index+1).toString()) }
                                 )

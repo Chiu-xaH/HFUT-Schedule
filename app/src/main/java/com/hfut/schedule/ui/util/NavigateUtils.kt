@@ -7,7 +7,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.transition.util.navigateAndSaveForTransition
 import com.xah.transition.util.navigateWithSave
 
-fun NavController.navigateAndSave(route: String) {
+// 导航后 上一级永远是firstRoute
+fun NavController.navigateForBottomBar(route: String) {
     navigate(route) {
         popUpTo(graph.startDestinationId) {
             saveState = true
@@ -17,7 +18,7 @@ fun NavController.navigateAndSave(route: String) {
     }
 }
 
-
+// 导航后 上一级永远是上个界面
 fun NavController.navigateForTransition(app : AppNavRoute,route: String,transplantBackground : Boolean = false) = try {
     GlobalUIStateHolder.pushToFront(route,app)
     navigateAndSaveForTransition(route,transplantBackground)

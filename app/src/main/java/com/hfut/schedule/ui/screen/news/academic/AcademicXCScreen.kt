@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,6 +38,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import kotlinx.coroutines.launch
 
 //private const val TAB_TEACHING = 0
 //private const val TAB_IETP = 1
@@ -58,7 +60,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
         value = getWebVpnCookie(vm)
     }
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     LaunchedEffect(page,pagerState.currentPage) {
         refreshNetwork()
     }
@@ -86,12 +88,19 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
                                 modifier = Modifier.clickable {
-                                    val link = if(isValidWebUrl(item.link)) {
-                                        item.link
-                                    } else {
-                                        MyApplication.XC_ACADEMIC_URL + item.link
+                                    scope.launch {
+                                        val link = if (isValidWebUrl(item.link)) {
+                                            item.link
+                                        } else {
+                                            MyApplication.XC_ACADEMIC_URL + item.link
+                                        }
+                                        autoWebVpnForNews(
+                                            context,
+                                            link,
+                                            item.title,
+                                            cookie = cookies
+                                        )
                                     }
-                                    autoWebVpnForNews(context,link,item.title,cookie = cookies)
                                 },
                                 index = index
                             )

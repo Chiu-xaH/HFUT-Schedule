@@ -576,12 +576,12 @@ fun JxglstuCourseTableUI(
                        return@async
                    }
                    val cookies =  "$casCookies;$tgcCookie"
-                   if(webVpn && !CasInHFUT.excludeJxglstu) {
-                       showToast("外地访问下仅支持刷新教务系统")
-                       return@async
-                   }
-
+                   val useWebVpn = webVpn && !CasInHFUT.excludeJxglstu
+                   // 智慧社区
                    launch community@ {
+                       if(useWebVpn) {
+                           return@community
+                       }
                        val communityAuth = prefs.getString("TOKEN", "")
                        if(communityAuth == null || communityAuth.isEmpty()) {
                            loginCommunity(cookies,vm)
@@ -598,6 +598,7 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
+                   // 慧新易校
                    launch huiXin@ {
                        //检测慧新易校可用性
                        val auth = prefs.getString("auth", "")
@@ -610,7 +611,7 @@ fun JxglstuCourseTableUI(
 //                                   showToast("无需刷新慧新易校")
                                return@huiXin
                            } else {
-                               if(CasInHFUT.excludeJxglstu) {
+                               if(useWebVpn || CasInHFUT.excludeJxglstu) {
                                    loginHuiXin(vm)
                                } else {
                                    vm.goToHuiXin(cookies)
@@ -618,7 +619,11 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
+                   // 信息门户
                    launch one@ {
+                       if(useWebVpn) {
+                           return@one
+                       }
                        val token = prefs.getString("bearer","")
                        if(token == null|| token.isEmpty()) {
                            loginOne(cookies,vm)
@@ -633,23 +638,30 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
+                   // 学工系统
                    launch stu@ {
-                       vm.goToStu(cookies)
-//                       val auth = prefs.getString("stu", "")
-//                       if(auth == null || auth.isEmpty()) {
-//                           loginStu(cookies,vm)
-//                       } else {
-//                           // 检测学工系统可用性
-//                           vm.checkStuLogin(auth)
-//                           val result =  (vm.checkStuLoginResp.state.value as? UiState.Success)?.data
-//                           if(result == true) {
-////                               showToast("无需刷新学工平台")
-//                               return@stu
-//                           } else {
-//                               // 登录
-//                               loginStu(cookies,vm)
-//                           }
-//                       }
+                       if(useWebVpn) {
+                           return@stu
+                       }
+                       val auth = prefs.getString("stu", "")
+                       if(auth == null || auth.isEmpty()) {
+                           vm.goToStu(cookies)
+                       } else {
+                           // 检测学工系统可用性
+                           vm.checkStuLogin(auth)
+                           val result =  (vm.checkStuLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+//                               showToast("无需刷新学工平台")
+                               return@stu
+                           } else {
+                               // 登录
+                               vm.goToStu(cookies)
+                           }
+                       }
+                   }
+                   // 图书馆
+                   launch library@ {
+
                    }
                }
                withTimeoutOrNull(10000) { // 超时时间 10s

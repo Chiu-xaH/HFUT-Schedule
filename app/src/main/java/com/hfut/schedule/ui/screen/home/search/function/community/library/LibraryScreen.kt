@@ -63,6 +63,8 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -89,7 +91,7 @@ fun LibraryScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Library.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    val scope = rememberCoroutineScope()
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -109,13 +111,15 @@ fun LibraryScreen(
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                             FilledTonalIconButton(
                                 onClick = {
-                                    navController.navigateForTransition(
-                                        AppNavRoute.WebView,
-                                        AppNavRoute.WebView.withArgs(
-                                        url = MyApplication.NEW_LIBRARY_URL,
-                                        title = "图书馆",
-                                        icon = R.drawable.net,
-                                    ),transplantBackground = true)
+                                    scope.launch {
+                                        Starter.startWebView(
+                                            navController,
+                                            url = MyApplication.NEW_LIBRARY_URL,
+                                            title = "图书馆",
+                                            icon = R.drawable.net,
+                                            transplantBackground = true
+                                        )
+                                    }
                                 }
                             ) {
                                 Icon(
@@ -133,12 +137,13 @@ fun LibraryScreen(
                             val seatUrl = remember { MyApplication.LIBRARY_SEAT + "home/web/f_second" }
                             FilledTonalButton(
                                 onClick = {
-                                    navController.navigateForTransition(
-                                        AppNavRoute.WebView,
-                                        AppNavRoute.WebView.withArgs(
+                                    scope.launch {
+                                        Starter.startWebView(
+                                            navController,
                                             url = seatUrl,
                                             title = seatTitle,
-                                        ))
+                                        )
+                                    }
                                 },
                                 modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(seatUrl))
                             ) {
@@ -150,7 +155,8 @@ fun LibraryScreen(
             },
         ) { innerPadding ->
             Column(
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier
+                    .padding(innerPadding)
                     .hazeSource(hazeState)
                     .fillMaxSize()
             ) {

@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.component.webview.getPureUrl
+import com.hfut.schedule.ui.component.webview.isThemeDark
 import com.hfut.schedule.ui.screen.control.ControlCenterScreen
 import com.hfut.schedule.ui.screen.control.limitDrawerSwipeArea
 import com.hfut.schedule.ui.screen.grade.GradeScreen
@@ -249,7 +250,7 @@ fun MainHost(
                 1f
             } else {
                 val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-                (if(motionBlur) 0.85f else 0.9f) * (1 - fraction) + fraction// 0.85f else 0.8875
+                (0.85f) * (1 - fraction) + fraction// 0.85f else 0.8875
             }
         }
     }
@@ -273,7 +274,10 @@ fun MainHost(
             }
         }
     }
-    val alpha = if(motionBlur && !isScan) 0.45f else 1f//0.35f
+    val alpha = if(motionBlur && !isScan) {
+        0.4f
+    } else 1f
+    //0.35f//45f  0.425f
 
     ModalNavigationDrawer  (
         scrimColor = MaterialTheme.colorScheme.surface.copy(alpha),
@@ -282,7 +286,7 @@ fun MainHost(
         drawerContent = {
             ControlCenterScreen(
                 if(isWebView) {
-                    containerColor?.copy(if(motionBlur) 0.45f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
+                    containerColor?.copy(if(motionBlur) 0.425f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
                 } else {
                     null
                 }
@@ -376,9 +380,6 @@ fun MainHost(
                             } else LoginScreen(
                                 loginVm,
                                 networkVm,
-                                navController,
-                                this@SharedTransitionLayout,
-                                this@composable,
                             )
                         }
                         mainUI(celebration.str)

@@ -40,7 +40,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,7 +61,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
                        leadingContent = {
                            Icon(painterResource(id = R.drawable.rotate_right), contentDescription = "")
                        },
-                       modifier = Modifier.clickable { navHostController.navigateAndSave(ShowerScreen.LOGIN.name) }
+                       modifier = Modifier.clickable { navHostController.navigateForBottomBar(ShowerScreen.LOGIN.name) }
                    )
                    PaddingHorizontalDivider()
                    TransplantListItem(

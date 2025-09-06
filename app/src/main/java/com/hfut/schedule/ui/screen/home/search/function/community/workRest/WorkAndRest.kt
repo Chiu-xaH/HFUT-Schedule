@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -67,6 +68,7 @@ import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.launch
 
 @Composable
 fun TimeTableUI(friendUserName : String? = null) {
@@ -212,6 +214,7 @@ fun TimeTableScreen(
             null
         }
     }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TimeTable.route }
@@ -233,11 +236,13 @@ fun TimeTableScreen(
                     actions = {
                         FilledTonalButton(
                             onClick = {
-                                if(url == null) {
-                                    showToast("正在从云端获取数据")
-                                } else {
-                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
-                                    showToast("即将打开网页链接,可自行下载或保存图片")
+                                scope.launch {
+                                    if(url == null) {
+                                        showToast("正在从云端获取数据")
+                                    } else {
+                                        Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
+                                        showToast("即将打开网页链接,可自行下载或保存图片")
+                                    }
                                 }
                             },
                             modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)

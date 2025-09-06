@@ -41,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -250,7 +251,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
         }
 
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
 
     //布局///////////////////////////////////////////////////////////////////////////
@@ -300,7 +301,9 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
 
                     FilledTonalButton(
                         onClick = {
-                            Starter.startWebView(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
+                            scope.launch {
+                                Starter.startWebView(context,url = getUrl(XUANCHENG_TAB), title = "慧新易校")
+                            }
                         }
                     ) {
                         Text("官方充值")
@@ -337,8 +340,9 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                         CardListItem(
                             headlineContent = { Text("官方充值查询入口") },
                             modifier = Modifier.clickable {
-                                Starter.startWebView(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
-
+                                scope.launch {
+                                    Starter.startWebView(context,url = getUrl(HEFEI_TAB), title = "慧新易校")
+                                }
                             },
                             trailingContent = {
                                 Icon(Icons.Default.ArrowForward,null)

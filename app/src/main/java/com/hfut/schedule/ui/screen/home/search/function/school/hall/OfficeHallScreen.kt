@@ -58,6 +58,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -67,16 +68,16 @@ private enum class OfficeHallType(val serviceMode : String,val description: Stri
     SEARCH("11","查找"),
     HANDLE("12","办理")
 }
-private fun openDetail(context: Context,bean : OfficeHallSearchBean,needLogin : Boolean) = with(bean) {
+private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,needLogin : Boolean) = with(bean) {
     val finalUrl = if(url != null && isValidWebUrl(url)) {
         url
     } else {
         MyApplication.OFFICE_HALL_URL + "ServiceHall/ServiceDetail/" + id
     }
-    if(needLogin) {
-        Starter.startWebUrl(context,finalUrl)
-    } else {
+    if(!needLogin || GlobalUIStateHolder.globalWebVpn == true) {
         Starter.startWebView(context,finalUrl,name,null, AppNavRoute.OfficeHall.icon)
+    } else {
+        Starter.startWebUrl(context,finalUrl)
     }
 }
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -162,7 +163,9 @@ fun OfficeHallScreen(
                                     CustomCard (
                                         color = cardNormalColor(),
                                         modifier = Modifier.clickable {
-                                            openDetail(context,item,needLogin)
+                                            scope.launch {
+                                                openDetail(context,item,needLogin)
+                                            }
                                         }
                                     ){
                                         TransplantListItem(

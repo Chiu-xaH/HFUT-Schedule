@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,8 +69,10 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.launch
 
 
 fun apiCheck() : Boolean {
@@ -179,18 +182,20 @@ fun HomeSettingScreen(navController: NavController,
         MyAPIItem(color = MaterialTheme.colorScheme.surface)
 
         if (showUpdate) {
+            val canUseUpdate = AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64
             DividerTextExpandedWith(text = "更新版本") {
                 UpdateUI(vm)
-                if(AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64) {
+                if(canUseUpdate) {
                     val patchItem = getPatchVersions().find { item ->
                         currentVersion == item.oldVersion
                     }
 
-                    if (patchItem != null ) {
+                    if (patchItem != null) {
                         Spacer(Modifier.height(CARD_NORMAL_DP))
                         PaddingHorizontalDivider(isDashed = true)
                         PatchUpdateUI(patchItem,vm)
-                    } else {
+                    } else if(!AppVersion.isPreview()) {
+                        BottomTip("为了保证您的使用体验，建议及时跟进更新")
                         // 清理
                         if(!hasCleaned) {
                             hasCleaned = BsdiffUpdate.deleteCache(context)
@@ -202,6 +207,9 @@ fun HomeSettingScreen(navController: NavController,
                 Spacer(Modifier.height(CARD_NORMAL_DP))
                 CustomCard(color = MaterialTheme.colorScheme.surface) {
                     GithubDownloadUI()
+                }
+                if(!canUseUpdate) {
+                    BottomTip("当前安装的是非ARM64架构安装包,无法直接更新,请从备用更新通道下载对应包体")
                 }
             }
         }
@@ -223,6 +231,7 @@ fun HomeSettingScreen(navController: NavController,
 
 @Composable
 fun GithubDownloadUI() {
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
     TransplantListItem(
         headlineContent = {
@@ -233,7 +242,9 @@ fun GithubDownloadUI() {
         },
         leadingContent = { Icon(painterResource(R.drawable.github),null)},
         modifier = Modifier.clickable {
-            Starter.startWebView(context ,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest")
+            scope.launch {
+                Starter.startWebView(context ,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}/releases/latest")
+            }
         }
     )
 }
@@ -252,6 +263,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
         }
         refreshNetwork()
     }
+    val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data.sortedBy {
             val tinyList = it.name.split(".")
@@ -272,9 +284,11 @@ fun UpdateContents(vm : NetWorkViewModel) {
                         modifier = Modifier.padding(CARD_NORMAL_DP)
                     ) {
                         TransplantListItem(
-                            headlineContent = { Text("v" + versionName) },
+                            headlineContent = { Text("v$versionName") },
                             modifier = Modifier.clickable {
-                                Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/update/${name}",versionName,null,R.drawable.github)
+                                }
                             }
                         )
                     }

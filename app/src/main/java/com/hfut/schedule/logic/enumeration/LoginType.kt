@@ -6,12 +6,10 @@ import com.hfut.schedule.application.MyApplication
 enum class LoginType(val service : String?,val description: String) {
     JXGLSTU(MyApplication.JXGLSTU_URL + "neusoft-sso/login","教务系统"),
     ONE(null,"信息门户"),
-    // xsfw/sys/xggzptapp/index.do xsfw/sys/xggzptapp/index.do
-    //
     STU(MyApplication.STU_URL + "xsfw/sys/xgutilapp/userinfo/getConfigUserInfo.do","学工系统"),
     COMMUNITY(MyApplication.COMMUNITY_URL,"智慧社区"),
     HUI_XIN(MyApplication.HUI_XIN_URL + "/plat","慧新易校"),
-    LIBRARY(MyApplication.NEW_LIBRARY_URL,"图书馆"),
+    LIBRARY(MyApplication.NEW_LIBRARY_URL + "svc/sso/login/callback/portal/hfut","图书馆"),
     // 二课
     // 校友
     // 办事大厅

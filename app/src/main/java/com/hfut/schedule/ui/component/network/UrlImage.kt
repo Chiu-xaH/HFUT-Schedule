@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -21,6 +22,7 @@ import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.util.other.loadImage
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -33,7 +35,7 @@ fun UrlImage(
     useCut : Boolean = true
 ) {
     val context = LocalContext.current
-
+    val scope = rememberCoroutineScope()
     val modifierCut = if(useCut) {
         Modifier
             .clip(RoundedCornerShape(roundSize))
@@ -49,7 +51,9 @@ fun UrlImage(
             .clip(RoundedCornerShape(roundSize))
             .size(width = width,height= height)
             .clickable {
-                Starter.startWebView(context,url,"图片",cookie)
+               scope.launch {
+                   Starter.startWebView(context,url,"图片",cookie)
+               }
             }
     ) {
         val imageState = loadImage(url, cookie = cookie)
@@ -71,13 +75,16 @@ fun UrlImageNoCrop(
     modifier: Modifier = Modifier.padding(APP_HORIZONTAL_DP)
 ) {
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     val imageState = loadImage(url, cookie = cookie)
     imageState.value?.let { bitmap ->
         Image(
             bitmap = bitmap.asImageBitmap(),
             contentDescription = null,
             modifier = modifier.clickable {
-                Starter.startWebView(context,url,"图片",cookie)
+                scope.launch {
+                    Starter.startWebView(context,url,"图片",cookie)
+                }
             },
             contentScale = ContentScale.Fit
         )

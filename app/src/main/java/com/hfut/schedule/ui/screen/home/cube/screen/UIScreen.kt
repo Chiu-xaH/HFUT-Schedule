@@ -168,6 +168,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
         val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
+        val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
 
         val scope = rememberCoroutineScope()
 
@@ -641,6 +642,26 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         showProcessText = true
                     )
                 }
+            }
+        }
+        DividerTextExpandedWith("标签") {
+            val useCustomBackground = customBackground != ""
+            CustomCard(color = backgroundColor) {
+                TransplantListItem(
+                    headlineContent = {
+                        Text("显示所有底栏标签")
+                    },
+                    supportingContent = {
+                        Text("显示全部的底栏标签或仅选中项")
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) }
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.label),null)
+                    },
+                    trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
+                )
             }
         }
         if(!isControlCenter) {

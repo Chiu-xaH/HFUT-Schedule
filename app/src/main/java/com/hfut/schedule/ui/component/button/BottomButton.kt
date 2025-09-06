@@ -19,7 +19,7 @@ fun BottomButton(
     onClick : () -> Unit,
     text : String,
     enable : Boolean = true,
-    color : Color = if(enable) MaterialTheme.colorScheme.secondaryContainer else Color.Gray.copy(.3f)
+    color : Color = if(enable) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer
 ) {
     Column {
         Box(Modifier.background(color)) {
@@ -29,7 +29,7 @@ fun BottomButton(
                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
                 modifier = Modifier.fillMaxSize(),
             ) {
-                Text(text)
+                Text(text,color = if(enable) MaterialTheme.colorScheme.primary else Color.Gray)
             }
         }
     }

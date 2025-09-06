@@ -61,7 +61,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.navigateAndSave
+import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -236,7 +236,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
                     RowHorizontal {
                         Button(
                             onClick = {
-                                navController.navigateAndSave(ShowerScreen.LOGIN.name)
+                                navController.navigateForBottomBar(ShowerScreen.LOGIN.name)
                             }
                         ) {
                             Text("去登录")

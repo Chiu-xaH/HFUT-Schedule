@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -125,6 +126,7 @@ fun About(vm : NetWorkViewModel) {
             starsNum = (uiState as UiState.Success).data.toString()
         }
     }
+    val scope = rememberCoroutineScope()
     val userCount by vm.supabaseUserCountResp.state.collectAsState()
     val activity = LocalActivity.current
     val todayVisitCount by vm.supabaseTodayVisitResp.state.collectAsState()
@@ -137,7 +139,11 @@ fun About(vm : NetWorkViewModel) {
                     HazeBottomSheetTopBar("关于") {
                         FilledTonalButton(
                             enabled = todayVisitCount is UiState.Success,
-                            onClick = { Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) }
+                            onClick = {
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                                }
+                            }
                         ) {
                             Text("今日流量 ${(todayVisitCount as? UiState.Success)?.data ?: ""}")
                         }
@@ -150,7 +156,11 @@ fun About(vm : NetWorkViewModel) {
                     ScrollHorizontalBottomDivider(scrollState)
                     Row(modifier = Modifier.padding(APP_HORIZONTAL_DP),horizontalArrangement = Arrangement.Center) {
                         Button(
-                            onClick = { Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}") },
+                            onClick = {
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}/${MyApplication.GITHUB_REPO_NAME}")
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(.5f)
@@ -160,7 +170,11 @@ fun About(vm : NetWorkViewModel) {
 
                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP/2))
                         FilledTonalButton(
-                            onClick = { Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github) },
+                            onClick = {
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CHART.md","统计报表",null,R.drawable.github)
+                                }
+                            },
                             enabled = userCount is UiState.Success,
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -179,7 +193,9 @@ fun About(vm : NetWorkViewModel) {
                     CardListItem(
                         color = MaterialTheme.colorScheme.surface,
                         modifier = Modifier.clickable {
-                            Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
+                            scope.launch {
+                                Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
+                            }
                         },
                         headlineContent = { ScrollText(MyApplication.GITHUB_DEVELOPER_NAME) },
                         leadingContent = {

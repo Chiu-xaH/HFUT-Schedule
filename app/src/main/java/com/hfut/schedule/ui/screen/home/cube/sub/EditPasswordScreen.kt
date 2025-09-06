@@ -141,7 +141,9 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
                         Text("前往慧新易校修改一卡通及其校园网的密码")
                     },
                     modifier = Modifier.clickable {
-                        Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                        scope.launch {
+                            Starter.startWebView(context,"${MyApplication.HUI_XIN_URL}campus-card/cardSetPwd" + "?synjones-auth=" + auth,"修改密码", icon = R.drawable.lock_reset)
+                        }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.lock_reset),null) },
                 )

@@ -354,7 +354,9 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                         .padding(horizontal = APP_HORIZONTAL_DP),
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
-                        Starter.startWebView(context,"https://www.hfut.edu.cn/")
+                        scope.launch {
+                            Starter.startWebView(context,"https://www.hfut.edu.cn/")
+                        }
                     }
                 ) {
                     Text("测试连通性")
@@ -385,7 +387,9 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     }
                     FilledTonalButton(
                         onClick = {
-                            Starter.startWebView(context,url = zjgdUrl, title = "慧新易校")
+                            scope.launch {
+                                Starter.startWebView(context,url = zjgdUrl, title = "慧新易校")
+                            }
                         },
                     ) {
                         Text("官方充值")
