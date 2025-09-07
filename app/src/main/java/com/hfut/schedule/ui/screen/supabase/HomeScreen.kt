@@ -11,6 +11,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -42,6 +43,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -80,16 +82,16 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI : UIViewModel) {
+    val navController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-    val bottomBarItems = when(navHostController.currentRouteWithoutArgs()) {
+    val bottomBarItems = when(navController.currentRouteWithoutArgs()) {
         SupabaseScreen.HOME.name -> SupabaseScreen.HOME
         SupabaseScreen.SETTINGS.name -> SupabaseScreen.SETTINGS
         SupabaseScreen.STORAGE.name -> SupabaseScreen.STORAGE
         SupabaseScreen.ME.name -> SupabaseScreen.ME
         else -> SupabaseScreen.HOME
     }
-    val navController = rememberNavController()
     val titles = listOf("日程","网址导航")
 
     val pagerState = rememberPagerState(pageCount = { titles.size })
@@ -150,7 +152,8 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                             SortType.TIME_LINE -> SortType.CREATE_TIME
                                             SortType.CREATE_TIME -> SortType.TIME_LINE
                                         }
-                                    }
+                                    },
+                                    modifier = Modifier.padding(end = 5.dp)
                                 ) {
                                     Text(
                                         when(sortType) {

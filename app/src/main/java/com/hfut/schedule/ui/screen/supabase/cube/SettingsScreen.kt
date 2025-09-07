@@ -47,6 +47,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     val filter by DataStoreManager.enableSupabaseFilterEvent.collectAsState(initial = false)
     val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
     val context = LocalContext.current
+    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
 
     val scope = rememberCoroutineScope()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -69,12 +70,6 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
                 ) {
-                    TransplantListItem(
-                        headlineContent = { Text("多层屏障 保障信息安全") },
-                        supportingContent = { Text("本平台为私有平台，即使软件开源，但是只有规定用户可使用") },
-                        leadingContent = { Icon(painterResource(R.drawable.info),null) }
-                    )
-
                     CardListItem(
                         headlineContent = { Text("本地检查") },
                         supportingContent = { Text("APP验证是否拥有教务个人信息，没有则证明用户没登陆过教务系统，不是在校生，直接不展示此功能") },
@@ -131,7 +126,7 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
         DividerTextExpandedWith("设置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text("刷新登陆状态") },
+                    headlineContent = { Text(if(jwt.isEmpty() || jwt.isBlank()) "注册/登录" else "刷新登陆状态") },
                     leadingContent = { Icon(painterResource(R.drawable.login), null) },
                     modifier = Modifier.clickable { Starter.loginSupabase(context) }
                 )

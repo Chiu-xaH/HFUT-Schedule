@@ -16,17 +16,14 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -44,23 +41,20 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.AppDownloadManager
-import com.hfut.schedule.logic.util.sys.AppDownloadManager.DownloadIds
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.getDownloadProgress
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.noticeInstall
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
-import com.hfut.schedule.logic.util.sys.AppDownloadManager.removeDownload
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
@@ -68,7 +62,6 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.xah.uicommon.component.status.LoadingUI
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -171,7 +164,8 @@ fun UpdateUI(vm : NetWorkViewModel) {
                 text = "下载并安装" + if(uiState is UiState.Success) {
                     " ("+formatDecimal((uiState as UiState.Success).data,2) + "MB)"
                 } else "",
-                color = MaterialTheme.colorScheme.error.copy(.07f)
+                textColor = Color. Unspecified,
+                containerColor = MaterialTheme.colorScheme.error.copy(.07f)
             )
         }
     }
@@ -305,7 +299,9 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
                                 if(uiStatePatch is UiState.Success) {
                                    " ("+ formatDecimal((uiStatePatch as UiState.Success).data,2) + "MB)"
                                 } else ""
-                    , color = MaterialTheme.colorScheme.outlineVariant.copy(.5f)
+                    ,
+                    textColor = Color. Unspecified,
+                    containerColor = MaterialTheme.colorScheme.outlineVariant.copy(.5f)
                 )
             }
         }

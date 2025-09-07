@@ -56,7 +56,7 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
     val refreshNetwork : suspend () -> Unit = {
         vm.supabaseGetMyEventsResp.clear()
         vm.supabaseDelResp.clear()
-        vm.supabaseGetMyEvents(jwt)
+        vm.supabaseGetMyEvents()
     }
     val refreshing = uiState is UiState.Loading
     val scope = rememberCoroutineScope()
@@ -65,7 +65,11 @@ fun SupabaseMeScreenRefresh(vm : NetWorkViewModel,innerPadding : PaddingValues) 
     })
 
     LaunchedEffect(jwt) {
-        if ((jwt.isNotBlank() || jwt.isNotEmpty()) && refreshing) {
+        if ((jwt.isEmpty() || jwt.isBlank())) {
+            showToast("未登录")
+            return@LaunchedEffect
+        }
+        if ((jwt.isNotBlank() && jwt.isNotEmpty()) && refreshing) {
             refreshNetwork()
         }
     }

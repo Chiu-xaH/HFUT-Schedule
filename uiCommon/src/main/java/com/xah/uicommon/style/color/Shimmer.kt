@@ -27,7 +27,7 @@ enum class ShimmerAngle(val angle : Float) {
 @Composable
 fun Modifier.shimmerEffect(
     angle: ShimmerAngle = ShimmerAngle.START_TOP_TO_BOTTOM_END,
-    alpha : Float = 1f,
+    alpha : Float = 0.55f,
 ): Modifier {
     val durationMills = 1000
     val transition = rememberInfiniteTransition(label = "shimmer")
@@ -41,7 +41,7 @@ fun Modifier.shimmerEffect(
         label = "shimmer-progress"
     )
 
-    val color = MaterialTheme.colorScheme.surface.copy(alpha)
+    val color = Color.White.copy(alpha)
 
     return this.drawWithContent {
         drawContent()

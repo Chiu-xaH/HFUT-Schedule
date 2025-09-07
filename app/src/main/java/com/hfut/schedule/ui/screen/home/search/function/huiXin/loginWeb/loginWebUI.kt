@@ -454,10 +454,9 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                             }
                             BottomButton(
                                 onClick = {
-                                    if(!loading) {
-                                        showDialog2 = true
-                                    }
+                                    showDialog2 = true
                                 },
+                                enable = loading == false,
                                 text = "快速充值"
                             )
                         }

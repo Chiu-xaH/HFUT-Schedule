@@ -75,128 +75,63 @@ suspend fun regSupabase(password : String, vm: NetWorkViewModel, onResult : (Boo
 }
 
 // 一键登录
-suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWorkViewModel,context : Context) = withContext(Dispatchers.IO) {
-
+suspend fun loginSupabaseWithCheck(jwt : String, refreshToken: String, vm: NetWorkViewModel,context : Context) : Boolean = withContext(Dispatchers.IO) {
     if(jwt.isEmpty() || jwt.isBlank()) {
-//        onResult(false)
-        loginSupabase(context)
-        return@withContext
+        // 未登陆过
+        return@withContext false
     }
 
-//    lateinit var checkObserver: Observer<Boolean?> // 延迟初始化观察者
-//    lateinit var loginObserver: Observer<String?> // 延迟初始化观察者
-
-//
-//    checkObserver = Observer { result ->
-//        if(result != null) {
-//            if (result) {
-//                // 登录有效
-//                onResult(false)
-//                startSupabase()
-//                vm.supabaseCheckResp.removeObserver(checkObserver)
-//                return@Observer
-//            } else {
-//                // 需要刷新
-//                vm.supabaseCheckResp.removeObserver(checkObserver)
-//                // 只能使用密码登录法
-//                if(refreshToken.isEmpty() || refreshToken.isBlank()) {
-//                    onResult(false)
-//                    loginSupabase()
-//                    return@Observer
-//                }
-//                // 使用刷新登录
-//                vm.supabaseLoginWithRefreshToken(refreshToken)
-//                vm.supabaseLoginResp.observeForever(loginObserver)
-//                return@Observer
-//            }
-//        }
-//    }
-
-//    loginObserver = Observer { result ->
-//        if(result != null) {
-//            onResult(false)
-//            if (!result.contains("error")) {
-//                // 登录成功 保存新的JWT与TOKEN
-//                CoroutineScope(Job()).launch {
-//                    async {
-//                        launch { saveSupabaseJwt(vm) }
-//                        launch { saveSupabaseRefreshToken(vm) }
-//                    }.await()
-//                    launch {
-//                        startSupabase()
-//                        return@launch
-//                    }
-//                }
-//            } else {
-//                // 只能使用密码登录法
-//                vm.supabaseLoginResp.removeObserver(loginObserver)
-//                onResult(true)
-//                loginSupabase()
-//                vm.supabaseLoginResp.removeObserver(loginObserver)
-//                return@Observer
-//            }
-//        }
-//    }
-    val checkLogin : suspend () -> Unit = checkLogin@ {
-        vm.supabaseCheckJwt(jwt)
-        val check2 = (vm.supabaseCheckResp.state.value as? UiState.Success)?.data ?: return@checkLogin
-        if (check2) {
-            // 登录有效
-            startSupabase(context)
-            return@checkLogin
-        } else {
-            // 需要刷新
+    suspend fun tryLogin() : Boolean {
+        if(refreshToken.isEmpty() || refreshToken.isBlank()) {
+            showToast("未登陆过，请前往选项中选择刷新登陆状态")
+            return false
+        }
+        // 使用刷新登录
+        vm.supabaseLoginWithRefreshToken(refreshToken)
+        val login = (vm.supabaseLoginResp.state.value as? UiState.Success)?.data
+        if(login == null) {
             // 只能使用密码登录法
-            if(refreshToken.isEmpty() || refreshToken.isBlank()) {
-                loginSupabase(context)
-                return@checkLogin
-            }
-            // 使用刷新登录
-            vm.supabaseLoginWithRefreshToken(refreshToken)
-            val login = (vm.supabaseLoginResp.state.value as? UiState.Success)?.data
-            if(login == null) {
-                // 只能使用密码登录法
-                loginSupabase(context)
-                return@checkLogin
-            } else {
-                // 登录成功 保存新的JWT与TOKEN
-                async {
-                    launch { DataStoreManager.saveSupabaseRefreshToken(login.refreshToken) }
-                    launch { DataStoreManager.saveSupabaseJwt(login.token) }
-                }.await()
-                launch { startSupabase(context) }
-                return@checkLogin
-            }
-            return@checkLogin
-        }
-    }
-    val check = vm.supabaseCheckResp.state.first()
-    if(check is UiState.Success) {
-        if(check.data) {
-            startSupabase(context)
-            return@withContext
+            showToast("自动刷新登录失败，请前往选项中选手动刷新登陆状态")
+            return false
         } else {
-            return@withContext checkLogin()
+            // 登录成功 保存新的JWT与TOKEN
+            showToast("自动刷新登录成功")
+            async {
+                launch { DataStoreManager.saveSupabaseRefreshToken(login.refreshToken) }
+                launch { DataStoreManager.saveSupabaseJwt(login.token) }
+            }.await()
+            return true
         }
-    } else {
-        return@withContext checkLogin()
     }
-//    CoroutineScope(Job()).launch {
-//        val isLogin = async { vm.supabaseCheckResp.value }.await()
-//        if(isLogin == true) {
-//            onResult(false)
-//            startSupabase()
-//            return@launch
-//        } else {
-//            async { reEmptyLiveDta(vm.supabaseCheckResp) }.await()
-//            async { onResult(true) }.await()
-//            async { vm.supabaseCheckJwt(jwt) }.await()
-//            launch {
-//                Handler(Looper.getMainLooper()).post {
-//                    vm.supabaseCheckResp.observeForever(checkObserver)
-//                }
-//            }
-//        }
-//    }
+
+    val status = vm.supabaseCheckResp.state.first()
+    when(status) {
+        is UiState.Success -> {
+            // 已经检查过
+            return@withContext true
+        }
+        is UiState.Error -> {
+            // Token不对或过期
+            return@withContext tryLogin()
+        }
+        else -> {
+            // 未检查 检查
+            vm.supabaseCheckResp.clear()
+            vm.supabaseCheckJwt(jwt)
+            val check2 = vm.supabaseCheckResp.state.first()
+            when(check2) {
+                is UiState.Success -> {
+                    return@withContext true
+                }
+                is UiState.Error -> {
+                    // Token不对或过期
+                    return@withContext tryLogin()
+                }
+                else -> {
+                    return@withContext false
+                }
+            }
+        }
+    }
 }
 

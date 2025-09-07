@@ -203,7 +203,7 @@ fun SearchScreen(
                 SearchAppBean(36,"大创系统 大学生创新创业", { IETP(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
                 SearchAppBean(37,"${AppNavRoute.Work.label} 实习 春招 双选 秋招", { Work(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Work.route),
                 SearchAppBean(38,"${AppNavRoute.Holiday.label} 国家法定节假日 假期 节日", { Holiday(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.Holiday.route),
-                SearchAppBean(39,"共建平台 信息共建 日程 网课 网址导航", { Supabase(vm) }),
+                SearchAppBean(39,"共建平台 信息共建 日程 网课 网址导航", { Supabase() }),
                 SearchAppBean(40,"洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState,navController,sharedTransitionScope,animatedContentScope) }),
                 SearchAppBean(41,"${AppNavRoute.Admission.label} 历年分数线 招生计划", { Admission(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.Admission.route),
                 SearchAppBean(42,"${AppNavRoute.WebVpn.label} 外地访问 内网", { WebVpn(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.WebVpn.route),

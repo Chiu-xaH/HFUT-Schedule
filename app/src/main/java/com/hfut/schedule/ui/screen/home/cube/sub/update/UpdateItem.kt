@@ -63,6 +63,7 @@ fun VersionInfo() {
             UpdateItems("重构 登录界面","将功能区折叠起来，以规整界面")
             UpdateItems("重构 日志记录","现在 可以更好地手动记录崩溃日志了")
             UpdateItems("重构 一卡通-统计中消费预测与统计功能改为本地分析")
+            UpdateItems("修改 共建平台的开放政策为全员开放，但新增日程需注册或登录")
             UpdateItems("回归 底栏标签开关","位于 选项-外观显示")
             UpdateItems("修复 检查教务封网部分情况说明错误的Bug")
             UpdateItems("修复 转场动画结束后仍裁切圆角的Bug")
@@ -130,6 +131,8 @@ private fun UpdateItems(
         "新增" -> UpdateType.ADD
         "重构" -> UpdateType.RENEW
         "重写" -> UpdateType.RENEW
+        "修改" -> UpdateType.RENEW
+        "调整" -> UpdateType.RENEW
         "优化" -> UpdateType.OPTIMIZE
         "修复" -> UpdateType.FIX
         "更新" -> UpdateType.UPDATE

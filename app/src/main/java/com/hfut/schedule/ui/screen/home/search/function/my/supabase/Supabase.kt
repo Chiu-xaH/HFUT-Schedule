@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.loginSupabase
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.xah.uicommon.component.text.ScrollText
@@ -26,21 +27,21 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun Supabase(vm: NetWorkViewModel) {
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
-    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
-    val scope = rememberCoroutineScope()
-    var loading by remember { mutableStateOf(false) }
+fun Supabase() {
+//    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+//    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+//    val scope = rememberCoroutineScope()
+//    var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = "共建平台") },
         leadingContent = {
-            if(loading) {
-                LoadingIcon()
-            } else {
+//            if(loading) {
+//                LoadingIcon()
+//            } else {
                 Icon(painterResource(id = R.drawable.cloud), contentDescription = "")
-            }
+//            }
         },
         trailingContent = {
             FilledTonalIconButton(
@@ -51,11 +52,12 @@ fun Supabase(vm: NetWorkViewModel) {
             }
         },
         modifier = Modifier.clickable {
-           scope.launch {
-               loading = true
-               loginSupabaseWithCheck(jwt,refreshToken,vm,context)
-               loading = false
-           }
+            Starter.startSupabase(context)
+//           scope.launch {
+//               loading = true
+//               loginSupabaseWithCheck(jwt,refreshToken,vm,context)
+//               loading = false
+//           }
         }
     )
 }

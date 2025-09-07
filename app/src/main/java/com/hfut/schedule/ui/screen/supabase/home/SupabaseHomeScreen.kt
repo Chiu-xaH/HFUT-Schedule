@@ -88,31 +88,21 @@ private const val TAB_RIGHT = 1
 @Composable
 fun SupabaseHomeScreen(vm: NetWorkViewModel, sortType: SortType, sortReversed : Boolean, innerPadding : PaddingValues, pagerState : PagerState) {
     var refreshing by remember { mutableStateOf(true) }
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
 
     val scope = rememberCoroutineScope()
     val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
-            async {
-                refreshing = true
-            }.await()
-            launch {
-                if ((jwt.isNotBlank() || jwt.isNotEmpty()) && refreshing) {
-                    reEmptyLiveDta(vm.supabaseGetEventsResp)
-                    vm.supabaseGetEvents(jwt)
-                }
-            }
+            refreshing = true
+            reEmptyLiveDta(vm.supabaseGetEventsResp)
+            vm.supabaseGetEvents()
         }
     })
 
-    LaunchedEffect(jwt) {
-        if ((jwt.isNotBlank() || jwt.isNotEmpty()) && refreshing) {
-            refreshing = true
-            reEmptyLiveDta(vm.supabaseGetEventsResp)
-            vm.supabaseGetEvents(jwt)
-        }
-    }
     LaunchedEffect(Unit) {
+        if(refreshing) {
+            reEmptyLiveDta(vm.supabaseGetEventsResp)
+            vm.supabaseGetEvents()
+        }
         Handler(Looper.getMainLooper()).post {
             vm.supabaseGetEventsResp.observeForever { result ->
                 if (result != null) {

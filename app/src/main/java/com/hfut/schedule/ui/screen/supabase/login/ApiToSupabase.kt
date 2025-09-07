@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -31,7 +32,7 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val check by vm.supabaseCheckResp.state.collectAsState()
 
-    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
+//    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
     var showBadge by remember { mutableStateOf(false) }
 
     val uiState by vm.supabaseGetEventLatestResp.state.collectAsState()
@@ -58,9 +59,10 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
 
     IconButton(
         onClick = {
-            scope.launch {
-                loginSupabaseWithCheck(jwt,refreshToken,vm, context)
-            }
+            Starter.startSupabase(context)
+//            scope.launch {
+//                loginSupabaseWithCheck(jwt,refreshToken,vm, context)
+//            }
         },
         colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)
     ) {

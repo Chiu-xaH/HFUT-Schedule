@@ -13,10 +13,11 @@ open class BaseServiceCreator(
     protected val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(url)
         .client(client)
-//        .addConverterFactory(
-//            if (isJSONorXML) GsonConverterFactory.create()
+        .addConverterFactory(
+//            if (isJSONorXML)
+                    GsonConverterFactory.create()
 //            else ScalarsConverterFactory.create()
-//        )
+        )
         .build()
 
     fun <T> create(service: Class<T>): T = retrofit.create(service)

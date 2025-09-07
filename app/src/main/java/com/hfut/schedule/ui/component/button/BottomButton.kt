@@ -19,17 +19,18 @@ fun BottomButton(
     onClick : () -> Unit,
     text : String,
     enable : Boolean = true,
-    color : Color = if(enable) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainer
+    textColor : Color = MaterialTheme.colorScheme.primary,
+    containerColor : Color = MaterialTheme.colorScheme.secondaryContainer
 ) {
     Column {
-        Box(Modifier.background(color)) {
+        Box(Modifier.background(if(enable) containerColor else MaterialTheme.colorScheme.surfaceContainer)) {
             FilledTonalButton(
                 onClick = if(enable) onClick else {{}},
                 shape = RoundedCornerShape(0.dp),
                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
                 modifier = Modifier.fillMaxSize(),
             ) {
-                Text(text,color = if(enable) MaterialTheme.colorScheme.primary else Color.Gray)
+                Text(text,color = if(enable) textColor else Color.Gray)
             }
         }
     }

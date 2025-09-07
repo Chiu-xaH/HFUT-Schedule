@@ -50,7 +50,7 @@ interface SupabaseService {
     // EVENT查
     @GET("rest/v1/event")
     fun getEvents(
-        @Header("Authorization") authorization : String,
+//        @Header("Authorization") authorization : String,
         @Header("apikey") publicKey : String = getSupabasePublicKey(),
         @Query("end_time") endTime : String? = "gt.${toDateTimeBeanForSupabase()}",
         @Query("contributor_email") email : String? = null,

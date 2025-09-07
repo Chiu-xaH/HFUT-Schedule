@@ -67,6 +67,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -90,21 +91,20 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.SupabaseEventOutput
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardBottomButtons
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
@@ -114,31 +114,26 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.CustomSwitch
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.BottomTip
+import com.hfut.schedule.ui.component.status.StatusUI
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.UpdateContents
-import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
-import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -238,12 +233,12 @@ fun AddEventScreen(
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
 
-    var loading by remember { mutableStateOf(false) }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
+
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -262,13 +257,12 @@ fun AddEventScreen(
                         TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.AddEvent.icon)
                     },
                     actions = {
-                        if(getPersonInfo().studentId != null && !isSupabase)
+                        if(!isSupabase)
                             FilledTonalButton(onClick = {
-                                scope.launch {
-                                    loading = true
-                                    loginSupabaseWithCheck(jwt,refreshToken,vm,context)
-                                    loading = false
-                                }
+                                Starter.startSupabase(context)
+//                                scope.launch {
+
+//                                }
                             }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                                 Text("云端共建")
                             }
@@ -276,12 +270,31 @@ fun AddEventScreen(
                 )
             },
         ) { innerPadding ->
+            val canUse by produceState<Boolean?>(initialValue = null) {
+                value = if(isSupabase) loginSupabaseWithCheck(jwt,refreshToken,vm,context) else true
+            }
             Column(modifier = Modifier.padding(innerPadding)) {
-                if(loading) {
-                    LoadingUI("正在核对登录")
-                } else {
-                    AddEventUI(vm,isSupabase) {
-                        navController.popBackStack()
+                when(canUse) {
+                    null -> {
+                        CenterScreen {
+                            LoadingUI("正在核对登录(登录账号才可贡献日程)")
+                        }
+                    }
+                    true -> {
+                        AddEventUI(vm,isSupabase) {
+                            navController.popBackStack()
+                        }
+                    }
+                    false -> {
+                        CenterScreen {
+                            ColumnVertical {
+                                StatusUI(R.drawable.login,"未登录或状态失效")
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                                Button(onClick = { Starter.loginSupabase(context)}) {
+                                    Text("刷新登录状态")
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -332,8 +345,10 @@ private fun SharedTransitionScope.SurfaceUI(
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
 
-    var loading by remember { mutableStateOf(false) }
+//    var loading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
+    val scope = rememberCoroutineScope()
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var useBackHandler by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -341,6 +356,14 @@ private fun SharedTransitionScope.SurfaceUI(
             delay(AppAnimationManager.ANIMATION_SPEED*1L)
             useBackHandler = true
         }
+//        launch {
+//            loading = true
+//            loginSupabaseWithCheck(jwt,refreshToken,vm,context)
+//            loading = false
+//        }
+//        //                            scope.launch {
+
+//                            }
     }
     var scale by remember { mutableFloatStateOf(1f) }
     if(useBackHandler && enablePredictive) {
@@ -365,9 +388,7 @@ private fun SharedTransitionScope.SurfaceUI(
         }
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val context = LocalContext.current
 
-    val scope = rememberCoroutineScope()
     Scaffold(
         modifier = Modifier
             .nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -387,16 +408,12 @@ private fun SharedTransitionScope.SurfaceUI(
                     colors = topBarTransplantColor(),
                     title = { Text("添加") },
                     actions = {
-                        if(getPersonInfo().studentId != null && !isSupabase)
-                            FilledTonalButton(onClick = {
-                                scope.launch {
-                                    loading = true
-                                    loginSupabaseWithCheck(jwt,refreshToken,vm,context)
-                                    loading = false
-                                }
-                            }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                Text("云端共建")
-                            }
+                        if(!isSupabase)
+                        FilledTonalButton(onClick = {
+                            Starter.startSupabase(context)
+                        }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                            Text("云端共建")
+                        }
 
                     },
                     navigationIcon = {
@@ -419,13 +436,30 @@ private fun SharedTransitionScope.SurfaceUI(
             enter  = fadeIn(),
             exit = fadeOut(tween(durationMillis = 0))
         ) {
-            Column(modifier = Modifier
-                .padding(innerPadding)
-                .background(Color.Transparent)) {
-                if(loading) {
-                    LoadingUI("正在核对登录")
-                } else {
-                    AddEventUI(vm,isSupabase,showChange)
+            val canUse by produceState<Boolean?>(initialValue = null) {
+                value = if(isSupabase) loginSupabaseWithCheck(jwt,refreshToken,vm,context) else true
+            }
+            Column(modifier = Modifier.padding(innerPadding).background(Color.Transparent)) {
+                when(canUse) {
+                    null -> {
+                        CenterScreen {
+                            LoadingUI("正在核对登录(登录账号才可贡献日程)")
+                        }
+                    }
+                    true -> {
+                        AddEventUI(vm,isSupabase,showChange)
+                    }
+                    false -> {
+                        CenterScreen {
+                            ColumnVertical {
+                                StatusUI(R.drawable.login,"未登录或状态失效")
+                                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                                Button(onClick = { Starter.loginSupabase(context)}) {
+                                    Text("刷新登录状态")
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

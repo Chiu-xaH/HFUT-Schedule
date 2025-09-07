@@ -343,7 +343,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     // 默认 展示未过期日程&&符合自己班级的日程
     val supabaseGetEventsResp = MutableLiveData<String?>()
-    fun supabaseGetEvents(jwt: String) = makeRequest(supabase.getEvents(authorization = "Bearer $jwt"),supabaseGetEventsResp)
+    fun supabaseGetEvents() = makeRequest(supabase.getEvents(),supabaseGetEventsResp)
 
     private val _eventForkCountCache = mutableStateMapOf<Int, String>()
     val eventForkCountCache: Map<Int, String> get() = _eventForkCountCache
@@ -392,9 +392,9 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     // 定制 展示自己上传过的日程
     val supabaseGetMyEventsResp = StateHolder<List<SupabaseEventsInput>>()
-    suspend fun supabaseGetMyEvents(jwt: String) = launchRequestSimple(
-        holder = supabaseGetMyEventsResp,
-        request = { supabase.getEvents(authorization = "Bearer $jwt",endTime = null,email = "eq." + getSchoolEmail()).awaitResponse() },
+    suspend fun supabaseGetMyEvents() = launchRequestSimple(
+        holder = supabaseGetMyEventsResp,// authorization = "Bearer $jwt"
+        request = { supabase.getEvents(endTime = null,email = "eq." + getSchoolEmail()).awaitResponse() },
         transformSuccess = { _,json -> parseSupabaseMyEvents(json) }
     )
     private fun parseSupabaseMyEvents(json : String) : List<SupabaseEventsInput> = try {
