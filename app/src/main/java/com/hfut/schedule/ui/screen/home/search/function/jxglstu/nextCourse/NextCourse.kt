@@ -78,7 +78,7 @@ fun NextCourse(
             Icon(painterResource(AppNavRoute.NextCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
         },
         modifier = Modifier.clickable {
-            if (!isNextOpen()) {
+            if (isNextOpen()) {
                 if(ifSaved) {
                     if(prefs.getInt("FIRST",0) != 0)
                         navController.navigateForTransition(AppNavRoute.NextCourse,AppNavRoute.NextCourse.withArgs(ifSaved))

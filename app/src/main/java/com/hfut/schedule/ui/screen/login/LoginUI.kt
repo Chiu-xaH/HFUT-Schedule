@@ -262,6 +262,7 @@ fun isAnonymity() : Boolean {
 private val TAB_LOGIN = 0
 private val TAB_SETTRINGS = 1
 
+private data class CheckResult(val can : Boolean?,val text : String,val code : Int?)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -417,21 +418,21 @@ fun LoginScreen(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surface,
                         ) {
-                            val status: Pair<Color?,String> = if(jxglstuStatus == null) {
-                                Pair(null,"正在检查")
+                            val status = if(jxglstuStatus == null) {
+                                CheckResult(null,"正在检查",null)
                             } else if(jxglstuStatus!! < 400) {
-                                Pair(null,"状态正常,可直接登录")
+                                CheckResult(true,"状态正常,可直接登录",jxglstuStatus)
                             } else if(jxglstuStatus!! in 500 until 600) {
-                                Pair(MaterialTheme.colorScheme.errorContainer,"教务系统拒绝响应,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后,或打开跳过教务系统")
+                                CheckResult(false,"教务系统拒绝响应,可能是系统在维护,或使用了爬虫工具导致暂时性的网络IP封禁,请更换网络重新进入或等待几小时后,或打开跳过教务系统",jxglstuStatus)
                             } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
-                                Pair(MaterialTheme.colorScheme.errorContainer,"教务系统封网,请换为校园网重新使用或打开外地访问")
+                                CheckResult(false,"教务系统封网,请换为校园网重新使用或打开外地访问",jxglstuStatus)
                             } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
-                                Pair(MaterialTheme.colorScheme.errorContainer,"网络连接失败,是否连接了网络?")
+                                CheckResult(false,"网络连接失败,是否连接了网络?",jxglstuStatus)
                             } else {
-                                Pair(MaterialTheme.colorScheme.errorContainer,"未知错误")
+                                CheckResult(false,"状态码 $jxglstuStatus",jxglstuStatus)
                             }
                             TransplantListItem(
-                                supportingContent = { Text(status.second ) },
+                                supportingContent = { Text(status.text ) },
                                 modifier = Modifier.clickable {
                                     Starter.startWlanSettings(context)
                                 },
@@ -439,19 +440,19 @@ fun LoginScreen(
                                     Text("教务系统联通状态")
                                 },
                                 leadingContent = {
-                                    if(jxglstuStatus == null) {
-                                        LoadingIcon()
-                                    } else {
-                                        BadgedBox(
-                                            badge = {
-                                                if(jxglstuStatus!! >= 400) {
+                                    when(status.can) {
+                                        null -> LoadingIcon()
+                                        true -> Icon(painterResource(R.drawable.check_circle),null)
+                                        false -> {
+                                            BadgedBox(
+                                                badge = {
                                                     Badge()
+                                                },
+                                                content = {
+                                                    Icon(painterResource(R.drawable.link_off),null)
                                                 }
-                                            },
-                                            content = {
-                                                Icon(painterResource(R.drawable.net),null)
-                                            }
-                                        )
+                                            )
+                                        }
                                     }
                                 }
                             )

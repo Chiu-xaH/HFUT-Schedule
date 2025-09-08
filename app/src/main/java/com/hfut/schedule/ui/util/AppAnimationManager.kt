@@ -76,13 +76,13 @@ object AppAnimationManager {
     )
     private val exitRightAnimation = slideOutHorizontally(
         targetOffsetX = { it }, // 向右侧隐藏
-        animationSpec = tween(durationMillis = ANIMATION_SPEED)
+        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow)
     )
     val hiddenRightAnimation = TransferAnimation("向右侧边隐藏", enterRightAnimation, exitRightAnimation)
 
     private val enterLeftAnimation = slideInHorizontally(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
-    private val exitLeftAnimation = slideOutHorizontally(animationSpec = tween(durationMillis = ANIMATION_SPEED))
-    val hiddenLeftAnimation = TransferAnimation("向左侧边隐藏", enterRightAnimation, exitRightAnimation)
+    private val exitLeftAnimation = slideOutHorizontally(animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow))
+    val hiddenLeftAnimation = TransferAnimation("向左侧边隐藏", enterLeftAnimation, exitLeftAnimation)
 
 
 

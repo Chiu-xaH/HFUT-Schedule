@@ -22,7 +22,7 @@ import retrofit2.http.Query
 
 
 interface JxglstuService {
-    @GET("/")
+    @GET("/eams5-student")
     @Headers(MyApplication.PC_UA)
     fun checkCanUse() : Call<ResponseBody>
 

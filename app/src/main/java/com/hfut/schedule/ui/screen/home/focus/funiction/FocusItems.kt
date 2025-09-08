@@ -60,6 +60,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
@@ -729,6 +730,8 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
     }
 }
 
+private const val TOMORROW_CODE = -1
+private const val TODAY_CODE = -2
 @Composable
 fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState,vm: NetWorkViewModel) {
 
@@ -751,6 +754,7 @@ fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState
         }
     }
 
+//    val route = AppNavRoute.CourseDetail.withArgs(name,TOMORROW_CODE*time.start.hour)
     CardListItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},

@@ -232,9 +232,6 @@ fun ClassroomDetailScreen(
                                 ) }
                             )
                         }
-                        item() {
-                            BottomTip("空教室功能开学后上线")
-                        }
                         item { InnerPaddingHeight(innerPadding,false) }
                     }
                 }

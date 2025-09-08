@@ -108,7 +108,7 @@ fun APPScreen(
         saveBoolean("SWITCHFOCUS",true,showfocus)
 //        var showBottomSheet_card by remember { mutableStateOf(false) }
 
-        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", if(isSuccessTransfer()) CourseType.JXGLSTU.code else CourseType.COMMUNITY.code)
+        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
         var currentDefaultCalendar by remember { mutableIntStateOf(switch_default) }
         saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 

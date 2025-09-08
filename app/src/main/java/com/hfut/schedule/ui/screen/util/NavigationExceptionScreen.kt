@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.other
+package com.hfut.schedule.ui.screen.util
 
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi

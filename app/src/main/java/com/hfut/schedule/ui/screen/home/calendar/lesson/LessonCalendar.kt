@@ -772,11 +772,17 @@ private fun parseWeekday(text: String): Int = when (text) {
     else -> throw IllegalArgumentException("未知的星期: $text")
 }
 
-// 解析 1~3,5~9周 为list(1,2,3,5,6,7,8,9)
+// 解析 1~3(双),5~9周 为list(1,2,3,5,6,7,8,9)
 private fun parseWeek(text: String) : List<Int> {
-    val textList = text.let {
-        if (it.endsWith("周")) it.dropLast(1) else it
-    }.split(",")
+    // 去掉括号及其中的内容
+    val cleaned = text.replace(Regex("[(（][^)）]*[)）]"), "")
+        .let {
+            if (it.endsWith("周")) it.dropLast(1) else it
+        }
+
+    if (cleaned.isBlank()) return emptyList()
+
+    val textList = cleaned.split(",")
     return textList.flatMap { part ->
         if ("~" in part) {
             val (start, end) = part.split("~").map { it.toInt() }

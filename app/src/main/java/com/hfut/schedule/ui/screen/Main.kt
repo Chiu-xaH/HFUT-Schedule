@@ -57,9 +57,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.component.webview.getPureUrl
-import com.hfut.schedule.ui.component.webview.isThemeDark
-import com.hfut.schedule.ui.screen.control.ControlCenterScreen
-import com.hfut.schedule.ui.screen.control.limitDrawerSwipeArea
+import com.hfut.schedule.ui.screen.util.ControlCenterScreen
+import com.hfut.schedule.ui.screen.util.limitDrawerSwipeArea
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
@@ -107,7 +106,8 @@ import com.hfut.schedule.ui.screen.login.LoginScreen
 import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.news.home.NewsScreen
-import com.hfut.schedule.ui.screen.other.NavigationExceptionScreen
+import com.hfut.schedule.ui.screen.util.NavigationExceptionScreen
+import com.hfut.schedule.ui.screen.util.EmptyScreen
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -409,7 +409,12 @@ fun MainHost(
                         arguments = getArgs(AppNavRoute.Empty.Args.entries)
                     ) { backStackEntry ->
                         val targetRoute = backStackEntry.arguments?.getString(AppNavRoute.Empty.Args.TARGET_ROUTE.argName) ?: return@composable
-                        EmptyScreen(targetRoute,navController,this@SharedTransitionLayout, this@composable)
+                        EmptyScreen(
+                            targetRoute,
+                            navController,
+                            this@SharedTransitionLayout,
+                            this@composable
+                        )
                     }
                     // 成绩
                     composable(
