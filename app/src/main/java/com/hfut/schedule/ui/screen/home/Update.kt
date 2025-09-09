@@ -14,6 +14,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -22,9 +23,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-suspend fun getJxglstuCookie(vm: NetWorkViewModel) : String? {
+suspend fun getJxglstuCookie() : String? {
     var cookie : String?
-    if(vm.webVpn) {
+    if(GlobalUIStateHolder.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
@@ -62,7 +63,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
 
-    val cookie =  getJxglstuCookie(vm)
+    val cookie =  getJxglstuCookie()
     // 刷新个人接口
     launch { vm.getMyApi() }
     // 用于更新ifSaved
@@ -71,14 +72,16 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         val studentId = (vm.studentId.state.value as? UiState.Success)?.data
         if(studentId == null) {
             // 切换到WEBVPN模式尝试
-            vm.webVpn = true
+            GlobalUIStateHolder.webVpn = true
+//            vm.webVpn = true
             vm.updateServices()
             val c = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
             vm.getStudentId(c)
             val studentId = (vm.studentId.state.value as? UiState.Success)?.data
             if(studentId == null) {
                 // 复原
-                vm.webVpn = false
+                GlobalUIStateHolder.webVpn = false
+//                vm.webVpn = false
                 vm.updateServices()
                 return@launch
             }
@@ -161,7 +164,7 @@ private suspend fun refreshWxAuth(vm: NetWorkViewModel) : String? = withContext(
 suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {
     val webVpnCookie = DataStoreManager.webVpnCookies.first { it.isNotEmpty() }
 
-    val cookie = if (!vm.webVpn) {
+    val cookie = if (!GlobalUIStateHolder.webVpn) {
             prefs.getString("redirect", "") ?: return@withContext
         } else {
             if(webVpnCookie.isEmpty()) {

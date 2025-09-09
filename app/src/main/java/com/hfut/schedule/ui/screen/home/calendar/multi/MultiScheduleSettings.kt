@@ -78,6 +78,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.uicommon.component.slider.CustomSlider
@@ -190,7 +191,7 @@ fun MultiScheduleSettings(
     }
 
     val cookie by produceState(initialValue = "") {
-        value = getJxglstuCookie(vm) ?: ""
+        value = getJxglstuCookie() ?: ""
     }
 
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
@@ -287,7 +288,7 @@ fun MultiScheduleSettings(
                                     scope.launch {
                                         Starter.startWebView(
                                             context,
-                                            url = if (vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+                                            url = if (GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
                                             title = "教务系统",
                                             cookie = cookie,
                                             icon = AppNavRoute.NextCourse.icon

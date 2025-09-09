@@ -3,9 +3,9 @@ package com.hfut.schedule.logic.network.repo
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.api.LoginWebsService
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginWeb2ServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebHefeiServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.LoginWeb2ServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.LoginWebHefeiServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.LoginWebServiceCreator
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo

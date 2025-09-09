@@ -147,7 +147,7 @@ fun MainHost(
     uiVm : UIViewModel,
     login : Boolean,
     isSuccessActivity: Boolean,
-    isSuccessActivityWebVpn : Boolean,
+//    isSuccessActivityWebVpn : Boolean,
     startRoute : String? = null
 ) {
     val switchUpload by remember { mutableStateOf(prefs.getBoolean("SWITCHUPLOAD",true )) }
@@ -360,7 +360,7 @@ fun MainHost(
                                     vm = networkVm,
                                     vmUI = uiVm,
                                     celebrationText = celebrationText,
-                                    webVpn = isSuccessActivityWebVpn,
+//                                    webVpn = isSuccessActivityWebVpn,
                                     isLogin = true,
                                     navHostTopController = navController,
                                     this@SharedTransitionLayout,
@@ -372,7 +372,7 @@ fun MainHost(
                                     uiVm,
                                     celebrationText,
                                     false,
-                                    false,
+//                                    false,
                                     navHostTopController = navController,
                                     this@SharedTransitionLayout,
                                     this@composable,

@@ -5,10 +5,11 @@ import com.hfut.schedule.logic.enumeration.LoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.model.CasGetFlavorResponse
 import com.hfut.schedule.logic.network.api.LoginService
-import com.hfut.schedule.logic.network.servicecreator.Login.GetAESKeyServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Login.GetCookieServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.GetAESKeyServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.GetCookieServiceCreator
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import okhttp3.Headers
 import org.jsoup.Jsoup
 import retrofit2.awaitResponse
@@ -21,7 +22,7 @@ object CasLoginRepository {
         holder = execution,
         request = {
             getCookie.getCookie(
-                if(CasInHFUT.excludeJxglstu) LoginType.ONE.service
+                if(GlobalUIStateHolder.excludeJxglstu) LoginType.ONE.service
                 else LoginType.JXGLSTU.service
             ).awaitResponse()
         },

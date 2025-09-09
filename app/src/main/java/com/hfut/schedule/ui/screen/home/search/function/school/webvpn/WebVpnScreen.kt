@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,10 +14,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -31,45 +28,44 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.application.MyApplication.Companion.WEBVPN_URL
-import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.network.WebVpnUtil
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -88,6 +84,11 @@ fun WebVpnScreen(
     val route = remember { AppNavRoute.WebVpn.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
+//    val providerState = rememberLiquidGlassProviderState(
+        // if the providing content has any transparent area and there is a background behind the content, set the
+        // background color here, or set it to null
+//        backgroundColor = Color.White
+//    )
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -107,13 +108,13 @@ fun WebVpnScreen(
                     actions = {
                         FilledTonalButton(
                             onClick = {
-                                if(!vm.webVpn) {
+                                if(!GlobalUIStateHolder.webVpn) {
                                     Starter.refreshLogin(context)
                                 }
                             },
                             modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         ) {
-                            Text("${if(vm.webVpn) "已" else "未"}登录WebVpn")
+                            Text("${if(GlobalUIStateHolder.webVpn) "已" else "未"}登录WebVpn")
                         }
                     }
                 )
@@ -138,7 +139,7 @@ suspend fun getWebVpnCookie() : String? {
     return MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
 }
 suspend fun getWebVpnCookie(vm: NetWorkViewModel) : String? =
-    if(vm.webVpn) {
+    if(GlobalUIStateHolder.webVpn) {
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
         MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
     } else {
@@ -257,7 +258,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             },
                             CardBottomButton("打开") {
                                 scope.launch {
-                                    if(vm.webVpn) {
+                                    if(GlobalUIStateHolder.webVpn) {
                                         Starter.startWebView(context,it, cookie = cookies)
                                     } else {
                                         showToast("先以外地访问模式登录")
@@ -277,13 +278,13 @@ fun WebVpnUI(vm: NetWorkViewModel) {
             headlineContent = { Text("全局WebVpn")},
             supportingContent = { Text("打开后,App内所有打开网页的场景都将自动转换为WebVpn链接;\n仅登录WebVpn时可打开,退出App后自动关闭")},
             trailingContent = {
-                Switch(checked = GlobalUIStateHolder.globalWebVpn, enabled = vm.webVpn, onCheckedChange = { GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn})
+                Switch(checked = GlobalUIStateHolder.globalWebVpn, enabled = GlobalUIStateHolder.webVpn, onCheckedChange = { GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn})
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.multiple_stop),null)
             },
             modifier = Modifier.clickable {
-                if(vm.webVpn) {
+                if(GlobalUIStateHolder.webVpn) {
                     GlobalUIStateHolder.globalWebVpn = !GlobalUIStateHolder.globalWebVpn
                 } else {
                     showToast("先以外地访问模式登录")

@@ -129,7 +129,7 @@ private fun SurveyAllButton(vm: NetWorkViewModel,refresh : suspend () -> Unit) {
     val surveyData by vm.surveyData.state.collectAsState()
     val scope = rememberCoroutineScope()
     val refreshOne: suspend (Int) -> Unit = { id : Int ->
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.surveyData.clear()
             vm.getSurveyToken(it,id.toString())

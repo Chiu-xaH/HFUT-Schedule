@@ -105,7 +105,7 @@ fun CourseSearchScreen(
 
     val refreshNetwork : suspend () -> Unit = {
         if(semester != null) {
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             cookie?.let {
                 vm.courseSearchResponse.clear()
                 if(firstSearch) firstSearch = false
@@ -366,7 +366,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
         }
         val refreshNetwork : suspend () -> Unit = {
             if(semester != null) {
-                val cookie = getJxglstuCookie(vm)
+                val cookie = getJxglstuCookie()
                 cookie?.let {
                     vm.courseSearchResponse.clear()
                     vm.searchCourse(it, null, courseName, semester!!,courseId)

@@ -53,13 +53,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 开课查询中点击右上角显示排课时无法使用的Bug")//
-            UpdateItems("修复 开课查询中一些课程如通用学术英语无法显示排课的Bug")//
-            UpdateItems("修复 查询中心-下学期课程表误未关闭的Bug")//
-            UpdateItems("修复 教务正常联通下仍提示未知错误的Bug")//
-            UpdateItems("修复 登录成功时，切换课表仍加载的Bug")//
-            UpdateItems("优化 翻页器组件的交互")//
-//            UpdateItems("新增 图书馆的登录")
+            UpdateItems("新增 单独登录教务系统")
+            UpdateItems("优化 外地访问开关的逻辑")
 //            UpdateItems("重构 关于")
 //            UpdateItems("新增 为选项适配了新的转场动画")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")

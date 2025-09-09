@@ -12,15 +12,20 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.AdmissionType
+import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
+import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.enumeration.LibraryItems
 import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.AcademicNewsResponse
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.model.AdmissionTokenResponse
-import com.hfut.schedule.logic.model.ForecastAllBean
+import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
@@ -100,45 +105,51 @@ import com.hfut.schedule.logic.model.one.ClassroomResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
-import com.xah.shared.model.BillBean
 import com.hfut.schedule.logic.model.zjgd.BillMonth
 import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
 import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
-import com.xah.shared.model.BillResponse
 import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
 import com.hfut.schedule.logic.model.zjgd.FeeType
 import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC_XUANCHENG
 import com.hfut.schedule.logic.model.zjgd.FeeType.NET_XUANCHENG
 import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER_XUANCHENG
+import com.hfut.schedule.logic.model.zjgd.HuiXinLoginResponse
 import com.hfut.schedule.logic.model.zjgd.PayStep1Response
 import com.hfut.schedule.logic.model.zjgd.PayStep2Response
 import com.hfut.schedule.logic.model.zjgd.PayStep3Response
+import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.GuaGuaService
+import com.hfut.schedule.logic.network.api.HuiXinService
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
-import com.hfut.schedule.logic.network.api.HuiXinService
+import com.hfut.schedule.logic.network.repo.GithubRepository
+import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
+import com.hfut.schedule.logic.network.repo.NewsRepository
+import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.Repository
+import com.hfut.schedule.logic.network.repo.WxRepository
 import com.hfut.schedule.logic.network.repo.launchRequestNone
 import com.hfut.schedule.logic.network.repo.launchRequestSimple
+import com.hfut.schedule.logic.network.repo.makeRequest
 import com.hfut.schedule.logic.network.servicecreator.CommunityServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuHTMLServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Jxglstu.JxglstuJSONServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.HuiXinServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.JxglstuServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.HuiXinServiceCreator
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
+import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.supabaseEventDtoToEntity
@@ -153,30 +164,18 @@ import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
-import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
-import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.GithubFolderBean
-import com.hfut.schedule.logic.model.zjgd.HuiXinLoginResponse
-import com.hfut.schedule.logic.network.StatusCode
-import com.hfut.schedule.logic.network.repo.GithubRepository
-import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
-import com.hfut.schedule.logic.network.repo.NewsRepository
-import com.hfut.schedule.logic.network.repo.QWeatherRepository
-import com.hfut.schedule.logic.network.repo.WxRepository
-import com.hfut.schedule.logic.network.repo.makeRequest
-import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
 import com.xah.shared.getConsumptionResult
+import com.xah.shared.model.BillBean
+import com.xah.shared.model.BillResponse
 import com.xah.shared.model.TotalResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -192,16 +191,16 @@ import retrofit2.Response
 import retrofit2.awaitResponse
 
 // 106个函数
-class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
+class NetWorkViewModel() : ViewModel() {
     private fun createJSONService(): JxglstuService {
-        return JxglstuJSONServiceCreator.create(JxglstuService::class.java, webVpn)
+        return JxglstuServiceCreator.create(JxglstuService::class.java, GlobalUIStateHolder.webVpn)
     }
 
-    private fun createHTMLService(): JxglstuService {
-        return JxglstuHTMLServiceCreator.create(JxglstuService::class.java, webVpn)
-    }
-    private var jxglstuJSON = createJSONService()
-    private var jxglstuHTML = createHTMLService()
+//    private fun createHTMLService(): JxglstuService {
+//        return JxglstuHTMLServiceCreator.create(JxglstuService::class.java, GlobalUIStateHolder.webVpn)
+//    }
+    private var jxglstu = createJSONService()
+//    private var jxglstuHTML = createHTMLService()
     private val oneGoto = OneGotoServiceCreator.create(LoginService::class.java)
     private val one = OneServiceCreator.create(OneService::class.java)
     private val huiXin = HuiXinServiceCreator.create(HuiXinService::class.java)
@@ -212,15 +211,15 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
     fun updateServices() {
-        jxglstuJSON = createJSONService()
-        jxglstuHTML = createHTMLService()
+        jxglstu = createJSONService()
+//        jxglstuHTML = createHTMLService()
     }
     val studentId = StateHolder<Int>()
     val lessonIds = StateHolder<lessonResponse>()
     val token = MutableLiveData<String>()
 
     suspend fun checkJxglstuCanUse() = launchRequestNone {
-        jxglstuJSON.checkCanUse().awaitResponse()
+        jxglstu.checkCanUse().awaitResponse()
     }
 
     val wxLoginResponse = StateHolder<String>()
@@ -467,7 +466,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
             launchRequestSimple(
                 holder = postTransferResponse,
                 request = {
-                    jxglstuJSON.postTransfer(
+                    jxglstu.postTransfer(
                         cookie = cookie,
                         redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${sId}&batchId=${batchId}&studentId=${sId}".toRequestBody(
                             "text/plain".toMediaTypeOrNull()
@@ -509,7 +508,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         launchRequestSimple(
             holder = fromCookie,
             request = {
-                jxglstuHTML.getFormCookie(
+                jxglstu.getFormCookie(
                     cookie = cookie,
                     id = id,
                     studentId = sId.toString(),
@@ -536,7 +535,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         launchRequestSimple(
             holder = cancelTransferResponse,
             request = {
-                jxglstuJSON.cancelTransfer(
+                jxglstu.cancelTransfer(
                     cookie = cookie,
                     redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${sId}&batchId=${batchId}&studentId=${sId}",
                     batchId = batchId,
@@ -562,7 +561,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 // 选课 ////////////////////////////////////////////////////////////////////////////////////////////////
     val verifyData = MutableLiveData<String?>()
     fun verify(cookie: String) {
-        val call = jxglstuJSON.verify(cookie)
+        val call = jxglstu.verify(cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -583,7 +582,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getSelectCourse(cookie: String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
             onListenStateHolderForNetwork<Int,Unit>(bizTypeIdResponse,null) { bizTypeId ->
-                val call = jxglstuJSON.getSelectCourse(bizTypeId,sId.toString(), cookie)
+                val call = jxglstu.getSelectCourse(bizTypeId,sId.toString(), cookie)
 
                 call.enqueue(object : Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -603,7 +602,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val selectCourseInfoData = StateHolder<List<SelectCourseInfo>>()
     suspend fun getSelectCourseInfo(cookie: String, id : Int) = launchRequestSimple(
         holder = selectCourseInfoData,
-        request = { jxglstuJSON.getSelectCourseInfo(id,cookie).awaitResponse() },
+        request = { jxglstu.getSelectCourseInfo(id,cookie).awaitResponse() },
         transformSuccess = { _,json -> parseSelectCourseInfo(json) }
     )
     private fun parseSelectCourseInfo(json : String) : List<SelectCourseInfo> = try {
@@ -613,7 +612,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val stdCountData = MutableLiveData<String?>()
     fun getSCount(cookie: String,id : Int) {
-        val call = jxglstuJSON.getCount(id,cookie)
+        val call = jxglstu.getCount(id,cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -629,7 +628,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val requestIdData = MutableLiveData<String?>()
     suspend fun getRequestID(cookie: String, lessonId : String, courseId : String, type : String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstuJSON.getRequestID(sId.toString(),lessonId,courseId,cookie,type)
+            val call = jxglstu.getRequestID(sId.toString(),lessonId,courseId,cookie,type)
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -646,7 +645,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val selectedData = MutableLiveData<String?>()
     suspend fun getSelectedCourse(cookie: String, courseId : String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstuJSON.getSelectedCourse(sId.toString(),courseId,cookie)
+            val call = jxglstu.getSelectedCourse(sId.toString(),courseId,cookie)
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -664,7 +663,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val selectResultData = MutableLiveData<String?>()
     suspend fun postSelect(cookie: String,requestId : String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstuJSON.postSelect(sId.toString(), requestId,cookie)
+            val call = jxglstu.postSelect(sId.toString(), requestId,cookie)
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -683,7 +682,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getTransfer(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId,transferData) { sId ->
         launchRequestSimple(
             holder = transferData,
-            request = { jxglstuJSON.getTransfer(cookie, batchId, sId).awaitResponse() },
+            request = { jxglstu.getTransfer(cookie, batchId, sId).awaitResponse() },
             transformSuccess = { _, json -> parseTransfer(json) }
         )
     }
@@ -695,7 +694,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getTransferList(cookie: String) = onListenStateHolderForNetwork(studentId,transferListData) { sId ->
         launchRequestSimple(
             holder = transferListData,
-            request = { jxglstuHTML.getTransferList(cookie, sId).awaitResponse() },
+            request = { jxglstu.getTransferList(cookie, sId).awaitResponse() },
             transformSuccess = { _, html -> parseTransferList(html) }
         )
     }
@@ -730,7 +729,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getMyApply(cookie: String,batchId: String) = onListenStateHolderForNetwork(studentId,myApplyData) { sId ->
         launchRequestSimple(
             holder = myApplyData,
-            request = { jxglstuJSON.getMyTransfer(cookie, batchId, sId).awaitResponse() },
+            request = { jxglstu.getMyTransfer(cookie, batchId, sId).awaitResponse() },
             transformSuccess = { _, json -> parseMyApply(json) }
         )
     }
@@ -742,7 +741,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getMyApplyInfo(cookie: String, listId: Int) = onListenStateHolderForNetwork(studentId,myApplyInfoData) { sId ->
         launchRequestSimple(
             holder = myApplyInfoData,
-            request = { jxglstuHTML.getMyTransferInfo(cookie, listId, sId).awaitResponse() },
+            request = { jxglstu.getMyTransferInfo(cookie, listId, sId).awaitResponse() },
             transformSuccess = { _, html -> parseMyApplyGradeInfo(html) }
         )
     }
@@ -838,7 +837,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolderForNetwork(studentId,jxglstuGradeData) { sId ->
         launchRequestSimple(
             holder = jxglstuGradeData,
-            request = { jxglstuHTML.getGrade(cookie, sId.toString(), semester).awaitResponse() },
+            request = { jxglstu.getGrade(cookie, sId.toString(), semester).awaitResponse() },
             transformSuccess = { _, html -> parseJxglstuGrade(html) }
         )
     }
@@ -879,7 +878,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     fun jxglstuLogin(cookie : String) {
 
-        val call = jxglstuJSON.jxglstulogin(cookie)
+        val call = jxglstu.jxglstulogin(cookie)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {}
@@ -891,7 +890,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val bizTypeIdResponse = StateHolder<Int>()
     suspend fun getBizTypeId(cookie: String,studentId : Int) = launchRequestSimple(
         holder = bizTypeIdResponse,
-        request = { jxglstuHTML.getBizTypeId(cookie, studentId).awaitResponse() },
+        request = { jxglstu.getBizTypeId(cookie, studentId).awaitResponse() },
         transformSuccess = { _, html -> parseBizTypeId(html) }
     )
     private fun parseBizTypeId(html : String): Int = try{
@@ -903,8 +902,8 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getStudentId(cookie : String) = launchRequestSimple(
         holder = studentId,
         request = {
-            Log.d("webVpnMode",webVpn.toString())
-            jxglstuJSON.getStudentId(cookie).awaitResponse()
+//            Log.d("webVpnMode",webVpn.toString())
+            jxglstu.getStudentId(cookie).awaitResponse()
                   },
         transformRedirect = { headers -> parseStudentId(headers) },
         transformSuccess = { _,_ -> -1 }
@@ -942,7 +941,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int) = launchRequestSimple(
         holder = lessonIds,
         request = {
-            jxglstuJSON.getLessonIds(
+            jxglstu.getLessonIds(
                 cookie,
                 bizTypeId.toString(),
                 SemseterParser.getSemseter().toString(),
@@ -971,7 +970,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         }
         launchRequestSimple(
             holder = datumData,
-            request = { jxglstuJSON.getDatum(cookie, jsonObject).awaitResponse() },
+            request = { jxglstu.getDatum(cookie, jsonObject).awaitResponse() },
             transformSuccess = { _, json -> parseDatum(json) }
         )
     }
@@ -990,7 +989,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     suspend fun getInfo(cookie : String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstuHTML.getInfo(cookie,sId.toString())
+            val call = jxglstu.getInfo(cookie,sId.toString())
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -999,7 +998,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
             })
-            val call2 = jxglstuHTML.getMyProfile(cookie)
+            val call2 = jxglstu.getMyProfile(cookie)
 
             call2.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1015,14 +1014,14 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val lessonTimesResponse = StateHolder<List<CourseUnitBean>>()
     suspend fun getLessonTimes(cookie: String,timeCampusId : Int) = launchRequestSimple(
         holder = lessonTimesResponse,
-        request = { jxglstuJSON.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
+        request = { jxglstu.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
         transformSuccess = { _,json -> parseLessonTimes(json) }
     )
 
     val lessonTimesResponseNext = StateHolder<List<CourseUnitBean>>()
     suspend fun getLessonTimesNext(cookie: String,timeCampusId : Int) = launchRequestSimple(
         holder = lessonTimesResponseNext,
-        request = { jxglstuJSON.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
+        request = { jxglstu.getLessonTimes(cookie, JxglstuService.LessonTimeRequest(timeCampusId)).awaitResponse() },
         transformSuccess = { _,json -> parseLessonTimes(json) }
     )
     private suspend fun parseLessonTimes(result: String) : List<CourseUnitBean> = withContext(Dispatchers.IO){
@@ -1038,7 +1037,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getProgram(cookie: String) = onListenStateHolderForNetwork(studentId,programData) { sId ->
         launchRequestSimple(
             holder = programData,
-            request = { jxglstuJSON.getProgram(cookie, sId.toString()).awaitResponse() },
+            request = { jxglstu.getProgram(cookie, sId.toString()).awaitResponse() },
             transformSuccess = { _, json -> parseProgram(json) }
         )
     }
@@ -1054,7 +1053,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val programCompletionData = StateHolder<ProgramCompletionResponse>()
     suspend fun getProgramCompletion(cookie: String) = launchRequestSimple(
         holder = programCompletionData,
-        request = { jxglstuJSON.getProgramCompletion(cookie).awaitResponse() },
+        request = { jxglstu.getProgramCompletion(cookie).awaitResponse() },
         transformSuccess = { _,json -> parseProgramCompletion(json) }
     )
     private fun parseProgramCompletion(json : String) : ProgramCompletionResponse = try {
@@ -1068,7 +1067,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     suspend fun getProgramPerformance(cookie: String) = onListenStateHolderForNetwork(studentId,programPerformanceData) { sId ->
         launchRequestSimple(
             holder = programPerformanceData,
-            request = { jxglstuJSON.getProgramPerformance(cookie, sId).awaitResponse() },
+            request = { jxglstu.getProgramPerformance(cookie, sId).awaitResponse() },
             transformSuccess = { _, json -> parseProgramPerformance(json) }
         )
     }
@@ -1091,7 +1090,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         launchRequestSimple(
             holder = courseSearchResponse,
             request = {
-                jxglstuJSON.searchCourse(
+                jxglstu.searchCourse(
                     cookie,
                     sId.toString(),
                     semester,
@@ -1124,7 +1123,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         launchRequestSimple(
             holder = surveyListData,
             request = {
-                jxglstuJSON.getSurveyList(cookie, sId.toString(), semester).awaitResponse()
+                jxglstu.getSurveyList(cookie, sId.toString(), semester).awaitResponse()
             },
             transformSuccess = { _, json -> parseSurveyList(json) }
         )
@@ -1136,7 +1135,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val surveyData = StateHolder<SurveyResponse>()
     suspend fun getSurvey(cookie: String, id : String) = launchRequestSimple(
         holder = surveyData,
-        request = { jxglstuJSON.getSurveyInfo(cookie,id).awaitResponse() },
+        request = { jxglstu.getSurveyInfo(cookie,id).awaitResponse() },
         transformSuccess = { _,json -> parseSurvey(json) }
     )
     private fun parseSurvey(json : String) : SurveyResponse = try {
@@ -1148,7 +1147,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         launchRequestSimple(
             holder = surveyToken,
             request = {
-                jxglstuJSON.getSurveyToken(
+                jxglstu.getSurveyToken(
                     cookie,
                     id,
                     "/for-std/lesson-survey/semester-index/${sId}"
@@ -1163,7 +1162,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     val surveyPostData = MutableLiveData<String?>()
     fun postSurvey(cookie : String,json: JsonObject){
-        val call = jxglstuJSON.postSurvey(cookie,json)
+        val call = jxglstu.postSurvey(cookie,json)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1176,7 +1175,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
 
     suspend fun getPhoto(cookie : String){
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstuJSON.getPhoto(cookie,sId.toString())
+            val call = jxglstu.getPhoto(cookie,sId.toString())
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1202,7 +1201,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
         onListenStateHolderForNetwork(bizTypeIdResponse,courseBookResponse) { bizTypeId ->
             launchRequestSimple(
                 holder = courseBookResponse,
-                request = { jxglstuJSON.getCourseBook(cookie, bizTypeId = bizTypeId, semesterId = semester, studentId = sId).awaitResponse() },
+                request = { jxglstu.getCourseBook(cookie, bizTypeId = bizTypeId, semesterId = semester, studentId = sId).awaitResponse() },
                 transformSuccess = { _, json -> parseCourseBookNetwork(json) }
             )
         }
@@ -1674,7 +1673,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val jxglstuExamCode = MutableLiveData<Int>()
     suspend fun getExamJXGLSTU(cookie: String) {
         onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstuJSON.getExam(cookie,sId.toString())
+            val call = jxglstu.getExam(cookie,sId.toString())
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -1940,7 +1939,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
     val lessonIdsNext = StateHolder<lessonResponse>()
     suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int) = launchRequestSimple(
         holder = lessonIdsNext,
-        request = { (SemseterParser.getSemseter().plus(20)).toString().let { jxglstuJSON.getLessonIds(cookie,bizTypeId.toString(), it,studentId.toString()).awaitResponse() }},
+        request = { (SemseterParser.getSemseter().plus(20)).toString().let { jxglstu.getLessonIds(cookie,bizTypeId.toString(), it,studentId.toString()).awaitResponse() }},
         transformSuccess = { _,json -> parseLessonIdsNext(json) }
     )
     private fun parseLessonIdsNext(json : String) : lessonResponse {
@@ -1977,7 +1976,7 @@ class NetWorkViewModel(var webVpn: Boolean) : ViewModel() {
                 addProperty("studentId",sId)//学生ID
                 addProperty("weekIndex", "")
             }
-            val call = jxglstuJSON.getDatum(cookie,jsonObject)
+            val call = jxglstu.getDatum(cookie,jsonObject)
 
             call.enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

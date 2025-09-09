@@ -47,6 +47,7 @@ import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -68,7 +69,7 @@ fun NextCourse(
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
 
     val cookie by produceState(initialValue = "") {
-        value = getJxglstuCookie(vm) ?: ""
+        value = getJxglstuCookie() ?: ""
     }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -89,7 +90,7 @@ fun NextCourse(
                     scope.launch {
                         Starter.startWebView(
                             context,
-                            url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
+                            url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
                             title = "教务系统",
                             cookie = cookie,
                             icon = AppNavRoute.NextCourse.icon

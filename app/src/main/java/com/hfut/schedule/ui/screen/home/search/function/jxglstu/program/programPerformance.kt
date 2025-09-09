@@ -155,7 +155,7 @@ private fun ProgramPerformance(
         if(uiState is UiState.Success) {
             return@s
         }
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.programPerformanceData.clear()
             vm.getProgramPerformance(it)

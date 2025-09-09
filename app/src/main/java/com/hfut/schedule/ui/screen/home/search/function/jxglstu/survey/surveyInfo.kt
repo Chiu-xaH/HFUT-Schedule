@@ -60,7 +60,7 @@ fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,scope : CoroutineScope,onDismiss
     val uiState by vm.surveyData.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.surveyData.clear()
             vm.getSurveyToken(it,id.toString())
@@ -177,7 +177,7 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
 suspend fun postSurvey(vm : NetWorkViewModel, mode : PostMode, bean: SurveyResponse, comment: String = "好") = withContext(Dispatchers.IO) {
     // 主线程监听 StateFlow
     onListenStateHolder(vm.surveyToken) { token ->
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         when(mode) {
             PostMode.NORMAL -> {
                 showToast("正在开发")

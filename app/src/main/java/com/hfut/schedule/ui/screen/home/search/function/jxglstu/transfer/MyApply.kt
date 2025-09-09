@@ -93,7 +93,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
 
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.myApplyData.clear()
             vm.getMyApply(it,batchId)
@@ -174,7 +174,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
 
     val uiState1 by vm.myApplyData.state.collectAsState()
     val refreshNetwork1 = suspend {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.myApplyData.clear()
             vm.getMyApply(it,batchId)
@@ -191,7 +191,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
     var successLoad = uiState1 is UiState.Success
     val refreshNetwork2 : suspend () -> Unit = {
         onListenStateHolder(vm.myApplyData) { data ->
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
 
             val list = data.models
             val id = if(list.isNotEmpty() == true) {
@@ -350,7 +350,7 @@ private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: I
     val uiState by vm.cancelTransferResponse.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.cancelTransferResponse.clear()
             vm.cancelTransfer(it,batchId,id.toString())

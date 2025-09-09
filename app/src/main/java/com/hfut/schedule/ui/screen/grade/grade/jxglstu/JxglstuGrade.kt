@@ -94,7 +94,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
     val uiState by vm.jxglstuGradeData.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.jxglstuGradeData.clear()
             vm.getGradeFromJxglstu(cookie,null)

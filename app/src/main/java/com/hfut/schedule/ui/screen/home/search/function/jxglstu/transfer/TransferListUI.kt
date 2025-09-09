@@ -187,7 +187,7 @@ private fun TransferListUI(vm: NetWorkViewModel, hazeState: HazeState,innerPaddi
     val uiState by vm.transferListData.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.transferListData.clear()
             vm.getTransferList(it)
@@ -274,7 +274,7 @@ private fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeSta
     var id by remember { mutableIntStateOf(0) }
     val uiState by vm.transferData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.transferData.clear()
             vm.getTransfer(it,batchId)
@@ -505,7 +505,7 @@ private fun TransferUI(vm: NetWorkViewModel, batchId: String, hazeState: HazeSta
 @Composable
 private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, phoneNumber : String) {
     val refreshNetwork : suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.postTransferResponse.clear()
             vm.fromCookie.clear()

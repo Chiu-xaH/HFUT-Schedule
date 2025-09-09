@@ -10,13 +10,14 @@ import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.network.repo.CasLoginRepository
 import com.hfut.schedule.logic.network.repo.launchRequestSimple
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.Login.LoginWebVpnServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.login.LoginWebVpnServiceCreator
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -41,14 +42,14 @@ class LoginViewModel : ViewModel() {
 
 
     var ticketStValue = MutableLiveData<String?>()
-    suspend fun login(username : String, password : String, keys : String, imageCode : String, webVpn : Boolean) =
+    suspend fun login(username : String, password : String, keys : String, imageCode : String) =
         onListenStateHolderForNetwork<CasGetFlavorBean,Unit>(jSessionId,null) { jId ->
             onListenStateHolderForNetwork<Pair<String, String>,Unit>(executionAndSession,null) {
                 val execution = it.first
                 val session = it.second
                 val cookies : String = session + jId.jSession +";" + keys
                 CasInHFUT.casCookies = cookies
-                if(webVpn) {
+                if(GlobalUIStateHolder.webVpn) {
                     onListenStateHolderForNetwork<String,Unit>(webVpnTicket,null) { ticket ->
                         val call = loginWebVpn.loginWebVpn(
                             cookie ="wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}",
@@ -82,7 +83,7 @@ class LoginViewModel : ViewModel() {
                         execution = execution,
                         code = imageCode,
                         url =
-                            if(CasInHFUT.excludeJxglstu) LoginType.ONE.service
+                            if(GlobalUIStateHolder.excludeJxglstu) LoginType.ONE.service
                             else LoginType.JXGLSTU.service
                     )
                     call.enqueue(object : Callback<ResponseBody> {

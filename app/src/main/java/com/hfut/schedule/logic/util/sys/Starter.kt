@@ -252,9 +252,9 @@ object Starter {
         context.startActivity(it)
     }
     @JvmStatic
-    fun loginSuccess(context: Context,webVpn : Boolean = true) {
+    fun loginSuccess(context: Context) {
         val it = Intent(context, SuccessActivity::class.java).apply {
-            putExtra("webVpn",webVpn)
+//            putExtra("webVpn",GlobalUIStateHolder.webVpn)
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }

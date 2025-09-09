@@ -73,7 +73,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
     val uiState by vm.surveyListData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         if(semester != null) {
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             cookie?.let {
                 vm.surveyListData.clear()
                 vm.getSurveyList(it, semester!!)

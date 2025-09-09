@@ -100,6 +100,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJ
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -176,7 +177,7 @@ suspend fun loginHuiXin(vm: NetWorkViewModel) {
 
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
-    if (result == (if(CasInHFUT.excludeJxglstu) StatusCode.REDIRECT.code else StatusCode.OK.code)) {
+    if (result == (if(GlobalUIStateHolder.excludeJxglstu) StatusCode.REDIRECT.code else StatusCode.OK.code)) {
         CasGoToInterceptorState.toCommunityTicket
             .filterNotNull()
             .collect { value ->
@@ -571,7 +572,7 @@ fun JxglstuCourseTableUI(
            }
            // 等待读取本地Cookie
            if(loadingJxglstu == false) return@LaunchedEffect
-           val cookie = getJxglstuCookie(vm)
+           val cookie = getJxglstuCookie()
 
            // 信息门户 慧新易校 智慧社区
            launch  {
@@ -582,7 +583,7 @@ fun JxglstuCourseTableUI(
                        return@async
                    }
                    val cookies =  "$casCookies;$tgcCookie"
-                   val useWebVpn = webVpn && !CasInHFUT.excludeJxglstu
+                   val useWebVpn = webVpn && !GlobalUIStateHolder.excludeJxglstu
                    // 智慧社区
                    launch community@ {
                        if(useWebVpn) {
@@ -617,7 +618,7 @@ fun JxglstuCourseTableUI(
 //                                   showToast("无需刷新慧新易校")
                                return@huiXin
                            } else {
-                               if(useWebVpn || CasInHFUT.excludeJxglstu) {
+                               if(useWebVpn || GlobalUIStateHolder.excludeJxglstu) {
                                    loginHuiXin(vm)
                                } else {
                                    vm.goToHuiXin(cookies)
@@ -673,7 +674,7 @@ fun JxglstuCourseTableUI(
                withTimeoutOrNull(10000) { // 超时时间 10s
                    job.await()
                }
-               if(CasInHFUT.excludeJxglstu) {
+               if(GlobalUIStateHolder.excludeJxglstu) {
                    loadingJxglstu = false
                }
                onEnabled(true)
@@ -681,7 +682,7 @@ fun JxglstuCourseTableUI(
 
            // 教务系统
            launch jxglstu@ {
-               if(CasInHFUT.excludeJxglstu) {
+               if(GlobalUIStateHolder.excludeJxglstu) {
                    return@jxglstu
                }
                cookie?: return@jxglstu
@@ -720,7 +721,7 @@ fun JxglstuCourseTableUI(
 
     if(loadingJxglstu) {
         CenterScreen {
-            LoadingUI(if(webVpn) "若加载时间过长，请重新刷新登陆状态" else null)
+            LoadingUI(if(webVpn) "请等待,若加载超过10s则为超时,可重新登录" else null)
         }
     } else {
         // 课程表布局

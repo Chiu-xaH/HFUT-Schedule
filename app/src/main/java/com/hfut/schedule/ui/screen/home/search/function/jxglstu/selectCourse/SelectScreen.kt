@@ -111,6 +111,7 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.transition.component.containerShare
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -134,10 +135,10 @@ fun SelectCourseScreen(
     val route = remember { AppNavRoute.SelectCourse.route }
     val scope = rememberCoroutineScope()
     val cookie by produceState(initialValue = "") {
-        value = getJxglstuCookie(vm) ?: ""
+        value = getJxglstuCookie() ?: ""
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val url = if(vm.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
+    val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
@@ -201,7 +202,7 @@ private fun SelectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState,
         loading = true
 
         CoroutineScope(Job()).launch{
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             async { cookie?.let { vm.verify(cookie) } }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
@@ -426,7 +427,7 @@ private fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState
     val uiState by vm.selectCourseInfoData.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie(vm)
+        val cookie = getJxglstuCookie()
         cookie?.let {
             vm.selectCourseInfoData.clear()
             vm.getSelectCourseInfo(it,courseId)
@@ -483,7 +484,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     var showBottomSheet_info by remember { mutableStateOf(false) }
 
     val cookie by produceState<String?>(initialValue = null) {
-        value = getJxglstuCookie(vm)
+        value = getJxglstuCookie()
     }
 
 
@@ -608,7 +609,7 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             async { cookie?.let { vm.getRequestID(it,lessonId.toString(),courseId.toString(), type) } }.await()
             async {
                 Handler(Looper.getMainLooper()).post{
@@ -823,7 +824,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
     if(refresh) {
         loading = true
         CoroutineScope(Job()).launch{
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             async { cookie?.let { vm.getSelectedCourse(it, prefs.getString("courseIDS",null).toString())} }.await()
             async {
                 Handler(Looper.getMainLooper()).post{

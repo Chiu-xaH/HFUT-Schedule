@@ -1,11 +1,12 @@
 [versions]
+androidliquidglass = "1.0.0-alpha06"
 composelevitation = "1.0.3"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
 minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
-adaptive = "1.2.0-alpha08"
+adaptive = "1.2.0-beta01"
 animation = "1.7.0-beta06" # 1.7.0-beta06
 animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
@@ -42,20 +43,20 @@ roomRuntime = "2.6.1"
 tesseract4android = "4.8.0"
 uiautomator = "2.2.0"
 kotlin = "2.1.21"
-agp = "8.9.2"
+agp = "8.9.3"
 kotlinStdlib = "2.1.20"
 kotlinTest = "2.1.20"
 runner = "1.5.2"
 core = "1.5.0"
 ksp = "2.1.20-1.0.32"
-test = "8.9.2"
-materialVersion = "1.12.0"
+test = "8.9.3"
 webkit = "1.14.0"
 accompanistPermissions = "0.34.0"
 jetbrainsKotlinJvm = "2.1.21"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
+androidliquidglass = { module = "com.github.Kyant0:AndroidLiquidGlass", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
@@ -98,7 +99,6 @@ androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", versi
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 bsdiff-lib = { module = "com.github.Chiu-xaH:Bsdiff-Lib", version.ref = "bsdiffLib" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
-composelevitation = { module = "com.github.GIGAMOLE:ComposeLevitation", version.ref = "composelevitation" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }
 core = { module = "com.google.zxing:core", version.ref = "coreVersion" }
@@ -118,7 +118,6 @@ kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", versio
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
-material = { group = "com.google.android.material", name = "material", version.ref = "materialVersion" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 

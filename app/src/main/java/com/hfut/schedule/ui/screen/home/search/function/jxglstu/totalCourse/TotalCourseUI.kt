@@ -84,7 +84,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
         LaunchedEffect(Unit) {
             if(vm.courseBookResponse.state.first() is UiState.Success) return@LaunchedEffect
             val term = SemseterParser.getSemseter()
-            val cookie = getJxglstuCookie(vm) ?: return@LaunchedEffect
+            val cookie = getJxglstuCookie() ?: return@LaunchedEffect
             when(dataSource) {
                 TotalCourseDataSource.MINE -> vm.getCourseBook(cookie,term)
                 TotalCourseDataSource.MINE_NEXT -> vm.getCourseBook(cookie, SemseterParser.plusSemseter(term))

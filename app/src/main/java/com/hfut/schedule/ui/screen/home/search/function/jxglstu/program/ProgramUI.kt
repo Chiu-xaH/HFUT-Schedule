@@ -95,7 +95,7 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
 
     LaunchedEffect(Unit) {
         if(!ifSaved) {
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             cookie?.let {
                 launch {
                     vm.programData.clear()
@@ -157,7 +157,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
 
     LaunchedEffect(Unit) {
         if(!ifSaved) {
-            val cookie = getJxglstuCookie(vm)
+            val cookie = getJxglstuCookie()
             cookie?.let {
                 launch {
                     vm.programCompletionData.clear()

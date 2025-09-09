@@ -25,7 +25,7 @@ class MainActivity : BaseActivity() {
         super.uiVm,
         intent.getBooleanExtra("nologin",true),
         false,
-        false,
+//        false,
         intent.getStringExtra("route"),
     )
 

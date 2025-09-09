@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.login
 
+//import androidx.compose.ui.tooling.preview.Preview
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
@@ -8,16 +9,10 @@ import android.os.Looper
 import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -67,7 +62,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -75,19 +69,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-//import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -100,26 +90,20 @@ import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
@@ -131,9 +115,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.net.InetAddress
@@ -146,12 +128,12 @@ private fun loginClick(
     username : String,
     inputAES : String,
     code : String,
-    webVpn : Boolean,
+//    webVpn : Boolean,
     onLoad : (Boolean) -> Unit,
     onResult : (String) -> Unit,
     scope: CoroutineScope
 ) {
-    val cookie = prefs.getString(if(!webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
+    val cookie = prefs.getString(if(!GlobalUIStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
     val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
     val loginFlavoring = "LOGIN_FLAVORING=$cookie"
 
@@ -168,7 +150,7 @@ private fun loginClick(
             if (username.length != 10)
                 showToast("请输入正确的账号")
             else
-                outputAES?.let { it1 -> vm.login(username, it1,loginFlavoring,code,webVpn) }
+                outputAES?.let { it1 -> vm.login(username, it1,loginFlavoring,code) }
         }.await()
         async { onLoad(true) }.await()
         async {
@@ -187,10 +169,10 @@ private fun loginClick(
                                     refresh(vm)
                                 }
                                 StatusCode.OK.code.toString() -> {
-                                    if(CasInHFUT.excludeJxglstu) {
+                                    if(GlobalUIStateHolder.excludeJxglstu) {
                                         onResult("登陆成功")
                                         Starter.loginSuccess(context)
-                                    } else if(!webVpn) {
+                                    } else if(!GlobalUIStateHolder.webVpn) {
                                         onResult("请输入正确的账号")
                                         refresh(vm)
                                     } else {
@@ -203,7 +185,7 @@ private fun loginClick(
                                     when {
                                         vm.location.value.toString().contains("ticket") -> {
                                             onResult("登陆成功")
-                                            Starter.loginSuccess(context,webVpn)
+                                            Starter.loginSuccess(context)
                                         }
                                         else -> {
                                             onResult("登陆失败")
@@ -221,14 +203,14 @@ private fun loginClick(
 }
 
 @Composable
-private fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onResult : (String) -> Unit) {
+private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
     // refresh当webVpn关闭才起效，开启时不需要refresh，直接重载图片
     val jSessionId by vm.jSessionId.state.collectAsState()
     val webVpnCookie by DataStoreManager.webVpnCookies.collectAsState(initial = "")
 
     val w by vm.webVpnTicket.state.collectAsState()
 
-    val refresh = if(webVpn) {
+    val refresh = if(GlobalUIStateHolder.webVpn) {
         w is UiState.Loading
     } else {
         jSessionId is UiState.Loading
@@ -237,17 +219,17 @@ private fun ImageCodeUI(webVpn : Boolean, vm: LoginViewModel, onResult : (String
         CircularProgressIndicator()
     } else  {
         val url = (
-                if(!webVpn) MyApplication.CAS_LOGIN_URL
+                if(!GlobalUIStateHolder.webVpn) MyApplication.CAS_LOGIN_URL
                 else MyApplication.WEBVPN_URL + "http/77726476706e69737468656265737421f3f652d22f367d44300d8db9d6562d/"
                 ) + "cas/vercode"
         // 让 URL 可变，每次点击时更新
         var imageUrl by remember { mutableStateOf("$url?timestamp=${System.currentTimeMillis()}") }
-        val cookies = if(webVpn) MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie else {
+        val cookies = if(GlobalUIStateHolder.webVpn) MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie else {
             (jSessionId as? UiState.Success)?.data?.jSession
         }
 
         // webVpn开关变化时重载
-        LaunchedEffect(webVpn, GlobalUIStateHolder.refreshImageCode,cookies) {
+        LaunchedEffect(GlobalUIStateHolder.webVpn, GlobalUIStateHolder.refreshImageCode,cookies) {
             imageUrl = "$url?timestamp=${System.currentTimeMillis()}"
         }
         // 请求图片
@@ -280,7 +262,7 @@ fun LoginScreen(
 ) {
     val scope = rememberCoroutineScope()
     val activity = LocalActivity.current
-    var webVpn by rememberSaveable { mutableStateOf(false) }
+//    var webVpn by rememberSaveable { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val Savedusername = prefs.getString("Username", "")
@@ -419,7 +401,7 @@ fun LoginScreen(
                 exit = fadeOut()
             ) {
                 Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    TwoTextField(vm,webVpn,innerPadding,username) {
+                    TwoTextField(vm,innerPadding,username) {
                         username = it
                     }
                 }
@@ -501,13 +483,35 @@ fun LoginScreen(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surface,
                         ) {
-                            if(!webVpn) {
+                            TransplantListItem(
+                                supportingContent = { Text("自授权登录") },
+                                headlineContent = { Text("借助扫码登陆通道，自己为自己授权登录") },
+                                modifier = Modifier.clickable {
+                                    showToast("正在开发")
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.qr_code_2),null)
+                                },
+                            )
+                            PaddingHorizontalDivider()
+                            TransplantListItem(
+                                supportingContent = { Text("不使用CAS统一认证登录，直接用账号密码登录教务系统") },
+                                headlineContent = { Text("教务系统备用通道") },
+                                modifier = Modifier.clickable {
+                                    showToast("正在开发")
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.login),null)
+                                },
+                            )
+                            PaddingHorizontalDivider()
+                            if(!GlobalUIStateHolder.webVpn) {
                                 TransplantListItem(
                                     supportingContent = { Text("打开开关后,将跳过教务系统而登录,用于离校且教务封网的情况下需刷新其他平台") },
                                     headlineContent = { Text("跳过教务系统") },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            CasInHFUT.excludeJxglstu = !CasInHFUT.excludeJxglstu
+                                            GlobalUIStateHolder.excludeJxglstu = !GlobalUIStateHolder.excludeJxglstu
                                             refresh(vm)
                                         }
                                     },
@@ -515,9 +519,9 @@ fun LoginScreen(
                                         Icon(painterResource(R.drawable.arrow_split),null)
                                     },
                                     trailingContent = {
-                                        Switch(checked = CasInHFUT.excludeJxglstu,onCheckedChange = { ch ->
+                                        Switch(checked = GlobalUIStateHolder.excludeJxglstu,onCheckedChange = { ch ->
                                             scope.launch {
-                                                CasInHFUT.excludeJxglstu = !CasInHFUT.excludeJxglstu
+                                                GlobalUIStateHolder.excludeJxglstu = !GlobalUIStateHolder.excludeJxglstu
                                                 refresh(vm)
                                             }
                                         })
@@ -532,9 +536,9 @@ fun LoginScreen(
                                 supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
                                 leadingContent = { Icon(painterResource(R.drawable.vpn_key),null) },
                                 trailingContent = {
-                                    Switch(checked = webVpn,onCheckedChange = { ch -> webVpn = ch })
+                                    Switch(checked = GlobalUIStateHolder.webVpn,onCheckedChange = { ch -> GlobalUIStateHolder.webVpn = !GlobalUIStateHolder.webVpn })
                                 },
-                                modifier = Modifier.clickable { webVpn = !webVpn },
+                                modifier = Modifier.clickable { GlobalUIStateHolder.webVpn = !GlobalUIStateHolder.webVpn },
                             )
                             PaddingHorizontalDivider()
                             TransplantListItem(
@@ -570,9 +574,9 @@ fun LoginScreen(
                                 items(list.size) { index ->
                                     val item = list[index]
                                     val enabled =
-                                        if(webVpn) {
+                                        if(GlobalUIStateHolder.webVpn) {
                                             item.canWebVpn
-                                        } else if(CasInHFUT.excludeJxglstu) {
+                                        } else if(GlobalUIStateHolder.excludeJxglstu) {
                                             item.canWithoutJxglstu
                                         } else {
                                             item.canWithJxglstu
@@ -623,7 +627,7 @@ private suspend fun refresh(vm: LoginViewModel) = withContext(Dispatchers.IO) {
 @Composable
 private fun TwoTextField(
     vm : LoginViewModel,
-    webVpn: Boolean,
+//    webVpn: Boolean,
     innerPadding : PaddingValues,
     username : String,
     onUsername : (String) -> Unit
@@ -763,7 +767,7 @@ private fun TwoTextField(
                                 },
                                 trailingIcon = {
                                     Box(modifier = Modifier.padding(5.dp)) {
-                                        ImageCodeUI(webVpn, vm,) {
+                                        ImageCodeUI(vm) {
                                             inputCode = it
                                         }
                                     }
@@ -802,7 +806,7 @@ private fun TwoTextField(
                     onClick = {
                         val cookie = prefs.getString("LOGIN_FLAVORING", "")
                         if (cookie != null) {
-                            loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it},scope)
+                            loginClick(context,vm,username,inputAES,inputCode, onLoad = { loading = it }, onResult = { status = it},scope)
                         }
                     },
                     modifier = Modifier.fillMaxWidth().weight(.5f),
@@ -830,7 +834,7 @@ private fun TwoTextField(
                     onClick = {
                         val cookie = prefs.getString("LOGIN_FLAVORING", "")
                         if (cookie != null) {
-                            loginClick(context,vm,username,inputAES,inputCode,webVpn, onLoad = { loading = it }, onResult = { status = it}, scope)
+                            loginClick(context,vm,username,inputAES,inputCode, onLoad = { loading = it }, onResult = { status = it}, scope)
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
