@@ -724,7 +724,8 @@ fun MainScreen(
                                         navHostTopController,
                                         sharedTransitionScope,
                                         animatedContentScope,
-                                        if (useCustomBackground) backGroundHaze else null
+                                        if (useCustomBackground) backGroundHaze else null,
+                                        isEnabled
                                     ) { isEnabled = it }
                                     // 教务2
                                     CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(

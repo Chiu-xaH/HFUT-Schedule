@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-07") },
+                overlineContent = { Text(text = "2025-09-09") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -55,9 +55,9 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("修复 开课查询中一些课程如通用学术英语无法显示排课的Bug")//
             UpdateItems("修复 查询中心-下学期课程表误未关闭的Bug")//
-            UpdateItems("优化 翻页器组件的交互")//
-//            UpdateItems("修复 正常的教务登录无法使用的Bug")//
             UpdateItems("修复 教务正常联通下仍提示未知错误的Bug")//
+            UpdateItems("修复 登录成功时，切换课表仍加载的Bug")//
+            UpdateItems("优化 翻页器组件的交互")//
 //            UpdateItems("新增 图书馆的登录")
 //            UpdateItems("重构 关于")
 //            UpdateItems("新增 为选项适配了新的转场动画")

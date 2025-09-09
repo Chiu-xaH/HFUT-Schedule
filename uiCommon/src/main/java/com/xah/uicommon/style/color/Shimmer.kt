@@ -41,7 +41,7 @@ fun Modifier.shimmerEffect(
         label = "shimmer-progress"
     )
 
-    val color = Color.White.copy(alpha)
+    val color = MaterialTheme.colorScheme.surface.copy(alpha)
 
     return this.drawWithContent {
         drawContent()

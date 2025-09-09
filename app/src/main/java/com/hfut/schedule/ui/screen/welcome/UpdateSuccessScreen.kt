@@ -168,7 +168,7 @@ fun UpdateSuccessScreen(
                         .fillMaxWidth()
                         .padding(APP_HORIZONTAL_DP)
                         .navigationBarsPadding()
-                        .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.2f)
+                        .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
                         .containerShare(
                             sharedTransitionScope,
                             animatedContentScope,

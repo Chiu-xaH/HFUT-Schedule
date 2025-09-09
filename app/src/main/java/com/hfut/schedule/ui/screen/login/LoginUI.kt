@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContent
@@ -74,6 +75,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -82,6 +84,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
@@ -118,6 +121,7 @@ import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
@@ -127,10 +131,13 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.InetAddress
+import java.net.URL
 
 //登录方法，auto代表前台调用
 private fun loginClick(
@@ -358,37 +365,48 @@ fun LoginScreen(
             )
         },
         bottomBar = bottom@ {
-            if(tab == TAB_SETTRINGS) {
-                return@bottom
-            }
-
-            val text =
-
-            if(showTip && showTip2) {
-                "两条重要提示"
-            } else if(showTip) {
-                "新生登录前须知"
-            } else if(showTip2) {
-                "教务系统无法联通"
-            } else {
-                "选项"
-            }
-
             Column (modifier = Modifier.bottomBarBlur(hazeState, color = MaterialTheme.colorScheme.surfaceContainer)) {
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                LargeButton(
-                    onClick = {
-                        tab = when(tab) {
-                            TAB_LOGIN -> TAB_SETTRINGS
-                            else -> TAB_LOGIN
+                if(tab == TAB_SETTRINGS) {
+                    LargeButton(
+                        onClick = {
+                            tab = when(tab) {
+                                TAB_LOGIN -> TAB_SETTRINGS
+                                else -> TAB_LOGIN
+                            }
+                        },
+                        text = "回到登录页面",
+                        modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
+                        icon = R.drawable.login,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                } else {
+                    val text =
+
+                        if(showTip && showTip2) {
+                            "两条重要提示"
+                        } else if(showTip) {
+                            "新生登录前须知"
+                        } else if(showTip2) {
+                            "教务系统无法联通"
+                        } else {
+                            "选项"
                         }
-                    },
-                    text = text,
-                    modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
-                    icon = if(!showTip && !showTip2) R.drawable.settings else R.drawable.notifications,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                )
+                    LargeButton(
+                        onClick = {
+                            tab = when(tab) {
+                                TAB_LOGIN -> TAB_SETTRINGS
+                                else -> TAB_LOGIN
+                            }
+                        },
+                        text = text,
+                        modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP).navigationBarsPadding(),
+                        icon = if(!showTip && !showTip2) R.drawable.settings else R.drawable.notifications,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.9f),
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
             }
         }
     ) {innerPadding ->
@@ -427,7 +445,7 @@ fun LoginScreen(
                             } else if(jxglstuStatus == TIMEOUT_ERROR_CODE) {
                                 CheckResult(false,"教务系统封网,请换为校园网重新使用或打开外地访问",jxglstuStatus)
                             } else if(jxglstuStatus == CONNECTION_ERROR_CODE) {
-                                CheckResult(false,"网络连接失败,是否连接了网络?",jxglstuStatus)
+                                CheckResult(false,"连接失败,设备无网络或对方服务器存在问题丢包,尝试重新进入此页面",jxglstuStatus)
                             } else {
                                 CheckResult(false,"状态码 $jxglstuStatus",jxglstuStatus)
                             }
@@ -581,6 +599,8 @@ fun LoginScreen(
                             }
                         }
                     }
+                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                    BottomTip("如果登不进去就左上角叉掉重进，再试一两次，学校经常把各种平台搞得有问题")
                     Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
                     InnerPaddingHeight(innerPadding,false)
                 }
@@ -836,3 +856,52 @@ data class CasPlatform(
     val canWithJxglstu : Boolean,
     val maybeUnlinked : Boolean
 )
+
+
+ suspend fun preloadDnsFromUrl(url: String): String? = withContext(Dispatchers.IO) {
+    try {
+        val host = URL(url).host
+        val address = InetAddress.getByName(host)
+        address.hostAddress
+    } catch (e: Exception) {
+        Log.e("DNS解析",getKeyStackTrace(e))
+        e.printStackTrace()
+        null
+    }
+}
+
+
+fun preloadDnsFromUrl2(url: String): String? {
+    return try {
+        val host = URL(url).host   // 提取 host
+        val address = InetAddress.getByName(host)
+        address.hostAddress.also {
+            println("$host -> $it")
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun main() {
+    preloadDnsFromUrl2(MyApplication.JXGLSTU_URL)
+    preloadDnsFromUrl2(MyApplication.CAS_LOGIN_URL)
+    preloadDnsFromUrl2(MyApplication.WEBVPN_URL)
+}
+
+@Composable
+//@Preview
+fun A() {
+    LaunchedEffect(Unit) {
+        launch {
+            Log.d("DNS解析JXGLSTU_URL",preloadDnsFromUrl(MyApplication.JXGLSTU_URL).toString())
+        }
+        launch {
+            Log.d("DNS解析CAS_LOGIN_URL",preloadDnsFromUrl(MyApplication.CAS_LOGIN_URL).toString())
+        }
+        launch {
+            Log.d("DNS解析WEBVPN_URL",preloadDnsFromUrl(MyApplication.WEBVPN_URL).toString())
+        }
+    }
+}

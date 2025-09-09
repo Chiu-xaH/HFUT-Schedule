@@ -213,6 +213,7 @@ fun JxglstuCourseTableUI(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
     backGroundHaze : HazeState?,
+    isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit
 ) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
@@ -560,6 +561,11 @@ fun JxglstuCourseTableUI(
 
 
        LaunchedEffect(Unit) {
+           // 如果已经加载过 跳过
+           if(isEnabled) {
+               loadingJxglstu = false
+               return@LaunchedEffect
+           }
            launch {
                if (nextBoolean) saveInt("FIRST", 1)
            }
