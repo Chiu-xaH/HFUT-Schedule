@@ -53,6 +53,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("修复 开课查询中点击右上角显示排课时无法使用的Bug")//
             UpdateItems("修复 开课查询中一些课程如通用学术英语无法显示排课的Bug")//
             UpdateItems("修复 查询中心-下学期课程表误未关闭的Bug")//
             UpdateItems("修复 教务正常联通下仍提示未知错误的Bug")//

@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.calendar.lesson
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -779,7 +780,6 @@ private fun parseWeek(text: String) : List<Int> {
         .let {
             if (it.endsWith("周")) it.dropLast(1) else it
         }
-
     if (cleaned.isBlank()) return emptyList()
 
     val textList = cleaned.split(",")
