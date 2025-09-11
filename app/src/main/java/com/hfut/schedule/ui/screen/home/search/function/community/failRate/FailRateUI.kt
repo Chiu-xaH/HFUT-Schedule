@@ -35,6 +35,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PagingController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -55,9 +56,9 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
             item { InnerPaddingHeight(innerPadding,true) }
             items(list.size){ item ->
                 AnimationCardListItem(
+                    overlineContent = { Text(list[item].courseMetaId)},
                     headlineContent = {  Text(list[item].courseName) },
-                    leadingContent = { Icon(painterResource(R.drawable.monitoring), contentDescription = "Localized description",) },
-                    trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "")},
+                    leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable {
                         showBottomSheet = true
                         num = item

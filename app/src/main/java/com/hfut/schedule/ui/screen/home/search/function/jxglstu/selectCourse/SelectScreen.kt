@@ -16,6 +16,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -23,14 +24,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -39,12 +46,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,65 +68,64 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
-import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
+import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.xah.uicommon.style.align.CenterScreen
+import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyUI
-import com.xah.uicommon.component.status.LoadingUI
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-   
+import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.screen.home.updateCourses
-import com.xah.uicommon.style.align.ColumnVertical
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 fun SelectCourseScreen(
     vm: NetWorkViewModel,
@@ -137,6 +141,28 @@ fun SelectCourseScreen(
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie() ?: ""
     }
+    val uiState by vm.selectCourseData.state.collectAsState()
+    val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
+        if(skip && uiState is UiState.Success) {
+            return@m
+        }
+        val cookie = getJxglstuCookie()
+        if(cookie == null) {
+            return@m
+        }
+        val result = vm.verify(cookie)
+        if(result != StatusCode.REDIRECT.code) {
+            showToast("验证出现问题")
+        }
+        vm.selectCourseData.clear()
+        vm.getSelectCourse(cookie)
+    }
+    val refreshing = uiState is UiState.Loading
+    val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch {
+            refreshNetwork(false)
+        }
+    })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
     with(sharedTransitionScope) {
@@ -155,7 +181,13 @@ fun SelectCourseScreen(
                         TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.SelectCourse.icon)
                     },
                     actions = {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                            FilledTonalIconButton(onClick = {
+                                scope.launch{ updateCourses(vm, vmUI) }
+                                showToast("已刷新课表与课程汇总")
+                            }) {
+                                Icon(painterResource(R.drawable.event_repeat),null)
+                            }
                             FilledTonalButton(onClick = {
                                 scope.launch {
                                     Starter.startWebView(
@@ -170,142 +202,220 @@ fun SelectCourseScreen(
                             ) {
                                 Text(text = "冲突预览")
                             }
-                            Spacer(modifier = Modifier.width(CARD_NORMAL_DP))
-                            FilledTonalButton(onClick = {
-                                scope.launch{ updateCourses(vm, vmUI) }
-                                showToast("已刷新课表与课程汇总")
-                            }) {
-                                Text(text = "刷新课表")
-                            }
                         }
                     }
                 )
             },
         ) { innerPadding ->
             Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+                modifier = Modifier
+                    .hazeSource(hazeState)
+                    .fillMaxSize()
             ) {
-                SelectCourseListLoading(vm, hazeState = hazeState,innerPadding)
+                LaunchedEffect(Unit) {
+                    refreshNetwork(true)
+                }
+
+                Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+                    RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
+                    CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
+                        SelectCourseList(vm,innerPadding,navController,sharedTransitionScope,animatedContentScope)
+                    }
+                }
             }
         }
     }
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun SelectCourseListLoading(vm : NetWorkViewModel, hazeState: HazeState,innerPadding : PaddingValues) {
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
+fun SelectCourseDetailScreen(
+    vm: NetWorkViewModel,
+    courseId : Int,
+    title : String,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val route = remember { AppNavRoute.SelectCourseDetail.withArgs(courseId,title) }
     val scope = rememberCoroutineScope()
-    if(refresh) {
-        loading = true
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CoroutineScope(Job()).launch{
-            val cookie = getJxglstuCookie()
-            async { cookie?.let { vm.verify(cookie) } }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.verifyData.observeForever { result ->
-                        // Log.d("sss",result.toString())
-                        if (result != null) {
-                            if (result.contains("302")) {
-                                scope.launch {
-                                    cookie?.let { vm.getSelectCourse(it) }
+    var input by remember { mutableStateOf("") }
+    val refreshNetwork: suspend () -> Unit = {
+        val cookie = getJxglstuCookie()
+        cookie?.let {
+            vm.selectCourseInfoData.clear()
+            vm.getSelectCourseInfo(it,courseId)
+        }
+    }
+
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                Column(
+                    modifier = Modifier.topBarBlur(hazeState),
+                ) {
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
+                        colors = topBarTransplantColor(),
+                        title = { Text(title) },
+                        navigationIcon = {
+                            TopBarNavigationIcon(
+                                navController,
+                                animatedContentScope,
+                                route,
+                                AppNavRoute.SelectCourseDetail.icon
+                            )
+                        },
+                        actions = {
+                            Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        scope.launch {
+                                            refreshNetwork()
+                                        }
+                                    },
+                                ) {
+                                    Icon(painterResource(R.drawable.rotate_right), null)
+                                }
+                                FilledTonalButton(
+                                    onClick = {
+                                        navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
+                                    },
+                                    modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope, AppNavRoute.DropCourse.route)
+                                ) {
+                                    Text(text = "退课")
                                 }
                             }
                         }
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        TextField(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = APP_HORIZONTAL_DP),
+                            value = input,
+                            onValueChange = {
+                                input = it
+                            },
+                            label = { Text("搜索 名称、代码、类型、教师") },
+                            singleLine = true,
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {}) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            colors = textFiledTransplant(),
+                        )
                     }
+                    Spacer(Modifier.height(CARD_NORMAL_DP))
                 }
-            }
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.selectCourseData.observeForever { result ->
-                        if (result != null) {
-                            if (result.contains("[")) {
-                                loading = false
-                                refresh = false
-                            }
-                        }
-                    }
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .hazeSource(hazeState)
+                    .fillMaxSize()
+            ) {
+                val uiState by vm.selectCourseInfoData.state.collectAsState()
+
+                LaunchedEffect(Unit) {
+                    refreshNetwork()
+                }
+
+                CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                    SelectCourseInfo(vm,courseId,input, hazeState =hazeState ,innerPadding)
                 }
             }
         }
     }
-
-
-    if(loading) {
-        CenterScreen {
-            LoadingUI()
-        }
-    } else {
-        SelectCourseList(vm, hazeState = hazeState,innerPadding)
-    }
-
-
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPadding : PaddingValues) {
-    val list = getSelectCourseList(vm)
-    var courseId by remember { mutableIntStateOf(0) }
-    var nameTitle by remember { mutableStateOf("选课") }
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun DropCourseScreen(
+    vm: NetWorkViewModel,
+    courseId : Int,
+    title : String,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val route = remember { AppNavRoute.DropCourse.route }
+    val scope = rememberCoroutineScope()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    with(sharedTransitionScope) {
+        CustomTransitionScaffold (
+            route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            animatedContentScope = animatedContentScope,
+            navHostController = navController,
+            topBar = {
+                Column(
+                    modifier = Modifier.topBarBlur(hazeState),
+                    ) {
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
+                        colors = topBarTransplantColor(),
+                        title = {
+                            Text("$title : 退课")
+                        },
+                        navigationIcon = {
+                            TopBarNavigationIcon(
+                                navController,
+                                animatedContentScope,
+                                route,
+                                AppNavRoute.DropCourse.icon
+                            )
+                        },
+                    )
+                }
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .hazeSource(hazeState)
+                    .fillMaxSize()
+            ) {
+                HaveSelectedCourseLoad(vm, courseId,hazeState,innerPadding)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
+@Composable
+private fun SelectCourseList(
+    vm: NetWorkViewModel,
+    innerPadding : PaddingValues,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+ ) {
+    val uiState by vm.selectCourseData.state.collectAsState()
+    val list = (uiState as UiState.Success).data
     var input by remember { mutableStateOf("") }
 
-    var showBottomSheet_selected by remember { mutableStateOf(false) }
-
-    if (showBottomSheet_selected) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_selected = false },
-            showBottomSheet = showBottomSheet_selected,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("已选课程")
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    HaveSelectedCourseLoad(vm, courseId,hazeState)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar(nameTitle) {
-                        FilledTonalButton(onClick = {
-                            showBottomSheet_selected = true
-                        },) {
-                            Text(text = "退课")
-                        }
-                    }
-                },) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    SelectCourseInfoLoad(courseId,vm, hazeState =hazeState )
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
     val ui = @Composable {
         AnimationCardListItem(
             index = list.size,
@@ -326,10 +436,7 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPad
                             trailingIcon = {
                                 IconButton(onClick = {
                                     input.toIntOrNull()?.let { i ->
-                                        courseId = i
-                                        SharedPrefs.saveString("courseIDS", i.toString())
-                                        nameTitle = "入口$i"
-                                        showBottomSheet = true
+                                        navController.navigateForTransition(AppNavRoute.SelectCourseDetail, AppNavRoute.SelectCourseDetail.withArgs(i,"入口$i"))
                                     } ?: showToast("必须为数字")
                                 }) {
                                     Icon(Icons.Default.ArrowForward,null)
@@ -351,14 +458,18 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPad
                 val data = list[item]
                 var expand by remember { mutableStateOf(false) }
                 with(data) {
-                    AnimationCustomCard (Modifier.clickable {
-                        courseId = id
-                        SharedPrefs.saveString("courseIDS", id.toString())
-                        nameTitle = name
-                        showBottomSheet = true
-                    },
+                    val route = AppNavRoute.SelectCourseDetail.withArgs(id,name)
+                    AnimationCustomCard (
+                        modifier = Modifier
+                            .containerShare(sharedTransitionScope, animatedContentScope, route)
+                            .clickable {
+                                navController.navigateForTransition(
+                                    AppNavRoute.SelectCourseDetail,
+                                    route
+                                )
+                            },
                         index = item,
-                        containerColor = cardNormalColor()
+                        containerColor = mixedCardNormalColor()
                     ) {
                         TransplantListItem(
                             headlineContent = { Text(text = name) },
@@ -370,7 +481,6 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPad
                                     }
                                     Text("代号 $id")
                                 }
-
                             },
                         )
                         AnimatedVisibility(
@@ -385,6 +495,7 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPad
                             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
                         ) {
                             Column {
+                                PaddingHorizontalDivider()
                                 TransplantListItem(
                                     headlineContent = { Text(text = "选课公告") },
                                     supportingContent = {
@@ -403,7 +514,6 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPad
                         }
                     }
                 }
-
             }
             item {
                 ui()
@@ -421,62 +531,24 @@ private fun SelectCourseList(vm: NetWorkViewModel, hazeState: HazeState,innerPad
     }
 }
 
-@Composable
-private fun SelectCourseInfoLoad(courseId : Int, vm: NetWorkViewModel, hazeState: HazeState) {
-    var input by remember { mutableStateOf("") }
-    val uiState by vm.selectCourseInfoData.state.collectAsState()
-
-    val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie()
-        cookie?.let {
-            vm.selectCourseInfoData.clear()
-            vm.getSelectCourseInfo(it,courseId)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        refreshNetwork()
-    }
-
-    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        Column {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = APP_HORIZONTAL_DP),
-                    value = input,
-                    onValueChange = {
-                        input = it
-                    },
-                    label = { Text("搜索 名称、代码、类型" ) },
-                    singleLine = true,
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {
-
-                            }) {
-                            Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
-                        }
-                    },
-                    shape = MaterialTheme.shapes.medium,
-                    colors = textFiledTransplant(),
-                )
-            }
-            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-            SelectCourseInfo(vm,courseId,input, hazeState =hazeState )
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState) {
+private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState,innerPadding: PaddingValues) {
     val uiState by vm.selectCourseInfoData.state.collectAsState()
-    val list = (uiState as UiState.Success).data
+    val list = (uiState as UiState.Success).data.let {
+        if(search.isEmpty() || search.isBlank()) {
+            it
+        } else {
+            it.filter { item ->
+                item.code.contains(search) ||
+                        item.course.nameZh.contains(search) ||
+                        item.nameZh.contains(search) ||
+                        item.remark?.contains(search) == true ||
+                        item.teachers.toString().contains(search)
+            }
+        }
+    }
     var lessonId by remember { mutableIntStateOf(0) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("课程详情") }
@@ -486,7 +558,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     val cookie by produceState<String?>(initialValue = null) {
         value = getJxglstuCookie()
     }
-
+    val state = rememberLazyListState()
 
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -503,13 +575,6 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
             }
         }
     }
-    val searchList = mutableListOf<SelectCourseInfo>()
-    list.forEach { item ->
-        if(item.code.contains(search) || item.course.nameZh.contains(search) || item.nameZh.contains(search) || item.remark?.contains(search) == true) {
-            searchList.add(item)
-        }
-    }
-
 
     if (showBottomSheet_info) {
         HazeBottomSheet (
@@ -526,15 +591,16 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
                         Text(text = "选课")
                     }
                 }
-                CourseInfo(num,searchList,vm, hazeState =hazeState )
+                CourseInfo(num,list,vm, hazeState =hazeState )
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
 
-    LazyColumn {
-        items(searchList.size) {item ->
-            val lists = searchList[item]
+    LazyColumn(state=state) {
+        item { InnerPaddingHeight(innerPadding,true) }
+        items(list.size, key = { list[it].id }) { item ->
+            val lists = list[item]
             var stdCount by remember { mutableStateOf("0") }
             LaunchedEffect(lists.id) {
                 if(cookie == null) return@LaunchedEffect
@@ -589,6 +655,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
             )
 //            }
         }
+        item { InnerPaddingHeight(innerPadding,false) }
     }
 }
 
@@ -599,72 +666,27 @@ private fun parseDynamicJson(jsonString: String): Map<String, Int> {
 }
 @Composable
 fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int, type : String) {
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-    var statusText by remember { mutableStateOf("提交中") }
-    var statusBoolean by remember { mutableStateOf(false) }
-
-    val scope = rememberCoroutineScope()
-
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch{
-            val cookie = getJxglstuCookie()
-            async { cookie?.let { vm.getRequestID(it,lessonId.toString(),courseId.toString(), type) } }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.requestIdData.observeForever { result ->
-                        if (result != null) {
-                            scope.launch {
-                                cookie?.let { vm.postSelect(it,result) }
-
-                            }
-                        }
-                    }
-                }
-            }
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.selectResultData.observeForever { result ->
-                        if (result != null) {
-                            if (result.contains("{")) {
-                                loading = false
-                                refresh = false
-                                try {
-                                    val data = Gson().fromJson(result, SelectPostResponse::class.java)
-                                    val status = data.success
-                                    statusBoolean = status
-                                    statusText = if(status) {
-                                        "成功"
-                                    } else {
-                                        data.errorMessage?.textZh ?: "失败"
-                                    }
-                                } catch (e : Exception) {
-                                    statusBoolean = false
-                                    statusText = "失败"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    val refreshNetwork = suspend m@ {
+        val cookie = getJxglstuCookie() ?: return@m
+        vm.requestIdData.clear()
+        vm.getRequestID(cookie,lessonId,courseId, type)
+        val result = (vm.requestIdData.state.value as? UiState.Success)?.data ?: return@m
+        vm.selectResultData.clear()
+        vm.postSelect(cookie,result)
     }
-
-
-
-
-    if(!loading) {
-        Column {
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-                Icon( if(statusBoolean) Icons.Filled.Check else Icons.Filled.Close, contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
-            }
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
-                Text(text = statusText, color = MaterialTheme.colorScheme.primary)
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+    val uiState by vm.selectResultData.state.collectAsState()
+    Column {
+        CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
+            val data = (uiState as UiState.Success).data
+            ColumnVertical(modifier = Modifier.fillMaxWidth()) {
+                Icon( if(data.first) Icons.Filled.Check else Icons.Filled.Close, contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
+                Text(text = data.second, color = MaterialTheme.colorScheme.primary)
             }
         }
-    } else {
-        LoadingUI()
+        Spacer(Modifier.height(APP_HORIZONTAL_DP))
     }
 }
 
@@ -673,7 +695,6 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
 private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkViewModel, hazeState: HazeState) {
     val data = lists[num]
 
-    val sheetState_FailRate = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
 
     if (showBottomSheet_FailRate) {
@@ -681,8 +702,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             onDismissRequest = { showBottomSheet_FailRate = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_FailRate
-//            sheetState = sheetState_FailRate,
-//            shape = bottomSheetRound(sheetState_FailRate)
         ) {
 
             Scaffold(
@@ -702,7 +721,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
         }
     }
 
-    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet_Teacher by remember { mutableStateOf(false) }
 
     var teacherTitle by remember { mutableStateOf("") }
@@ -712,8 +730,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             onDismissRequest = { showBottomSheet_Teacher = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Teacher,
-//            sheetState = sheetState_Teacher,
-//            shape = bottomSheetRound(sheetState_Teacher)
         ) {
 
             Scaffold(
@@ -816,94 +832,41 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
     }
 }
 
-@Composable
-private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeState) {
-    var loading by remember { mutableStateOf(true) }
-    var refresh by remember { mutableStateOf(true) }
-
-    if(refresh) {
-        loading = true
-        CoroutineScope(Job()).launch{
-            val cookie = getJxglstuCookie()
-            async { cookie?.let { vm.getSelectedCourse(it, prefs.getString("courseIDS",null).toString())} }.await()
-            async {
-                Handler(Looper.getMainLooper()).post{
-                    vm.selectedData.observeForever { result ->
-                        if (result != null) {
-                            if (result.contains("{")) {
-                                loading = false
-                                refresh = false
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
-
-
-
-    if(!loading) {
-        HaveSelectedCourse(vm, courseId, hazeState = hazeState)
-    } else {
-        LoadingUI()
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HaveSelectedCourse(vm: NetWorkViewModel, courseId : Int, hazeState: HazeState) {
-    val lists = getSelectedCourse(vm)
+private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeState: HazeState,innerPadding: PaddingValues) {
+    val uiState by vm.selectedData.state.collectAsState()
+    val refreshNetwork = suspend m@ {
+        vm.selectedData.clear()
+        val cookie = getJxglstuCookie() ?: return@m
+        vm.getSelectedCourse(cookie,courseId)
+    }
+
     var name by remember { mutableStateOf("课程详情") }
-    var num by remember { mutableStateOf(0) }
-    val sheetState_info = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet_info by remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    var num by remember { mutableIntStateOf(0) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var showDialog by remember { mutableStateOf(false) }
-    //   var courseId by remember { mutableStateOf(0) }
     var lessonId by remember { mutableStateOf(0) }
 
-    if (showBottomSheet_info) {
-        ModalBottomSheet(
-            onDismissRequest = { showBottomSheet_info = false },
-            sheetState = sheetState_info,
-//            shape = Round(sheetState_info)
-        ) {
-            Column {
-                BottomSheetTopBar(name) {
-                    FilledTonalButton(onClick = { showDialog = true }) {
-                        Text(text = "退课")
-                    }
-                }
-
-                CourseInfo(num,lists,vm, hazeState = hazeState)
-                Spacer(modifier = Modifier.height(20.dp))
-            }
+    LaunchedEffect(showBottomSheet) {
+        if(showBottomSheet == false) {
+            refreshNetwork()
         }
     }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
+            showBottomSheet = showBottomSheet,
+            autoShape = false,
+            hazeState = hazeState,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("调课结果")
-                },
-            ) { innerPadding ->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    SelectCourseResultLoad(vm,courseId,lessonId, SelectType.drop.name)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
+            Column(modifier = Modifier) {
+                HazeBottomSheetTopBar("调课结果", isPaddingStatusBar = false)
+                SelectCourseResultLoad(vm,courseId,lessonId, SelectType.drop.name)
+                Spacer(modifier = Modifier
+                    .height(APP_HORIZONTAL_DP)
+                    .navigationBarsPadding())
             }
         }
     }
@@ -915,35 +878,59 @@ private fun HaveSelectedCourse(vm: NetWorkViewModel, courseId : Int, hazeState: 
                 showBottomSheet = true
                 showDialog = false
             },
-            dialogTitle = "警告",
-            dialogText = "请再次确定,是否退掉 ${name}\n若为培养计划内的公共或专业课,如需再选需在教务完全关闭之前选择!否则无法再修改",
-            conformText = "确定",
-            dismissText = "取消"
+            hazeState = hazeState,
+            dialogText = "请再次确定,是否退掉${name}?需在教务完全关闭之前完成调整,否则无法再修改!",
         )
     }
 
-    LazyColumn {
-        items(lists.size) {item ->
-            val names =  lists[item].course.nameZh
-//            MyCustomCard {
-            CardListItem(
-                headlineContent = { Text(text = names)  },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.category), contentDescription = "")},
-                trailingContent = { FilledTonalIconButton(onClick = {
-                    lessonId = lists[item].id
-                    name = names
-                    showDialog = true
-                }) {
-                    Icon(Icons.Filled.Close, contentDescription = "")
-                }},
-                modifier = Modifier.clickable {
-                    showBottomSheet_info = true
-                    num = item
-                    name = names
-                    lessonId = lists[item].id
+    val state = rememberLazyListState()
+    CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+        val lists = (uiState as UiState.Success).data
+        var showBottomSheet_info by remember { mutableStateOf(false) }
+        if (showBottomSheet_info) {
+            HazeBottomSheet (
+                showBottomSheet = showBottomSheet_info,
+                autoShape = false,
+                hazeState = hazeState,
+                onDismissRequest = { showBottomSheet_info = false },
+            ) {
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                    HazeBottomSheetTopBar(name, isPaddingStatusBar = false) {
+                        FilledTonalButton(onClick = { showDialog = true }) {
+                            Text(text = "退课")
+                        }
+                    }
+                    CourseInfo(num,lists,vm, hazeState = hazeState)
+                    Spacer(modifier = Modifier
+                        .height(APP_HORIZONTAL_DP)
+                        .navigationBarsPadding())
                 }
-            )
-//            }
+            }
+        }
+
+        LazyColumn(state=state) {
+            item { InnerPaddingHeight(innerPadding,true) }
+            items(lists.size, key = { it }) {item ->
+                val names =  lists[item].course.nameZh
+                CardListItem(
+                    headlineContent = { Text(text = names)  },
+                    leadingContent = { Icon(painter = painterResource(id = R.drawable.category), contentDescription = "")},
+                    trailingContent = { FilledTonalIconButton(onClick = {
+                        lessonId = lists[item].id
+                        name = names
+                        showDialog = true
+                    }) {
+                        Icon(Icons.Filled.Close, contentDescription = "")
+                    }},
+                    modifier = Modifier.clickable {
+                        showBottomSheet_info = true
+                        num = item
+                        name = names
+                        lessonId = lists[item].id
+                    }
+                )
+            }
+            item { InnerPaddingHeight(innerPadding,false) }
         }
     }
 }

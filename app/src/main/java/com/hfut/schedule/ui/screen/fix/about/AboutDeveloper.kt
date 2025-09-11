@@ -223,19 +223,8 @@ fun About(vm : NetWorkViewModel) {
                             overlineContent = { Text("语言") }
                         )
                         TransplantListItem(
-                            headlineContent = { Text(dependencies.ui) },
-                            overlineContent = { Text("UI") }
-                        )
-                        TransplantListItem(
                             headlineContent = { Text(dependencies.jetpack) },
                         )
-                        val builds = dependencies.build
-                        for(index in builds.indices) {
-                            TransplantListItem(
-                                headlineContent = { Text(builds[index]) },
-                                overlineContent = { Text("构建 打包") }
-                            )
-                        }
                     }
                 }
 

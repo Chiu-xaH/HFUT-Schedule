@@ -144,6 +144,41 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.IF_SAVED.argName to ifSaved
         )
     }
+    object TransferDetail : AppNavRoute("TRANSFER_DETAIL","转专业详情",R.drawable.compare_arrows) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any,override val isNullable: Boolean) : NavArg {
+            IS_HIDDEN("isHidden", NavType.BoolType,false,false),
+            BATCH_ID("batchId", NavType.StringType,"-1",false),
+            NAME("name", NavType.StringType,label,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(isHidden: Boolean,batchId : String,name : String): String = withArgs(
+            Args.IS_HIDDEN.argName to isHidden,
+            Args.BATCH_ID.argName to batchId,
+            Args.NAME.argName to name,
+        )
+    }
+    object SelectCourseDetail : AppNavRoute("SELECT_COURSE_DETAIL","选课入口",R.drawable.ads_click) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any,override val isNullable: Boolean) : NavArg {
+            COURSE_ID("courseId", NavType.IntType,-1,false),
+            NAME("name", NavType.StringType,label,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(courseId: Int,name : String): String = withArgs(
+            Args.COURSE_ID.argName to courseId,
+            Args.NAME.argName to name
+        )
+    }
+    object DropCourse : AppNavRoute("DROP_COURSE","退课",R.drawable.ads_click) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any,override val isNullable: Boolean) : NavArg {
+            COURSE_ID("courseId", NavType.IntType,-1,false),
+            NAME("name", NavType.StringType,label,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(courseId: Int,name : String): String = withArgs(
+            Args.COURSE_ID.argName to courseId,
+            Args.NAME.argName to name
+        )
+    }
     object Program : AppNavRoute("PROGRAM","培养方案",R.drawable.conversion_path) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             IF_SAVED("ifSaved", NavType.BoolType,true,false)
@@ -165,7 +200,15 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object SelectCourse : AppNavRoute("SELECT_COURSE","选课",R.drawable.ads_click)
     object WebNavigation : AppNavRoute("WEB_NAVIGATION","网址导航",R.drawable.explore)
     object NotificationBox : AppNavRoute("BOX","收纳",R.drawable.notifications)
-    object Life : AppNavRoute("LIFE","生活服务",R.drawable.near_me)
+    object Life : AppNavRoute("LIFE","生活服务",R.drawable.near_me) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            IN_FOCUS("inFocus", NavType.BoolType,false,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(inFocus: Boolean): String = withArgs(
+            Args.IN_FOCUS.argName to inFocus
+        )
+    }
     object CourseSearch : AppNavRoute("COURSE_SEARCH","开课查询",R.drawable.search)
     object TotalCourse : AppNavRoute("TOTAL_COURSE","课程汇总",R.drawable.category) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {

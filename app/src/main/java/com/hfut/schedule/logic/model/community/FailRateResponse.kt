@@ -6,7 +6,7 @@ data class FailRate(val records : List<FailRateRecord>,
                     val current : Int,
                     val pages  : Int)
 
-data class FailRateRecord(val courseName : String,val courseFailRateDTOList : List<courseFailRateDTOList>)
+data class FailRateRecord(val courseName : String,val courseMetaId : String,val courseFailRateDTOList : List<courseFailRateDTOList>)
 
 data class courseFailRateDTOList(val xn : String,//学期
                                  val xq : String,//第几学期

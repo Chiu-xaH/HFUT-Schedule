@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-09") },
+                overlineContent = { Text(text = "2025-09-11") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,8 +53,17 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 单独登录教务系统")
+//            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")
+//            UpdateItems("新增 启动台支持一键清除最近记录")
+            UpdateItems("新增 部分界面适配了新的转场动画")
+            UpdateItems("新增 挂科率支持显示课程代码")
+            UpdateItems("重构 选课的网络请求逻辑")
             UpdateItems("优化 外地访问开关的逻辑")
+            UpdateItems("修复 聚焦天气预警与生活服务之间的重叠的Bug")
+            UpdateItems("修复 查询中心检索不到部分项目的Bug")
+//            UpdateItems("新增 单独登录教务系统")
+//            UpdateItems("新增 备份与恢复数据","位于 选项-应用及配置，可将数据导出到另一台设备以实现多端共存")
+
 //            UpdateItems("重构 关于")
 //            UpdateItems("新增 为选项适配了新的转场动画")
 //            UpdateItems("修复 登录教务时提示失败后需要重进界面才能登录的Bug")
@@ -64,7 +73,7 @@ fun VersionInfo() {
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 为部分场景适配新的转场动画")
             /*
-                        转专业二级界面
+
             就业二级界面 通知公告二级界面
             教师检索二级界面 课程详情查教师三级界面
             开课查询二级界面 课程汇总二级界面

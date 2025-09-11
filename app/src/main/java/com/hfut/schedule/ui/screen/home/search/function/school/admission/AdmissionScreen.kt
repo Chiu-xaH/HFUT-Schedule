@@ -320,16 +320,6 @@ fun AdmissionRegionScreen(
                                                     )
                                                 }
                                             }
-                                            Row {
-                                                item.avgScore?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("平均分") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.filter_vintage),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                            }
                                         }
                                     }
                                 }

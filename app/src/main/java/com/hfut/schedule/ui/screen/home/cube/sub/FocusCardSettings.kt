@@ -259,7 +259,7 @@ fun FocusCard(
     var loading by remember { mutableStateOf(false) }
     val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
-    val route = remember { AppNavRoute.Life.route }
+    val route = remember { AppNavRoute.Life.withArgs(true) }
     val context = LocalContext.current
     if(showCard || showEle || showToday || showWeb)
         CustomCard(

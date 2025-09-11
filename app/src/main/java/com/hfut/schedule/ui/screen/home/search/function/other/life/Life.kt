@@ -44,7 +44,7 @@ fun Life(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
-    val route = remember { AppNavRoute.Life.route }
+    val route = remember { AppNavRoute.Life.withArgs(false) }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Life.label) },
@@ -60,6 +60,7 @@ fun Life(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LifeScreen(
+    inFocus : Boolean,
     vm : NetWorkViewModel,
     navController : NavHostController,
     sharedTransitionScope: SharedTransitionScope,
@@ -67,7 +68,7 @@ fun LifeScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-    val route = remember { AppNavRoute.Life.route }
+    val route = remember { AppNavRoute.Life.withArgs(inFocus) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     with(sharedTransitionScope) {

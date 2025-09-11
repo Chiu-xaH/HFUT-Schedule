@@ -262,9 +262,10 @@ fun ControlCenterScreen(
                             .padding(horizontal = APP_HORIZONTAL_DP),
                         value = input,
                         onValueChange = {
+                            showToast("正在开发")
                             input = it
                         },
-                        label = { Text("搜索 查询中心") },
+                        label = { Text("全局搜索") },
                         leadingIcon = { Icon(painterResource(R.drawable.search),null) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
@@ -296,45 +297,45 @@ fun ControlCenterScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
-                    val list = GlobalUIStateHolder.funcMaps.filter { it.name.contains(input,ignoreCase = true) }
-                    Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
-                        for(i in list.indices step 2) {
-                            val item = list[i]
-                            Row() {
-                                SmallCard(modifier = Modifier
-                                    .padding(horizontal = 3.dp, vertical = 3.dp)
-                                    .weight(.5f)) {
-                                    TransplantListItem(
-                                        headlineContent = { ScrollText(item.name) },
-                                        leadingContent = {
-                                            Icon(painterResource(item.icon),null)
-                                        },
-                                        modifier = Modifier.clickable {
-                                            showToast("正在开发")
-                                        }
-                                    )
-                                }
-                                if(i + 1 < list.size) {
-                                    val item2 = list[i+1]
-                                    SmallCard(modifier = Modifier
-                                        .padding(horizontal = 3.dp, vertical = 3.dp)
-                                        .weight(.5f)) {
-                                        TransplantListItem(
-                                            headlineContent = { ScrollText(item2.name) },
-                                            leadingContent = {
-                                                Icon(painterResource(item2.icon),null)
-                                            },
-                                            modifier = Modifier.clickable {
-                                                showToast("正在开发")
-                                            }
-                                        )
-                                    }
-                                } else {
-                                    Spacer(modifier = Modifier.weight(.5f))
-                                }
-                            }
-                        }
-                    }
+//                    val list = GlobalUIStateHolder.funcMaps.filter { it.name.contains(input,ignoreCase = true) }
+//                    Column(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
+//                        for(i in list.indices step 2) {
+//                            val item = list[i]
+//                            Row() {
+//                                SmallCard(modifier = Modifier
+//                                    .padding(horizontal = 3.dp, vertical = 3.dp)
+//                                    .weight(.5f)) {
+//                                    TransplantListItem(
+//                                        headlineContent = { ScrollText(item.name) },
+//                                        leadingContent = {
+//                                            Icon(painterResource(item.icon),null)
+//                                        },
+//                                        modifier = Modifier.clickable {
+//                                            showToast("正在开发")
+//                                        }
+//                                    )
+//                                }
+//                                if(i + 1 < list.size) {
+//                                    val item2 = list[i+1]
+//                                    SmallCard(modifier = Modifier
+//                                        .padding(horizontal = 3.dp, vertical = 3.dp)
+//                                        .weight(.5f)) {
+//                                        TransplantListItem(
+//                                            headlineContent = { ScrollText(item2.name) },
+//                                            leadingContent = {
+//                                                Icon(painterResource(item2.icon),null)
+//                                            },
+//                                            modifier = Modifier.clickable {
+//                                                showToast("正在开发")
+//                                            }
+//                                        )
+//                                    }
+//                                } else {
+//                                    Spacer(modifier = Modifier.weight(.5f))
+//                                }
+//                            }
+//                        }
+//                    }
                 }
                 androidx.compose.animation.AnimatedVisibility(
                     visible = tab == TAB_SETTINGS,
@@ -351,8 +352,11 @@ fun ControlCenterScreen(
                     exit = fadeOut()
                 ){
                     Column {
+//                        DividerTextExpandedWith("固定项目") {
+
+//                        }
                         if(queue.isNotEmpty()) {
-                            DividerTextExpandedWith("最近记录") {
+                            DividerTextExpandedWith("最近使用") {
                                 LazyRow {
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
                                     items(queue.size) { index ->

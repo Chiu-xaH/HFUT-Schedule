@@ -511,25 +511,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                             modifier = Modifier.clickable { showBottomSheet_Fee = true }
                         )
                         PaddingHorizontalDivider()
-                        var loading by remember { mutableStateOf(false) }
-                        TransplantListItem(
-                            headlineContent = { Text(text = "刷新登陆状态") },
-                            supportingContent = { Text(text = "若慧新易校(一卡通)相关功能(包括缴费)登录失效,可一键刷新")},
-                            leadingContent = {
-                                if(loading) {
-                                    LoadingIcon()
-                                } else {
-                                    Icon(painter = painterResource(id = R.drawable.rotate_right), contentDescription = "")
-                                }
-                            },
-                            modifier = Modifier.clickable {
-                                scope.launch {
-                                    loading = true
-                                    loginHuiXin(vm)
-                                    loading = false
-                                }
-                            }
-                        )
+                        RefreshHuiXin(vm,false)
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { Text(text = "修改密码") },
@@ -618,3 +600,27 @@ fun CardLostScreen(vm : NetWorkViewModel) {
     }
 }
 
+
+@Composable
+fun RefreshHuiXin(vm: NetWorkViewModel,showOnCas : Boolean = false) {
+    val scope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) }
+    TransplantListItem(
+        headlineContent = { Text(text = if(!showOnCas)"刷新登录状态" else "一键刷新登陆状态(慧新易校)") },
+        supportingContent = { Text(text = "若慧新易校(一卡通)相关功能(包括缴费)登录失效,可点击刷新")},
+        leadingContent = {
+            if(loading) {
+                LoadingIcon()
+            } else {
+                Icon(painter = painterResource(id = R.drawable.rotate_right), contentDescription = "")
+            }
+        },
+        modifier = Modifier.clickable {
+            scope.launch {
+                loading = true
+                loginHuiXin(vm)
+                loading = false
+            }
+        }
+    )
+}

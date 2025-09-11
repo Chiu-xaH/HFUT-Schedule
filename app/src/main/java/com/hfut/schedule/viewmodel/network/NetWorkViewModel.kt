@@ -90,7 +90,9 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
+import com.hfut.schedule.logic.model.jxglstu.SelectCourse
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
+import com.hfut.schedule.logic.model.jxglstu.SelectPostResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.SurveyTeacherResponse
 import com.hfut.schedule.logic.model.jxglstu.TransferPostResponse
@@ -559,45 +561,25 @@ class NetWorkViewModel() : ViewModel() {
     }
 
 // 选课 ////////////////////////////////////////////////////////////////////////////////////////////////
-    val verifyData = MutableLiveData<String?>()
-    fun verify(cookie: String) {
-        val call = jxglstu.verify(cookie)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    verifyData.value = response.code().toString()
-                } else {
-                    verifyData.value = response.code().toString()
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                t.printStackTrace()
-            }
-        })
+    suspend fun verify(cookie: String) = launchRequestNone {
+        jxglstu.verify(cookie).awaitResponse()
     }
-
-    val selectCourseData = MutableLiveData<String?>()
+    val selectCourseData = StateHolder<List<SelectCourse>>()
     suspend fun getSelectCourse(cookie: String) {
-        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            onListenStateHolderForNetwork<Int,Unit>(bizTypeIdResponse,null) { bizTypeId ->
-                val call = jxglstu.getSelectCourse(bizTypeId,sId.toString(), cookie)
-
-                call.enqueue(object : Callback<ResponseBody> {
-                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        if (response.isSuccessful) {
-                            selectCourseData.value = response.body()?.string()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        t.printStackTrace()
-                    }
-                })
+        onListenStateHolderForNetwork<Int, List<SelectCourse>>(studentId,selectCourseData) { sId ->
+            onListenStateHolderForNetwork<Int,List<SelectCourse>>(bizTypeIdResponse,selectCourseData) { bizTypeId ->
+                launchRequestSimple(
+                    request = { jxglstu.getSelectCourse(bizTypeId,sId.toString(), cookie).awaitResponse() },
+                    holder = selectCourseData,
+                    transformSuccess = { _,json -> parseSelectedList(json) }
+                )
             }
         }
     }
+    private fun parseSelectedList(json : String) : List<SelectCourse> = try {
+        val courses: List<SelectCourse> = Gson().fromJson(json, object : TypeToken<List<SelectCourse>>() {}.type)
+        courses
+    } catch (e : Exception) { throw e }
 
     val selectCourseInfoData = StateHolder<List<SelectCourseInfo>>()
     suspend fun getSelectCourseInfo(cookie: String, id : Int) = launchRequestSimple(
@@ -625,57 +607,52 @@ class NetWorkViewModel() : ViewModel() {
         })
     }
 
-    val requestIdData = MutableLiveData<String?>()
-    suspend fun getRequestID(cookie: String, lessonId : String, courseId : String, type : String) {
-        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstu.getRequestID(sId.toString(),lessonId,courseId,cookie,type)
-
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    requestIdData.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
+    val requestIdData = StateHolder<String>()
+    suspend fun getRequestID(cookie: String, lessonId : Int, courseId : Int, type : String) {
+        onListenStateHolderForNetwork<Int,String>(studentId,requestIdData) { sId ->
+            launchRequestSimple(
+                request = { jxglstu.getRequestID(sId.toString(),lessonId.toString(),courseId.toString(),cookie,type).awaitResponse() },
+                holder = requestIdData,
+                transformSuccess = { _,body -> body }
+            )
         }
     }
 
-    val selectedData = MutableLiveData<String?>()
-    suspend fun getSelectedCourse(cookie: String, courseId : String) {
-        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstu.getSelectedCourse(sId.toString(),courseId,cookie)
-
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    selectedData.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
+    val selectedData = StateHolder<List<SelectCourseInfo>>()
+    suspend fun getSelectedCourse(cookie: String, courseId : Int) {
+        onListenStateHolderForNetwork<Int,List<SelectCourseInfo>>(studentId,selectedData) { sId ->
+            launchRequestSimple(
+                request = { jxglstu.getSelectedCourse(sId.toString(),courseId.toString(),cookie).awaitResponse() },
+                holder = selectedData,
+                transformSuccess = { _,json -> parseSelectedCourses(json) }
+            )
         }
-
     }
+    private fun parseSelectedCourses(json : String) : List<SelectCourseInfo> = try {
+        val courses: List<SelectCourseInfo> = Gson().fromJson(json, object : TypeToken<List<SelectCourseInfo>>() {}.type)
+        courses
+    } catch (e : Exception) { throw e }
 
-    val selectResultData = MutableLiveData<String?>()
+    val selectResultData = StateHolder<Pair<Boolean, String>>()
     suspend fun postSelect(cookie: String,requestId : String) {
-        onListenStateHolderForNetwork<Int,Unit>(studentId,null) { sId ->
-            val call = jxglstu.postSelect(sId.toString(), requestId,cookie)
-
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    selectResultData.value = response.body()?.string()
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
+        onListenStateHolderForNetwork<Int, Pair<Boolean, String>>(studentId,selectResultData) { sId ->
+            launchRequestSimple(
+                holder = selectResultData,
+                request = { jxglstu.postSelect(sId.toString(), requestId,cookie).awaitResponse() },
+                transformSuccess = { _,json -> parseSelectResult(json) }
+            )
         }
     }
+    private fun parseSelectResult(json : String) : Pair<Boolean, String> = try {
+        val data = Gson().fromJson(json, SelectPostResponse::class.java)
+        val status = data.success
+        val statusText = if(status) {
+            "成功"
+        } else {
+            data.errorMessage?.textZh ?: "失败"
+        }
+        Pair(status,statusText)
+    } catch (e : Exception) { throw e }
 
 // 转专业 ////////////////////////////////////////////////////////////////////////////////////////////////
     val transferData = StateHolder<TransferResponse>()

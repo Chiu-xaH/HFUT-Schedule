@@ -96,6 +96,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.card.function.main.RefreshHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
@@ -483,28 +484,30 @@ fun LoginScreen(
                             modifier = Modifier,
                             color = MaterialTheme.colorScheme.surface,
                         ) {
-                            TransplantListItem(
-                                supportingContent = { Text("自授权登录") },
-                                headlineContent = { Text("借助扫码登陆通道，自己为自己授权登录") },
-                                modifier = Modifier.clickable {
-                                    showToast("正在开发")
-                                },
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.qr_code_2),null)
-                                },
-                            )
+                            RefreshHuiXin(networkVm,true)
                             PaddingHorizontalDivider()
-                            TransplantListItem(
-                                supportingContent = { Text("不使用CAS统一认证登录，直接用账号密码登录教务系统") },
-                                headlineContent = { Text("教务系统备用通道") },
-                                modifier = Modifier.clickable {
-                                    showToast("正在开发")
-                                },
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.login),null)
-                                },
-                            )
-                            PaddingHorizontalDivider()
+//                            TransplantListItem(
+//                                supportingContent = { Text("自授权登录") },
+//                                headlineContent = { Text("借助扫码登陆通道，自己为自己授权登录") },
+//                                modifier = Modifier.clickable {
+//                                    showToast("正在开发")
+//                                },
+//                                leadingContent = {
+//                                    Icon(painterResource(R.drawable.qr_code_2),null)
+//                                },
+//                            )
+//                            PaddingHorizontalDivider()
+//                            TransplantListItem(
+//                                supportingContent = { Text("不使用CAS统一认证登录，直接用账号密码登录教务系统") },
+//                                headlineContent = { Text("教务系统备用通道") },
+//                                modifier = Modifier.clickable {
+//                                    showToast("正在开发")
+//                                },
+//                                leadingContent = {
+//                                    Icon(painterResource(R.drawable.login),null)
+//                                },
+//                            )
+//                            PaddingHorizontalDivider()
                             if(!GlobalUIStateHolder.webVpn) {
                                 TransplantListItem(
                                     supportingContent = { Text("打开开关后,将跳过教务系统而登录,用于离校且教务封网的情况下需刷新其他平台") },
