@@ -77,7 +77,20 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-
+private val items = listOf(
+    NavigationBarItemData(
+        SupabaseScreen.HOME.name,"源", R.drawable.cloud,  R.drawable.cloud_filled
+    ),
+    NavigationBarItemData(
+        SupabaseScreen.ME.name,"已贡献", R.drawable.database,R.drawable.database_filled
+    ),
+    NavigationBarItemData(
+        SupabaseScreen.STORAGE.name,"已下载", R.drawable.lightbulb,R.drawable.lightbulb_filled
+    ),
+    NavigationBarItemData(
+        SupabaseScreen.SETTINGS.name,"选项", R.drawable.deployed_code,R.drawable.deployed_code_filled
+    )
+)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -171,24 +184,6 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                 }
             },
             bottomBar = {
-                val items = listOf(
-                    NavigationBarItemData(
-                        SupabaseScreen.HOME.name,"源", painterResource(R.drawable.cloud), painterResource(
-                            R.drawable.cloud_filled)
-                    ),
-                    NavigationBarItemData(
-                        SupabaseScreen.ME.name,"已贡献", painterResource(R.drawable.database), painterResource(
-                            R.drawable.database_filled)
-                    ),
-                    NavigationBarItemData(
-                        SupabaseScreen.STORAGE.name,"已下载", painterResource(R.drawable.lightbulb),
-                        painterResource(R.drawable.lightbulb_filled)
-                    ),
-                    NavigationBarItemData(
-                        SupabaseScreen.SETTINGS.name,"选项", painterResource(R.drawable.deployed_code),
-                        painterResource(R.drawable.deployed_code_filled)
-                    )
-                )
                 HazeBottomBar(hazeState,items,navController)
             }
         ) { innerPadding ->

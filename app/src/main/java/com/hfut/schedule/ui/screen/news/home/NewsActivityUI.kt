@@ -111,7 +111,17 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import org.json.JSONArray
-
+private val items = listOf(
+    NavigationBarItemData(
+        NewsBarItems.News.name,"通知公告", R.drawable.star,R.drawable.star_filled
+    ),
+    NavigationBarItemData(
+        NewsBarItems.Academic.name,"教务处", R.drawable.star_half,R.drawable.star_filled
+    ),
+    NavigationBarItemData(
+        NewsBarItems.School.name,"各级学院", R.drawable.school,R.drawable.school_filled
+    )
+)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -229,20 +239,6 @@ fun NewsScreen(
                 }
             },
             bottomBar = {
-                val items = listOf(
-                    NavigationBarItemData(
-                        NewsBarItems.News.name,"通知公告", painterResource(R.drawable.star), painterResource(
-                            R.drawable.star_filled)
-                    ),
-                    NavigationBarItemData(
-                        NewsBarItems.Academic.name,"教务处", painterResource(R.drawable.star_half), painterResource(
-                            R.drawable.star_filled)
-                    ),
-                    NavigationBarItemData(
-                        NewsBarItems.School.name,"各级学院", painterResource(R.drawable.school),
-                        painterResource(R.drawable.school_filled)
-                    )
-                )
                 HazeBottomBar(hazeState,items,navController)
             }
         ) { innerPadding ->

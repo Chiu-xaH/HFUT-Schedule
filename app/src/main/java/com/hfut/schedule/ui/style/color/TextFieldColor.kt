@@ -7,13 +7,13 @@ import androidx.compose.ui.graphics.Color
 import com.hfut.schedule.ui.component.container.cardNormalColor
 
 @Composable
-fun textFiledTransplant(isColorCopy : Boolean = true,isFocusColor : Boolean = true) : TextFieldColors {
+fun textFiledTransplant(isColorCopy : Boolean = true) : TextFieldColors {
     return TextFieldDefaults.colors(
         errorIndicatorColor = Color.Transparent,
         focusedIndicatorColor = Color.Transparent,
         unfocusedIndicatorColor = Color.Transparent,
         disabledIndicatorColor = Color.Transparent,
-        focusedContainerColor = if(!isFocusColor) cardNormalColor() else Color.Unspecified,
+        focusedContainerColor = cardNormalColor(),
         unfocusedContainerColor = if(isColorCopy) cardNormalColor() else Color.Unspecified,
     )
 }

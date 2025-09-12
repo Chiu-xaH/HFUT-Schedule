@@ -32,7 +32,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState
 
 @Composable
-fun TermFirstlyInfo(list: List<lessons>, isSearch : Boolean) {
+fun TermFirstlyInfo(list: List<lessons>) {
     if(list.isEmpty()) return
 
     val info = list[0].semester
@@ -45,8 +45,7 @@ fun TermFirstlyInfo(list: List<lessons>, isSearch : Boolean) {
         ) },
         color = MaterialTheme.colorScheme.secondaryContainer,
         trailingContent = {
-            if(!isSearch)
-                Text(text = "学分 ${periodsSum(list)}")
+            Text(text = "学分 ${periodsSum(list)}")
         },
         index = 0
     )

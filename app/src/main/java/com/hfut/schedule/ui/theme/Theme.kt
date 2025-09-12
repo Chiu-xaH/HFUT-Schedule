@@ -78,7 +78,11 @@ fun AppTheme(
         )
         scheme.let {
             if(style == DataStoreManager.ColorStyle.BLACK.code) {
-                it.copy(primaryContainer = scheme.secondaryContainer.deepen(if(isInDark) 0.3f else 0.2f,isInDark), primary = scheme.primary.deepen(-0.2f,isInDark))
+                it.copy(
+                    primaryContainer = it.secondaryContainer.deepen(if(isInDark) 0.3f else 0.2f,isInDark),
+                    primary = it.primary.deepen(-0.2f,isInDark),
+                    surfaceVariant = it.surface.deepen(0.1f,isInDark)
+                )
             } else {
                 it
             }

@@ -107,6 +107,8 @@ fun JxglstuCourseTableUINext(
     innerPadding : PaddingValues,
     backGroundHaze : HazeState?,
 ) {
+    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
+
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
@@ -420,6 +422,8 @@ fun JxglstuCourseTableUINext(
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val textSize = if(showAll)12.sp else 14.sp
+        val height = remember { 125.dp }
+        val padding = if (showAll) 1.dp else 1.75.dp
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(if(showAll)7 else 5),
@@ -430,106 +434,110 @@ fun JxglstuCourseTableUINext(
             items(if(showAll)42 else 30) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                 val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
-                Card(
-                    shape = MaterialTheme.shapes.extraSmall,
-                    colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
-                    modifier = Modifier
-                        .height(125.dp)
-                        .padding(if (showAll) 1.dp else 2.dp)
-                        .let {
-                            backGroundHaze?.let { haze ->
-                                it
-                                    .clip(MaterialTheme.shapes.extraSmall)
-                                    .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
-                            } ?: it
-                        }
-                        .clickable {
-                            // 只有一节课
-                            if (texts.size == 1) {
-                                val name =
-                                    parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
-                                if (name != null) {
-                                    navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, cell))
-                                }
-                            } else if (texts.size > 1) {
-                                multiWeekday =
-                                    if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                multiWeek = currentWeek.toInt()
-                                courses = texts
-                                showBottomSheetMultiCourse = true
+                if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
+                    Box(modifier = Modifier.height(height).padding(padding))
+                } else {
+                    Card(
+                        shape = MaterialTheme.shapes.extraSmall,
+                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
+                        modifier = Modifier
+                            .height(height)
+                            .padding(padding)
+                            .let {
+                                backGroundHaze?.let { haze ->
+                                    it
+                                        .clip(MaterialTheme.shapes.extraSmall)
+                                        .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                } ?: it
                             }
-                        }
-                        .containerShare(
-                            sharedTransitionScope,
-                            animatedContentScope,
-                            route = if (texts.size == 1) {
-                                val name =
-                                    parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
-                                if (name != null) {
-                                    AppNavRoute.CourseDetail.withArgs(name,cell)
+                            .clickable {
+                                // 只有一节课
+                                if (texts.size == 1) {
+                                    val name =
+                                        parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                    if (name != null) {
+                                        navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, cell))
+                                    }
+                                } else if (texts.size > 1) {
+                                    multiWeekday =
+                                        if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                    multiWeek = currentWeek.toInt()
+                                    courses = texts
+                                    showBottomSheetMultiCourse = true
+                                }
+                            }
+                            .containerShare(
+                                sharedTransitionScope,
+                                animatedContentScope,
+                                route = if (texts.size == 1) {
+                                    val name =
+                                        parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                    if (name != null) {
+                                        AppNavRoute.CourseDetail.withArgs(name,cell)
+                                    } else {
+                                        route
+                                    }
                                 } else {
                                     route
-                                }
-                            } else {
-                                route
-                            },
-                            roundShape = MaterialTheme.shapes.extraSmall,
-                        )
-                ) {
-                    if(texts.size == 1) {
-                        val l = texts[0].split("\n")
-                        val time = l[0]
-                        val name = l[1]
-                        val place = l[2]
-                        Column(
-                            modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
-                            verticalArrangement = Arrangement.SpaceBetween,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = time,
-                                fontSize = textSize,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
+                                },
+                                roundShape = MaterialTheme.shapes.extraSmall,
                             )
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f) // 占据中间剩余的全部空间
-                                    .fillMaxWidth(),
-                                contentAlignment = Alignment.TopCenter
+                    ) {
+                        if(texts.size == 1) {
+                            val l = texts[0].split("\n")
+                            val time = l[0]
+                            val name = l[1]
+                            val place = l[2]
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = name,
+                                    text = time,
                                     fontSize = textSize,
                                     textAlign = TextAlign.Center,
-                                    overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f) // 占据中间剩余的全部空间
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    Text(
+                                        text = name,
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                Text(
+                                    text = place,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
                             }
-                            Text(
-                                text = place,
-                                fontSize = textSize,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                        } else {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                Text(
+                                    text =
+                                        if (texts.size == 1) texts[0]
+                                        else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                        else "",
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
                         }
-                    } else {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Text(
-                                text =
-                                    if (texts.size == 1) texts[0]
-                                    else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                    else "",
-                                fontSize = textSize,
-                                textAlign = TextAlign.Center,
-                            )
-                        }
-                    }
 
+                    }
                 }
             }
             item { InnerPaddingHeight(innerPadding,false) }

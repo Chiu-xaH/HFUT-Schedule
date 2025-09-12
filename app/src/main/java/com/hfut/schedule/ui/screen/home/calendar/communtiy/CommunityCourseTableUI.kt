@@ -36,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,6 +56,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -92,6 +94,7 @@ fun CommunityCourseTableUI(
     backGroundHaze : HazeState?
 ) {
     var examList by remember { mutableStateOf(examToCalendar()) }
+    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     //切换周数
     var currentWeek by rememberSaveable {
@@ -422,7 +425,8 @@ fun CommunityCourseTableUI(
             Box {
                 val scrollState = rememberLazyGridState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-                val padding = if (showAll) 1.dp else 2.dp
+                val padding = if (showAll) 1.dp else 1.75.dp
+                val height = remember { 125.dp }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(if(showAll)7 else 5),
                     modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP-padding*2, vertical = padding),
@@ -432,113 +436,120 @@ fun CommunityCourseTableUI(
                     items(if(showAll)42 else 30) { cell ->
                         val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                         val texts = transferSummaryCourseInfos(itemList).toMutableList()
-                        Card(
-                            shape = MaterialTheme.shapes.extraSmall,
-                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
-                            modifier = Modifier
-                                .height(125.dp)
-                                .padding(padding)
-                                .let {
-                                    backGroundHaze?.let { haze ->
-                                        it
-                                            .clip(MaterialTheme.shapes.extraSmall)
-                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
-                                    } ?: it
-                                }
-                                .clickable {
-                                    if (texts.size == 1) {
-                                        // 如果是考试
-                                        if (friendUserName == null && texts[0].contains("考试")) {
-                                            return@clickable
-                                        }
-                                        sheet = itemList[0]
-                                        showBottomSheet = true
-                                    } else if (itemList.size > 1) {
-                                        multiWeekday =
-                                            if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                        multiWeek = currentWeek.toInt()
-                                        courses = itemList
-                                        showBottomSheetMultiCourse = true
+                        if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
+                            // 隐藏
+                            Box(modifier = Modifier.height(height).padding(padding))
+                        } else {
+                            Card(
+                                shape = MaterialTheme.shapes.extraSmall,
+                                colors = CardDefaults.cardColors(containerColor =
+                                    if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainer
+                                ),
+                                modifier = Modifier
+                                    .height(height)
+                                    .padding(padding)
+                                    .let {
+                                        backGroundHaze?.let { haze ->
+                                            it
+                                                .clip(MaterialTheme.shapes.extraSmall)
+                                                .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                        } ?: it
                                     }
-                                }
-                        ) {
-                            //存在待考时
-                            if(examList.isNotEmpty() && friendUserName == null){
-                                val numa = if(showAll) 7 else 5
-                                val i = cell % numa
-                                val j = cell / numa
-                                val date = dateList[i]
-                                examList.forEach {
-                                    if(date == it.day) {
-                                        val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
-                                        val data  = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
-                                        if(hour in 7..9 && j == 0) {
-                                            texts.add(data)
-                                        } else if(hour in 10..12 && j == 1) {
-                                            texts.add(data)
-                                        } else if(hour in 14..15  && j == 2) {
-                                            texts.add(data)
-                                        } else if(hour in 16..17  && j == 3) {
-                                            texts.add(data)
-                                        } else if(hour >= 18  && j == 4) {
-                                            texts.add(data)
+                                    .clickable {
+                                        if (texts.size == 1) {
+                                            // 如果是考试
+                                            if (friendUserName == null && texts[0].contains("考试")) {
+                                                return@clickable
+                                            }
+                                            sheet = itemList[0]
+                                            showBottomSheet = true
+                                        } else if (itemList.size > 1) {
+                                            multiWeekday =
+                                                if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                            multiWeek = currentWeek.toInt()
+                                            courses = itemList
+                                            showBottomSheetMultiCourse = true
                                         }
                                     }
+                            ) {
+                                //存在待考时
+                                if(examList.isNotEmpty() && friendUserName == null){
+                                    val numa = if(showAll) 7 else 5
+                                    val i = cell % numa
+                                    val j = cell / numa
+                                    val date = dateList[i]
+                                    examList.forEach {
+                                        if(date == it.day) {
+                                            val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
+                                            val data  = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
+                                            if(hour in 7..9 && j == 0) {
+                                                texts.add(data)
+                                            } else if(hour in 10..12 && j == 1) {
+                                                texts.add(data)
+                                            } else if(hour in 14..15  && j == 2) {
+                                                texts.add(data)
+                                            } else if(hour in 16..17  && j == 3) {
+                                                texts.add(data)
+                                            } else if(hour >= 18  && j == 4) {
+                                                texts.add(data)
+                                            }
+                                        }
+                                    }
                                 }
-                            }
 
-                            if(texts.size == 1) {
-                                val l = texts[0].split("\n")
-                                val time = l[0]
-                                val name = l[1]
-                                val place = l[2]
-                                Column(
-                                    modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
-                                    verticalArrangement = Arrangement.SpaceBetween,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = time,
-                                        fontSize = textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f) // 占据中间剩余的全部空间
-                                            .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
+                                if(texts.size == 1) {
+                                    val l = texts[0].split("\n")
+                                    val time = l[0]
+                                    val name = l[1]
+                                    val place = l[2]
+                                    Column(
+                                        modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                        verticalArrangement = Arrangement.SpaceBetween,
+                                        horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            text = name,
+                                            text = time,
                                             fontSize = textSize,
                                             textAlign = TextAlign.Center,
-                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f) // 占据中间剩余的全部空间
+                                                .fillMaxWidth(),
+                                            contentAlignment = Alignment.TopCenter
+                                        ) {
+                                            Text(
+                                                text = name,
+                                                fontSize = textSize,
+                                                textAlign = TextAlign.Center,
+                                                overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        }
+                                        Text(
+                                            text = place,
+                                            fontSize = textSize,
+                                            textAlign = TextAlign.Center,
                                             modifier = Modifier.fillMaxWidth()
                                         )
                                     }
-                                    Text(
-                                        text = place,
-                                        fontSize = textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-                            } else {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .verticalScroll(rememberScrollState())
-                                ) {
-                                    Text(
-                                        text =
-                                            if(texts.size == 1) texts[0]
-                                            else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                            else "",
-                                        fontSize = textSize,
-                                        textAlign = TextAlign.Center,
-                                        fontWeight = if(friendUserName == null && texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-                                    )
+                                } else {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .verticalScroll(rememberScrollState())
+                                    ) {
+                                        Text(
+                                            text =
+                                                if(texts.size == 1) texts[0]
+                                                else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                                else "",
+                                            fontSize = textSize,
+                                            textAlign = TextAlign.Center,
+                                            fontWeight = if(friendUserName == null && texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                        )
+                                    }
                                 }
                             }
                         }

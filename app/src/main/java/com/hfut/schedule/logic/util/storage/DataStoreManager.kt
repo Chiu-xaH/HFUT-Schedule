@@ -42,10 +42,10 @@ object DataStoreManager {
         SLOW(3,550,"慢"),NORMAL(0,400,"正常"),FAST(1,250,"快"),NONE(2,0,"无")
     }
     enum class ColorStyle(val code : Int,val description: String,val style : PaletteStyle) {
-        DEFAULT(0,"正常", PaletteStyle.TonalSpot),
-        LIGHT(2,"淡雅", PaletteStyle.Neutral),
-        DEEP(3,"饱和", PaletteStyle.Vibrant),
-        BLACK(1,"黑白", PaletteStyle.Monochrome),
+        DEFAULT(2,"正常", PaletteStyle.TonalSpot),
+        LIGHT(1,"淡雅", PaletteStyle.Neutral),
+        DEEP(3,"艳丽", PaletteStyle.Vibrant),
+        BLACK(0,"黑白", PaletteStyle.Monochrome),
     }
 
     val SEARCH_DEFAULT_STR = GlobalUIStateHolder.funcDefault.map { it.id }.joinToString(",")
@@ -102,12 +102,13 @@ object DataStoreManager {
     private val WX_AUTH = stringPreferencesKey("wx_auth")
     private val CUSTOM_COLOR = longPreferencesKey("custom_color")
     private val CUSTOM_BACKGROUND = stringPreferencesKey("custom_background")
-    private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style")
+    private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style_2")
     private val CUSTOM_BACKGROUND_ALPHA = floatPreferencesKey("custom_background_alpha")
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
     private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
     private val USUALLY_ITEMS = stringPreferencesKey("usually_items")
+    private val HIDE_EMPTY_CALENDAR_SQUARE = booleanPreferencesKey("hide_empry_calendar_square")
 
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -145,6 +146,7 @@ object DataStoreManager {
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
     suspend fun saveUsuallyItems(value: List<String>) = saveValue(USUALLY_ITEMS, value.joinToString(","))
+    suspend fun saveHideEmptyCalendarSquare(value: Boolean) = saveValue(HIDE_EMPTY_CALENDAR_SQUARE,value)
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookies = getFlow(STU_COOKIE,EMPTY_STRING)
@@ -181,5 +183,6 @@ object DataStoreManager {
     val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
+    val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val usuallyItems = getFlow(USUALLY_ITEMS,EMPTY_STRING)
 }

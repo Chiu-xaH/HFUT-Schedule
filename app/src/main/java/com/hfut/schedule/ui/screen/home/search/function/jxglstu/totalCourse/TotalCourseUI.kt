@@ -165,7 +165,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
         if(!isSearch) {
             CustomTextField(
                 input = input,
-                label = { Text("筛选 学院、课程、代码、类型")},
+                label = { Text("搜索 学院、课程、代码、类型")},
                 leadingIcon = {
                     Icon(painterResource(R.drawable.search),null)
                 }
@@ -173,7 +173,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
             Spacer(Modifier.height(CARD_NORMAL_DP))
         }
         LazyColumn(state = state) {
-            item { TermFirstlyInfo(list,isSearch) }
+            item { TermFirstlyInfo(list) }
             items(sortList.size, key = { sortList[it].code }) { item ->
                 val data = sortList[item]
                 val weeksInfo = data.scheduleWeeksInfo
@@ -331,7 +331,7 @@ fun DetailItems(
                             headlineContent = { lessons.courseType.nameZh.let { Text(it) } },
                             leadingContent = {
                                 Icon(
-                                    painterResource(R.drawable.hotel_class),
+                                    painterResource(R.drawable.kid_star),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -452,8 +452,8 @@ fun DetailItems(
                                 .weight(.5f),
                         )
                         TransplantListItem(
-                            overlineContent = { Text("考察方式 ${lessons.examMode.nameZh.toString() }") },
-                            headlineContent = { ScrollText(if(lessons.planExamWeek != null)"预计第${lessons.planExamWeek.toString()}周" else "无时间") },
+                            overlineContent = { Text("考察方式") },
+                            headlineContent = { Text(lessons.examMode.nameZh) },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.draw),
@@ -557,29 +557,30 @@ fun DetailItems(
                         } else {
                             "辅助教材: " + it.specialTextbook.replace("<br/>"," ").replace("<br>"," ")
                         }
+                        val text = if(t1 != null && t2 == null) {
+                            t1
+                        } else if(t2 != null && t1 == null) {
+                            t2
+                        } else if(t2 != null && t1 != null) {
+                            t1 + "\n" + t2
+                        } else {
+                            ""
+                        }
                         if(!(t1 == null && t2 == null)) {
                             TransplantListItem(
                                 overlineContent = { Text("教材") },
                                 headlineContent = {
-                                    Text(
-                                        if(t1 != null && t2 == null) {
-                                            t1
-                                        } else if(t2 != null && t1 == null) {
-                                            t2
-                                        } else if(t2 != null && t1 != null) {
-                                            t1 + "\n" + t2
-                                        } else {
-                                            ""
-                                        }
-                                    )
+                                    Text(text)
                                 },
                                 leadingContent = {
                                     Icon(
-                                        painterResource(R.drawable.book),
+                                        painterResource(R.drawable.book_5),
                                         contentDescription = "Localized description",
                                     )
                                 },
-                                modifier = Modifier.clickable {},
+                                modifier = Modifier.clickable {
+                                    ClipBoardUtils.copy(text)
+                                },
                             )
                         }
                     }

@@ -20,6 +20,7 @@ class MyApplication : Application() {
         const val DEFAULT_MAX_FREE_FLOW = 30
         // 默认每页数量
         const val DEFAULT_PAGE_SIZE = 30
+        const val GITEE_TOKEN = "b06c1c34f49717bc2afbbaaa001d3ca9"
         // 教务系统
         const val JXGLSTU_URL = "http://jxglstu.hfut.edu.cn/eams5-student/"
         // Github
@@ -36,7 +37,9 @@ class MyApplication : Application() {
         // 合工大教务
         const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
         // 更新渠道
-        const val GITEE_UPDATE_URL = "https://gitee.com/chiu-xah/HFUT-Schedule/"
+        const val GITEE_URL = "https://gitee.com/"
+
+        const val GITEE_UPDATE_URL = GITEE_URL + "chiu-xah/HFUT-Schedule/"
         // 智慧社区
         const val COMMUNITY_URL = "https://community.hfut.edu.cn/"
         // 慧新易校

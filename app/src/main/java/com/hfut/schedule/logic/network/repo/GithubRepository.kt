@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.network.repo
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.network.api.GiteeService
@@ -75,14 +76,20 @@ object GithubRepository {
         contentLength.toDouble() / (1024 * 1024)
     } catch (e: Exception) { throw e }
 
-    fun getUpdate() {
-        val call = gitee.getUpdate()
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                saveString("versions",response.body()?.string())
-            }
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
-    }
-
+    suspend fun getUpdate(holder : StateHolder<GiteeReleaseResponse>) = launchRequestSimple(
+        request = { gitee.getUpdate().awaitResponse() },
+        holder = holder,
+        transformSuccess = { _,json -> parseGiteeUpdates(json) }
+    )
+    @JvmStatic
+    private fun parseGiteeUpdates(json : String) : GiteeReleaseResponse = try {
+        val listType = object : TypeToken<List<GiteeReleaseResponse>>() {}.type
+        val b : List<GiteeReleaseResponse> = Gson().fromJson(json,listType)
+        val data = b[0]
+        val list = data.assets.filter {
+            it.name.endsWith(".apk") || it.name.endsWith(".patch")
+        }
+        val versionName = data.name.replace("HFUT-Schedule ","")
+        GiteeReleaseResponse(versionName,data.body,list)
+    } catch (e : Exception) { throw e }
 }

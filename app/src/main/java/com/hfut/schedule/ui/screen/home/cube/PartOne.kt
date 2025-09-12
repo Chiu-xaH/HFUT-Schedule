@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -42,6 +43,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.application.MyApplication.Companion.context
 import com.hfut.schedule.logic.enumeration.FixBarItems
+import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.sys.Starter
@@ -66,6 +68,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -165,7 +168,21 @@ fun HomeSettingScreen(navController: NavController,
    //
     val currentVersion = AppVersion.getVersionName()
     var hasCleaned by remember { mutableStateOf(false) }
-    val showUpdate = currentVersion != getUpdates().version
+    val refreshNetwork = suspend {
+        vm.giteeUpdatesResp.clear()
+        vm.getUpdate()
+    }
+    val update by produceState<GiteeReleaseResponse?>(initialValue = null) {
+        value = getUpdates(vm)
+    }
+    val uiState by vm.giteeUpdatesResp.state.collectAsState()
+    LaunchedEffect(Unit) {
+        if(uiState is UiState.Success) {
+            return@LaunchedEffect
+        }
+        refreshNetwork()
+    }
+    val showUpdate = update != null
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
@@ -180,20 +197,21 @@ fun HomeSettingScreen(navController: NavController,
 
 
         MyAPIItem(color = MaterialTheme.colorScheme.surface)
-
         if (showUpdate) {
             val canUseUpdate = AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64
             DividerTextExpandedWith(text = "更新版本") {
-                UpdateUI(vm)
+                UpdateUI(vm,update)
                 if(canUseUpdate) {
-                    val patchItem = getPatchVersions().find { item ->
-                        currentVersion == item.oldVersion
+                    val patchItem by produceState<Patch?>(initialValue = null) {
+                        value = getPatchVersions(vm).find { item ->
+                            currentVersion == item.oldVersion
+                        }
                     }
 
                     if (patchItem != null) {
                         Spacer(Modifier.height(CARD_NORMAL_DP))
                         PaddingHorizontalDivider(isDashed = true)
-                        PatchUpdateUI(patchItem,vm)
+                        PatchUpdateUI(patchItem!!,vm,update)
                     } else if(!AppVersion.isPreview()) {
                         BottomTip("为了保证您的使用体验，建议及时跟进更新")
                         // 清理
@@ -215,7 +233,7 @@ fun HomeSettingScreen(navController: NavController,
         }
 
         DividerTextExpandedWith(text = "常驻项目") {
-            AlwaysItem(navHostTopController,sharedTransitionScope,animatedContentScope)
+            AlwaysItem(navHostTopController,sharedTransitionScope,animatedContentScope,update)
         }
 
 
@@ -304,12 +322,13 @@ fun AlwaysItem(
     navHostTopController : NavController,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
+    update : GiteeReleaseResponse?
 ) {
-    val version by remember { mutableStateOf(getUpdates()) }
+    val showBadge = update != null
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     val isPreview = AppVersion.isPreview()
     val route = remember { AppNavRoute.VersionInfo.route }
-    val show = currentVersion == version.version || isPreview
+    val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,
         modifier = Modifier.let{ if(show) it.containerShare(sharedTransitionScope,animatedContentScope,route) else it }

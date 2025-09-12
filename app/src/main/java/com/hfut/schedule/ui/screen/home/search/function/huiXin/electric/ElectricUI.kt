@@ -179,9 +179,9 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 
     region = when(EndNumber) {
-        "11"-> "南边照明"
+        "11"-> if(BuildingsNumber.toInt() > 5 )"南边照明" else "南边"
         "12" -> "南边空调"
-        "21" -> "北边照明"
+        "21" -> if(BuildingsNumber.toInt() > 5 )"北边照明" else "北边"
         "22" -> "北边空调"
         else -> "选择南北"
     }
@@ -432,7 +432,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     BuildingsNumber.toIntOrNull() != null -> {
                                         when {
                                             BuildingsNumber.toInt() > 5 -> showitem2 = true
-                                            BuildingsNumber.toInt() in 1..4 -> showitem3 = true
+                                            BuildingsNumber.toInt() in 1..5 -> showitem3 = true
                                         }
                                     }
                                     else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()

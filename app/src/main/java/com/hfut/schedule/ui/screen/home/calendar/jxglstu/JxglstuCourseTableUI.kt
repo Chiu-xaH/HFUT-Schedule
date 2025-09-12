@@ -217,6 +217,8 @@ fun JxglstuCourseTableUI(
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit
 ) {
+    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
+
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
@@ -728,9 +730,11 @@ fun JxglstuCourseTableUI(
         Box(modifier = Modifier.fillMaxSize()) {
             val scrollState = rememberLazyGridState()
             val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-            val padding = if (showAll) 1.dp else 2.dp
+            val padding = if (showAll) 1.dp else 1.75.dp
             val textSize = if(showAll) 12.sp else 14.sp
             val count = if(showAll) 7 else 5
+            val height = remember { 125.dp }
+
             LazyVerticalGrid(
                 columns = GridCells.Fixed(count),
                 modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP- CARD_NORMAL_DP - padding*2, vertical = padding),
@@ -749,138 +753,165 @@ fun JxglstuCourseTableUI(
                 items(count*6, key = { it }) { index ->
                     val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
                     val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,index)
-                    Card(
-                        shape = MaterialTheme.shapes.extraSmall,
-                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
-                        modifier = Modifier
-                            .height(125.dp)
-                            .padding(padding)
-                            .let {
-                                backGroundHaze?.let { haze ->
-                                    it
-                                        .clip(MaterialTheme.shapes.extraSmall)
-                                        .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
-                                } ?: it
-                            }
-                            .clickableWithScale(ClickScale.SMALL.scale) {
-                                // 只有一节课
-                                if (texts.size == 1) {
-                                    // 如果是考试
-                                    if (texts[0].contains("考试")) {
-                                        return@clickableWithScale
-                                    }
-                                    val name =
-                                        parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
-                                    if (name != null) {
-                                        navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name,index))
-                                    }
-                                } else if (texts.size > 1) {
-                                    multiWeekday =
-                                        if (showAll) (index + 1) % 7 else (index + 1) % 5
-                                    multiWeek = currentWeek.toInt()
-                                    courses = texts
-                                    showBottomSheetMultiCourse = true
+                    if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
+                        Box(modifier = Modifier.height(height).padding(padding))
+                    } else {
+                        Card(
+                            shape = MaterialTheme.shapes.extraSmall,
+                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainer),
+                            modifier = Modifier
+                                .height(height)
+                                .padding(padding)
+                                .let {
+                                    backGroundHaze?.let { haze ->
+                                        it
+                                            .clip(MaterialTheme.shapes.extraSmall)
+                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                    } ?: it
                                 }
-                                // 空数据
-                            }
-                            .containerShare(
-                                sharedTransitionScope,
-                                animatedContentScope,
-                                route = if (texts.size == 1) {
-                                    // 如果是考试
-                                    if (texts[0].contains("考试")) {
-                                        route
-                                    } else {
+                                .clickableWithScale(ClickScale.SMALL.scale) {
+                                    // 只有一节课
+                                    if (texts.size == 1) {
+                                        // 如果是考试
+                                        if (texts[0].contains("考试")) {
+                                            return@clickableWithScale
+                                        }
                                         val name =
                                             parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
                                         if (name != null) {
-                                            AppNavRoute.CourseDetail.withArgs(name,index)
-                                        } else {
-                                            route
+                                            navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name,index))
                                         }
+                                    } else if (texts.size > 1) {
+                                        multiWeekday =
+                                            if (showAll) (index + 1) % 7 else (index + 1) % 5
+                                        multiWeek = currentWeek.toInt()
+                                        courses = texts
+                                        showBottomSheetMultiCourse = true
                                     }
-                                } else {
-                                    route
-                                },
-                                roundShape = MaterialTheme.shapes.extraSmall,
-                            )
-                    ) {
-                        //存在待考时
-                        if(examList.isNotEmpty()){
-                            val numa = if(showAll) 7 else 5
-                            val i = index % numa
-                            val j = index / numa
-                            val date = dateList[i]
-                            examList.forEach {
-                                if(date == it.day) {
-                                    val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
+                                    // 空数据
+                                }
+                                .containerShare(
+                                    sharedTransitionScope,
+                                    animatedContentScope,
+                                    route = if (texts.size == 1) {
+                                        // 如果是考试
+                                        if (texts[0].contains("考试")) {
+                                            route
+                                        } else {
+                                            val name =
+                                                parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
+                                            if (name != null) {
+                                                AppNavRoute.CourseDetail.withArgs(name,index)
+                                            } else {
+                                                route
+                                            }
+                                        }
+                                    } else {
+                                        route
+                                    },
+                                    roundShape = MaterialTheme.shapes.extraSmall,
+                                )
+                        ) {
+                            //存在待考时
+                            if(examList.isNotEmpty()){
+                                val numa = if(showAll) 7 else 5
+                                val i = index % numa
+                                val j = index / numa
+                                val date = dateList[i]
+                                examList.forEach {
+                                    if(date == it.day) {
+                                        val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
 
-                                    if(hour in 7..9 && j == 0) {
-                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                    } else if(hour in 10..12 && j == 1) {
-                                        texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
-                                    } else if(hour in 14..15  && j == 2) {
-                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                    } else if(hour in 16..17  && j == 3) {
-                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
-                                    } else if(hour >= 18  && j == 4) {
-                                        texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                        if(hour in 7..9 && j == 0) {
+                                            texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                        } else if(hour in 10..12 && j == 1) {
+                                            texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
+                                        } else if(hour in 14..15  && j == 2) {
+                                            texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                        } else if(hour in 16..17  && j == 3) {
+                                            texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                        } else if(hour >= 18  && j == 4) {
+                                            texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if(texts.size == 1) {
-                            val l = texts[0].split("\n")
-                            val time = l[0]
-                            val name = l[1]
-                            val place = l[2]
-                            Column(
-                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
-                                verticalArrangement = Arrangement.SpaceBetween,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text(
-                                    text = time,
-                                    fontSize = textSize,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                                Box(
-                                    modifier = Modifier
-                                        .weight(1f) // 占据中间剩余的全部空间
-                                        .fillMaxWidth(),
-                                    contentAlignment = Alignment.TopCenter
+                            if(texts.size == 1) {
+                                val l = texts[0].split("\n")
+                                val time = l[0]
+                                val name = l[1]
+                                val place = l[2]
+                                Column(
+                                    modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
+                                    Text(
+                                        text = time,
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f) // 占据中间剩余的全部空间
+                                            .fillMaxWidth(),
+                                        contentAlignment = Alignment.TopCenter
+                                    ) {
+                                        Text(
+                                            text = name,
+                                            fontSize = textSize,
+                                            textAlign = TextAlign.Center,
+                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                    }
+                                    Text(
+                                        text = place,
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            } else if(texts.size > 1){
+                                val name = texts.map {
+                                    it.split("\n")[1][0]
+                                }.joinToString(",")
+                                val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                Column(
+                                    modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                    verticalArrangement = Arrangement.SpaceBetween,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = texts[0].substringBefore("\n"),
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        fontWeight = isExam
+                                    )
+                                    Box(
+                                        modifier = Modifier
+                                            .weight(1f) // 占据中间剩余的全部空间
+                                            .fillMaxWidth(),
+                                        contentAlignment = Alignment.TopCenter
+                                    ) {
+                                        Text(
+                                            text = "${texts.size}节课冲突",
+                                            fontSize = textSize,
+                                            textAlign = TextAlign.Center,
+                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                            modifier = Modifier.fillMaxWidth(),
+                                            fontWeight = isExam
+                                        )
+                                    }
                                     Text(
                                         text = name,
                                         fontSize = textSize,
                                         textAlign = TextAlign.Center,
-                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                         modifier = Modifier.fillMaxWidth()
                                     )
                                 }
-                                Text(
-                                    text = place,
-                                    fontSize = textSize,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                        } else {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .verticalScroll(rememberScrollState())
-                            ) {
-                                Text(
-                                    text =
-                                        if(texts.size == 1) texts[0]
-                                        else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                        else "",
-                                    fontSize = textSize,
-                                    textAlign = TextAlign.Center,
-                                    fontWeight = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-                                )
                             }
                         }
                     }

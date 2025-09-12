@@ -61,7 +61,17 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-
+private val items = listOf(
+    NavigationBarItemData(
+        ShowerBarItems.HOME.name,"开始", R.drawable.bathtub,R.drawable.bathtub_filled
+    ),
+    NavigationBarItemData(
+        ShowerBarItems.BILLS.name,"账单", R.drawable.receipt_long,  R.drawable.receipt_long_filled
+    ),
+    NavigationBarItemData(
+        ShowerBarItems.FUNCTION.name,"选项", R.drawable.deployed_code,R.drawable.deployed_code_filled
+    )
+)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,20 +117,6 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
             }
         },
         bottomBar = {
-            val items = listOf(
-                NavigationBarItemData(
-                    ShowerBarItems.HOME.name,"开始", painterResource(R.drawable.bathtub), painterResource(
-                        R.drawable.bathtub_filled)
-                ),
-                NavigationBarItemData(
-                    ShowerBarItems.BILLS.name,"账单", painterResource(R.drawable.receipt_long), painterResource(
-                        R.drawable.receipt_long_filled)
-                ),
-                NavigationBarItemData(
-                    ShowerBarItems.FUNCTION.name,"选项", painterResource(R.drawable.deployed_code),
-                    painterResource(R.drawable.deployed_code_filled)
-                )
-            )
             HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->

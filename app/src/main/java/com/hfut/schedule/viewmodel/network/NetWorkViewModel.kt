@@ -25,6 +25,7 @@ import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.model.AdmissionTokenResponse
+import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubFolderBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
@@ -1988,6 +1989,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getWebInfo() = LoginSchoolNetRepository.getWebInfo(infoWebValue)
     suspend fun getWebInfo2() = LoginSchoolNetRepository.getWebInfo2(infoWebValue)
 
-    fun getUpdate() = GithubRepository.getUpdate()
+    val giteeUpdatesResp = StateHolder<GiteeReleaseResponse>()
+    suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)
 }
 

@@ -106,7 +106,10 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
             }
     }
     //检查更新
-    launch { vm.getUpdate() }
+    launch {
+        vm.giteeUpdatesResp.clear()
+        vm.getUpdate()
+    }
     // 更新聚焦卡片
     if(showWeb && getCampusRegion() == CampusRegion.XUANCHENG)
         launch { getWebInfoFromHuiXin(vm,vmUI) }

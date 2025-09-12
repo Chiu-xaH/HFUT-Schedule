@@ -40,6 +40,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -59,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
@@ -210,6 +212,7 @@ fun JxglstuCourseTableSearch(
     backGroundHaze : HazeState? = null
 ) {
     var numItem by remember { mutableIntStateOf(0) }
+    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -534,9 +537,10 @@ fun JxglstuCourseTableSearch(
     }
     Box(modifier = Modifier.fillMaxHeight()) {
         val scrollState = rememberLazyGridState()
-        val padding = if (showAll) 1.dp else 2.dp
+        val padding = if (showAll) 1.dp else 1.75.dp
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val textSize = if(showAll)12.sp else 14.sp
+        val height = remember { 125.dp }
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(if(showAll)7 else 5),
@@ -546,92 +550,96 @@ fun JxglstuCourseTableSearch(
             items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
             items(if(showAll)42 else 30) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                Card(
-                    shape = MaterialTheme.shapes.extraSmall,
-                    colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
-                    modifier = Modifier
-                        .fillMaxWidth() // 填满列宽
-                        // 高度由内容撑开
-                        .height(125.dp)
-                        .padding(padding)
-                        .let {
-                            backGroundHaze?.let { haze ->
-                                it
-                                    .clip(MaterialTheme.shapes.extraSmall)
-                                    .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainerHigh)
-                            } ?: it
-                        }
-                        .clickable {
-                            // 只有一节课
-                            if (texts.size == 1) {
-                                numItem = texts[0].lessonNum
-                                showBottomSheet = true
-                            } else if (texts.size > 1) {
-                                multiWeekday =
-                                    if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                multiWeek = currentWeek.toInt()
-                                courses = texts
-                                showBottomSheetMultiCourse = true
+                if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
+                    Box(modifier = Modifier.height(height).padding(padding))
+                } else {
+                    Card(
+                        shape = MaterialTheme.shapes.extraSmall,
+                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainer),
+                        modifier = Modifier
+                            .fillMaxWidth() // 填满列宽
+                            // 高度由内容撑开
+                            .height(height)
+                            .padding(padding)
+                            .let {
+                                backGroundHaze?.let { haze ->
+                                    it
+                                        .clip(MaterialTheme.shapes.extraSmall)
+                                        .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                } ?: it
                             }
-                        },
-                ) {
-                    if(texts.size == 1) {
-                        val l = texts[0].text.split("\n")
-                        val time = l[0]
-                        val name = l[1]
-                        val place = if(l.size>=3) l[2] else null
-                        Column(
-                            modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
-                            verticalArrangement = Arrangement.SpaceBetween,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                text = time,
-                                fontSize = textSize,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f) // 占据中间剩余的全部空间
-                                    .fillMaxWidth(),
-                                contentAlignment = Alignment.TopCenter
+                            .clickable {
+                                // 只有一节课
+                                if (texts.size == 1) {
+                                    numItem = texts[0].lessonNum
+                                    showBottomSheet = true
+                                } else if (texts.size > 1) {
+                                    multiWeekday =
+                                        if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                    multiWeek = currentWeek.toInt()
+                                    courses = texts
+                                    showBottomSheetMultiCourse = true
+                                }
+                            },
+                    ) {
+                        if(texts.size == 1) {
+                            val l = texts[0].text.split("\n")
+                            val time = l[0]
+                            val name = l[1]
+                            val place = if(l.size>=3) l[2] else null
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Text(
-                                    text = name,
-                                    fontSize = textSize,
-                                    textAlign = TextAlign.Center,
-                                    overflow = TextOverflow.Ellipsis, // 超出显示省略号
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                            place?.let {
-                                Text(
-                                    text = it,
+                                    text = time,
                                     fontSize = textSize,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f) // 占据中间剩余的全部空间
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    Text(
+                                        text = name,
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                place?.let {
+                                    Text(
+                                        text = it,
+                                        fontSize = textSize,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
                             }
-                        }
-                    } else {
-                        Column (
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(rememberScrollState())
+                        } else {
+                            Column (
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .verticalScroll(rememberScrollState())
 //                        contentAlignment = Alignment.Center // 文字垂直水平居中
-                        ) {
-                            Text(
-                                text =
-                                    if (texts.size == 1) texts[0].text
-                                    else if (texts.size > 1) "${texts[0].text.substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                    else "",
-                                fontSize = textSize ,
-                                textAlign = TextAlign.Center,
-                            )
+                            ) {
+                                Text(
+                                    text =
+                                        if (texts.size == 1) texts[0].text
+                                        else if (texts.size > 1) "${texts[0].text.substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
+                                        else "",
+                                    fontSize = textSize ,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
                         }
-                    }
 
+                    }
                 }
             }
             item { InnerPaddingHeight(innerPadding,false) }

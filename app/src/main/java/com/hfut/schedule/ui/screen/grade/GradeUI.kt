@@ -69,7 +69,14 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-
+private val items = listOf(
+    NavigationBarItemData(
+        GradeBarItems.GRADE.name,"学期", R.drawable.article, R.drawable.article_filled
+    ),
+    NavigationBarItemData(
+        GradeBarItems.COUNT.name,"计算", R.drawable.leaderboard,R.drawable.leaderboard_filled
+    )
+)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -162,16 +169,6 @@ fun GradeScreen(
                 )
             },
             bottomBar = {
-                val items = listOf(
-                    NavigationBarItemData(
-                        GradeBarItems.GRADE.name,"学期", painterResource(R.drawable.article), painterResource(
-                            R.drawable.article_filled)
-                    ),
-                    NavigationBarItemData(
-                        GradeBarItems.COUNT.name,"计算", painterResource(R.drawable.leaderboard),
-                        painterResource(R.drawable.leaderboard_filled)
-                    )
-                )
                 HazeBottomBar(hazeState,items,navController)
             }
         ) { innerPadding ->

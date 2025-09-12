@@ -423,7 +423,7 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                 TransplantListItem(
                     headlineContent = { Text(type) },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.hotel_class),null)
+                        Icon(painterResource(R.drawable.kid_star),null)
                     },
                     overlineContent = { Text("类型") },
                     modifier = Modifier.weight(.5f)

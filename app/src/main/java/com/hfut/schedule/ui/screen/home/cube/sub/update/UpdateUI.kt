@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -47,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -70,12 +72,15 @@ import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 // 全量更新UI
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun UpdateUI(vm : NetWorkViewModel) {
+fun UpdateUI(vm : NetWorkViewModel,update : GiteeReleaseResponse?) {
+    val updateState = vm.giteeUpdatesResp.state.collectAsState()
+    val canDownload = updateState.value is UiState.Success<*>
     val handler = Handler(Looper.getMainLooper())
     var pro by remember { mutableFloatStateOf(0f) }
     var able by remember { mutableStateOf(true) }
@@ -102,24 +107,23 @@ fun UpdateUI(vm : NetWorkViewModel) {
     val activity = LocalActivity.current
 
 
-    val version by remember { mutableStateOf(getUpdates()) }
     val context = LocalContext.current
     var expandItems by remember { mutableStateOf(false) }
     val uiState by vm.giteeApkSizeResp.state.collectAsState()
 
-    LaunchedEffect(version.version) {
+    LaunchedEffect(update) {
         if(uiState is UiState.Success)
             return@LaunchedEffect
-        version.version?.let {
+        update?.name?.let {
             vm.giteeApkSizeResp.clear()
             vm.getGiteeApkSize(it)
         }
     }
 
-    CustomCard(color = MaterialTheme.colorScheme.errorContainer) {
+    CustomCard(color = if(canDownload) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surface) {
         TransplantListItem(
             headlineContent = { Text(text = "最新版本") },
-            supportingContent = { Text(text = "${AppVersion.getVersionName()} → ${version.version}") },
+            supportingContent = { Text(text = if(canDownload) "${AppVersion.getVersionName()} → ${update?.name}" else "${update?.name} 点击手动下载") },
             leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
             trailingContent = {
                 FilledTonalIconButton(
@@ -145,19 +149,19 @@ fun UpdateUI(vm : NetWorkViewModel) {
             TransplantListItem(
                 headlineContent = { Text(text ="更新日志") },
                 supportingContent = {
-                    getUpdates().text?.let { Text(text = it) }
+                    update?.body?.let { Text(text = it) }
                 },
             )
         }
         AnimatedVisibility(
-            visible = able,
+            visible = able && canDownload,
             exit = AppAnimationManager.upDownAnimation.exit,
             enter = AppAnimationManager.upDownAnimation.enter
         ) {
             BottomButton(
                 onClick = {
                     activity?.let { ac ->
-                        getUpdates().version?.let { AppDownloadManager.update(it,ac) }
+                        update?.name?.let { AppDownloadManager.update(it,ac) }
                         able = false
                     }
                 },
@@ -170,7 +174,7 @@ fun UpdateUI(vm : NetWorkViewModel) {
         }
     }
     AnimatedVisibility(
-        visible = !able || pro > 0,
+        visible = (!able || pro > 0) && canDownload,
         exit = AppAnimationManager.upDownAnimation.exit,
         enter = AppAnimationManager.upDownAnimation.enter
     ) {
@@ -190,7 +194,7 @@ fun UpdateUI(vm : NetWorkViewModel) {
                 Button(
                     onClick = {
                         activity?.let { ac ->
-                            getUpdates().version?.let { AppDownloadManager.update(it,ac) }
+                            update?.name?.let { AppDownloadManager.update(it,ac) }
                         }
                     },
                     modifier = Modifier.fillMaxWidth().weight(.5f),
@@ -227,7 +231,7 @@ fun UpdateUI(vm : NetWorkViewModel) {
 // 增量更新UI
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
+fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel,update : GiteeReleaseResponse?) {
     val coroutineScope = rememberCoroutineScope()
     var loadingPatch by remember { mutableStateOf(false) }
 
@@ -273,7 +277,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
         CustomCard( color = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
                 headlineContent = { Text(text = "增量更新至" +
-                        patch.newVersion.let{ if (it == getUpdates().version) "最新版本" else (""+ it) }
+                        patch.newVersion.let{ if (it == update?.name) "最新版本" else (""+ it) }
                 ) },
                 supportingContent = {
                     Text(text = "开发者为一个月(动态调整)内的过去版本的ARM64分包提供增量包，可节省至少40%的下载实现版本更新")
@@ -295,7 +299,7 @@ fun PatchUpdateUI(patch: Patch,vm: NetWorkViewModel) {
                         }
                     },
                     text =
-                        patch.newVersion.let { if(it != getUpdates().version) "更新至 $it" else "下载增量包" } +
+                        patch.newVersion.let { if(it != update?.name) "更新至 $it" else "下载增量包" } +
                                 if(uiStatePatch is UiState.Success) {
                                    " ("+ formatDecimal((uiStatePatch as UiState.Success).data,2) + "MB)"
                                 } else ""

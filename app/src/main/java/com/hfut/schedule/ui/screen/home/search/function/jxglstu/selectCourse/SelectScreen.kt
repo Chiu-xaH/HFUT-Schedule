@@ -59,9 +59,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -80,6 +82,7 @@ import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -98,6 +101,7 @@ import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
@@ -244,7 +248,7 @@ fun SelectCourseDetailScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    var input by remember { mutableStateOf("") }
+    var input by rememberSaveable { mutableStateOf("") }
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie()
         cookie?.let {
@@ -252,6 +256,7 @@ fun SelectCourseDetailScreen(
             vm.getSelectCourseInfo(it,courseId)
         }
     }
+    var refreshCount by remember { mutableIntStateOf(0) }
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -279,9 +284,8 @@ fun SelectCourseDetailScreen(
                             Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                                 FilledTonalIconButton(
                                     onClick = {
-                                        scope.launch {
-                                            refreshNetwork()
-                                        }
+                                        refreshCount++
+                                        showToast("已刷新人数")
                                     },
                                 ) {
                                     Icon(painterResource(R.drawable.rotate_right), null)
@@ -340,7 +344,7 @@ fun SelectCourseDetailScreen(
                 }
 
                 CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                    SelectCourseInfo(vm,courseId,input, hazeState =hazeState ,innerPadding)
+                    SelectCourseInfo(vm,courseId,input, hazeState =hazeState ,innerPadding,refreshCount)
                 }
             }
         }
@@ -534,21 +538,24 @@ private fun SelectCourseList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState,innerPadding: PaddingValues) {
+private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : String = "", hazeState: HazeState,innerPadding: PaddingValues,refreshCount : Int) {
     val uiState by vm.selectCourseInfoData.state.collectAsState()
-    val list = (uiState as UiState.Success).data.let {
-        if(search.isEmpty() || search.isBlank()) {
-            it
-        } else {
-            it.filter { item ->
-                item.code.contains(search) ||
-                        item.course.nameZh.contains(search) ||
-                        item.nameZh.contains(search) ||
-                        item.remark?.contains(search) == true ||
-                        item.teachers.toString().contains(search)
+    val list = (uiState as UiState.Success).data
+        .let {
+            if(search.isEmpty() || search.isBlank()) {
+                it
+            } else {
+                it.filter { item ->
+                    item.code.contains(search,ignoreCase = true) ||
+                            item.course.nameZh.contains(search) ||
+                            item.nameZh.contains(search) ||
+                            item.remark?.contains(search) == true ||
+                            item.teachers.toString().contains(search)
+                }
             }
         }
-    }
+        .sortedBy { it.code }
+
     var lessonId by remember { mutableIntStateOf(0) }
     var showBottomSheet by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("课程详情") }
@@ -584,7 +591,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
             autoShape = false
         ) {
             Column {
-                HazeBottomSheetTopBar(name) {
+                HazeBottomSheetTopBar(name, isPaddingStatusBar = false) {
                     FilledTonalButton(onClick = {
                         showBottomSheet = true
                     }) {
@@ -602,8 +609,9 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         items(list.size, key = { list[it].id }) { item ->
             val lists = list[item]
             var stdCount by remember { mutableStateOf("0") }
-            LaunchedEffect(lists.id) {
+            LaunchedEffect(lists.id,refreshCount) {
                 if(cookie == null) return@LaunchedEffect
+                async { stdCount = "0" }.await()
                 async { vm.getSCount(cookie!!,lists.id) }.await()
                 async {
                     Handler(Looper.getMainLooper()).post{
@@ -767,9 +775,8 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
     }
     Row {
         TransplantListItem(
-            overlineContent = { Text(text = data.nameZh)},
             headlineContent = { Text(text = data.courseType.nameZh) },
-            leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar_view_month), contentDescription = "")},
+            leadingContent = { Icon(painter = painterResource(id = R.drawable.kid_star), contentDescription = "")},
             modifier = Modifier.weight(.5f)
         )
         TransplantListItem(
@@ -783,6 +790,14 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
                 .weight(.5f),
         )
     }
+    TransplantListItem(
+        headlineContent = { Text(text = data.nameZh)},
+        overlineContent = { Text("班级")},
+        leadingContent = { Icon(painter = painterResource(id = R.drawable.sensor_door), contentDescription = "")},
+        modifier = Modifier.clickable {
+            ClipBoardUtils.copy(data.nameZh)
+        }
+    )
     val teachers = data.teachers
     for(i in teachers.indices step 2) {
         val item = teachers[i]
@@ -820,13 +835,16 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             overlineContent = { Text(text = "代码")},
             headlineContent = { Text(text = data.code) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")},
-            modifier = Modifier.weight(.5f)
+            modifier = Modifier.weight(.5f).clickable {
+                ClipBoardUtils.copy(data.code)
+            }
         )
     }
     data.dateTimePlace.textZh?.let {
         TransplantListItem(
             overlineContent = { Text(text = "安排")},
             headlineContent = { Text(text = it)  },
+            modifier = Modifier.clickable {},
             leadingContent = { Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "")}
         )
     }
@@ -934,3 +952,5 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
         }
     }
 }
+
+

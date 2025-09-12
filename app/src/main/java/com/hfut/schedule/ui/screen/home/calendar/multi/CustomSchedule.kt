@@ -735,7 +735,7 @@ fun CustomSchedules(showAll : Boolean,
                         items(if(showAll)42 else 30) { cell ->
                             Card(
                                 shape = MaterialTheme.shapes.extraSmall,
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
                                 modifier = Modifier
                                     .height(125.dp)
                                     .padding(if (showAll) 1.dp else 2.dp)

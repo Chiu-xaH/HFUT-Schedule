@@ -169,6 +169,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
+        val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
 
@@ -395,28 +396,21 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
                 DividerTextExpandedWith("自定义取色") {
                     if(!useDynamicColor) {
+                        val t = styleList.find { it.code == customColorStyle }?.description
                         TransplantListItem(
-                            headlineContent = { Text(text = "风格") },
+                            headlineContent = { Text(text = "浓度 | $t") },
                             leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description",) },
-                            supportingContent = {
-                                Row {
-                                    for(i in styleList.indices) {
-                                        val item = styleList[i]
-                                        FilterChip(
-                                            onClick = {
-                                                scope.launch { DataStoreManager.saveCustomColorStyle(item) }
-                                            },
-                                            label = {
-                                                Text(text = item.description)
-                                            },
-                                            selected = customColorStyle == item.code
-                                        )
-                                        if(i != styleList.size-1) {
-                                            Spacer(modifier = Modifier.width(5.dp))
-                                        }
-                                    }
-                                }
-                            }
+                        )
+                        CustomSlider(
+                            value = customColorStyle.toFloat(),
+                            onValueChange = { value ->
+                                val level = styleList.find { it.code == value.toInt() } ?: return@CustomSlider
+                                scope.launch { DataStoreManager.saveCustomColorStyle(level) }
+                            },
+                            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                            steps = 2,
+                            valueRange = 0f..3f,
+                            showProcessText = true, processText = t
                         )
                         PaddingHorizontalDivider()
                     }
@@ -580,12 +574,12 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
 
-        DividerTextExpandedWith("课程表背景") {
+        DividerTextExpandedWith("课程表") {
             val useCustomBackground = customBackground != ""
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
-                        Text("自定义图片")
+                        Text("背景图片")
                     },
                     supportingContent = {
                         Text(if(!useCustomBackground) "选择图片，作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
@@ -610,23 +604,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     }
                 )
-//                TransplantListItem(
-//                    headlineContent = {
-//                        Text("随机背景")
-//                    },
-//                    supportingContent = {
-//                        Text(if(!useCustomBackground) "以必应每日壁纸作为课程表的背景，同时也会改变色彩，每天会更换" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
-//                    },
-//                    modifier = Modifier.clickable {
-//
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.image),null)
-//                    },
-//                    trailingContent = {
-//                        CustomSwitch(checked = false,)
-//                    }
-//                )
                 if(useCustomBackground) {
                     var alpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
                     CustomSlider(
@@ -642,6 +619,30 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         showProcessText = true
                     )
                 }
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("隐藏空方格")
+                    },
+                    supportingContent = {
+                        Text("隐藏无内容的方格")
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveHideEmptyCalendarSquare(!enableHideEmptyCalendarSquare)
+                        }
+                    },
+                    trailingContent = {
+                        Switch(checked = enableHideEmptyCalendarSquare, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveHideEmptyCalendarSquare(!enableHideEmptyCalendarSquare)
+                            }
+                        })
+                    },
+                    leadingContent = {
+                        Icon(painterResource(if(!enableHideEmptyCalendarSquare) R.drawable.visibility else R.drawable.visibility_off),null)
+                    },
+                )
             }
         }
         DividerTextExpandedWith("标签") {

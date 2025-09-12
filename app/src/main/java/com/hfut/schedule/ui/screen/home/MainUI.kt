@@ -98,7 +98,10 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SortType
+import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemData
+import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
+import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -111,6 +114,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -185,9 +189,10 @@ fun MainScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
 
-    val showBadge by produceState(initialValue = false) {
-        value = getUpdates().version != AppVersion.getVersionName()
+    val update by produceState<GiteeReleaseResponse?>(initialValue = null) {
+        value = getUpdates(vm)
     }
+    val showBadge = update != null
 
 //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(
@@ -585,37 +590,47 @@ fun MainScreen(
             },
             bottomBar = {
                 val items = listOf(
-                    NavigationBarItemData(
+                    NavigationBarItemDataDynamic(
                         COURSES.name,
                         "课程表",
-                        painterResource(R.drawable.calendar),
-                        painterResource(R.drawable.calendar_month_filled)
+                        icon = { selected -> NavigationBarItemDynamicIcon(
+                            selected,
+                            R.drawable.calendar,
+                            R.drawable.calendar_month_filled
+                        ) },
                     ),
-                    NavigationBarItemData(
+                    NavigationBarItemDataDynamic(
                         FOCUS.name,
                         "聚焦",
-                        painterResource(R.drawable.lightbulb),
-                        painterResource(R.drawable.lightbulb_filled)
+                        icon = { selected -> NavigationBarItemDynamicIcon(
+                            selected,
+                            R.drawable.lightbulb,
+                            R.drawable.lightbulb_filled
+                        ) },
                     ),
-                    NavigationBarItemData(
+                    NavigationBarItemDataDynamic(
                         SEARCH.name,
                         "查询中心",
-                        painterResource(R.drawable.category_search),
-                        painterResource(R.drawable.category_search_filled)
+                        icon = { selected -> NavigationBarItemDynamicIcon(
+                            selected,
+                            R.drawable.category_search,
+                            R.drawable.category_search_filled
+                        ) },
                     ),
-                    NavigationBarItemData(
+                    NavigationBarItemDataDynamic(
                         SETTINGS.name,
                         "选项",
-                        painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code else R.drawable.deployed_code_update),
-                        painterResource(if (getUpdates().version == AppVersion.getVersionName()) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled)
+                        icon = { selected -> NavigationBarItemDynamicIcon(
+                            selected,
+                            if (!showBadge) R.drawable.deployed_code else R.drawable.deployed_code_update,
+                            if (!showBadge) R.drawable.deployed_code_filled else R.drawable.deployed_code_update_filled
+                        ) },
+                        badge = {
+                            if (showBadge) Badge { Text("1") }
+                        }
                     )
                 )
-                HazeBottomBar(hazeState,items,navController,isEnabled,listOf(
-                    null,
-                    null,
-                    null,
-                    { if (showBadge) Badge { Text("1") } }
-                ))
+                HazeBottomBarDynamic(hazeState,items,navController,isEnabled)
             },
         ) { innerPadding ->
             val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)

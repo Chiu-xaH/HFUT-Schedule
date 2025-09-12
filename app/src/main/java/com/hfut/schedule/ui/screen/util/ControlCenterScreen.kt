@@ -269,7 +269,7 @@ fun ControlCenterScreen(
                         leadingIcon = { Icon(painterResource(R.drawable.search),null) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(true,false),
+                        colors = textFiledTransplant(),
                     )
                     val height by animateDpAsState(
                         targetValue = if(isAtStart) {
