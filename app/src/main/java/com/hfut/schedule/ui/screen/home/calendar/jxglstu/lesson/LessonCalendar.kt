@@ -1,8 +1,7 @@
-package com.hfut.schedule.ui.screen.home.calendar.lesson
+package com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -23,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
@@ -35,7 +35,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,12 +57,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -74,15 +71,18 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
-import com.hfut.schedule.ui.screen.home.calendar.next.parseSingleChineseDigit
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.style.CalendarStyle
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
@@ -537,38 +537,36 @@ fun JxglstuCourseTableSearch(
     }
     Box(modifier = Modifier.fillMaxHeight()) {
         val scrollState = rememberLazyGridState()
-        val padding = if (showAll) 1.dp else 1.75.dp
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-        val textSize = if(showAll)12.sp else 14.sp
-        val height = remember { 125.dp }
+        val style = CalendarStyle(showAll)
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(if(showAll)7 else 5),
-            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP-padding*2, vertical = padding),
+            columns = GridCells.Fixed(style.rowCount),
+            modifier = style.calendarPadding(),
             state = scrollState
         ) {
-            items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
-            items(if(showAll)42 else 30) { cell ->
+            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
+            items(style.rowCount*style.columnCount) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                 if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
-                    Box(modifier = Modifier.height(height).padding(padding))
+                    Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
                 } else {
                     Card(
-                        shape = MaterialTheme.shapes.extraSmall,
-                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainer),
+                        shape = style.containerCorner,
+                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
                         modifier = Modifier
                             .fillMaxWidth() // 填满列宽
                             // 高度由内容撑开
-                            .height(height)
-                            .padding(padding)
+                            .height(style.height)
+                            .padding(style.everyPadding)
                             .let {
                                 backGroundHaze?.let { haze ->
                                     it
-                                        .clip(MaterialTheme.shapes.extraSmall)
-                                        .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                        .clip(style.containerCorner)
+                                        .containerBlur(haze,style.containerColor)
                                 } ?: it
                             }
-                            .clickable {
+                            .clickableWithScale(ClickScale.SMALL.scale){
                                 // 只有一节课
                                 if (texts.size == 1) {
                                     numItem = texts[0].lessonNum
@@ -594,7 +592,7 @@ fun JxglstuCourseTableSearch(
                             ) {
                                 Text(
                                     text = time,
-                                    fontSize = textSize,
+                                    fontSize = style.textSize,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -606,7 +604,7 @@ fun JxglstuCourseTableSearch(
                                 ) {
                                     Text(
                                         text = name,
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                         modifier = Modifier.fillMaxWidth()
@@ -615,7 +613,7 @@ fun JxglstuCourseTableSearch(
                                 place?.let {
                                     Text(
                                         text = it,
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth()
                                     )
@@ -633,7 +631,7 @@ fun JxglstuCourseTableSearch(
                                         if (texts.size == 1) texts[0].text
                                         else if (texts.size > 1) "${texts[0].text.substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
                                         else "",
-                                    fontSize = textSize ,
+                                    fontSize = style.textSize ,
                                     textAlign = TextAlign.Center,
                                 )
                             }
@@ -642,7 +640,7 @@ fun JxglstuCourseTableSearch(
                     }
                 }
             }
-            item { InnerPaddingHeight(innerPadding,false) }
+            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,false) }
         }
         // 上一周
         AnimatedVisibility(

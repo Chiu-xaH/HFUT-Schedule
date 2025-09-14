@@ -50,12 +50,14 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -99,11 +101,9 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
-import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -113,14 +113,15 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -129,10 +130,11 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
-import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableTwo
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
-import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
@@ -140,10 +142,12 @@ import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
+import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -401,7 +405,7 @@ fun MainScreen(
     }
     val context = LocalContext.current
     val activity = LocalActivity.current
-
+    var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
     BackHandler {
         activity?.finish()
     }
@@ -581,10 +585,25 @@ fun MainScreen(
                                 }
                             },
                         )
-                        if (swapUI == CourseType.NEXT.code) null else ScheduleTopDate(
-                            showAll,
-                            today
-                        )
+                        if(swapUI == CourseType.ZHI_JIAN.code) {
+                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    value = zhiJianStudentId,
+                                    onValueChange = { zhiJianStudentId = it },
+                                    leadingIcon = {
+                                        Icon(painterResource(R.drawable.person),null)
+                                    },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                )
+                            }
+                        }
+                        if (swapUI != CourseType.NEXT.code) {
+                            ScheduleTopDate(showAll, today)
+                        }
                     }
                 }
             },
@@ -731,7 +750,18 @@ fun MainScreen(
                                         today = today,
                                         backGroundHaze = if (useCustomBackground) backGroundHaze else null
                                     )
-                                    // 慧新易校
+                                    // 指尖工大
+                                    CourseType.ZHI_JIAN.code -> ZhiJianCourseTableUI(
+                                        showAll,
+                                        vm,
+                                        vmUI,
+                                        innerPadding,
+                                        zhiJianStudentId,
+                                        today = today,
+                                        onDateChange = { new -> today = new },
+                                        backGroundHaze = if (useCustomBackground) backGroundHaze else null,
+                                        hazeState,
+                                    )
                                     // 自定义导入课表 数据库id+3=swapUI
 //                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
                                 }

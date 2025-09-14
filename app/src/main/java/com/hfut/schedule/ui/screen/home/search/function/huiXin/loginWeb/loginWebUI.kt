@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.parse.formatDecimal

@@ -2,6 +2,9 @@ package com.hfut.schedule.logic.network.interceptor
 
 import android.util.Log
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.encodeUrl
+import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.network.isNotBadRequest
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -27,10 +30,52 @@ class RedirectInterceptor() : Interceptor {
                         .build()
                     val nextResponse = chain.proceed(newRequest)
                     parseLoginStu(nextResponse.headers,nextResponse.body?.string())
+                    nextResponse.close()
                 }
                 location.contains(MyApplication.COMMUNITY_URL) -> {
                     // 智慧社区的登录
                     CasGoToInterceptorState.toCommunityTicket.value = ticket
+                }
+                location.contains(MyApplication.ZHI_JIAN_URL) -> {
+                    // 指间工大登录
+                    // 向前重定向一次
+                    val newRequest = request
+                        .newBuilder()
+                        .url(location)
+                        .build()
+                    val nextResponse = chain.proceed(newRequest)
+                    val cookie = parseLoginZhiJian(nextResponse.headers)
+                    val homeLocation = nextResponse.header("Location")
+                    nextResponse.close()
+                    cookie?.let {
+                        // 向主页发送一个请求 使cookie生效
+                        val checkRequest = request
+                            .newBuilder()
+                            .header("Cookie", cookie)
+                            .url(
+                                homeLocation ?: (
+                                        MyApplication.ZHI_JIAN_URL +
+                                                "wui/cas-entrance.jsp;jsessionid=${
+                                                    it.substringAfter("=")
+                                                }?path=${
+                                                    encodeUrl(
+                                                        encodeUrl(
+                                                            MyApplication.ZHI_JIAN_URL + "wui/index.html#/main"
+                                                        )
+                                                    )
+                                                }&ssoType=CAS"
+                                        )
+                            )
+                            .build()
+                        val checkResponse = chain.proceed(checkRequest)
+                        Log.d("CAS","指尖工大登录 ${checkResponse.code}")
+                        if(isNotBadRequest(checkResponse.code)) {
+                            showToast("指间工大登陆成功")
+                        } else {
+                            showToast("指间工大登陆失败 ${checkResponse.code}")
+                        }
+                        checkResponse.close()
+                    }
                 }
                 location.contains(MyApplication.JXGLSTU_URL) -> {
                     // 教务系统的登录
@@ -41,6 +86,7 @@ class RedirectInterceptor() : Interceptor {
                         .build()
                     val nextResponse = chain.proceed(newRequest)
                     parseLoginJxglstu(nextResponse.headers)
+                    nextResponse.close()
                 }
             }
         }
@@ -65,10 +111,25 @@ private fun parseLoginStu(headers: Headers,json: String?) =  try {
 }
 
 
-fun parseLoginJxglstu(headers: Headers) = try {
+private fun parseLoginJxglstu(headers: Headers) = try {
     val cookie = headers.toString().substringAfter("SESSION=").substringBefore(";")
     saveString("redirect", "SESSION=$cookie")
     showToast("教务系统登陆成功")
 } catch (e : Exception) {
     e.printStackTrace()
+}
+
+private fun parseLoginZhiJian(headers: Headers) : String? = try {
+    val token = headers["Location"]?.substringAfter("jsessionid=")?.substringBefore("?")
+    if (token != null) {
+        val r = "ecology_JSessionid=$token"
+        saveString("ZhiJian", r)
+        r
+    } else {
+        showToast("指间工大登陆失败")
+        null
+    }
+} catch (e : Exception) {
+    e.printStackTrace()
+    null
 }

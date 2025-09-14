@@ -210,6 +210,7 @@ fun SearchScreen(
                 SearchAppBean(43,"${AppNavRoute.OfficeHall.label}", { OfficeHall(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.OfficeHall.route),
                 SearchAppBean(44,"慧新易校 一卡通 校园卡 账单 充值 缴费 合肥" , { HuiXin(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
                 SearchAppBean(45,"${AppNavRoute.SecondClass.label}", { SecondClass(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.SecondClass.route),
+//                SearchAppBean(46,"${AppNavRoute..label}", { (navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute..route),
             )
         )
     }

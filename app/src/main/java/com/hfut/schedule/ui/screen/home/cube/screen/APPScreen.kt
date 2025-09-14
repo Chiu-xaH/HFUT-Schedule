@@ -291,7 +291,7 @@ fun APPScreen(
                 TransplantListItem(
                     headlineContent = { Text(text = "默认日程账户") },
                     supportingContent = {
-                        Text("自定义添加到系统日历的账户")
+                        Text("自定义添加到系统日历的账户;\n利用邮箱账户，可进行课表、聚焦日程的多设备同步")
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.calendar_add_on),

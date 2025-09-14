@@ -71,7 +71,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import dev.chrisbanes.haze.HazeState

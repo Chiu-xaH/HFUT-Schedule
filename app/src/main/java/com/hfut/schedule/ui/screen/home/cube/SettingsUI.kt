@@ -112,9 +112,9 @@ fun SettingsScreen(vm : NetWorkViewModel,
                     FixUI(innerPadding = innerPaddings,vm,hazeState,navController)
                 }
             }
-            composable("DEBUG") {
+            composable(Screen.DebugScreen.route) {
                 Scaffold {
-                    TEST(innerPaddings,navController)
+                    TEST(vm,innerPaddings,navController)
                 }
             }
             composable(Screen.DownloadScreen.route) {

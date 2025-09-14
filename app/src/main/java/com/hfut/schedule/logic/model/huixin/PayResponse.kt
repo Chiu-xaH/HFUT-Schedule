@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.model.zjgd
+package com.hfut.schedule.logic.model.huixin
 
 data class PayStep1Response(val data : PayStep1Data)
 

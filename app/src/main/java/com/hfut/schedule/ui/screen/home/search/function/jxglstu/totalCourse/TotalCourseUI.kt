@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.lesson.JxglstuCourseTableSearch
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit

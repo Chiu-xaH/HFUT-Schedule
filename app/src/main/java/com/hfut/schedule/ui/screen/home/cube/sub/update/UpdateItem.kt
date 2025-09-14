@@ -10,7 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -27,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-12") },
+                overlineContent = { Text(text = "2025-09-14") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,20 +57,16 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 隐藏课程表空方格","位于 选项-外观与效果-课程表")//
-            UpdateItems("修复 宣城校区寝室电费五号楼无法选择南北的Bug")//
-            UpdateItems("修复 由于Gitee修改服务端而导致无法显示更新的Bug","换成了Gitee官方Api，应该不会再出岔子了")//
-            UpdateItems("优化 选课的排序机制为按课程代码排序")//
-            UpdateItems("优化 选课右上角刷新的逻辑为只刷新人数")//
-            UpdateItems("优化 部分界面的显示")//
+            UpdateItems("新增 指间工大数据源课程表","位于课程表-多课表，本课表可输入学号，获取对方的课程表")
+            UpdateItems("修复 转场动画带背景缩放时，渐变模糊错位的Bug")
+            UpdateItems("修复 无法获取更新的Bug")
+            UpdateItems("修复 添加上课提醒偶见部分日程缺失的Bug","此版本中直接点击更新日程，就会将之前的旧日程删掉，再重新添加新的日程")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")
 //            UpdateItems("新增 启动台支持一键清除最近记录")
 //            UpdateItems("新增 单独登录教务系统")
 //            UpdateItems("新增 备份与恢复数据","位于 选项-应用及配置，可将数据导出到另一台设备以实现多端共存")
-
 //            UpdateItems("重构 关于")
 //            UpdateItems("新增 为选项适配了新的转场动画")
-//            UpdateItems("新增 慧新易校的课表数据源")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
             /*
@@ -140,5 +140,3 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
-
-

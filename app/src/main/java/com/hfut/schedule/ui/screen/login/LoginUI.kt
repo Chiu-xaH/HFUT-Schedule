@@ -568,6 +568,7 @@ fun LoginScreen(
                                 CasPlatform("智慧社区", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
                                 CasPlatform("学工系统", canWebVpn = false, canWithoutJxglstu = true,canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
                                 CasPlatform("慧新易校",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
+                                CasPlatform("指间工大", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
                                 CasPlatform("WebVpn",canWebVpn = true, canWithoutJxglstu = false,canWithJxglstu = false, maybeUnlinked = false),
                                 CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
                                 CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true)

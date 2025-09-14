@@ -16,18 +16,22 @@ import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
 suspend fun getUpdates(vm : NetWorkViewModel) : GiteeReleaseResponse? = withContext(Dispatchers.IO) {
-    val update = vm.giteeUpdatesResp.state.first()
-    return@withContext if(update is UiState.Success) {
-        val data = update.data
-        if(data.name == AppVersion.getVersionName()) {
-            null
-        } else {
-            data
+    val update = vm.giteeUpdatesResp.state.first { it !is UiState.Loading }
+    return@withContext when(update) {
+        is UiState.Error -> {
+            GiteeReleaseResponse(name = "检查更新错误 ${update.code}", "无法检查更新 请留意软件内提醒\n" + update.exception?.let { getKeyStackTrace(it) } ,emptyList())
         }
-    } else if(update is UiState.Error) {
-        GiteeReleaseResponse(name = "检查更新错误 ${update.code}", "无法检查更新 请留意软件内提醒\n" + update.exception?.let { getKeyStackTrace(it) } ,emptyList())
-    } else {
-        null
+        is UiState.Success -> {
+            val data = update.data
+            if(data.name == AppVersion.getVersionName()) {
+                null
+            } else {
+                data
+            }
+        }
+        else -> {
+            GiteeReleaseResponse(name = "检查更新错误 prepare", "无法检查更新 请留意软件内提醒" ,emptyList())
+        }
     }
 }
 

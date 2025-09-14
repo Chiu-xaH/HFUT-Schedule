@@ -20,7 +20,7 @@ class MyApplication : Application() {
         const val DEFAULT_MAX_FREE_FLOW = 30
         // 默认每页数量
         const val DEFAULT_PAGE_SIZE = 30
-        const val GITEE_TOKEN = "b06c1c34f49717bc2afbbaaa001d3ca9"
+        const val GITEE_TOKEN = "bf51445a2add374b70205ca460f9a696"
         // 教务系统
         const val JXGLSTU_URL = "http://jxglstu.hfut.edu.cn/eams5-student/"
         // Github

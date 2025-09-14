@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -26,8 +25,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -62,7 +59,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
@@ -71,8 +67,8 @@ import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
-import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
+import com.hfut.schedule.logic.network.isNotBadRequest
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
@@ -92,12 +88,13 @@ import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
-import com.hfut.schedule.ui.screen.home.calendar.next.parseCourseName
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
+import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
@@ -177,7 +174,7 @@ suspend fun loginHuiXin(vm: NetWorkViewModel) {
 
 private suspend fun loginCommunity(cookies: String, vm: NetWorkViewModel) {
     val result = vm.gotoCommunity(cookies)
-    if (result == (if(GlobalUIStateHolder.excludeJxglstu) StatusCode.REDIRECT.code else StatusCode.OK.code)) {
+    if (isNotBadRequest(result)) {
         CasGoToInterceptorState.toCommunityTicket
             .filterNotNull()
             .collect { value ->
@@ -257,7 +254,7 @@ fun JxglstuCourseTableUI(
     val table = rememberSaveable { List(30) { mutableStateListOf<String>() } }
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<String>() } }
 
-    val dateList  =  getScheduleDate(showAll, today)
+    val dateList  = getScheduleDate(showAll, today)
     var examList by rememberSaveable { mutableStateOf(examToCalendar()) }
 
     var currentWeek by rememberSaveable {
@@ -672,6 +669,26 @@ fun JxglstuCourseTableUI(
                    launch library@ {
 
                    }
+                   // 指间工大
+                   launch zhiJian@ {
+                       if(useWebVpn) {
+                           return@zhiJian
+                       }
+                       val auth = prefs.getString("ZhiJian", "")
+                       if(auth == null || auth.isEmpty()) {
+                           vm.gotoZhiJian(cookies)
+                       } else {
+                           // 检测可用性
+                           vm.zhiJianCheckLogin(auth)
+                           val result = (vm.zhiJianCheckLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+                               return@zhiJian
+                           } else {
+//                                登录
+                               vm.gotoZhiJian(cookies)
+                           }
+                       }
+                   }
                }
                withTimeoutOrNull(10000) { // 超时时间 10s
                    job.await()
@@ -730,14 +747,11 @@ fun JxglstuCourseTableUI(
         Box(modifier = Modifier.fillMaxSize()) {
             val scrollState = rememberLazyGridState()
             val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-            val padding = if (showAll) 1.dp else 1.75.dp
-            val textSize = if(showAll) 12.sp else 14.sp
-            val count = if(showAll) 7 else 5
-            val height = remember { 125.dp }
+            val style = CalendarStyle(showAll)
 
             LazyVerticalGrid(
-                columns = GridCells.Fixed(count),
-                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP- CARD_NORMAL_DP - padding*2, vertical = padding),
+                columns = GridCells.Fixed(style.rowCount),
+                modifier = style.calendarPadding(),
                 state = scrollState
             ) {
                 item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
@@ -750,23 +764,23 @@ fun JxglstuCourseTableUI(
                         )
                     }
                 }
-                items(count*6, key = { it }) { index ->
+                items(style.rowCount*style.columnCount, key = { it }) { index ->
                     val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
                     val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,index)
                     if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
-                        Box(modifier = Modifier.height(height).padding(padding))
+                        Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
                     } else {
                         Card(
-                            shape = MaterialTheme.shapes.extraSmall,
-                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainer),
+                            shape = style.containerCorner,
+                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
                             modifier = Modifier
-                                .height(height)
-                                .padding(padding)
+                                .height(style.height)
+                                .padding(style.everyPadding)
                                 .let {
                                     backGroundHaze?.let { haze ->
                                         it
-                                            .clip(MaterialTheme.shapes.extraSmall)
-                                            .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                            .clip(style.containerCorner)
+                                            .containerBlur(haze,style.containerColor)
                                     } ?: it
                                 }
                                 .clickableWithScale(ClickScale.SMALL.scale) {
@@ -848,7 +862,7 @@ fun JxglstuCourseTableUI(
                                 ) {
                                     Text(
                                         text = time,
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth()
                                     )
@@ -860,7 +874,7 @@ fun JxglstuCourseTableUI(
                                     ) {
                                         Text(
                                             text = name,
-                                            fontSize = textSize,
+                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                             modifier = Modifier.fillMaxWidth()
@@ -868,7 +882,7 @@ fun JxglstuCourseTableUI(
                                     }
                                     Text(
                                         text = place,
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth()
                                     )
@@ -885,7 +899,7 @@ fun JxglstuCourseTableUI(
                                 ) {
                                     Text(
                                         text = texts[0].substringBefore("\n"),
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth(),
                                         fontWeight = isExam
@@ -898,7 +912,7 @@ fun JxglstuCourseTableUI(
                                     ) {
                                         Text(
                                             text = "${texts.size}节课冲突",
-                                            fontSize = textSize,
+                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                             modifier = Modifier.fillMaxWidth(),
@@ -907,7 +921,7 @@ fun JxglstuCourseTableUI(
                                     }
                                     Text(
                                         text = name,
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         modifier = Modifier.fillMaxWidth()
                                     )

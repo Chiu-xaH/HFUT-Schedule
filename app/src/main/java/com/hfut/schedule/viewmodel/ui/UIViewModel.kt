@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.hfut.schedule.logic.model.zjgd.ReturnCard
+import com.hfut.schedule.logic.model.huixin.ReturnCard
 import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 

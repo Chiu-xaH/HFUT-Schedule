@@ -7,6 +7,7 @@ import android.provider.CalendarContract
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
@@ -69,6 +70,63 @@ private suspend fun checkExistEvent(dateTime: DateTime, title: String, activity:
         null
     }
 }
+private const val CALENDAR_COURSE_TAG = "聚在工大-"
+
+suspend fun delAllCourseEvent(vmUI: UIViewModel,activity: Activity) = withContext(Dispatchers.IO) {
+    checkAndRequestCalendarPermission(activity)
+    try {
+        // 删除所有remark为常量CALENDAR_COURSE_TAG的日程
+        val resolver = MyApplication.context.contentResolver
+        val calendarId = DataStoreManager.defaultCalendarAccountId.first()
+
+        // 删除条件：备注匹配 + 属于当前账号
+        val where = """
+            ${CalendarContract.Events.DESCRIPTION} = ?
+            AND ${CalendarContract.Events.CALENDAR_ID} = ?
+        """.trimIndent()
+
+        val args = arrayOf(CALENDAR_COURSE_TAG + SemseterParser.parseSemseter(SemseterParser.getSemseter()), calendarId.toString())
+
+        // 执行删除
+        val rows = resolver.delete(
+            CalendarContract.Events.CONTENT_URI,
+            where,
+            args
+        )
+
+        // 然后删除title等于下面列表里it.courseName的日程
+        var rowsTitle = 0
+        vmUI.jxglstuCourseScheduleList.map { it.courseName }
+            .distinct() // 避免重复课程名多次删除
+            .forEach { courseName ->
+                val whereTitle = """
+                    ${CalendarContract.Events.TITLE} = ?
+                    AND ${CalendarContract.Events.CALENDAR_ID} = ?
+                """.trimIndent()
+                val argsTitle = arrayOf(courseName, calendarId.toString())
+                rowsTitle += resolver.delete(
+                    CalendarContract.Events.CONTENT_URI,
+                    whereTitle,
+                    argsTitle
+                )
+            }
+        vmUI.jxglstuCourseScheduleList.map {
+            it.courseName
+        }
+
+
+
+        if (rows > 0) {
+            showToast("成功删除 $rows 个课程日程")
+        }
+
+    } catch (e : Exception) {
+        showToast("未授予读取权限")
+        null
+    }
+}
+
+
 
 // 添加一次性日程
 private suspend fun addEvent(
@@ -79,8 +137,8 @@ private suspend fun addEvent(
     timeZone: String = "Asia/Shanghai",
     reminderMinutes: Int? = null, // 提前多少分钟提,
     showToast : Boolean = true
-) = withContext(Dispatchers.IO) {
-    try {
+) : Boolean = withContext(Dispatchers.IO) {
+    return@withContext try {
         val beginTime = Calendar.getInstance().apply {
             set(dateTime.start.year, dateTime.start.month - 1, dateTime.start.day, dateTime.start.hour, dateTime.start.minute)
         }
@@ -113,12 +171,15 @@ private suspend fun addEvent(
             }
             resolver.insert(CalendarContract.Reminders.CONTENT_URI, reminderValues)
             if(showToast) showToast("添加成功(日程开始前的${reminderMinutes}分钟后提醒)")
+            true
         } else {
             if(showToast) showToast("添加成功(无提醒)")
+            true
         }
     } catch (e:Exception) {
         e.printStackTrace()
         if(showToast) showToast("添加失败(可能是权限问题)")
+        false
     }
 }
 // 使用规范的时间bean 推荐
@@ -304,7 +365,8 @@ fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule
     return list
 }
 
-suspend fun addCourseToEvent(vmUI : UIViewModel,activity: Activity,time : Int)  = withContext(Dispatchers.IO) {
+suspend fun addCourseToEvent(vmUI : UIViewModel,activity: Activity,time : Int) : Int = withContext(Dispatchers.IO) {
+    var failedCount = 0
     async { checkAndRequestCalendarPermission(activity) }.await()
     launch {
         try {
@@ -312,38 +374,18 @@ suspend fun addCourseToEvent(vmUI : UIViewModel,activity: Activity,time : Int)  
             for(item in list) {
                 val itemTime = item.time
                 val itemName = item.courseName
-                if (checkExistEvent(itemTime, itemName,activity,showToast = false) != null) {
-                    break
+                val result = addEvent(dateTime = itemTime, title = itemName,place = item.place, reminderMinutes = time, showToast = false, remark = CALENDAR_COURSE_TAG + SemseterParser.parseSemseter(SemseterParser.getSemseter()))
+                if(!result) {
+                    failedCount++
                 }
-                addEvent(dateTime = itemTime, title = itemName,place = item.place, reminderMinutes = time, showToast = false)
             }
-            showToast("执行完成 请检查日历")
+            showToast(if(failedCount == 0) "执行完成 请检查日历" else "有${failedCount}项添加失败，尝试重新点击更新日程")
         } catch (e : Exception) {
             showToast("失败 可能是代码错了或者权限问题")
         }
     }
+    failedCount
 }
-
-
-suspend fun delCourseEvents(vmUI: UIViewModel,activity: Activity)  = withContext(Dispatchers.IO) {
-    async { checkAndRequestCalendarPermission(activity) }.await()
-    launch {
-        try {
-            val list = vmUI.jxglstuCourseScheduleList
-            for(item in list) {
-                val itemTime = item.time
-                val itemName = item.courseName
-                checkExistEvent(itemTime, itemName,activity,showToast = false)?.let {
-                    delEvent(id = it, showToast = false)
-                } ?: break
-            }
-            showToast("执行完成 请检查日历")
-        } catch (e : Exception) {
-            showToast("失败 可能是代码错了或者权限问题")
-        }
-    }
-}
-
 
 private fun delEvent(id : Long,showToast: Boolean = true) : Boolean {
     val resolver = MyApplication.context.contentResolver

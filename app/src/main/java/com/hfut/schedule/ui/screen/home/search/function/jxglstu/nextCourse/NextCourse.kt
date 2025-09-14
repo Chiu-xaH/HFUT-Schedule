@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.next.JxglstuCourseTableUINext
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.special.topBarBlur

@@ -9,7 +9,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
@@ -72,12 +72,15 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
+import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -419,47 +422,46 @@ fun CommunityCourseTableUI(
         }
     }
     val dateList  = getScheduleDate(showAll,today)
-    val textSize = if(showAll)12.sp else 14.sp
 
     Column(modifier = Modifier.fillMaxSize()) {
             Box {
                 val scrollState = rememberLazyGridState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-                val padding = if (showAll) 1.dp else 1.75.dp
-                val height = remember { 125.dp }
+                val style = CalendarStyle(showAll)
+
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(if(showAll)7 else 5),
-                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-CARD_NORMAL_DP-padding*2, vertical = padding),
+                    columns = GridCells.Fixed(style.rowCount),
+                    modifier = style.calendarPadding(),
                     state = scrollState
                 ) {
-                    items(if(showAll)7 else 5) { InnerPaddingHeight(innerPaddings,true) }
-                    items(if(showAll)42 else 30) { cell ->
+                    item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,true) }
+                    items(style.rowCount*style.columnCount) { cell ->
                         val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                         val texts = transferSummaryCourseInfos(itemList).toMutableList()
                         if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
                             // 隐藏
-                            Box(modifier = Modifier.height(height).padding(padding))
+                            Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
                         } else {
                             Card(
-                                shape = MaterialTheme.shapes.extraSmall,
+                                shape = style.containerCorner,
                                 colors = CardDefaults.cardColors(containerColor =
-                                    if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainer
+                                    if(backGroundHaze != null) Color.Transparent else style.containerColor
                                 ),
                                 modifier = Modifier
-                                    .height(height)
-                                    .padding(padding)
+                                    .height(style.height)
+                                    .padding(style.everyPadding)
                                     .let {
                                         backGroundHaze?.let { haze ->
                                             it
-                                                .clip(MaterialTheme.shapes.extraSmall)
-                                                .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                                .clip(style.containerCorner)
+                                                .containerBlur(haze,style.containerColor)
                                         } ?: it
                                     }
-                                    .clickable {
+                                    .clickableWithScale(ClickScale.SMALL.scale) {
                                         if (texts.size == 1) {
                                             // 如果是考试
                                             if (friendUserName == null && texts[0].contains("考试")) {
-                                                return@clickable
+                                                return@clickableWithScale
                                             }
                                             sheet = itemList[0]
                                             showBottomSheet = true
@@ -509,7 +511,7 @@ fun CommunityCourseTableUI(
                                     ) {
                                         Text(
                                             text = time,
-                                            fontSize = textSize,
+                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             modifier = Modifier.fillMaxWidth()
                                         )
@@ -521,7 +523,7 @@ fun CommunityCourseTableUI(
                                         ) {
                                             Text(
                                                 text = name,
-                                                fontSize = textSize,
+                                                fontSize = style.textSize,
                                                 textAlign = TextAlign.Center,
                                                 overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                                 modifier = Modifier.fillMaxWidth()
@@ -529,7 +531,7 @@ fun CommunityCourseTableUI(
                                         }
                                         Text(
                                             text = place,
-                                            fontSize = textSize,
+                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             modifier = Modifier.fillMaxWidth()
                                         )
@@ -545,7 +547,7 @@ fun CommunityCourseTableUI(
                                                 if(texts.size == 1) texts[0]
                                                 else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
                                                 else "",
-                                            fontSize = textSize,
+                                            fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
                                             fontWeight = if(friendUserName == null && texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
                                         )
@@ -554,7 +556,7 @@ fun CommunityCourseTableUI(
                             }
                         }
                     }
-                    item { InnerPaddingHeight(innerPaddings,false) }
+                    item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,false) }
                 }
                 androidx.compose.animation.AnimatedVisibility(
                     visible = shouldShowAddButton,

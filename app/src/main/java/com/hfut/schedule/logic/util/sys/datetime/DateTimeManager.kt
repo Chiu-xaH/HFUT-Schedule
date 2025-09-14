@@ -4,6 +4,7 @@ import com.hfut.schedule.logic.util.sys.DateTimeBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -200,6 +201,13 @@ object DateTimeManager {
         } catch (e: Exception) {
             false // 日期格式不对时，返回 false
         }
+    }
+
+    fun getMondayOfWeek(date: LocalDate): String {
+        // Kotlin 的 DayOfWeek 是 1=Monday, 7=Sunday
+        val diff = date.dayOfWeek.value - DayOfWeek.MONDAY.value
+        val monday = date.minusDays(diff.toLong())
+        return monday.toString() // 默认格式就是 YYYY-MM-DD
     }
 
     fun isCurrentMonth(yearMonthString: String): Boolean {

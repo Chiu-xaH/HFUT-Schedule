@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,7 +25,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,20 +45,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
-import com.hfut.schedule.logic.util.sys.delCourseEvents
+import com.hfut.schedule.logic.util.sys.delAllCourseEvent
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -70,18 +65,18 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.xah.uicommon.component.status.LoadingUI
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
@@ -93,7 +88,8 @@ enum class CourseType(val code : Int) {
     JXGLSTU(0),
     COMMUNITY(1),
     JXGLSTU2(2),
-    NEXT(3)
+    ZHI_JIAN(3),
+    NEXT(4)
 }
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -209,8 +205,8 @@ fun MultiScheduleSettings(
         val friendList = getFriendsList()
 
         LazyRow {
-            // 教务课表
             item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP*2)) }
+            // 教务课表
             item {
                 Card (
                     modifier = Modifier
@@ -267,6 +263,24 @@ fun MultiScheduleSettings(
                                 fontWeight = if (select == CourseType.JXGLSTU2.code) FontWeight.Bold else FontWeight.Light
                             )
                         }
+                    }
+                }
+            }
+            // 指尖工大
+            item {
+                Card (
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 70.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
+                        .clickable {
+                            onSelectedChange(CourseType.ZHI_JIAN.code)
+                        },
+                    colors = if(select == CourseType.ZHI_JIAN.code) selectedColor else normalColor
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text("指间工大", modifier = Modifier.align(Alignment.Center)
+                            , fontWeight = if(select == CourseType.ZHI_JIAN.code) FontWeight.Bold else FontWeight.Light
+                        )
                     }
                 }
             }
@@ -579,7 +593,6 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
     var time by remember { mutableIntStateOf(20) }
     val cor = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
-
     if(loading) {
         LoadingUI("勿动稍等")
     } else {
@@ -619,51 +632,37 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
         )
         CardListItem(
             headlineContent = {
-                Text("更新日程(清空+导入)")
-            },
-            leadingContent = { Icon(painterResource(R.drawable.event_repeat),null) },
-            modifier = Modifier.clickable {
-                context?.let {
-                    cor.launch {
-                        async { loading = true }.await()
-                        async { delCourseEvents(vmUI,activity = it) }.await()
-                        async { addCourseToEvent(vmUI,activity = it,time) }.await()
-                        launch { loading = false }
-                    }
-                }
-            }
-        )
-        CardListItem(
-            headlineContent = {
-                Text("导入")
+                Text("清空+导入")
             },
             overlineContent = {
-                Text("跳过已导入日程")
+                Text("将目前的教务课表写入到日程")
             },
             leadingContent = { Icon(painterResource(R.drawable.event_upcoming),null) },
             modifier = Modifier.clickable {
                 context?.let {
                     cor.launch {
                         async { loading = true }.await()
+                        async { delAllCourseEvent(vmUI,activity = it) }.await()
                         async { addCourseToEvent(vmUI,activity = it,time) }.await()
                         launch { loading = false }
                     }
                 }
             }
         )
+
         CardListItem(
             headlineContent = {
                 Text("清空")
             },
             overlineContent = {
-                Text("只清空上面导入日程")
+                Text("清空导入的日程")
             },
             leadingContent = { Icon(painterResource(R.drawable.event_busy),null) },
             modifier = Modifier.clickable {
                 context?.let {
                     cor.launch {
                         async { loading = true }.await()
-                        async { delCourseEvents(vmUI,activity = it) }.await()
+                        async { delAllCourseEvent(vmUI,activity = it) }.await()
                         launch { loading = false }
                     }
                 }

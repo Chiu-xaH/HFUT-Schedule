@@ -14,6 +14,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 object GlobalUIStateHolder {
     var excludeJxglstu by mutableStateOf(false)
     var refreshImageCode by mutableIntStateOf(1)
+    var isTransiting by mutableStateOf(false)
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
     var isSupabaseRegistering = mutableStateOf(false)
@@ -69,6 +70,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(43, AppNavRoute.OfficeHall.label,  AppNavRoute.OfficeHall.icon),
         SearchAppBeanLite(44,"慧新易校" ,R.drawable.corporate_fare),
         SearchAppBeanLite(45, AppNavRoute.SecondClass.label,AppNavRoute.SecondClass.icon),
+//        SearchAppBeanLite(46, AppNavRoute..label,AppNavRoute..icon),
     )
 
     val funcMaps = funcDefault.toMutableStateList()

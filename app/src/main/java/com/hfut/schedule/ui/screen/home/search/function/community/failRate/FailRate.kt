@@ -171,7 +171,12 @@ fun FailRateScreen(
 
 var permit = 1
 @Composable
-fun ApiToFailRate(input : String, vm: NetWorkViewModel, hazeState: HazeState,innerPadding : PaddingValues) {
+fun ApiToFailRate(
+    input : String,
+    vm: NetWorkViewModel,
+    hazeState: HazeState,
+    innerPadding : PaddingValues
+) {
     val uiState by vm.failRateData.state.collectAsState()
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork : suspend () -> Unit = {

@@ -3,8 +3,8 @@ package com.hfut.schedule.ui.screen.home.focus.funiction
 import android.os.Handler
 import android.os.Looper
 import com.google.gson.Gson
-import com.hfut.schedule.logic.model.zjgd.BalanceResponse
-import com.hfut.schedule.logic.model.zjgd.ReturnCard
+import com.hfut.schedule.logic.model.huixin.BalanceResponse
+import com.hfut.schedule.logic.model.huixin.ReturnCard
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs

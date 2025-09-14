@@ -1,9 +1,10 @@
-package com.hfut.schedule.ui.screen.home.calendar.next
+package com.hfut.schedule.ui.screen.home.calendar.jxglstu.next
 
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
@@ -53,8 +55,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
+import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
@@ -77,6 +78,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
 
 
@@ -421,36 +424,35 @@ fun JxglstuCourseTableUINext(
     Box(modifier = Modifier.fillMaxHeight()) {
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-        val textSize = if(showAll)12.sp else 14.sp
-        val height = remember { 125.dp }
-        val padding = if (showAll) 1.dp else 1.75.dp
+        val style = CalendarStyle(showAll)
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(if(showAll)7 else 5),
-            modifier = Modifier.padding(10.dp),
+            columns = GridCells.Fixed(style.rowCount),
+            modifier = style.calendarPadding(),
+//            modifier = Modifier.padding(10.dp),
             state = scrollState
         ) {
-            items(if(showAll)7 else 5) { InnerPaddingHeight(innerPadding,true) }
-            items(if(showAll)42 else 30) { cell ->
+            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
+            items(style.rowCount*style.columnCount, key = { it }) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
                 val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
                 if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
-                    Box(modifier = Modifier.height(height).padding(padding))
+                    Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
                 } else {
                     Card(
-                        shape = MaterialTheme.shapes.extraSmall,
-                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else MaterialTheme.colorScheme.surfaceContainerHigh),
+                        shape = style.containerCorner,
+                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
                         modifier = Modifier
-                            .height(height)
-                            .padding(padding)
+                            .height(style.height)
+                            .padding(style.everyPadding)
                             .let {
                                 backGroundHaze?.let { haze ->
                                     it
-                                        .clip(MaterialTheme.shapes.extraSmall)
-                                        .containerBlur(haze,MaterialTheme.colorScheme.surfaceContainer)
+                                        .clip(style.containerCorner)
+                                        .containerBlur(haze,style.containerColor)
                                 } ?: it
                             }
-                            .clickable {
+                            .clickableWithScale(ClickScale.SMALL.scale) {
                                 // 只有一节课
                                 if (texts.size == 1) {
                                     val name =
@@ -495,7 +497,7 @@ fun JxglstuCourseTableUINext(
                             ) {
                                 Text(
                                     text = time,
-                                    fontSize = textSize,
+                                    fontSize = style.textSize,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -507,7 +509,7 @@ fun JxglstuCourseTableUINext(
                                 ) {
                                     Text(
                                         text = name,
-                                        fontSize = textSize,
+                                        fontSize = style.textSize,
                                         textAlign = TextAlign.Center,
                                         overflow = TextOverflow.Ellipsis, // 超出显示省略号
                                         modifier = Modifier.fillMaxWidth()
@@ -515,7 +517,7 @@ fun JxglstuCourseTableUINext(
                                 }
                                 Text(
                                     text = place,
-                                    fontSize = textSize,
+                                    fontSize = style.textSize,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.fillMaxWidth()
                                 )
@@ -531,7 +533,7 @@ fun JxglstuCourseTableUINext(
                                         if (texts.size == 1) texts[0]
                                         else if (texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
                                         else "",
-                                    fontSize = textSize,
+                                    fontSize = style.textSize,
                                     textAlign = TextAlign.Center,
                                 )
                             }
@@ -540,10 +542,10 @@ fun JxglstuCourseTableUINext(
                     }
                 }
             }
-            item { InnerPaddingHeight(innerPadding,false) }
+            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,false) }
         }
         // 上一周
-        androidx.compose.animation.AnimatedVisibility(
+        AnimatedVisibility(
             visible = shouldShowAddButton,
             enter = scaleIn(),
             exit = scaleOut(),
@@ -567,7 +569,7 @@ fun JxglstuCourseTableUINext(
             }
         }
         // 中间
-        androidx.compose.animation.AnimatedVisibility(
+        AnimatedVisibility(
             visible = shouldShowAddButton,
             enter = scaleIn(),
             exit = scaleOut(),
@@ -599,7 +601,7 @@ fun JxglstuCourseTableUINext(
             }
         }
         // 下一周
-        androidx.compose.animation.AnimatedVisibility(
+        AnimatedVisibility(
             visible = shouldShowAddButton,
             enter = scaleIn(),
             exit = scaleOut(),
@@ -634,7 +636,7 @@ fun parseSingleChineseDigit(text: Char): Int = when (text) {
     '四' -> 4
     '五' -> 5
     '六' -> 6
-    '七' -> 7
+    '七', '日' -> 7
     '八' -> 8
     '九' -> 9
     else -> throw IllegalArgumentException("未知数字: $text")

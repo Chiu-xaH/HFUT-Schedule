@@ -108,18 +108,21 @@ import com.hfut.schedule.logic.model.one.ClassroomResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
-import com.hfut.schedule.logic.model.zjgd.BillMonth
-import com.hfut.schedule.logic.model.zjgd.BillMonthResponse
-import com.hfut.schedule.logic.model.zjgd.BillRangeResponse
-import com.hfut.schedule.logic.model.zjgd.ChangeLimitResponse
-import com.hfut.schedule.logic.model.zjgd.FeeType
-import com.hfut.schedule.logic.model.zjgd.FeeType.ELECTRIC_XUANCHENG
-import com.hfut.schedule.logic.model.zjgd.FeeType.NET_XUANCHENG
-import com.hfut.schedule.logic.model.zjgd.FeeType.SHOWER_XUANCHENG
-import com.hfut.schedule.logic.model.zjgd.HuiXinLoginResponse
-import com.hfut.schedule.logic.model.zjgd.PayStep1Response
-import com.hfut.schedule.logic.model.zjgd.PayStep2Response
-import com.hfut.schedule.logic.model.zjgd.PayStep3Response
+import com.hfut.schedule.logic.model.huixin.BillMonth
+import com.hfut.schedule.logic.model.huixin.BillMonthResponse
+import com.hfut.schedule.logic.model.huixin.BillRangeResponse
+import com.hfut.schedule.logic.model.huixin.ChangeLimitResponse
+import com.hfut.schedule.logic.model.huixin.FeeType
+import com.hfut.schedule.logic.model.huixin.FeeType.ELECTRIC_XUANCHENG
+import com.hfut.schedule.logic.model.huixin.FeeType.NET_XUANCHENG
+import com.hfut.schedule.logic.model.huixin.FeeType.SHOWER_XUANCHENG
+import com.hfut.schedule.logic.model.huixin.HuiXinLoginResponse
+import com.hfut.schedule.logic.model.huixin.PayStep1Response
+import com.hfut.schedule.logic.model.huixin.PayStep2Response
+import com.hfut.schedule.logic.model.huixin.PayStep3Response
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItem
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
+import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
 import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.api.CommunityService
 import com.hfut.schedule.logic.network.api.GuaGuaService
@@ -130,6 +133,7 @@ import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.SupabaseService
+import com.hfut.schedule.logic.network.api.ZhiJianService
 import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
 import com.hfut.schedule.logic.network.repo.NewsRepository
@@ -149,6 +153,7 @@ import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.ZhiJianServiceCreator
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CasInHFUT
@@ -192,6 +197,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.awaitResponse
+import java.time.LocalDate
 
 // 106个函数
 class NetWorkViewModel() : ViewModel() {
@@ -210,6 +216,7 @@ class NetWorkViewModel() : ViewModel() {
     private val login = LoginServiceCreator.create(LoginService::class.java)
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
     private val guaGua = GuaGuaServiceCreator.create(GuaGuaService::class.java)
+    private val zhiJian = ZhiJianServiceCreator.create(ZhiJianService::class.java)
     private val myAPI = MyServiceCreator.create(MyService::class.java)
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
@@ -779,6 +786,9 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun gotoCommunity(cookie : String) = launchRequestNone {
         login.loginGoTo(service = LoginType.COMMUNITY.service,cookie = cookie).awaitResponse()
     }
+    suspend fun gotoZhiJian(cookie : String) = launchRequestNone {
+        login.loginGoTo(service = LoginType.ZHI_JIAN.service,cookie = cookie).awaitResponse()
+    }
 
 
 
@@ -810,6 +820,72 @@ class NetWorkViewModel() : ViewModel() {
             throw Exception(json)
         }
     } catch (e : Exception) { throw e }
+
+
+    private fun buildZhiJianJson(date: String, idNumber: String): String {
+        val map = mapOf(
+            "date" to date,
+            "id_number" to idNumber
+        )
+        return Gson().toJson(map)
+    }
+    val zhiJianCourseResp = StateHolder<List<ZhiJianCourseItemDto>>()
+    suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String) = launchRequestSimple(
+        holder = zhiJianCourseResp,
+        request = { zhiJian.getCourses(token,buildZhiJianJson(mondayDate,studentId)).awaitResponse() },
+        transformSuccess = { _,json -> parseZhiJianCourses(json, mondayDate) }
+    )
+    private fun parseZhiJianCourses(json : String,mondayDate : String) : List<ZhiJianCourseItemDto> = try {
+        val gson = Gson()
+        val root = gson.fromJson(json, ZhiJianCoursesResponse::class.java)
+        val data = root.data
+
+        // 提取 kbdata 字符串
+        val rawStr = data.rawJsonString
+        // 再把这个字符串解析成二维数组
+        val listType = object : TypeToken<List<ZhiJianCourseItem>>() {}.type
+        val rawData: List<ZhiJianCourseItem> = gson.fromJson(rawStr, listType)
+        val monday = LocalDate.parse(mondayDate)
+        val sunday = monday.plusDays(6)
+
+        rawData.filter { item ->
+            // mondayDate始终传周一YYYY-MM-DD
+            // 过滤掉it.date大于周日的项目，即只允许mondayDate(周一)~本周日
+            val d = LocalDate.parse(item.date)
+            !d.isBefore(monday) && !d.isAfter(sunday)
+        }.mapNotNull {
+            it.toDto()
+        }
+    } catch (e : Exception) { throw e }
+
+    val zhiJianCheckLoginResp = StateHolder<Boolean>()
+    suspend fun zhiJianCheckLogin(token : String) = launchRequestSimple(
+        holder = zhiJianCheckLoginResp,
+        request = { zhiJian.checkLogin(token).awaitResponse() },
+        transformSuccess = { _,json -> parseZhiJianCheckLogin(json) }
+    )
+    private fun parseZhiJianCheckLogin(json : String) : Boolean = try {
+        json.contains(getPersonInfo().studentId!!) || json.contains(getPersonInfo().name!!)
+    } catch (e : Exception) { throw e }
+
+
+//    val loginZhiJianData = StateHolder<String>()
+//    suspend fun loginZhiJian(ticket : String) = launchRequestSimple(
+//        holder = loginZhiJianData,
+//        request = { zhiJian.login(ticket).awaitResponse() },
+//        transformRedirect = { headers -> parseZhiJianLogin(headers,null) },
+//        transformSuccess = { headers,json -> parseZhiJianLogin(headers,json) }
+//    )
+//    private fun parseZhiJianLogin(headers: Headers,json : String?) : String = try {
+//        val token = headers["Location"]?.substringAfter("jsessionid=")?.substringBefore("?")
+//        if (token != null) {
+//            saveString("ZhiJian", token)
+//            showToast("指间工大登陆成功")
+//            token
+//        } else {
+//            throw Exception(json)
+//        }
+//    } catch (e : Exception) { throw e }
 
     val jxglstuGradeData = StateHolder<List<GradeJxglstuDTO>>()
     suspend fun getGradeFromJxglstu(cookie: String, semester: Int?) = onListenStateHolderForNetwork(studentId,jxglstuGradeData) { sId ->

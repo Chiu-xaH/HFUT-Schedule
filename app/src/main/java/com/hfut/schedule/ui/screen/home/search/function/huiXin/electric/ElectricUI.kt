@@ -61,8 +61,8 @@ import androidx.compose.ui.window.Dialog
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.zjgd.FeeResponse
-import com.hfut.schedule.logic.model.zjgd.FeeType
+import com.hfut.schedule.logic.model.huixin.FeeResponse
+import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
