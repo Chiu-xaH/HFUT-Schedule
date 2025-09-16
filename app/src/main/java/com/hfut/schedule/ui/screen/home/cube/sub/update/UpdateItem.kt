@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-14") },
+                overlineContent = { Text(text = "2025-09-15") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,10 +57,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 指间工大数据源课程表","位于课程表-多课表，本课表可输入学号，获取对方的课程表")
-            UpdateItems("修复 转场动画带背景缩放时，渐变模糊错位的Bug")
-            UpdateItems("修复 无法获取更新的Bug")
-            UpdateItems("修复 添加上课提醒偶见部分日程缺失的Bug","此版本中直接点击更新日程，就会将之前的旧日程删掉，再重新添加新的日程")
+            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")
 //            UpdateItems("新增 启动台支持一键清除最近记录")
 //            UpdateItems("新增 单独登录教务系统")
@@ -70,13 +67,11 @@ fun VersionInfo() {
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
             /*
-
             就业二级界面 通知公告二级界面
             教师检索二级界面 课程详情查教师三级界面
             开课查询二级界面 课程汇总二级界面
             课程详情查挂科率三级界面 挂科率二级界面
             一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
-
              */
 //            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
 //            UpdateItems("下线 成绩-统计","后期重构完成后回归")
@@ -86,11 +81,8 @@ fun VersionInfo() {
 //        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
 //        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
 //        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
-//
             // 下版本规划
 //        UpdateItems("修复 体测平台、报修打开白屏的Bug")
-            // v5.0 2025-07+ 远期规划
-//        UpdateItems("重构 CAS登录", "完全重写底层，使其支持更多平台的边界接入、支持外地访问下使用邮箱等功能、支持对外开放API等", UpdateType.RENEW)
         }
     }
 }

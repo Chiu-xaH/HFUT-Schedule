@@ -8,6 +8,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavHostController
+import androidx.navigationevent.NavigationEventHandler
+import androidx.navigationevent.NavigationEventInfo
 import com.xah.transition.style.DefaultTransitionStyle
 import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.cancellation.CancellationException
@@ -57,3 +59,6 @@ fun TransitionPredictiveBackHandler(
         }
     }
 }
+
+data class MyScreenInfo(val screenName: String) : NavigationEventInfo
+

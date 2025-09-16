@@ -35,6 +35,7 @@ lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
 material3 = "1.4.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
 navigationCompose = "2.7.5" # 2.9.1 2.7.5
+navigationevent = "1.0.0-alpha08"
 okhttp = "4.9.0"
 palette = "1.0.0"
 profileinstaller = "1.4.1"
@@ -84,6 +85,7 @@ androidx-material = { module = "androidx.compose.material:material", version.ref
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigationevent = { module = "androidx.navigationevent:navigationevent", version.ref = "navigationevent" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
