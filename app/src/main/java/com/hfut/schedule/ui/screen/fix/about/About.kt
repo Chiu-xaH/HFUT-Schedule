@@ -72,7 +72,7 @@ import java.util.Hashtable
 @Composable
 fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavHostController, hazeState: HazeState) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     Column (modifier = Modifier

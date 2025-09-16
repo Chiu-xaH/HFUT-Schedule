@@ -33,7 +33,7 @@ import com.xah.uicommon.component.slider.CustomSlider
 @Composable
 fun RequestArrange(innerPadding : PaddingValues,navController: NavHostController) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     LazyColumn(modifier = Modifier.scale(scale)) {

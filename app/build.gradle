@@ -135,7 +135,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     // 测试
 //    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.testExt.junit)
 //    androidTestImplementation(libs.androidx.espresso.core)
 //    androidTestImplementation(libs.androidx.ui.test.junit4)
 //    androidTestImplementation platform(libs.androidx.compose.bom)
@@ -179,7 +179,7 @@ dependencies {
     // 透明状态栏
     implementation(libs.accompanist.systemuicontroller)
     // 导航
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.navigation.compose)
     // 开屏显示
     implementation(libs.androidx.core.splashscreen)
     // 模糊库

@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -20,5 +21,5 @@ fun SharedTransitionScope.TopBarNavigationIcon(
     icon : Int,
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    TopBarNavigateIcon(navController,animatedContentScope=animatedContentScope,route,icon,!enablePredictive)
+    TopBarNavigateIcon(navController,animatedContentScope=animatedContentScope,route, painterResource(icon),!enablePredictive)
 }

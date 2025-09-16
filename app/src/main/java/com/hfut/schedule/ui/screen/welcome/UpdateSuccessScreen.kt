@@ -67,10 +67,10 @@ import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.measureDpSize
+import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndClear
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.color.ShimmerAngle

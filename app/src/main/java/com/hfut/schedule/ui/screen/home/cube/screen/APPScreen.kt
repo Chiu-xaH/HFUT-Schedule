@@ -75,7 +75,7 @@ fun APPScreen(
     innerPaddings: PaddingValues,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     val tabThumbFilePath = remember { mutableStateOf("") }

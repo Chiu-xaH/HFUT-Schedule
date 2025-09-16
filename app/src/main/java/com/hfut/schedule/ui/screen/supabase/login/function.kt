@@ -18,7 +18,7 @@ import com.hfut.schedule.logic.util.sys.Starter.loginSupabase
 import com.hfut.schedule.logic.util.sys.Starter.startSupabase
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.xah.transition.util.navigateAndClear
+import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

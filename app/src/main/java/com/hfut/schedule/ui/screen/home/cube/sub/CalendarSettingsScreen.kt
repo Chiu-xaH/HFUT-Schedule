@@ -36,7 +36,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostController) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     val activity = LocalActivity.current

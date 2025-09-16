@@ -50,7 +50,7 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavHostController) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)

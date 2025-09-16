@@ -46,7 +46,7 @@ fun NetWorkScreen(navController: NavHostController,
                   ifSaved : Boolean,
 ) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     val context = LocalContext.current

@@ -26,7 +26,6 @@ espressoCore = "3.4.0"
 haze = "1.6.2"
 jsoup = "1.16.2"
 junit = "4.13.2"
-junitVersion = "1.2.1"
 konfettiCompose = "2.0.5"
 kotlinBom = "1.8.0"
 lifecycleExtensions = "2.2.0"
@@ -35,6 +34,8 @@ lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
 material3 = "1.4.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
 navigationCompose = "2.7.5" # 2.9.1 2.7.5
+navigationComposeNew = "2.9.0-beta04"
+navigationComposeVersion = "2.7.0-alpha07" # 2.9.0-beta04
 navigationevent = "1.0.0-alpha08"
 okhttp = "4.9.0"
 palette = "1.0.0"
@@ -53,7 +54,9 @@ ksp = "2.1.20-1.0.32"
 test = "8.9.3"
 webkit = "1.14.0"
 accompanistPermissions = "0.34.0"
+composeMultiplatform = "1.8.0"
 jetbrainsKotlinJvm = "2.1.21"
+androidx-testExt = "1.2.1"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -76,7 +79,7 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx"
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
-androidx-junit = { module = "androidx.test.ext:junit", version.ref = "junitVersion" }
+androidx-testExt-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-testExt" }
 androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExtensions" }
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -84,7 +87,9 @@ androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-view
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+#androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
+navigation-compose-new = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeNew" }
 androidx-navigationevent = { module = "androidx.navigationevent:navigationevent", version.ref = "navigationevent" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
@@ -131,5 +136,7 @@ composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "k
 googleKsp = { id = "com.google.devtools.ksp" ,version.ref = "ksp" }
 testAndroid = {id = "com.android.test", version.ref = "test"}
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
-
+kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+androidKotlinMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 

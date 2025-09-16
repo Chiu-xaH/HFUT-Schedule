@@ -50,7 +50,7 @@ import com.xah.transition.util.TransitionPredictiveBackHandler
 @Composable
 fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navController : NavHostController) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     var showEditDialog by remember { mutableStateOf(false) }

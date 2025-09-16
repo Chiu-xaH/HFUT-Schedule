@@ -105,7 +105,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostController) {
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(navController,true) {
         scale = it
     }
     var showBottomSheet by remember { mutableStateOf(false) }

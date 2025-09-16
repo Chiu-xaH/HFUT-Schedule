@@ -68,7 +68,7 @@ fun FixUI(innerPadding : PaddingValues, vm : NetWorkViewModel, hazeState: HazeSt
     val scope = rememberCoroutineScope()
 
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController) {
+    TransitionPredictiveBackHandler(enable = true,navController = navController) {
         scale = it
     }
     Column(modifier = Modifier

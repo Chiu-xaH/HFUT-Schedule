@@ -55,7 +55,7 @@ import com.xah.transition.util.TransitionPredictiveBackHandler
 fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?) {
     var scale by remember { mutableFloatStateOf(1f) }
     navController?.let {
-        TransitionPredictiveBackHandler(it) {
+        TransitionPredictiveBackHandler(it,true) {
             scale = it
         }
     }
