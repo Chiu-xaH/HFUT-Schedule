@@ -57,7 +57,7 @@ kotlin {
         commonMain {
             dependencies {
 //                implementation(libs.androidx.navigationevent.navigationevent)
-                implementation(compose.components.resources)
+//                implementation(compose.components.resources)
                 implementation(libs.navigation.compose)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)

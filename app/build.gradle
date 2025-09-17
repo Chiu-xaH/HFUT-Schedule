@@ -41,7 +41,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 220
-        versionName "4.17.8.1"
+        versionName "4.17.8.1 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

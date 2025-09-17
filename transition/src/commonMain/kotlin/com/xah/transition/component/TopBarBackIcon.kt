@@ -25,9 +25,6 @@ import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.popBackStackForTransition
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
-import 肥工课程表.transition.generated.resources.Res
-import 肥工课程表.transition.generated.resources.arrow_back
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
