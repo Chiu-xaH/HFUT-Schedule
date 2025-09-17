@@ -1,11 +1,8 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,69 +10,36 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 @Composable
-fun RequestArrange(innerPadding : PaddingValues,navController: NavHostController) {
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,true) {
-        scale = it
-    }
-    LazyColumn(modifier = Modifier.scale(scale)) {
-        item { InnerPaddingHeight(innerPadding,true) }
-        item { ArrangeItem(title = AppNavRoute.Library.label, icon = AppNavRoute.Library.icon, key = "BookRequest") }
-        item { ArrangeItem(title = "一卡通", icon = R.drawable.credit_card, key = "CardRequest") }
-        item { ArrangeItem(title = AppNavRoute.FailRate.label, icon = AppNavRoute.FailRate.icon, key = "FailRateRequest") }
-        item { ArrangeItem(title = AppNavRoute.CourseSearch.label, icon = AppNavRoute.CourseSearch.icon, key = "CourseSearchRequest") }
-        item { ArrangeItem(title = AppNavRoute.TeacherSearch.label, icon = AppNavRoute.TeacherSearch.icon, key = "TeacherSearchRequest") }
-        item { ArrangeItem(title = AppNavRoute.Work.label, icon = AppNavRoute.Work.icon, key = "WorkSearchRequest") }
-        item { ArrangeItem(title = "好友课表列表", icon = AppNavRoute.NextCourse.icon, key = "FriendRequest") }
-        item { ArrangeItem(title = AppNavRoute.HaiLeWashing.label, icon = AppNavRoute.HaiLeWashing.icon, key = "HaileRequest") }
-        item { ArrangeItem(title = AppNavRoute.OfficeHall.label, icon = AppNavRoute.OfficeHall.icon, key = "OfficeHallRequest") }
-
-//        item { ArrangeItem(title = "通知公告", icon = R.drawable.stream, key = "NewsRequest",false) }
-        item { InnerPaddingHeight(innerPadding,false) }
-    }
-}
-
-
-@Composable
-fun ArrangeItem(title : String, icon : Int, key : String) {
+fun ArrangeItem() {
+    val key = "BookRequest"
     val pageSize = prefs.getString(key,MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString()
     var sliderPosition by remember { mutableFloatStateOf(pageSize.toFloat()) }
     val str = formatDecimal(sliderPosition.toDouble(),0)
-    CustomCard(color = MaterialTheme.colorScheme.surface) {
-        TransplantListItem(
-            overlineContent = { Text(text = title)},
-            headlineContent = { Text("$str 条/页")},
-            leadingContent = { Icon(painterResource(id = icon), contentDescription = "") },
-        )
-        PaddingHorizontalDivider()
-        CustomSlider(
-            value = sliderPosition,
-            onValueChange = {
-                sliderPosition = it
-                val str = formatDecimal(sliderPosition.toDouble(),0)
-                SharedPrefs.saveString(key,str)
-            },
-            steps = 39,
-            valueRange = 10f..50f,
-        )
-    }
-    Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
+    TransplantListItem(
+        headlineContent = { Text(text = "请求范围 | $str 条/页") },
+        supportingContent = { Text(text = "自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息") },
+        leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
+    )
+    CustomSlider(
+        value = sliderPosition,
+        onValueChange = {
+            sliderPosition = it
+            val str = formatDecimal(sliderPosition.toDouble(),0)
+            SharedPrefs.saveString(key,str)
+        },
+        steps = 39,
+        valueRange = 10f..50f,
+    )
+    Spacer(Modifier.height(APP_HORIZONTAL_DP))
 }

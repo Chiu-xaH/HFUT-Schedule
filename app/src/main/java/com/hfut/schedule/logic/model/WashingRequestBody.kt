@@ -9,7 +9,7 @@ data class HaiLeNearPositionRequestBody(
     val lat : Double,// 纬度
     val categoryCode : String? = null, // 01洗衣机 ,02烘干机，03洗鞋机，不加或00全部
     val page : Int,
-    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
+    val pageSize : Int = prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
 )
 
 data class HaiLeDeviceDetailRequestBody(
@@ -17,12 +17,12 @@ data class HaiLeDeviceDetailRequestBody(
     val floorCode : String? = null,
     val categoryCode : String? = null,
     val page : Int,
-    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
+    val pageSize : Int = prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
 )
 data class HaiLeTradeListRequestBody(
     val newOrderState : String? = null,
     val page : Int,
-    val pageSize : Int = prefs.getString("HaileRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
+    val pageSize : Int = prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
 )
 
 enum class HaiLeType(val typeCode : String,val description: String) {

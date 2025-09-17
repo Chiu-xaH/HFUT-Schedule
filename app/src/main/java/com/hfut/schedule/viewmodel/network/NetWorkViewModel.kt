@@ -1151,7 +1151,7 @@ class NetWorkViewModel() : ViewModel() {
                     className,
                     "1,${
                         prefs.getString(
-                            "CourseSearchRequest",
+                            "BookRequest",
                             MyApplication.DEFAULT_PAGE_SIZE.toString()
                         ) ?: MyApplication.DEFAULT_PAGE_SIZE
                     }",
@@ -1295,7 +1295,7 @@ class NetWorkViewModel() : ViewModel() {
         auth : String,
         page : Int,
         size : Int =
-            prefs.getString("CardRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull()
+            prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull()
                 ?: MyApplication.DEFAULT_PAGE_SIZE
     ) = launchRequestSimple(
         holder = huiXinBillResult,
@@ -1573,7 +1573,7 @@ class NetWorkViewModel() : ViewModel() {
     val huiXinSearchBillsResult = StateHolder<BillBean>()
     suspend fun searchBills(auth : String, info: String,page : Int) = launchRequestSimple(
         holder = huiXinSearchBillsResult,
-        request = { huiXin.searchBills(auth,info,page, prefs.getString("CardRequest","30") ?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
+        request = { huiXin.searchBills(auth,info,page, prefs.getString("BookRequest","30") ?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _, json -> parseHuiXinSearchBills(json) }
     )
     private fun parseHuiXinSearchBills(result : String) : BillBean = try {
@@ -1707,7 +1707,7 @@ class NetWorkViewModel() : ViewModel() {
     val failRateData = StateHolder<List<FailRateRecord>>()
     suspend fun searchFailRate(token : String, name: String, page : Int) = launchRequestSimple(
         holder = failRateData,
-        request = { community.getFailRate(token,name,page.toString(), prefs.getString("FailRateRequest", MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
+        request = { community.getFailRate(token,name,page.toString(), prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _,json -> parseFailRate(json) }
     )
     private fun parseFailRate(json : String) : List<FailRateRecord> = try {
@@ -1881,7 +1881,7 @@ class NetWorkViewModel() : ViewModel() {
     val applyFriendsResponse = StateHolder<List<ApplyingLists?>>()
     suspend fun getApplying(token : String) = launchRequestSimple(
         holder = applyFriendsResponse,
-        request = { community.getApplyingList(token, prefs.getString("FriendRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
+        request = { community.getApplyingList(token, prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?: MyApplication.DEFAULT_PAGE_SIZE.toString()).awaitResponse() },
         transformSuccess = { _,json -> parseApplyFriends(json) }
     )
     private fun parseApplyFriends(result : String) : List<ApplyingLists?> = try {

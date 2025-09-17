@@ -54,6 +54,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -76,6 +77,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -99,6 +101,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
@@ -107,6 +110,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
@@ -123,7 +127,9 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEven
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.uicommon.component.status.LoadingUI
@@ -593,71 +599,88 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             dialogText = "是否核对好信息无误?提交后若有问题可删除重新添加；上传的内容请遵守需符合规范，不得出现谎骗、低俗等内容"
         )
     }
-
-
+    val context = LocalContext.current
+    var bottomHeight by remember { mutableStateOf(0.dp) }
+    val color = MaterialTheme.colorScheme.surface
     Box(modifier = Modifier.fillMaxSize()) {
-        Button(
-            onClick = {
-                if(!isSupabase) {
-                    scope.launch {
-                        async {
-                            val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
-                                CustomEventDTO(
-                                    title = title,
-                                    dateTime = it,
-                                    type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
-                                    description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
-                                    remark = remark
-                                )
-                            }
-                            if(enabled && entity != null) {
-                                // 添加到数据库
-                                DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
-                                showToast("执行完成 请检查是否显示")
-                            }
-                        }.await()
-                        // 关闭
-                        launch { showChange(false) }
-                    }
-                } else {
-                    if(enabled)
-                        showSupabaseDialog = true
-                    else
-                        showChange(false)
-                }
-            },
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding()
-                .padding(horizontal = APP_HORIZONTAL_DP)
+                .measureDpSize { _,h ->
+                    bottomHeight = h
+                }
+//                .navigationBarsPadding()
                 .align(Alignment.BottomCenter)
                 .zIndex(2f)
-        ) {
-            if(!updateLoading)
-                Text(if(enabled) "添加" else "关闭")
-            else
-                LoadingIcon()
-        }
-        val context = LocalContext.current
+                .background(
+                    Brush.verticalGradient(
+                        colorStops = arrayOf(
+                            0.0f to color.copy(alpha = 0f),
+                            0.25f to color.copy(alpha = 0.65f),
+                            0.50f to color.copy(alpha = 0.80f),
+                            0.75f to color.copy(alpha = 0.95f),
+                            1.0f to color.copy(alpha = 1f),
+                        )
+                    )
+                )
+                .navigationBarsPadding()
+        ){
 
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            DividerTextExpandedWith("预览") {
-                CardListItem(
+            OutlinedCard(
+                shape = MaterialTheme.shapes.medium,
+                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP),
+            ) {
+                TransplantListItem(
                     headlineContent = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                     leadingContent = typeIcon,
                     overlineContent = { Text(remark,maxLines = 1,overflow = TextOverflow.Ellipsis) },
                     supportingContent =  if(description.isNotBlank() && description.isNotEmpty()) { { Text(description,maxLines = 1,overflow = TextOverflow.Ellipsis) } } else null,
-                    trailingContent = { FilledTonalIconButton(
-                        onClick = {
-                            scope.launch {
-                                activity?.let { addToCalendars(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second, description, title,null, it) }
-                            }
-                        }, enabled = enabled
-                    ) { Icon(painterResource(R.drawable.event_upcoming),null) } },
-                    modifier = Modifier.clickable { openOperation(description,context) }
                 )
             }
-            DividerTextExpandedWith("配置") {
+            Button(
+                onClick = {
+                    if(!isSupabase) {
+                        scope.launch {
+                            async {
+                                val entity = parseToDateTime(startDate = date.first, startTime = time.first, endDate = date.second, endTime = time.second)?.let {
+                                    CustomEventDTO(
+                                        title = title,
+                                        dateTime = it,
+                                        type = if(isScheduleType) CustomEventType.SCHEDULE else CustomEventType.NET_COURSE,
+                                        description = description.let { desp -> if(desp.isNotEmpty() && desp.isNotBlank()) desp else null },
+                                        remark = remark
+                                    )
+                                }
+                                if(enabled && entity != null) {
+                                    // 添加到数据库
+                                    DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
+                                    showToast("执行完成 请检查是否显示")
+                                }
+                            }.await()
+                            // 关闭
+                            launch { showChange(false) }
+                        }
+                    } else {
+                        if(enabled)
+                            showSupabaseDialog = true
+                    }
+                },
+                shape = MaterialTheme.shapes.medium,
+                enabled = updateLoading || enabled,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP)
+
+            ) {
+                if(!updateLoading)
+                    Text("添加")
+                else
+                    LoadingIcon()
+            }
+
+        }
+
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+//            DividerTextExpandedWith("配置") {
                 CardListItem(
                     headlineContent = { Text("类型: " + if(isScheduleType) "日程" else "网课" ) },
                     supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终；\n添加后，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine)；\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
@@ -912,9 +935,8 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 } else {
                     BottomTip("结果将保存在本地，若需共享请进入云端共建")
                 }
-            }
-
-            Spacer(Modifier.height(40.dp + APP_HORIZONTAL_DP))
+//            }
+            Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).navigationBarsPadding())
         }
     }
 }

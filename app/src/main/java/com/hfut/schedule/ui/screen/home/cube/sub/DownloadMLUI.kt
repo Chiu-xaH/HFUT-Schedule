@@ -22,6 +22,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +41,8 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.isModelInDownloadFolder
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -55,7 +58,8 @@ import com.xah.transition.util.TransitionPredictiveBackHandler
 fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?) {
     var scale by remember { mutableFloatStateOf(1f) }
     navController?.let {
-        TransitionPredictiveBackHandler(it,true) {
+        val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+        TransitionPredictiveBackHandler(it,enablePredictive) {
             scale = it
         }
     }

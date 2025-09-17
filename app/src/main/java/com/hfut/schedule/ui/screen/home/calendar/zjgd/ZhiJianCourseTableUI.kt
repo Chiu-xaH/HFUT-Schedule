@@ -197,6 +197,7 @@ fun ZhiJianCourseTableUI(
             } else {
                 clearUnit(table)
             }
+            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
 
             try {
                 // 组装

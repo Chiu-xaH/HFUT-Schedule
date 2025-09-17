@@ -130,8 +130,10 @@ val styleList = DataStoreManager.ColorStyle.entries
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,true) {
+    TransitionPredictiveBackHandler(navController,enablePredictive) {
         scale = it
     }
     UISettingsScreen(

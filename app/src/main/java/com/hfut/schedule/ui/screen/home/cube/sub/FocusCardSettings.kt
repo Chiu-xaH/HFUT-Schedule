@@ -85,6 +85,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebIn
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -104,8 +105,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostController) {
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,true) {
+    TransitionPredictiveBackHandler(navController,enablePredictive) {
         scale = it
     }
     var showBottomSheet by remember { mutableStateOf(false) }

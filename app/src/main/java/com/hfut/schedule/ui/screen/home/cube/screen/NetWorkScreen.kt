@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +28,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
@@ -36,6 +39,7 @@ import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
+import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionPredictiveBackHandler
 
@@ -45,8 +49,9 @@ fun NetWorkScreen(navController: NavHostController,
                   innerPaddings : PaddingValues,
                   ifSaved : Boolean,
 ) {
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,true) {
+    TransitionPredictiveBackHandler(navController,enablePredictive) {
         scale = it
     }
     val context = LocalContext.current
@@ -77,12 +82,7 @@ fun NetWorkScreen(navController: NavHostController,
                     modifier = Modifier.clickable { navController.navigate(Screen.FocusCardScreen.route) }
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "请求范围") },
-                    supportingContent = { Text(text = "自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息") },
-                    leadingContent = { Icon(painterResource(R.drawable.settings_ethernet), contentDescription = "Localized description",) },
-                    modifier = Modifier.clickable {  navController.navigate(Screen.RequestRangeScreen.route) }
-                )
+                ArrangeItem()
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "一卡通密码") },

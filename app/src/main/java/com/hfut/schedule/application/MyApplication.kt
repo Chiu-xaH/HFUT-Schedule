@@ -197,6 +197,7 @@ class MyApplication : Application() {
             CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
             CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
         )
+
     }
 
     override fun onCreate() {

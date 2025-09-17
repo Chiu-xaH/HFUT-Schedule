@@ -31,7 +31,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-15") },
+                overlineContent = { Text(text = "2025-09-17") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,7 +57,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
+            UpdateItems("新增 缓存清理支持清理应用内的网页缓存，以缓解越来越大的空间占用")
+            UpdateItems("重构 合并所有的请求范围","位于 选项-网络-请求范围")
+            UpdateItems("修复 合肥校区跨校区转专业后，由于作息表未及时变更，使课程表显示不全的Bug")
+            UpdateItems("优化 部分界面的显示")
+//            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")
 //            UpdateItems("新增 启动台支持一键清除最近记录")
 //            UpdateItems("新增 单独登录教务系统")

@@ -69,7 +69,7 @@ object Repository {
         request = { hall.search(
             name = text,
             page = page,
-            pageSize = prefs.getString("OfficeHallRequest",MyApplication.DEFAULT_PAGE_SIZE.toString())?.toInt() ?: MyApplication.DEFAULT_PAGE_SIZE,
+            pageSize = prefs.getString("BookRequest",MyApplication.DEFAULT_PAGE_SIZE.toString())?.toInt() ?: MyApplication.DEFAULT_PAGE_SIZE,
         ).awaitResponse() },
         transformSuccess = { _,json -> parseOfficeHallSearch(json) }
     )
@@ -80,7 +80,7 @@ object Repository {
 
     suspend fun searchTeacher(name: String = "", direction: String = "",teacherSearchData : StateHolder<TeacherResponse>) = launchRequestSimple(
         holder = teacherSearchData,
-        request = { teacher.searchTeacher(name=name, direction = direction, size = prefs.getString("TeacherSearchRequest",MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString() ).awaitResponse() },
+        request = { teacher.searchTeacher(name=name, direction = direction, size = prefs.getString("BookRequest",MyApplication.DEFAULT_PAGE_SIZE.toString()) ?: MyApplication.DEFAULT_PAGE_SIZE.toString() ).awaitResponse() },
         transformSuccess = { _,json -> parseTeacherSearch(json) }
     )
 
@@ -153,7 +153,7 @@ object Repository {
             workSearch.search(
                 keyword = keyword,
                 page = page,
-                pageSize = prefs.getString("WorkSearchRequest",MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
+                pageSize = prefs.getString("BookRequest",MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull() ?: MyApplication.DEFAULT_PAGE_SIZE,
                 type = type.let { if(it == 0) null else it },
                 token = "yxqqnn1700000" + if(campus == CampusRegion.XUANCHENG) "119" else "002"
             ).awaitResponse() },

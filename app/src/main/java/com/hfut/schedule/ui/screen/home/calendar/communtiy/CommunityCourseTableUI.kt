@@ -117,13 +117,15 @@ fun CommunityCourseTableUI(
     var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
     
     //填充UI与更新
-    fun refreshUI(showAll: Boolean) {
+    fun refreshUI() {
         // 清空
         if(showAll) {
             clearUnit(tableAll)
         } else {
             clearUnit(table)
         }
+        Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
+
         try {
             for (j in 0 until 7 ) {
                 val lists = getCourseInfoFromCommunity(j +1 ,currentWeek.toInt(),friendUserName)
@@ -387,7 +389,7 @@ fun CommunityCourseTableUI(
 
     //装载数组和信息
     LaunchedEffect(showAll,currentWeek) {
-        refreshUI(showAll)
+        refreshUI()
     }
 
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }

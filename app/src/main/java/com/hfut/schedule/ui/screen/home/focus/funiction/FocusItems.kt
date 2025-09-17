@@ -1,6 +1,9 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
@@ -59,19 +63,26 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.containerShare
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+
+private const val TOMORROW_CODE = -1
+private const val TODAY_CODE = -2
 
 @Composable
 fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
@@ -655,37 +666,30 @@ fun parseTimeItem(item : Int) : String = item.let {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, timeNow : String,vm : NetWorkViewModel) {
-
-    val switchShowEnded = prefs.getBoolean("SWITCHSHOWENDED",true)
-    //课程详情
+fun JxglstuTodayCourseItem(
+    index : Int,
+    item : JxglstuCourseSchedule,
+    switchShowEnded: Boolean,
+    timeNow : String,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     val time = item.time
-
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-
-
     val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
     val name = item.courseName
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            CourseDetailApi(courseName = name, vm = vm, hazeState = hazeState)
-        }
-    }
+    val route = AppNavRoute.CourseDetail.withArgs(name,CourseDetailOrigin.FOCUS_TODAY.t + "$index")
 
     val itemUI = @Composable {
         CardListItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { item.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
+            cardModifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope,route, MaterialTheme.shapes.medium),
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -707,8 +711,9 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
 
             },
             modifier = Modifier.clickable {
-                showBottomSheet = true
+                navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
             },
+            color = mixedCardNormalColor(),
             trailingContent = {
                 Text(
                     when(state) {
@@ -730,43 +735,34 @@ fun JxglstuTodayCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState, t
     }
 }
 
-private const val TOMORROW_CODE = -1
-private const val TODAY_CODE = -2
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun JxglstuTomorrowCourseItem(item : JxglstuCourseSchedule, hazeState: HazeState,vm: NetWorkViewModel) {
-
+fun JxglstuTomorrowCourseItem(
+    index : Int,
+    item : JxglstuCourseSchedule,
+    navController : NavHostController,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedContentScope: AnimatedContentScope,
+) {
     val time = item.time
-
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-
     val name = item.courseName
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            CourseDetailApi(courseName = name, vm = vm, hazeState = hazeState)
-        }
-    }
+    val route = AppNavRoute.CourseDetail.withArgs(name,CourseDetailOrigin.FOCUS_TOMORROW.t + "$index")
 
-//    val route = AppNavRoute.CourseDetail.withArgs(name,TOMORROW_CODE*time.start.hour)
     CardListItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { item.place?.let { Text(text = it) } },
+        cardModifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope,route, MaterialTheme.shapes.medium),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable {
-            showBottomSheet = true
+            navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
         },
+        color = mixedCardNormalColor(),
         trailingContent = { Text(text = "明日")}
     )
 }
-
 
 // 传入今天日期 YYYY-MM-DD 返回当天课程
 fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSchedule> {

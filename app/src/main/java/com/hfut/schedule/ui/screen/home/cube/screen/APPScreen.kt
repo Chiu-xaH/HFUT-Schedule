@@ -33,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -74,17 +75,17 @@ fun APPScreen(
     navController: NavHostController,
     innerPaddings: PaddingValues,
 ) {
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,true) {
+    TransitionPredictiveBackHandler(navController,enablePredictive) {
         scale = it
     }
+    val context = LocalContext.current
     val tabThumbFilePath = remember { mutableStateOf("") }
     val saveTrigger = remember { mutableIntStateOf(0) }
     if (saveTrigger.intValue == 1) {
         SaveComposeAsImage(saveTrigger, "my_tab", tabThumbFilePath)
     }
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
@@ -330,11 +331,11 @@ fun APPScreen(
                     headlineContent = { Text("缓存清理") },
                     leadingContent = { Icon(painterResource(R.drawable.mop),null)},
                     supportingContent = {
-                        Text("清理一些缓存，这不会影响应用数据\n如需清理更深的缓存，请在系统的应用管理中点击清除缓存")
+                        Text("清理一些缓存，这不会影响应用数据")
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
-                            val result = async { cleanCache() }.await()
+                            val result = async { cleanCache(context) }.await()
                             showToast("已清理 $result MB")
                         }
                     }

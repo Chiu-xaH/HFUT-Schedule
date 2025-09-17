@@ -67,8 +67,9 @@ fun FixUI(innerPadding : PaddingValues, vm : NetWorkViewModel, hazeState: HazeSt
     SharedPrefs.saveBoolean("SWITCHMYAPI", false, showapi)
     val scope = rememberCoroutineScope()
 
+    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(enable = true,navController = navController) {
+    TransitionPredictiveBackHandler(navController,enablePredictive) {
         scale = it
     }
     Column(modifier = Modifier

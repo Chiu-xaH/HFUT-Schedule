@@ -460,11 +460,11 @@ fun MainHost(
                         arguments = getArgs(AppNavRoute.CourseDetail.Args.entries)
                     ) { backStackEntry ->
                         val courseName = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.NAME.argName) ?: (AppNavRoute.CourseDetail.Args.NAME.default as String)
-                        val index = backStackEntry.arguments?.getInt(AppNavRoute.CourseDetail.Args.INDEX.argName) ?: (AppNavRoute.CourseDetail.Args.INDEX.default as Int)
+                        val id = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.INDEX.argName) ?: (AppNavRoute.CourseDetail.Args.INDEX.default as String)
 
                         CourseDetailApiScreen(
                             courseName,
-                            index,
+                            id,
                             networkVm,
                             this@SharedTransitionLayout,
                             this@composable,

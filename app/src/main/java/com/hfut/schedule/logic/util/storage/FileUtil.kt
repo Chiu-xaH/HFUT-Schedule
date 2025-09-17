@@ -1,6 +1,9 @@
 package com.hfut.schedule.logic.util.storage
 
+import android.content.Context
 import android.os.Environment
+import android.webkit.WebStorage
+import android.webkit.WebView
 import com.hfut.schedule.application.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -8,10 +11,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-suspend fun cleanCache(): Double = withContext(Dispatchers.IO) {
+suspend fun cleanCache(context : Context): Double = withContext(Dispatchers.IO) {
     var totalDeletedBytes = 0L
 
-    with(MyApplication.context) {
+    with(context) {
         async {
             launch {
                 // 删除 /Android/data/包名/files/Download
@@ -41,6 +44,10 @@ suspend fun cleanCache(): Double = withContext(Dispatchers.IO) {
                     totalDeletedBytes += getFileSize(it)
                     it.deleteRecursively()
                 }
+            }
+            launch() {
+                // WebView缓存
+                WebStorage.getInstance().deleteAllData()
             }
             launch {
                 // 删除 内部存储 Download 中 "聚在工大_" 开头的 .apk 文件

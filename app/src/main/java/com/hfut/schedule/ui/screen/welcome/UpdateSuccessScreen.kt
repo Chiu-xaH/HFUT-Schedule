@@ -49,6 +49,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -90,6 +91,7 @@ fun UpdateSuccessScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
 ) {
+    val context = LocalContext.current
     val route = remember { AppNavRoute.UpdateSuccess.route }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -152,7 +154,7 @@ fun UpdateSuccessScreen(
                 Button(
                     onClick = {
                         scope.launch {
-                            val result = async { cleanCache() }.await()
+                            val result = async { cleanCache(context ) }.await()
                             showToast("已清理缓存 $result MB")
                             async {
                                 SharedPrefs.saveString(

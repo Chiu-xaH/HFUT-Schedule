@@ -46,6 +46,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
 import com.hfut.schedule.ui.screen.home.focus.funiction.CommunityTodayCourseItem
@@ -64,6 +65,7 @@ import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.LoginViewModel
@@ -205,9 +207,12 @@ fun TodayScreen(
             SortType.CREATE_TIME -> customScheduleList.sortedBy { it.id }
         }.let { if (sortReversed) it.reversed() else it }
     }
+    val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
 
 
-    Box(modifier = Modifier.fillMaxSize().pullRefresh(states)) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pullRefresh(states)) {
         //lastTime字符串一定得到HH:MM格式，封装一个函数获取本地时间，再写代码比较两者
         HorizontalPager(state = state) { page ->
             val showTomorrow = when(courseDataSource) {
@@ -243,7 +248,7 @@ fun TodayScreen(
                                         if(!isHolidayTomorrow()) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(list[item], hazeState,vm)
+                                                    JxglstuTomorrowCourseItem(item,list[item],navController,sharedTransitionScope,animatedContentScope)
                                                 }
                                             }
                                         }
@@ -251,7 +256,7 @@ fun TodayScreen(
                                         if(!isHoliday()) {
                                             todayJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTodayCourseItem(list[item], hazeState,timeNow,vm)
+                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow,navController,sharedTransitionScope,animatedContentScope)
                                                 }
                                             }
                                         }
@@ -330,7 +335,7 @@ fun TodayScreen(
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(list[item], hazeState,vm)
+                                                    JxglstuTomorrowCourseItem(item,list[item],navController,sharedTransitionScope,animatedContentScope)
                                                 }
                                             }
                                         }
@@ -346,7 +351,9 @@ fun TodayScreen(
                 }
             }
         }
-        RefreshIndicator(refreshing, states, Modifier.padding(innerPadding).align(Alignment.TopCenter))
+        RefreshIndicator(refreshing, states, Modifier
+            .padding(innerPadding)
+            .align(Alignment.TopCenter))
     }
 }
 

@@ -83,6 +83,13 @@ import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
 
 
+enum class CourseDetailOrigin(val t : String) {
+    CALENDAR_JXGLSTU("教务方格"),
+    CALENDAR_NEXT("下学期方格"),
+    FOCUS_TOMORROW("明日聚焦"),
+    FOCUS_TODAY("今日聚焦")
+}
+
 fun parseCourseName(text : String) : String? {
     try {
         if(text.contains("\n")) {
@@ -156,13 +163,14 @@ fun JxglstuCourseTableUINext(
         timeTable = parseTimeTable(times,true)
     }
 
-    fun refreshUI(showAll : Boolean,timeList : List<CourseUnitBean>) {
+    fun refreshUI() {
         // 清空
         if(showAll) {
             clearUnit(tableAll)
         } else {
             clearUnit(table)
         }
+        Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
 
         try {
             // 组装
@@ -173,11 +181,11 @@ fun JxglstuCourseTableUINext(
 
             for (i in scheduleList.indices) {
                 val item = scheduleList[i]
-                var startTime = item.startTime.toString()
-                startTime =
-                    startTime.substring(0, startTime.length - 2) + ":" + startTime.substring(
-                        startTime.length - 2
-                    )
+                val startTime = item.startTime
+                val startHour = startTime / 100
+                val startMinute = startTime % 100
+                val startTimeStr = "$startHour:${startMinute.let { if(it < 10) "0${it}" else it }}"
+
                 var room = item.room?.nameZh
                 var courseId = item.lessonId.toString()
                 room = room?.replace("学堂","") ?: ""
@@ -189,7 +197,7 @@ fun JxglstuCourseTableUINext(
                     }
                 }
 
-                val text = startTime + "\n" + courseId + "\n" + room
+                val text = startTimeStr + "\n" + courseId + "\n" + room
 
                 if (item.weekIndex == currentWeek.toInt()) {
                     when(item.weekday) {
@@ -198,207 +206,207 @@ fun JxglstuCourseTableUINext(
                     }
                     if(showAll) {
                         if (item.weekday == 1) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[0].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[7].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[14].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[21].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[28].add(text)
                             }
                         }
                         if (item.weekday == 2) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[1].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[8].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[15].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[22].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[29].add(text)
                             }
                         }
                         if (item.weekday == 3) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[2].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[9].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[16].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[23].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[30].add(text)
                             }
                         }
                         if (item.weekday == 4) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[3].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[10].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[17].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[24].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[31].add(text)
                             }
                         }
                         if (item.weekday == 5) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[4].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[11].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[18].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[25].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[32].add(text)
                             }
                         }
                         if (item.weekday == 6) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[5].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[12].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[19].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[26].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[33].add(text)
                             }
                         }
                         if (item.weekday == 7) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 tableAll[6].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 tableAll[13].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 tableAll[20].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 tableAll[27].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 tableAll[34].add(text)
                             }
                         }
                     } else {
                         if (item.weekday == 1) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 table[0].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 table[5].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 table[10].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 table[15].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 table[20].add(text)
                             }
                         }
                         if (item.weekday == 2) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 table[1].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 table[6].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 table[11].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 table[16].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 table[21].add(text)
                             }
                         }
                         if (item.weekday == 3) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 table[2].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 table[7].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 table[12].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 table[17].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 table[22].add(text)
                             }
                         }
                         if (item.weekday == 4) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 table[3].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 table[8].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 table[13].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 table[18].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 table[23].add(text)
                             }
                         }
                         if (item.weekday == 5) {
-                            if (item.startTime == timeList[0].startTime || item.startTime == timeList[1].startTime) {
+                            if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
                                 table[4].add(text)
                             }
-                            if (item.startTime == timeList[2].startTime || item.startTime == timeList[3].startTime) {
+                            if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
                                 table[9].add(text)
                             }
-                            if (item.startTime == timeList[4].startTime || item.startTime == timeList[5].startTime) {
+                            if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
                                 table[14].add(text)
                             }
-                            if (item.startTime == timeList[6].startTime || item.startTime == timeList[7].startTime) {
+                            if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
                                 table[19].add(text)
                             }
-                            if (item.startTime == timeList[8].startTime || item.startTime == timeList[9].startTime || item.startTime == timeList[10].startTime) {
+                            if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
                                 table[24].add(text)
                             }
                         }
@@ -418,7 +426,7 @@ fun JxglstuCourseTableUINext(
     }
 
     LaunchedEffect(showAll,currentWeek,times) {
-        refreshUI(showAll,timeTable)
+        refreshUI()
     }
 
     Box(modifier = Modifier.fillMaxHeight()) {
@@ -433,9 +441,8 @@ fun JxglstuCourseTableUINext(
             state = scrollState
         ) {
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
-            items(style.rowCount*style.columnCount, key = { it }) { cell ->
-                val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                val route = AppNavRoute.CourseDetail.withArgs(AppNavRoute.CourseDetail.Args.NAME.default as String,cell)
+            items(style.rowCount*style.columnCount, key = { it }) { index ->
+                val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
                 if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
                     Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
                 } else {
@@ -456,34 +463,39 @@ fun JxglstuCourseTableUINext(
                                 // 只有一节课
                                 if (texts.size == 1) {
                                     val name =
-                                        parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                                        parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
                                     if (name != null) {
-                                        navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, cell))
+                                        navController.navigateForTransition(AppNavRoute.CourseDetail,AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_NEXT.t + "$index"))
                                     }
                                 } else if (texts.size > 1) {
                                     multiWeekday =
-                                        if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                        if (showAll) (index + 1) % 7 else (index + 1) % 5
                                     multiWeek = currentWeek.toInt()
                                     courses = texts
                                     showBottomSheetMultiCourse = true
                                 }
                             }
-                            .containerShare(
-                                sharedTransitionScope,
-                                animatedContentScope,
-                                route = if (texts.size == 1) {
-                                    val name =
-                                        parseCourseName(if (showAll) tableAll[cell][0] else table[cell][0])
+                            .let {
+                                val route = if(texts.size == 1) {
+                                    val name = parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
                                     if (name != null) {
-                                        AppNavRoute.CourseDetail.withArgs(name,cell)
+                                        AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_NEXT.t + "$index")
                                     } else {
-                                        route
+                                        null
                                     }
                                 } else {
-                                    route
-                                },
-                                roundShape = MaterialTheme.shapes.extraSmall,
-                            )
+                                    null
+                                }
+
+                                route?.let { it1 ->
+                                    it.containerShare(
+                                        sharedTransitionScope,
+                                        animatedContentScope,
+                                        route = it1,
+                                        roundShape = MaterialTheme.shapes.extraSmall,
+                                    )
+                                } ?: it
+                            }
                     ) {
                         if(texts.size == 1) {
                             val l = texts[0].split("\n")

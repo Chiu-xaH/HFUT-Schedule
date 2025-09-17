@@ -94,12 +94,12 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object CourseDetail : AppNavRoute("COURSE_DETAIL","课程详情",R.drawable.category) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             NAME("name", NavType.StringType,"课程详情",false),
-            INDEX("index",NavType.IntType,-1,false)
+            INDEX("id",NavType.StringType,"-1",false)
         }
         fun receiveRoute() = receiveRoutePair(Args.entries)
-        fun withArgs(courseName : String,index : Int): String = withArgs(
+        fun withArgs(courseName : String,id : String): String = withArgs(
             Args.NAME.argName to courseName,
-            Args.INDEX.argName to index
+            Args.INDEX.argName to id
         )
     }
     object WebVpn : AppNavRoute("WEBVPN","WebVpn",R.drawable.vpn_key)

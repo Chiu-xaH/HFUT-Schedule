@@ -152,7 +152,7 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
 @Composable
 fun CourseDetailApiScreen(
     courseName : String,
-    index : Int,
+    id : String,
     vm : NetWorkViewModel,
     sharedTransitionScope: SharedTransitionScope,
     animatedContentScope: AnimatedContentScope,
@@ -180,7 +180,7 @@ fun CourseDetailApiScreen(
             courseBookData = data
         }
     }
-    val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,index) }
+    val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,id) }
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold(

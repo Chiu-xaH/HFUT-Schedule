@@ -284,6 +284,9 @@ fun JxglstuCourseTableSearch(
         } else {
             clearUnit(table)
         }
+        vmUI?.let {
+            Handler(Looper.getMainLooper()).post { it.findNewCourse.value = false }
+        }
 
         try {
             // 组装
