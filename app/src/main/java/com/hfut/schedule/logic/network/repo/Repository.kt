@@ -30,6 +30,7 @@ import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.api.AdmissionService
 import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.HaiLeWashingService
+import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.api.OfficeHallService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.VercelForecastService
@@ -37,6 +38,7 @@ import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.servicecreator.AdmissionServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.HaiLeWashingServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OfficeHallServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.VercelForecastServiceCreator
@@ -46,6 +48,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.flow.first
 import retrofit2.awaitResponse
 
@@ -58,6 +61,21 @@ object Repository {
     private val haiLe = HaiLeWashingServiceCreator.create(HaiLeWashingService::class.java)
     private val admission = AdmissionServiceCreator.create(AdmissionService::class.java)
     private val hall = OfficeHallServiceCreator.create(OfficeHallService::class.java)
+    private val library = LibraryServiceCreator.create(LibraryService::class.java)
+
+
+
+    suspend fun checkLibraryLogin(token : String,holder : StateHolder<Boolean>) = launchRequestSimple(
+        holder = holder,
+        request = { library.checkLogin(token).awaitResponse() },
+        transformSuccess = { _,json -> parseCheckLibraryLogin(json) }
+    )
+    @JvmStatic
+    private fun parseCheckLibraryLogin(json : String) : Boolean = try {
+        val sId = getPersonInfo().studentId ?: return false
+        val name = getPersonInfo().name ?: return false
+        json.contains(sId) || json.contains(name)
+    } catch (e : Exception) { throw e }
 
 
     suspend fun officeHallSearch(

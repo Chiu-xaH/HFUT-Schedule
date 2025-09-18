@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.network.servicecreator.login
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.servicecreator.BaseServiceCreator
-import com.hfut.schedule.logic.network.interceptor.RedirectInterceptor
+import com.hfut.schedule.logic.network.interceptor.RedirectTicketInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -12,7 +12,7 @@ object LoginServiceCreator {
     val Client = OkHttpClient.Builder()
         .followRedirects(false)
         .followSslRedirects(false)
-        .addInterceptor(RedirectInterceptor())
+        .addInterceptor(RedirectTicketInterceptor())
         .build()
 
 

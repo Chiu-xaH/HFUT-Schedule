@@ -669,7 +669,24 @@ fun JxglstuCourseTableUI(
                    }
                    // 图书馆
                    launch library@ {
-
+                       if(useWebVpn) {
+                           return@library
+                       }
+                       val auth = prefs.getString("LibraryToken", "")
+                       if(auth == null || auth.isEmpty()) {
+                           vm.gotoLibrary(cookies)
+                       } else {
+                           // 检测可用性
+                           vm.checkLibraryLogin(auth)
+                           val result =  (vm.checkLibraryLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+//                               showToast("无需刷新学工平台")
+                               return@library
+                           } else {
+                               // 登录
+                               vm.gotoLibrary(cookies)
+                           }
+                       }
                    }
                    // 指间工大
                    launch zhiJian@ {

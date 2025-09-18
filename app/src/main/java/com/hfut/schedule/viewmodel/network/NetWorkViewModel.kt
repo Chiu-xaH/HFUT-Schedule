@@ -789,6 +789,10 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun gotoZhiJian(cookie : String) = launchRequestNone {
         login.loginGoTo(service = LoginType.ZHI_JIAN.service,cookie = cookie).awaitResponse()
     }
+    suspend fun gotoLibrary(cookie : String) = launchRequestNone {
+        login.loginGoTo(service = LoginType.LIBRARY.service,cookie = cookie).awaitResponse()
+    }
+
 
 
 
@@ -803,6 +807,9 @@ class NetWorkViewModel() : ViewModel() {
         json.contains(sId)
     } catch (e : Exception) { throw e }
 
+
+    val checkLibraryLoginResp = StateHolder<Boolean>()
+    suspend fun checkLibraryLogin(token : String) = Repository.checkLibraryLogin(token,checkLibraryLoginResp)
 
     val loginCommunityData = StateHolder<String>()
     suspend fun loginCommunity(ticket : String) = launchRequestSimple(

@@ -5,14 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.xah.transition.state.TransitionState
 
-//
-//fun NavController.navigateAndClear(route: String) {
-//    navigate(route) {
-//        popUpTo(graph.startDestinationId) { inclusive = true } // 清除所有历史记录
-//        launchSingleTop = true // 避免多次实例化相同的目的地
-//    }
-//}
-
 fun NavController.navigateWithSave(route: String) {
     navigate(route) {
         launchSingleTop = true
@@ -40,21 +32,6 @@ fun NavController.currentRouteWithArgWithoutValues() : String? = this.currentBac
 @Composable
 fun NavController.currentRouteWithoutArgs() : String? =  currentRouteWithArgWithoutValues()?.substringBefore("?")
 
-//@Composable
-//fun NavController.currentRouteWithArgsWithValues(): String? {
-//    val navBackStackEntry by currentBackStackEntryAsState()
-//    val routeTemplate = navBackStackEntry?.destination?.route?.substringBefore("?") ?: return null
-//    val args = navBackStackEntry?.arguments ?: return routeTemplate
-//
-//    val paramStr = args.keySet()
-//        .filter { it != "android-support-nav:controller:deepLinkIntent" } // 排除系统参数
-//        .joinToString("&") { key ->
-//            val value = args.get(key)
-//            "$key=$value"
-//        }
-//    return if (paramStr.isNotEmpty()) "$routeTemplate?$paramStr" else routeTemplate
-//}
-
 @Composable
 fun NavController.isCurrentRouteWithoutArgs(route: String) : Boolean = currentRouteWithoutArgs() == route.substringBefore("?")
 
@@ -63,21 +40,6 @@ fun NavController.previousRouteWithArgWithoutValues(): String? = this.previousBa
 
 @Composable
 fun NavController.previousRouteWithoutArgs() : String? =  previousRouteWithArgWithoutValues()?.substringBefore("?")
-
-//@Composable
-//fun NavController.previousRouteWithArgsWithValues(): String? {
-//    val routeTemplate = previousBackStackEntry?.destination?.route?.substringBefore("?") ?: return null
-//    val args = previousBackStackEntry?.arguments ?: return routeTemplate
-//
-//    val paramStr = args.keySet()
-//        .filter { it != "android-support-nav:controller:deepLinkIntent" } // 排除系统参数
-//        .joinToString("&") { key ->
-//            val value = args.get(key)
-//            "$key=$value"
-//        }
-//    return if (paramStr.isNotEmpty()) "$routeTemplate?$paramStr" else routeTemplate
-//}
-
 
 // 所有
 fun NavController.allRouteStack() : List<String> = this.currentBackStack.value.mapNotNull { it.destination.route }

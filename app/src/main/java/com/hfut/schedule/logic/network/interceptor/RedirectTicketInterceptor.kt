@@ -3,7 +3,6 @@ package com.hfut.schedule.logic.network.interceptor
 import android.util.Log
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.encodeUrl
-import com.hfut.schedule.logic.network.StatusCode
 import com.hfut.schedule.logic.network.isNotBadRequest
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
@@ -13,7 +12,7 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import kotlin.text.substringAfter
 
-class RedirectInterceptor() : Interceptor {
+class RedirectTicketInterceptor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         val response = chain.proceed(request)
@@ -88,6 +87,17 @@ class RedirectInterceptor() : Interceptor {
                     parseLoginJxglstu(nextResponse.headers)
                     nextResponse.close()
                 }
+                location.contains(MyApplication.NEW_LIBRARY_URL) -> {
+                    // 图书馆登录
+                    // 向前重定向一次
+                    val newRequest = request
+                        .newBuilder()
+                        .url(location)
+                        .build()
+                    val nextResponse = chain.proceed(newRequest)
+                    parseLoginLibrary(nextResponse.headers)
+                    nextResponse.close()
+                }
             }
         }
         return response
@@ -132,4 +142,16 @@ private fun parseLoginZhiJian(headers: Headers) : String? = try {
 } catch (e : Exception) {
     e.printStackTrace()
     null
+}
+
+private fun parseLoginLibrary(headers: Headers)  = try {
+    val token = headers.toString().substringAfter("Authorization=").substringBefore(";")
+    if (token.contains("ey")) {
+        saveString("LibraryToken", "Bearer $token")
+        showToast("图书馆登陆成功")
+    } else {
+        showToast("图书馆登陆失败")
+    }
+} catch (e : Exception) {
+    e.printStackTrace()
 }

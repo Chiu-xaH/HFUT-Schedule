@@ -16,21 +16,21 @@ class GotoInterceptor : Interceptor {
         val response = chain.proceed(request)
         val location = response.headers("Location")
         val locationStr = location.toString()
-        // 登录信息门户
         Log.d("CAS拦截器",locationStr)
-        if (locationStr.contains("code=")) {
-            Log.d("信息门户登录",locationStr)
-            CasGoToInterceptorState.toOneCode.value = location[0]
+        when {
+            locationStr.contains("code=") -> {
+                // 登录信息门户
+                CasGoToInterceptorState.toOneCode.value = location[0]
+            }
+            locationStr.contains("synjones") -> {
+                // 登录慧新易校
+                parseHuiXinAuth(locationStr)
+            }
         }
-        // 登录慧新易校
-        if (locationStr.contains("synjones")) {
-            Log.d("慧新易校登录",locationStr)
-            parseHuiXinAuth(locationStr)
-        }
-        // 登录一些别的平台
         return response
     }
 }
+
 private fun parseHuiXinAuth(location : String) {
     var key = location.substringAfter("synjones-auth=").substringBefore("&")
     SharedPrefs.saveString("auth",key)
