@@ -52,7 +52,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.getTodayCampusApps
-import com.hfut.schedule.logic.util.network.state.CasInHFUT
+import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs

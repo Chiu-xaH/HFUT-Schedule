@@ -58,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -180,7 +181,7 @@ fun JxglstuCourseTableTwo(
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
-                prefs.getString("courses","")?.let { value = vm.parseDatumCourse(it) }
+                prefs.getString("courses","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
             TotalCourseDataSource.SEARCH -> {
                 onListenStateHolder(vm.courseSearchResponse) { data ->
@@ -188,7 +189,7 @@ fun JxglstuCourseTableTwo(
                 }
             }
             TotalCourseDataSource.MINE_NEXT -> {
-                prefs.getString("coursesNext","")?.let { value = vm.parseDatumCourse(it) }
+                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
         }
     }

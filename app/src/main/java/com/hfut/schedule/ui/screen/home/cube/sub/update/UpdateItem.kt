@@ -59,6 +59,8 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
 //            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
             UpdateItems("新增 图书馆的登录")
+            UpdateItems("新增 斛兵知搜","位于 查询中心-图书馆，搜素全局文献、馆藏图书、电子书等资源")
+            UpdateItems("新增 图书馆-我的","位于 查询中心-图书馆")
 //            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")
 //            UpdateItems("新增 启动台支持一键清除最近记录")

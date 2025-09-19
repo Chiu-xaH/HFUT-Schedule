@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.development.getExceptionDetail
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE

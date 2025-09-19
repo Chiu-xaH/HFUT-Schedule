@@ -6,9 +6,10 @@ import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.model.QWeatherResponse
 import com.hfut.schedule.logic.model.QWeatherWarnBean
 import com.hfut.schedule.logic.model.QWeatherWarnResponse
-import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
+import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import retrofit2.awaitResponse
@@ -16,22 +17,24 @@ import retrofit2.awaitResponse
 object QWeatherRepository {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
-    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : StateHolder<List<QWeatherWarnBean>>) = launchRequestSimple(
-        holder = weatherWarningData,
-        request = { qWeather.getWeatherWarn(locationID = getLocation(campus)).awaitResponse() },
-        transformSuccess = { _,json -> parseWeatherWarn(json) }
-    )
+    suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : StateHolder<List<QWeatherWarnBean>>) =
+        launchRequestSimple(
+            holder = weatherWarningData,
+            request = { qWeather.getWeatherWarn(locationID = getLocation(campus)).awaitResponse() },
+            transformSuccess = { _, json -> parseWeatherWarn(json) }
+        )
 
     @JvmStatic
     private fun parseWeatherWarn(json : String) : List<QWeatherWarnBean> = try {
         Gson().fromJson(json, QWeatherWarnResponse::class.java).warning
     } catch (e : Exception) { throw e }
 
-    suspend fun getWeather(campus: CampusRegion, qWeatherResult : StateHolder<QWeatherNowBean>) = launchRequestSimple(
-        holder = qWeatherResult,
-        request = { qWeather.getWeather(locationID = getLocation(campus)).awaitResponse() },
-        transformSuccess = { _, json -> parseWeatherNow(json) }
-    )
+    suspend fun getWeather(campus: CampusRegion, qWeatherResult : StateHolder<QWeatherNowBean>) =
+        launchRequestSimple(
+            holder = qWeatherResult,
+            request = { qWeather.getWeather(locationID = getLocation(campus)).awaitResponse() },
+            transformSuccess = { _, json -> parseWeatherNow(json) }
+        )
 
 
     @JvmStatic

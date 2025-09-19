@@ -14,6 +14,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getWebInfoFromHuiXin
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -74,7 +75,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
             // 切换到WEBVPN模式尝试
             GlobalUIStateHolder.webVpn = true
 //            vm.webVpn = true
-            vm.updateServices()
+            JxglstuRepository.updateServices()
             val c = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
             vm.getStudentId(c)
             val studentId = (vm.studentId.state.value as? UiState.Success)?.data
@@ -82,7 +83,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
                 // 复原
                 GlobalUIStateHolder.webVpn = false
 //                vm.webVpn = false
-                vm.updateServices()
+                JxglstuRepository.updateServices()
                 return@launch
             }
             launch { vm.getBizTypeId(c,studentId) }

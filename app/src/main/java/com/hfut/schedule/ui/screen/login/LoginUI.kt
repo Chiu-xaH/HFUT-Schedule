@@ -74,7 +74,7 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.Encrypt
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE

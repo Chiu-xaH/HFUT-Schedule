@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.network.interceptor
 import android.util.Log
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.encodeUrl
-import com.hfut.schedule.logic.network.isNotBadRequest
+import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo

@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.network.ParseJsons.getMy
+import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import java.time.LocalDate
 
@@ -102,8 +102,8 @@ fun getStartWeekFromCommunity() : LocalDate {
             start = when(month) {
                 1 -> DateTimeManager.Date_yyyy + "-02-23"
                 in 2..7 -> DateTimeManager.Date_yyyy + "-02-23"
-                in 8..12 -> DateTimeManager.Date_yyyy + "-09-09"
-                else -> DateTimeManager.Date_yyyy + "-09-09"
+                in 8..12 -> DateTimeManager.Date_yyyy + "-09-08"
+                else -> DateTimeManager.Date_yyyy + "-09-08"
             }
         }
         return LocalDate.parse(start)

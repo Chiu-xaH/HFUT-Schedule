@@ -40,6 +40,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
@@ -176,7 +177,7 @@ fun CourseDetailApiScreen(
     LaunchedEffect(courseBookJson) {
 //         是JSON
         if(courseBookJson.contains("{")) {
-            val data = vm.parseCourseBook(courseBookJson)
+            val data = JxglstuRepository.parseCourseBook(courseBookJson)
             courseBookData = data
         }
     }
@@ -228,7 +229,7 @@ fun CourseDetailApi(isNext : Boolean = false, courseName : String, vm : NetWorkV
     LaunchedEffect(courseBookJson) {
 //         是JSON
         if(courseBookJson.contains("{")) {
-            val data = vm.parseCourseBook(courseBookJson)
+            val data = JxglstuRepository.parseCourseBook(courseBookJson)
             courseBookData = data
         }
     }

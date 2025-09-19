@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -97,7 +98,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
-                prefs.getString("courses","")?.let { value = vm.parseDatumCourse(it) }
+                prefs.getString("courses","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
             TotalCourseDataSource.SEARCH -> {
                 onListenStateHolder(vm.courseSearchResponse) { data ->
@@ -105,7 +106,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
                 }
             }
             TotalCourseDataSource.MINE_NEXT -> {
-                prefs.getString("coursesNext","")?.let { value = vm.parseDatumCourse(it) }
+                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
         }
     }
@@ -113,7 +114,7 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
     LaunchedEffect(courseBookJson) {
 //         是JSON
         if(courseBookJson.contains("{")) {
-            val data = vm.parseCourseBook(courseBookJson)
+            val data = JxglstuRepository.parseCourseBook(courseBookJson)
             courseBookData = data
         }
     }

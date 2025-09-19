@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventsInput
-import com.hfut.schedule.logic.util.network.supabaseEventEntityToDto
+import com.hfut.schedule.logic.network.util.supabaseEventEntityToDto
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 fun getEvents(vm: NetWorkViewModel) : List<SupabaseEventsInput> {

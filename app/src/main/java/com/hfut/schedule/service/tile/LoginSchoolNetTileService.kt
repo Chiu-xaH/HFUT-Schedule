@@ -7,12 +7,12 @@ import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import android.widget.Toast
 import androidx.annotation.RequiresPermission
-import com.hfut.schedule.logic.network.repo.Repository
+import com.hfut.schedule.logic.network.repo.hfut.Repository
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.network.repo.LoginSchoolNetRepository
+import com.hfut.schedule.logic.network.repo.hfut.LoginSchoolNetRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

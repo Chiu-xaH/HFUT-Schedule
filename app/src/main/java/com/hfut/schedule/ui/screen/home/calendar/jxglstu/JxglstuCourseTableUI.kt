@@ -68,10 +68,10 @@ import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
-import com.hfut.schedule.logic.network.isNotBadRequest
+import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
-import com.hfut.schedule.logic.util.network.ParseJsons.isNextOpen
-import com.hfut.schedule.logic.util.network.state.CasInHFUT
+import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
+import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -191,7 +191,7 @@ private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
     CasGoToInterceptorState.toOneCode
         .filterNotNull()
         .collect { value ->
-            vm.getToken(value)
+            vm.loginOne(value)
         }
 }
 

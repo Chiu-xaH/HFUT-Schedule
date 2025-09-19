@@ -3,8 +3,8 @@ package com.hfut.schedule.viewmodel.network
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
-import com.hfut.schedule.logic.network.repo.GuaGuaRepository
-import com.hfut.schedule.logic.network.repo.Repository
+import com.hfut.schedule.logic.network.repo.hfut.GuaGuaRepository
+import com.hfut.schedule.logic.network.repo.hfut.Repository
 import com.hfut.schedule.logic.util.network.state.StateHolder
 
 // 5个函数

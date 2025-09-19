@@ -1,4 +1,4 @@
-package com.hfut.schedule.shortcut
+package com.hfut.schedule.logic.util.shortcut
 
 import android.content.Context
 import android.content.Intent
@@ -15,6 +15,7 @@ object AppShortcutManager {
 
         // 构造启动 MainActivity 的 Intent，带参数
         val intent = Intent(context, MainActivity::class.java).apply {
+//            Intent.setAction = Intent.ACTION_VIEW
             action = Intent.ACTION_VIEW
             putExtra("route", AppNavRoute.Scan.route)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)

@@ -8,11 +8,11 @@ import com.hfut.schedule.logic.enumeration.LoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.WebVpnService
-import com.hfut.schedule.logic.network.repo.CasLoginRepository
-import com.hfut.schedule.logic.network.repo.launchRequestSimple
+import com.hfut.schedule.logic.network.repo.hfut.CasLoginRepository
+import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebVpnServiceCreator
-import com.hfut.schedule.logic.util.network.state.CasInHFUT
+import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
@@ -34,11 +34,11 @@ class LoginViewModel : ViewModel() {
     val location = MutableLiveData<String>()
 
     val jSessionId = StateHolder<CasGetFlavorBean>() // JSESSION
-    suspend fun getKey() = CasLoginRepository.getKey(jSessionId)
+    suspend fun getKey() = CasLoginRepository.getEncryptKey(jSessionId)
 
     //  execution,SESSION
     val executionAndSession = StateHolder<Pair<String, String>>()
-    suspend fun getCookie() = CasLoginRepository.getCookie(executionAndSession)
+    suspend fun getCookie() = CasLoginRepository.getCasCookie(executionAndSession)
 
 
     var ticketStValue = MutableLiveData<String?>()

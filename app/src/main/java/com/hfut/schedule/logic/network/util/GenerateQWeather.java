@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.util.network;
+package com.hfut.schedule.logic.network.util;
 
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPrivateKey;

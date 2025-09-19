@@ -2,15 +2,24 @@ package com.hfut.schedule.logic.network.repo
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
+import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.GithubBean
 import com.hfut.schedule.logic.model.GithubFolderBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.network.api.GiteeService
 import com.hfut.schedule.logic.network.api.GithubRawService
 import com.hfut.schedule.logic.network.api.GithubService
+import com.hfut.schedule.logic.network.api.MyService
 import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
+import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import okhttp3.Headers
@@ -24,12 +33,60 @@ object GithubRepository {
     private val github = GithubServiceCreator.create(GithubService::class.java)
     private val githubRaw = GithubRawServiceCreator.create(GithubRawService::class.java)
     private val gitee = GiteeServiceCreator.create(GiteeService::class.java)
+    private val myAPI = MyServiceCreator.create(MyService::class.java)
 
+
+    fun getMyApi() {
+        val call = myAPI.my()
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                saveString("my", response.body()?.string())
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
+        })
+    }
+
+    suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : StateHolder<ProgramSearchBean>) =
+        launchRequestSimple(
+            holder = holder,
+            request = {
+                myAPI.getProgram(
+                    id,
+                    when (campus) {
+                        HEFEI -> "hefei"
+                        XUANCHENG -> "xuancheng"
+                    }
+                ).awaitResponse()
+            },
+            transformSuccess = { _, json -> parseProgramSearchInfo(json) }
+        )
+    private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
+        Gson().fromJson(json,ProgramSearchResponse::class.java).data
+    } catch (e : Exception) { throw e }
+
+    suspend fun getProgramList(campus : CampusRegion,holder : StateHolder<List<ProgramListBean>>) =
+        launchRequestSimple(
+            holder = holder,
+            request = {
+                myAPI.getProgramList(
+                    when (campus) {
+                        HEFEI -> "hefei"
+                        XUANCHENG -> "xuancheng"
+                    }
+                ).awaitResponse()
+            },
+            transformSuccess = { _, json -> parseProgramSearch(json) }
+        )
+    @JvmStatic
+    private fun parseProgramSearch(json : String) : List<ProgramListBean> = try {
+        val data: List<ProgramListBean> = Gson().fromJson(json,object : TypeToken<List<ProgramListBean>>() {}.type)
+        data
+    } catch (e : Exception) { throw e }
 
     suspend fun getStarNum(githubStarsData : StateHolder<Int>) = launchRequestSimple(
         holder = githubStarsData,
         request = { github.getRepoInfo().awaitResponse() },
-        transformSuccess = { _,json -> parseGithubStarNum(json) }
+        transformSuccess = { _, json -> parseGithubStarNum(json) }
     )
 
     @JvmStatic
@@ -37,11 +94,12 @@ object GithubRepository {
         Gson().fromJson(json,GithubBean::class.java).stargazers_count
     } catch (e : Exception) { throw e }
 
-    suspend fun getUpdateContents(holder : StateHolder<List<GithubFolderBean>>) = launchRequestSimple(
-        holder = holder,
-        request = { github.getFolderContent().awaitResponse() },
-        transformSuccess = { _,json -> parseUpdateContents(json) }
-    )
+    suspend fun getUpdateContents(holder : StateHolder<List<GithubFolderBean>>) =
+        launchRequestSimple(
+            holder = holder,
+            request = { github.getFolderContent().awaitResponse() },
+            transformSuccess = { _, json -> parseUpdateContents(json) }
+        )
 
     @JvmStatic
     private fun parseUpdateContents(json : String) : List<GithubFolderBean> = try {
@@ -64,11 +122,12 @@ object GithubRepository {
     }
 
 
-    suspend fun getUpdateFileSize(fileName : String,holder : StateHolder<Double>) = launchRequestSimple(
-        holder = holder,
-        request = { gitee.download(fileName).awaitResponse() },
-        transformSuccess = { headers -> parseGiteeFileSize(headers) }
-    )
+    suspend fun getUpdateFileSize(fileName : String,holder : StateHolder<Double>) =
+        launchRequestSimple(
+            holder = holder,
+            request = { gitee.download(fileName).awaitResponse() },
+            transformSuccess = { headers -> parseGiteeFileSize(headers) }
+        )
 
     @JvmStatic
     private fun parseGiteeFileSize(headers: Headers): Double = try {
@@ -79,7 +138,7 @@ object GithubRepository {
     suspend fun getUpdate(holder : StateHolder<GiteeReleaseResponse>) = launchRequestSimple(
         request = { gitee.getUpdate().awaitResponse() },
         holder = holder,
-        transformSuccess = { _,json -> parseGiteeUpdates(json) }
+        transformSuccess = { _, json -> parseGiteeUpdates(json) }
     )
     @JvmStatic
     private fun parseGiteeUpdates(json : String) : GiteeReleaseResponse = try {

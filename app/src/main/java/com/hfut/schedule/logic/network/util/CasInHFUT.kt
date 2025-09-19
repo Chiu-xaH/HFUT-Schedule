@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.util.network.state
+package com.hfut.schedule.logic.network.util
 
 import org.jsoup.Jsoup
 

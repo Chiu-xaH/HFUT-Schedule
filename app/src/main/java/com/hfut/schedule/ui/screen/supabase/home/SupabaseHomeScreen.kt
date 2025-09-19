@@ -56,8 +56,8 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
-import com.hfut.schedule.logic.util.network.toStr
-import com.hfut.schedule.logic.util.network.toTimestampWithOutT
+import com.hfut.schedule.logic.network.util.toStr
+import com.hfut.schedule.logic.network.util.toTimestampWithOutT
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.align.CenterScreen

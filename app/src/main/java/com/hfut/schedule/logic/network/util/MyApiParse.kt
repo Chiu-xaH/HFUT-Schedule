@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.util.network
+package com.hfut.schedule.logic.network.util
 
 import com.google.gson.Gson
 import com.hfut.schedule.logic.database.DataBaseManager
@@ -12,7 +12,7 @@ import com.hfut.schedule.logic.util.storage.SharedPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object ParseJsons {
+object MyApiParse {
     @JvmStatic
     fun getMy() : MyAPIResponse? {
         val json = SharedPrefs.prefs.getString("my","")
@@ -43,22 +43,7 @@ object ParseJsons {
             )
         }
     }
-    @JvmStatic
-    fun useCaptcha() : Boolean {
-        return try {
-            getMy()!!.useCaptcha
-        } catch (e: Exception) {
-            false
-        }
-    }
-    @JvmStatic
-    fun getURL() : String {
-        return try {
-            getMy()!!.API
-        } catch (e : Exception) {
-            "https://www.chiuxah.xyz/"
-        }
-    }
+
     @JvmStatic
     private fun getAPISchedule(): Lessons? {
         return try {
@@ -72,10 +57,6 @@ object ParseJsons {
         try {
             val list = getAPISchedule()?.Schedule ?: return emptyList()
             return list
-//                .sortedBy {
-//                val time = it.startTime
-//                LocalDateTime.of(time[0], time[1], time[2], time[3], time[4])
-//            }
         } catch (_ : Exception) {
             return emptyList()
         }
@@ -91,27 +72,12 @@ object ParseJsons {
             }
             return@withContext dtoList
         }
-//    @JvmStatic
-//    suspend fun getCustomSchedule(isSupabase : Boolean = false) : List<CustomEventDTO> = getCustomEvent(CustomEventType.SCHEDULE,isSupabase).sortedBy {
-//        with(it.dateTime.start) {
-//            LocalDateTime.of(year, month, day, hour, minute)
-//        }
-//    }
-//    @JvmStatic
-//    suspend fun getCustomNetCourse(isSupabase : Boolean = false) : List<CustomEventDTO> = getCustomEvent(CustomEventType.NET_COURSE,isSupabase).sortedBy {
-//        with(it.dateTime.end) {
-//            LocalDateTime.of(year, month, day, hour, minute)
-//        }
-//    }
+
     @JvmStatic
     fun getNetCourse() : List<Schedule> {
         try {
             val list = getAPISchedule()?.MyList ?: return emptyList()
             return list
-//                .sortedBy {
-//                val time = it.endTime
-//                LocalDateTime.of(time[0], time[1], time[2], time[3], time[4])
-//            }
         } catch (_ : Exception) {
             return emptyList()
         }

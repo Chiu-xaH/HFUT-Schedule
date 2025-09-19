@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network
+package com.hfut.schedule.logic.network.util
 
 enum class StatusCode(val code: Int,val description: String) {
     OK(200,"成功得到用户请求的数据"),

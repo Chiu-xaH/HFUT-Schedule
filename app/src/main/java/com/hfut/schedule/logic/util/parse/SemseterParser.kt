@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.util.parse
 
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.network.ParseJsons.getMy
+import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import kotlinx.coroutines.flow.first
 

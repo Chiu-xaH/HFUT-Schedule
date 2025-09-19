@@ -1,7 +1,7 @@
-package com.hfut.schedule.logic.network.repo
+package com.hfut.schedule.logic.network.util
 
 import androidx.lifecycle.MutableLiveData
-import com.hfut.schedule.logic.network.StatusCode
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.OPERATION_FAST_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE

@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.network.repo
+package com.hfut.schedule.logic.network.repo.hfut
 
 import com.hfut.schedule.logic.model.AcademicNewsResponse
 import com.hfut.schedule.logic.model.AcademicType
@@ -8,6 +8,7 @@ import com.hfut.schedule.logic.network.api.AcademicService
 import com.hfut.schedule.logic.network.api.AcademicXCService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.XuanChengService
+import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.AcademicServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.AcademicXCServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
@@ -42,11 +43,15 @@ object NewsRepository {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
-    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : StateHolder<List<NewsResponse>>) = launchRequestSimple(
-        holder = newsXuanChengResult,
-        request = { xuanCheng.getNotications(page = page.let { if(it <= 1)  ""  else  it.toString()  }).awaitResponse() },
-        transformSuccess = { _,html -> parseNewsXuanCheng(html) }
-    )
+    suspend fun getXuanChengNews(page: Int,newsXuanChengResult : StateHolder<List<NewsResponse>>) =
+        launchRequestSimple(
+            holder = newsXuanChengResult,
+            request = {
+                xuanCheng.getNotications(page = page.let { if (it <= 1) "" else it.toString() })
+                    .awaitResponse()
+            },
+            transformSuccess = { _, html -> parseNewsXuanCheng(html) }
+        )
 
     @JvmStatic
     private fun parseNewsXuanCheng(html : String) : List<NewsResponse> = try {
@@ -61,11 +66,12 @@ object NewsRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademicXC(type: AcademicXCType,page: Int = 1,holder : StateHolder<List<NewsResponse>>) = launchRequestSimple(
-        holder = holder,
-        request = { academicXC.getNews(type.type,page).awaitResponse() },
-        transformSuccess = { _, json -> parseAcademicNewsXC(json) },
-    )
+    suspend fun getAcademicXC(type: AcademicXCType, page: Int = 1, holder : StateHolder<List<NewsResponse>>) =
+        launchRequestSimple(
+            holder = holder,
+            request = { academicXC.getNews(type.type, page).awaitResponse() },
+            transformSuccess = { _, json -> parseAcademicNewsXC(json) },
+        )
     @JvmStatic
     private fun parseAcademicNewsXC(html : String) : List<NewsResponse> = try {
         val document = Jsoup.parse(html)
@@ -89,17 +95,18 @@ object NewsRepository {
         newsList
     } catch (e : Exception) { throw e }
 
-    suspend fun getAcademic(type: AcademicType, totalPage : Int? = null,page: Int = 1,holder : StateHolder<AcademicNewsResponse>) = launchRequestSimple(
-        holder = holder,
-        request = {
-            if(totalPage == null || totalPage == page) {
-                academic.getNews("${type.type}.htm").awaitResponse()
-            } else {
-                academic.getNews("${type.type}/${totalPage - page + 1}.htm").awaitResponse()
-            }
-        },
-        transformSuccess = { _, json -> parseAcademicNews(json) },
-    )
+    suspend fun getAcademic(type: AcademicType, totalPage : Int? = null, page: Int = 1, holder : StateHolder<AcademicNewsResponse>) =
+        launchRequestSimple(
+            holder = holder,
+            request = {
+                if (totalPage == null || totalPage == page) {
+                    academic.getNews("${type.type}.htm").awaitResponse()
+                } else {
+                    academic.getNews("${type.type}/${totalPage - page + 1}.htm").awaitResponse()
+                }
+            },
+            transformSuccess = { _, json -> parseAcademicNews(json) },
+        )
     @JvmStatic
     private fun parseAcademicNews(html : String) : AcademicNewsResponse = try {
         val document: Document = Jsoup.parse(html)
@@ -123,11 +130,12 @@ object NewsRepository {
         AcademicNewsResponse(news = newsList, totalPage = maxPage)
     } catch (e : Exception) { throw e }
 
-    suspend fun searchNews(title : String,page: Int = 1,newsResult : StateHolder<List<NewsResponse>>) = launchRequestSimple(
-        holder = newsResult,
-        request = { news.searchNews(Encrypt.encodeToBase64(title),page).awaitResponse() },
-        transformSuccess = { _,html -> parseNews(html) }
-    )
+    suspend fun searchNews(title : String,page: Int = 1,newsResult : StateHolder<List<NewsResponse>>) =
+        launchRequestSimple(
+            holder = newsResult,
+            request = { news.searchNews(Encrypt.encodeToBase64(title), page).awaitResponse() },
+            transformSuccess = { _, html -> parseNews(html) }
+        )
 
     @JvmStatic
     private fun parseNews(html : String) : List<NewsResponse> = try {

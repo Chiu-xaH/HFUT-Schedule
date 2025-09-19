@@ -35,7 +35,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.development.CrashHandler
-import com.hfut.schedule.logic.util.network.ParseJsons.getTimeStamp
+import com.hfut.schedule.logic.network.util.MyApiParse.getTimeStamp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
