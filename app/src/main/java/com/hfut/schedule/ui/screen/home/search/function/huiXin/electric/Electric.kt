@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -30,12 +32,21 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
+    val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
+    var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
 
     val EndNumber = prefs.getString("EndNumber", "0")
     var room by remember { mutableStateOf("寝室电费") }
-    if(EndNumber == "12" || EndNumber == "22") room = "空调"
-    else if(EndNumber == "11" || EndNumber == "21") room = "照明"
+//    if(EndNumber == "12" || EndNumber == "22") room = "空调"
+//    else if(EndNumber == "11" || EndNumber == "21") room = "照明"
 
+    room = when(EndNumber) {
+        "11"-> if(BuildingsNumber.toInt() > 5 )"照明" else "南边"
+        "12" -> "空调"
+        "21" -> if(BuildingsNumber.toInt() > 5 )"照明" else "北边"
+        "22" -> "空调"
+        else -> "寝室电费"
+    }
 
     if (showBottomSheet) {
 
@@ -51,11 +62,36 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
         }
 
     val memoryEle = prefs.getString("memoryEle","0")
+    val f = vmUI.electricValue.value ?: memoryEle
+    val fD = f?.toDoubleOrNull() ?: 0.0
+    val showRed = if(fD < 0.0) {
+        // 爆红
+        true
+    } else if(fD > 0.0 && fD < 1.0) {
+        // 爆红
+        true
+    } else {
+        false
+    }
 
     TransplantListItem(
-        headlineContent = { if(!card)ScrollText(text = "寝室电费" ) else ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") },
-        overlineContent = { if(!card) ScrollText(text = "￥${vmUI.electricValue.value ?: memoryEle}") else ScrollText(text = room) },
-        leadingContent = { Icon(painterResource(R.drawable.flash_on), contentDescription = "Localized description",) },
+        headlineContent = {
+            ScrollText(
+                text = if(!card) "寝室电费" else "￥${f}",
+                color = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
+            )
+        },
+        overlineContent = {
+            ScrollText(
+                text = if(!card) "￥${f}" else room,
+                color = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
+            )
+        },
+        leadingContent = { Icon(
+            painterResource(R.drawable.flash_on),
+            contentDescription = "Localized description",
+            tint = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
+            ) },
         modifier = Modifier.clickable { showBottomSheet  = true }
     )
 }

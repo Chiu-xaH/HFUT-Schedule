@@ -355,7 +355,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                     shape = MaterialTheme.shapes.medium,
                     onClick = {
                         scope.launch {
-                            Starter.startWebView(context,"https://www.hfut.edu.cn/")
+                            Starter.startWebView(context,"https://www.bing.cn/")
                         }
                     }
                 ) {

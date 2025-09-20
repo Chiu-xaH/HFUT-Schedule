@@ -191,7 +191,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                 },
                                 headlineContent = { ScrollText(name) },
                                 modifier = Modifier.clickable {
-                                    Starter.startWebUrl(context,openUrl)
+                                    scope.launch {
+                                        openUrl.let {
+                                            Starter.startWebView(context,it, title = name, cookie =cookie)
+                                        }
+                                    }
                                 }
                             )
                         }
@@ -239,7 +243,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
-                                                    Starter.startWebUrl(context,openUrl)
+                                                    scope.launch {
+                                                        openUrl.let {
+                                                            Starter.startWebView(context,it, title = name, cookie =cookie)
+                                                        }
+                                                    }
                                                 }
                                             )
                                         }
@@ -254,7 +262,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                                     },
                                                     headlineContent = { ScrollText(name) },
                                                     modifier = Modifier.clickable {
-                                                        Starter.startWebUrl(context,openUrl)
+                                                        scope.launch {
+                                                            openUrl.let {
+                                                                Starter.startWebView(context,it, title = name, cookie =cookie)
+                                                            }
+                                                        }
                                                     }
                                                 )
                                             }
@@ -281,7 +293,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                             },
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
-                                                url?.let { Starter.startWebUrl(context,it) }
+                                                scope.launch {
+                                                    url?.let {
+                                                        Starter.startWebView(context,it, title = name, cookie =cookie)
+                                                    }
+                                                }
                                             }
                                         )
                                     }
@@ -296,7 +312,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
-                                                    url?.let { Starter.startWebUrl(context,it) }
+                                                    scope.launch {
+                                                        url?.let {
+                                                            Starter.startWebView(context,it, title = name, cookie =cookie)
+                                                        }
+                                                    }
                                                 }
                                             )
                                         }
@@ -308,9 +328,9 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                         }
                     }
                 }
-                DividerTextExpandedWith("学工系统") {
-
-                }
+//                DividerTextExpandedWith("学工系统") {
+//
+//                }
                 InnerPaddingHeight(innerPadding,false)
             }
         }

@@ -84,6 +84,7 @@ import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import okhttp3.OkHttpClient
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -410,12 +411,13 @@ fun WebViewScreenForActivity(
                 enter = AppAnimationManager.hiddenRightAnimation.enter,
                 exit = AppAnimationManager.hiddenRightAnimation.exit,
                 modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(horizontal = APP_HORIZONTAL_DP)
                     .align(Alignment.CenterEnd)
                     .zIndex(1f)
             ) {
                 VerticalFloatingToolbar (
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = APP_HORIZONTAL_DP),
                     expanded = true,
                 ) {
                     tools()
@@ -440,7 +442,6 @@ fun WebViewScreenForActivity(
                         settings.domStorageEnabled = true
                         settings.builtInZoomControls = true
                         settings.displayZoomControls = false
-//                        settings.userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
                         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                         enableSlowWholeDocumentDraw()
                         setWebContentsDebuggingEnabled(true)
@@ -461,8 +462,8 @@ fun WebViewScreenForActivity(
 
                         // 启用 Cookie
                         val cookieManager = CookieManager.getInstance()
-                        cookieManager.setAcceptCookie(true)
-                        cookieManager.setAcceptThirdPartyCookies(this, true)
+                        cookieManager.setAcceptCookie(true)//true
+                        cookieManager.setAcceptThirdPartyCookies(this, true)//true
                         // 设置 Cookie
                         // **清除已有 Cookie**
                         cookieManager.removeSessionCookies(null)
@@ -472,7 +473,6 @@ fun WebViewScreenForActivity(
                         // **异步设置 Cookie，并确保生效后再加载 URL**
                         cookies?.let {
                             cookieManager.setCookie(url, it) {
-                                Log.d("cookie断点","2")
                                 cookieManager.flush()
                                 post {
                                     loadUrl(url)
@@ -513,11 +513,15 @@ fun WebViewScreenForActivity(
                                 view: WebView?,
                                 request: WebResourceRequest?
                             ): WebResourceResponse? {
-                                request?.url?.toString()?.let { requestUrl ->
-                                    cookies?.let {
-                                        cookieManager.setCookie(requestUrl, it)
+                                val req = request
+                                if(req != null) {
+                                    val c = req.requestHeaders["Cookie"]
+                                    if(cookies != null && c?.contains(cookies) == false) {
+                                        cookieManager.setCookie(req.url.toString(), cookies)
+                                        cookieManager.flush()
                                     }
                                 }
+
                                 return super.shouldInterceptRequest(view, request)
                             }
                             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -553,3 +557,4 @@ fun WebViewScreenForActivity(
         }
     }
 }
+

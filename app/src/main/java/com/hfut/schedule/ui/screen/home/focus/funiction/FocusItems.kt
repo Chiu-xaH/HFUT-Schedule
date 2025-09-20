@@ -558,7 +558,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     headlineContent = { ScrollText(text = "有调休上课" ) },
                     overlineContent = { ScrollText(text = "明天") },
                     leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
-                    colors = MaterialTheme.colorScheme.errorContainer
+//                    colors = MaterialTheme.colorScheme.errorContainer
                 )
             }
             else -> {
@@ -573,7 +573,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                 val time = if(list.isEmpty()) "" else list[0][0].classTime.substringBefore(":")
                 TransplantListItem(
                     headlineContent = { ScrollText(text =  if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
-                    overlineContent = { ScrollText(text = "今天") },
+                    overlineContent = { ScrollText(text = "课程") },
                     leadingContent = { Icon(painter = painterResource( if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
                 )
             }

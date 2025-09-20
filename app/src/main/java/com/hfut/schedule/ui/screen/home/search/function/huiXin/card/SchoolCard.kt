@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -59,40 +60,63 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
 
     val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     TransplantListItem(
-        headlineContent = { if(cardBool) ScrollText(text = "￥$text") else ScrollText(text = "一卡通 ￥$text") },
+        headlineContent = {
+            ScrollText(
+                text = if(cardBool)"￥$text" else "一卡通 ￥$text",
+                color = if (text != null && text != "未登录") {
+                    if(text!!.length <= 4){
+                        MaterialTheme.colorScheme.error
+                    } else LocalContentColor.current
+                } else LocalContentColor. current
+            )
+        },
         overlineContent = { if(cardBool) {
             ScrollText(
                 if (text != null && text != "未登录") {
                     if(text!!.length <= 4){
                         "余额不足"
                     } else "一卡通"
-                } else "一卡通")
+                } else "一卡通",
+                color = if (text != null && text != "未登录") {
+                    if(text!!.length <= 4){
+                        MaterialTheme.colorScheme.error
+                    } else LocalContentColor.current
+                } else LocalContentColor. current
+            )
         }
 
                           },
-        leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
+        leadingContent = { Icon(
+            painterResource(R.drawable.credit_card),
+            contentDescription = "Localized description",
+            tint = if (text != null && text != "未登录") {
+                if(text!!.length <= 4){
+                    MaterialTheme.colorScheme.error
+                } else LocalContentColor.current
+            } else LocalContentColor. current
+            ) },
         trailingContent={
             if (text != null && text != "未登录") {
-                if(showAdd || !cardBool)
+                if(showAdd || !cardBool || text!!.length <= 4)
                 FilledTonalIconButton(
                     modifier = Modifier
                         .scale(scale2.value)
                         .size(30.dp),
                     interactionSource = interactionSource2,
                     onClick = { Starter.startAppUrl(context,MyApplication.ALIPAY_CARD_URL) },
-                    colors =  if(text!!.length <= 4) {
-                        IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                    } else IconButtonDefaults.filledTonalIconButtonColors()
+//                    colors =  if(text!!.length <= 4) {
+//                        IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+//                    } else IconButtonDefaults.filledTonalIconButtonColors()
                 ) { Icon( painterResource(R.drawable.add), contentDescription = "Localized description",) }
             }
         },
-        colors = (
-            if (text != null && text != "未登录") {
-                if(text!!.length <= 4){
-                    MaterialTheme.colorScheme.errorContainer
-                } else null
-            } else null
-        ),
+//        colors = (
+//            if (text != null && text != "未登录") {
+//                if(text!!.length <= 4){
+//                    MaterialTheme.colorScheme.errorContainer
+//                } else null
+//            } else null
+//        ),
         modifier = Modifier.clickable {
             Starter.startCard(context)
         }

@@ -103,25 +103,6 @@
             ]
         },
         {
-            "categoryId": "664219241884418048",
-            "categoryName": "办公服务",
-            "order": 1,
-            "apps": []
-        },
-        {
-            "categoryId": "664404286033100800",
-            "categoryName": "学校新闻",
-            "order": 2,
-            "apps": []
-        },
-        {
-            "categoryId": "-1",
-            "categoryName": "其它",
-            "order": 3,
-            "apps": [
-            ]
-        },
-        {
             "categoryId": "0fc92c9659dd4ea3b67debcb5c54929f",
             "categoryName": "研工服务",
             "order": 4,

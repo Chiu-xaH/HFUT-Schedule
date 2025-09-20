@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 
@@ -198,7 +199,18 @@ class MyApplication : Application() {
             CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
             CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
         )
-
+        // 合肥校区本科生电费
+        data class ElectricRoomHeFei(
+            val campus : Campus,
+            val buildings : Int,
+            val direction : ElectricRoomHeFeiDirection,
+            val isLight : Boolean,
+        ) {
+            override fun toString() : String = "${campus.description}校区${buildings}号${direction.description}楼${if(isLight) "照明" else "空调"}"
+        }
+        enum class ElectricRoomHeFeiDirection(val description : String) {
+            NORTH("北"),SOUTH("南"),MID("中")
+        }
     }
 
     override fun onCreate() {
@@ -206,3 +218,5 @@ class MyApplication : Application() {
         context = applicationContext
     }
 }
+
+

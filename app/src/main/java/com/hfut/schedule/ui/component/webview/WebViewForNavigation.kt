@@ -473,10 +473,14 @@ fun WebViewScreenForNavigation(
                     visible = visible,
                     enter = AppAnimationManager.hiddenRightAnimation.enter,
                     exit = AppAnimationManager.hiddenRightAnimation.exit,
-                    modifier = Modifier.padding(innerPadding).padding(horizontal = APP_HORIZONTAL_DP).align(Alignment.CenterEnd).zIndex(1f)
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd).zIndex(1f)
                 ) {
                     VerticalFloatingToolbar (
                         expanded = true,
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
                         tools()
                         IconButton(onClick = { visible = false }) { Icon(
@@ -568,11 +572,15 @@ fun WebViewScreenForNavigation(
                                     view: WebView?,
                                     request: WebResourceRequest?
                                 ): WebResourceResponse? {
-                                    request?.url?.toString()?.let { requestUrl ->
-                                        cookies?.let {
-                                            cookieManager.setCookie(requestUrl, it)
+                                    val req = request
+                                    if(req != null) {
+                                        val c = req.requestHeaders["Cookie"]
+                                        if(cookies != null && c?.contains(cookies) == false) {
+                                            cookieManager.setCookie(req.url.toString(), cookies)
+                                            cookieManager.flush()
                                         }
                                     }
+
                                     return super.shouldInterceptRequest(view, request)
                                 }
                                 override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

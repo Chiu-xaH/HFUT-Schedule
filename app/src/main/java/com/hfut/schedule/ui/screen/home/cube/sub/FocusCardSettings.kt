@@ -193,12 +193,6 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "洗浴(需要时显示)")} ,
-                    leadingContent = { Icon(painter = painterResource(id = R.drawable.bathtub), contentDescription = "")},
-                    trailingContent = { Switch(checked = showShower, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowShower(!showShower) } })}
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
                     headlineContent = { Text(text = "气象预警(需要时显示)")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.warning), contentDescription = "")},
                     trailingContent = { Switch(checked = showWeather, onCheckedChange = { scope.launch { DataStoreManager.saveFocusShowWeatherWarn(!showWeather) } })}
@@ -300,38 +294,7 @@ fun FocusCard(
                                 LoginWeb(vmUI,true,vm,hazeState)
                             }
                     }
-                if(DateTimeManager.Time_Hour.toInt() in 22 until 25 && showShower) {
-                    Row(
-                        modifier = Modifier.clickable {
-                            getInGuaGua(vm, context) { loading = it }
-                        }
-                    ) {
-                        if(loading) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = "正在核对登录") },
-                                leadingContent = {
-                                    LoadingIcon()
-                                }
-                            )
-                        } else {
-                            Box(modifier = Modifier.weight(.5f)) {
-                                TransplantListItem(
-                                    headlineContent = { Text(text = "晚上好") },
-                                    overlineContent = { Text(text = "洗去一身疲惫吧") },
-                                    leadingContent = {
-                                        Icon(painterResource(id = R.drawable.dark_mode), contentDescription = "")
-                                    }
-                                )
-                            }
-                            Box(modifier = Modifier.weight(.5f)) {
-                                TransplantListItem(headlineContent = { Text(text = "洗浴") }, leadingContent = {
-                                    Icon(painterResource(id = R.drawable.bathtub), contentDescription = "")
-                                }, overlineContent = { Text(text = "推荐") }
-                                )
-                            }
-                        }
-                    }
-                }
+
                 if(showWeather) {
                     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
                     AnimatedVisibility(
