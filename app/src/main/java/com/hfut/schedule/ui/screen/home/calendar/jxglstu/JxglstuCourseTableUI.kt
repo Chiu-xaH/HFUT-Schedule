@@ -680,7 +680,7 @@ fun JxglstuCourseTableUI(
                            vm.checkLibraryLogin(auth)
                            val result =  (vm.checkLibraryLoginResp.state.value as? UiState.Success)?.data
                            if(result == true) {
-//                               showToast("无需刷新学工平台")
+//                               showToast("无需刷新图书馆")
                                return@library
                            } else {
                                // 登录

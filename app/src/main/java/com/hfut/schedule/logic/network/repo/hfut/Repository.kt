@@ -140,11 +140,13 @@ object Repository {
             transformSuccess = { _, json -> parseCheckLibraryLogin(json) }
         )
     @JvmStatic
-    private fun parseCheckLibraryLogin(json : String) : Boolean = try {
-        val sId = getPersonInfo().studentId ?: return false
-        val name = getPersonInfo().name ?: return false
-        json.contains(sId) || json.contains(name)
-    } catch (e : Exception) { throw e }
+    private fun parseCheckLibraryLogin(json : String) : Boolean {
+        try {
+            val sId = getPersonInfo().studentId ?: return false
+            val name = getPersonInfo().name ?: return false
+            return json.contains(sId) || json.contains(name)
+        } catch (e : Exception) { throw e }
+    }
 
 
     suspend fun officeHallSearch(

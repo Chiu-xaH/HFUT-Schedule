@@ -143,7 +143,7 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
     val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
-    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
+    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
 //    val showSpecial by DataStoreManager.showFocusSpecial.collectAsState(initial = true)
 
     val scope = rememberCoroutineScope()

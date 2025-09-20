@@ -512,7 +512,7 @@ fun MainHost(
                     composable(route = AppNavRoute.Fee.route) {
                         FeeScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
                     }
-                    // 学工系统
+                    // 学工系统/今日校园
                     composable(route = AppNavRoute.StuTodayCampus.route) {
                         StuTodayCampusScreen(networkVm,navController, this@SharedTransitionLayout, this@composable)
                     }

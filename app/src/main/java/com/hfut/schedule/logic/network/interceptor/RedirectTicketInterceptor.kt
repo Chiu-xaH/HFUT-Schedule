@@ -115,7 +115,7 @@ private fun parseLoginStu(headers: Headers,json: String?) =  try {
     val weu = prefix + cookie.substringAfter(prefix).substringBefore(";")
     saveString("stu",weu)
     Log.d("学工系统登录",weu)
-    showToast("学工平台登陆成功")
+    showToast("学工系统登陆成功")
 } catch (e : Exception) {
     e.printStackTrace()
 }

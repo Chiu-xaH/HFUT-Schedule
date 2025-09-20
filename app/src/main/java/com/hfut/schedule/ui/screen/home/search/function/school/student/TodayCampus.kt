@@ -1,12 +1,11 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.student
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,25 +13,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,53 +32,40 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.community.getTodayCampusApps
-import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.StartAppIcon
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.xah.uicommon.component.status.LoadingUI
-import com.hfut.schedule.ui.component.status.StatusUI2
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
-import com.xah.uicommon.style.align.ColumnVertical
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -110,7 +87,6 @@ fun ToadyCampus(
         }
     )
 }
-private val titles = listOf("Community源(动态)","今日校园源(静态)")
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -125,8 +101,8 @@ fun StuTodayCampusScreen(
     val route = remember { AppNavRoute.StuTodayCampus.route }
     val context = LocalContext.current
 
-    val paperState = rememberPagerState(pageCount = { titles.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var input by remember { mutableStateOf("") }
 
     with(sharedTransitionScope) {
         CustomTransitionScaffold (
@@ -136,7 +112,7 @@ fun StuTodayCampusScreen(
             navHostController = navController,
             topBar = {
                 Column (
-                    modifier = Modifier.topBarBlur(hazeState, ),
+                    modifier = Modifier.topBarBlur(hazeState),
                 ){
                     MediumTopAppBar(
                         scrollBehavior = scrollBehavior,
@@ -148,7 +124,7 @@ fun StuTodayCampusScreen(
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
                                 StartAppIcon(Starter.AppPackages.TODAY_CAMPUS,R.drawable.today_campus_icon)
-                                Spacer(Modifier.width(CARD_NORMAL_DP))
+//                                Spacer(Modifier.width(CARD_NORMAL_DP))
                                 FilledTonalButton(onClick = {
                                     Starter.startWebUrl(context,MyApplication.STU_URL)
                                 }) {
@@ -157,24 +133,28 @@ fun StuTodayCampusScreen(
                             }
                         }
                     )
-                    CustomTabRow(paperState,titles)
+                    CustomTextField(
+                        input = input,
+                        label = { Text("检索功能") },
+                        leadingIcon = { Icon(painterResource(R.drawable.search),null) },
+                    ) {
+                        input = it
+                    }
+                    Spacer(Modifier.height(CARD_NORMAL_DP))
                 }
-
             },
         ) { innerPadding ->
             Column(
-                modifier = Modifier.padding(innerPadding).fillMaxSize()
+                modifier = Modifier.fillMaxSize().hazeSource(hazeState)
             ) {
-                StuAppsScreen(vm,paperState)
+                StuAppsScreen(vm,input,innerPadding)
             }
         }
     }
 }
 
-private const val TAB_LEFT = 0
-private const val TAB_RIGHT = 1
 @Composable
-fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
+fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingValues) {
     val refreshNetwork : suspend () -> Unit = {
         prefs.getString("TOKEN","")?.let {
             vm.stuAppsResponse.clear()
@@ -183,172 +163,155 @@ fun StuAppsScreen(vm : NetWorkViewModel,paperState : PagerState) {
     }
     val cookie = remember { prefs.getString("stu","") }
     val context = LocalContext.current
-    val todayCampusTip by DataStoreManager.showTodayCampusTip.collectAsState(initial = true)
     val scope = rememberCoroutineScope()
     val size = remember { 30.dp }
-    var input by remember { mutableStateOf("") }
     val uiState by vm.stuAppsResponse.state.collectAsState()
     val localList = remember { getTodayCampusApps(context) }
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
+    val l = localList.flatMap { it.apps }.map { it.openUrl.substringAfter("stu.hfut.edu.cn/").substringBefore("?")  }
+    val dataCommunity = (uiState as? UiState.Success)?.data?.filter {
+        val filteredUrl = it.url?.substringAfter("stu.hfut.edu.cn/")?.substringBefore("?")
+        it.name.contains(input) && (filteredUrl !in l)
+    }
 
-    Column {
-        HorizontalPager(state = paperState) { pager ->
-            Column(modifier = Modifier.fillMaxSize()) {
-                if(todayCampusTip) {
-                    CardListItem(
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.info),null)
-                        },
-                        headlineContent = { Text(
-                            when(pager) {
-                                TAB_RIGHT -> {
-                                    "本使用源由开发者从今日校园APP整理的功能，若有新增的功能请联系开发者"
+    Column(modifier = Modifier.fillMaxSize()) {
+        if(input.isNotEmpty() || input.isNotBlank()) {
+            val data = localList.flatMap { it.apps }.filter { it.name.contains(input) }
+            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
+                item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding, true) }
+                items(data.size, key = { it }) { index ->
+                    val item = data[index]
+                    with(item) {
+                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
+                            TransplantListItem(
+                                leadingContent = {
+                                    UrlImage(iconUrl, width = size, height = size)
+                                },
+                                headlineContent = { ScrollText(name) },
+                                modifier = Modifier.clickable {
+                                    Starter.startWebUrl(context,openUrl)
                                 }
-                                TAB_LEFT -> {
-                                    "本使用源自动托给智慧社区源动态获取，但是功能不是特别全..."
-                                }
-                                else -> ""
-                            }
-                        )},
-                        trailingContent = {
-                            IconButton(onClick = {
-                                scope.launch{ DataStoreManager.saveTodayCampusTip(false) }
-                            }) {
-                                Icon(painterResource(R.drawable.close),null)
+                            )
+                        }
+                    }
+                }
+                dataCommunity?.let { list ->
+                    items(list.size, key = { it }) { index ->
+                        val item = list[index]
+                        with(item) {
+                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
+                                TransplantListItem(
+                                    leadingContent = {
+                                        UrlImage(logo, width = size, height = size)
+                                    },
+                                    headlineContent = { ScrollText(name) },
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            url?.let {
+                                                Starter.startWebView(context,it, title = name, cookie =cookie)
+                                            }
+                                        }
+                                    }
+                                )
                             }
                         }
-                    )
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                    }
                 }
-                Spacer(Modifier.height(CARD_NORMAL_DP))
-
-                CustomTextField(
-                    input = input,
-                    label = { Text("检索功能") },
-                    leadingIcon = { Icon(painterResource(R.drawable.search),null) },
-                ) {
-                    input = it
-                }
-                Spacer(Modifier.height(CARD_NORMAL_DP))
-
-                when(pager) {
-                    TAB_RIGHT -> {
-                        if(input.isNotEmpty() || input.isNotBlank()) {
-                            val data = localList.flatMap { it.apps }.filter { it.name.contains(input) }
-                            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
-                                items(data.size, key = { it }) { index ->
-                                    val item = data[index]
-                                    with(item) {
-                                        val canUse = openUrl.startsWith(MyApplication.STU_URL)
-                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
+                item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding, false) }
+            }
+        } else {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                InnerPaddingHeight(innerPadding,true)
+                for(i in localList) {
+                    val list = i.apps
+                    if(list.isNotEmpty()) {
+                        DividerTextExpandedWith(i.categoryName) {
+                            for(j in list.indices step 2) {
+                                val item1 = list[j]
+                                Row(Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
+                                    with(item1) {
+                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
                                             TransplantListItem(
                                                 leadingContent = {
                                                     UrlImage(iconUrl, width = size, height = size)
                                                 },
-                                                headlineContent = { ScrollText(name, textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
+                                                headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
-                                                    if(canUse)
-                                                        Starter.startWebUrl(context,openUrl)
-                                                    else
-                                                        showToast("暂不支持，请使用今日校园")
+                                                    Starter.startWebUrl(context,openUrl)
                                                 }
                                             )
                                         }
                                     }
-                                }
-                                items(2) {
-                                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                                }
-                            }
-                        } else {
-                            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                                for(i in localList) {
-                                    val list = i.apps
-                                    if(list.isNotEmpty()) {
-                                        DividerTextExpandedWith(i.categoryName) {
-                                            for(j in list.indices step 2) {
-                                                val item1 = list[j]
-                                                Row(Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
-                                                    with(item1) {
-                                                        val canUse = openUrl.startsWith(MyApplication.STU_URL)
-                                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
-                                                            TransplantListItem(
-                                                                leadingContent = {
-                                                                    UrlImage(iconUrl, width = size, height = size)
-                                                                },
-                                                                headlineContent = { ScrollText(name,textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
-                                                                modifier = Modifier.clickable {
-                                                                    if(canUse)
-                                                                        Starter.startWebUrl(context,openUrl)
-                                                                    else
-                                                                        showToast("暂不支持，请使用今日校园")
-                                                                }
-                                                            )
-                                                        }
+                                    if(j + 1 < i.apps.size) {
+                                        val item2 = list[j+1]
+                                        with(item2) {
+                                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                                TransplantListItem(
+                                                    leadingContent = {
+                                                        UrlImage(iconUrl, width = size, height = size)
+                                                    },
+                                                    headlineContent = { ScrollText(name) },
+                                                    modifier = Modifier.clickable {
+                                                        Starter.startWebUrl(context,openUrl)
                                                     }
-                                                    if(j + 1 < i.apps.size) {
-                                                        val item2 = list[j+1]
-                                                        with(item2) {
-                                                            val canUse = openUrl.startsWith(MyApplication.STU_URL)
-                                                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
-                                                                TransplantListItem(
-                                                                    leadingContent = {
-                                                                        UrlImage(iconUrl, width = size, height = size)
-                                                                    },
-                                                                    headlineContent = { ScrollText(name, textDecoration = if(canUse) TextDecoration.None else TextDecoration.LineThrough) },
-                                                                    modifier = Modifier.clickable {
-                                                                        if(canUse)
-                                                                            Starter.startWebUrl(context,openUrl)
-                                                                        else
-                                                                            showToast("暂不支持，请使用今日校园")
-                                                                    }
-                                                                )
-                                                            }
-                                                        }
-                                                    } else {
-                                                        Spacer(Modifier.width(1.dp).weight(.5f))
-                                                    }
-                                                }
+                                                )
                                             }
                                         }
+                                    } else {
+                                        Spacer(Modifier.width(1.dp).weight(.5f))
                                     }
                                 }
                             }
                         }
                     }
-                    TAB_LEFT -> {
-                        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                            val data = (uiState as UiState.Success).data.filter { it.name.contains(input) }
-                            LazyVerticalGrid(columns = GridCells.Fixed(2),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
-                                items(data.size, key = { it }) { index ->
-                                    val item = data[index]
-                                    with(item) {
-                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
+                }
+                DividerTextExpandedWith("智慧社区") {
+                    CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
+                        val data = dataCommunity!!
+                        for(j in data.indices step 2) {
+                            val item1 = data[j]
+                            Row(Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
+                                with(item1) {
+                                    SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                        TransplantListItem(
+                                            leadingContent = {
+                                                UrlImage(logo, width = size, height = size)
+                                            },
+                                            headlineContent = { ScrollText(name) },
+                                            modifier = Modifier.clickable {
+                                                url?.let { Starter.startWebUrl(context,it) }
+                                            }
+                                        )
+                                    }
+                                }
+                                if(j + 1 < data.size) {
+                                    val item2 = data[j+1]
+                                    with(item2) {
+                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
                                             TransplantListItem(
                                                 leadingContent = {
                                                     UrlImage(logo, width = size, height = size)
                                                 },
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
-                                                    scope.launch {
-                                                        url?.let {
-                                                            Starter.startWebView(context,it, title = name, cookie =cookie)
-                                                        }
-                                                    }
+                                                    url?.let { Starter.startWebUrl(context,it) }
                                                 }
                                             )
                                         }
                                     }
-                                }
-                                items(2) {
-                                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                                } else {
+                                    Spacer(Modifier.width(1.dp).weight(.5f))
                                 }
                             }
                         }
                     }
                 }
+                DividerTextExpandedWith("学工系统") {
+
+                }
+                InnerPaddingHeight(innerPadding,false)
             }
         }
     }

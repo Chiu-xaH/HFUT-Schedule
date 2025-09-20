@@ -78,6 +78,7 @@ class MyApplication : Application() {
         // 和风天气
         const val Q_WEATHER_URL = "https://devapi.qweather.com/v7/"
         // 学工系统
+
         const val STU_URL = "https://stu.hfut.edu.cn/"
         // 智慧后勤 宣城
         const val REPAIR_XC_URL = "http://xcfw.hfut.edu.cn/school/"

@@ -160,7 +160,7 @@ object DataStoreManager {
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,true)
     val enableSupabaseAutoCheck = getFlow(SUPABASE_AUTO_CHECK,true)
     val enableShowFocusShower = getFlow(FOCUS_SHOW_SHOWER,true)
-    val enableShowFocusWeatherWarn = getFlow(FOCUS_SHOW_WEATHER_WARN,true)
+    val enableShowFocusWeatherWarn = getFlow(FOCUS_SHOW_WEATHER_WARN,false)
     val customCardPassword = getFlow(CARD_PASSWORD,EMPTY_STRING)
     val enableUseDefaultCardPassword = getFlow(USE_DEFAULT_CARD_PASSWORD,true)
     val defaultCalendarAccountId = getFlow(DEFAULT_CALENDAR_ACCOUNT,1)
