@@ -17,7 +17,11 @@ enum class LoginType(val service : String?,val description: String) {
     // 二课
     // 校友
     // 办事大厅
+    // 智慧后勤
+    REPAIR_XC(MyApplication.REPAIR_XC_URL + "school/index.html","宣城校区智慧后勤"),
+    REPAIR(MyApplication.REPAIR_URL + "school/index.html","宣城校区智慧后勤"),
     // 体测平台
+    PE(MyApplication.PE_URL + "bdlp_h5_fitness_test/public/index.php/index/login/hfutLogin","体测平台"),
     // 指间工大
     ZHI_JIAN(MyApplication.ZHI_JIAN_URL  + "wui/cas-entrance.jsp?path=${encodeUrl(MyApplication.ZHI_JIAN_URL + "wui/index.html#/main")}&ssoType=CAS","指间工大")
     // ...

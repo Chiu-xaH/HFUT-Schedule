@@ -1,5 +1,0 @@
-package com.hfut.schedule.logic.network.servicecreator
-
-import com.hfut.schedule.application.MyApplication
-
-object VercelForecastServiceCreator : BaseServiceCreator(url = MyApplication.VERCEL_FORECAST_URL)
