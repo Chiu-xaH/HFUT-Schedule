@@ -31,6 +31,7 @@ import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.HaiLeWashingService
 import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.api.OfficeHallService
+import com.hfut.schedule.logic.network.api.PeService
 import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.WorkService
@@ -41,6 +42,7 @@ import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreat
 import com.hfut.schedule.logic.network.servicecreator.HaiLeWashingServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OfficeHallServiceCreator
+import com.hfut.schedule.logic.network.servicecreator.PeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
@@ -66,6 +68,18 @@ object Repository {
     private val library = LibraryServiceCreator.create(LibraryService::class.java)
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val zhiJian = ZhiJianServiceCreator.create(ZhiJianService::class.java)
+    private val pe = PeServiceCreator.create(PeService::class.java)
+
+    suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestSimple(
+        holder = holder,
+        request = { pe.checkLogin(cookie).awaitResponse() },
+        transformSuccess = { _,json -> parseCheckPeLogin(json) }
+    )
+    @JvmStatic
+    private fun parseCheckPeLogin(json: String) : Boolean = try {
+        json.contains("成功")
+    } catch (e : Exception) { throw e }
+
 
     suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String,holder : StateHolder<List<ZhiJianCourseItemDto>>) =
         launchRequestSimple(

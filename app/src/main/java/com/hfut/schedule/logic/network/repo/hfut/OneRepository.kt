@@ -12,7 +12,7 @@ import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.network.api.OneService
 import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
@@ -42,9 +42,9 @@ object OneRepository {
         launchRequestSimple(
             holder = holder,
             request = {
-                val secret = Encrypt.generateRandomHexString()
+                val secret = Crypto.generateRandomHexString()
                 val email = getSchoolEmail() ?: ""
-                val chipperText = Encrypt.encryptAesECB(email, secret)
+                val chipperText = Crypto.encryptAesECB(email, secret)
                 val cookie = "secret=$secret"
                 one.getMailURL(chipperText, token, cookie).awaitResponse()
             },

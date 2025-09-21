@@ -47,7 +47,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.model.guagua.GuaGuaLogin
 import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
@@ -256,7 +256,7 @@ suspend fun loginGuaGuaClick(
     // 存储信息
     saveString("PHONENUM", phoneNumber)
     saveString("GuaGuaPsk", psk)
-    val inputPSK = Encrypt.md5Hash(psk).uppercase(Locale.getDefault())
+    val inputPSK = Crypto.md5Hash(psk).uppercase(Locale.getDefault())
 
     // 启动登录
     vm.loginResult.clear()

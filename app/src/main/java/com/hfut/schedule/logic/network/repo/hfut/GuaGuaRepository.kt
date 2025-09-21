@@ -8,7 +8,7 @@ import com.hfut.schedule.logic.model.guagua.UseCodeResponse
 import com.hfut.schedule.logic.network.api.GuaGuaService
 import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.screen.shower.home.function.StatusMsgResponse
@@ -84,7 +84,7 @@ object GuaGuaRepository {
             holder = reSetCodeResult,
             request = {
                 val psk = SharedPrefs.prefs.getString("GuaGuaPsk", "") ?: ""
-                val encrypted = Encrypt.md5Hash(psk).uppercase(Locale.ROOT)
+                val encrypted = Crypto.md5Hash(psk).uppercase(Locale.ROOT)
                 guaGua.reSetUseCode(
                     phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
                     encrypted,

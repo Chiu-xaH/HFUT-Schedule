@@ -14,11 +14,12 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,10 +28,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
@@ -40,7 +38,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -73,7 +70,6 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.dialog.MenuChip
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
  
@@ -86,9 +82,8 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.ui.component.WheelPicker
 import dev.chrisbanes.haze.HazeState
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.json.JSONObject
@@ -98,16 +93,16 @@ private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
 
 
-private fun getUrl(page : Int,isUnderGraduate : Boolean) : String {
+private fun getUrl(page : Int) : String {
     val auth = prefs.getString("auth","")
     return  MyApplication.HUI_XIN_URL +
             "charge-app/?name=pays&appsourse=ydfwpt&id=${
                 if(page == XUANCHENG_TAB)
                     FeeType.ELECTRIC_XUANCHENG.code else {
-                    if(isUnderGraduate)
+//                    if(isUnderGraduate)
                         FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
-                    else
-                        FeeType.ELECTRIC_HEFEI_GRADUATE.code
+//                    else
+//                        FeeType.ELECTRIC_HEFEI_GRADUATE.code
                 }
             }&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
 }
@@ -310,44 +305,50 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier.animateContentSize()) {
         HazeBottomSheetTopBar("寝室电费" , isPaddingStatusBar = false) {
-            if(pagerState.currentPage == XUANCHENG_TAB) {
                 Row() {
                     if(showitem4)
                         IconButton(onClick = {RoomNumber = RoomNumber.replaceFirst(".$".toRegex(), "")}) {
                             Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description") }
                     FilledTonalIconButton(onClick = {
-                        show = false
-                        CoroutineScope(Job()).launch {
-                            async {
-                                showitem4 = false
-                                Handler(Looper.getMainLooper()).post{
-                                    vm.electricData.value = "{}"
-                                }
-                                SharedPrefs.saveString("BuildNumber", BuildingsNumber)
-                                SharedPrefs.saveString("EndNumber", EndNumber)
-                                SharedPrefs.saveString("RoomNumber", RoomNumber)
-                                SharedPrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
-                            }.await()
-                            async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
-                            // async { vm.searchEle(jsons) }.await()
-                            async {
-                                Handler(Looper.getMainLooper()).post{
-                                    vm.electricData.observeForever { result ->
-                                        if (result?.contains("success") == true) {
-                                            showButton = true
-                                            try {
-                                                val jsons = Gson().fromJson(result, FeeResponse::class.java).map
-                                                val data = jsons.showData
-                                                for ((_, value) in data) {
-                                                    Result = value
+                        when(pagerState.currentPage) {
+                            HEFEI_TAB -> {
+                                showToast("正在开发")
+                            }
+                            XUANCHENG_TAB -> {
+                                scope.launch {
+                                    show = false
+                                    async {
+                                        showitem4 = false
+                                        Handler(Looper.getMainLooper()).post{
+                                            vm.electricData.value = "{}"
+                                        }
+                                        SharedPrefs.saveString("BuildNumber", BuildingsNumber)
+                                        SharedPrefs.saveString("EndNumber", EndNumber)
+                                        SharedPrefs.saveString("RoomNumber", RoomNumber)
+                                        SharedPrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
+                                    }.await()
+                                    async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
+                                    // async { vm.searchEle(jsons) }.await()
+                                    async {
+                                        Handler(Looper.getMainLooper()).post{
+                                            vm.electricData.observeForever { result ->
+                                                if (result?.contains("success") == true) {
+                                                    showButton = true
+                                                    try {
+                                                        val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                                        val data = jsons.showData
+                                                        for ((_, value) in data) {
+                                                            Result = value
+                                                        }
+                                                    } catch (e : Exception) {
+                                                        showToast("错误") }
+                                                    val jsonObject = JSONObject(result)
+                                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+                                                    dataObject.put("myCustomInfo", "房间：$input")
+                                                    json = dataObject.toString()
+                                                    show = false
                                                 }
-                                            } catch (e : Exception) {
-                                                showToast("错误") }
-                                            val jsonObject = JSONObject(result)
-                                            val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
-                                            dataObject.put("myCustomInfo", "房间：$input")
-                                            json = dataObject.toString()
-                                            show = false
+                                            }
                                         }
                                     }
                                 }
@@ -358,14 +359,13 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     FilledTonalButton(
                         onClick = {
                             scope.launch {
-                                Starter.startWebView(context,getUrl(XUANCHENG_TAB,true), title = "慧新易校")
+                                Starter.startWebView(context,getUrl(pagerState.currentPage), title = "慧新易校")
                             }
                         }
                     ) {
                         Text("官方充值")
                     }
                 }
-            }
         }
         if (BuildingsNumber == "0") BuildingsNumber = ""
         CustomTabRow(pagerState,titles)
@@ -373,39 +373,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
             when(page) {
                 HEFEI_TAB -> {
                     Column {
-                        CardListItem(
-                            overlineContent = { Text("官方充值查询入口") },
-                            headlineContent = { Text("本科生")},
-                            modifier = Modifier.clickable {
-                                scope.launch {
-                                    Starter.startWebView(context,getUrl(HEFEI_TAB,true), title = "慧新易校")
-                                }
-                            },
-                            trailingContent = {
-                                Icon(Icons.Default.ArrowForward,null)
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.search),null)
-                            },
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                        CardListItem(
-                            overlineContent = { Text("官方充值查询入口") },
-                            headlineContent = { Text("研究生")},
-                            modifier = Modifier.clickable {
-                                scope.launch {
-                                    Starter.startWebView(context,getUrl(HEFEI_TAB,false), title = "慧新易校")
-                                }
-                            },
-                            trailingContent = {
-                                Icon(Icons.Default.ArrowForward,null)
-                            },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.search),null)
-                            },
-                            color = MaterialTheme.colorScheme.secondaryContainer
-                        )
-                        Spacer(Modifier.height(APP_HORIZONTAL_DP*2))
+                        ElectricHefei(vm)
                     }
                 }
                 XUANCHENG_TAB -> {
@@ -569,5 +537,39 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         }
         Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
     }
+}
+
+
+
+@Composable
+fun ElectricHefei(
+    vm : NetWorkViewModel
+) {
+    val selectedBuilding by remember { mutableStateOf(0) }
+    DividerTextExpandedWith("楼栋") {
+        WheelPicker(
+            data = listOf(1,2,3,4,5,6,7,8,9,10,11,12,13),
+            selectIndex = selectedBuilding,
+            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+            onSelect = { _,_ ->
+
+            }
+        ) {
+            Text(it.toString() + "号楼")
+        }
+    }
+    DividerTextExpandedWith("区域") {
+        WheelPicker(
+            data = listOf("南","北","中"),
+            selectIndex = selectedBuilding,
+            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+            onSelect = { _,_ ->
+
+            }
+        ) {
+            Text(it.toString() + "边")
+        }
+    }
+
 
 }

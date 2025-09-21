@@ -13,7 +13,7 @@ import com.hfut.schedule.logic.network.servicecreator.AcademicServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.AcademicXCServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.XuanChengServiceCreator
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.news.home.transferToPostData
 import okhttp3.ResponseBody
@@ -133,7 +133,7 @@ object NewsRepository {
     suspend fun searchNews(title : String,page: Int = 1,newsResult : StateHolder<List<NewsResponse>>) =
         launchRequestSimple(
             holder = newsResult,
-            request = { news.searchNews(Encrypt.encodeToBase64(title), page).awaitResponse() },
+            request = { news.searchNews(Crypto.encodeToBase64(title), page).awaitResponse() },
             transformSuccess = { _, html -> parseNews(html) }
         )
 

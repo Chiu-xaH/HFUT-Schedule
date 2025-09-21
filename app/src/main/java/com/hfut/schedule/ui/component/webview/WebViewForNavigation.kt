@@ -68,6 +68,7 @@ import androidx.navigation.NavHostController
 import androidx.webkit.WebSettingsCompat
 import androidx.webkit.WebViewFeature
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
@@ -575,6 +576,10 @@ fun WebViewScreenForNavigation(
                                     val req = request
                                     if(req != null) {
                                         val c = req.requestHeaders["Cookie"]
+                                        if(currentUrl.startsWith(MyApplication.PE_URL)) {
+                                            cookieManager.setCookie(req.url.toString(), cookies)
+                                            cookieManager.flush()
+                                        } else
                                         if(cookies != null && c?.contains(cookies) == false) {
                                             cookieManager.setCookie(req.url.toString(), cookies)
                                             cookieManager.flush()

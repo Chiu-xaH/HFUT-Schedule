@@ -575,7 +575,6 @@ fun JxglstuCourseTableUI(
            if(loadingJxglstu == false) return@LaunchedEffect
            val cookie = getJxglstuCookie()
 
-           // 信息门户 慧新易校 智慧社区
            launch  {
                onEnabled(false)
                val job = async {
@@ -708,8 +707,29 @@ fun JxglstuCourseTableUI(
                            }
                        }
                    }
+                   // 体测平台
+                   launch pe@ {
+                       if(useWebVpn) {
+                           return@pe
+                       }
+                       val auth = prefs.getString("PE", "")
+                       if(auth == null || auth.isEmpty()) {
+                           vm.goToPe(cookies)
+                       } else {
+                           // 检测可用性
+                           vm.checkPeLogin(auth)
+                           val result = (vm.checkPeLoginResp.state.value as? UiState.Success)?.data
+                           if(result == true) {
+                               return@pe
+                           } else {
+//                                登录
+                               vm.goToPe(cookies)
+                           }
+                       }
+                   }
                }
-               withTimeoutOrNull(10000) { // 超时时间 10s
+               // 超时10s
+               withTimeoutOrNull(10000) {
                    job.await()
                }
                if(GlobalUIStateHolder.excludeJxglstu) {
@@ -717,7 +737,6 @@ fun JxglstuCourseTableUI(
                }
                onEnabled(true)
            }
-
            // 教务系统
            launch jxglstu@ {
                if(GlobalUIStateHolder.excludeJxglstu) {

@@ -98,7 +98,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val data = (uiState as UiState.Success).data
-        val list = data.records
+        val list = data.records.sortedByDescending { it.effectdateStr }
         val listState = rememberLazyListState()
 
         Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
@@ -109,8 +109,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                     item { CardRow(vm,vmUI, hazeState) }
                 items(list.size) { item ->
                     val bills = list[item]
-                    var name = bills.resume
-                    if (name.contains("有限公司")) name = name.replace("有限公司","")
+                    var name = bills.resume.replace("有限公司","")
 
                     val time =bills.effectdateStr
                     val getTime = time.substringBefore(" ")

@@ -49,7 +49,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(22, AppNavRoute.NextCourse.label, AppNavRoute.NextCourse.icon),
         SearchAppBeanLite(23,"热水机",R.drawable.water_voc),
         SearchAppBeanLite(24, AppNavRoute.Classroom.label,AppNavRoute.Classroom.icon),
-        SearchAppBeanLite(25,"体育",R.drawable.directions_run),
+        SearchAppBeanLite(25,"体测平台",R.drawable.sports_volleyball),
         SearchAppBeanLite(26, AppNavRoute.TimeTable.label, AppNavRoute.TimeTable.icon),
         SearchAppBeanLite(27,"学信网", R.drawable.school),
         SearchAppBeanLite(28, AppNavRoute.Life.label,AppNavRoute.Life.icon),

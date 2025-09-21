@@ -1,4 +1,5 @@
 package com.hfut.schedule.logic.network.servicecreator
 
-object PeServiceCreator {
-}
+import com.hfut.schedule.application.MyApplication
+
+object PeServiceCreator : BaseServiceCreator(MyApplication.PE_URL)

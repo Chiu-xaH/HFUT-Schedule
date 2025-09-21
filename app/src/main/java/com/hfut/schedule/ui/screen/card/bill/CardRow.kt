@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -69,9 +70,9 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
     }
 
     //添加间距
-    Spacer(modifier = Modifier.height(5.dp))
+//    Spacer(modifier = Modifier.height(5.dp))
 
-    AnimationCustomCard(containerColor = MaterialTheme.colorScheme.errorContainer) {
+    AnimationCustomCard(containerColor = cardNormalColor()) {
         Row {
             TransplantListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${cardValue?.now ?: now}") },

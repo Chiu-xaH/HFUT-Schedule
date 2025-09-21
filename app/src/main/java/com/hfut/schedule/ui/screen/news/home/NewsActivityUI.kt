@@ -68,7 +68,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.NewsBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
@@ -424,6 +424,6 @@ fun transferToPostData(text : String, page : Int = 1)  : String {
 
     // 转换为字符串
     val updatedJsonString = jsonArray.toString()
-    return Encrypt.encodeToBase64(updatedJsonString)
+    return Crypto.encodeToBase64(updatedJsonString)
 }
 

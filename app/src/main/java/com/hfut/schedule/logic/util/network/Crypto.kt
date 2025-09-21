@@ -7,7 +7,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
-object Encrypt {
+object Crypto {
     @JvmStatic
     fun encryptAES(input:String, password:String): String {
         return try {

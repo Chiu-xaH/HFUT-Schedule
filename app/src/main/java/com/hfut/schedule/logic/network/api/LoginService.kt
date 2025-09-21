@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.api
 
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.enumeration.CasLoginType
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -20,7 +20,7 @@ interface LoginService {
     //获取登录POST所需要的Cookie
     @GET ("cas/login")
     fun getCookie(
-        @Query("service") url : String? = LoginType.JXGLSTU.service
+        @Query("service") url : String? = CasLoginType.JXGLSTU.service
     ) : Call<ResponseBody>
 
     //教务系统附加AES登录
@@ -34,7 +34,7 @@ interface LoginService {
         @Field("execution") execution: String,
         @Field("_eventId") eventId: String = "submit",
         @Field("capcha") code : String,
-        @Query("service") url : String? = LoginType.JXGLSTU.service
+        @Query("service") url : String? = CasLoginType.JXGLSTU.service
     ) : Call<ResponseBody>
 
    //信息门户登录

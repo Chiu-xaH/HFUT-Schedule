@@ -59,12 +59,14 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
 //            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
             UpdateItems("新增 图书馆的登录")//
+            UpdateItems("新增 体测平台的登录","连接校园网(体测平台为内网才可访问)并刷新登录后，在 查询中心-体测平台 中可使用")//
             UpdateItems("新增 斛兵知搜","位于 查询中心-图书馆，搜素全局文献、馆藏图书、电子书等资源")
             UpdateItems("新增 图书馆-我的","位于 查询中心-图书馆")
             UpdateItems("新增 今日校园","位于 查询中心-今日校园；现在，可以在刷新登陆状态后，可使用本App使用某些今日校园的功能")//
             UpdateItems("新增 合肥校区的电费充值与查看")
             UpdateItems("调整 天气预警的开关为默认关闭，按需开启")//
             UpdateItems("修复 网页右侧工具栏收回时动画异常的Bug")//
+            UpdateItems("修复 刷新登陆状态不刷新慧新易校的Bug")//
             UpdateItems("优化 部分界面的显示")//
 //            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")

@@ -189,7 +189,7 @@ fun SearchScreen(
                 SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,vm,navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.NextCourse.receiveRoute()),
                 SearchAppBean(23,"热水机 趣智校园", { HotWater() }),
                 SearchAppBean(24,"${AppNavRoute.Classroom.label} 空教室", { Classroom(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.Classroom.route),
-                SearchAppBean(25,"体育 云运动 乐跑 校园跑 体测 体育测试 体检", { LePaoYun(hazeState) }),
+                SearchAppBean(25,"体育 云运动 乐跑 校园跑 体测 体育测试 体检", { LePaoYun(navController,sharedTransitionScope,animatedContentScope) }, AppNavRoute.WebView.shareRoute(MyApplication.PE_HOME_URL)),
                 SearchAppBean(26,"${AppNavRoute.TimeTable.label} 校历", { WorkAndRest(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.TimeTable.route),
                 SearchAppBean(27,"学信网", { XueXin(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL)),
                 SearchAppBean(28,"${AppNavRoute.Life.label} 校园 校园 天气 教学楼 建筑 学堂", { Life(navController,sharedTransitionScope,animatedContentScope) },AppNavRoute.Life.withArgs(false)),

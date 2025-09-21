@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.logic.util.network.Encrypt.encryptTimestamp
+import com.hfut.schedule.logic.util.network.Crypto.encryptTimestamp
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import okhttp3.ResponseBody
 import retrofit2.Call

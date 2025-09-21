@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -15,13 +15,13 @@ interface QWeatherService {
     @GET("warning/now")
     fun getWeatherWarn(
         @Query("location") locationID : String = getLocation(),
-        @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
+        @Header("Authorization") authorization : String = Crypto.getQWeatherAuth()
     ) : Call<ResponseBody>
     //实时天气
     @GET("weather/now")
     fun getWeather(
         @Query("location") locationID : String = getLocation(),
-        @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
+        @Header("Authorization") authorization : String = Crypto.getQWeatherAuth()
     ) : Call<ResponseBody>
 
     //每日天气 day=7 15 30
@@ -29,7 +29,7 @@ interface QWeatherService {
     fun getWeatherDay(
         @Path("day") day : Int = 30,
         @Query("location") locationID : String = getLocation(),
-        @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
+        @Header("Authorization") authorization : String = Crypto.getQWeatherAuth()
     ) : Call<ResponseBody>
 
     //小时天气 hour=24 72 168
@@ -37,14 +37,14 @@ interface QWeatherService {
     fun getWeatherHour(
         @Path("hour") hour : Int = 168,
         @Query("location") locationID : String = getLocation(),
-        @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
+        @Header("Authorization") authorization : String = Crypto.getQWeatherAuth()
     ) : Call<ResponseBody>
 
     //分钟降水
     @GET("weather/minutely/5m")
     fun getRain(
         @Query("location") locationID : String = getLocation(),
-        @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
+        @Header("Authorization") authorization : String = Crypto.getQWeatherAuth()
     ) : Call<ResponseBody>
 
     //天气指数 type=3 穿衣  6 旅游 9 感冒 11 空调 14 晾晒 16 防晒
@@ -52,6 +52,6 @@ interface QWeatherService {
     fun getTodayConditions(
         @Query("type") type : Int,
         @Query("location") locationID : String = getLocation(),
-        @Header("Authorization") authorization : String = Encrypt.getQWeatherAuth()
+        @Header("Authorization") authorization : String = Crypto.getQWeatherAuth()
     ) : Call<ResponseBody>
 }

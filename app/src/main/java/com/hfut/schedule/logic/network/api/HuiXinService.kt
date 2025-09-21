@@ -1,7 +1,7 @@
 package com.hfut.schedule.logic.network.api
 
 import com.google.gson.JsonObject
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import okhttp3.ResponseBody
@@ -23,10 +23,10 @@ interface HuiXinService {
         @Field("password") password : String,
         @Field("grant_type") type : String = "password",
         @Field("logintype") loginType : String = "sno",
-        @Header("Authorization") auth : String = Encrypt.getHuiXinAuth(),
+        @Header("Authorization") auth : String = Crypto.getHuiXinAuth(),
     ) : Call<ResponseBody>
     //
-    @GET("berserker-base/user")
+    @GET("berserker-app/ykt/tsm/getCampusCards")
     fun checkLogin(@Header("synjones-auth") auth : String ) : Call<ResponseBody>
     //一卡通基本信息 其中包括余额
     @GET("berserker-app/ykt/tsm/getCampusCards")

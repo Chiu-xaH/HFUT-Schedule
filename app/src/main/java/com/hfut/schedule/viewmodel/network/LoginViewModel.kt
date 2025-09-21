@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.enumeration.CasLoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.WebVpnService
@@ -83,8 +83,8 @@ class LoginViewModel : ViewModel() {
                         execution = execution,
                         code = imageCode,
                         url =
-                            if(GlobalUIStateHolder.excludeJxglstu) LoginType.ONE.service
-                            else LoginType.JXGLSTU.service
+                            if(GlobalUIStateHolder.excludeJxglstu) CasLoginType.ONE.service
+                            else CasLoginType.JXGLSTU.service
                     )
                     call.enqueue(object : Callback<ResponseBody> {
                         override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

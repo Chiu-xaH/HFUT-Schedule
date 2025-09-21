@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.network.repo.hfut
 
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.LoginType
+import com.hfut.schedule.logic.enumeration.CasLoginType
 import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.model.CasGetFlavorResponse
 import com.hfut.schedule.logic.network.api.LoginService
@@ -25,16 +25,19 @@ object CasLoginRepository {
     private val casOauth = OneGotoServiceCreator.create(LoginService::class.java)
 
     suspend fun gotoCommunity(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = LoginType.COMMUNITY.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.COMMUNITY.service, cookie = cookie).awaitResponse()
     }
     suspend fun gotoZhiJian(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = LoginType.ZHI_JIAN.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.ZHI_JIAN.service, cookie = cookie).awaitResponse()
     }
     suspend fun gotoLibrary(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = LoginType.LIBRARY.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.LIBRARY.service, cookie = cookie).awaitResponse()
     }
     suspend fun goToStu(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = LoginType.STU.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.STU.service, cookie = cookie).awaitResponse()
+    }
+    suspend fun goToPe(cookie : String) = launchRequestNone {
+        login.loginGoTo(service = CasLoginType.PE.service, cookie = cookie).awaitResponse()
     }
     suspend fun goToOne(cookie : String) = launchRequestNone {// 创建一个Call对象，用于发送异步请求
         casOauth.loginGoToOauth(
@@ -55,8 +58,8 @@ object CasLoginRepository {
         holder = execution,
         request = {
             getCookie.getCookie(
-                if (GlobalUIStateHolder.excludeJxglstu) LoginType.ONE.service
-                else LoginType.JXGLSTU.service
+                if (GlobalUIStateHolder.excludeJxglstu) CasLoginType.ONE.service
+                else CasLoginType.JXGLSTU.service
             ).awaitResponse()
         },
         transformSuccess = { headers, html -> parseCookie(headers, html) }

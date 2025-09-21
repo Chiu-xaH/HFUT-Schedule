@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.getConsumptionResult
 import com.xah.shared.model.BillBean
 import com.xah.shared.model.BillResponse

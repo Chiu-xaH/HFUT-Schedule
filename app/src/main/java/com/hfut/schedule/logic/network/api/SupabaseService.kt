@@ -6,7 +6,7 @@ import com.hfut.schedule.logic.model.SupabaseEventForkCount
 import com.hfut.schedule.logic.model.SupabaseEventForkEntity
 import com.hfut.schedule.logic.model.SupabaseUsageEntity
 import com.hfut.schedule.logic.model.SupabaseUserLoginBean
-import com.hfut.schedule.logic.util.network.Encrypt.getSupabasePublicKey
+import com.hfut.schedule.logic.util.network.Crypto.getSupabasePublicKey
 import com.hfut.schedule.logic.network.util.toDateTimeBeanForSupabase
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus

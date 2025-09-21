@@ -2,8 +2,10 @@ package com.hfut.schedule.logic.network.interceptor
 
 import android.util.Log
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.encodeUrl
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.util.isNotBadRequest
+import com.hfut.schedule.logic.util.network.encodeUrl
+import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -98,6 +100,32 @@ class RedirectTicketInterceptor() : Interceptor {
                     parseLoginLibrary(nextResponse.headers)
                     nextResponse.close()
                 }
+                location.contains(MyApplication.PE_URL) -> {
+                    // 体测平台
+                    val token = "PHPSESSID=$ticket"
+                    saveString("PE", token)
+                    // 向前重定向一次
+                    // 直到响应不是302
+                    val newRequest = request
+                        .newBuilder()
+                        .url(location)
+                        .build()
+                    val nextResponse = chain.proceed(newRequest)
+                    val location2 = nextResponse.headers["Location"]
+                    nextResponse.close()
+                    if(location2 != null) {
+                        val newRequest2 = request
+                            .newBuilder()
+                            .url(location2)
+                            .header("Cookie",token)
+                            .build()
+                        val nextResponse2 = chain.proceed(newRequest2)
+                        nextResponse2.close()
+                        showToast("体测平台登陆成功")
+                    } else {
+                        showToast("体测平台登录失败")
+                    }
+                }
             }
         }
         return response
@@ -155,3 +183,4 @@ private fun parseLoginLibrary(headers: Headers)  = try {
 } catch (e : Exception) {
     e.printStackTrace()
 }
+

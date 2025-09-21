@@ -76,7 +76,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
-import com.hfut.schedule.logic.util.network.Encrypt
+import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -135,7 +135,7 @@ private fun loginClick(
     scope: CoroutineScope
 ) {
     val cookie = prefs.getString(if(!GlobalUIStateHolder.webVpn)"LOGIN_FLAVORING" else "webVpnKey", "")
-    val outputAES = cookie?.let { it1 -> Encrypt.encryptAES(inputAES, it1) }
+    val outputAES = cookie?.let { it1 -> Crypto.encryptAES(inputAES, it1) }
     val loginFlavoring = "LOGIN_FLAVORING=$cookie"
 
 
@@ -569,9 +569,10 @@ fun LoginScreen(
                                 CasPlatform("学工系统", canWebVpn = false, canWithoutJxglstu = true,canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
                                 CasPlatform("慧新易校",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
                                 CasPlatform("指间工大", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
+                                CasPlatform("体测平台",canWebVpn = false, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
                                 CasPlatform("WebVpn",canWebVpn = true, canWithoutJxglstu = false,canWithJxglstu = false, maybeUnlinked = false),
                                 CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
-                                CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true)
+                                CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
                             )
                             LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP/2)) {
                                 item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
