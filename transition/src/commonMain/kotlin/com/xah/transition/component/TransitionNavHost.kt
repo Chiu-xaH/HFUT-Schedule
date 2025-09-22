@@ -37,19 +37,16 @@ fun TransitionNavHost(
         modifier = modifier
     ) {
         CompositionLocalProvider(
-            LocalSharedTransitionScope provides this
+            LocalSharedTransitionScope provides this,
+            LocalAppNavController provides navController
         ) {
-            CompositionLocalProvider(
-                LocalAppNavController provides navController
-            ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = startDestination,
-                    enterTransition = enterTransition,
-                    exitTransition = exitTransition,
-                    builder = builder
-                )
-            }
+            NavHost(
+                navController = navController,
+                startDestination = startDestination,
+                enterTransition = enterTransition,
+                exitTransition = exitTransition,
+                builder = builder
+            )
         }
     }
 }
