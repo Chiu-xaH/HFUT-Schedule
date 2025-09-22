@@ -55,6 +55,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.HazeState
 
 
@@ -155,8 +157,6 @@ fun CourseDetailApiScreen(
     courseName : String,
     id : String,
     vm : NetWorkViewModel,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     navController : NavHostController,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -183,10 +183,9 @@ fun CourseDetailApiScreen(
     }
     val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,id) }
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             route = route,
             navHostController = navController,
             topBar = {
@@ -208,7 +207,7 @@ fun CourseDetailApiScreen(
                 DetailItems(getTotalCourse(json)[numItem], vm, hazeState =hazeState,courseBookData  )
             }
         }
-    }
+//    }
 }
 //根据课程名跨接口查找唯一课程信息
 @OptIn(ExperimentalMaterial3Api::class)

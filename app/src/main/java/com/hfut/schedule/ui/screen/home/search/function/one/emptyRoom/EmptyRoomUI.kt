@@ -15,6 +15,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 
 
@@ -22,8 +24,6 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun Classroom(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
 ){
     val route = remember { AppNavRoute.Classroom.route }
     TransplantListItem(
@@ -32,7 +32,7 @@ fun Classroom(
             Icon(
                 painterResource(AppNavRoute.Classroom.icon),
                 contentDescription = "Localized description",
-                modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope, route)
+                modifier = Modifier.iconElementShare(route)
             )
         },
         modifier = Modifier.clickable {

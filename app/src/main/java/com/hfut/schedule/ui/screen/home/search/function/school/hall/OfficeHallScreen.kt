@@ -59,6 +59,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -85,8 +87,6 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
 fun OfficeHallScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -100,11 +100,10 @@ fun OfficeHallScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val imageSize = remember { 25.dp }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(
@@ -117,7 +116,6 @@ fun OfficeHallScreen(
                         navigationIcon = {
                             TopBarNavigationIcon(
                                 navController,
-                                animatedContentScope,
                                 route,
                                 AppNavRoute.OfficeHall.icon
                             )
@@ -219,5 +217,5 @@ fun OfficeHallScreen(
                 }
             }
         }
-    }
+//    }
 }

@@ -62,6 +62,8 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -69,8 +71,6 @@ import kotlinx.coroutines.launch
 fun ScanScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val color = MaterialTheme.colorScheme.surface
     var resultText by remember { mutableStateOf("") }
@@ -90,10 +90,9 @@ fun ScanScreen(
             }
         }
     }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             bottomBar = {
                 val auth by produceState<String?>(initialValue = null) {
@@ -216,7 +215,7 @@ fun ScanScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Scan.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Scan.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Scan.icon)
                     },
                     actions = {
                         Row {
@@ -268,5 +267,5 @@ fun ScanScreen(
                 CameraScan(imageAnalysis, modifier = Modifier.fillMaxSize())
             }
         }
-    }
+//    }
 }

@@ -74,6 +74,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -85,15 +87,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun WebUI(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.WebNavigation.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.WebNavigation.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WebNavigation.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.WebNavigation.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.WebNavigation,route)
@@ -151,8 +151,6 @@ fun isValidWebUrl(url: String, strict : Boolean = false): Boolean {
 @Composable
 fun WebNavigationScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -228,11 +226,10 @@ fun WebNavigationScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -241,7 +238,7 @@ fun WebNavigationScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.WebNavigation.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.WebNavigation.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.WebNavigation.icon)
                     },
                     actions = {
                         Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -266,7 +263,7 @@ fun WebNavigationScreen(
                 InnerPaddingHeight(innerPadding,true)
                 DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
                     Column(
-                        modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(input)),
+                        modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(input)),
                     ) {
                         CustomTextField(
                             input = input,
@@ -311,15 +308,13 @@ fun WebNavigationScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationBoxScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -330,11 +325,10 @@ fun NotificationBoxScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -343,7 +337,7 @@ fun NotificationBoxScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.NotificationBox.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.NotificationBox.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.NotificationBox.icon)
                     },
                 )
             },
@@ -364,5 +358,5 @@ fun NotificationBoxScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }

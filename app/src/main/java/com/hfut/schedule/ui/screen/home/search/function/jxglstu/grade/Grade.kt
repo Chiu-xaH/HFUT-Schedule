@@ -22,6 +22,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.component.titleElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.navigateAndSaveForTransition
 import com.xah.uicommon.component.text.ScrollText
 
@@ -32,8 +34,6 @@ import com.xah.uicommon.component.text.ScrollText
 fun Grade(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 )  {
     val route = remember { AppNavRoute.Grade.receiveRoute() }
     TransplantListItem(
@@ -41,7 +41,7 @@ fun Grade(
             ScrollText(text = AppNavRoute.Grade.label)
         },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Grade,AppNavRoute.Grade.withArgs(ifSaved))

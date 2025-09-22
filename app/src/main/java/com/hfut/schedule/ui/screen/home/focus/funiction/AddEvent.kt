@@ -132,6 +132,8 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -228,11 +230,7 @@ fun AddEventFloatButton(
 fun AddEventScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
-//    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-//    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.AddEvent.route }
 
     val isSupabase = false
@@ -245,60 +243,53 @@ fun AddEventScreen(
 
     val scope = rememberCoroutineScope()
 
-
-    with(sharedTransitionScope) {
-        CustomTransitionScaffold (
-            route = route,
-            animatedContentScope = animatedContentScope,
-            navHostController = navController,
-            roundShape = FloatingActionButtonDefaults.shape,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        roundShape = FloatingActionButtonDefaults.shape,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
 //                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.AddEvent.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.AddEvent.icon)
-                    },
-                    actions = {
-                        if(!isSupabase)
-                            FilledTonalButton(onClick = {
-                                Starter.startSupabase(context)
-//                                scope.launch {
-
-//                                }
-                            }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                                Text("云端共建")
-                            }
-                    }
-                )
-            },
-        ) { innerPadding ->
-            val canUse by produceState<Boolean?>(initialValue = null) {
-                value = if(isSupabase) loginSupabaseWithCheck(jwt,refreshToken,vm,context) else true
-            }
-            Column(modifier = Modifier.padding(innerPadding)) {
-                when(canUse) {
-                    null -> {
-                        CenterScreen {
-                            LoadingUI("正在核对登录(登录账号才可贡献日程)")
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.AddEvent.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.AddEvent.icon)
+                },
+                actions = {
+                    if(!isSupabase)
+                        FilledTonalButton(onClick = {
+                            Starter.startSupabase(context)
+                        }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                            Text("云端共建")
                         }
+                }
+            )
+        },
+    ) { innerPadding ->
+        val canUse by produceState<Boolean?>(initialValue = null) {
+            value = if(isSupabase) loginSupabaseWithCheck(jwt,refreshToken,vm,context) else true
+        }
+        Column(modifier = Modifier.padding(innerPadding)) {
+            when(canUse) {
+                null -> {
+                    CenterScreen {
+                        LoadingUI("正在核对登录(登录账号才可贡献日程)")
                     }
-                    true -> {
-                        AddEventUI(vm,isSupabase) {
-                            navController.popBackStack()
-                        }
+                }
+                true -> {
+                    AddEventUI(vm,isSupabase) {
+                        navController.popBackStack()
                     }
-                    false -> {
-                        CenterScreen {
-                            ColumnVertical {
-                                StatusUI(R.drawable.login,"未登录或状态失效")
-                                Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                                Button(onClick = { Starter.loginSupabase(context)}) {
-                                    Text("刷新登录状态")
-                                }
+                }
+                false -> {
+                    CenterScreen {
+                        ColumnVertical {
+                            StatusUI(R.drawable.login,"未登录或状态失效")
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                            Button(onClick = { Starter.loginSupabase(context)}) {
+                                Text("刷新登录状态")
                             }
                         }
                     }

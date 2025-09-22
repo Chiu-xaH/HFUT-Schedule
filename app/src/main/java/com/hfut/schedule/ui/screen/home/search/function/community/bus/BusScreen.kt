@@ -68,6 +68,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -82,8 +84,6 @@ private enum class BusDate(val type : String,val description: String) {
 fun BusScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -92,11 +92,10 @@ fun BusScreen(
     var startInput by remember { mutableStateOf("") }
     var endInput by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(
@@ -109,7 +108,6 @@ fun BusScreen(
                         navigationIcon = {
                             TopBarNavigationIcon(
                                 navController,
-                                animatedContentScope,
                                 route,
                                 AppNavRoute.Bus.icon
                             )
@@ -310,5 +308,5 @@ fun BusScreen(
                 }
             }
         }
-    }
+//    }
 }

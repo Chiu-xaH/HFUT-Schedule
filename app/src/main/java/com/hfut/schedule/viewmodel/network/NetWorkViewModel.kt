@@ -83,6 +83,7 @@ import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.hfut.Repository
 import com.hfut.schedule.logic.network.repo.SupabaseRepository
 import com.hfut.schedule.logic.network.repo.hfut.WxRepository
+import com.hfut.schedule.logic.network.util.launchRequestNone
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -246,6 +247,7 @@ class NetWorkViewModel() : ViewModel() {
     val selectResultData = StateHolder<Pair<Boolean, String>>()
     suspend fun postSelect(cookie: String,requestId : String) = JxglstuRepository.postSelect(cookie,requestId,studentId,selectResultData)
 
+    suspend fun checkLibraryNetwork() = Repository.checkLibraryNetwork()
 // 转专业 ////////////////////////////////////////////////////////////////////////////////////////////////
     val transferData = StateHolder<TransferResponse>()
     suspend fun getTransfer(cookie: String,batchId: String) = JxglstuRepository.getTransfer(cookie,batchId,studentId,transferData)

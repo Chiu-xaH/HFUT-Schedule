@@ -9,6 +9,9 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface LibraryService {
+    @GET("/")
+    fun check() : Call<ResponseBody>
+
     @GET("svc/control/currentTenantUser/loginUserInfo")
     fun checkLogin(
         @Header("authorization") auth : String

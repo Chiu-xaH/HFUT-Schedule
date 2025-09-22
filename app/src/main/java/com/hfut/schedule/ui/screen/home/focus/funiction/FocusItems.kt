@@ -674,8 +674,6 @@ fun JxglstuTodayCourseItem(
     switchShowEnded: Boolean,
     timeNow : String,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
@@ -689,7 +687,7 @@ fun JxglstuTodayCourseItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { item.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
-            cardModifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope,route, MaterialTheme.shapes.medium),
+            cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -741,8 +739,6 @@ fun JxglstuTomorrowCourseItem(
     index : Int,
     item : JxglstuCourseSchedule,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
@@ -754,7 +750,7 @@ fun JxglstuTomorrowCourseItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { item.place?.let { Text(text = it) } },
-        cardModifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope,route, MaterialTheme.shapes.medium),
+        cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.CourseDetail, route,)

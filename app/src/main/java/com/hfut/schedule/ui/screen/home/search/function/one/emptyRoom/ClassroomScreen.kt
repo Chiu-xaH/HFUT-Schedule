@@ -55,6 +55,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -73,8 +75,6 @@ private val campusList = Campus.entries
 fun ClassroomScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -108,11 +108,10 @@ fun ClassroomScreen(
             refreshNetwork(false)
         }
     })
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(
@@ -123,7 +122,7 @@ fun ClassroomScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.Classroom.label) },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Classroom.icon)
+                            TopBarNavigationIcon(navController,route, AppNavRoute.Classroom.icon)
                         }
                     )
                     CustomTabRow(pagerState,campusList.map { it.description })
@@ -147,7 +146,7 @@ fun ClassroomScreen(
                                     color = mixedCardNormalColor(),
                                     modifier = Modifier
                                         .padding(2.5.dp)
-                                        .containerShare(sharedTransitionScope, animatedContentScope, pRoute,)
+                                        .containerShare(pRoute,)
                                 ) {
                                     TransplantListItem(
                                         headlineContent = { ScrollText(item.nameZh) },
@@ -163,7 +162,7 @@ fun ClassroomScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 
@@ -171,8 +170,6 @@ fun ClassroomScreen(
 @Composable
 fun ClassroomDetailScreen(
     vm : NetWorkViewModel,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     navController : NavHostController,
     code : String,
     name: String
@@ -193,11 +190,10 @@ fun ClassroomDetailScreen(
         refreshNetwork()
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
@@ -237,5 +233,5 @@ fun ClassroomDetailScreen(
                 }
             }
         }
-    }
+//    }
 }

@@ -18,6 +18,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.navigateAndSaveForTransition
 import com.xah.uicommon.component.text.ScrollText
 
@@ -26,8 +28,6 @@ import com.xah.uicommon.component.text.ScrollText
 fun SelectCourse(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.SelectCourse.route }
     val context = LocalContext.current
@@ -35,7 +35,7 @@ fun SelectCourse(
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.SelectCourse.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.SelectCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.SelectCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             if(!ifSaved) navController.navigateForTransition(AppNavRoute.SelectCourse,route)

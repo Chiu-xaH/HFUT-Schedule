@@ -24,14 +24,12 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun Admission(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Admission.route }
     TransplantListItem(
         headlineContent = { ScrollText(AppNavRoute.Admission.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Admission.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Admission.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Admission,route)

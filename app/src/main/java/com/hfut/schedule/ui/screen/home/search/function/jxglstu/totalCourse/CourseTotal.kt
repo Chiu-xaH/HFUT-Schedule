@@ -37,6 +37,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -47,15 +49,13 @@ import dev.chrisbanes.haze.rememberHazeState
 fun CourseTotal(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.TotalCourse.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TotalCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.TotalCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.TotalCourse,AppNavRoute.TotalCourse.withArgs(ifSaved))
@@ -71,8 +71,6 @@ fun TotalCourseScreen(
     vm : NetWorkViewModel,
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     var next by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(true) }
@@ -81,10 +79,9 @@ fun TotalCourseScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -94,7 +91,7 @@ fun TotalCourseScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.TotalCourse.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.TotalCourse.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.TotalCourse.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -132,7 +129,7 @@ fun TotalCourseScreen(
                 )
             }
         }
-    }
+//    }
 }
 
 

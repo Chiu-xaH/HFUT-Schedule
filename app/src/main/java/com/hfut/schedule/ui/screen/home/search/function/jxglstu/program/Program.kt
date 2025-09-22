@@ -1,9 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,26 +31,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.button.LargeButton
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.xah.uicommon.component.text.ScrollText
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -61,25 +61,22 @@ import dev.chrisbanes.haze.rememberHazeState
 fun Program(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val iconRoute = remember { AppNavRoute.ProgramSearch.receiveRoute() }
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val context = LocalContext.current
 
-
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Program.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         trailingContent = {
             FilledTonalIconButton(
                 onClick = {
                     navController.navigateForTransition(AppNavRoute.ProgramSearch,AppNavRoute.ProgramSearch.withArgs(ifSaved))
                 },
-                modifier = Modifier.size(30.dp).containerShare(sharedTransitionScope,animatedContentScope,iconRoute)
+                modifier = Modifier.size(30.dp).containerShare(iconRoute)
             ) {
                 Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
             }
@@ -104,8 +101,6 @@ fun ProgramScreen(
     vm: NetWorkViewModel,
     ifSaved: Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -118,12 +113,11 @@ fun ProgramScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             roundShape = MaterialTheme.shapes.extraExtraLarge,
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             bottomBar = {
                 AnimatedVisibility(
@@ -133,7 +127,7 @@ fun ProgramScreen(
                 ) {
                     Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
                         LargeButton(
-                            iconModifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = competitionRoute),
+                            iconModifier = Modifier.iconElementShare( route = competitionRoute),
                             onClick = {
                                 if(prefs.getString("PROGRAM_PERFORMANCE","")?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
                                 else refreshLogin(context)
@@ -146,8 +140,6 @@ fun ProgramScreen(
                                     .fillMaxWidth()
                                     .padding(APP_HORIZONTAL_DP)
                                     .containerShare(
-                                        sharedTransitionScope,
-                                        animatedContentScope,
                                         competitionRoute,
                                         roundShape = MaterialTheme.shapes.large,
                                     ),
@@ -166,7 +158,7 @@ fun ProgramScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.Program.label) },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Program.icon)
+                            TopBarNavigationIcon(navController,route, AppNavRoute.Program.icon)
                         },
                         actions = {
                             FilledTonalButton(
@@ -200,7 +192,7 @@ fun ProgramScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 

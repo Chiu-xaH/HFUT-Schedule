@@ -18,6 +18,8 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -25,8 +27,6 @@ import com.xah.transition.component.iconElementShare
 fun Transfer(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ){
     val route = remember { AppNavRoute.Transfer.route }
     val context = LocalContext.current
@@ -34,7 +34,7 @@ fun Transfer(
     TransplantListItem(
         headlineContent = { Text(text = AppNavRoute.Transfer.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Transfer.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Transfer.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context) else {

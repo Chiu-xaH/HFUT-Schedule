@@ -53,6 +53,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -64,8 +66,6 @@ import kotlinx.coroutines.launch
 fun Exam(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Exam.route }
     val context = LocalContext.current
@@ -74,7 +74,7 @@ fun Exam(
         headlineContent = { ScrollText(text = AppNavRoute.Exam.label) },
 //        overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved)  {
@@ -90,19 +90,16 @@ fun Exam(
 @Composable
 fun ExamScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Exam.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -111,7 +108,7 @@ fun ExamScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Exam.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Exam.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Exam.icon)
                     }
                 )
             },
@@ -133,7 +130,7 @@ fun ExamScreen(
                 }
             }
         }
-    }
+//    }
 }
 @Composable
 private fun ExamItems(item : Int,status : Boolean) {

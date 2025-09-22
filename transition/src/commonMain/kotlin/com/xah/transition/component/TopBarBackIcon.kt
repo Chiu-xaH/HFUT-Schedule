@@ -1,6 +1,5 @@
 package com.xah.transition.component
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -28,9 +27,8 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.TopBarNavigateIcon(
+fun TopBarNavigateIcon(
     navController : NavHostController,
-    animatedContentScope: AnimatedContentScope,
     route : String,
     icon :  Painter,
     restoreIcon : Boolean = true
@@ -57,7 +55,7 @@ fun SharedTransitionScope.TopBarNavigateIcon(
                 enter = DefaultTransitionStyle.centerAllAnimation.enter,
                 exit = DefaultTransitionStyle.centerAllAnimation.exit
             ) {
-                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(this@TopBarNavigateIcon,animatedContentScope = animatedContentScope, route = route))
+                Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = route))
             }
             AnimatedVisibility(
                 visible = !show,

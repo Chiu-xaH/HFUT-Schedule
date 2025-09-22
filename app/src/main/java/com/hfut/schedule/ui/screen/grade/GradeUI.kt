@@ -66,6 +66,8 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -84,8 +86,6 @@ fun GradeScreen(
     ifSaved : Boolean,
     vm : NetWorkViewModel,
     navTopController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
@@ -135,11 +135,10 @@ fun GradeScreen(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = targetRoute,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navTopController,
             topBar = {
                 MediumTopAppBar(
@@ -148,7 +147,7 @@ fun GradeScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Grade.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navTopController,animatedContentScope,targetRoute,AppNavRoute.Grade.icon)
+                        TopBarNavigationIcon(navTopController,targetRoute,AppNavRoute.Grade.icon)
                     },
                     actions = {
                         Row {
@@ -196,7 +195,7 @@ fun GradeScreen(
                 }
             }
         }
-    }
+//    }
 
 }
 

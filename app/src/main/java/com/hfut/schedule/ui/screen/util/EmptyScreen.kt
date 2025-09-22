@@ -9,6 +9,8 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 
 // 当转场的目标界面很复杂，用此界面进行中转，减少掉帧
 @OptIn(ExperimentalSharedTransitionApi::class,)
@@ -16,17 +18,14 @@ import com.hfut.schedule.ui.util.navigateForTransition
 fun EmptyScreen(
     targetRoute : String,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Empty.withArgs(targetRoute) }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold(
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
         ) { innerPadding ->
             navController.navigateForTransition(targetRoute,transplantBackground = true)
         }
-    }
+//    }
 }

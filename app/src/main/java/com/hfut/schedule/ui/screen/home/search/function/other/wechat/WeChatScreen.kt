@@ -52,6 +52,8 @@ import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -74,8 +76,6 @@ private val list2 = listOf(
 @Composable
 fun WeChatScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -102,10 +102,9 @@ fun WeChatScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Wechat.route }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -115,7 +114,7 @@ fun WeChatScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Wechat.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Wechat.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Wechat.icon)
                     },
                     actions = {
                         StartAppIcon(
@@ -180,5 +179,5 @@ fun WeChatScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }

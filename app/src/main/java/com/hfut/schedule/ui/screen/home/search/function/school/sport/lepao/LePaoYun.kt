@@ -41,6 +41,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -51,8 +53,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun LePaoYun(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val context = LocalContext.current
     val icon = remember { R.drawable.sports_volleyball }
@@ -62,7 +62,7 @@ fun LePaoYun(
     TransplantListItem(
         headlineContent = { ScrollText(text = title) },
         leadingContent = {
-            Icon(painterResource(icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         trailingContent = {
             FilledTonalIconButton(

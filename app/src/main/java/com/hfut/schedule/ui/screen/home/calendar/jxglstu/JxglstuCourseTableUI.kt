@@ -103,6 +103,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
@@ -209,8 +211,6 @@ fun JxglstuCourseTableUI(
     today: LocalDate,
     hazeState: HazeState,
     navController: NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     backGroundHaze : HazeState?,
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit
@@ -860,8 +860,6 @@ fun JxglstuCourseTableUI(
 
                                     route?.let { it1 ->
                                         it.containerShare(
-                                            sharedTransitionScope,
-                                            animatedContentScope,
                                             route = it1,
                                             roundShape = MaterialTheme.shapes.extraSmall,
                                         )

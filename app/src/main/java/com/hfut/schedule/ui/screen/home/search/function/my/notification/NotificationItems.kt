@@ -38,6 +38,8 @@ import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -74,18 +76,15 @@ fun NotificationItems() {
 @Composable
 fun NotificationsScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Notifications.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -94,7 +93,7 @@ fun NotificationsScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Notifications.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Notifications.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Notifications.icon)
                     },
                 )
             },
@@ -109,5 +108,5 @@ fun NotificationsScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }

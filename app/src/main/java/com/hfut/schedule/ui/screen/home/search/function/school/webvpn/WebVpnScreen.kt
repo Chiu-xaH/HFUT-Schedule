@@ -63,6 +63,8 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -76,8 +78,6 @@ import kotlinx.coroutines.launch
 fun WebVpnScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -90,11 +90,10 @@ fun WebVpnScreen(
 //        backgroundColor = Color.White
 //    )
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -103,7 +102,7 @@ fun WebVpnScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.WebVpn.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.WebVpn.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.WebVpn.icon)
                     },
                     actions = {
                         FilledTonalButton(
@@ -131,7 +130,7 @@ fun WebVpnScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }
 
 suspend fun getWebVpnCookie() : String? {

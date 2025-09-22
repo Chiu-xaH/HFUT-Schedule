@@ -68,6 +68,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.status.LoadingScreen
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -85,20 +87,17 @@ fun ProgramCompetitionScreen(
     vm: NetWorkViewModel,
     ifSaved: Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             roundShape = MaterialTheme.shapes.large,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -107,7 +106,7 @@ fun ProgramCompetitionScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.ProgramCompetition.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.ProgramCompetition.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.ProgramCompetition.icon)
                     }
                 )
             },
@@ -115,10 +114,10 @@ fun ProgramCompetitionScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                ProgramPerformance(vm,ifSaved,innerPadding,navController,sharedTransitionScope,animatedContentScope)
+                ProgramPerformance(vm,ifSaved,innerPadding,navController)
             }
         }
-    }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -128,9 +127,8 @@ private fun ProgramPerformance(
     ifSaved : Boolean,
     innerPadding : PaddingValues,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
+
     val uiState by vm.programPerformanceData.state.collectAsState()
     val data by produceState<ProgramBean?>(initialValue = null) {
         if(!ifSaved || uiState is UiState.Success) {
@@ -190,8 +188,8 @@ private fun ProgramPerformance(
                                     navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
                                 }
                                 .containerShare(
-                                sharedTransitionScope,
-                                animatedContentScope=animatedContentScope,
+//                                sharedTransitionScope,
+//                                animatedContentScope=animatedContentScope,
                                 route=route,
                                 roundShape = MaterialTheme.shapes.medium,
                             )
@@ -246,8 +244,8 @@ private fun ProgramPerformance(
                                 navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
                             }
                             .containerShare(
-                            sharedTransitionScope,
-                            animatedContentScope=animatedContentScope,
+//                            sharedTransitionScope,
+//                            animatedContentScope=animatedContentScope,
                             route=route,
                             roundShape = MaterialTheme.shapes.medium,
                         )
@@ -303,8 +301,6 @@ fun ProgramCompetitionDetailScreen(
     title : String,
     moduleIndex : Int,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -312,11 +308,10 @@ fun ProgramCompetitionDetailScreen(
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             roundShape = MaterialTheme.shapes.medium,
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -374,7 +369,7 @@ fun ProgramCompetitionDetailScreen(
                 PerformanceInfo(vm,moduleIndex,hazeState,innerPadding,input)
             }
         }
-    }
+//    }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

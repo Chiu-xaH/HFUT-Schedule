@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.component.button
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,12 +12,11 @@ import com.xah.transition.component.TopBarNavigateIcon
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.TopBarNavigationIcon(
+fun TopBarNavigationIcon(
     navController : NavHostController,
-    animatedContentScope: AnimatedContentScope,
     route : String,
     icon : Int,
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    TopBarNavigateIcon(navController,animatedContentScope=animatedContentScope,route, painterResource(icon),!enablePredictive)
+    TopBarNavigateIcon(navController,route, painterResource(icon),!enablePredictive)
 }

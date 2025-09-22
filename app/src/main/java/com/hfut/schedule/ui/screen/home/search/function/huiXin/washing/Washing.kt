@@ -62,6 +62,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
@@ -75,8 +77,6 @@ fun Washing(
     vm: NetWorkViewModel,
     hazeState: HazeState,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val route = remember { AppNavRoute.HaiLeWashing.route }
@@ -99,7 +99,7 @@ fun Washing(
         },
         trailingContent = {
                 FilledTonalIconButton(
-                    modifier = Modifier.size(30.dp).containerShare(sharedTransitionScope,animatedContentScope,route),
+                    modifier = Modifier.size(30.dp).containerShare(route),
                     onClick = {
                         navController.navigateForTransition(AppNavRoute.HaiLeWashing,route)
                     },
@@ -118,19 +118,16 @@ fun Washing(
 fun HaiLeWashingScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.HaiLeWashing.route }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             roundShape = MaterialTheme.shapes.extraExtraLarge,
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -150,7 +147,7 @@ fun HaiLeWashingScreen(
                 HaiLeScreen(vm,hazeState)
             }
         }
-    }
+//    }
 }
 
 

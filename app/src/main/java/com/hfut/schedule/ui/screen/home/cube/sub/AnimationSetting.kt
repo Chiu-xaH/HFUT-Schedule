@@ -202,23 +202,23 @@ fun TransitionExample() {
                     }
                 }
             }
-            SharedTransitionLayout() {
-                AnimatedContent(
-                    targetState = isExpand,
-                    transitionSpec = {
-                        fadeIn(animationSpec = tween()) togetherWith fadeOut(animationSpec = tween())
-                    },
-                    label = ""
-                ) { targetLabel ->
-                    Box(modifier = Modifier.clip(RoundedCornerShape(11.dp))) {
-                        if(targetLabel) {
-                            ScreenApp(index,this@SharedTransitionLayout,this@AnimatedContent)
-                        } else {
-                            ScreenBackground(isExpand,index,this@SharedTransitionLayout,this@AnimatedContent)
-                        }
-                    }
-                }
-            }
+//            SharedTransitionLayout() {
+//                AnimatedContent(
+//                    targetState = isExpand,
+//                    transitionSpec = {
+//                        fadeIn(animationSpec = tween()) togetherWith fadeOut(animationSpec = tween())
+//                    },
+//                    label = ""
+//                ) { targetLabel ->
+//                    Box(modifier = Modifier.clip(RoundedCornerShape(11.dp))) {
+//                        if(targetLabel) {
+//                            ScreenApp(index)
+//                        } else {
+//                            ScreenBackground(isExpand,index)
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 }
@@ -229,8 +229,6 @@ fun TransitionExample() {
 private fun ScreenBackground(
     isExpanded : Boolean,
     index : Int,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val backgroundColor by animateFloatAsState(
         targetValue = if(isExpanded) 0.7f else 0f,
@@ -278,7 +276,7 @@ private fun ScreenBackground(
                                 }
                             } else it
                         }
-                        .containerShare(sharedTransitionScope,animatedContentScope,"test${0}", roundShape = RoundedCornerShape(6.dp))
+                        .containerShare("test${0}", roundShape = RoundedCornerShape(6.dp))
                 ) {
                 }
                 Spacer(Modifier.width(4.dp))
@@ -300,7 +298,7 @@ private fun ScreenBackground(
                                 }
                             } else it
                         }
-                        .containerShare(sharedTransitionScope,animatedContentScope,"test${1}", roundShape = RoundedCornerShape(6.dp))
+                        .containerShare("test${1}", roundShape = RoundedCornerShape(6.dp))
                 ) {
 
                 }
@@ -322,7 +320,7 @@ private fun ScreenBackground(
                                     }
                                 } else it
                             }
-                            .containerShare(sharedTransitionScope,animatedContentScope,"test${i+2}", roundShape = RoundedCornerShape(6.dp))
+                            .containerShare("test${i+2}", roundShape = RoundedCornerShape(6.dp))
                     ) {
 
                     }
@@ -345,7 +343,7 @@ private fun ScreenBackground(
                                     }
                                 } else it
                             }
-                            .containerShare(sharedTransitionScope,animatedContentScope,"test${i+4}", roundShape = RoundedCornerShape(6.dp))
+                            .containerShare("test${i+4}", roundShape = RoundedCornerShape(6.dp))
                     ) {
 
                     }
@@ -360,14 +358,13 @@ private fun ScreenBackground(
 @Composable
 private fun ScreenApp(
     index : Int,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.secondaryContainer)
-            .containerShare(sharedTransitionScope,animatedContentScope,"test$index", roundShape = RoundedCornerShape(6.dp))
+            .containerShare("test$index", roundShape = RoundedCornerShape(6.dp))
     ) {
         Icon(
             Icons.Default.ArrowBack,
@@ -381,7 +378,7 @@ private fun ScreenApp(
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(end = 6.dp, top = 6.dp).align(Alignment.TopEnd).size(11.dp)
         )
-        Text((index+1).toString(), modifier = Modifier.align(Alignment.Center).titleElementShare(sharedTransitionScope,animatedContentScope,"test$index"))
+        Text((index+1).toString(), modifier = Modifier.align(Alignment.Center).titleElementShare("test$index"))
     }
 }
 

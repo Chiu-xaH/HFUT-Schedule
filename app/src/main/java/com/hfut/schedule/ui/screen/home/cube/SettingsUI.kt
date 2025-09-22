@@ -38,6 +38,8 @@ import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
@@ -62,8 +64,6 @@ fun SettingsScreen(vm : NetWorkViewModel,
                    innerPaddings : PaddingValues,
                    hazeState: HazeState,
                    navHostTopController : NavController,
-                   sharedTransitionScope: SharedTransitionScope,
-                   animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
     Scaffold() { _ ->
@@ -80,7 +80,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
 
             composable(Screen.HomeScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    HomeSettingScreen(navController, innerPaddings,vm,navHostTopController,sharedTransitionScope,animatedContentScope)
+                    HomeSettingScreen(navController, innerPaddings,vm,navHostTopController)
                 }
             }
             composable(Screen.UIScreen.route) {

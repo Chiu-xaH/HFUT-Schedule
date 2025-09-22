@@ -123,6 +123,8 @@ class MyApplication : Application() {
         const val XUE_XIN_URL = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
         // 必应壁纸
         const val BING_WALLPAPER_URL = "https://bing.img.run/"
+        // 研讨间预约 校园网
+        const val MEETING_ROOM_URL = "http://210.45.243.31:81"
         // U校园
         const val UNIPUS_URL = "https://u.unipus.cn/"
         const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"

@@ -24,8 +24,6 @@ import com.xah.transition.component.iconElementShare
 @Composable
 fun Scan(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Scan.route }
 
@@ -33,7 +31,7 @@ fun Scan(
         headlineContent = { ScrollText(text = AppNavRoute.Scan.label) },
         overlineContent = { ScrollText("CAS扫码登录")},
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Scan.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Scan.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Scan,route)

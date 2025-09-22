@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.theme
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
@@ -33,10 +34,20 @@ fun AppTheme(
     val enableDynamicColor = customColor == -1L
     // 跟随系统深色模式
     val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
+    // 除了Compose的深色跟随
     val isInDark = when(currentColorModeIndex) {
-        DataStoreManager.ColorMode.DARK.code -> true
-        DataStoreManager.ColorMode.LIGHT.code -> false
-        else -> isSystemInDarkTheme()
+        DataStoreManager.ColorMode.DARK.code -> {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            true
+        }
+        DataStoreManager.ColorMode.LIGHT.code -> {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            false
+        }
+        else -> {
+//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            isSystemInDarkTheme()
+        }
     }
     // OLED 纯黑
     val usePureBlack by DataStoreManager.enablePureDark.collectAsState(initial = false)

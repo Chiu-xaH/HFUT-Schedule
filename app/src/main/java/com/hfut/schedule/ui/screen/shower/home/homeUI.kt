@@ -34,7 +34,7 @@ fun GuaguaStart(vm: GuaGuaViewModel, innerPadding : PaddingValues, netWm : NetWo
             StartShowerUI(vm,hazeState)
         }
 
-        DividerTextExpandedWith("脱机使用 (无需APP 输入使用码)") {
+        DividerTextExpandedWith("脱机使用 (无需APP 输入使用码)",openBlurAnimation = false) {
             UseCodeUI(vm,hazeState,navHostController)
         }
         InnerPaddingHeight(innerPadding,false)

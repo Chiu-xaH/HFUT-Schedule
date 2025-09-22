@@ -67,6 +67,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getC
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -89,8 +91,6 @@ fun TodayScreen(
     sortType: SortType,
     sortReversed : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
@@ -226,7 +226,7 @@ fun TodayScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
                         TAB_LEFT -> {
-                            item { FocusCard(vmUI,vm,hazeState, navController,sharedTransitionScope,animatedContentScope) }
+                            item { FocusCard(vmUI,vm,hazeState, navController,) }
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
@@ -245,7 +245,7 @@ fun TodayScreen(
                                         if(!isHolidayTomorrow()) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],navController,sharedTransitionScope,animatedContentScope)
+                                                    JxglstuTomorrowCourseItem(item,list[item],navController,)
                                                 }
                                             }
                                         }
@@ -253,7 +253,7 @@ fun TodayScreen(
                                         if(!isHoliday()) {
                                             todayJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow,navController,sharedTransitionScope,animatedContentScope)
+                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow,navController,)
                                                 }
                                             }
                                         }
@@ -332,7 +332,7 @@ fun TodayScreen(
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],navController,sharedTransitionScope,animatedContentScope)
+                                                    JxglstuTomorrowCourseItem(item,list[item],navController,)
                                                 }
                                             }
                                         }

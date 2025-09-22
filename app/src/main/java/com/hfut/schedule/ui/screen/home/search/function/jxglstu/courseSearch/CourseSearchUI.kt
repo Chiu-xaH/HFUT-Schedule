@@ -74,6 +74,8 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -84,8 +86,6 @@ import kotlinx.coroutines.launch
 fun CourseSearchScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -138,11 +138,10 @@ fun CourseSearchScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -150,7 +149,7 @@ fun CourseSearchScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.CourseSearch.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.CourseSearch.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.CourseSearch.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {
@@ -167,7 +166,7 @@ fun CourseSearchScreen(
                                 Icon(
                                     painterResource(R.drawable.calendar),
                                     null,
-                                    modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.CourseSearchCalendar.route)
+                                    modifier = Modifier.iconElementShare( route = AppNavRoute.CourseSearchCalendar.route)
                                 )
                             }
                             AnimatedVisibility(
@@ -351,7 +350,7 @@ fun CourseSearchScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 

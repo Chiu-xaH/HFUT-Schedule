@@ -42,6 +42,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -50,8 +52,6 @@ import dev.chrisbanes.haze.rememberHazeState
 fun ClassmatesScreen(
     vm: NetWorkViewModel,
     navTopController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -59,12 +59,11 @@ fun ClassmatesScreen(
     var nameSort by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             roundShape = MaterialTheme.shapes.medium,
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navTopController,
             topBar = {
                 MediumTopAppBar(
@@ -75,7 +74,6 @@ fun ClassmatesScreen(
                     navigationIcon = {
                         TopBarNavigationIcon(
                             navTopController,
-                            animatedContentScope,
                             route,
                             AppNavRoute.Classmates.icon
                         )
@@ -164,7 +162,7 @@ fun ClassmatesScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 

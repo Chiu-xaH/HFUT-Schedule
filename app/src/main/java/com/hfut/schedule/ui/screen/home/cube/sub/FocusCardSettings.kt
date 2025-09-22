@@ -245,8 +245,6 @@ fun FocusCard(
     vm : NetWorkViewModel,
     hazeState: HazeState,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val showEle = prefs.getBoolean("SWITCHELE",getCampusRegion() == CampusRegion.XUANCHENG)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
@@ -262,8 +260,6 @@ fun FocusCard(
             color = mixedCardNormalColor(),
             modifier = if(showWeather) {
                 Modifier.containerShare(
-                    sharedTransitionScope,
-                    animatedContentScope = animatedContentScope,
                     route = route,
                     roundShape = MaterialTheme.shapes.medium,
                 )

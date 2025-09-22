@@ -45,6 +45,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -52,15 +54,13 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun Holiday(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Holiday.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Holiday.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Holiday,route)
@@ -72,18 +72,15 @@ fun Holiday(
 @Composable
 fun HolidayScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Holiday.route }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -91,7 +88,7 @@ fun HolidayScreen(
                     colors = topBarTransplantColor(),
                     title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.label}") },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route,AppNavRoute.Holiday.icon)
+                        TopBarNavigationIcon(navController,route,AppNavRoute.Holiday.icon)
                     },
                     modifier = Modifier.topBarBlur(hazeState, )
                 )
@@ -104,7 +101,7 @@ fun HolidayScreen(
                 HolidayUI(innerPadding)
             }
         }
-    }
+//    }
 }
 
 @Composable

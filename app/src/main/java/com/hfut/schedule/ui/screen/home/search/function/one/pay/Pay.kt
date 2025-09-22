@@ -64,6 +64,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -72,15 +74,13 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun Pay(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Fee.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Fee.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Fee,route)
@@ -93,19 +93,16 @@ fun Pay(
 fun FeeScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
 ) {
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Fee.route }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -114,7 +111,7 @@ fun FeeScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Fee.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route,AppNavRoute.Fee.icon)
+                        TopBarNavigationIcon(navController,route,AppNavRoute.Fee.icon)
                     },
                     actions = {
                         FilledTonalButton(
@@ -135,7 +132,7 @@ fun FeeScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }
 
 @Composable

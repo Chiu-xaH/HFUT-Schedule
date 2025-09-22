@@ -1,6 +1,5 @@
 [versions]
 androidliquidglass = "1.0.0-alpha06"
-composelevitation = "1.0.3"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
 minAndroidVersion = "26"

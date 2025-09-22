@@ -112,6 +112,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.align.ColumnVertical
@@ -131,8 +133,6 @@ fun SelectCourseScreen(
     vm: NetWorkViewModel,
     vmUI : UIViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -165,11 +165,10 @@ fun SelectCourseScreen(
     })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -178,7 +177,7 @@ fun SelectCourseScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.SelectCourse.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.SelectCourse.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.SelectCourse.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
@@ -198,7 +197,7 @@ fun SelectCourseScreen(
                                     )
                                 }
                             },
-                                modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url))
+                                modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url))
                             ) {
                                 Text(text = "冲突预览")
                             }
@@ -219,12 +218,12 @@ fun SelectCourseScreen(
                 Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
                     RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
                     CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                        SelectCourseList(vm,innerPadding,navController,sharedTransitionScope,animatedContentScope)
+                        SelectCourseList(vm,innerPadding,navController)
                     }
                 }
             }
         }
-    }
+//    }
 }
 
 
@@ -235,8 +234,6 @@ fun SelectCourseDetailScreen(
     courseId : Int,
     title : String,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -254,11 +251,10 @@ fun SelectCourseDetailScreen(
     }
     var refreshCount by remember { mutableIntStateOf(0) }
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(
@@ -271,7 +267,6 @@ fun SelectCourseDetailScreen(
                         navigationIcon = {
                             TopBarNavigationIcon(
                                 navController,
-                                animatedContentScope,
                                 route,
                                 AppNavRoute.SelectCourseDetail.icon
                             )
@@ -290,7 +285,7 @@ fun SelectCourseDetailScreen(
                                     onClick = {
                                         navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
                                     },
-                                    modifier = Modifier.containerShare(sharedTransitionScope,animatedContentScope, AppNavRoute.DropCourse.route)
+                                    modifier = Modifier.containerShare( AppNavRoute.DropCourse.route)
                                 ) {
                                     Text(text = "退课")
                                 }
@@ -344,7 +339,7 @@ fun SelectCourseDetailScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 
@@ -355,8 +350,6 @@ fun DropCourseScreen(
     courseId : Int,
     title : String,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -364,11 +357,10 @@ fun DropCourseScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(
@@ -383,7 +375,6 @@ fun DropCourseScreen(
                         navigationIcon = {
                             TopBarNavigationIcon(
                                 navController,
-                                animatedContentScope,
                                 route,
                                 AppNavRoute.DropCourse.icon
                             )
@@ -400,7 +391,7 @@ fun DropCourseScreen(
                 HaveSelectedCourseLoad(vm, courseId,hazeState,innerPadding)
             }
         }
-    }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -409,8 +400,6 @@ private fun SelectCourseList(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
  ) {
     val uiState by vm.selectCourseData.state.collectAsState()
     val list = (uiState as UiState.Success).data
@@ -461,7 +450,7 @@ private fun SelectCourseList(
                     val route = AppNavRoute.SelectCourseDetail.withArgs(id,name)
                     AnimationCustomCard (
                         modifier = Modifier
-                            .containerShare(sharedTransitionScope, animatedContentScope, route)
+                            .containerShare( route)
                             .clickable {
                                 navController.navigateForTransition(
                                     AppNavRoute.SelectCourseDetail,

@@ -1,6 +1,5 @@
 package com.xah.transition.component
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -25,6 +24,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.transitionBackground
 import com.xah.transition.util.TransitionPredictiveBackHandler
@@ -35,15 +35,12 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.TransitionScaffold(
-    animatedContentScope: AnimatedContentScope,
+fun TransitionScaffold(
     roundShape : Shape = MaterialTheme.shapes.medium,
     route: String,
     navHostController : NavHostController,
     modifier: Modifier = Modifier.clip(roundShape)
         .transitionBackground(navHostController, route).containerShare(
-            this,
-        animatedContentScope,
         route,
         roundShape,
     ),
@@ -141,15 +138,12 @@ fun SharedTransitionScope.TransitionScaffold(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.TransitionSurface(
-    animatedContentScope: AnimatedContentScope,
+fun TransitionSurface(
     roundShape : Shape = MaterialTheme.shapes.medium,
     route: String,
     navHostController : NavHostController,
     modifier: Modifier = Modifier.clip(roundShape)
         .transitionBackground(navHostController, route).containerShare(
-            this,
-            animatedContentScope,
             route,
             roundShape,
         ),

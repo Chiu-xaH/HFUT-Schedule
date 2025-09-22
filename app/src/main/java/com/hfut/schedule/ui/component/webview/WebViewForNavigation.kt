@@ -91,6 +91,8 @@ import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.canPopBack
@@ -113,8 +115,6 @@ private fun WebViewBackIcon(
     navController: NavHostController,
     route : String,
     color : Color,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val back : () -> Unit = {
@@ -146,42 +146,40 @@ private fun WebViewBackIcon(
             content()
         }
     }
-    with(sharedTransitionScope) {
-        if(icon == null) {
-            button {
-                Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-            }
-        } else {
-            val speed = TransitionState.curveStyle.speedMs
-            var show by remember { mutableStateOf(true) }
-            LaunchedEffect(Unit) {
+    if(icon == null) {
+        button {
+            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+        }
+    } else {
+        val speed = TransitionState.curveStyle.speedMs
+        var show by remember { mutableStateOf(true) }
+        LaunchedEffect(Unit) {
+            show = true
+            delay(speed*1L)
+            delay(1500L)
+            show = false
+            if(!enablePredictive || TransitionState.transplantBackground) {
+                delay(3000L)
                 show = true
-                delay(speed*1L)
-                delay(1500L)
-                show = false
-                if(!enablePredictive || TransitionState.transplantBackground) {
-                    delay(3000L)
-                    show = true
-                }
             }
+        }
 
 
-            button {
-                Box() {
-                    AnimatedVisibility(
-                        visible = show,
-                        enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                        exit = DefaultTransitionStyle.centerAllAnimation.exit
-                    ) {
-                        Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).iconElementShare(sharedTransitionScope ,animatedContentScope = animatedContentScope, route = route))
-                    }
-                    AnimatedVisibility(
-                        visible = !show,
-                        enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                        exit = DefaultTransitionStyle.centerAllAnimation.exit
-                    ) {
-                        Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                    }
+        button {
+            Box() {
+                AnimatedVisibility(
+                    visible = show,
+                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
+                    exit = DefaultTransitionStyle.centerAllAnimation.exit
+                ) {
+                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).iconElementShare( route = route))
+                }
+                AnimatedVisibility(
+                    visible = !show,
+                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
+                    exit = DefaultTransitionStyle.centerAllAnimation.exit
+                ) {
+                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
                 }
             }
         }
@@ -217,8 +215,6 @@ fun WebViewScreenForNavigation(
     icon : Int? = null,
     cookies : String? = null,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     drawerState: DrawerState,
     onColor: (Color?) -> Unit
 ) {
@@ -420,11 +416,9 @@ fun WebViewScreenForNavigation(
     }
 
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             enablePredictive = false,
             route = route,
-            animatedContentScope = animatedContentScope,
             navHostController = navController,
             topBar = {
                 AnimatedVisibility(
@@ -450,7 +444,7 @@ fun WebViewScreenForNavigation(
                             }
                         },
                         navigationIcon = {
-                            WebViewBackIcon(webView,icon,navController,route,topBarTitleColor,sharedTransitionScope,animatedContentScope)
+                            WebViewBackIcon(webView,icon,navController,route,topBarTitleColor)
                         },
                         title = {
                             Column {
@@ -616,7 +610,7 @@ fun WebViewScreenForNavigation(
                 )
             }
         }
-    }
+//    }
 }
 
 private const val FORCE_DARK_CSS = """

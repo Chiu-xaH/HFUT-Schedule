@@ -36,6 +36,8 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -47,8 +49,6 @@ import dev.chrisbanes.haze.rememberHazeState
 fun VersionInfoScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -81,10 +81,9 @@ fun VersionInfoScreen(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.VersionInfo.route }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             roundShape = MaterialTheme.shapes.medium,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -95,7 +94,7 @@ fun VersionInfoScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.VersionInfo.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.VersionInfo.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.VersionInfo.icon)
                     },
                     actions = {
                         FilledTonalButton(onClick = { showBottomSheetUpdate = true }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
@@ -116,5 +115,5 @@ fun VersionInfoScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }

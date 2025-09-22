@@ -81,6 +81,8 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
@@ -92,11 +94,9 @@ private const val XUANCHENG_TAB = 1
 fun DormitoryScoreScreen(
     vm: NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+//    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.DormitoryScore.route }
 
     val titles = remember { listOf("合肥","宣城") }
@@ -164,10 +164,9 @@ fun DormitoryScoreScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -177,7 +176,7 @@ fun DormitoryScoreScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.DormitoryScore.label) },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.DormitoryScore.icon)
+                            TopBarNavigationIcon(navController,route, AppNavRoute.DormitoryScore.icon)
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -312,5 +311,5 @@ fun DormitoryScoreScreen(
                 }
             }
         }
-    }
+//    }
 }

@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,15 +30,17 @@ import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
-import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -54,20 +54,17 @@ fun CourseSearchCalendarScreen(
     vm : NetWorkViewModel,
     vmUI : UIViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.CourseSearchCalendar.route }
     var showAll by remember { mutableStateOf(false) }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             roundShape = MaterialTheme.shapes.medium,
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(
@@ -108,7 +105,7 @@ fun CourseSearchCalendarScreen(
                             }
                         },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route,AppNavRoute.CourseSearchCalendar.icon)
+                            TopBarNavigationIcon(navController,route,AppNavRoute.CourseSearchCalendar.icon)
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -136,5 +133,5 @@ fun CourseSearchCalendarScreen(
                 }
             }
         }
-    }
+//    }
 }

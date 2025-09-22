@@ -60,6 +60,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -72,15 +74,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun ToadyCampus(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ){
     val route = remember { AppNavRoute.StuTodayCampus.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.StuTodayCampus.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.StuTodayCampus,route)
@@ -93,8 +93,6 @@ fun ToadyCampus(
 fun StuTodayCampusScreen(
     vm: NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -104,11 +102,10 @@ fun StuTodayCampusScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf("") }
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column (
@@ -119,7 +116,7 @@ fun StuTodayCampusScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.StuTodayCampus.label) },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.StuTodayCampus.icon)
+                            TopBarNavigationIcon(navController,route, AppNavRoute.StuTodayCampus.icon)
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -150,7 +147,7 @@ fun StuTodayCampusScreen(
                 StuAppsScreen(vm,input,innerPadding)
             }
         }
-    }
+//    }
 }
 
 @Composable

@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZhiJianServiceCreator
+import com.hfut.schedule.logic.network.util.launchRequestNone
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -69,6 +70,10 @@ object Repository {
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val zhiJian = ZhiJianServiceCreator.create(ZhiJianService::class.java)
     private val pe = PeServiceCreator.create(PeService::class.java)
+
+    suspend fun checkLibraryNetwork() = launchRequestNone {
+        library.check().awaitResponse()
+    }
 
     suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestSimple(
         holder = holder,

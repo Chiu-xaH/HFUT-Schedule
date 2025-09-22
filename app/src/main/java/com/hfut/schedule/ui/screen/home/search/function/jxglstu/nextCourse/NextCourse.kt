@@ -53,6 +53,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -61,10 +63,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun NextCourse(
     ifSaved : Boolean,
-    vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
 
@@ -76,7 +75,7 @@ fun NextCourse(
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.NextCourse.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.NextCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.NextCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
             if (isNextOpen()) {
@@ -112,8 +111,6 @@ fun NextCourseScreen(
     vmUI: UIViewModel,
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var showAll by rememberSaveable { mutableStateOf(false) }
@@ -121,10 +118,8 @@ fun NextCourseScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     var next by remember { mutableStateOf(isNextOpen()) }
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             navHostController = navController,
             topBar = {
@@ -134,7 +129,7 @@ fun NextCourseScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.NextCourse.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.NextCourse.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.NextCourse.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -150,8 +145,8 @@ fun NextCourseScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navController,sharedTransitionScope,animatedContentScope,innerPadding,null)
+                JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navController,innerPadding,null)
             }
         }
-    }
+//    }
 }

@@ -35,6 +35,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.navigateAndSaveForTransition
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
@@ -45,8 +47,6 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun NotificationsCenter(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Notifications.route }
 
@@ -61,7 +61,7 @@ fun NotificationsCenter(
                 if (prefs.getString("Notifications","0") != getNotifications().size.toString())
                 Badge { Text(text = getNotifications().size.toString())}
             }) {
-                Icon(painterResource(AppNavRoute.Notifications.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+                Icon(painterResource(AppNavRoute.Notifications.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
 
             }
         }

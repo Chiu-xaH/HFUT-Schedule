@@ -72,6 +72,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -81,15 +83,13 @@ import kotlinx.coroutines.launch
 @Composable
 fun Work(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.Work.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Work.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Work,route)
@@ -102,8 +102,6 @@ fun Work(
 fun WorkScreen(
     vm: NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -123,10 +121,9 @@ fun WorkScreen(
     val pagerState = rememberPagerState(pageCount = { types.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -138,7 +135,7 @@ fun WorkScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(AppNavRoute.Work.label) },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Work.icon)
+                            TopBarNavigationIcon(navController,route, AppNavRoute.Work.icon)
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -160,7 +157,7 @@ fun WorkScreen(
                                         }
                                     },
                                 ) {
-                                    Icon(painterResource(R.drawable.net), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = iconRoute))
+                                    Icon(painterResource(R.drawable.net), contentDescription = null,modifier = Modifier.iconElementShare( route = iconRoute))
                                 }
                                 FilledTonalButton(
                                     onClick = {
@@ -182,10 +179,10 @@ fun WorkScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                WorkSearchUI(vm,campus,pagerState,innerPadding,navController,sharedTransitionScope,animatedContentScope)
+                WorkSearchUI(vm,campus,pagerState,innerPadding,navController)
             }
         }
-    }
+//    }
 }
 // 模范写法
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterialApi::class)
@@ -197,8 +194,6 @@ private fun WorkSearchUI(
     pagerState : PagerState,
     innerPadding : PaddingValues,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
@@ -257,7 +252,6 @@ private fun WorkSearchUI(
                                 WorkSearchType.ANNOUNCEMENT.code.toString() -> WorkSearchType.ANNOUNCEMENT
                                 else -> WorkSearchType.ALL
                             }
-                            with(sharedTransitionScope) {
                                 val url = when(campus) {
                                     CampusRegion.HEFEI -> MyApplication.WORK_URL
                                     CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
@@ -275,7 +269,7 @@ private fun WorkSearchUI(
                                     },
                                     leadingContent = { Text((index+1).toString()) }
                                 )
-                            }
+//                            }
                         }
                     }
                     item { PaddingForPageControllerButton() }

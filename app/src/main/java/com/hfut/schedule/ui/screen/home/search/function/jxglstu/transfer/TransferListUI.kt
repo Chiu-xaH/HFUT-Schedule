@@ -97,6 +97,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
@@ -114,8 +116,6 @@ import kotlinx.coroutines.launch
 fun TransferScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -142,10 +142,9 @@ fun TransferScreen(
             refreshNetwork(false)
         }
     })
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -155,7 +154,7 @@ fun TransferScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Transfer.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Transfer.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Transfer.icon)
                     }
                 )
             },
@@ -199,11 +198,7 @@ fun TransferScreen(
                                                 route
                                             )
                                         }
-                                        .containerShare(
-                                        sharedTransitionScope,
-                                        animatedContentScope,
-                                        route
-                                    ),
+                                        .containerShare(route),
                                     color = mixedCardNormalColor()
                                 ) {
                                     TransplantListItem(
@@ -288,7 +283,7 @@ fun TransferScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -299,8 +294,6 @@ fun TransferDetailScreen(
     title : String,
     vm : NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -334,10 +327,9 @@ fun TransferDetailScreen(
     }
     var input by remember { mutableStateOf("") }
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -352,7 +344,6 @@ fun TransferDetailScreen(
                         navigationIcon = {
                             TopBarNavigationIcon(
                                 navController,
-                                animatedContentScope,
                                 route,
                                 AppNavRoute.TransferDetail.icon
                             )
@@ -406,7 +397,7 @@ fun TransferDetailScreen(
                 TransferUI(vm,batchId,hazeState,isHidden,input,innerPadding)
             }
         }
-    }
+//    }
 }
 
 

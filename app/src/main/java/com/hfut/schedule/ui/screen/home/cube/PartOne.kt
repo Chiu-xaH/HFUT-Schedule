@@ -72,6 +72,8 @@ import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
@@ -162,10 +164,7 @@ fun HomeSettingScreen(navController: NavController,
                       innerPaddings : PaddingValues,
                       vm : NetWorkViewModel,
                       navHostTopController : NavController,
-                      sharedTransitionScope: SharedTransitionScope,
-                      animatedContentScope: AnimatedContentScope,
 ) {
-   //
     val currentVersion = AppVersion.getVersionName()
     var hasCleaned by remember { mutableStateOf(false) }
     val refreshNetwork = suspend {
@@ -233,7 +232,7 @@ fun HomeSettingScreen(navController: NavController,
         }
 
         DividerTextExpandedWith(text = "常驻项目") {
-            AlwaysItem(navHostTopController,sharedTransitionScope,animatedContentScope,update)
+            AlwaysItem(navHostTopController,update)
         }
 
 
@@ -320,8 +319,6 @@ fun UpdateContents(vm : NetWorkViewModel) {
 @Composable
 fun AlwaysItem(
     navHostTopController : NavController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     update : GiteeReleaseResponse?
 ) {
     val showBadge = update != null
@@ -331,7 +328,7 @@ fun AlwaysItem(
     val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.let{ if(show) it.containerShare(sharedTransitionScope,animatedContentScope,route) else it }
+        modifier = Modifier.let{ if(show) it.containerShare(route) else it }
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "刷新登录状态") },
@@ -348,7 +345,7 @@ fun AlwaysItem(
                     Icon(
                         painterResource(AppNavRoute.VersionInfo.icon),
                         contentDescription = "Localized description",
-                        modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope,route)
+                        modifier = Modifier.iconElementShare(route)
                     )
                 },
                 modifier = Modifier.clickable{

@@ -45,6 +45,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -56,8 +58,6 @@ import kotlinx.coroutines.launch
 fun Survey(
     ifSaved : Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ){
     val route = remember { AppNavRoute.Survey.route }
     val context = LocalContext.current
@@ -65,7 +65,7 @@ fun Survey(
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Survey.label)},
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context) else {
@@ -80,8 +80,6 @@ fun Survey(
 fun SurveyScreen(
     vm: NetWorkViewModel,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -89,11 +87,10 @@ fun SurveyScreen(
     var refresh by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -102,7 +99,7 @@ fun SurveyScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Survey.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.Survey.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Survey.icon)
                     },
                     actions = {
                         Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -120,7 +117,7 @@ fun SurveyScreen(
                 SurveyUI(vm,hazeState,refresh,innerPadding)
             }
         }
-    }
+//    }
 }
 
 @Composable

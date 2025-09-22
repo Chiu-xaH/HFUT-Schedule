@@ -19,6 +19,8 @@ import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -27,8 +29,6 @@ import com.xah.transition.component.iconElementShare
 fun CoursesSearch(
     ifSaved :  Boolean,
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.CourseSearch.route }
     val context = LocalContext.current
@@ -36,7 +36,7 @@ fun CoursesSearch(
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.CourseSearch.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.CourseSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context)

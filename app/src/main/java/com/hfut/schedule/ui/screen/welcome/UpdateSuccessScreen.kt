@@ -72,6 +72,8 @@ import com.hfut.schedule.ui.util.navigateAndClear
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.color.ShimmerAngle
@@ -88,8 +90,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun UpdateSuccessScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val context = LocalContext.current
     val route = remember { AppNavRoute.UpdateSuccess.route }
@@ -98,10 +98,9 @@ fun UpdateSuccessScreen(
     val oldVersion = prefs.getString("versionName","上版本")
     val scope = rememberCoroutineScope()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold(
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 LargeTopAppBar(
@@ -139,11 +138,7 @@ fun UpdateSuccessScreen(
                                 painterResource(AppNavRoute.VersionInfo.icon),
                                 null,
                                 tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.iconElementShare(
-                                    sharedTransitionScope,
-                                    animatedContentScope,
-                                    targetRoute
-                                )
+                                modifier = Modifier.iconElementShare(targetRoute)
                             )
                         }
                     },
@@ -171,12 +166,7 @@ fun UpdateSuccessScreen(
                         .padding(APP_HORIZONTAL_DP)
                         .navigationBarsPadding()
                         .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
-                        .containerShare(
-                            sharedTransitionScope,
-                            animatedContentScope,
-                            targetRoute,
-                            MaterialTheme.shapes.extraLarge
-                        )
+                        .containerShare(targetRoute, MaterialTheme.shapes.extraLarge)
 
                 ) {
                     Text(
@@ -253,7 +243,7 @@ fun UpdateSuccessScreen(
                 }
             }
         }
-    }
+//    }
 }
 
 

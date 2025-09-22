@@ -68,6 +68,8 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.hazeSource
@@ -78,8 +80,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdmissionScreen(
     vm : NetWorkViewModel,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
@@ -87,11 +87,10 @@ fun AdmissionScreen(
     val route = remember { AppNavRoute.Admission.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column {
@@ -101,16 +100,16 @@ fun AdmissionScreen(
                         colors = topBarTransplantColor(),
                         title = { Text("本科招生") },
                         navigationIcon = {
-                            TopBarNavigationIcon(navController,animatedContentScope,route,R.drawable.publics)
+                            TopBarNavigationIcon(navController,route,R.drawable.publics)
                         },
                     )
                 }
             },
 
         ) { innerPadding ->
-            AdmissionListUI(vm,innerPadding,navController,sharedTransitionScope,animatedContentScope)
+            AdmissionListUI(vm,innerPadding,navController)
         }
-    }
+//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterialApi::class)
@@ -119,8 +118,6 @@ fun AdmissionListUI(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
     navController: NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val pageList = remember { AdmissionType.entries }
     val titles = remember { pageList.map { it.description } }
@@ -162,11 +159,7 @@ fun AdmissionListUI(
                                     .clickableWithScale(ClickScale.SMALL.scale) {
                                         navController.navigateForTransition(AppNavRoute.AdmissionRegionDetail,route)
                                     }
-                                    .containerShare(
-                                    sharedTransitionScope,
-                                    animatedContentScope,
-                                    route,
-                                )
+                                    .containerShare(route,)
                             ) {
                                 TransplantListItem(
                                     headlineContent = { Text(item.key) },
@@ -186,14 +179,10 @@ fun AdmissionListUI(
 @Composable
 fun AdmissionRegionScreen(
     vm : NetWorkViewModel,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     navController : NavHostController,
     type : String,
     index: Int
 ) {
-    if(index < 0) return
-
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.AdmissionRegionDetail.withArgs(index,type) }
@@ -215,11 +204,10 @@ fun AdmissionRegionScreen(
         refreshNetwork(typeE,bean,region)
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
@@ -377,5 +365,5 @@ fun AdmissionRegionScreen(
                 }
             }
         }
-    }
+//    }
 }

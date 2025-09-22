@@ -48,6 +48,8 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateAndClear
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -70,8 +72,6 @@ val arguments = listOf(
 @Composable
 fun UseAgreementScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -131,7 +131,7 @@ fun UseAgreementScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(.5f)
-                                .containerShare(sharedTransitionScope,animatedContentScope,route, MaterialTheme.shapes.extraLarge)
+                                .containerShare(route, MaterialTheme.shapes.extraLarge)
                         ) {
                             Text("同意")
                         }

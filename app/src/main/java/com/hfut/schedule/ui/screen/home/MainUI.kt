@@ -158,6 +158,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -182,11 +184,8 @@ fun MainScreen(
     vm : NetWorkViewModel,
     vmUI : UIViewModel,
     celebrationText : String?,
-//    webVpn : Boolean,
     isLogin : Boolean,
     navHostTopController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val navController = rememberNavController()
     var isEnabled by rememberSaveable(AppNavRoute.Home.route) { mutableStateOf(!isLogin) }
@@ -398,7 +397,7 @@ fun MainScreen(
                     if (getNotifications().size.toString() != prefs.getString("Notifications",""))
                         Badge()
                 }) {
-                    Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = iconRoute))
+                    Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = iconRoute))
                 }
             }
         }
@@ -409,10 +408,9 @@ fun MainScreen(
     BackHandler {
         activity?.finish()
     }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold(
             navHostController = navHostTopController,
-            animatedContentScope = animatedContentScope,
+            
             route = AppNavRoute.Home.route,
             roundShape = MaterialTheme.shapes.extraLarge,
             modifier = Modifier.let {
@@ -432,8 +430,8 @@ fun MainScreen(
                     FloatingActionButton(
                         modifier = Modifier
                             .containerShare(
-                                sharedTransitionScope,
-                                animatedContentScope,
+//                                sharedTransitionScope,
+//                                animatedContentScope,
                                 addRoute,
                                 FloatingActionButtonDefaults.shape
                             ),
@@ -448,11 +446,7 @@ fun MainScreen(
                         Icon(
                             painterResource(AppNavRoute.AddEvent.icon),
                             "Add Button",
-                            modifier = Modifier.iconElementShare(
-                                sharedTransitionScope,
-                                animatedContentScope,
-                                addRoute
-                            )
+                            modifier = Modifier.iconElementShare(addRoute)
                         )
                     }
                 }
@@ -489,11 +483,7 @@ fun MainScreen(
                                                 painterResource(id = R.drawable.edit),
                                                 contentDescription = "",
                                                 tint = MaterialTheme.colorScheme.primary,
-                                                modifier = Modifier.iconElementShare(
-                                                    sharedTransitionScope,
-                                                    animatedContentScope = animatedContentScope,
-                                                    route = route
-                                                )
+                                                modifier = Modifier.iconElementShare(route = route)
                                             )
                                         }
                                         IconButton(onClick = { showSearch = !showSearch }) {
@@ -705,8 +695,6 @@ fun MainScreen(
                                         vmUI,
                                         hazeState,
                                         navHostTopController,
-                                        sharedTransitionScope,
-                                        animatedContentScope,
                                         innerPadding,
                                         backGroundHaze = if (useCustomBackground) backGroundHaze else null
                                     )
@@ -733,8 +721,6 @@ fun MainScreen(
                                         today,
                                         hazeState,
                                         navHostTopController,
-                                        sharedTransitionScope,
-                                        animatedContentScope,
                                         if (useCustomBackground) backGroundHaze else null,
                                         isEnabled
                                     ) { isEnabled = it }
@@ -792,8 +778,6 @@ fun MainScreen(
                             sortType,
                             sortReversed,
                             navHostTopController,
-                            sharedTransitionScope,
-                            animatedContentScope,
                         )
                     }
                 }
@@ -807,8 +791,6 @@ fun MainScreen(
                             searchText,
                             navController = navHostTopController,
                             hazeState = hazeState,
-                            sharedTransitionScope,
-                            animatedContentScope
                         )
                     }
                 }
@@ -820,14 +802,12 @@ fun MainScreen(
                             innerPadding,
                             hazeState,
                             navHostTopController,
-                            sharedTransitionScope,
-                            animatedContentScope
                         )
                     }
                 }
             }
         }
-    }
+//    }
 }
 
 
@@ -890,8 +870,6 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
 @Composable
 fun SearchEditScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -960,9 +938,7 @@ fun SearchEditScreen(
             colors = topBarTransplantColor(),
             title = { Text(AppNavRoute.SearchEdit.label) },
             navigationIcon = {
-                with(sharedTransitionScope) {
-                    TopBarNavigationIcon(navController,animatedContentScope,route, AppNavRoute.SearchEdit.icon)
-                }
+                    TopBarNavigationIcon(navController,route, AppNavRoute.SearchEdit.icon)
             },
             actions = {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

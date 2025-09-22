@@ -1,42 +1,32 @@
 package com.xah.transition.component
 
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.BoundsTransform
-import androidx.compose.animation.EnterExitState
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.ScaleToBounds
 import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionState
-import com.xah.transition.style.DefaultTransitionStyle
 
 // 容器共享元素 如果两个容器颜色不同，可以启用渐变fade参数
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.containerShare(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     route : String,
     roundShape : Shape = MaterialTheme.shapes.small,
 ) : Modifier  {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedContentScope = LocalAnimatedContentScope.current
     with(sharedTransitionScope) {
         val isAnimating = this.isTransitionActive
         val state = rememberSharedContentState(key = "container_$route")
@@ -74,11 +64,11 @@ fun Modifier.containerShare(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.singleElementShare(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     title : String,
     route : String,
 ) : Modifier {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
+    val animatedContentScope = LocalAnimatedContentScope.current
     return with(sharedTransitionScope) {
         this@singleElementShare.sharedElement(
             boundsTransform = BoundsTransform { _,_ ->
@@ -97,15 +87,11 @@ fun Modifier.singleElementShare(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.iconElementShare(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     route : String,
-) : Modifier = singleElementShare(sharedTransitionScope,animatedContentScope,"icon",route)
+) : Modifier = singleElementShare("icon",route)
 // 图标共享元素
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.titleElementShare(
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     route : String,
-) : Modifier = singleElementShare(sharedTransitionScope,animatedContentScope,"title",route)
+) : Modifier = singleElementShare("title",route)

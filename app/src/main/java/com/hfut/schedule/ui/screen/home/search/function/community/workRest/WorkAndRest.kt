@@ -64,6 +64,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -182,15 +184,13 @@ fun TimeTableUI(friendUserName : String? = null) {
 @Composable
 fun WorkAndRest(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val route = remember { AppNavRoute.TimeTable.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.TimeTable.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TimeTable.icon), contentDescription = null,modifier = Modifier.iconElementShare(sharedTransitionScope,animatedContentScope = animatedContentScope, route = route))
+            Icon(painterResource(AppNavRoute.TimeTable.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.TimeTable,route)
@@ -202,8 +202,6 @@ fun WorkAndRest(
 @Composable
 fun TimeTableScreen(
     navController : NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
@@ -218,11 +216,10 @@ fun TimeTableScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TimeTable.route }
-    with(sharedTransitionScope) {
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            animatedContentScope = animatedContentScope,
+            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(
@@ -231,7 +228,7 @@ fun TimeTableScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.TimeTable.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,animatedContentScope,route,AppNavRoute.TimeTable.icon)
+                        TopBarNavigationIcon(navController,route,AppNavRoute.TimeTable.icon)
                     },
                     actions = {
                         FilledTonalButton(
@@ -263,7 +260,7 @@ fun TimeTableScreen(
                 InnerPaddingHeight(innerPadding,false)
             }
         }
-    }
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

@@ -112,8 +112,6 @@ fun JxglstuCourseTableUINext(
     vmUI: UIViewModel,
     hazeState: HazeState,
     navController: NavHostController,
-    sharedTransitionScope: SharedTransitionScope,
-    animatedContentScope: AnimatedContentScope,
     innerPadding : PaddingValues,
     backGroundHaze : HazeState?,
 ) {
@@ -489,8 +487,6 @@ fun JxglstuCourseTableUINext(
 
                                 route?.let { it1 ->
                                     it.containerShare(
-                                        sharedTransitionScope,
-                                        animatedContentScope,
                                         route = it1,
                                         roundShape = MaterialTheme.shapes.extraSmall,
                                     )
