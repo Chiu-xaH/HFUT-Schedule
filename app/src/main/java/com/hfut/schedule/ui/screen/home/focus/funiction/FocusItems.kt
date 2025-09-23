@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.xah.uicommon.style.align.ColumnVertical
@@ -538,7 +539,9 @@ fun TermTip() {
 }
 
 @Composable
-fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
+fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
+    val courseDataSource = remember { prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) }
+
     val data by produceState<TodayResult?>(initialValue = null) {
         onListenStateHolder(vm.todayFormCommunityResponse, onError = { _,_ -> }) { data ->
             value = data
@@ -569,12 +572,44 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                 when(weekdayTomorrow) {
                     1 -> week += 1
                 }
-                val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
-                val time = if(list.isEmpty()) "" else list[0][0].classTime.substringBefore(":")
+                val time : Int? = try {
+                    if(courseDataSource == CourseType.JXGLSTU.code) {
+                        getTomorrowJxglstuCourse(vmUI).firstOrNull()?.time?.start?.hour
+                    } else {
+                        val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
+                        if(list.isEmpty()) null else list[0][0].classTime.substringBefore(":").toIntOrNull()
+                    }
+                } catch (e : Exception) {
+                    null
+                }
+                val result = when {
+                    time == null -> {
+                        Pair("无课", R.drawable.sentiment_very_satisfied)
+                    }
+                    time == 8 -> {
+                        Pair("有早八",R.drawable.sentiment_sad)
+                    }
+                    time == 9 -> {
+                        Pair("有早九",R.drawable.sentiment_sad)
+                    }
+                    time == 10 -> {
+                        Pair("有早十",R.drawable.sentiment_dissatisfied)
+                    }
+                    time == 11 -> {
+                        Pair("有早十",R.drawable.sentiment_dissatisfied)
+                    }
+                    time >= 14 -> {
+                        Pair("睡懒觉",R.drawable.sentiment_very_satisfied)
+                    }
+                    else -> {
+                        Pair("未知",R.drawable.sentiment_very_satisfied)
+                    }
+                }
+
                 TransplantListItem(
-                    headlineContent = { ScrollText(text =  if( time == "08")"明天有早八" else if(time == "10") "明天有早十"  else if(time == "14" || time == "16" || time == "19" )  "明天睡懒觉" else "明天没有课") },
-                    overlineContent = { ScrollText(text = "课程") },
-                    leadingContent = { Icon(painter = painterResource( if( time == "08") R.drawable.sentiment_sad else if (time == "10") R.drawable.sentiment_dissatisfied else R.drawable.sentiment_very_satisfied) , contentDescription = "")},
+                    headlineContent = { ScrollText(text = result.first) },
+                    overlineContent = { ScrollText(text = "明天") },
+                    leadingContent = { Icon(painter = painterResource(result.second) , contentDescription = "")},
                 )
             }
         }

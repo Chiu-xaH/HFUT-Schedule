@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
@@ -39,10 +38,10 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.GlobalUIStateHolder.isTransiting
 import com.xah.transition.state.TransitionState
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
+import com.xah.transition.style.transitionSkip
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
@@ -52,7 +51,6 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
@@ -236,7 +234,7 @@ fun CustomBottomSheet(
 @Composable
 fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-    val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.NONE.code)
+    val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
     // 👍 NONE
     if(transition == TransitionLevel.NONE.code) {
         return this
@@ -301,24 +299,7 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
         .scale(scale.value)
 }
 
-@Composable
-fun Modifier.transitionBackgroundF(
-    navHostController: NavHostController,
-    route : String,
-) : Modifier = with(TransitionState.transitionBackgroundStyle) {
-    val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
-    val speed = TransitionState.curveStyle.speedMs
 
-    if(level.code >= TransitionLevel.MEDIUM.code) {
-        LaunchedEffect(isExpanded) {
-            GlobalUIStateHolder.isTransiting = true
-            delay(speed*2L)
-            GlobalUIStateHolder.isTransiting = false
-        }
-    }
-
-    return transitionBackground(navHostController,route)
-}
 
 // 用于遮挡的blur
 @Composable

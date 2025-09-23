@@ -38,11 +38,13 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu" >
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.util.WebViewActivity"
             android:exported="false"
             android:label="@string/title_activity_web_view"
             android:theme="@style/Theme.App" />
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.screen.SupabaseActivity"
             android:exported="true"
             android:label="@string/title_activity_supbase"
@@ -60,16 +62,19 @@
         <!-- </receiver> -->
         <!-- <profileable android:shell="true" /> -->
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.util.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_base"
             android:theme="@style/Theme.App.Starting" />
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.screen.ShowerActivity"
             android:exported="true"
             android:label="@string/title_activity_shower"
             android:theme="@style/Theme.App" />
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.screen.FixActivity"
             android:exported="true"
             android:label="@string/title_activity_fix"
@@ -147,16 +152,19 @@
             android:exported="false" />
 
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.screen.CardActivity"
             android:exported="true"
             android:label="@string/title_activity_card"
             android:theme="@style/Theme.App" />
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.screen.SuccessActivity"
             android:exported="false"
             android:label="@string/title_activity_uiacitivity"
             android:theme="@style/Theme.App" />
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting" >

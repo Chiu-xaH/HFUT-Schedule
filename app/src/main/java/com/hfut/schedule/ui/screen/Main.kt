@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.BusScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.library.screen.LibraryBorrowedScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeTableScreen
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchCalendarScreen
@@ -369,7 +370,11 @@ fun MainHost(
                 }
                 // 本版本新特性
                 transitionComposable(AppNavRoute.VersionInfo.route) {
-                    VersionInfoScreen(networkVm,navController, )
+                    VersionInfoScreen(networkVm,navController)
+                }
+                // 图书借阅
+                transitionComposable(AppNavRoute.LibraryBorrowed.route) {
+                    LibraryBorrowedScreen(networkVm,navController)
                 }
                 // 添加聚焦日程
                 transitionComposable(AppNavRoute.AddEvent.route) {

@@ -22,6 +22,7 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
+import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.model.PayData
@@ -65,6 +66,7 @@ import com.hfut.schedule.logic.model.jxglstu.TransferResponse
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.ClassroomBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
@@ -82,11 +84,11 @@ import com.hfut.schedule.logic.network.repo.hfut.OneRepository
 import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.hfut.Repository
 import com.hfut.schedule.logic.network.repo.SupabaseRepository
+import com.hfut.schedule.logic.network.repo.hfut.LibraryRepository
 import com.hfut.schedule.logic.network.repo.hfut.WxRepository
-import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
+import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
@@ -95,12 +97,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatch
-import com.xah.shared.getConsumptionResult
 import com.xah.shared.model.BillBean
 import com.xah.shared.model.TotalResult
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 
 class NetWorkViewModel() : ViewModel() {
     val studentId = StateHolder<Int>()
@@ -247,7 +245,7 @@ class NetWorkViewModel() : ViewModel() {
     val selectResultData = StateHolder<Pair<Boolean, String>>()
     suspend fun postSelect(cookie: String,requestId : String) = JxglstuRepository.postSelect(cookie,requestId,studentId,selectResultData)
 
-    suspend fun checkLibraryNetwork() = Repository.checkLibraryNetwork()
+    suspend fun checkLibraryNetwork() = LibraryRepository.checkLibraryNetwork()
 // 转专业 ////////////////////////////////////////////////////////////////////////////////////////////////
     val transferData = StateHolder<TransferResponse>()
     suspend fun getTransfer(cookie: String,batchId: String) = JxglstuRepository.getTransfer(cookie,batchId,studentId,transferData)
@@ -283,9 +281,14 @@ class NetWorkViewModel() : ViewModel() {
     val checkStuLoginResp = StateHolder<Boolean>()
     suspend fun checkStuLogin(cookie : String) = Repository.checkStuLogin(cookie,checkStuLoginResp)
 
+    val libraryStatusResp = StateHolder<LibraryStatus>()
+    suspend fun getLibraryStatus(token : String) = LibraryRepository.getStatus(token,libraryStatusResp)
 
     val checkLibraryLoginResp = StateHolder<Boolean>()
-    suspend fun checkLibraryLogin(token : String) = Repository.checkLibraryLogin(token,checkLibraryLoginResp)
+    suspend fun checkLibraryLogin(token : String) = LibraryRepository.checkLibraryLogin(token,checkLibraryLoginResp)
+
+    val libraryBorrowedResp = StateHolder<List<LibraryBorrowedBean>>()
+    suspend fun getBorrowed(token : String,page : Int) = LibraryRepository.getBorrowed(token,page,libraryBorrowedResp)
 
     val loginCommunityData = StateHolder<String>()
     suspend fun loginCommunity(ticket : String) = CommunityRepository.loginCommunity(ticket,loginCommunityData)
@@ -354,9 +357,7 @@ class NetWorkViewModel() : ViewModel() {
     suspend fun getCardBill(
         auth : String,
         page : Int,
-        size : Int =
-            prefs.getString("BookRequest", MyApplication.DEFAULT_PAGE_SIZE.toString())?.toIntOrNull()
-                ?: MyApplication.DEFAULT_PAGE_SIZE
+        size : Int = getPageSize()
     ) = HuiXinRepository.getCardBill(auth,page,size,huiXinBillResult)
 
     val huiXinCardInfoResponse = MutableLiveData<String?>()

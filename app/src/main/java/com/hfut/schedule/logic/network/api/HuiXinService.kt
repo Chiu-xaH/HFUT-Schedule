@@ -54,7 +54,7 @@ interface HuiXinService {
     fun searchBills(@Header("synjones-auth") auth : String,
                    @Query("info") info : String,
                     @Query("current") page : Int
-        ,@Query("size") size : String) : Call<ResponseBody>
+        ,@Query("size") size : Int) : Call<ResponseBody>
 
 
     //修改限额

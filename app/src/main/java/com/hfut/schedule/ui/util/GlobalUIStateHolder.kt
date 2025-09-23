@@ -14,7 +14,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 object GlobalUIStateHolder {
     var excludeJxglstu by mutableStateOf(false)
     var refreshImageCode by mutableIntStateOf(1)
-    var isTransiting by mutableStateOf(false)
+    var isTransiting by mutableStateOf<Boolean>(false)
     var globalWebVpn by mutableStateOf(false)
     var webVpn by mutableStateOf(false)
     var isSupabaseRegistering = mutableStateOf(false)

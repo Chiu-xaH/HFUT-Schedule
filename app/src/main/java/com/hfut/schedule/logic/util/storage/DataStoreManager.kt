@@ -154,7 +154,7 @@ object DataStoreManager {
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, HazeBlurLevel.MID.code)
-    val transitionLevel = getFlow(TRANSITION, TransitionLevel.NONE.code)
+    val transitionLevel = getFlow(TRANSITION, TransitionLevel.MEDIUM.code)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,true)

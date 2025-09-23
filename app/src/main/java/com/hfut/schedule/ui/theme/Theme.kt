@@ -1,6 +1,12 @@
 package com.hfut.schedule.ui.theme
 
+import android.app.Activity
+import android.app.UiModeManager
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Build
+import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,12 +18,16 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.DataStoreManager.ColorMode
 import com.xah.uicommon.style.color.TransparentSystemBars
 import com.hfut.schedule.ui.util.deepen
 import com.materialkolor.rememberDynamicColorScheme
@@ -29,24 +39,37 @@ private val list = DataStoreManager.ColorStyle.entries
 fun AppTheme(
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
+
     // 自主取色
     val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
     val enableDynamicColor = customColor == -1L
     // 跟随系统深色模式
-    val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
-    // 除了Compose的深色跟随
+    val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = null)
+    // Compose深色
     val isInDark = when(currentColorModeIndex) {
-        DataStoreManager.ColorMode.DARK.code -> {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        ColorMode.DARK.code -> {
             true
         }
-        DataStoreManager.ColorMode.LIGHT.code -> {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        ColorMode.LIGHT.code -> {
             false
         }
         else -> {
-//            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
             isSystemInDarkTheme()
+        }
+    }
+    // View体系跟随App深浅色
+    LaunchedEffect(currentColorModeIndex) {
+        when(currentColorModeIndex) {
+            ColorMode.DARK.code -> {
+                setNightMode(context,ColorMode.DARK)
+            }
+            ColorMode.LIGHT.code -> {
+                setNightMode(context,ColorMode.LIGHT)
+            }
+            ColorMode.AUTO.code  -> {
+                setNightMode(context, ColorMode.AUTO)
+            }
         }
     }
     // OLED 纯黑
@@ -146,3 +169,29 @@ fun DefaultAppTheme(
     TransparentSystemBars(darkTheme)
 }
 
+@RequiresApi(Build.VERSION_CODES.S)
+fun setNightMode(
+    context: Context,
+    mode: ColorMode
+) {
+    if (AppVersion.sdkInt >= Build.VERSION_CODES.S) {
+        // Android 12+
+        val uiModeManager = context.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        uiModeManager.setApplicationNightMode(
+            when(mode) {
+                ColorMode.DARK -> UiModeManager.MODE_NIGHT_YES
+                ColorMode.LIGHT -> UiModeManager.MODE_NIGHT_NO
+                else -> UiModeManager.MODE_NIGHT_AUTO
+            }
+        )
+    } else {
+        // 低版本用
+        AppCompatDelegate.setDefaultNightMode(
+            when(mode) {
+                ColorMode.DARK -> AppCompatDelegate.MODE_NIGHT_YES
+                ColorMode.LIGHT -> AppCompatDelegate.MODE_NIGHT_NO
+                else -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            }
+        )
+    }
+}

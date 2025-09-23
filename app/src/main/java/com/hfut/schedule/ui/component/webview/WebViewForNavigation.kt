@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.component.webview
 
 import android.graphics.Canvas
+import android.os.Build
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest

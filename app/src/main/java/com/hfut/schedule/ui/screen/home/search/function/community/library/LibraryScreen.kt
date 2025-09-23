@@ -1,34 +1,26 @@
 package com.hfut.schedule.ui.screen.home.search.function.community.library
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +39,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,15 +46,16 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UNKNOWN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -72,7 +64,7 @@ import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.LargeCard
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -87,18 +79,14 @@ import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -159,68 +147,60 @@ fun LibraryScreen(
     }
 
 
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            navHostController = navController,
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.Library.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route, AppNavRoute.Library.icon)
-                        },
-                    )
-                    when(targetPage) {
-                        LibraryBarItems.SEARCH_ALL -> {
-
-                        }
-                        LibraryBarItems.SEARCH_BOOK -> {
-
-                        }
-                        else -> null
-                    }
-                }
-            },
-            bottomBar = {
-                HazeBottomBar(hazeState, items,libraryNavController)
-            }
-        ) { innerPadding ->
-            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
-            NavHost(navController = libraryNavController,
-                startDestination = LibraryBarItems.MINE.name,
-                enterTransition = { animation.enter },
-                exitTransition = { animation.exit },
-                modifier = Modifier.hazeSource(state = hazeState)
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+        navHostController = navController,
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
-                composable(LibraryBarItems.SEARCH_ALL.name) {
-                    Column (modifier = Modifier.fillMaxSize()) {
-                        LibrarySearchUI(vm,innerPadding)
-                    }
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Library.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Library.icon)
+                    },
+                )
+            }
+        },
+        bottomBar = {
+            HazeBottomBar(hazeState, items,libraryNavController)
+        }
+    ) { innerPadding ->
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+
+        NavHost(navController = libraryNavController,
+            startDestination = LibraryBarItems.MINE.name,
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
+            modifier = Modifier.hazeSource(state = hazeState)
+        ) {
+            composable(LibraryBarItems.SEARCH_ALL.name) {
+                Column (modifier = Modifier.fillMaxSize()) {
+                    LibrarySearchUI(vm,innerPadding)
                 }
-                composable(LibraryBarItems.SEARCH_BOOK.name) {
-                    Column (modifier = Modifier.fillMaxSize()){
-                        BookSearchUI(vm,hazeState,innerPadding)
-                    }
+            }
+            composable(LibraryBarItems.SEARCH_BOOK.name) {
+                Column (modifier = Modifier.fillMaxSize()){
+                    BookSearchUI(vm,hazeState,innerPadding)
                 }
-                composable(LibraryBarItems.MINE.name) {
-                    Column (modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
-                        LibraryMineUI(
-                            vm,
-                            innerPadding,
-                            libraryNavController,
-                            navController
-                        )
-                    }
+            }
+            composable(LibraryBarItems.MINE.name) {
+                Column (modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceContainer)) {
+                    LibraryMineUI(
+                        vm,
+                        innerPadding,
+                        libraryNavController,
+                        navController
+                    )
                 }
             }
         }
-//    }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -231,7 +211,7 @@ fun BookSearchUI(
     innerPadding : PaddingValues,
 ) {
     var startUse by remember { mutableStateOf(false) }
-    var input by remember { mutableStateOf( "") }
+    var input by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("地点") }
     var callNum by remember { mutableStateOf<String>("") }
     var page by remember { mutableIntStateOf(1) }
@@ -268,22 +248,27 @@ fun BookSearchUI(
     }
 
     val searchBar = @Composable {
-        CustomTextField(
-            input = input,
-            label = { Text("搜索馆藏" ) },
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        scope.launch { refreshNetwork() }
-                    }) {
-                    Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
-                }
-            },
-        ) { input = it }
+        Column {
+            CustomTextField(
+                input = input,
+                label = { Text("搜索馆藏" ) },
+                trailingIcon = {
+                    IconButton(
+                        onClick = {
+                            scope.launch { refreshNetwork() }
+                        }) {
+                        Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                    }
+                },
+            ) { input = it }
+            Spacer(Modifier.height(CARD_NORMAL_DP))
+        }
     }
 //    Column {
         CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = {
-            Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)) {
                 Box(
                     modifier = Modifier.align(Alignment.TopCenter)
                 ) {
@@ -427,54 +412,82 @@ fun LibraryMineUI(
             Pair("未知分支",R.drawable.net)
         }
     }
+    val refreshNetwork = suspend {
+        val token = prefs.getString(LIBRARY_TOKEN,"")
+        token?.let {
+            vm.libraryStatusResp.clear()
+            vm.getLibraryStatus(it)
+        }
+    }
+    val uiState by vm.libraryStatusResp.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        if(uiState is UiState.Success) {
+            return@LaunchedEffect
+        }
+        refreshNetwork()
+    }
+    val loading = uiState !is UiState.Success
+    val response = (uiState as? UiState.Success)?.data ?: LibraryStatus()
+
     Column(modifier = Modifier.verticalScroll(scrollState)) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("状态",openBlurAnimation = false) {
-            LargeCard(
+            LoadingLargeCard (
+                loading = loading,
+                prepare = false,
                 title = "待归还 -本"
             ) {
                 Row {
                     TransplantListItem(
                         overlineContent = { Text("借阅") },
-                        headlineContent = { Text("-本") },
+                        headlineContent = { Text("${response.borrowCount}本") },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.book_5),null)
+                            Icon(painterResource(R.drawable.book_5),null, modifier = Modifier.iconElementShare(AppNavRoute.LibraryBorrowed.route))
                         },
-                        modifier = Modifier.weight(0.5f).clickable {
-
-                        }
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .clickable {
+                                navController.navigateForTransition(AppNavRoute.LibraryBorrowed, AppNavRoute.LibraryBorrowed.route,transplantBackground = true)
+                            }
                     )
                     TransplantListItem(
                         overlineContent = { Text("预约") },
-                        headlineContent = { Text("-本") },
+                        headlineContent = { Text("${response.reserveCount}本") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.schedule),null)
                         },
-                        modifier = Modifier.weight(0.5f).clickable {
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .clickable {
 
-                        }
+                            }
                     )
                 }
                 Row {
                     TransplantListItem(
                         overlineContent = { Text("收藏") },
-                        headlineContent = { Text("-条") },
+                        headlineContent = { Text("${response.collectCount}条") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.bookmark),null)
                         },
-                        modifier = Modifier.weight(0.5f).clickable {
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .clickable {
 
-                        }
+                            }
                     )
                     TransplantListItem(
                         overlineContent = { Text("书架") },
-                        headlineContent = { Text("-本") },
+                        headlineContent = { Text("${response.bookShelfCount}本") },
                         leadingContent = {
                             Icon(painterResource(R.drawable.newsstand),null)
                         },
-                        modifier = Modifier.weight(0.5f).clickable {
+                        modifier = Modifier
+                            .weight(0.5f)
+                            .clickable {
 
-                        }
+                            }
                     )
                 }
             }

@@ -78,11 +78,7 @@ object CommunityRepository {
                 community.getFailRate(
                     token,
                     name,
-                    page.toString(),
-                    SharedPrefs.prefs.getString(
-                        "BookRequest",
-                        MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                    ) ?: MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
+                    page,
                 ).awaitResponse()
             },
             transformSuccess = { _, json -> parseFailRate(json) }
@@ -150,11 +146,7 @@ object CommunityRepository {
                 community.searchBooks(
                     token,
                     name,
-                    page.toString(),
-                    SharedPrefs.prefs.getString(
-                        "BookRequest",
-                        MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                    ) ?: MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
+                    page
                 ).awaitResponse()
             },
             transformSuccess = { _, json -> parseSearchBooks(json) }
@@ -266,10 +258,6 @@ object CommunityRepository {
             request = {
                 community.getApplyingList(
                     token,
-                    SharedPrefs.prefs.getString(
-                        "BookRequest",
-                        MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                    ) ?: MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
                 ).awaitResponse()
             },
             transformSuccess = { _, json -> parseApplyFriends(json) }

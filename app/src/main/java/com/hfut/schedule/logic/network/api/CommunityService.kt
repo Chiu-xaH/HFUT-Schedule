@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.logic.util.getPageSize
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -26,16 +27,16 @@ interface CommunityService {
     fun getFailRate(
         @Header("X-Access-Token") token : String,
         @Query("courseName") courseName : String,
-        @Query("pageNo") page : String
-        , @Query("pageSize") size : String
+        @Query("pageNo") page : Int,
+        @Query("pageSize") size : Int = getPageSize()
     ) : Call<ResponseBody>
     //图书检索
     @GET("api/business/book/search")
     fun searchBooks(
         @Header("X-Access-Token") token : String,
         @Query("name") name: String,
-        @Query("pageNo") page : String
-        , @Query("pageSize") size : String
+        @Query("pageNo") page : Int,
+        @Query("pageSize") size : Int = getPageSize()
     ) : Call<ResponseBody>
     //考试（接口由于学校不发消息，废弃了）
     @GET("api/business/examarrangement/listselect")
@@ -74,7 +75,7 @@ interface CommunityService {
     fun getFriends(@Header("X-Access-Token") token : String) : Call<ResponseBody>
     //查看有谁申请想查看我的课表
     @GET("api/business/coursefriendapply/apgelist")
-    fun getApplyingList(@Header("X-Access-Token") token : String, @Query("pageSize") pageSize : String, @Query("applyUsername")applyUsername : String = "", @Query("pageNo") page : Int = 1) : Call<ResponseBody>
+    fun getApplyingList(@Header("X-Access-Token") token : String, @Query("pageSize") pageSize : Int = getPageSize(), @Query("applyUsername")applyUsername : String = "", @Query("pageNo") page : Int = 1) : Call<ResponseBody>
     //申请添加好友
     data class RequestJsonApply(val applyUserId: String)
     @POST("api/business/coursefriendapply/add") //传入学号

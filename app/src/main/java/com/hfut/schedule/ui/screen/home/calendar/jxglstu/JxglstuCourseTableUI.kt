@@ -75,6 +75,7 @@ import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -671,7 +672,7 @@ fun JxglstuCourseTableUI(
                        if(useWebVpn) {
                            return@library
                        }
-                       val auth = prefs.getString("LibraryToken", "")
+                       val auth = prefs.getString(LIBRARY_TOKEN, "")
                        if(auth == null || auth.isEmpty()) {
                            vm.gotoLibrary(cookies)
                        } else {

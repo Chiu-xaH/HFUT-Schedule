@@ -282,6 +282,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.EXCEPTION.argName to exception
         )
     }
+    object LibraryBorrowed : AppNavRoute("LIBRARY_BORROWED","借阅图书",R.drawable.book_5)
     object UiSettings : AppNavRoute("UI_SETTINGS","设置-外观与效果",R.drawable.format_paint)
     object ConfigSettings : AppNavRoute("CONFIG_SETTINGS","设置-应用及配置",R.drawable.joystick)
     object NetworkSettings : AppNavRoute("NETWORK_SETTINGS","设置-网络",R.drawable.net)

@@ -50,6 +50,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
@@ -59,6 +60,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -144,14 +146,19 @@ fun StuTodayCampusScreen(
             Column(
                 modifier = Modifier.fillMaxSize().hazeSource(hazeState)
             ) {
-                StuAppsScreen(vm,input,innerPadding)
+                StuAppsScreen(vm,input,innerPadding,navController)
             }
         }
 //    }
 }
 
 @Composable
-fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingValues) {
+fun StuAppsScreen(
+    vm : NetWorkViewModel,
+    input : String,
+    innerPadding : PaddingValues,
+    navController: NavHostController
+) {
     val refreshNetwork : suspend () -> Unit = {
         prefs.getString("TOKEN","")?.let {
             vm.stuAppsResponse.clear()
@@ -165,6 +172,9 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
     val uiState by vm.stuAppsResponse.state.collectAsState()
     val localList = remember { getTodayCampusApps(context) }
     LaunchedEffect(Unit) {
+        if(uiState is UiState.Success) {
+            return@LaunchedEffect
+        }
         refreshNetwork()
     }
     val l = localList.flatMap { it.apps }.map { it.openUrl.substringAfter("stu.hfut.edu.cn/").substringBefore("?")  }
@@ -181,7 +191,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                 items(data.size, key = { it }) { index ->
                     val item = data[index]
                     with(item) {
-                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
+                        val route = AppNavRoute.WebView.shareRoute(openUrl)
+                        SmallCard(
+                            color = mixedCardNormalColor(),
+                            modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).containerShare(route)
+                        ) {
                             TransplantListItem(
                                 leadingContent = {
                                     UrlImage(iconUrl, width = size, height = size)
@@ -189,9 +203,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                 headlineContent = { ScrollText(name) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        openUrl.let {
-                                            Starter.startWebView(context,it, title = name, cookie =cookie)
-                                        }
+                                        Starter.startWebView(navController,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                     }
                                 }
                             )
@@ -202,7 +214,14 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                     items(list.size, key = { it }) { index ->
                         val item = list[index]
                         with(item) {
-                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp)) {
+                            if(url == null) {
+                                return@with
+                            }
+                            val route = AppNavRoute.WebView.shareRoute(url)
+                            SmallCard(
+                                color = mixedCardNormalColor(),
+                                modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).containerShare(route)
+                            ) {
                                 TransplantListItem(
                                     leadingContent = {
                                         UrlImage(logo, width = size, height = size)
@@ -210,9 +229,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                     headlineContent = { ScrollText(name) },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            url?.let {
-                                                Starter.startWebView(context,it, title = name, cookie =cookie)
-                                            }
+                                            Starter.startWebView(navController,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                         }
                                     }
                                 )
@@ -233,7 +250,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                 val item1 = list[j]
                                 Row(Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                     with(item1) {
-                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                        val route = AppNavRoute.WebView.shareRoute(openUrl)
+                                        SmallCard(
+                                            color = mixedCardNormalColor(),
+                                            modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
+                                        ) {
                                             TransplantListItem(
                                                 leadingContent = {
                                                     UrlImage(iconUrl, width = size, height = size)
@@ -241,9 +262,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        openUrl.let {
-                                                            Starter.startWebView(context,it, title = name, cookie =cookie)
-                                                        }
+                                                        Starter.startWebView(navController,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                     }
                                                 }
                                             )
@@ -252,7 +271,11 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                     if(j + 1 < i.apps.size) {
                                         val item2 = list[j+1]
                                         with(item2) {
-                                            SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                            val route = AppNavRoute.WebView.shareRoute(openUrl)
+                                            SmallCard(
+                                                color = mixedCardNormalColor(),
+                                                modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
+                                            ) {
                                                 TransplantListItem(
                                                     leadingContent = {
                                                         UrlImage(iconUrl, width = size, height = size)
@@ -260,9 +283,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                                     headlineContent = { ScrollText(name) },
                                                     modifier = Modifier.clickable {
                                                         scope.launch {
-                                                            openUrl.let {
-                                                                Starter.startWebView(context,it, title = name, cookie =cookie)
-                                                            }
+                                                            Starter.startWebView(navController,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                         }
                                                     }
                                                 )
@@ -283,7 +304,14 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                             val item1 = data[j]
                             Row(Modifier.padding(horizontal = APP_HORIZONTAL_DP-3.dp)) {
                                 with(item1) {
-                                    SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                    if(url == null) {
+                                        return@with
+                                    }
+                                    val route = AppNavRoute.WebView.shareRoute(url)
+                                    SmallCard(
+                                        color = mixedCardNormalColor(),
+                                        modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
+                                    ) {
                                         TransplantListItem(
                                             leadingContent = {
                                                 UrlImage(logo, width = size, height = size)
@@ -291,9 +319,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
                                                 scope.launch {
-                                                    url?.let {
-                                                        Starter.startWebView(context,it, title = name, cookie =cookie)
-                                                    }
+                                                    Starter.startWebView(navController,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                 }
                                             }
                                         )
@@ -302,7 +328,14 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                 if(j + 1 < data.size) {
                                     val item2 = data[j+1]
                                     with(item2) {
-                                        SmallCard(modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f)) {
+                                        if(url == null) {
+                                            return@with
+                                        }
+                                        val route = AppNavRoute.WebView.shareRoute(url)
+                                        SmallCard(
+                                            color = mixedCardNormalColor(),
+                                            modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
+                                        ) {
                                             TransplantListItem(
                                                 leadingContent = {
                                                     UrlImage(logo, width = size, height = size)
@@ -310,9 +343,7 @@ fun StuAppsScreen(vm : NetWorkViewModel,input : String,innerPadding : PaddingVal
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        url?.let {
-                                                            Starter.startWebView(context,it, title = name, cookie =cookie)
-                                                        }
+                                                        Starter.startWebView(navController,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                     }
                                                 }
                                             )

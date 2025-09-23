@@ -77,7 +77,7 @@ fun LePaoYun(
                 Starter.startWebView(
                     navController,
                     url = MyApplication.PE_HOME_URL,
-                    title = "$title(校园网)",
+                    title = title,
                     icon = icon,
                     cookie = prefs.getString("PE","")
                 )

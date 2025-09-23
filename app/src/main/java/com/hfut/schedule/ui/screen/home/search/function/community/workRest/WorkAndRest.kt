@@ -160,7 +160,7 @@ fun TimeTableUI(friendUserName : String? = null) {
             }
         }
         if(courseBasicInfoDTOList.isNotEmpty()) {
-            DividerTextExpandedWith("线下课程(社区数据源 可能有更新延迟)") {
+            DividerTextExpandedWith("线下课程(智慧社区数据源)") {
                 courseBasicInfoDTOList.forEachIndexed { index, item ->
                     val type = item.trainingCategoryName_dictText
                     val str = type?.let { " | $it" } ?: ""

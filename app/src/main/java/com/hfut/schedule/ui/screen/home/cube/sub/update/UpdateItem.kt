@@ -10,18 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.uicommon.component.text.BottomTip
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -57,15 +52,19 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-//            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
-            UpdateItems("重构 图书馆","新增 图书馆平台的登录(校园网)")//
-            UpdateItems("新增 体测平台的登录","连接校园网(体测平台为内网才可访问)并刷新登录后，在 查询中心-体测平台 中可使用")//
+            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
+            UpdateItems("重构 图书馆","新增 图书馆平台的登录")//
+            UpdateItems("新增 体测平台的登录","并刷新登录后，在 查询中心-体测平台 中可使用")//
             UpdateItems("新增 今日校园","位于 查询中心-今日校园；现在，可以在刷新登陆状态后，可使用本App使用某些今日校园的功能")//
             UpdateItems("新增 合肥校区的电费充值与查看")
             UpdateItems("调整 天气预警的开关为默认关闭，按需开启")//
             UpdateItems("修复 网页右侧工具栏收回时动画异常的Bug")//
             UpdateItems("修复 刷新登陆状态不刷新慧新易校的Bug")//
+            UpdateItems("修复 聚焦始终显示明天没有课的Bug")//
+            UpdateItems("修复 从App返回桌面无预测式返回的Bug")//
+
             UpdateItems("优化 部分界面的显示")//
+//            UpdateItems("修复 首次开屏时层级模糊暂时失效的Bug")//
 //            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")
 //            UpdateItems("新增 启动台支持一键清除最近记录")
@@ -82,8 +81,8 @@ fun VersionInfo() {
             课程详情查挂科率三级界面 挂科率二级界面
             一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
              */
-//            UpdateItems("下线 从外部文件导入课表的功能","后期重构完成后回归")
-//            UpdateItems("下线 成绩-统计","后期重构完成后回归")
+//            UpdateItems("回归 从外部文件导入课表的功能")
+//            UpdateItems("回归 成绩-统计")
             // 未实现
 //        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
 //        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)

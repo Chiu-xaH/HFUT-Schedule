@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.logic.util.getPageSize
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -23,18 +24,17 @@ interface LibraryService {
         @Header("authorization") auth : String
     ) : Call<ResponseBody>
 
-//    @GET("svc/circulate/readerRecord")
-//    fun getBorrowedRecord(
-//        @Header("authorization") auth : String,
-//        @Query("page") page : Int,
-//        @Query("pageSize") pageSize : Int,
-//
-//    )
+    @GET("svc/circulate/readerRecord")
+    fun getBorrowed(
+        @Header("authorization") auth : String,
+        @Query("page") page : Int,
+        @Query("limit") pageSize : Int = getPageSize(),
+    ) : Call<ResponseBody>
 
     @POST("svc/space/mate/search")
     fun search(
 //        @Body body : ,
         @Header("authorization") auth : String
 
-    )
+    ) : Call<ResponseBody>
 }

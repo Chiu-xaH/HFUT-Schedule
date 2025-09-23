@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -14,9 +15,15 @@ import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.ui.style.special.transitionBackgroundF
+import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.TransitionState
+import com.xah.transition.style.TransitionLevel
+import com.xah.transition.style.transitionBackground
+import com.xah.transition.style.transitionSkip
+import com.xah.transition.util.isCurrentRouteWithoutArgs
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +46,7 @@ fun CustomTransitionScaffold(
         roundShape = roundShape,
         navHostController = navHostController,
         topBar = topBar,
-        modifier = modifier.transitionBackgroundF(navHostController, route).containerShare(
+        modifier = modifier.transitionBackgroundCustom(navHostController, route).containerShare(
             route,
             roundShape = roundShape,
         ),
@@ -50,4 +57,29 @@ fun CustomTransitionScaffold(
         containerColor = containerColor,
         content = content
     )
+}
+
+@Composable
+private fun Modifier.transitionBackgroundCustom(
+    navHostController: NavHostController,
+    route : String,
+) : Modifier = transitionSkip(route, transitionBackgroundC(navHostController,route))
+
+@Composable
+private fun Modifier.transitionBackgroundC(
+    navHostController: NavHostController,
+    route : String,
+) : Modifier = with(TransitionState.transitionBackgroundStyle) {
+    val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
+    val speed = TransitionState.curveStyle.speedMs
+
+    if(level.code >= TransitionLevel.MEDIUM.code) {
+        LaunchedEffect(isExpanded) {
+            GlobalUIStateHolder.isTransiting = true
+            delay(speed*2L)
+            GlobalUIStateHolder.isTransiting = false
+        }
+    }
+
+    return transitionBackground(navHostController,route)
 }

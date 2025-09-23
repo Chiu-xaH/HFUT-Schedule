@@ -83,7 +83,6 @@ fun VersionInfoScreen(
     val route = remember { AppNavRoute.VersionInfo.route }
         CustomTransitionScaffold (
             route = route,
-            
             navHostController = navController,
             roundShape = MaterialTheme.shapes.medium,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

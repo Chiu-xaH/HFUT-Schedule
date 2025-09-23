@@ -35,16 +35,19 @@ fun TopBarNavigateIcon(
 ) {
     val speed = TransitionState.curveStyle.speedMs
     var show by remember { mutableStateOf(true) }
-    LaunchedEffect(Unit) {
-        show = true
-        delay(speed*1L)
-        delay(1500L)
-        show = false
-        if(restoreIcon || TransitionState.transplantBackground) {
-            delay(3000L)
+    if(!TransitionState.transplantBackground) {
+        LaunchedEffect(Unit) {
             show = true
+            delay(speed*1L)
+            delay(1500L)
+            show = false
+            if(restoreIcon) {
+                delay(3000L)
+                show = true
+            }
         }
     }
+
 
     IconButton(onClick = {
         navController.popBackStackForTransition()

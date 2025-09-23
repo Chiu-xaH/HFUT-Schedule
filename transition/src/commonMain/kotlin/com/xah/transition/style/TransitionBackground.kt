@@ -20,23 +20,14 @@ import com.xah.transition.util.isCurrentRouteWithoutArgs
 fun Modifier.transitionBackground(
     navHostController: NavHostController,
     route : String,
+) : Modifier = transitionSkip(route,transitionDefaultBackground(navHostController,route))
+
+
+@Composable
+fun Modifier.transitionDefaultBackground(
+    navHostController: NavHostController,
+    route : String,
 ) : Modifier = with(TransitionState.transitionBackgroundStyle) {
-    //👍 NONE
-    if(level == TransitionLevel.NONE) {
-        return this@transitionBackground
-    }
-    if(route in TransitionState.firstStartRoute && TransitionState.firstUse) {
-        return this@transitionBackground
-    }
-    // 禁用刚冷启动第一个界面模糊缩放
-    if(TransitionState.firstUse && TransitionState.firstTransition) {
-        TransitionState.firstUse = false
-        return this@transitionBackground
-    } else if(TransitionState.firstTransition) {
-        // 禁用刚冷启动第一次转场动画的增强效果
-        TransitionState.firstTransition = false
-        return this@transitionBackground
-    }
     val transplantBackground = TransitionState.transplantBackground
     val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
     val speed = TransitionState.curveStyle.speedMs
@@ -48,7 +39,7 @@ fun Modifier.transitionBackground(
         animationSpec = tween(speed, easing = FastOutSlowInEasing),
     )
     // 蒙版 遮罩
-    val darkModifier = this@transitionBackground.let {
+    val darkModifier = this@transitionDefaultBackground.let {
         if(!transplantBackground && level.code >= TransitionLevel.LOW.code) {
             it.drawWithContent {
                 drawContent()
@@ -61,6 +52,7 @@ fun Modifier.transitionBackground(
     if(level == TransitionLevel.LOW) {
         return darkModifier
     }
+
 
     val scale = animateFloatAsState( //.875f
         targetValue = if (isExpanded) {
@@ -84,4 +76,29 @@ fun Modifier.transitionBackground(
 
     //👍 HIGH
     return darkModifier.blur(blurSize).scale(scale.value)
+}
+
+
+
+fun Modifier.transitionSkip(
+    route : String,
+    background : Modifier
+): Modifier = with(TransitionState.transitionBackgroundStyle) {
+    //👍 NONE
+    if(level == TransitionLevel.NONE) {
+        return this@transitionSkip
+    }
+    if(route in TransitionState.firstStartRoute && TransitionState.firstUse) {
+        return this@transitionSkip
+    }
+    // 禁用刚冷启动第一个界面模糊缩放
+    if(TransitionState.firstUse && TransitionState.firstTransition) {
+        TransitionState.firstUse = false
+        return this@transitionSkip
+    } else if(TransitionState.firstTransition) {
+        // 禁用刚冷启动第一次转场动画的增强效果
+        TransitionState.firstTransition = false
+        return this@transitionSkip
+    }
+    return background
 }

@@ -98,7 +98,7 @@ fun TransitionScaffold(
         }
     }
 
-    TransitionPredictiveBackHandler(navHostController,useBackHandler && enablePredictive) {
+    TransitionPredictiveBackHandler(navHostController,useBackHandler && enablePredictive && route !in TransitionState.firstStartRoute) {
         scale = it
     }
 

@@ -6,6 +6,7 @@ import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.encodeUrl
 import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -175,7 +176,7 @@ private fun parseLoginZhiJian(headers: Headers) : String? = try {
 private fun parseLoginLibrary(headers: Headers)  = try {
     val token = headers.toString().substringAfter("Authorization=").substringBefore(";")
     if (token.contains("ey")) {
-        saveString("LibraryToken", "Bearer $token")
+        saveString(LIBRARY_TOKEN, "Bearer $token")
         showToast("图书馆登陆成功")
     } else {
         showToast("图书馆登陆失败")

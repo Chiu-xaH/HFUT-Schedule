@@ -35,6 +35,7 @@ import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.network.util.StatusCode
+import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -694,12 +695,7 @@ object JxglstuRepository {
                     sId.toString(),
                     semester,
                     className,
-                    "1,${
-                        SharedPrefs.prefs.getString(
-                            "BookRequest",
-                            MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                        ) ?: MyApplication.Companion.DEFAULT_PAGE_SIZE
-                    }",
+                    "1,${getPageSize()}",
                     courseName,
                     courseId
                 ).awaitResponse()

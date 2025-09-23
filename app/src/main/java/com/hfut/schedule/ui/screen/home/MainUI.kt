@@ -405,9 +405,9 @@ fun MainScreen(
     val context = LocalContext.current
     val activity = LocalActivity.current
     var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
-    BackHandler {
-        activity?.finish()
-    }
+//    BackHandler {
+//        activity?.finish()
+//    }
         CustomTransitionScaffold(
             navHostController = navHostTopController,
             

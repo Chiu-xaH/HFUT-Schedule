@@ -48,6 +48,7 @@ import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZhiJianServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestNone
+import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -66,14 +67,11 @@ object Repository {
     private val haiLe = HaiLeWashingServiceCreator.create(HaiLeWashingService::class.java)
     private val admission = AdmissionServiceCreator.create(AdmissionService::class.java)
     private val hall = OfficeHallServiceCreator.create(OfficeHallService::class.java)
-    private val library = LibraryServiceCreator.create(LibraryService::class.java)
     private val stu = StuServiceCreator.create(StuService::class.java)
     private val zhiJian = ZhiJianServiceCreator.create(ZhiJianService::class.java)
     private val pe = PeServiceCreator.create(PeService::class.java)
 
-    suspend fun checkLibraryNetwork() = launchRequestNone {
-        library.check().awaitResponse()
-    }
+
 
     suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestSimple(
         holder = holder,
@@ -152,20 +150,6 @@ object Repository {
     } catch (e : Exception) { throw e }
 
 
-    suspend fun checkLibraryLogin(token : String,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
-            holder = holder,
-            request = { library.checkLogin(token).awaitResponse() },
-            transformSuccess = { _, json -> parseCheckLibraryLogin(json) }
-        )
-    @JvmStatic
-    private fun parseCheckLibraryLogin(json : String) : Boolean {
-        try {
-            val sId = getPersonInfo().studentId ?: return false
-            val name = getPersonInfo().name ?: return false
-            return json.contains(sId) || json.contains(name)
-        } catch (e : Exception) { throw e }
-    }
 
 
     suspend fun officeHallSearch(
@@ -177,11 +161,7 @@ object Repository {
         request = {
             hall.search(
                 name = text,
-                page = page,
-                pageSize = SharedPrefs.prefs.getString(
-                    "BookRequest",
-                    MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                )?.toInt() ?: MyApplication.Companion.DEFAULT_PAGE_SIZE,
+                page = page
             ).awaitResponse()
         },
         transformSuccess = { _, json -> parseOfficeHallSearch(json) }
@@ -198,10 +178,6 @@ object Repository {
                 teacher.searchTeacher(
                     name = name,
                     direction = direction,
-                    size = SharedPrefs.prefs.getString(
-                        "BookRequest",
-                        MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                    ) ?: MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
                 ).awaitResponse()
             },
             transformSuccess = { _, json -> parseTeacherSearch(json) }
@@ -290,10 +266,6 @@ object Repository {
                 workSearch.search(
                     keyword = keyword,
                     page = page,
-                    pageSize = SharedPrefs.prefs.getString(
-                        "BookRequest",
-                        MyApplication.Companion.DEFAULT_PAGE_SIZE.toString()
-                    )?.toIntOrNull() ?: MyApplication.Companion.DEFAULT_PAGE_SIZE,
                     type = type.let { if (it == 0) null else it },
                     token = "yxqqnn1700000" + if (campus == CampusRegion.XUANCHENG) "119" else "002"
                 ).awaitResponse()
