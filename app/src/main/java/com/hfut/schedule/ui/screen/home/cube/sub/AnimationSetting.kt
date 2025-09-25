@@ -77,7 +77,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.titleElementShare
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.uicommon.style.align.CenterScreen
 
 import kotlinx.coroutines.delay
@@ -233,8 +233,8 @@ private fun ScreenBackground(
     val backgroundColor by animateFloatAsState(
         targetValue = if(isExpanded) 0.7f else 0f,
         animationSpec = spring(
-            dampingRatio = TransitionState.curveStyle.dampingRatio,
-            stiffness = TransitionState.curveStyle.stiffness.toFloat(),
+            dampingRatio = TransitionConfig.curveStyle.dampingRatio,
+            stiffness = TransitionConfig.curveStyle.stiffness.toFloat(),
         )
     )
 

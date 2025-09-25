@@ -36,7 +36,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -134,7 +134,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                 }
                                 item { PaddingForPageControllerButton() }
                             }
-                            PagingController(listState,currentPage, nextPage = { currentPage = it }, previousPage = { currentPage = it })
+                            PageController(listState,currentPage, nextPage = { currentPage = it }, previousPage = { currentPage = it })
                         }
                     }
                 }

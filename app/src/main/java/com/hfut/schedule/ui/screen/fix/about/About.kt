@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -49,6 +50,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -61,6 +63,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
 import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
@@ -75,6 +78,7 @@ import java.util.Hashtable
 fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavHostController, hazeState: HazeState) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
+    val context = LocalContext.current
     TransitionPredictiveBackHandler(navController,enablePredictive) {
         scale = it
     }
@@ -200,7 +204,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         DividerTextExpandedWith("关于") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text(text = "本版本新特性") },
+                    headlineContent = { Text(text = AppNavRoute.VersionInfo.label) },
                     supportingContent = { Text(text = "查看此版本的更新内容")},
                     modifier = Modifier.clickable { showBottomSheet_version = true },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
@@ -219,7 +223,18 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "推广应用") },
+                    headlineContent = { Text(text = "反馈") },
+                    supportingContent = { Text(text = "向开发者发送邮件")},
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.alternate_email), contentDescription = "Localized description")
+                    },
+                    modifier = Modifier.clickable {
+                        Starter.emailMe(context)
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "推广") },
                     supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
                     leadingContent = {
                         Icon(
@@ -248,6 +263,20 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         }
 
         if(cubeShow) {
+            DividerTextExpandedWith("修复") {
+                CustomCard(
+                    color = MaterialTheme.colorScheme.surface
+                ) {
+                    GithubDownloadUI()
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text(text = "疑难解答与修复") },
+                        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
+                        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+                        modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
+                    )
+                }
+            }
             DividerTextExpandedWith("开发") {
                 CustomCard(color = MaterialTheme.colorScheme.surface) {
                     TransplantListItem(
@@ -265,20 +294,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                             modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
                         )
                     }
-                }
-            }
-            DividerTextExpandedWith("修复") {
-                CustomCard(
-                    color = MaterialTheme.colorScheme.surface
-                ) {
-                    GithubDownloadUI()
-                    PaddingHorizontalDivider()
-                    TransplantListItem(
-                        headlineContent = { Text(text = "疑难解答与修复") },
-                        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
-                        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
-                        modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
-                    )
                 }
             }
         }

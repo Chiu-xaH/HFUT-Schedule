@@ -21,12 +21,16 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.materialkolor.PaletteStyle
 import com.xah.transition.style.TransitionLevel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object DataStoreManager {
     /* 用法
@@ -71,6 +75,12 @@ object DataStoreManager {
         }
     }
 
+    data class HefeiElectricStorage(
+        val buildingNumber : String,
+        val roomNumber : String,
+        val name : String
+    )
+
 
     private val ANIMATION_TYPE = intPreferencesKey("animation_types")
     private val STU_COOKIE = stringPreferencesKey("stu_cookie")
@@ -109,7 +119,9 @@ object DataStoreManager {
     private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
     private val USUALLY_ITEMS = stringPreferencesKey("usually_items")
     private val HIDE_EMPTY_CALENDAR_SQUARE = booleanPreferencesKey("hide_empry_calendar_square")
-
+    private val HEFEI_ROOM_NUMBER = stringPreferencesKey("hefei_room_number")
+    private val HEFEI_BUILDING_NUMBER = stringPreferencesKey("hefei_building_number")
+    private val HEFEI_ELECTRIC = stringPreferencesKey("hefei_electric")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun saveStuCookie(value: String) = saveValue(STU_COOKIE,value)
@@ -147,6 +159,22 @@ object DataStoreManager {
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
     suspend fun saveUsuallyItems(value: List<String>) = saveValue(USUALLY_ITEMS, value.joinToString(","))
     suspend fun saveHideEmptyCalendarSquare(value: Boolean) = saveValue(HIDE_EMPTY_CALENDAR_SQUARE,value)
+    private suspend fun saveHefeiBuildingNumber(value: String) = saveValue(HEFEI_BUILDING_NUMBER, value)
+    private suspend fun saveHefeiElectricName(value: String) = saveValue(HEFEI_ELECTRIC, value)
+    private suspend fun saveHefeiRoomNumber(value: String) = saveValue(HEFEI_ROOM_NUMBER, value)
+    suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
+        with(bean) {
+            launch { saveHefeiRoomNumber(roomNumber) }
+            launch { saveHefeiBuildingNumber(buildingNumber) }
+            launch { saveHefeiElectricName(name) }
+        }
+    }
+    suspend fun emptyHefeiElectric() = withContext(Dispatchers.IO) {
+        launch { saveHefeiRoomNumber(EMPTY_STRING) }
+        launch { saveHefeiBuildingNumber(EMPTY_STRING) }
+        launch { saveHefeiElectricName(EMPTY_STRING) }
+    }
+
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val stuCookies = getFlow(STU_COOKIE,EMPTY_STRING)
@@ -185,4 +213,16 @@ object DataStoreManager {
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val usuallyItems = getFlow(USUALLY_ITEMS,EMPTY_STRING)
+    private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
+    private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
+    private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
+    suspend fun getHefeiElectric(): HefeiElectricStorage? = withContext(Dispatchers.IO) {
+        val hefeiBuildingNumber = hefeiBuildingNumber.first()
+        val hefeiRoomNumber = hefeiRoomNumber.first()
+        val hefeiElectric = hefeiElectric.first()
+        if(hefeiRoomNumber == EMPTY_STRING || hefeiElectric == EMPTY_STRING || hefeiBuildingNumber == EMPTY_STRING) {
+            return@withContext null
+        }
+        return@withContext HefeiElectricStorage(hefeiBuildingNumber,hefeiRoomNumber,hefeiElectric)
+    }
 }

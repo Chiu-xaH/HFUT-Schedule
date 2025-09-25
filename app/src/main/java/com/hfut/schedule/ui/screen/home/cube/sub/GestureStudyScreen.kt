@@ -66,7 +66,7 @@ import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.allRouteStack
 import dev.chrisbanes.haze.HazeState
@@ -82,7 +82,7 @@ fun GestureStudyScreen(
     navController: NavHostController
 ) {
     val icon = @Composable {
-        val speed = TransitionState.curveStyle.speedMs
+        val speed = TransitionConfig.curveStyle.speedMs
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true

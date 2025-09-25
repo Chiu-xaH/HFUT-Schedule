@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
 import com.hfut.schedule.logic.util.other.loadImage
+import com.hfut.schedule.logic.util.preprocessCaptcha
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
@@ -107,15 +108,17 @@ fun UrlImageWithAutoOcr(
     ) {
         val imageState = loadImage(url, cookie = cookie)
         imageState.value?.let { bitmap ->
+            val preProgressed = bitmap
+//                preprocessCaptcha(bitmap)
             Image(
-                bitmap = bitmap.asImageBitmap(),
+                bitmap = preProgressed.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
             val switch_open = prefs.getBoolean("SWITCH_ML",false)
             if(switch_open) {
-                    val result = recognizeCaptcha(bitmap)
+                    val result = recognizeCaptcha(preProgressed)
                     onResult(result)
             }
         }

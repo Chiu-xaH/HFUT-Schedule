@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -135,7 +135,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                 item { InnerPaddingHeight(innerPaddings,false) }
                 item { PaddingForPageControllerButton() }
             }
-            PagingController(
+            PageController(
                 listState,
                 page,
                 nextPage = { page = it },

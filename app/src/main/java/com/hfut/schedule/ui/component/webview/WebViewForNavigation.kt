@@ -94,7 +94,7 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.canPopBack
 import kotlinx.coroutines.delay
@@ -152,14 +152,14 @@ private fun WebViewBackIcon(
             Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
         }
     } else {
-        val speed = TransitionState.curveStyle.speedMs
+        val speed = TransitionConfig.curveStyle.speedMs
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true
             delay(speed*1L)
             delay(1500L)
             show = false
-            if(!enablePredictive || TransitionState.transplantBackground) {
+            if(!enablePredictive || TransitionConfig.transplantBackground) {
                 delay(3000L)
                 show = true
             }

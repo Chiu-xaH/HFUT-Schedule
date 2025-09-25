@@ -28,7 +28,7 @@ fun BottomButton(
                 onClick = if(enable) onClick else {{}},
                 shape = RoundedCornerShape(0.dp),
                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
-                modifier = Modifier.fillMaxSize(),
+//                modifier = Modifier.fillMaxSize(),
             ) {
                 Text(text,color = if(enable) textColor else Color.Gray)
             }

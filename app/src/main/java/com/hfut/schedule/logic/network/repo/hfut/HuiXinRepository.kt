@@ -3,7 +3,8 @@ package com.hfut.schedule.logic.network.repo.hfut
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
+import com.hfut.schedule.logic.model.HuiXinHefeiBuildingsResponse
 import com.hfut.schedule.logic.model.huixin.BillMonth
 import com.hfut.schedule.logic.model.huixin.BillMonthResponse
 import com.hfut.schedule.logic.model.huixin.BillRangeResponse
@@ -22,7 +23,6 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.xah.shared.getConsumptionResult
 import com.xah.shared.model.BillBean
 import com.xah.shared.model.BillResponse
@@ -258,25 +258,56 @@ object HuiXinRepository {
         }
     } catch (e : Exception) { throw e }
 
+
+    @JvmStatic
+    private fun parseHefeiBuildings(json : String) : List<HuiXinHefeiBuildingBean> = try {
+        Gson().fromJson(json, HuiXinHefeiBuildingsResponse::class.java).map.data
+    } catch (e : Exception) { throw e }
+
+    suspend fun getHefeiRooms(
+        auth: String,
+        building: String?,
+        holder: StateHolder<List<HuiXinHefeiBuildingBean>>
+    ) = launchRequestSimple(
+        request = {
+            huiXin.getFee(
+                auth = auth,
+                type = "select",
+                typeId = 1,
+                campus = "1sh",
+                level = if(building == null) "1" else "2",
+                building = building
+            ).awaitResponse()
+        },
+        holder = holder,
+        transformSuccess = { _,json -> parseHefeiBuildings(json) }
+    )
+
+
     fun getFee(
         auth: String,
         type : FeeType,
         room : String? = null,
         phoneNumber : String? = null,
-        infoValue : MutableLiveData<String?>,
+        building : String? = null,
+        hefeiElectric : MutableLiveData<String?>,
+        netValue : MutableLiveData<String?>,
         electricData : MutableLiveData<String?>,
         showerData : MutableLiveData<String?>
     ) {
 
-        val feeItemId = type.code.toString()
+        val feeItemId = type.code
+        val campus = when(type) {
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1sh"
+            else -> null
+        }
         val levels = when(type) {
             FeeType.NET_XUANCHENG -> "0"
             FeeType.ELECTRIC_XUANCHENG -> null
             FeeType.SHOWER_XUANCHENG -> "1"
             FeeType.SHOWER_HEFEI -> "未适配"
             FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
-            FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "1"
         }
         val rooms = when(type) {
             FeeType.NET_XUANCHENG -> null
@@ -284,8 +315,7 @@ object HuiXinRepository {
             FeeType.SHOWER_XUANCHENG -> null
             FeeType.SHOWER_HEFEI -> null
             FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
-            FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> room
         }
         val phoneNumbers = when(type) {
             FeeType.NET_XUANCHENG -> null
@@ -293,18 +323,31 @@ object HuiXinRepository {
             FeeType.SHOWER_XUANCHENG -> phoneNumber
             FeeType.SHOWER_HEFEI -> phoneNumber
             FeeType.WASHING_HEFEI -> "未适配"
-            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> "未适配"
-            FeeType.ELECTRIC_HEFEI_GRADUATE -> "未适配"
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> null
         }
-        val call = huiXin.getFee(auth, typeId = feeItemId, room = rooms, level = levels, phoneNumber = phoneNumbers)
+        val buildings = when(type) {
+            FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> building
+            else -> null
+        }
+        val call = huiXin.getFee(
+            auth = auth,
+            typeId = feeItemId,
+            room = rooms,
+            level = levels,
+            phoneNumber = phoneNumbers,
+            type = "IEC",
+            campus = campus,
+            building = buildings
+        )
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 val responseBody = response.body()?.string()
                 when(type) {
-                    FeeType.NET_XUANCHENG -> infoValue.value = responseBody
+                    FeeType.NET_XUANCHENG -> netValue.value = responseBody
                     FeeType.ELECTRIC_XUANCHENG ->  electricData.value = responseBody
                     FeeType.SHOWER_XUANCHENG -> showerData.value = responseBody
+                    FeeType.ELECTRIC_HEFEI_UNDERGRADUATE -> hefeiElectric.value = responseBody
                     else -> {
                         showToast("未适配")
                     }

@@ -2,16 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
-    <uses-feature
-        android:name="android.hardware.camera"
-        android:required="false" /> <!-- 联网权限 -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" /> <!-- 联网权限 -->
     <uses-permission android:name="android.permission.INTERNET" /> <!-- 日历的读取 用于写入聚焦日程到日历 -->
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" /> <!-- 洗浴扫码 -->
     <uses-permission android:name="android.permission.CAMERA" /> <!-- 外部调用打开文件 用于导入课表 -->
-    <uses-permission
-        android:name="android.permission.MANAGE_EXTERNAL_STORAGE"
-        tools:ignore="ScopedStorage" /> <!-- 安装APK 用于下载更新后安装 -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" tools:ignore="ScopedStorage" /> <!-- 安装APK 用于下载更新后安装 -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" /> <!-- 发送通知 用于提示安装包已下载好 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
@@ -22,6 +18,9 @@
         <package android:name="com.netease.edu.ucmooc" />
         <package android:name="com.tencent.mm" />
         <package android:name="com.yunzhi.tiyu" />
+        <package android:name="com.iflytek.oshall.ahzwfw" />
+        <package android:name="com.hfut.schedule" />
+        <package android:name="com.eg.android.AlipayGphone" />
     </queries>
 
     <application
@@ -37,58 +36,65 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu" >
+
         <activity
-            android:configChanges="uiMode"
             android:name=".activity.util.WebViewActivity"
             android:exported="false"
             android:label="@string/title_activity_web_view"
             android:theme="@style/Theme.App" />
         <activity
-            android:configChanges="uiMode"
             android:name=".activity.screen.SupabaseActivity"
             android:exported="true"
             android:label="@string/title_activity_supbase"
-            android:theme="@style/Theme.App.Starting" /> <!-- 预编译 -->
-        <profileable android:shell="true" />
-        <!-- 小组件 -->
-        <!-- <receiver android:name=".ui.widget.MyAppWidgetReceiver" -->
-        <!-- android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
-        <!-- </intent-filter> -->
-        <!-- <meta-data -->
-        <!-- android:name="android.appwidget.provider" -->
-        <!-- android:resource="@xml/widget_info" /> -->
-        <!-- </receiver> -->
-        <!-- <profileable android:shell="true" /> -->
+            android:theme="@style/Theme.App" />
         <activity
-            android:configChanges="uiMode"
+            android:name=".activity.screen.CardActivity"
+            android:exported="true"
+            android:label="@string/title_activity_card"
+            android:theme="@style/Theme.App" />
+        <activity
+            android:name=".activity.screen.SuccessActivity"
+            android:exported="false"
+            android:label="@string/title_activity_uiacitivity"
+            android:theme="@style/Theme.App" />
+        <activity
+            android:name=".activity.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.App.Starting" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter
+                android:scheme="http"
+                tools:ignore="AppLinkUrlError" >
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
+        </activity>
+        <activity
             android:name=".activity.util.BaseActivity"
             android:exported="false"
             android:label="@string/title_activity_base"
-            android:theme="@style/Theme.App.Starting" />
+            android:theme="@style/Theme.App" />
         <activity
-            android:configChanges="uiMode"
             android:name=".activity.screen.ShowerActivity"
             android:exported="true"
             android:label="@string/title_activity_shower"
             android:theme="@style/Theme.App" />
         <activity
-            android:configChanges="uiMode"
             android:name=".activity.screen.FixActivity"
             android:exported="true"
             android:label="@string/title_activity_fix"
             android:theme="@style/Theme.App" />
-
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
-            android:exported="false"
-            android:grantUriPermissions="true" >
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths" />
-        </provider>
 
         <service
             android:name=".service.tile.LoginHefeiSchoolNetTileService"
@@ -147,46 +153,32 @@
             </intent-filter>
         </service>
 
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <receiver
             android:name=".receiver.UpdateReceiver"
             android:exported="false" />
 
-        <activity
-            android:configChanges="uiMode"
-            android:name=".activity.screen.CardActivity"
-            android:exported="true"
-            android:label="@string/title_activity_card"
-            android:theme="@style/Theme.App" />
-        <activity
-            android:configChanges="uiMode"
-            android:name=".activity.screen.SuccessActivity"
-            android:exported="false"
-            android:label="@string/title_activity_uiacitivity"
-            android:theme="@style/Theme.App" />
-        <activity
-            android:configChanges="uiMode"
-            android:name=".activity.MainActivity"
-            android:exported="true"
-            android:theme="@style/Theme.App.Starting" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <profileable android:shell="true" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter
-                android:scheme="http"
-                tools:ignore="AppLinkUrlError" >
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-
-                <data android:mimeType="text/plain" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.app.shortcuts"
-                android:resource="@xml/shortcuts" />
-        </activity>
+        <!-- 小组件 -->
+        <!-- <receiver android:name=".ui.widget.MyAppWidgetReceiver" -->
+        <!-- android:exported="true"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="android.appwidget.action.APPWIDGET_UPDATE" /> -->
+        <!-- </intent-filter> -->
+        <!-- <meta-data -->
+        <!-- android:name="android.appwidget.provider" -->
+        <!-- android:resource="@xml/widget_info" /> -->
+        <!-- </receiver> -->
+        <!-- <profileable android:shell="true" /> -->
     </application>
-
 </manifest>

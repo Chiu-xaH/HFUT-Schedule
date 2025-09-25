@@ -2,8 +2,6 @@ package com.hfut.schedule.logic.network.api
 
 import com.google.gson.JsonObject
 import com.hfut.schedule.logic.util.network.Crypto
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
@@ -63,14 +61,17 @@ interface HuiXinService {
         @Header("synjones-auth") auth : String,
         @Body json: JsonObject ) : Call<ResponseBody>
 
+    // 获取肥区的区域
     //查询  feeitemid为281为网费，261为电费 223为宣城校区洗浴
     @FormUrlEncoded
     @POST("charge/feeitem/getThirdData")
     fun getFee(@Header("synjones-auth") auth : String,
-               @Field("feeitemid") typeId : String,
-               @Field("type") IEC : String = "IEC",
+               @Field("feeitemid") typeId : Int,
+               @Field("type") type : String = "IEC",
                @Field("level") level : String? = null,
                @Field("room") room : String? = null,
+               @Field("campus") campus : String? = "1sh",
+               @Field("building") building : String? = null,
                @Field("telPhone") phoneNumber : String? = null) : Call<ResponseBody>
     //交费支付 3步走
     @FormUrlEncoded

@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
@@ -105,6 +106,7 @@ import com.hfut.schedule.ui.screen.news.home.NewsScreen
 import com.hfut.schedule.ui.screen.util.ControlCenterScreen
 import com.hfut.schedule.ui.screen.util.EmptyScreen
 import com.hfut.schedule.ui.screen.util.NavigationExceptionScreen
+import com.hfut.schedule.ui.screen.util.OpenOuterApplicationScreen
 import com.hfut.schedule.ui.screen.util.limitDrawerSwipeArea
 import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
@@ -115,7 +117,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -312,10 +314,10 @@ fun MainHost(
                 navController = navController,
                 startDestination = first,
                 enterTransition = {
-                    fadeIn(animationSpec = tween(durationMillis = TransitionState.curveStyle.speedMs),)
+                    fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),)
                 },
                 exitTransition = {
-                    fadeOut(animationSpec = tween(durationMillis = TransitionState.curveStyle.speedMs),)
+                    fadeOut(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),)
                 },
                 modifier = Modifier
                     .let {
@@ -371,6 +373,18 @@ fun MainHost(
                 // 本版本新特性
                 transitionComposable(AppNavRoute.VersionInfo.route) {
                     VersionInfoScreen(networkVm,navController)
+                }
+                // 打开外部应用
+                transitionComposable(
+                    route = AppNavRoute.OpenOuterApplication.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.OpenOuterApplication.Args.entries)
+                ) { backStackEntry ->
+                    val target = backStackEntry.arguments?.getString(AppNavRoute.OpenOuterApplication.Args.PACKAGE_NAME.argName) ?: return@transitionComposable
+                    val app = Starter.AppPackages.entries.find { it.packageName == target } ?: return@transitionComposable
+                    OpenOuterApplicationScreen(
+                        app,
+                        navController,
+                    )
                 }
                 // 图书借阅
                 transitionComposable(AppNavRoute.LibraryBorrowed.route) {

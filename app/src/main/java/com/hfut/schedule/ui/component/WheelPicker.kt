@@ -45,7 +45,7 @@ fun <T> WheelPicker(
     onSelect: (index: Int, item: T) -> Unit,
     content: @Composable (item: T) -> Unit,
 ) {
-    BoxWithConstraints(modifier = modifier, propagateMinConstraints = true) {
+    BoxWithConstraints(modifier = modifier.height(height.dp), propagateMinConstraints = true) {
         val density = LocalDensity.current
         val size = data.size
         val count = size * 10000
@@ -61,7 +61,7 @@ fun <T> WheelPicker(
         )
         val layoutInfo by remember { derivedStateOf { listState.layoutInfo } }
         LazyColumn(
-            modifier = Modifier.height(height.dp),
+            modifier = Modifier,
             state = listState,
             flingBehavior = rememberSnapFlingBehavior(listState),
         ) {

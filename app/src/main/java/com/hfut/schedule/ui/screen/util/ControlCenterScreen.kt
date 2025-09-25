@@ -77,7 +77,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.ui.util.navigateForTransition
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithArgWithoutValues
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -182,7 +182,7 @@ fun ControlCenterScreen(
                     actions = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             var height by remember { mutableStateOf(0.dp) }
-                            if(tab == TAB_STACK && currentRoute !in TransitionState.firstStartRoute){
+                            if(tab == TAB_STACK && currentRoute !in TransitionConfig.firstStartRoute){
                                 IconButton (
                                     onClick = {
                                         scope.launch {
@@ -192,7 +192,7 @@ fun ControlCenterScreen(
                                                 }
                                             }
                                             showToast("已回到首页")
-                                            delay(TransitionState.curveStyle.speedMs*1L)
+                                            delay(TransitionConfig.curveStyle.speedMs*1L)
                                             onExit()
                                         }
                                     },
@@ -375,7 +375,7 @@ fun ControlCenterScreen(
                                                 onClick = {
                                                     scope.launch {
                                                         navController.navigateForTransition(item.app,item.route)
-                                                        delay(TransitionState.curveStyle.speedMs*1L)
+                                                        delay(TransitionConfig.curveStyle.speedMs*1L)
                                                         onExit()
                                                     }
                                                 },
@@ -418,7 +418,7 @@ fun ControlCenterScreen(
                                             } else {
                                                 scope.launch {
                                                     navController.navigateForTransition(item.app,item.route)
-                                                    delay(TransitionState.curveStyle.speedMs*1L)
+                                                    delay(TransitionConfig.curveStyle.speedMs*1L)
                                                     onExit()
                                                 }
                                             }

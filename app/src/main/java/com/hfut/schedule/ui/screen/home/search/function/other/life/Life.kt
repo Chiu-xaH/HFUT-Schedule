@@ -72,7 +72,6 @@ fun LifeScreen(
         CustomTransitionScaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
-            
             navHostController = navController,
             topBar = {
                 MediumTopAppBar(

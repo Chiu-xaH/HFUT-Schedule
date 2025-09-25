@@ -3,11 +3,16 @@ package com.xah.uicommon.style
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -20,6 +25,7 @@ import androidx.compose.ui.unit.dp
 enum class ClickScale(val scale : Float) {
     SMALL(0.9F),MEDIUM(0.95F)
 }
+
 fun Modifier.clickableWithScale(
     pressedScale: Float = ClickScale.MEDIUM.scale,
     onClick: () -> Unit
@@ -42,7 +48,7 @@ fun Modifier.clickableWithScale(
         )
         .clickable(
             interactionSource = interactionSource, // 👈 关键：传给 clickable
-            indication = null, // 去掉水波纹
+            indication = LocalIndication.current, // 去掉水波纹
             onClick = onClick
         )
 }
@@ -52,9 +58,9 @@ fun Modifier.clickableWithRotation(
     maxTilt: Float = 10f,
     onClick: () -> Unit
 ): Modifier = composed {
-    var scale by remember { mutableStateOf(1f) }
-    var rotationX by remember { mutableStateOf(0f) }
-    var rotationY by remember { mutableStateOf(0f) }
+    var scale by remember { mutableFloatStateOf(1f) }
+    var rotationX by remember { mutableFloatStateOf(0f) }
+    var rotationY by remember { mutableFloatStateOf(0f) }
 
     // 使用 animateFloatAsState 来平滑过渡
     val animatedScale by animateFloatAsState(
@@ -122,9 +128,9 @@ fun Modifier.clickableWithRotation(
 fun Modifier.clickableWithRotation(
     onClick: () -> Unit
 ): Modifier = composed {
-    var scale by remember { mutableStateOf(1f) }
-    var rotationX by remember { mutableStateOf(0f) }
-    var rotationY by remember { mutableStateOf(0f) }
+    var scale by remember { mutableFloatStateOf(1f) }
+    var rotationX by remember { mutableFloatStateOf(0f) }
+    var rotationY by remember { mutableFloatStateOf(0f) }
 
     // 使用 animateFloatAsState 来平滑过渡
     val animatedScale by animateFloatAsState(

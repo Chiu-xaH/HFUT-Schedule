@@ -80,7 +80,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun UpdateUI(vm : NetWorkViewModel,update : GiteeReleaseResponse?) {
     val updateState = vm.giteeUpdatesResp.state.collectAsState()
-    val canDownload = updateState.value is UiState.Success<*>
+    val canDownload = updateState.value is UiState.Success
     val handler = Handler(Looper.getMainLooper())
     var pro by remember { mutableFloatStateOf(0f) }
     var able by remember { mutableStateOf(true) }
@@ -119,17 +119,20 @@ fun UpdateUI(vm : NetWorkViewModel,update : GiteeReleaseResponse?) {
             vm.getGiteeApkSize(it)
         }
     }
+    val scope = rememberCoroutineScope()
 
     CustomCard(color = if(canDownload) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surface) {
         TransplantListItem(
-            headlineContent = { Text(text = "最新版本") },
+            headlineContent = { Text(text = if(canDownload)"最新版本" else "检查更新失败") },
             supportingContent = { Text(text = if(canDownload) "${AppVersion.getVersionName()} → ${update?.name}" else "${update?.name} 点击手动下载") },
             leadingContent = { Icon(painterResource(R.drawable.arrow_upward), contentDescription = "Localized description",) },
             trailingContent = {
-                FilledTonalIconButton(
-                    onClick = { expandItems = !expandItems },
-                    colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                ) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
+                if(canDownload) {
+                    FilledTonalIconButton(
+                        onClick = { expandItems = !expandItems },
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                    ) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
+                    }
                 }
             },
             modifier = Modifier.clickable{ Starter.startWebUrl(context,MyApplication.GITEE_UPDATE_URL+ "/releases/tag/Android") },

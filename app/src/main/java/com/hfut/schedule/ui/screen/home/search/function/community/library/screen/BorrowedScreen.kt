@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageIndicator
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -151,7 +151,7 @@ private fun BorrowUI(
                 item { PaddingForPageControllerButton() }
                 item { InnerPaddingHeight(innerPadding,false) }
             }
-            PagingController(listState,page,false,{ page = it },{ page = it }, modifier = Modifier.padding(innerPadding))
+            PageController(listState,page,false,{ page = it },{ page = it }, modifier = Modifier.padding(innerPadding))
         }
     }
 }

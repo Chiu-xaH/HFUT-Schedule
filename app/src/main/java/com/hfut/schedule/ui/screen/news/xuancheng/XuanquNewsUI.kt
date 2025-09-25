@@ -27,7 +27,7 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 
@@ -78,7 +78,7 @@ fun XuanquNewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }
             }
-            PagingController(
+            PageController(
                 listState,
                 page,
                 nextPage = { page = it },

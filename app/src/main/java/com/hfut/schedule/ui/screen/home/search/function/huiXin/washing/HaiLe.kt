@@ -37,7 +37,7 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.logic.enumeration.CampusRegion
@@ -166,7 +166,7 @@ fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
                     }
                     item { PaddingForPageControllerButton() }
                 }
-                PagingController(listState,page,nextPage = { page = it }, previousPage = { page = it })
+                PageController(listState,page,nextPage = { page = it }, previousPage = { page = it })
             }
         }
     }
@@ -249,7 +249,7 @@ fun HaiLeDetailScreen(vm : NetWorkViewModel,itemId : Long,onType : (HaiLeType) -
                     }
                     item { PaddingForPageControllerButton() }
                 }
-                PagingController(listState,page,nextPage = { page = it }, previousPage = { page = it })
+                PageController(listState,page,nextPage = { page = it }, previousPage = { page = it })
             }
         }
     }

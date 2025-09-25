@@ -8,8 +8,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
-import android.webkit.CookieManager
-import androidx.core.app.ActivityCompat.startActivityForResult
+import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.navigation.NavController
 import com.hfut.schedule.application.MyApplication
@@ -24,7 +23,6 @@ import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.util.network.WebVpnUtil
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
@@ -32,13 +30,20 @@ import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
 
 object Starter {
-    enum class AppPackages(val packageName : String,val appName : String) {
-        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园"),
-        WECHAT("com.tencent.mm","微信"),
-        CHAO_XING("com.chaoxing.mobile","学习通"),
-        MOOC("com.netease.edu.ucmooc","中国大学MOOC"),
-        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂"),
-        LEPAO("com.yunzhi.tiyu","云运动"),
+    enum class AppPackages(
+        val packageName : String,
+        val appName : String,
+        val icon : Int,
+        val iconBackgroundColor : Color,
+    ) {
+        TODAY_CAMPUS("com.wisedu.cpdaily","今日校园",R.drawable.today_campus_icon, Color(0xFF3452E6)),
+        WECHAT("com.tencent.mm","微信",R.drawable.wechat_icon, Color(0xFF07C561)),
+        CHAO_XING("com.chaoxing.mobile","学习通",R.drawable.chao_xing_icon, Color(0xFFD00521)),
+        MOOC("com.netease.edu.ucmooc","中国大学MOOC",R.drawable.mooc_icon, Color(0xFFFFFFFF)),
+        RAIN_CLASSROOM("com.xuetangx.ykt","雨课堂",R.drawable.rain_classroom_icon, Color(0xFF5097F5)),
+        LE_PAO("com.yunzhi.tiyu","云运动",R.drawable.le_pao_icon, Color(0xFF4084FE)),
+        ANHUI_HALL("com.iflytek.oshall.ahzwfw","皖事通",R.drawable.anhui_hall_icon, Color(0xFFE20311)),
+        ALIPAY("com.eg.android.AlipayGphone","支付宝",R.drawable.alipay_icon, Color(0xFF1978FF))
     }
     //通过包名启动第三方应用
     @JvmStatic

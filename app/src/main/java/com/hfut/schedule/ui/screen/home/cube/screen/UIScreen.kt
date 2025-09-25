@@ -101,7 +101,7 @@ import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
@@ -115,10 +115,7 @@ import kotlinx.coroutines.withContext
 
 suspend fun initTransition() = withContext(Dispatchers.IO) {
     val transition = DataStoreManager.transitionLevel.first()
-    val motionBlur = DataStoreManager.enableMotionBlur.first()
-//    TransitionState.firstStartRoute = AppNavRoute.Home.route
-//    TransitionState.transitionBackgroundStyle.motionBlur = motionBlur
-    TransitionState.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
+    TransitionConfig.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
 }
 
 
@@ -203,7 +200,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val hazeBlurLevels = remember { HazeBlurLevel.entries }
 
         LaunchedEffect(transition) {
-            TransitionState.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
+            TransitionConfig.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
         }
 
         val useDynamicColor = customColor == -1L

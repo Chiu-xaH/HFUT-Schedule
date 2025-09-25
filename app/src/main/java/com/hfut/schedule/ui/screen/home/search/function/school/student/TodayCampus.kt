@@ -45,7 +45,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.button.StartAppIcon
+import com.hfut.schedule.ui.component.button.StartAppIconButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -122,7 +122,7 @@ fun StuTodayCampusScreen(
                         },
                         actions = {
                             Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                StartAppIcon(Starter.AppPackages.TODAY_CAMPUS,R.drawable.today_campus_icon)
+                                StartAppIconButton(Starter.AppPackages.TODAY_CAMPUS)
 //                                Spacer(Modifier.width(CARD_NORMAL_DP))
                                 FilledTonalButton(onClick = {
                                     Starter.startWebUrl(context,MyApplication.STU_URL)

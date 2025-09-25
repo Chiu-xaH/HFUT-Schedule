@@ -59,7 +59,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
@@ -275,7 +275,7 @@ private fun WorkSearchUI(
                     item { PaddingForPageControllerButton() }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
-                PagingController(listState,currentPage,nextPage = { currentPage = it }, previousPage = { currentPage = it })
+                PageController(listState,currentPage,nextPage = { currentPage = it }, previousPage = { currentPage = it })
             }
         }
     }

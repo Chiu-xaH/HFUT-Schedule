@@ -186,7 +186,7 @@ dependencies {
     implementation(libs.haze)
     implementation(libs.haze.materials)
     // 图片库  别用Coil，与登录逻辑代码有玄学冲突
-    implementation(libs.compose)
+    implementation(libs.glide)
     // DataStore
     implementation(libs.androidx.datastore.preferences)
     // 生物识别 指纹

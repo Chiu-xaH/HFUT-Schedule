@@ -219,12 +219,6 @@ fun HomeSettingScreen(navController: NavController,
                         }
                     }
                 }
-                Spacer(Modifier.height(CARD_NORMAL_DP))
-                PaddingHorizontalDivider(isDashed = true)
-                Spacer(Modifier.height(CARD_NORMAL_DP))
-                CustomCard(color = MaterialTheme.colorScheme.surface) {
-                    GithubDownloadUI()
-                }
                 if(!canUseUpdate) {
                     BottomTip("当前安装的是非ARM64架构安装包,无法直接更新,请从备用更新通道下载对应包体")
                 }
@@ -321,7 +315,7 @@ fun AlwaysItem(
     navHostTopController : NavController,
     update : GiteeReleaseResponse?
 ) {
-    val showBadge = update != null
+    val showBadge = update != null && update.assets.isNotEmpty()
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     val isPreview = AppVersion.isPreview()
     val route = remember { AppNavRoute.VersionInfo.route }

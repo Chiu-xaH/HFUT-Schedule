@@ -107,10 +107,10 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
             )
         }
 
-        DividerTextExpandedWith("模型") {
+        DividerTextExpandedWith("Tesseract OCR 模型") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { ScrollText("English OCR By Tesseract") },
+                    headlineContent = { ScrollText("English") },
                     supportingContent = { Text("约21MB" + if(isExistModule) " 长按删除" else "") },
                     trailingContent = {
                         if(!isExistModule) {

@@ -13,7 +13,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 @Composable
@@ -27,10 +27,10 @@ fun Modifier.transitionBackground(
 fun Modifier.transitionDefaultBackground(
     navHostController: NavHostController,
     route : String,
-) : Modifier = with(TransitionState.transitionBackgroundStyle) {
-    val transplantBackground = TransitionState.transplantBackground
+) : Modifier = with(TransitionConfig.transitionBackgroundStyle) {
+    val transplantBackground = TransitionConfig.transplantBackground
     val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
-    val speed = TransitionState.curveStyle.speedMs
+    val speed = TransitionConfig.curveStyle.speedMs
 
     val backgroundColor by animateFloatAsState(
         targetValue = if(isExpanded) {
@@ -83,21 +83,21 @@ fun Modifier.transitionDefaultBackground(
 fun Modifier.transitionSkip(
     route : String,
     background : Modifier
-): Modifier = with(TransitionState.transitionBackgroundStyle) {
+): Modifier = with(TransitionConfig.transitionBackgroundStyle) {
     //👍 NONE
     if(level == TransitionLevel.NONE) {
         return this@transitionSkip
     }
-    if(route in TransitionState.firstStartRoute && TransitionState.firstUse) {
+    if(route in TransitionConfig.firstStartRoute && TransitionConfig.firstUse) {
         return this@transitionSkip
     }
     // 禁用刚冷启动第一个界面模糊缩放
-    if(TransitionState.firstUse && TransitionState.firstTransition) {
-        TransitionState.firstUse = false
+    if(TransitionConfig.firstUse && TransitionConfig.firstTransition) {
+        TransitionConfig.firstUse = false
         return this@transitionSkip
-    } else if(TransitionState.firstTransition) {
+    } else if(TransitionConfig.firstTransition) {
         // 禁用刚冷启动第一次转场动画的增强效果
-        TransitionState.firstTransition = false
+        TransitionConfig.firstTransition = false
         return this@transitionSkip
     }
     return background

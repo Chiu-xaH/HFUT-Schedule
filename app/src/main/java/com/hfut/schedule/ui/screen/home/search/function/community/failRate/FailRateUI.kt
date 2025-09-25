@@ -33,7 +33,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -50,7 +50,7 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
     val listState = rememberLazyListState()
     val list = (uiState as UiState.Success).data
     Box(modifier = Modifier.fillMaxSize()) {
-        PagingController(listState,page,nextPage=nextPage,previousPage=previousPage,modifier = Modifier.zIndex(2f))
+        PageController(listState,page,nextPage=nextPage,previousPage=previousPage,modifier = Modifier.zIndex(2f))
         LazyColumn(state = listState) {
             item { Spacer(Modifier.height(CARD_NORMAL_DP)) }
             item { InnerPaddingHeight(innerPadding,true) }

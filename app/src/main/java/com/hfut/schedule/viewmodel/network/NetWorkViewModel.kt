@@ -22,6 +22,7 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailBean
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
+import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.OfficeHallSearchBean
@@ -378,7 +379,8 @@ class NetWorkViewModel() : ViewModel() {
     val infoValue = MutableLiveData<String?>()
     val electricData = MutableLiveData<String?>()
     val showerData = MutableLiveData<String?>()
-    fun getFee(auth: String,type : FeeType,room : String? = null,phoneNumber : String? = null) = HuiXinRepository.getFee(auth,type,room,phoneNumber, infoValue, electricData, showerData)
+    val hefeiElectric = MutableLiveData<String?>()
+    fun getFee(auth: String,type : FeeType,room : String? = null,phoneNumber : String? = null,building : String? = null) = HuiXinRepository.getFee(auth,type,room,phoneNumber, building,hefeiElectric,infoValue, electricData, showerData)
 
     val guaGuaUserInfo = MutableLiveData<String?>()
     fun getGuaGuaUserInfo() = GuaGuaRepository.getGuaGuaUserInfo(guaGuaUserInfo)
@@ -417,6 +419,12 @@ class NetWorkViewModel() : ViewModel() {
 
     val mailData = StateHolder<MailResponse>()
     suspend fun getMailURL(token : String)  = OneRepository.getMailURL(token,mailData)
+
+    val hefeiRoomsResp = StateHolder<List<HuiXinHefeiBuildingBean>>()
+    suspend fun getHefeiRooms(auth : String,building : String) = HuiXinRepository.getHefeiRooms(auth,building,hefeiRoomsResp)
+
+    val hefeiBuildingsResp = StateHolder<List<HuiXinHefeiBuildingBean>>()
+    suspend fun getHefeiBuildings(auth : String) = HuiXinRepository.getHefeiRooms(auth,null,hefeiBuildingsResp)
 
     val payFeeResponse = StateHolder<PayData>()
     suspend fun getPay() = OneRepository.getPay(payFeeResponse)

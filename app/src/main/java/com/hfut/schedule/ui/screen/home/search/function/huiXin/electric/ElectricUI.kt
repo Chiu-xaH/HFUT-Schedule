@@ -1,25 +1,26 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.electric
 
+import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -42,8 +43,12 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -58,6 +63,7 @@ import androidx.compose.ui.window.Dialog
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.huixin.FeeResponse
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -76,13 +82,26 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.DataStoreManager.HefeiElectricStorage
+import com.hfut.schedule.logic.util.storage.DataStoreManager.getHefeiElectric
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.WheelPicker
+import com.hfut.schedule.ui.component.button.BottomButton
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.LargeCard
+import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
+import com.xah.uicommon.component.text.BottomTip
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -539,37 +558,383 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 }
 
+private enum class ExpandState {
+    NONE, CAMPUS, BUILDING, TYPE
+}
 
 
 @Composable
 fun ElectricHefei(
     vm : NetWorkViewModel
 ) {
-    val selectedBuilding by remember { mutableStateOf(0) }
-    DividerTextExpandedWith("楼栋") {
-        WheelPicker(
-            data = listOf(1,2,3,4,5,6,7,8,9,10,11,12,13),
-            selectIndex = selectedBuilding,
-            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-            onSelect = { _,_ ->
+    var expandState by remember { mutableStateOf(ExpandState.NONE) }
+    var campus by remember { mutableStateOf(getCampus() ?: Campus.TXL) }
+    var buildingCode by remember { mutableIntStateOf(0) }
+    var typeCode by remember { mutableStateOf<Type?>(null) }
+    val showType = expandState == ExpandState.TYPE
+    val showCampus = expandState == ExpandState.CAMPUS
+    val showBuildings = expandState == ExpandState.BUILDING
 
-            }
-        ) {
-            Text(it.toString() + "号楼")
+    val savedData by produceState<HefeiElectricStorage?>(initialValue = null) {
+        value = getHefeiElectric()
+    }
+    savedData?.let {
+        CustomCard (color = cardNormalColor()){
+            TransplantListItem(
+                headlineContent = {
+                    Text(it.name)
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.info),null)
+                }
+            )
+            BottomButton(
+                onClick = {
+
+                },
+                text = "使用上一次的记录查询"
+            )
         }
     }
-    DividerTextExpandedWith("区域") {
-        WheelPicker(
-            data = listOf("南","北","中"),
-            selectIndex = selectedBuilding,
-            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-            onSelect = { _,_ ->
 
-            }
+    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+        AnimatedVisibility(
+            visible = !showType,
+            enter = expandIn(),
+            exit = shrinkOut()
         ) {
-            Text(it.toString() + "边")
+            Row {
+                AnimatedVisibility(
+                    visible = !showBuildings,
+                    enter = expandIn(),
+                    exit = shrinkOut()
+                ) {
+                    AssistChip(
+                        onClick = { expandState = if(showCampus) ExpandState.NONE else ExpandState.CAMPUS },
+                        label = {
+                            Text(if(!showCampus) campus.description + "校区" else "选择校区")
+                            AnimatedVisibility(
+                                visible = showCampus,
+                                enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
+                                exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
+                            ) {
+                                WheelPicker(
+                                    data = Campus.entries,
+                                    selectIndex = Campus.entries.indexOf(campus),
+                                    modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                                    onSelect = { index, element ->
+                                        campus = element
+                                    }
+                                ) {
+                                    Text(it.description.toString() + "校区")
+                                }
+                            }
+                        }
+                    )
+                }
+                AnimatedVisibility(
+                    visible = !showCampus,
+                    enter = expandIn(),
+                    exit = shrinkOut()
+                ) {
+                    Row {
+                        Spacer(Modifier.width(CARD_NORMAL_DP*2))
+                        AssistChip(
+                            onClick = { expandState = if(showBuildings) ExpandState.NONE else ExpandState.BUILDING },
+                            label = {
+                                Text(if(showBuildings)"选择楼栋" else getBuildingStr(buildingCode,campus))
+                                AnimatedVisibility(
+                                    visible = showBuildings,
+                                    enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
+                                    exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
+                                ) {
+                                    WheelPicker(
+                                        data = when(campus) {
+                                            Campus.XC -> IntArray(10) { it+1 }
+                                            Campus.TXL -> IntArray(14) { it+1 }
+                                            Campus.FCH -> IntArray(13) { it+1 }
+                                        }.toList(),
+                                        selectIndex = if(buildingCode <= 0) 0 else buildingCode-1,
+                                        modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                                        onSelect = { index, element ->
+                                            buildingCode = element
+                                        }
+                                    ) {
+                                        val description = getBuildingStr(it,campus)
+                                        Text(description)
+                                    }
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        AnimatedVisibility(
+            visible = !showCampus && !showBuildings,
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
+            Row {
+                Spacer(Modifier.width(CARD_NORMAL_DP*2))
+                AssistChip(
+                    onClick = {
+                        expandState = if (showType) ExpandState.NONE else ExpandState.TYPE
+                    },
+                    label = {
+                        Text(if (showType) "选择区域" else typeCode?.description ?: "选择区域")
+                        AnimatedVisibility(
+                            visible = showType,
+                            enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
+                            exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
+                        ) {
+                            WheelPicker(
+                                data = getType(campus, buildingCode),
+                                selectIndex = 0,
+                                modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                                onSelect = { index, element ->
+                                    typeCode = element
+                                }
+                            ) {
+                                Text(it.description)
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 
+    val finalRegion = typeCode?.let {
+        campus.description + getBuildingStr(buildingCode,campus) + it.description
+    }
+    val buildingResponse by vm.hefeiBuildingsResp.state.collectAsState()
+    val getBuildings = suspend m@ {
+        if(buildingResponse is UiState.Success) {
+            return@m
+        }
+        val auth = prefs.getString("auth","")
+        auth?.let {
+            vm.hefeiBuildingsResp.clear()
+            vm.getHefeiBuildings("bearer $it")
+        }
+    }
+    val roomResponse by vm.hefeiRoomsResp.state.collectAsState()
+    val getRooms : suspend(String) -> Unit =  m@ { building : String ->
+        if(roomResponse is UiState.Success) {
+            return@m
+        }
+        val auth = prefs.getString("auth","")
+        auth?.let {
+            vm.hefeiRoomsResp.clear()
+            vm.getHefeiRooms("bearer $it",building)
+        }
+    }
+    LaunchedEffect(Unit) {
+        vm.hefeiRoomsResp.emitPrepare()
+    }
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(finalRegion) {
+        finalRegion?.let { final ->
+            getBuildings()
+            val data = (buildingResponse as? UiState.Success)?.data ?: return@LaunchedEffect
+            val bean = data.find {
+                val name = it.name
+                val isCampus = name.startsWith(campus.description)
+                // 判断校区
+                if(isCampus) {
+                    if(name.contains("研")) {
+                        name == final
+                    } else {
+                        val buildingStr = name.substringBefore("号").substringAfter(campus.description)
+                        // 判断楼栋
+                        val isBuilding = getBuildingStr(buildingCode,campus).startsWith(buildingStr)
+                        if(isBuilding) {
+                            // 判断区域
+                            val isRegion = name.endsWith(typeCode!!.description) || name.endsWith(typeCode!!.description.replace("楼",""))
+                            isRegion
+                        } else {
+                            false
+                        }
+                    }
+                } else {
+                    false
+                }
+            }
+            if(bean == null) {
+                showToast("未找到此区域,可能是接口变更了,请联系开发者")
+            } else {
+                getRooms(bean.value)
+            }
+        }
+    }
+    var showRoom by remember { mutableStateOf(false) }
+    var roomNumber by remember { mutableStateOf<HuiXinHefeiBuildingBean?>(null) }
+    AssistChip(
+        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+        onClick = { showRoom = !showRoom },
+        leadingIcon = {
+            if(roomResponse is UiState.Loading) {
+                LoadingIcon()
+            }
+        },
+        enabled = roomResponse is UiState.Success,
+        label = {
+            Text(if(showRoom) "选择房间" else roomNumber?.name ?: "选择房间")
+            AnimatedVisibility(
+                visible = showRoom,
+                enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
+                exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
+            ) {
+                val list = (roomResponse as UiState.Success).data
+                WheelPicker(
+                    data = list,
+                    selectIndex = 0,
+                    modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                    onSelect = { index, element ->
+                        roomNumber = element
+                    }
+                ) {
+                    Text(it.name)
+                }
+            }
+        }
+    )
+    DividerTextExpandedWith("查询",openBlurAnimation = false) {
+        val finalRoom = ""
+        LargeCard(
+            title = "￥XX.XX",
+            rightTop = {
+                FilledTonalButton(
+                    onClick = {
 
+                    },
+                    enabled = false
+                ) {
+                    Text("快速充值")
+                }
+            }
+        ) {
+            TransplantListItem(
+                headlineContent = {
+                    Text(finalRoom)
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.info),null)
+                },
+                overlineContent = {
+                    Text(finalRegion ?: "未选择区域")
+                }
+            )
+        }
+        BottomTip("快速充值开发中 请先使用官方充值")
+    }
 }
+
+private fun getBuildingStr(content : Int, campus : Campus) : String {
+    if(content <= 0) {
+        return "选择楼栋"
+    }
+    return when(campus) {
+        Campus.XC -> {
+            content.toString() + "号楼"
+        }
+        Campus.FCH -> {
+            content.toString() + "号楼"
+        }
+        Campus.TXL -> {
+            if(content > 10) {
+                "研${numToChineses(content-7)}"
+            } else {
+                content.toString() + "号楼"
+            }
+        }
+    }
+}
+private fun numToChineses(num : Int) : String {
+    return when(num) {
+        4 -> "四"
+        5 -> "五"
+        6 -> "六"
+        7 -> "七"
+        else -> ""
+    }
+}
+
+private fun getType( campus : Campus,buildingCode : Int) : List<Type> {
+    return when(campus) {
+        Campus.XC -> {
+            if(buildingCode <= 5) {
+                // 南楼 北楼
+                Type1.entries
+            } else {
+                // 北楼空调 北楼空调 南楼空调 南楼照明
+                Type2.entries
+            }
+        }
+        Campus.FCH -> {
+            if(buildingCode == 13) {
+                // 北楼空调 北楼照明 南楼空调 南楼照明 中楼空调 中楼照明
+                Type3.entries
+            } else {
+                // 北楼空调 北楼照明 南楼空调 南楼照明
+                Type2.entries
+            }
+        }
+        Campus.TXL -> {
+            if(buildingCode in listOf(3,4,9)) {
+                // 空调 照明
+                Type4.entries
+            } else {
+                // 北楼空调 北楼照明 南楼空调 南楼照明
+                Type2.entries
+            }
+        }
+    }
+}
+
+private interface Type {
+    val description: String
+}
+
+private enum class Type1(override val description: String) : Type {
+    SOUTH("南楼"), NORTH("北楼")
+}
+
+private enum class Type2(override val description: String) : Type {
+    SOUTH_AIR("南楼空调"), NORTH_AIR("北楼空调"),
+    SOUTH_LIGHT("南楼照明"), NORTH_LIGHT("北楼照明"),
+}
+
+private enum class Type3(override val description: String) : Type {
+    SOUTH_AIR("南楼空调"), NORTH_AIR("北楼空调"), MIDDLE_AIR("中楼空调"),
+    SOUTH_LIGHT("南楼照明"), NORTH_LIGHT("北楼照明"), MIDDLE_LIGHT("中楼照明")
+}
+
+private enum class Type4(override val description: String) : Type {
+    AIR("空调"), LIGHT("照明")
+}
+
+
+
+/*
+when(campus) {
+                    Campus.TXL -> {
+                        if(buildingCode in listOf(3,4,9)) {
+                            "空调/照明"
+                        } else {
+                            "南/北楼"
+                        }
+                    }
+                    Campus.XC -> {
+                        if(buildingCode <= 5) {
+                            "选择南/北楼"
+                        } else {
+                            "选择区域"
+                        }
+                    }
+                    Campus.FCH -> {
+                        if()
+                    }
+                }
+ */

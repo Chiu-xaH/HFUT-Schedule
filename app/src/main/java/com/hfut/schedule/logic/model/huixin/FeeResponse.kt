@@ -10,7 +10,7 @@ enum class FeeType(val code : Int,val payTypeId : Int) {
     SHOWER_HEFEI(code = 222, payTypeId = -1) ,// PAYTYPEID待定
     WASHING_HEFEI(code = 26, payTypeId = -1), // PAYTYPEID待定
     ELECTRIC_HEFEI_UNDERGRADUATE(code = 1, payTypeId = -1) ,// PAYTYPEID待定
-    ELECTRIC_HEFEI_GRADUATE(code = 2, payTypeId = -1) // PAYTYPEID待定
+//    ELECTRIC_HEFEI_GRADUATE(code = 2, payTypeId = -1) // PAYTYPEID待定
 }
 
 data class ShowerFeeResponse(val map : ShowerFeeMap)

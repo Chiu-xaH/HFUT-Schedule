@@ -73,7 +73,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PagingController
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.DevelopingUI
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -327,7 +327,7 @@ fun BookSearchUI(
                     item { InnerPaddingHeight(innerPadding,false) }
                     item { PaddingForPageControllerButton() }
                 }
-                PagingController(listState,page,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
+                PageController(listState,page,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
             }
         }
 //    }

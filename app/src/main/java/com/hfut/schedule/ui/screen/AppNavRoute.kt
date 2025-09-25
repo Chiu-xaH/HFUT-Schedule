@@ -5,6 +5,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.one.BuildingBean
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute.NavArg
 
 // 主导航
@@ -89,6 +90,15 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
         fun withArgs(index: Int,type : String): String = withArgs(
             Args.INDEX.argName to index,
             Args.TYPE.argName to type
+        )
+    }
+    object OpenOuterApplication : AppNavRoute("OPEN_OUTER_APPLICATION","打开外部App",R.drawable.arrow_split) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
+            PACKAGE_NAME("packageName", NavType.StringType,"",true)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(appPackages: Starter.AppPackages): String = withArgs(
+            Args.PACKAGE_NAME.argName to appPackages.packageName
         )
     }
     object CourseDetail : AppNavRoute("COURSE_DETAIL","课程详情",R.drawable.category) {

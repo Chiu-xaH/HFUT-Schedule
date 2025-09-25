@@ -37,7 +37,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.button.StartAppIcon
+import com.hfut.schedule.ui.component.button.StartAppIconButton
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -117,8 +117,8 @@ fun WeChatScreen(
                         TopBarNavigationIcon(navController,route, AppNavRoute.Wechat.icon)
                     },
                     actions = {
-                        StartAppIcon(
-                            Starter.AppPackages.WECHAT,R.drawable.wechat_icon,
+                        StartAppIconButton(
+                            Starter.AppPackages.WECHAT,
                             modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         )
                     }

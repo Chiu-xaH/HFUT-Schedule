@@ -38,7 +38,7 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
-import com.xah.transition.state.TransitionState
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
 import com.xah.transition.style.transitionSkip
@@ -242,7 +242,7 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
 
     // 蒙版
     val backgroundColor by animateFloatAsState(
-        targetValue = if(isExpanded) TransitionState.transitionBackgroundStyle.backgroundDark else 0f,
+        targetValue = if(isExpanded) TransitionConfig.transitionBackgroundStyle.backgroundDark else 0f,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
     )
 
@@ -262,7 +262,7 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
 
     val scale = animateFloatAsState(
         targetValue = if (isExpanded) {
-            with(TransitionState.transitionBackgroundStyle) {
+            with(TransitionConfig.transitionBackgroundStyle) {
                 scale
             }
         } else 1f, // 按下时为0.9，松开时为1
@@ -286,7 +286,7 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
     // 稍微晚于运动结束
     val blurSize by animateDpAsState(
         targetValue = if (isExpanded && motionBlur) {
-            with(TransitionState.transitionBackgroundStyle) {
+            with(TransitionConfig.transitionBackgroundStyle) {
                 blurRadius
             }
         } else 0.dp, label = ""
