@@ -23,12 +23,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
@@ -37,6 +41,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedCard
@@ -86,6 +91,7 @@ import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.DataStoreManager.HefeiElectricStorage
 import com.hfut.schedule.logic.util.storage.DataStoreManager.getHefeiElectric
@@ -100,12 +106,14 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.xah.uicommon.component.text.BottomTip
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import kotlin.String
 import kotlin.collections.iterator
 
 private const val HEFEI_TAB = 0
@@ -161,10 +169,8 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     var Result by remember { mutableStateOf("") }
     var Result2 by remember { mutableStateOf("") }
 
-    var showButton by remember { mutableStateOf(false) }
     var showAdd by remember { mutableStateOf(false) }
     var payNumber by remember { mutableStateOf("") }
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     var show by remember { mutableStateOf(false) }
@@ -322,7 +328,42 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.animateContentSize()) {
+    fun searchHefei() {
+        scope.launch {
+            val data = getHefeiElectric()
+            if(data == null) {
+                showToast("无")
+                return@launch
+            }
+            show = false
+            async { reEmptyLiveDta(vm.hefeiElectric) }.await()
+            async { vm.getFee("bearer $auth", FeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = data.roomNumber, building = data.buildingNumber) }.await()
+            async {
+                Handler(Looper.getMainLooper()).post{
+                    vm.hefeiElectric.observeForever { result ->
+                        if (result?.contains("success") == true) {
+                            try {
+                                val jsons = Gson().fromJson(result, FeeResponse::class.java).map
+                                val data = jsons.showData
+                                for ((_, value) in data) {
+                                    scope.launch {
+                                        DataStoreManager.saveHefeiElectricFee(value)
+                                        show = true
+                                    }
+                                }
+                            } catch (e : Exception) { showToast("错误") }
+//                                                    val jsonObject = JSONObject(result)
+//                                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
+//                                                    dataObject.put("myCustomInfo", "房间：$input")
+//                                                    json = dataObject.toString()
+//                                                    show = false
+                        }
+                    }
+                }
+            }
+        }
+    }
+    Column(modifier = Modifier) {
         HazeBottomSheetTopBar("寝室电费" , isPaddingStatusBar = false) {
                 Row() {
                     if(showitem4)
@@ -331,36 +372,31 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     FilledTonalIconButton(onClick = {
                         when(pagerState.currentPage) {
                             HEFEI_TAB -> {
-                                showToast("正在开发")
+                                searchHefei()
                             }
                             XUANCHENG_TAB -> {
                                 scope.launch {
                                     show = false
                                     async {
                                         showitem4 = false
-                                        Handler(Looper.getMainLooper()).post{
-                                            vm.electricData.value = "{}"
-                                        }
+                                        reEmptyLiveDta(vm.electricData)
                                         SharedPrefs.saveString("BuildNumber", BuildingsNumber)
                                         SharedPrefs.saveString("EndNumber", EndNumber)
                                         SharedPrefs.saveString("RoomNumber", RoomNumber)
                                         SharedPrefs.saveString("RoomText","${BuildingsNumber}号楼${RoomNumber}寝室${region}" )
                                     }.await()
                                     async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
-                                    // async { vm.searchEle(jsons) }.await()
                                     async {
                                         Handler(Looper.getMainLooper()).post{
                                             vm.electricData.observeForever { result ->
                                                 if (result?.contains("success") == true) {
-                                                    showButton = true
                                                     try {
                                                         val jsons = Gson().fromJson(result, FeeResponse::class.java).map
                                                         val data = jsons.showData
                                                         for ((_, value) in data) {
                                                             Result = value
                                                         }
-                                                    } catch (e : Exception) {
-                                                        showToast("错误") }
+                                                    } catch (e : Exception) { showToast("错误") }
                                                     val jsonObject = JSONObject(result)
                                                     val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
                                                     dataObject.put("myCustomInfo", "房间：$input")
@@ -387,120 +423,126 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
         }
         if (BuildingsNumber == "0") BuildingsNumber = ""
+        LaunchedEffect(pagerState.currentPage) {
+            show = false
+        }
         CustomTabRow(pagerState,titles)
-        HorizontalPager(state = pagerState) { page ->
-            when(page) {
-                HEFEI_TAB -> {
-                    Column {
-                        ElectricHefei(vm)
-                    }
-                }
-                XUANCHENG_TAB -> {
-                    Column {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
-
-                            MenuChip(
-                                label = { Text(text = "楼栋 $BuildingsNumber") },
-                            ) {
-                                menuOffset = it
-                                showitem = true
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            HorizontalPager(state = pagerState) { page ->
+                when(page) {
+                    HEFEI_TAB -> {
+                        Column {
+                            ElectricHefei(vm,show) {
+                                searchHefei()
                             }
-
-                            Spacer(modifier = Modifier.width(10.dp))
-
-                            MenuChip(
-                                label = { Text(text = region) },
-                                //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
-                            ) {
-                                menuOffset = it
-                                when {
-                                    BuildingsNumber.toIntOrNull() != null -> {
-                                        when {
-                                            BuildingsNumber.toInt() > 5 -> showitem2 = true
-                                            BuildingsNumber.toInt() in 1..5 -> showitem3 = true
-                                        }
-                                    }
-                                    else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
-                                }
-                            }
-
-                            Spacer(modifier = Modifier.width(10.dp))
-                            AssistChip(
-                                onClick = { showitem4 = !showitem4 },
-                                label = { Text(text = "寝室 ${RoomNumber}") },
-                                //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
-                            )
                         }
+                    }
+                    XUANCHENG_TAB -> {
+                        Column {
+                            Row(modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = APP_HORIZONTAL_DP, vertical = 0.dp), horizontalArrangement = Arrangement.Start) {
 
-                        // Spacer(modifier = Modifier.height(7.dp))
+                                MenuChip(
+                                    label = { Text(text = "楼栋 $BuildingsNumber") },
+                                ) {
+                                    menuOffset = it
+                                    showitem = true
+                                }
+
+                                Spacer(modifier = Modifier.width(10.dp))
+
+                                MenuChip(
+                                    label = { Text(text = region) },
+                                    //    leadingIcon = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "description") }
+                                ) {
+                                    menuOffset = it
+                                    when {
+                                        BuildingsNumber.toIntOrNull() != null -> {
+                                            when {
+                                                BuildingsNumber.toInt() > 5 -> showitem2 = true
+                                                BuildingsNumber.toInt() in 1..5 -> showitem3 = true
+                                            }
+                                        }
+                                        else -> Toast.makeText(MyApplication.context,"请选择楼栋", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+
+                                Spacer(modifier = Modifier.width(10.dp))
+                                AssistChip(
+                                    onClick = { showitem4 = !showitem4 },
+                                    label = { Text(text = "寝室 ${RoomNumber}") },
+                                    //leadingIcon = { Icon(painter = painterResource(R.drawable.add), contentDescription = "description") }
+                                )
+                            }
+
+                            // Spacer(modifier = Modifier.height(7.dp))
 
 //充值界面
 //        Spacer(modifier = Modifier.height(7.dp))
-                        AnimatedVisibility(
-                            visible = showitem4,
-                            enter = slideInVertically(
-                                initialOffsetY = { -40 }
-                            ) + expandVertically(
-                                expandFrom = Alignment.Top
-                            ) + scaleIn(
-                                // Animate scale from 0f to 1f using the top center as the pivot point.
-                                transformOrigin = TransformOrigin(0.5f, 0f)
-                            ) + fadeIn(initialAlpha = 0.3f),
-                            exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-                        ){
-                            Row (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
-                                OutlinedCard{
-                                    LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                        item {
-                                            Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
-                                        }
-                                        item {
-                                            LazyRow {
-                                                items(5) { items ->
-                                                    IconButton(onClick = {
-                                                        if (RoomNumber.length < 3)
-                                                            RoomNumber += items.toString()
-                                                        else Toast.makeText(
-                                                            MyApplication.context,
-                                                            "三位数",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }) { Text(text = items.toString()) }
+                            AnimatedVisibility(
+                                visible = showitem4,
+                                enter = slideInVertically(
+                                    initialOffsetY = { -40 }
+                                ) + expandVertically(
+                                    expandFrom = Alignment.Top
+                                ) + scaleIn(
+                                    // Animate scale from 0f to 1f using the top center as the pivot point.
+                                    transformOrigin = TransformOrigin(0.5f, 0f)
+                                ) + fadeIn(initialAlpha = 0.3f),
+                                exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                            ){
+                                Row (modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)){
+                                    OutlinedCard{
+                                        LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                            item {
+                                                Text(text = " 选取寝室号", modifier = Modifier.padding(10.dp))
+                                            }
+                                            item {
+                                                LazyRow {
+                                                    items(5) { items ->
+                                                        IconButton(onClick = {
+                                                            if (RoomNumber.length < 3)
+                                                                RoomNumber += items.toString()
+                                                            else Toast.makeText(
+                                                                MyApplication.context,
+                                                                "三位数",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
+                                                        }) { Text(text = items.toString()) }
+                                                    }
+                                                }
+                                            }
+                                            item {
+                                                LazyRow {
+                                                    items(5) { items ->
+                                                        val num = items + 5
+                                                        IconButton(onClick = {
+                                                            if (RoomNumber.length < 3)
+                                                                RoomNumber += num
+                                                            else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
+                                                        }) { Text(text = num.toString()) }
+                                                    }
                                                 }
                                             }
                                         }
-                                        item {
-                                            LazyRow {
-                                                items(5) { items ->
-                                                    val num = items + 5
-                                                    IconButton(onClick = {
-                                                        if (RoomNumber.length < 3)
-                                                            RoomNumber += num
-                                                        else Toast.makeText(MyApplication.context, "三位数", Toast.LENGTH_SHORT).show()
-                                                    }) { Text(text = num.toString()) }
-                                                }
-                                            }
-                                        }
+                                        Spacer(modifier = Modifier.height(10.dp))
                                     }
-                                    Spacer(modifier = Modifier.height(10.dp))
                                 }
                             }
-                        }
 
-                        if(Result.contains("剩余金额")){
-                            Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
-                            Result2 = Result2.replace(":","")
-                            Result = Result.substringBefore("剩余金额").replace(":","")
-                            show = true
+                            if(Result.contains("剩余金额")){
+                                Result2 = "剩余金额 " +Result.substringAfter("剩余金额")
+                                Result2 = Result2.replace(":","")
+                                Result = Result.substringBefore("剩余金额").replace(":","")
+                                show = true
 
-                        } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
+                            } else if(Result.contains("无法获取房间信息") || Result.contains("hfut")) Result2 = "失败"
 
 
-                        DividerTextExpandedWith(text = "查询结果",openBlurAnimation = false) {
-                            Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                                Spacer(modifier = Modifier.height(100.dp))
+                            DividerTextExpandedWith(text = "查询结果",openBlurAnimation = false) {
                                 LoadingLargeCard(
                                     title = if(!show)"￥XX.XX"
                                     else
@@ -508,10 +550,21 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                     loading = !show ,
                                     prepare = true,
                                     rightTop = {
-                                        if(show) {
-                                            if(showButton)
-                                                FilledTonalButton(onClick = { if(showAdd && payNumber != "") showBottomSheet = true   else showDialog2 = true  }) { Text(text = if(showAdd && payNumber != "") "提交订单" else "快速充值") }
-                                        } else FilledTonalButton(onClick = { null }) { Text(text = "快速充值") }
+                                        FilledTonalButton(
+                                            enabled = show,
+                                            onClick = {
+                                                if(showAdd && payNumber != "")
+                                                    showBottomSheet = true
+                                                else showDialog2 = true
+                                            }
+                                        ) {
+                                            Text(text =
+                                                if(showAdd && payNumber != "")
+                                                    "提交订单"
+                                                else
+                                                    "快速充值"
+                                            )
+                                        }
                                     }
                                 ) {
                                     TransplantListItem(
@@ -519,42 +572,43 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                         headlineContent = { (if(!show)"X号楼XXX寝室方向设施" else prefs.getString("RoomText",null))?.let { Text(text = it) } },
                                         leadingContent = { Icon(painter = painterResource(id = R.drawable.info), contentDescription = "")}
                                     )
-                                } }
-                            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP/2))
-                        }
-                        DividerTextExpandedWith("使用说明", defaultIsExpanded = false) {
-                            CustomCard(
-                                color = cardNormalColor()
-                            ) {
-                                TransplantListItem(
-                                    headlineContent = { Text("夜间透支") },
-                                    supportingContent = { Text("每日23:00之前缴费，最迟23:00到账，23:00之后缴费，次日6点到账，在23:01-6:00时间段，账户如果欠费不会断电")},
-                                    leadingContent = { Icon(painterResource(R.drawable.dark_mode),null)}
-                                )
-                                PaddingHorizontalDivider()
-                                TransplantListItem(
-                                    headlineContent = { Text("最大功率") },
-                                    supportingContent = { Text("超出800W将自动断电，5分钟后自动恢复")},
-                                    leadingContent = { Icon(painterResource(R.drawable.hvac_max_defrost),null)}
-                                )
-                                PaddingHorizontalDivider()
-                                TransplantListItem(
-                                    headlineContent = { Text("月末补贴") },
-                                    supportingContent = { Text("照明空调各￥15，约下旬初到账")},
-                                    leadingContent = { Icon(painterResource(R.drawable.paid),null)}
-                                )
-                                PaddingHorizontalDivider()
-                                TransplantListItem(
-                                    headlineContent = { Text("寝室缴费实测存在一定延迟") },
-                                    leadingContent = { Icon(painterResource(R.drawable.schedule),null)}
-                                )
+                                }
+                                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP/2))
+                            }
+                            DividerTextExpandedWith("使用说明", defaultIsExpanded = false) {
+                                CustomCard(
+                                    color = cardNormalColor()
+                                ) {
+                                    TransplantListItem(
+                                        headlineContent = { Text("夜间透支") },
+                                        supportingContent = { Text("每日23:00之前缴费，最迟23:00到账，23:00之后缴费，次日6点到账，在23:01-6:00时间段，账户如果欠费不会断电")},
+                                        leadingContent = { Icon(painterResource(R.drawable.dark_mode),null)}
+                                    )
+                                    PaddingHorizontalDivider()
+                                    TransplantListItem(
+                                        headlineContent = { Text("最大功率") },
+                                        supportingContent = { Text("超出800W将自动断电，5分钟后自动恢复")},
+                                        leadingContent = { Icon(painterResource(R.drawable.hvac_max_defrost),null)}
+                                    )
+                                    PaddingHorizontalDivider()
+                                    TransplantListItem(
+                                        headlineContent = { Text("月末补贴") },
+                                        supportingContent = { Text("照明空调各￥15，约下旬初到账")},
+                                        leadingContent = { Icon(painterResource(R.drawable.paid),null)}
+                                    )
+                                    PaddingHorizontalDivider()
+                                    TransplantListItem(
+                                        headlineContent = { Text("寝室缴费实测存在一定延迟") },
+                                        leadingContent = { Icon(painterResource(R.drawable.schedule),null)}
+                                    )
+                                }
                             }
                         }
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
         }
-        Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
     }
 }
 
@@ -565,7 +619,9 @@ private enum class ExpandState {
 
 @Composable
 fun ElectricHefei(
-    vm : NetWorkViewModel
+    vm : NetWorkViewModel,
+    show : Boolean,
+    search : () -> Unit
 ) {
     var expandState by remember { mutableStateOf(ExpandState.NONE) }
     var campus by remember { mutableStateOf(getCampus() ?: Campus.TXL) }
@@ -575,27 +631,6 @@ fun ElectricHefei(
     val showCampus = expandState == ExpandState.CAMPUS
     val showBuildings = expandState == ExpandState.BUILDING
 
-    val savedData by produceState<HefeiElectricStorage?>(initialValue = null) {
-        value = getHefeiElectric()
-    }
-    savedData?.let {
-        CustomCard (color = cardNormalColor()){
-            TransplantListItem(
-                headlineContent = {
-                    Text(it.name)
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.info),null)
-                }
-            )
-            BottomButton(
-                onClick = {
-
-                },
-                text = "使用上一次的记录查询"
-            )
-        }
-    }
 
     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
         AnimatedVisibility(
@@ -607,7 +642,7 @@ fun ElectricHefei(
                 AnimatedVisibility(
                     visible = !showBuildings,
                     enter = expandIn(),
-                    exit = shrinkOut()
+                    exit = shrinkOut(),
                 ) {
                     AssistChip(
                         onClick = { expandState = if(showCampus) ExpandState.NONE else ExpandState.CAMPUS },
@@ -635,73 +670,69 @@ fun ElectricHefei(
                 AnimatedVisibility(
                     visible = !showCampus,
                     enter = expandIn(),
-                    exit = shrinkOut()
+                    exit = shrinkOut(),
+                    modifier = Modifier.padding(start = if(showBuildings) 0.dp else CARD_NORMAL_DP*2)
                 ) {
-                    Row {
-                        Spacer(Modifier.width(CARD_NORMAL_DP*2))
-                        AssistChip(
-                            onClick = { expandState = if(showBuildings) ExpandState.NONE else ExpandState.BUILDING },
-                            label = {
-                                Text(if(showBuildings)"选择楼栋" else getBuildingStr(buildingCode,campus))
-                                AnimatedVisibility(
-                                    visible = showBuildings,
-                                    enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
-                                    exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
-                                ) {
-                                    WheelPicker(
-                                        data = when(campus) {
-                                            Campus.XC -> IntArray(10) { it+1 }
-                                            Campus.TXL -> IntArray(14) { it+1 }
-                                            Campus.FCH -> IntArray(13) { it+1 }
-                                        }.toList(),
-                                        selectIndex = if(buildingCode <= 0) 0 else buildingCode-1,
-                                        modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
-                                        onSelect = { index, element ->
-                                            buildingCode = element
-                                        }
-                                    ) {
-                                        val description = getBuildingStr(it,campus)
-                                        Text(description)
+                    AssistChip(
+                        onClick = { expandState = if(showBuildings) ExpandState.NONE else ExpandState.BUILDING },
+                        label = {
+                            Text(if(showBuildings)"选择楼栋" else getBuildingStr(buildingCode,campus))
+                            AnimatedVisibility(
+                                visible = showBuildings,
+                                enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
+                                exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
+                            ) {
+                                WheelPicker(
+                                    data = when(campus) {
+                                        Campus.XC -> IntArray(10) { it+1 }
+                                        Campus.TXL -> IntArray(14) { it+1 }
+                                        Campus.FCH -> IntArray(13) { it+1 }
+                                    }.toList(),
+                                    selectIndex = if(buildingCode <= 0) 0 else buildingCode-1,
+                                    modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                                    onSelect = { index, element ->
+                                        buildingCode = element
                                     }
+                                ) {
+                                    val description = getBuildingStr(it,campus)
+                                    Text(description)
                                 }
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
         AnimatedVisibility(
             visible = !showCampus && !showBuildings,
             enter = fadeIn(),
-            exit = fadeOut()
+            exit = fadeOut(),
+            modifier = Modifier.padding(start = if(showType) 0.dp else CARD_NORMAL_DP*2)
         ) {
-            Row {
-                Spacer(Modifier.width(CARD_NORMAL_DP*2))
-                AssistChip(
-                    onClick = {
-                        expandState = if (showType) ExpandState.NONE else ExpandState.TYPE
-                    },
-                    label = {
-                        Text(if (showType) "选择区域" else typeCode?.description ?: "选择区域")
-                        AnimatedVisibility(
-                            visible = showType,
-                            enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
-                            exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
-                        ) {
-                            WheelPicker(
-                                data = getType(campus, buildingCode),
-                                selectIndex = 0,
-                                modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
-                                onSelect = { index, element ->
-                                    typeCode = element
-                                }
-                            ) {
-                                Text(it.description)
+            AssistChip(
+                onClick = {
+                    expandState = if (showType) ExpandState.NONE else ExpandState.TYPE
+                },
+                label = {
+                    Text(if (showType) "选择区域" else typeCode?.description ?: "选择区域")
+                    AnimatedVisibility(
+                        visible = showType,
+                        enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
+                        exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
+                    ) {
+                        WheelPicker(
+                            data = getType(campus, buildingCode),
+                            selectIndex = 0,
+                            modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                            onSelect = { index, element ->
+                                typeCode = element
                             }
+                        ) {
+                            Text(it.description)
                         }
                     }
-                )
-            }
+                }
+            )
         }
     }
 
@@ -721,9 +752,6 @@ fun ElectricHefei(
     }
     val roomResponse by vm.hefeiRoomsResp.state.collectAsState()
     val getRooms : suspend(String) -> Unit =  m@ { building : String ->
-        if(roomResponse is UiState.Success) {
-            return@m
-        }
         val auth = prefs.getString("auth","")
         auth?.let {
             vm.hefeiRoomsResp.clear()
@@ -734,6 +762,7 @@ fun ElectricHefei(
         vm.hefeiRoomsResp.emitPrepare()
     }
     val scope = rememberCoroutineScope()
+    var buildingNumber by remember { mutableStateOf<HuiXinHefeiBuildingBean?>(null) }
     LaunchedEffect(finalRegion) {
         finalRegion?.let { final ->
             getBuildings()
@@ -762,14 +791,27 @@ fun ElectricHefei(
                 }
             }
             if(bean == null) {
-                showToast("未找到此区域,可能是接口变更了,请联系开发者")
+                showToast("未找到此区域,可能是接口变更,请联系开发者")
             } else {
+                buildingNumber = bean
+//                showToast("正在获取${bean.name}的房间")
                 getRooms(bean.value)
             }
         }
     }
     var showRoom by remember { mutableStateOf(false) }
     var roomNumber by remember { mutableStateOf<HuiXinHefeiBuildingBean?>(null) }
+    LaunchedEffect(roomNumber) {
+        roomNumber?.let {
+            buildingNumber?.let { it1 ->
+                DataStoreManager.saveHefeiElectric(HefeiElectricStorage(
+                    roomNumber = it.value,
+                    name = it.name,
+                    buildingNumber = it1.value
+                ))
+            }
+        }
+    }
     AssistChip(
         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
         onClick = { showRoom = !showRoom },
@@ -780,51 +822,95 @@ fun ElectricHefei(
         },
         enabled = roomResponse is UiState.Success,
         label = {
-            Text(if(showRoom) "选择房间" else roomNumber?.name ?: "选择房间")
+            Text(
+                if(!showRoom) {
+                    if(roomResponse is UiState.Loading) {
+                        "载入房间列表"
+                    } else {
+                        "选择房间"
+                    }
+                } else {
+                    roomNumber?.name ?: "选择房间"
+                }
+            )
             AnimatedVisibility(
                 visible = showRoom,
                 enter = expandIn(expandFrom = Alignment.Center) + scaleIn(),
                 exit = shrinkOut(shrinkTowards = Alignment.Center) + scaleOut(),
             ) {
-                val list = (roomResponse as UiState.Success).data
-                WheelPicker(
-                    data = list,
-                    selectIndex = 0,
-                    modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
-                    onSelect = { index, element ->
-                        roomNumber = element
+                val list = (roomResponse as? UiState.Success)?.data
+                list?.let {
+                    WheelPicker(
+                        data = it,
+                        selectIndex = 0,
+                        modifier = Modifier.padding(start = APP_HORIZONTAL_DP),
+                        onSelect = { index, element ->
+                            roomNumber = element
+                        }
+                    ) {
+                        Text(it.name)
                     }
-                ) {
-                    Text(it.name)
                 }
             }
         }
     )
-    DividerTextExpandedWith("查询",openBlurAnimation = false) {
-        val finalRoom = ""
-        LargeCard(
-            title = "￥XX.XX",
+    var useLocal by remember { mutableStateOf(false) }
+    val savedData by produceState<HefeiElectricStorage?>(initialValue = null, key1 = show) {
+        value = getHefeiElectric()
+    }
+
+    AnimatedVisibility(
+        visible = !useLocal && finalRegion == null,
+        enter = scaleIn(),
+        exit = scaleOut()
+    ) {
+        savedData?.let {
+            CustomCard (color = cardNormalColor()){
+                TransplantListItem(
+                    headlineContent = {
+                        Text(it.name)
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.info),null)
+                    }
+                )
+                BottomButton(
+                    onClick = {
+                        useLocal = true
+                        search()
+                    },
+                    text = "使用上一次的记录查询"
+                )
+            }
+        }
+    }
+
+    val result by DataStoreManager.hefeiElectricFee.collectAsState(initial = "XX.XX")
+    DividerTextExpandedWith("查询结果",openBlurAnimation = false) {
+        LoadingLargeCard(
+            title = if(!show)"￥XX.XX" else "￥$result",
+            loading = !show ,
+            prepare = true,
             rightTop = {
                 FilledTonalButton(
+                    enabled = show,
                     onClick = {
-
-                    },
-                    enabled = false
+                        showToast("正在开发")
+                    }
                 ) {
-                    Text("快速充值")
+                    Text(text = "快速充值")
                 }
             }
         ) {
             TransplantListItem(
                 headlineContent = {
-                    Text(finalRoom)
+                    Text(
+                        savedData?.name ?: "校区X号X楼XXXXX"
+                    )
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.info),null)
                 },
-                overlineContent = {
-                    Text(finalRegion ?: "未选择区域")
-                }
             )
         }
         BottomTip("快速充值开发中 请先使用官方充值")
@@ -914,27 +1000,3 @@ private enum class Type3(override val description: String) : Type {
 private enum class Type4(override val description: String) : Type {
     AIR("空调"), LIGHT("照明")
 }
-
-
-
-/*
-when(campus) {
-                    Campus.TXL -> {
-                        if(buildingCode in listOf(3,4,9)) {
-                            "空调/照明"
-                        } else {
-                            "南/北楼"
-                        }
-                    }
-                    Campus.XC -> {
-                        if(buildingCode <= 5) {
-                            "选择南/北楼"
-                        } else {
-                            "选择区域"
-                        }
-                    }
-                    Campus.FCH -> {
-                        if()
-                    }
-                }
- */

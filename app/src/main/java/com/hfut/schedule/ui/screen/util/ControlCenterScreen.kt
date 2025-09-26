@@ -2,7 +2,7 @@ package com.hfut.schedule.ui.screen.util
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -57,33 +57,31 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
-import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.home.cube.screen.UISettingsScreen
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.normalTopBarBlur
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.xah.uicommon.style.color.topBarTransplantColor
+import com.hfut.schedule.ui.style.special.normalTopBarBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.ui.util.navigateForTransition
+import com.xah.transition.component.awaitTransition
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithArgWithoutValues
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.animation.AnimatedVisibility
 
 fun Modifier.limitDrawerSwipeArea(
     allowedArea: Rect,
@@ -135,7 +133,7 @@ private const val TAB_SETTINGS = 1
 private const val TAB_SEARCH = 2
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun ControlCenterScreen(
     color : Color? = null,

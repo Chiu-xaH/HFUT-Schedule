@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -12,6 +13,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +28,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -118,11 +122,15 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
 import com.xah.transition.state.TransitionConfig
+import com.xah.transition.style.TransitionCurveStyle
 import com.xah.transition.util.isCurrentRouteWithoutArgs
+import com.xah.uicommon.style.align.CenterScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlin.text.toInt
 
 private const val OFFSET_KEY = "OFFSET_DRAWERS"
 suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(Dispatchers.IO) {
@@ -313,12 +321,6 @@ fun MainHost(
             TransitionNavHost(
                 navController = navController,
                 startDestination = first,
-                enterTransition = {
-                    fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),)
-                },
-                exitTransition = {
-                    fadeOut(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),)
-                },
                 modifier = Modifier
                     .let {
                         if(isWebView) {
@@ -782,3 +784,33 @@ fun MainHost(
     }
 }
 
+
+@Composable
+fun TestAnimation() {
+    val anim = remember { Animatable(0f) }
+    var result: Long by remember { mutableLongStateOf(0L) }
+    val scope = rememberCoroutineScope()
+    CenterScreen {
+        Button(
+            onClick = {
+                scope.launch {
+                    // 复位
+                    anim.animateTo(0f)
+                    // 测量
+                    val start = System.currentTimeMillis()
+                    anim.animateTo(
+                        targetValue = 1f,
+                        animationSpec = spring(
+                            dampingRatio = TransitionConfig.curveStyle.dampingRatio,
+                            stiffness = TransitionConfig.curveStyle.stiffness.toFloat()
+                        )
+                    )
+                    val end = System.currentTimeMillis()
+                    result = end-start
+                }
+            }
+        ) {
+            Text("测量 $result ms")
+        }
+    }
+}

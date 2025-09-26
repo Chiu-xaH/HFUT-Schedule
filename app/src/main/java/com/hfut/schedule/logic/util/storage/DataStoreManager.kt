@@ -12,7 +12,9 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
@@ -122,6 +124,8 @@ object DataStoreManager {
     private val HEFEI_ROOM_NUMBER = stringPreferencesKey("hefei_room_number")
     private val HEFEI_BUILDING_NUMBER = stringPreferencesKey("hefei_building_number")
     private val HEFEI_ELECTRIC = stringPreferencesKey("hefei_electric")
+    private val HEFEI_ELECTRIC_FEE = stringPreferencesKey("hefei_electric_fee")
+    private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun saveStuCookie(value: String) = saveValue(STU_COOKIE,value)
@@ -162,6 +166,8 @@ object DataStoreManager {
     private suspend fun saveHefeiBuildingNumber(value: String) = saveValue(HEFEI_BUILDING_NUMBER, value)
     private suspend fun saveHefeiElectricName(value: String) = saveValue(HEFEI_ELECTRIC, value)
     private suspend fun saveHefeiRoomNumber(value: String) = saveValue(HEFEI_ROOM_NUMBER, value)
+    suspend fun saveHefeiElectricFee(value: String) = saveValue(HEFEI_ELECTRIC_FEE, value)
+    suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -213,6 +219,8 @@ object DataStoreManager {
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val usuallyItems = getFlow(USUALLY_ITEMS,EMPTY_STRING)
+    val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
+    val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC,getCampusRegion() == CampusRegion.HEFEI)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)

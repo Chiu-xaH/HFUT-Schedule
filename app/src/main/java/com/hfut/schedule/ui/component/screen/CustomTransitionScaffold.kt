@@ -17,7 +17,9 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.transition.component.TransitionScaffold
+import com.xah.transition.component.awaitTransition
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
@@ -65,18 +67,19 @@ private fun Modifier.transitionBackgroundCustom(
     route : String,
 ) : Modifier = transitionSkip(route, transitionBackgroundC(navHostController,route))
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun Modifier.transitionBackgroundC(
     navHostController: NavHostController,
     route : String,
 ) : Modifier = with(TransitionConfig.transitionBackgroundStyle) {
     val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
-    val speed = TransitionConfig.curveStyle.speedMs
+    val sharedTransitionScope = LocalSharedTransitionScope.current
 
     if(level.code >= TransitionLevel.MEDIUM.code) {
         LaunchedEffect(isExpanded) {
             GlobalUIStateHolder.isTransiting = true
-            delay(speed*2L)
+            delay(TransitionConfig.curveStyle.speedMs*2L)
             GlobalUIStateHolder.isTransiting = false
         }
     }

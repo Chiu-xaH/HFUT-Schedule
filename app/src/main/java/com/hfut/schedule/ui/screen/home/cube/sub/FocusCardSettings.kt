@@ -24,6 +24,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -86,6 +87,8 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGu
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -96,11 +99,15 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,13 +120,13 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     var showBottomSheet by remember { mutableStateOf(false) }
     var sheetState = rememberModalBottomSheetState()
 
-    val switch_ele = prefs.getBoolean("SWITCHELE", getCampusRegion() == CampusRegion.XUANCHENG)
+    val switch_ele = prefs.getBoolean("SWITCHELE", true)
     var showEle by remember { mutableStateOf(switch_ele) }
     SharedPrefs.saveBoolean("SWITCHELE", true, showEle)
 
     val switch_web = prefs.getBoolean("SWITCHWEB", getCampusRegion() == CampusRegion.XUANCHENG)
     var showWeb by remember { mutableStateOf(switch_web) }
-    SharedPrefs.saveBoolean("SWITCHWEB", true, showWeb)
+    SharedPrefs.saveBoolean("SWITCHWEB", getCampusRegion() == CampusRegion.XUANCHENG, showWeb)
 
     val switch_card = prefs.getBoolean("SWITCHCARD", true)
     var showCard by remember { mutableStateOf(switch_card) }
@@ -147,6 +154,7 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
 //    val showSpecial by DataStoreManager.showFocusSpecial.collectAsState(initial = true)
 
     val scope = rememberCoroutineScope()
+    val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
 
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
@@ -174,6 +182,25 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
                 TransplantListItem(
                     headlineContent = { Text(text = "寝室电费")} ,
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.flash_on), contentDescription = "")},
+                    supportingContent = {
+                        Row( ) {
+                            FilterChip(
+                                onClick = {
+                                    scope.launch { DataStoreManager.saveUseHefeiElectric(true) }
+                                },
+                                selected = useHefei == true,
+                                label = { Text("合肥校区") }
+                            )
+                            Spacer(Modifier.width(CARD_NORMAL_DP*2))
+                            FilterChip(
+                                onClick = {
+                                    scope.launch { DataStoreManager.saveUseHefeiElectric(false) }
+                                },
+                                selected = useHefei == false,
+                                label = { Text("宣城校区") }
+                            )
+                        }
+                    },
                     trailingContent = {
                         Switch(checked = showEle, onCheckedChange = {showch -> showEle = showch })
                     }
@@ -340,15 +367,38 @@ fun getWebInfoFromHuiXin(vm: NetWorkViewModel, vmUI : UIViewModel)  {
     }
 }
 
-fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    val BuildingsNumber = prefs.getString("BuildNumber", "0")
-    val RoomNumber = prefs.getString("RoomNumber", "")
-    val EndNumber = prefs.getString("EndNumber", "")
-
-    var input = "300$BuildingsNumber$RoomNumber$EndNumber"
+suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = withContext(Dispatchers.IO) {
+    val useHefei = DataStoreManager.useHefeiElectric.first()
     val auth = prefs.getString("auth","")
+    if(useHefei) {
+        val bean = DataStoreManager.getHefeiElectric()
+        if(bean == null) {
+            vmUI.electricValue.value = "--"
+            saveString("memoryEle","0.0")
+            return@withContext
+        }
+        async { vm.getFee("bearer $auth", FeeType.ELECTRIC_HEFEI_UNDERGRADUATE, room = bean.roomNumber, building = bean.buildingNumber) }.await()
+        async {
+            Handler(Looper.getMainLooper()).post{
+                vm.hefeiElectric.observeForever { result ->
+                    if (result?.contains("success") == true) {
+                        try {
+                            val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
+                            for ((_, value) in data) {
+                                vmUI.electricValue.value = value
+                                saveString("memoryEle",vmUI.electricValue.value)
+                            }
+                        } catch (_:Exception) { }
+                    }
+                }
+            }
+        }
+    } else {
+        val BuildingsNumber = prefs.getString("BuildNumber", "0")
+        val RoomNumber = prefs.getString("RoomNumber", "")
+        val EndNumber = prefs.getString("EndNumber", "")
 
-    CoroutineScope(Job()).launch {
+        var input = "300$BuildingsNumber$RoomNumber$EndNumber"
         async { vm.getFee("bearer $auth", FeeType.ELECTRIC_XUANCHENG, room = input) }.await()
         async {
             Handler(Looper.getMainLooper()).post{
@@ -357,7 +407,6 @@ fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) {
                         try {
                             val data = Gson().fromJson(result,FeeResponse::class.java).map.showData
                             for ((_, value) in data) {
-//                                val bd = BigDecimal(value.substringAfter("剩余金额:"))
                                 vmUI.electricValue.value = formatDecimal(value.substringAfter("剩余金额:").toDouble(),2)
                                 saveString("memoryEle",vmUI.electricValue.value)
                             }

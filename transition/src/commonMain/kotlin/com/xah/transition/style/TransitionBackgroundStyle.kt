@@ -1,5 +1,6 @@
 package com.xah.transition.style
 
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -10,3 +11,4 @@ data class TransitionBackgroundStyle (
     val scale : Float = 0.875f,// 0.875 0.825f,
     val backgroundDarkDiffer : Float = 0.15f//0.1f,
 )
+

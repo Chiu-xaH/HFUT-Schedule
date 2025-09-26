@@ -33,6 +33,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
@@ -89,6 +90,14 @@ fun NetWorkScreen(navController: NavHostController,
                     supportingContent = { Text(text = "若您已经修改过一卡通初始密码,请在此录入新的密码以使用快速充值和校园网登录功能") },
                     leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.PasswordScreen.route) }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "自动刷新登录状态") },
+                    supportingContent = { Text(text = "冷启动App后，自动在后台进行CAS统一认证登录，请按需开启，这是一个耗时的操作，并非每次使用都需要刷新登录状态") },
+                    leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
+                    trailingContent = { Switch(checked = false, onCheckedChange = { showToast("正在开发") })},
+                    modifier = Modifier.clickable { showToast("正在开发") }
                 )
             }
         }

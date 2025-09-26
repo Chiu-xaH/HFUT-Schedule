@@ -165,65 +165,64 @@ fun SelectCourseScreen(
     })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.SelectCourse.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.SelectCourse.icon)
-                    },
-                    actions = {
-                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                            FilledTonalIconButton(onClick = {
-                                scope.launch{ updateCourses(vm, vmUI) }
-                                showToast("已刷新课表与课程汇总")
-                            }) {
-                                Icon(painterResource(R.drawable.event_repeat),null)
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.SelectCourse.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.SelectCourse.icon)
+                },
+                actions = {
+                    Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                        FilledTonalIconButton(onClick = {
+                            scope.launch{ updateCourses(vm, vmUI) }
+                            showToast("已刷新课表与课程汇总")
+                        }) {
+                            Icon(painterResource(R.drawable.event_repeat),null)
+                        }
+                        FilledTonalButton(onClick = {
+                            scope.launch {
+                                Starter.startWebView(
+                                    navController,
+                                    url = url,
+                                    title = "教务系统",
+                                    cookie = cookie
+                                )
                             }
-                            FilledTonalButton(onClick = {
-                                scope.launch {
-                                    Starter.startWebView(
-                                        navController,
-                                        url = url,
-                                        title = "教务系统",
-                                        cookie = cookie
-                                    )
-                                }
-                            },
-                                modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url))
-                            ) {
-                                Text(text = "冲突预览")
-                            }
+                        },
+                            modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url))
+                        ) {
+                            Text(text = "冲突预览")
                         }
                     }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
-            ) {
-                LaunchedEffect(Unit) {
-                    refreshNetwork(true)
                 }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            LaunchedEffect(Unit) {
+                refreshNetwork(true)
+            }
 
-                Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
-                    RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
-                    CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                        SelectCourseList(vm,innerPadding,navController)
-                    }
+            Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+                RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
+                CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
+                    SelectCourseList(vm,innerPadding,navController)
                 }
             }
         }
-//    }
+    }
 }
 
 
@@ -251,95 +250,94 @@ fun SelectCourseDetailScreen(
     }
     var refreshCount by remember { mutableIntStateOf(0) }
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(title) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(
-                                navController,
-                                route,
-                                AppNavRoute.SelectCourseDetail.icon
-                            )
-                        },
-                        actions = {
-                            Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        refreshCount++
-                                        showToast("已刷新人数")
-                                    },
-                                ) {
-                                    Icon(painterResource(R.drawable.rotate_right), null)
-                                }
-                                FilledTonalButton(
-                                    onClick = {
-                                        navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
-                                    },
-                                    modifier = Modifier.containerShare( AppNavRoute.DropCourse.route)
-                                ) {
-                                    Text(text = "退课")
-                                }
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
+        navHostController = navController,
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(title) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(
+                            navController,
+                            route,
+                            AppNavRoute.SelectCourseDetail.icon
+                        )
+                    },
+                    actions = {
+                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                            FilledTonalIconButton(
+                                onClick = {
+                                    refreshCount++
+                                    showToast("已刷新人数")
+                                },
+                            ) {
+                                Icon(painterResource(R.drawable.rotate_right), null)
+                            }
+                            FilledTonalButton(
+                                onClick = {
+                                    navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
+                                },
+                                modifier = Modifier.containerShare( AppNavRoute.DropCourse.route)
+                            ) {
+                                Text(text = "退课")
                             }
                         }
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("搜索 名称、代码、类型、教师") },
-                            singleLine = true,
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {}) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search),
-                                        contentDescription = "description"
-                                    )
-                                }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
                     }
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP),
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("搜索 名称、代码、类型、教师") },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {}) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
                 }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
-            ) {
-                val uiState by vm.selectCourseInfoData.state.collectAsState()
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            val uiState by vm.selectCourseInfoData.state.collectAsState()
 
-                LaunchedEffect(Unit) {
-                    refreshNetwork()
-                }
+            LaunchedEffect(Unit) {
+                refreshNetwork()
+            }
 
-                CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                    SelectCourseInfo(vm,courseId,input, hazeState =hazeState ,innerPadding,refreshCount)
-                }
+            CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                SelectCourseInfo(vm,courseId,input, hazeState =hazeState ,innerPadding,refreshCount)
             }
         }
-//    }
+    }
 }
 
 
@@ -357,40 +355,39 @@ fun DropCourseScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                    ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = {
-                            Text("$title : 退课")
-                        },
-                        navigationIcon = {
-                            TopBarNavigationIcon(
-                                navController,
-                                route,
-                                AppNavRoute.DropCourse.icon
-                            )
-                        },
-                    )
-                }
-            },
-        ) { innerPadding ->
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
             Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
-                HaveSelectedCourseLoad(vm, courseId,hazeState,innerPadding)
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = {
+                        Text("$title : 退课")
+                    },
+                    navigationIcon = {
+                        TopBarNavigationIcon(
+                            navController,
+                            route,
+                            AppNavRoute.DropCourse.icon
+                        )
+                    },
+                )
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            HaveSelectedCourseLoad(vm, courseId,hazeState,innerPadding)
         }
+    }
 //    }
 }
 

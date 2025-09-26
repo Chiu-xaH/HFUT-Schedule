@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.network.repo.hfut
 
 import com.google.gson.Gson
+import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryBorrowedResponse
 import com.hfut.schedule.logic.model.library.LibraryStatus
@@ -9,6 +10,7 @@ import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestNone
 import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import retrofit2.awaitResponse
@@ -73,9 +75,9 @@ object LibraryRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getBorrowed(token : String,page : Int,holder : StateHolder<List<LibraryBorrowedBean>>) = launchRequestSimple(
+    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = getPageSize(), holder : StateHolder<List<LibraryBorrowedBean>>) = launchRequestSimple(
         holder = holder,
-        request = { library.getBorrowed(token,page).awaitResponse() },
+        request = { library.getBorrowed(token,page,status?.status, pageSize = pageSize ).awaitResponse() },
         transformSuccess = { _,json -> parseBorrowed(json) }
     )
     @JvmStatic

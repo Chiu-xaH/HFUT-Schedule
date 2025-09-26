@@ -1,5 +1,7 @@
 package com.hfut.schedule.logic.model.library
 
+import android.accessibilityservice.GestureDescription
+import androidx.navigation.NavDestination
 import com.google.gson.annotations.SerializedName
 
 data class LibraryBorrowedResponse(
@@ -13,13 +15,15 @@ data class LibraryBorrowed(
 data class LibraryBorrowedBean(
     val callNo : String,
     val location : String,
-    val realReturnTime : String,
+    val status : String,
+    val realReturnTime : String? = null,
+    val returnTime : String? = null,
     val createdTime : String,
     val libraryDetail : LibraryDetail
 )
 
 data class LibraryDetail(
-    val detail : LibraryDetailBean
+    val detail : LibraryDetailBean,
 )
 
 data class LibraryDetailBean(
@@ -28,5 +32,13 @@ data class LibraryDetailBean(
     val authors : String,
     val publishers : String,
     @SerializedName("cbrq")
-    val year : String
+    val year : String,
+    val digest : String,
+    val keywords : String
 )
+
+enum class BorrowedStatus(val status : String,val description: String) {
+    RETURNED("0","已还"),
+    BORROWING("2","借阅中"),
+    OVERDUE("02","逾期待还")
+}

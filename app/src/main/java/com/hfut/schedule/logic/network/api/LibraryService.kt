@@ -28,6 +28,7 @@ interface LibraryService {
     fun getBorrowed(
         @Header("authorization") auth : String,
         @Query("page") page : Int,
+        @Query("status") status : String?,
         @Query("limit") pageSize : Int = getPageSize(),
     ) : Call<ResponseBody>
 

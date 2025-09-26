@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.cube.sub
 import androidx.activity.BackEventCompat
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,6 +66,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.xah.transition.component.awaitTransition
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
@@ -74,20 +77,20 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlin.coroutines.cancellation.CancellationException
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun GestureStudyScreen(
     hazeState: HazeState,
     innerPadding : PaddingValues,
     navController: NavHostController
 ) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
     val icon = @Composable {
-        val speed = TransitionConfig.curveStyle.speedMs
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true
-            delay(speed*1L)
-            delay(1000L)
+            sharedTransitionScope.awaitTransition()
+            delay(1500L)
             show = false
         }
 

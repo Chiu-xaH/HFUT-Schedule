@@ -81,6 +81,8 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.transition.component.awaitTransition
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
 import kotlinx.coroutines.delay
@@ -95,6 +97,7 @@ private fun WebViewBackIcon(
     color : Color,
     onExit : () -> Unit
 ) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
     val back : () -> Unit = {
         if(webView?.canGoBack() == true) {
             webView.goBack()
@@ -125,12 +128,11 @@ private fun WebViewBackIcon(
             Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
         }
     } else {
-        val speed = TransitionConfig.curveStyle.speedMs
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true
-            delay(speed*1L)
-            delay(1000L)
+            sharedTransitionScope.awaitTransition()
+            delay(1500L)
             show = false
         }
 

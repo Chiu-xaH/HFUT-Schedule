@@ -6,16 +6,20 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.DataStoreManager.HefeiElectricStorage
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -28,41 +32,40 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeState: HazeState) {
-
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
-
-    val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
-    var BuildingsNumber by remember { mutableStateOf(SavedBuildNumber) }
-
-    val EndNumber = prefs.getString("EndNumber", "0")
+    val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
     var room by remember { mutableStateOf("寝室电费") }
-//    if(EndNumber == "12" || EndNumber == "22") room = "空调"
-//    else if(EndNumber == "11" || EndNumber == "21") room = "照明"
 
-    room = when(EndNumber) {
-        "11"-> if(BuildingsNumber.toInt() > 5 )"照明" else "南边"
-        "12" -> "空调"
-        "21" -> if(BuildingsNumber.toInt() > 5 )"照明" else "北边"
-        "22" -> "空调"
-        else -> "寝室电费"
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if(useHefei) {
+        val name by produceState<HefeiElectricStorage?>(initialValue = null) {
+            value = DataStoreManager.getHefeiElectric()
+        }
+        room = name?.name ?: "合肥"
+    } else {
+        val buildingNumber = prefs.getString("BuildNumber", "0") ?: "0"
+
+        room = when( prefs.getString("EndNumber", "0")) {
+            "11"-> if(buildingNumber.toInt() > 5 )"照明" else "南边"
+            "12" -> "空调"
+            "21" -> if(buildingNumber.toInt() > 5 )"照明" else "北边"
+            "22" -> "空调"
+            else -> "寝室电费"
+        }
     }
 
-    if (showBottomSheet) {
 
+    if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             autoShape = false,
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState
         ) {
             EleUI(vm = vm,hazeState)
-            }
         }
+    }
 
-    val memoryEle = prefs.getString("memoryEle","0")
-    val f = vmUI.electricValue.value ?: memoryEle
+    val f = vmUI.electricValue.value ?: prefs.getString("memoryEle","0")
     val fD = f?.toDoubleOrNull() ?: 0.0
     val showRed = if(fD < 0.0) {
         // 爆红

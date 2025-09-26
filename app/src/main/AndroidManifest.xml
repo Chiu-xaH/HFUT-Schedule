@@ -58,6 +58,7 @@
             android:label="@string/title_activity_uiacitivity"
             android:theme="@style/Theme.App" />
         <activity
+            android:configChanges="uiMode"
             android:name=".activity.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.App.Starting" >

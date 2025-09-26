@@ -3,9 +3,12 @@ package com.xah.transition.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +35,18 @@ import com.xah.transition.util.isCurrentRouteWithoutArgs
 import com.xah.transition.util.isInBottom
 import com.xah.transition.util.previousRouteWithArgWithoutValues
 import kotlinx.coroutines.delay
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+suspend fun SharedTransitionScope.awaitTransition() {
+    snapshotFlow { this.isTransitionActive }
+        .filter { active -> !active }
+        .first()
+}
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -68,19 +83,19 @@ fun TransitionScaffold(
     }
 
     var scale by remember { mutableStateOf(1f) }
-
-    val speed = TransitionConfig.curveStyle.speedMs
     // 当从CustomScaffold1向CustomScaffold2时，CustomScaffold2先showSurface=false再true，而CustomScaffold1一直为true
     val isCurrentEntry = navHostController.isCurrentRouteWithoutArgs(route)
     val isPreviousEntry = navHostController.previousRouteWithArgWithoutValues() == route
     // 当回退时，即从CustomScaffold2回CustomScaffold1时，CustomScaffold2立刻showSurface=false，而CustomScaffold1一直为true
     var show by rememberSaveable(route) { mutableStateOf(false) }
-
+    val sharedTransitionScope = LocalSharedTransitionScope.current
     LaunchedEffect(isCurrentEntry) {
         // 当前页面首次进入时播放动画
         if (isCurrentEntry && !show) {
             show = false
-            delay(speed * 1L)
+            // 当动画结束后显示
+            delay(TransitionConfig.curveStyle.speedMs*1L)
+//            sharedTransitionScope.awaitTransition()
             show = true
         } else if(show) {
             if(navHostController.isInBottom(route)) {
@@ -93,7 +108,8 @@ fun TransitionScaffold(
     var useBackHandler by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         if(useBackHandler == false) {
-            delay(speed*1L)
+            delay(TransitionConfig.curveStyle.speedMs*1L)
+//            sharedTransitionScope.awaitTransition()
             useBackHandler = true
         }
     }
@@ -117,7 +133,7 @@ fun TransitionScaffold(
         bottomBar = {
             AnimatedVisibility(
                 visible = show,
-                enter  = if(speed == 0) fadeIn(tween(durationMillis = 0)) else fadeIn(),
+                enter  = fadeIn(),
                 exit = fadeOut(tween(durationMillis = 0))
             ) {
                 bottomBar()
@@ -128,7 +144,7 @@ fun TransitionScaffold(
     ) { innerPadding ->
         AnimatedVisibility(
             visible = show,
-            enter  = if(speed == 0) fadeIn(tween(durationMillis = 0)) else fadeIn(),
+            enter  = scaleIn(initialScale = 0.95f, animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)) + fadeIn(animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing)),
             exit = fadeOut(tween(durationMillis = 0))
         ) {
             content(innerPadding)
@@ -136,84 +152,3 @@ fun TransitionScaffold(
     }
 }
 
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun TransitionSurface(
-    roundShape : Shape = MaterialTheme.shapes.medium,
-    route: String,
-    navHostController : NavHostController,
-    modifier: Modifier = Modifier.clip(roundShape)
-        .transitionBackground(navHostController, route).containerShare(
-            route,
-            roundShape,
-        ),
-    containerColor : Color? = null,
-    enablePredictive : Boolean = true,
-    content: @Composable (() -> Unit)
-) {
-    if(route in TransitionConfig.firstStartRoute) {
-        // 首页 无需进行延迟显示
-        Surface(
-            modifier = modifier,
-            color = containerColor ?: Color.Transparent,
-            content = content
-        )
-        return
-    }
-
-    var scale by remember { mutableStateOf(1f) }
-
-    val speed = TransitionConfig.curveStyle.speedMs
-    // 当从CustomScaffold1向CustomScaffold2时，CustomScaffold2先showSurface=false再true，而CustomScaffold1一直为true
-    val isCurrentEntry = navHostController.isCurrentRouteWithoutArgs(route)
-    val isPreviousEntry = navHostController.previousRouteWithArgWithoutValues() == route
-    // 当回退时，即从CustomScaffold2回CustomScaffold1时，CustomScaffold2立刻showSurface=false，而CustomScaffold1一直为true
-    var show by rememberSaveable(route) { mutableStateOf(false) }
-
-    LaunchedEffect(isCurrentEntry) {
-        // 当前页面首次进入时播放动画
-        if (isCurrentEntry && !show) {
-            show = false
-            delay(speed * 1L)
-            show = true
-        } else if(show) {
-            if(navHostController.isInBottom(route)) {
-                return@LaunchedEffect
-            }
-            show = false
-        }
-    }
-
-    var useBackHandler by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if(useBackHandler == false) {
-            delay(speed*1L)
-            useBackHandler = true
-        }
-    }
-
-    TransitionPredictiveBackHandler(navHostController,useBackHandler && enablePredictive) {
-        scale = it
-    }
-
-    // 回退后恢复上一个页面的显示状态
-    LaunchedEffect(isPreviousEntry) {
-        if (isPreviousEntry) {
-            show = true
-        }
-    }
-    val targetColor =  containerColor ?: if(TransitionConfig.transplantBackground) Color.Transparent else MaterialTheme.colorScheme.surface
-
-    Surface(
-        color =  targetColor,
-        modifier = modifier.scale(scale),
-    ) {
-        AnimatedVisibility(
-            visible = show,
-            enter  = if(speed == 0) fadeIn(tween(durationMillis = 0)) else fadeIn(),
-            exit = fadeOut(tween(durationMillis = 0))
-        ) {
-            content()
-        }
-    }
-}

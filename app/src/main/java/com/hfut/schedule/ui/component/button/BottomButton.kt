@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -28,7 +29,7 @@ fun BottomButton(
                 onClick = if(enable) onClick else {{}},
                 shape = RoundedCornerShape(0.dp),
                 colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
-//                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Text(text,color = if(enable) textColor else Color.Gray)
             }

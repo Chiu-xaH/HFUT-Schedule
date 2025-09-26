@@ -132,12 +132,12 @@ fun WeChatScreen(
                     .fillMaxSize()
             ) {
                 InnerPaddingHeight(innerPadding,true)
-                TransplantListItem(
+                CardListItem(
                     headlineContent = { Text("由于微信的垄断，以及一些功能只设计了微信登陆方式，无法接入，只能由用户自己去微信使用")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
                 DividerTextExpandedWith("网页") {
-                    TransplantListItem(
+                    CardListItem(
                         headlineContent = { Text("点击展示二维码，长按复制链接，到微信打开")},
                         leadingContent = { Icon(painterResource(R.drawable.info),null)}
                     )
@@ -160,7 +160,7 @@ fun WeChatScreen(
                     }
                 }
                 DividerTextExpandedWith("小程序") {
-                    TransplantListItem(
+                    CardListItem(
                         headlineContent = { Text("点击复制名称，自行搜索小程序使用")},
                         leadingContent = { Icon(painterResource(R.drawable.info),null)},
                     )

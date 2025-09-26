@@ -91,6 +91,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.transition.component.awaitTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -117,6 +118,7 @@ private fun WebViewBackIcon(
     route : String,
     color : Color,
 ) {
+    val sharedTransitionScope = LocalSharedTransitionScope.current
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val back : () -> Unit = {
         if(webView?.canGoBack() == true) {
@@ -152,11 +154,10 @@ private fun WebViewBackIcon(
             Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
         }
     } else {
-        val speed = TransitionConfig.curveStyle.speedMs
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true
-            delay(speed*1L)
+            sharedTransitionScope.awaitTransition()
             delay(1500L)
             show = false
             if(!enablePredictive || TransitionConfig.transplantBackground) {

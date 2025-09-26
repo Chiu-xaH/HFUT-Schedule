@@ -3,13 +3,9 @@ package com.xah.transition.component
 import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
-import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.material3.MaterialTheme
@@ -18,14 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalClipboard
 import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
-import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 // 容器共享元素 如果两个容器颜色不同，可以启用渐变fade参数
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -39,13 +30,14 @@ fun Modifier.containerShare(
     with(sharedTransitionScope) {
         val isAnimating = this.isTransitionActive
         val state = rememberSharedContentState(key = "container_$route")
-        val transition = spring(
+        val exitTransition = spring(
             dampingRatio = TransitionConfig.curveStyle.dampingRatio,
             stiffness = TransitionConfig.curveStyle.stiffness.toFloat(),
             visibilityThreshold = Rect.VisibilityThreshold
         )
+//        val enterTransition = tween<Int>(durationMillis = TransitionConfig.curveStyle.speedMs)
         val boundsTransform = BoundsTransform { _,_ ->
-            transition
+            exitTransition
         }
 
         return this@containerShare
