@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-27") },
+                overlineContent = { Text(text = "2025-09-28") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,11 +52,12 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("修复 寝室电费宣城校区选取寝室号崩溃的Bug")
 //            UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")
 //            UpdateItems("修复 课程表界面捏合手势不灵敏的Bug")
-            UpdateItems("修复 借阅图书界面崩溃的Bug")
+//            UpdateItems("修复 借阅图书界面崩溃的Bug")
 //            UpdateItems("修复 从聚焦首页转场后再回退翻页重置的Bug")
 //            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
 //            UpdateItems("修复 首次开屏时层级模糊暂时失效的Bug")

@@ -42,6 +42,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -102,6 +103,25 @@ fun LibraryBorrowedScreen(
     }
 }
 
+private fun List<String>.filterKeyword() : List<String> {
+   try {
+       // 过滤拼音
+       if(this.size > 1) {
+           if(this[0].contains(' ')) {
+               // 删掉
+               return this.drop(1)
+           } else if(this[0][0] in 'a'..'b') {
+               // 删掉
+               return this.drop(1)
+           }
+       }
+       return this
+   } catch (e : Exception) {
+       e.printStackTrace()
+       return this
+   }
+}
+
 private val statusList = BorrowedStatus.entries
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -135,21 +155,19 @@ private fun BorrowUI(
             .map {
                 it.libraryDetail.detail.keywords
                     .split("/")
-                    .filter { !it.contains(' ') }
+                    .filterKeyword()
             }
             .flatMap { it }
             .groupingBy { it }
             .eachCount()
-            .map { it.value to it.key }   // 转成 Pair<Int, String>
-            .sortedByDescending { it.first } // 按次数降序
+            .map { it.value to it.key }
+            .sortedByDescending { it.first }
 
         Box() {
             LazyColumn(state = listState) {
                 item { InnerPaddingHeight(innerPadding,true) }
                 item {
-                    CustomCard(
-                        color = MaterialTheme.colorScheme.secondaryContainer
-                    ) {
+                    CustomCard(color = MaterialTheme.colorScheme.secondaryContainer) {
                         Row {
                             TransplantListItem(
                                 overlineContent = { Text("总计")},
@@ -245,7 +263,8 @@ private fun BorrowUI(
                                     val borrowing = borrowStatus == BorrowedStatus.OVERDUE || borrowStatus == BorrowedStatus.BORROWING
                                     Text("借于 $createdTime\n"
                                     + if(borrowing) {
-                                        "应还 $returnTime"
+                                        val t = returnTime?.substringBefore(' ')
+                                        "应还 $t" + t?.let { " (${DateTimeManager.daysBetween(it)}天后)" }
                                     } else {
                                         "还于 $realReturnTime"
                                     }
@@ -272,7 +291,7 @@ private fun BorrowUI(
                                         Icon(painterResource(R.drawable.info), null)
                                     },
                                 )
-                                val list = detail.keywords.split("/").filter { !it.contains(' ') }
+                                val list = detail.keywords.split("/").filterKeyword()
                                 LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     items(list.size) { index ->

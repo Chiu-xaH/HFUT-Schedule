@@ -125,12 +125,9 @@ private fun getUrl(page : Int) : String {
     return  MyApplication.HUI_XIN_URL +
             "charge-app/?name=pays&appsourse=ydfwpt&id=${
                 if(page == XUANCHENG_TAB)
-                    FeeType.ELECTRIC_XUANCHENG.code else {
-//                    if(isUnderGraduate)
-                        FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
-//                    else
-//                        FeeType.ELECTRIC_HEFEI_GRADUATE.code
-                }
+                    FeeType.ELECTRIC_XUANCHENG.code
+                else 
+                    FeeType.ELECTRIC_HEFEI_UNDERGRADUATE.code
             }&name=pays&paymentUrl=${MyApplication.HUI_XIN_URL}plat&token=" + auth
 }
 @SuppressLint("SuspiciousIndentation")
@@ -146,7 +143,6 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
             CampusRegion.HEFEI -> HEFEI_TAB
         }
     )
-    var isUnderGraduate by remember { mutableStateOf(getPersonInfo().educationLevel?.contains("本") == true) }
     val auth = prefs.getString("auth","")
 
     val SavedBuildNumber = prefs.getString("BuildNumber", "0") ?: "0"
@@ -159,7 +155,6 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     var region by remember { mutableStateOf("选择南北") }
 
     var input = "300$BuildingsNumber$RoomNumber$EndNumber"
-   // var jsons = "{ \"query_elec_roominfo\": { \"aid\":\"0030000000007301\", \"account\": \"24027\",\"room\": { \"roomid\": \"${input}\", \"room\": \"${input}\" },  \"floor\": { \"floorid\": \"\", \"floor\": \"\" }, \"area\": { \"area\": \"\", \"areaname\": \"\" }, \"building\": { \"buildingid\": \"\", \"building\": \"\" },\"extdata\":\"info1=\" } }"
 
     var showitem by remember { mutableStateOf(false) }
     var showitem2 by remember { mutableStateOf(false) }
@@ -183,7 +178,6 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
             showBottomSheet = showBottomSheet,
             autoShape = false,
             hazeState = hazeState
-//            sheetState = sheetState,
         ) {
                 Column(
 
@@ -207,14 +201,20 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
     }
 
     var showDialog2 by remember { mutableStateOf(false) }
-    if(showDialog2)
+    if(showDialog2) {
         Dialog(onDismissRequest = { showDialog2 = false }) {
             Column {
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
-                    OutlinedCard{
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    OutlinedCard {
                         LazyColumn(modifier = Modifier.padding(horizontal = 10.dp)) {
                             item {
-                                Text(text = "选取金额 ￥${payNumber}", modifier = Modifier.padding(10.dp))
+                                Text(
+                                    text = "选取金额 ￥${payNumber}",
+                                    modifier = Modifier.padding(10.dp)
+                                )
                             }
                             item {
                                 LazyRow {
@@ -238,7 +238,11 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                         IconButton(onClick = {
                                             if (payNumber.length < 3)
                                                 payNumber += num
-                                            else Toast.makeText(MyApplication.context, "最高999元", Toast.LENGTH_SHORT).show()
+                                            else Toast.makeText(
+                                                MyApplication.context,
+                                                "最高999元",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }) { Text(text = num.toString()) }
                                     }
                                 }
@@ -248,18 +252,24 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Row(modifier = Modifier.fillMaxWidth(),horizontalArrangement = Arrangement.Center) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     FilledTonalIconButton(
-                        onClick = {payNumber = payNumber.replaceFirst(".$".toRegex(), "")},
+                        onClick = { payNumber = payNumber.replaceFirst(".$".toRegex(), "") },
                         modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
-                        Icon(painter = painterResource(R.drawable.backspace), contentDescription = "description")
+                        Icon(
+                            painter = painterResource(R.drawable.backspace),
+                            contentDescription = "description"
+                        )
                     }
 
                     FilledTonalIconButton(
                         onClick = {
                             showDialog2 = false
-                            if(payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
+                            if (payNumber != "" && payNumber != "0" && payNumber != "00" && payNumber != "000")
                                 showBottomSheet = true
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
@@ -280,6 +290,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                 }
             }
         }
+    }
 
 
 
@@ -428,7 +439,6 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         }
         CustomTabRow(pagerState,titles)
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             HorizontalPager(state = pagerState) { page ->
                 when(page) {
@@ -607,7 +617,9 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
+            Spacer(modifier = Modifier
+                .height(APP_HORIZONTAL_DP)
+                .navigationBarsPadding())
         }
     }
 }
