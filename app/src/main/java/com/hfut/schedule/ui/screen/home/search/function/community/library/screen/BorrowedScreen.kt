@@ -110,15 +110,12 @@ private fun BorrowUI(
     innerPadding : PaddingValues
 ) {
     val uiState by vm.libraryBorrowedResp.state.collectAsState()
-//    var page by remember { mutableIntStateOf(1) }
-//    var needPageScroll by remember { mutableStateOf(true) }
     val refreshNetwork = suspend m@ {
         if(uiState is UiState.Success) {
             return@m
         }
         val token = prefs.getString(LIBRARY_TOKEN,"") ?: return@m
         val pageSize = (vm.libraryStatusResp.state.value as? UiState.Success)?.data?.borrowCount
-//        needPageScroll = pageSize == null
         vm.libraryBorrowedResp.clear()
         vm.getBorrowed(token,1,null,pageSize ?: getPageSize())
     }
@@ -138,7 +135,7 @@ private fun BorrowUI(
             .map {
                 it.libraryDetail.detail.keywords
                     .split("/")
-                    .drop(1)
+                    .filter { !it.contains(' ') }
             }
             .flatMap { it }
             .groupingBy { it }
@@ -275,7 +272,7 @@ private fun BorrowUI(
                                         Icon(painterResource(R.drawable.info), null)
                                     },
                                 )
-                                val list = detail.keywords.split("/").drop(1)
+                                val list = detail.keywords.split("/").filter { !it.contains(' ') }
                                 LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     items(list.size) { index ->

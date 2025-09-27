@@ -12,21 +12,8 @@
       "filters": [],
       "attributes": [],
       "versionCode": 221,
-      "versionName": "4.18 Preivew",
+      "versionName": "4.18",
       "outputFile": "app-universal-release.apk"
-    },
-    {
-      "type": "ONE_OF_MANY",
-      "filters": [
-        {
-          "filterType": "ABI",
-          "value": "arm64-v8a"
-        }
-      ],
-      "attributes": [],
-      "versionCode": 2212,
-      "versionName": "4.18 Preivew",
-      "outputFile": "4.18 Preivew-arm64-v8a.apk"
     },
     {
       "type": "ONE_OF_MANY",
@@ -38,8 +25,21 @@
       ],
       "attributes": [],
       "versionCode": 2214,
-      "versionName": "4.18 Preivew",
-      "outputFile": "4.18 Preivew-x86_64.apk"
+      "versionName": "4.18",
+      "outputFile": "4.18-x86_64.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2212,
+      "versionName": "4.18",
+      "outputFile": "4.18-arm64-v8a.apk"
     }
   ],
   "elementType": "File",
@@ -49,8 +49,8 @@
       "maxApi": 30,
       "baselineProfiles": [
         "baselineProfiles/1/app-universal-release.dm",
-        "baselineProfiles/1/4.18 Preivew-arm64-v8a.dm",
-        "baselineProfiles/1/4.18 Preivew-x86_64.dm"
+        "baselineProfiles/1/4.18-x86_64.dm",
+        "baselineProfiles/1/4.18-arm64-v8a.dm"
       ]
     },
     {
@@ -58,8 +58,8 @@
       "maxApi": 2147483647,
       "baselineProfiles": [
         "baselineProfiles/0/app-universal-release.dm",
-        "baselineProfiles/0/4.18 Preivew-arm64-v8a.dm",
-        "baselineProfiles/0/4.18 Preivew-x86_64.dm"
+        "baselineProfiles/0/4.18-x86_64.dm",
+        "baselineProfiles/0/4.18-arm64-v8a.dm"
       ]
     }
   ],

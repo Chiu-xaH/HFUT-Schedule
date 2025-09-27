@@ -405,29 +405,6 @@ fun LibraryMineUI(
         }
     }
     val uiState by vm.libraryStatusResp.state.collectAsState()
-//    val status = when {
-//        libraryStatusCode == null -> {
-//            Pair("正在检查与图书馆的联通状态",R.drawable.progress_activity)
-//        }
-//        isNotBadRequest(libraryStatusCode!!) -> {
-//            Pair("状态正常",R.drawable.check_circle)
-//        }
-//        libraryStatusCode in StatusCode.INTERNAL_SERVER_ERROR.code .. 600 -> {
-//            Pair("服务器异常,除馆藏检索外其余功能不可用",R.drawable.link_off)
-//        }
-//        libraryStatusCode == TIMEOUT_ERROR_CODE -> {
-//            Pair("连接超时,除馆藏检索外其余功能不可用",R.drawable.link_off)
-//        }
-//        libraryStatusCode == CONNECTION_ERROR_CODE -> {
-//            Pair("连接失败,除馆藏检索外其余功能不可用",R.drawable.link_off)
-//        }
-//        libraryStatusCode == UNKNOWN_ERROR_CODE -> {
-//            Pair("未知错误,除馆藏检索外其余功能不可用",R.drawable.link_off)
-//        }
-//        else -> {
-//            Pair("未知分支",R.drawable.net)
-//        }
-//    }
 
     val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
         if(skip && uiState is UiState.Success) {
@@ -573,28 +550,6 @@ fun LibraryMineUI(
             }
             DividerTextExpandedWith("选项") {
                 CustomCard(color = MaterialTheme.colorScheme.surface) {
-//                    TransplantListItem(
-//                        headlineContent = {
-//                            Text("联通状态(有时需校园网)")
-//                        },
-//                        supportingContent = {
-//                            Text(status.first)
-//                        },
-//                        leadingContent = {
-//                            if(libraryStatusCode == null) {
-//                                LoadingIcon()
-//                            } else {
-//                                Icon(painterResource(status.second),null)
-//                            }
-//                        },
-//                        modifier = Modifier.clickable {
-//                            scope.launch {
-//                                libraryStatusCode = null
-//                                libraryStatusCode = vm.checkLibraryNetwork()
-//                            }
-//                        }
-//                    )
-//                    PaddingHorizontalDivider()
                     TransplantListItem(
                         supportingContent = {
                             Text("搜索图书馆中的纸质书本")
