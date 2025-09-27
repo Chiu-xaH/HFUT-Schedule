@@ -1,6 +1,10 @@
 package com.xah.transition.state
 
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import com.xah.transition.style.TransitionBackgroundStyle
 import com.xah.transition.style.TransitionCurveStyle
 
@@ -18,6 +22,8 @@ object TransitionConfig {
     // 第一次使用转场动画 需要预热 否则掉帧
     var firstUse = true
     var firstTransition = true
+    // 打开后的界面显示动画 时长不要太长
+    val enterShowTransition :  EnterTransition = fadeIn(animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing))
 }
 //
 //object TransitionConfig {

@@ -823,7 +823,7 @@ fun ElectricHefei(
         enabled = roomResponse is UiState.Success,
         label = {
             Text(
-                if(!showRoom) {
+                if(showRoom) {
                     if(roomResponse is UiState.Loading) {
                         "载入房间列表"
                     } else {

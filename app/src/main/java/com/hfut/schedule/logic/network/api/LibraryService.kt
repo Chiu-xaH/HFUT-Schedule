@@ -32,10 +32,23 @@ interface LibraryService {
         @Query("limit") pageSize : Int = getPageSize(),
     ) : Call<ResponseBody>
 
+    data class BookShelfRequest(val page: Int,val size : Int = getPageSize())
+    @POST("svc/circulate/bookShelf/query")
+    fun getBookShelf(
+        @Header("authorization") auth : String,
+        @Body bean : BookShelfRequest
+    ) : Call<ResponseBody>
+
+    data class BookCollectRequest(val page: Int,val limit : Int = getPageSize(),val sorts : List<String> = emptyList())
+    @POST("svc/circulate/myCollect/listMyCollect")
+    fun getMyCollect(
+        @Header("authorization") auth : String,
+        @Body bean : BookCollectRequest
+    ) : Call<ResponseBody>
+
+
     @POST("svc/space/mate/search")
     fun search(
-//        @Body body : ,
         @Header("authorization") auth : String
-
     ) : Call<ResponseBody>
 }

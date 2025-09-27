@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-22") },
+                overlineContent = { Text(text = "2025-09-27") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,18 +52,19 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("重构 图书馆","新增 图书馆平台的登录")//
-            UpdateItems("新增 体测平台的登录","并刷新登录后，在 查询中心-体测平台 中可使用")//
-//            UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
-            UpdateItems("新增 今日校园","位于 查询中心-今日校园；现在，可以在刷新登陆状态后，可使用本App使用某些今日校园的功能")//
-            UpdateItems("新增 合肥校区的电费显示与查询","校区已经默认设置好，如需切换，请前往 选项-网络-预加载 切换校区")//
-            UpdateItems("调整 天气预警的开关为默认关闭，按需开启")//
-            UpdateItems("修复 网页右侧工具栏收回时动画异常的Bug")//
-            UpdateItems("修复 刷新登陆状态不刷新慧新易校的Bug")//
-            UpdateItems("修复 聚焦始终显示明天没有课的Bug")//
-            UpdateItems("修复 从App返回桌面无预测式返回的Bug")//
-            UpdateItems("优化 部分界面的显示")//
-            UpdateItems("优化 转场打开动画末尾的顿挫")
+            UpdateItems("重构 图书馆","新增 图书馆平台的登录")
+            UpdateItems("新增 体测平台的登录","并刷新登录后，在 查询中心-体测平台 中可使用")
+            UpdateItems("新增 今日校园","位于 查询中心-今日校园；现在，可以在刷新登陆状态后，可使用本App使用某些今日校园的功能")
+            UpdateItems("新增 合肥校区的电费显示与查询","校区已经默认设置好，如需切换，请前往 选项-网络-预加载 切换校区")
+            UpdateItems("调整 天气预警的开关为默认关闭，按需开启")
+            UpdateItems("修复 网页右侧工具栏收回时动画异常的Bug")
+            UpdateItems("修复 刷新登陆状态不刷新慧新易校的Bug")
+            UpdateItems("修复 聚焦始终显示明天没有课的Bug")
+            UpdateItems("修复 从App返回桌面无预测式返回的Bug")
+            UpdateItems("优化 部分界面的显示")
+            UpdateItems("优化 转场打开动画末尾的顿挫感")
+//            UpdateItems("修复 从聚焦首页转场后再回退翻页重置的Bug")
+            // UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
 //            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
 //            UpdateItems("修复 首次开屏时层级模糊暂时失效的Bug")//
 //            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")

@@ -109,7 +109,7 @@ private fun WeatherScreen(vm: NetWorkViewModel) {
     var campus by remember { mutableStateOf(getCampusRegion()) }
     val uiState by vm.qWeatherResult.state.collectAsState()
     val uiStateWarn by vm.weatherWarningData.state.collectAsState()
-    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
+    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
 
     var loading = uiState !is UiState.Success
     val refreshNetwork: suspend () -> Unit = {

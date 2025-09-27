@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.util.getPageSize
@@ -40,14 +42,19 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.network.UrlImage
+import com.hfut.schedule.ui.component.network.UrlImageNoCrop
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -127,6 +134,18 @@ private fun BorrowUI(
         val overdueCount = analysis.filter { it == BorrowedStatus.OVERDUE }.size
         val borrowingCount = analysis.filter { it == BorrowedStatus.BORROWING }.size
         val listState = rememberLazyListState()
+        val mostFrequents: List<Pair<Int, String>> = list
+            .map {
+                it.libraryDetail.detail.keywords
+                    .split("/")
+                    .drop(1)
+            }
+            .flatMap { it }
+            .groupingBy { it }
+            .eachCount()
+            .map { it.value to it.key }   // 转成 Pair<Int, String>
+            .sortedByDescending { it.first } // 按次数降序
+
         Box() {
             LazyColumn(state = listState) {
                 item { InnerPaddingHeight(innerPadding,true) }
@@ -169,6 +188,23 @@ private fun BorrowUI(
                                 },
                                 modifier = Modifier.weight(.5f)
                             )
+                        }
+                        LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            items(mostFrequents.size) { index ->
+                                val item = mostFrequents[index]
+                                AssistChip(
+                                    onClick = { showToast("筛选功能开发中") },
+                                    border = null,
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    label = { Text(item.second) },
+                                    trailingIcon = {
+                                        Text("x" + item.first.toString() )
+                                    },
+                                    modifier = Modifier.padding(end = if(index == mostFrequents.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                )
+                            }
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                         }
                     }
                 }
@@ -255,6 +291,7 @@ private fun BorrowUI(
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                 }
                             }
+//                            UrlImageNoCrop(MyApplication.NEW_LIBRARY_URL + "svc/fileserver/images/book/cover/undefined/${detail.title}/${detail.authors}?e=${detail.isbn.replace("-","")}")
                         }
                     }
                 }

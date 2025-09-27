@@ -11,13 +11,18 @@ def moduleShared = ":shared"
 
 android {
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file("local.properties")
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
 
     signingConfigs {
         chiu {
-            storeFile file('D:\\文档\\Android Sign Key\\Chiu-xaH.jks')
-            storePassword 'zhaosihan0908'
-            keyAlias 'Chiu-xaH'
-            keyPassword 'zhaosihan0908'
+            storeFile file(keystoreProperties["RELEASE_STORE_FILE"])
+            storePassword keystoreProperties["RELEASE_STORE_PASSWORD"]
+            keyAlias keystoreProperties["RELEASE_KEY_ALIAS"]
+            keyPassword keystoreProperties["RELEASE_KEY_PASSWORD"]
         }
     }
 
@@ -41,7 +46,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 221
-        versionName "4.18 Preivew"
+        versionName "4.18"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

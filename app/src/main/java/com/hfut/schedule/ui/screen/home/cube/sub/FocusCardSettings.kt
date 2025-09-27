@@ -273,13 +273,13 @@ fun FocusCard(
     hazeState: HazeState,
     navController : NavHostController,
 ) {
-    val showEle = prefs.getBoolean("SWITCHELE",getCampusRegion() == CampusRegion.XUANCHENG)
+    val showEle = prefs.getBoolean("SWITCHELE",true)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",getCampusRegion() == CampusRegion.XUANCHENG)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     var loading by remember { mutableStateOf(false) }
     val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
-    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = true)
+    val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
     val route = remember { AppNavRoute.Life.withArgs(true) }
     val context = LocalContext.current
     if(showCard || showEle || showToday || showWeb)
@@ -479,9 +479,10 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
                 leadingContent = { Icon(painter = painterResource(R.drawable.warning) , contentDescription = "")},
                 modifier = Modifier.weight(.5f)
             )
+            val d = targetDate?.substringAfter("-","")
             TransplantListItem(
-                headlineContent = { ScrollText(text = "上${ targetDate?.substringAfter("-","") ?: "--" }课程" ) },
-                overlineContent = { ScrollText(text = "选择今天上哪天的课") },
+                headlineContent = { ScrollText(text = "上${ d ?: "--" }课程" ) },
+                overlineContent = { ScrollText(text = if(d == null) "选择今天上哪天的课" else "已设置") },
                 modifier = Modifier.weight(.5f)
             )
         }
@@ -503,9 +504,10 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
                 leadingContent = { Icon(painter = painterResource(R.drawable.schedule) , contentDescription = "")},
                 modifier = Modifier.weight(.5f)
             )
+            val d = targetDate?.substringAfter("-","")
             TransplantListItem(
-                headlineContent = { ScrollText(text = "上${ targetDate?.substringAfter("-","") ?: "--" }课程" ) },
-                overlineContent = { ScrollText(text = "选择明天将上哪天的课") },
+                headlineContent = { ScrollText(text = "上${d ?: "--" }课程" ) },
+                overlineContent = { ScrollText(text = if(d == null) "选择明天将上哪天的课" else "已设置") },
                 modifier = Modifier.weight(.5f)
             )
         }

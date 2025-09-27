@@ -97,7 +97,6 @@ private fun WebViewBackIcon(
     color : Color,
     onExit : () -> Unit
 ) {
-    val sharedTransitionScope = LocalSharedTransitionScope.current
     val back : () -> Unit = {
         if(webView?.canGoBack() == true) {
             webView.goBack()
@@ -131,7 +130,7 @@ private fun WebViewBackIcon(
         var show by remember { mutableStateOf(true) }
         LaunchedEffect(Unit) {
             show = true
-            sharedTransitionScope.awaitTransition()
+            delay(TransitionConfig.curveStyle.speedMs*1L)
             delay(1500L)
             show = false
         }

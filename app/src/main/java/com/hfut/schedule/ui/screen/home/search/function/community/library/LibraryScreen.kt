@@ -41,6 +41,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
@@ -52,6 +53,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.library.BorrowedStatus
+import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.util.isNotBadRequest
@@ -63,6 +65,7 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -97,6 +100,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -401,7 +405,6 @@ fun LibraryMineUI(
         }
     }
     val uiState by vm.libraryStatusResp.state.collectAsState()
-    val uiStateBorrowed by vm.libraryBorrowedResp.state.collectAsState()
 //    val status = when {
 //        libraryStatusCode == null -> {
 //            Pair("正在检查与图书馆的联通状态",R.drawable.progress_activity)
@@ -425,8 +428,7 @@ fun LibraryMineUI(
 //            Pair("未知分支",R.drawable.net)
 //        }
 //    }
-    var overdueCount by remember { mutableStateOf<Int?>(null) }
-    var borrowingCount by remember { mutableStateOf<Int?>(null) }
+
     val refreshNetwork : suspend(Boolean) -> Unit =  m@ { skip : Boolean ->
         if(skip && uiState is UiState.Success) {
             return@m
@@ -435,15 +437,25 @@ fun LibraryMineUI(
         token?.let {
             vm.libraryStatusResp.clear()
             vm.getLibraryStatus(it)
-            val pageSize = (uiState as? UiState.Success)?.data?.borrowCount ?: return@m
+            val pageSize = (vm.libraryStatusResp.state.value as? UiState.Success)?.data?.borrowCount ?: return@m
             vm.libraryBorrowedResp.clear()
             vm.getBorrowed(token,1,null,pageSize)
-            val list = (uiStateBorrowed as? UiState.Success)?.data?.sortedByDescending { it.createdTime } ?: return@m
-            val analysis = list.map { l -> BorrowedStatus.entries.find { e -> e.status == l.status } }
-            overdueCount = analysis.filter { it == BorrowedStatus.OVERDUE }.size
-            borrowingCount = analysis.filter { it == BorrowedStatus.BORROWING }.size
         }
     }
+    val uiStateBorrowed by vm.libraryBorrowedResp.state.collectAsState()
+    val list = (uiStateBorrowed as? UiState.Success)?.data
+        ?.sortedByDescending { it.createdTime }
+    val analysis = list?.map { l ->
+            BorrowedStatus.entries.find { e ->
+                e.status == l.status
+            }
+        }
+
+    val overdueCount = analysis?.filter { it == BorrowedStatus.OVERDUE }?.size
+    val borrowingCount = analysis?.filter { it == BorrowedStatus.BORROWING }?.size
+    val latestReturnedData = list
+        ?.filter { it.returnTime != null }
+        ?.minByOrNull { it.returnTime!! }
 
     LaunchedEffect(Unit) {
         if(uiState is UiState.Success) {
@@ -468,19 +480,18 @@ fun LibraryMineUI(
                     loading = loading,
                     prepare = false,
                     title =
-                        if(overdueCount == null ||  borrowingCount == null) {
-                            "待归还 -本"
-                        } else if(overdueCount == 0 && borrowingCount == 0) {
-                            "无待归还书籍"
-                        } else if(overdueCount == 0 && borrowingCount != 0) {
-                            "借阅中 ${borrowingCount}本"
-                        } else if(overdueCount != 0 && borrowingCount == 0) {
-                            "逾期 ${overdueCount}本"
-                        } else {
-                            "待归还 ${overdueCount!! + borrowingCount!!}本"
-                        }
+                           when {
+                                overdueCount == null || borrowingCount == null -> "待归还 -本"
+                                overdueCount == 0 && borrowingCount == 0 -> "无待归还书籍"
+                                overdueCount == 0 && borrowingCount != 0 -> "借阅中 ${borrowingCount}本"
+                                overdueCount != 0 && borrowingCount == 0 -> "逾期 ${overdueCount}本"
+                                else -> "待归还 ${overdueCount + borrowingCount}本"
+                           },
+                    rightTop = {
+                        latestReturnedData?.returnTime?.substringBefore(" ")?.let { Text("${DateTimeManager.daysBetween(it)}天后") }
+                    }
                 ) {
-                    Row {
+                    Row() {
                         TransplantListItem(
                             overlineContent = { Text("借阅") },
                             headlineContent = { Text("${response.borrowCount}本") },
@@ -495,18 +506,37 @@ fun LibraryMineUI(
                                     }
                                 }
                         )
-                        TransplantListItem(
-                            overlineContent = { Text("预约") },
-                            headlineContent = { Text("${response.reserveCount}本") },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.schedule),null)
-                            },
-                            modifier = Modifier
-                                .weight(0.5f)
-                                .clickable {
-
-                                }
-                        )
+                        if(latestReturnedData != null){
+                            TransplantListItem(
+                                overlineContent = { Text(latestReturnedData.libraryDetail.detail.title, overflow = TextOverflow.Ellipsis, maxLines = 1) },
+                                headlineContent = { ScrollText("${latestReturnedData.returnTime?.substringBefore(" ")}") },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.send_money),null)
+                                },
+                                modifier = Modifier
+                                    .weight(0.5f)
+                                    .clickable {
+                                        if(!loading) {
+                                            navController.navigateForTransition(AppNavRoute.LibraryBorrowed, AppNavRoute.LibraryBorrowed.route,transplantBackground = true)
+                                        }
+                                    }
+                            )
+                        } else {
+                            TransplantListItem(
+                                overlineContent = { Text("预约") },
+                                headlineContent = { Text("${response.reserveCount}本") },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.schedule),null)
+                                },
+                                modifier = Modifier
+                                    .weight(0.5f)
+                                    .clickable {
+                                        if(!loading) {
+                                            showToast("正在开发")
+                                        }
+                                    }
+                            )
+                        }
                     }
                     Row {
                         TransplantListItem(
@@ -518,7 +548,9 @@ fun LibraryMineUI(
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
-
+                                    if(!loading) {
+                                        showToast("正在开发")
+                                    }
                                 }
                         )
                         TransplantListItem(
@@ -530,7 +562,9 @@ fun LibraryMineUI(
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
-
+                                    if(!loading) {
+                                        showToast("正在开发")
+                                    }
                                 }
                         )
                     }

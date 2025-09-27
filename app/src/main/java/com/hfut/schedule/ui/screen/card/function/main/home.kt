@@ -389,7 +389,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                         Column(modifier = Modifier.coverBlur(loading).scale(scale.value)
                             ) {
                             TransplantListItem(
-                                headlineContent = { Text(text = "$name 校园一卡通") },
+                                headlineContent = { Text(text = "校园一卡通") },
                                 trailingContent = {
                                     FilledTonalIconButton(onClick = {
                                         scope.launch {

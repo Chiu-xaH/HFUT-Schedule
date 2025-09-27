@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -33,7 +34,7 @@ import kotlin.math.roundToInt
 
 //滚轮 组件
 private const val visibleCount = 3
-private const val height = 125
+private const val height = 120
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -69,8 +70,10 @@ fun <T> WheelPicker(
                 val currIndex = (index - startIndex).floorMod(size)
                 val item = layoutInfo.visibleItemsInfo.find { it.index == index }
                 var currentsAdjust = 1f
+                var itemCenterY = 0   // 提前声明，保证 graphicsLayer 可见
+
                 if (item != null) {
-                    val itemCenterY = item.offset + item.size / 2
+                    itemCenterY = item.offset + item.size / 2
                     currentsAdjust = 0.75f + 0.25f * if (itemCenterY < pickerCenterLinePx) {
                         itemCenterY / pickerCenterLinePx
                     } else {
@@ -83,7 +86,7 @@ fun <T> WheelPicker(
                         onSelect(currIndex, data[currIndex])
                     }
                 }
-                val selected = formatDecimal(currentsAdjust.toDouble(),1) == "1.0"
+                val selected = itemCenterY == pickerCenterLinePx.toInt()
                 val colorAlpha = if(selected) 1f else 0f
 
                 Box(
@@ -98,7 +101,15 @@ fun <T> WheelPicker(
                             alpha = currentsAdjust
                             scaleX = currentsAdjust
                             scaleY = currentsAdjust
-                            rotationX = (1 + currentsAdjust) * 180
+                            rotationX = if (itemCenterY < pickerCenterLinePx) {
+                                // 在上方 → 朝上翻
+                                (1 - currentsAdjust) * 90f
+                            } else if(itemCenterY > pickerCenterLinePx) {
+                                // 在下方 → 朝下翻
+                                -(1 - currentsAdjust) * 90f
+                            } else {
+                                0f
+                            }
                         },
                     contentAlignment = Alignment.Center,
                 ) {
@@ -118,11 +129,3 @@ private fun Int.floorMod(other: Int): Int = when (other) {
     0 -> this
     else -> this - floorDiv(other) * other
 }
-
-fun transTime(num : Int) : String {
-    return if(num < 10) {
-        "0$num"
-    } else "$num"
-}
-
-

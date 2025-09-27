@@ -144,7 +144,7 @@ fun TransitionScaffold(
     ) { innerPadding ->
         AnimatedVisibility(
             visible = show,
-            enter  = scaleIn(initialScale = 0.95f, animationSpec = tween(durationMillis = 300, easing = LinearOutSlowInEasing)) + fadeIn(animationSpec = tween(durationMillis = 200, easing = LinearOutSlowInEasing)),
+            enter  = TransitionConfig.enterShowTransition,
             exit = fadeOut(tween(durationMillis = 0))
         ) {
             content(innerPadding)
