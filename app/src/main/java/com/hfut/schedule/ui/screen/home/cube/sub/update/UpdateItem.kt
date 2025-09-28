@@ -52,7 +52,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 寝室电费宣城校区选取寝室号崩溃的Bug")
+            UpdateItems("修复 有考试时课程表界面崩溃的Bug")
+            UpdateItems("优化 转场动画展开最后时的卡顿")
 //            UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")

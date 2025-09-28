@@ -1,37 +1,31 @@
 package com.hfut.schedule.ui.screen.home.calendar
 
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
 import java.time.LocalDate
 
-data class ExamToCalanderBean(
+data class ExamToCalenderBean(
     val day : String?,//YYYY-MM-DD
     val startTime: String?,//HH:MM
     val place: String?,
     val course: String?,
 )
 
-fun examToCalendar() : List<ExamToCalanderBean> {
+fun examToCalendar() : List<ExamToCalenderBean> {
     val examMaps: List<Map<String, String>> = getExamJXGLSTU()
-    //”MM-DD“ "STARTTIME" "PLACE" "TITLE"
-    val newList = mutableListOf<ExamToCalanderBean>()
+    val newList = mutableListOf<ExamToCalenderBean>()
 
     return try {
         for (examMap in examMaps) {
             val day = examMap["日期时间"]?.substringBefore(" ")
-            val dayLong = day?.replace("-","")?.toLong() ?: 0L
-            val todayLong = DateTimeManager.Date_yyyy_MM_dd.replace("-","").toLong()
-
-//            if(todayLong <= dayLong) {
                 val startTime = examMap["日期时间"]?.substringAfter(" ")?.substringBefore("~")
                 val place = examMap["考场"]
                 val course = examMap["课程名称"]
-                val examToCalendarBean = ExamToCalanderBean(day, startTime, place, course)
+                val examToCalendarBean = ExamToCalenderBean(day, startTime, place, course)
                 newList.add(examToCalendarBean)
-//            }
         }
         newList
     } catch (e:Exception) {
+        e.printStackTrace()
         emptyList()
     }
 }

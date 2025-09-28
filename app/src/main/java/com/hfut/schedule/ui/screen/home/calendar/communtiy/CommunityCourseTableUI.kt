@@ -490,7 +490,7 @@ fun CommunityCourseTableUI(
                                                 texts.add(data)
                                             } else if(hour in 10..12 && j == 1) {
                                                 texts.add(data)
-                                            } else if(hour in 14..15  && j == 2) {
+                                            } else if(hour in 13..15  && j == 2) {
                                                 texts.add(data)
                                             } else if(hour in 16..17  && j == 3) {
                                                 texts.add(data)

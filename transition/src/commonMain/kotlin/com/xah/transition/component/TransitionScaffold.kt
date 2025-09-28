@@ -94,8 +94,8 @@ fun TransitionScaffold(
         if (isCurrentEntry && !show) {
             show = false
             // 当动画结束后显示
-            delay(TransitionConfig.curveStyle.speedMs*1L)
-//            sharedTransitionScope.awaitTransition()
+//            delay(TransitionConfig.curveStyle.speedMs*1L)
+            sharedTransitionScope.awaitTransition()
             show = true
         } else if(show) {
             if(navHostController.isInBottom(route)) {

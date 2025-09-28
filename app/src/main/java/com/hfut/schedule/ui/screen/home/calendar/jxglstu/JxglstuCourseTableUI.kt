@@ -3,10 +3,8 @@ package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -61,17 +59,17 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
+import com.hfut.schedule.logic.network.util.CasInHFUT
+import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
-import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -104,8 +102,6 @@ import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
@@ -257,7 +253,7 @@ fun JxglstuCourseTableUI(
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<String>() } }
 
     val dateList  = getScheduleDate(showAll, today)
-    var examList by rememberSaveable { mutableStateOf(examToCalendar()) }
+    var examList by remember { mutableStateOf(examToCalendar()) }
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
@@ -881,7 +877,7 @@ fun JxglstuCourseTableUI(
                                             texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
                                         } else if(hour in 10..12 && j == 1) {
                                             texts.add(it.startTime + "\n" + it.course + "(考试)" + "\n" + it.place?.replace("学堂",""))
-                                        } else if(hour in 14..15  && j == 2) {
+                                        } else if(hour in 13..15  && j == 2) {
                                             texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
                                         } else if(hour in 16..17  && j == 3) {
                                             texts.add(it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂",""))
