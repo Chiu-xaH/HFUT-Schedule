@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -34,7 +35,7 @@ fun Modifier.transitionDefaultBackground(
 
     val backgroundColor by animateFloatAsState(
         targetValue = if(isExpanded) {
-            if(level.code == TransitionLevel.HIGH.code) backgroundDark else backgroundDark+backgroundDarkDiffer
+            backgroundDark
         } else 0f,
         animationSpec = tween(speed, easing = FastOutSlowInEasing),
     )
@@ -88,16 +89,8 @@ fun Modifier.transitionSkip(
     if(level == TransitionLevel.NONE) {
         return this@transitionSkip
     }
-    if(route in TransitionConfig.firstStartRoute && TransitionConfig.firstUse) {
-        return this@transitionSkip
-    }
-    // 禁用刚冷启动第一个界面模糊缩放
-    if(TransitionConfig.firstUse && TransitionConfig.firstTransition) {
-        TransitionConfig.firstUse = false
-        return this@transitionSkip
-    } else if(TransitionConfig.firstTransition) {
-        // 禁用刚冷启动第一次转场动画的增强效果
-        TransitionConfig.firstTransition = false
+    if(TransitionConfig.firstUse) {
+        // 第一次动画
         return this@transitionSkip
     }
     return background

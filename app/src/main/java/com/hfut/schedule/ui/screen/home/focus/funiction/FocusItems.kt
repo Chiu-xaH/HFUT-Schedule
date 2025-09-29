@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.app.Activity
+import android.os.Parcelable
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -54,6 +55,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.NOT_S
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ONGOING
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.addToCalendars
+import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
 import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -94,21 +96,13 @@ fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
 
         //判断过期不显示信息
         val startYear = startTime[0]
-        val startMonth = startTime[1]
-        val startDay = startTime[2]
-        var startDateStr = startTime[2].toString()
-        var startMonthStr = startTime[1].toString()
-        if(startDay < 10) startDateStr = "0$startDay"
-        if(startMonth < 10) startMonthStr = "0$startMonth"
+        var startDateStr = parseTimeItem(startTime[2])
+        var startMonthStr = parseTimeItem(startTime[1])
         val getStartTime = "${startYear}${startMonthStr}${startDateStr}".toInt()
 
         val endYear = endTime[0]
-        val endMonth = endTime[1]
-        val endDay = endTime[2]
-        var endDateStr = endTime[2].toString()
-        var endMonthStr = endTime[1].toString()
-        if(endDay < 10) endDateStr = "0$endDay"
-        if(endMonth < 10) endMonthStr = "0$endMonth"
+        var endDateStr = parseTimeItem(endTime[2])
+        var endMonthStr = parseTimeItem(endTime[1])
         val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 
@@ -193,12 +187,8 @@ fun NetCourseItem(listItem : Schedule, isFuture: Boolean, activity: Activity) {
 
             //判断过期不显示信息
             val endYear = endTime[0]
-            val endMonth = endTime[1]
-            val endDay = endTime[2]
-            var endDateStr = endTime[2].toString()
-            var endMonthStr = endTime[1].toString()
-            if(endDay < 10) endDateStr = "0$endDay"
-            if(endMonth < 10) endMonthStr = "0$endMonth"
+            var endDateStr = parseTimeItem(endTime[2])
+            var endMonthStr = parseTimeItem(endTime[1])
             val getEndTime = "${endYear}${endMonthStr}${endDateStr}".toLong()
 
 

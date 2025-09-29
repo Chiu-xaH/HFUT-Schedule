@@ -361,7 +361,9 @@ fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule
             )
             list.add(JxglstuCourseSchedule(bean,room,courseId))
         }
-    } catch (_ : Exception) { }
+    } catch (e : Exception) {
+        e.printStackTrace()
+    }
     return list
 }
 

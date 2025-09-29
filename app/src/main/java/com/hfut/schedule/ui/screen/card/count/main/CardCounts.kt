@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.card.count.drawLineChart
+import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -90,7 +91,7 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     val uiState by vm.huiXinMonthBillResult.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
         val auth = SharedPrefs.prefs.getString("auth","")
-        val input = "$year-" + if(month.toInt() < 10) "0$month" else month.toString()
+        val input = "$year-" + parseTimeItem(month)
         vm.huiXinMonthBillResult.clear()
         vm.getMonthBills("bearer $auth", input)
     }

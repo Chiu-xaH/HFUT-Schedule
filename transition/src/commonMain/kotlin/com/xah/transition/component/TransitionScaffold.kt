@@ -3,17 +3,13 @@ package com.xah.transition.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
@@ -35,17 +32,21 @@ import com.xah.transition.util.isCurrentRouteWithoutArgs
 import com.xah.transition.util.isInBottom
 import com.xah.transition.util.previousRouteWithArgWithoutValues
 import kotlinx.coroutines.delay
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.snapshotFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withTimeout
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 suspend fun SharedTransitionScope.awaitTransition() {
     snapshotFlow { this.isTransitionActive }
         .filter { active -> !active }
         .first()
+}
+
+
+fun restoreTransition() {
+    if(TransitionConfig.firstUse) {
+        TransitionConfig.firstUse = false
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -97,6 +98,8 @@ fun TransitionScaffold(
 //            delay(TransitionConfig.curveStyle.speedMs*1L)
             sharedTransitionScope.awaitTransition()
             show = true
+            // 恢复动画
+            restoreTransition()
         } else if(show) {
             if(navHostController.isInBottom(route)) {
                 return@LaunchedEffect

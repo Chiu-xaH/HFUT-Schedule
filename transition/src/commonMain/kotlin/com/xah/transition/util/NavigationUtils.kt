@@ -3,6 +3,7 @@ package com.xah.transition.util
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
 
 fun NavController.navigateWithSave(route: String) {
@@ -13,15 +14,14 @@ fun NavController.navigateWithSave(route: String) {
 }
 
 fun NavController.navigateAndSaveForTransition(route: String,transplantBackground : Boolean = false) {
-    // 禁用背景透明
     TransitionConfig.transplantBackground = transplantBackground
-//    println("READY GO $route | CURRENT" + this.allRouteStack())
+    TransitionConfig.action = NavAction.Push
     navigateWithSave(route)
-//    println("GONE" + this.allRouteStack())
 }
 
 fun NavController.popBackStackForTransition() {
     if(this.canPopBack()) {
+        TransitionConfig.action = NavAction.Pop
         this.popBackStack()
     }
 }

@@ -8,11 +8,13 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -35,33 +37,24 @@ fun Modifier.containerShare(
             stiffness = TransitionConfig.curveStyle.stiffness.toFloat(),
             visibilityThreshold = Rect.VisibilityThreshold
         )
-//        val enterTransition = tween<Int>(durationMillis = TransitionConfig.curveStyle.speedMs)
         val boundsTransform = BoundsTransform { _,_ ->
             exitTransition
         }
 
         return this@containerShare
-            .let {
-                if(TransitionConfig.useFade) {
-                    it.sharedBounds(
-                        boundsTransform = boundsTransform,
-                        sharedContentState = state,
-                        animatedVisibilityScope = animatedContentScope,
-                        enter = fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs)),
-                        exit = fadeOut(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs)),
-                        resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
-                    )
-                } else {
-                    it.sharedElement(
-                        boundsTransform = boundsTransform,
-                        sharedContentState = state,
-                        animatedVisibilityScope = animatedContentScope,
-                    )
-                }
-            }
+            .sharedBounds(
+                boundsTransform = boundsTransform,
+                sharedContentState = state,
+                animatedVisibilityScope = animatedContentScope,
+                enter = fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs/2)),
+                exit = fadeOut(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs/2)),
+                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds,
+            )
             .let {
                 if(isAnimating)
-                    it.clip(roundShape)
+                    it
+                        // 防止透明度变化时，重叠透明
+                        .clip(roundShape)
                 else
                     it
             }

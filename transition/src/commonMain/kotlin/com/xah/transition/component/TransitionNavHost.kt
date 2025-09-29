@@ -23,6 +23,7 @@ import androidx.navigation.compose.composable
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -31,8 +32,17 @@ fun TransitionNavHost(
     navController: NavHostController,
     modifier: Modifier = Modifier.background(MaterialTheme.colorScheme.surface),
     startDestination: String,
-    enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = { fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs)) },
-    exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = { fadeOut(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs)) },
+    enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
+        fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs,),
+//            initialAlpha = if(TransitionConfig.action == NavAction.Pop) 1f else 0f
+        )
+    },
+    exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
+        fadeOut(
+            animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
+//            targetAlpha = if(TransitionConfig.action == NavAction.Push) 1f else 0f
+        )
+    },
     builder: NavGraphBuilder.() -> Unit
 ) {
     SharedTransitionLayout(

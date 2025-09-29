@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.kotlinParcelize)
 }
 
 android {
@@ -13,6 +14,9 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+    }
+    buildFeatures {
+        aidl true
     }
 
     buildTypes {

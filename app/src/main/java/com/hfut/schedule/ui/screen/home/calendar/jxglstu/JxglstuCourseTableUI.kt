@@ -89,6 +89,7 @@ import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseCourseName
+import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -303,7 +304,7 @@ fun JxglstuCourseTableUI(
                 val startTime = item.startTime
                 val startHour = startTime / 100
                 val startMinute = startTime % 100
-                val startTimeStr = "$startHour:${startMinute.let { if(it < 10) "0${it}" else it }}"
+                val startTimeStr = "$startHour:${parseTimeItem(startMinute)}"
 
                 var room = item.room?.nameZh
                 var courseId = item.lessonId.toString()

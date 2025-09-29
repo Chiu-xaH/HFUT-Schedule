@@ -17,6 +17,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.xah.transition.state.LocalSharedTransitionScope
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -26,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-28") },
+                overlineContent = { Text(text = "2025-09-29") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,8 +53,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 有考试时课程表界面崩溃的Bug")
-            UpdateItems("优化 转场动画展开最后时的卡顿")
+            UpdateItems("新增 崩溃的自动处理")
+            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
+            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")
+            UpdateItems("优化 转场动画的容器透明度过渡、首次卡顿问题")
+//            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
 //            UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")

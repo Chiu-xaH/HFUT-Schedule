@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
+import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -182,7 +183,7 @@ fun JxglstuCourseTableUINext(
                 val startTime = item.startTime
                 val startHour = startTime / 100
                 val startMinute = startTime % 100
-                val startTimeStr = "$startHour:${startMinute.let { if(it < 10) "0${it}" else it }}"
+                val startTimeStr = "$startHour:${parseTimeItem(startMinute)}"
 
                 var room = item.room?.nameZh
                 var courseId = item.lessonId.toString()

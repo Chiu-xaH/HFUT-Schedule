@@ -21,6 +21,7 @@
         <package android:name="com.iflytek.oshall.ahzwfw" />
         <package android:name="com.hfut.schedule" />
         <package android:name="com.eg.android.AlipayGphone" />
+        <package android:name="com.hfut.schedule.lite" />
     </queries>
 
     <application
@@ -153,6 +154,17 @@
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
         </service>
+        <service
+            android:name=".service.aidl.RemoteService"
+            android:process=":remote"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.xah.shared.IJxglstuAidlInterface" />
+            </intent-filter>
+        </service>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"

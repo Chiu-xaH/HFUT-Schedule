@@ -1,5 +1,6 @@
 [versions]
 androidliquidglass = "1.0.0-alpha06"
+leakcanaryAndroid = "2.14"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
 minAndroidVersion = "26"
@@ -87,6 +88,7 @@ androidx-material = { module = "androidx.compose.material:material", version.ref
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 #androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
 navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 navigation-compose-new = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeNew" }
 androidx-navigationevent = { module = "androidx.navigationevent:navigationevent", version.ref = "navigationevent" }
@@ -128,6 +130,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 
 [plugins]
+kotlinParcelize = { id = "kotlin-parcelize" }
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin"}

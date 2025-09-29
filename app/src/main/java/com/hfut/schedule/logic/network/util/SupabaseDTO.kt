@@ -66,7 +66,7 @@ fun supabaseEventEntityToDto(entity : SupabaseEventEntity) : SupabaseEventsInput
 
 fun isValidStudentId(id : String) = id.length == 10
 
-private fun DateTimeBean.toTimestamp(): String = with(this) {
+fun DateTimeBean.toTimestamp(): String = with(this) {
     parseTimeItem(year) + "-" + parseTimeItem(month) + "-" + parseTimeItem(day) + "T" + parseTimeItem(hour) + ":" + parseTimeItem(minute) + ":00"
 }
 fun DateTimeBean.toTimestampWithOutT(): Long? = with(this) {

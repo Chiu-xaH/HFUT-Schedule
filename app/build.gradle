@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleKsp)
+    alias(libs.plugins.kotlinParcelize)
 }
 
 def moduleTransition = ":transition"
@@ -45,8 +46,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 224
-        versionName "4.18.0.3"
+        versionCode 225
+        versionName "4.18.1 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -108,6 +109,7 @@ android {
 
     buildFeatures {
         compose true
+        aidl true
     }
 
     composeOptions {
@@ -229,6 +231,8 @@ dependencies {
 //    implementation(libs.androidx.material3.adaptive.navigation.suite)
 //    implementation(libs.androidx.adaptive.layout)
 //    implementation(libs.androidx.adaptive.navigation)
+    // 内存泄漏
+    debugImplementation(libs.leakcanary.android)
     // 模块
     implementation(project(moduleTransition))
     implementation(project(moduleUiCommon))
