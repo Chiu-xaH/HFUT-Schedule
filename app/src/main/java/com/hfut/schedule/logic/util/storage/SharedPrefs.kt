@@ -6,8 +6,9 @@ import android.preference.PreferenceManager
 import com.hfut.schedule.application.MyApplication
 //特别想彻底重构这里，当时键值乱飞，已经难以重构了
 object SharedPrefs {
+    const val PREFS = "com.hfut.schedule_preferences"
     const val LIBRARY_TOKEN = "LibraryToken"
-    val prefs: SharedPreferences = MyApplication.context.getSharedPreferences("com.hfut.schedule_preferences", Context.MODE_PRIVATE)
+    val prefs: SharedPreferences = MyApplication.context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
     private val saved: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
 
     fun saveString(title : String, info : String?) {

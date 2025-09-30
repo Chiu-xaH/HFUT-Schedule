@@ -8,9 +8,9 @@ import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableEntity
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestStoragePermission
-import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.home.cube.screen.initTransition
+import com.hfut.schedule.ui.screen.MainHost
+import com.hfut.schedule.ui.screen.home.cube.screen.AppTransitionInitializer
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
@@ -32,7 +32,8 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
-            initTransition()
+            AppTransitionInitializer.init()
+//            initTransition()
         }
         //当用户以本应用打开TXT文件时进行读取操作
         intent?.data?.let { uri ->

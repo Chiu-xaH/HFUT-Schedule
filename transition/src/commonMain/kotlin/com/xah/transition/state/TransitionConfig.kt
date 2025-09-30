@@ -5,6 +5,10 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Shape
 import com.xah.transition.style.TransitionBackgroundStyle
 import com.xah.transition.style.TransitionCurveStyle
 
@@ -25,4 +29,5 @@ object TransitionConfig {
     // 状态
     var action: NavAction? = null
 }
+
 

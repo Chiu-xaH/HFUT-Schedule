@@ -3,6 +3,7 @@ package com.hfut.schedule.lite
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -36,6 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.hfut.schedule.lite.ui.theme.肥工课程表Theme
 import com.xah.shared.IJxglstuAidlInterface
 import com.xah.shared.JxglstuCourseGroup
+import androidx.core.net.toUri
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     private var remoteService: IJxglstuAidlInterface? = null
@@ -49,7 +52,6 @@ class MainActivity : ComponentActivity() {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             remoteService = IJxglstuAidlInterface.Stub.asInterface(binder)
             result = remoteService?.jxglstuCourseGroups
-            Log.d("结果", "Result: $result")
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {

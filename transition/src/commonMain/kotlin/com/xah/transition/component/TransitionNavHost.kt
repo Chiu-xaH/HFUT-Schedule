@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -25,6 +26,9 @@ import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
+import com.xah.transition.style.DefaultTransitionStyle
+import com.xah.transition.style.TransitionLevel
+import com.xah.transition.util.TransitionInitializer
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -33,15 +37,23 @@ fun TransitionNavHost(
     modifier: Modifier = Modifier.background(MaterialTheme.colorScheme.surface),
     startDestination: String,
     enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
-        fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs,),
+        if(TransitionConfig.transitionBackgroundStyle.level != TransitionLevel.NONE_ALL) {
+            fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs,),
 //            initialAlpha = if(TransitionConfig.action == NavAction.Pop) 1f else 0f
-        )
+            )
+        } else {
+            fadeIn()
+        }
     },
     exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = {
-        fadeOut(
-            animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
+        if(TransitionConfig.transitionBackgroundStyle.level != TransitionLevel.NONE_ALL) {
+            fadeOut(
+                animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
 //            targetAlpha = if(TransitionConfig.action == NavAction.Push) 1f else 0f
-        )
+            )
+        } else {
+            fadeOut()
+        }
     },
     builder: NavGraphBuilder.() -> Unit
 ) {

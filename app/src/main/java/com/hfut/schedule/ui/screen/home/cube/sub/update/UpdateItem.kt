@@ -53,10 +53,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 崩溃的自动处理")
-            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
-            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")
+            UpdateItems("新增 转场动画支持调整为Level0","削弱效果，以减少等待时间")
             UpdateItems("优化 转场动画的容器透明度过渡、首次卡顿问题")
+//            UpdateItems("新增 崩溃的自动处理")
+//            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
+//            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
 //            UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")

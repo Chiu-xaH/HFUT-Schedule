@@ -6,6 +6,7 @@ import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -332,8 +333,7 @@ fun MainHost(
                             it.background(MaterialTheme.colorScheme.surface)
                     }
                     .let{ if(motionBlur && enableControlCenter && !isScan) it.blur(blurDp) else it }
-                    .let { if(enableControlCenter) it.scale(scale) else it }
-
+                    .let { if(enableControlCenter) it.scale(scale) else it },
             )  {
                 // 主UI
                 transitionComposable(AppNavRoute.Home.route) {
@@ -784,33 +784,13 @@ fun MainHost(
     }
 }
 
-
 @Composable
-fun TestAnimation() {
-    val anim = remember { Animatable(0f) }
-    var result: Long by remember { mutableLongStateOf(0L) }
-    val scope = rememberCoroutineScope()
-    CenterScreen {
-        Button(
-            onClick = {
-                scope.launch {
-                    // 复位
-                    anim.animateTo(0f)
-                    // 测量
-                    val start = System.currentTimeMillis()
-                    anim.animateTo(
-                        targetValue = 1f,
-                        animationSpec = spring(
-                            dampingRatio = TransitionConfig.curveStyle.dampingRatio,
-                            stiffness = TransitionConfig.curveStyle.stiffness.toFloat()
-                        )
-                    )
-                    val end = System.currentTimeMillis()
-                    result = end-start
-                }
-            }
-        ) {
-            Text("测量 $result ms")
-        }
-    }
+//@androidx.compose.ui.tooling.preview.Preview
+fun TransitionSpeedTest() {
+    com.xah.transition.util.SpeedTest(
+        spring(
+            dampingRatio = Spring.DampingRatioNoBouncy,
+            stiffness = 225f
+        )
+    )
 }

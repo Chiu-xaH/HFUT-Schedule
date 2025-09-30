@@ -21,7 +21,7 @@ import com.xah.transition.util.isCurrentRouteWithoutArgs
 fun Modifier.transitionBackground(
     navHostController: NavHostController,
     route : String,
-) : Modifier = transitionSkip(route,transitionDefaultBackground(navHostController,route))
+) : Modifier = transitionSkip(transitionDefaultBackground(navHostController,route))
 
 
 @Composable
@@ -82,11 +82,10 @@ fun Modifier.transitionDefaultBackground(
 
 
 fun Modifier.transitionSkip(
-    route : String,
     background : Modifier
 ): Modifier = with(TransitionConfig.transitionBackgroundStyle) {
     //👍 NONE
-    if(level == TransitionLevel.NONE) {
+    if(level <= TransitionLevel.NONE) {
         return this@transitionSkip
     }
     if(TransitionConfig.firstUse) {

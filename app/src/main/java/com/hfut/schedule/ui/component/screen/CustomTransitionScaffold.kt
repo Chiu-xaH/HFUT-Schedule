@@ -65,7 +65,7 @@ fun CustomTransitionScaffold(
 private fun Modifier.transitionBackgroundCustom(
     navHostController: NavHostController,
     route : String,
-) : Modifier = transitionSkip(route, transitionBackgroundC(navHostController,route))
+) : Modifier = transitionSkip(transitionBackgroundC(navHostController,route))
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -74,7 +74,6 @@ private fun Modifier.transitionBackgroundC(
     route : String,
 ) : Modifier = with(TransitionConfig.transitionBackgroundStyle) {
     val isExpanded = !navHostController.isCurrentRouteWithoutArgs(route)
-    val sharedTransitionScope = LocalSharedTransitionScope.current
 
     if(level.code >= TransitionLevel.MEDIUM.code) {
         LaunchedEffect(isExpanded) {

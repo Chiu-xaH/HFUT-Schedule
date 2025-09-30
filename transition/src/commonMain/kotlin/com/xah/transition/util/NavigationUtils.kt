@@ -13,7 +13,10 @@ fun NavController.navigateWithSave(route: String) {
     }
 }
 
-fun NavController.navigateAndSaveForTransition(route: String,transplantBackground : Boolean = false) {
+fun NavController.navigateAndSaveForTransition(
+    route: String,
+    transplantBackground : Boolean = false,
+) {
     TransitionConfig.transplantBackground = transplantBackground
     TransitionConfig.action = NavAction.Push
     navigateWithSave(route)

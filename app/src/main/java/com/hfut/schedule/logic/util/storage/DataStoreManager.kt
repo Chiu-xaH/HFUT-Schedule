@@ -90,7 +90,7 @@ object DataStoreManager {
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
     private val HAZE_BLUR = intPreferencesKey("haze_blur_3")
-    private val TRANSITION = intPreferencesKey("transitions")
+    private val TRANSITION = intPreferencesKey("transitions_2")
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")

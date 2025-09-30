@@ -103,6 +103,7 @@ import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
+import com.xah.transition.util.TransitionInitializer
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.style.clickableWithScale
@@ -112,11 +113,17 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
-suspend fun initTransition() = withContext(Dispatchers.IO) {
-    val transition = DataStoreManager.transitionLevel.first()
-    TransitionConfig.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
+object AppTransitionInitializer : TransitionInitializer {
+    override suspend fun init() {
+        withContext(Dispatchers.IO) {
+            launch {
+                val transition = DataStoreManager.transitionLevel.first()
+                TransitionConfig.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
+            }
+        }
+    }
 }
+
 
 
 val animationList =  DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed }
@@ -202,7 +209,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         LaunchedEffect(transition) {
             TransitionConfig.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
         }
-
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
         LaunchedEffect(customColor) {
@@ -533,15 +539,15 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
 //                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 //                LoopingRectangleCenteredTrail2(it)
 //                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                PaddingHorizontalDivider()
+//                PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
                         Column {
-                            Text(text = "转场背景特效" + " | " + "Level${transition+1} (${transitionLevels.find { it.code == transition}?.title})")
+                            Text(text = "转场动画等级" + " | " + "Level${transition} (${transitionLevels.find { it.code == transition}?.title})")
                         }
                     },
                     supportingContent = {
-                        Text(text = "界面打开关闭时背景伴随特效\n平衡性能与美观,推荐为Level2")
+                        Text(text = "界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3,Level0效率最高")
                     },
                     leadingContent = { Icon(painterResource(R.drawable.transition_fade), contentDescription = "Localized description",) },
                 )
@@ -556,10 +562,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
                 )
 //                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-                RowHorizontal {
-                    TransitionExample()
-                }
-                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+//                RowHorizontal {
+//                    TransitionExample()
+//                }
+//                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "底栏转场动画") },
@@ -645,7 +651,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("标签") {
-            val useCustomBackground = customBackground != ""
+//            val useCustomBackground = customBackground != ""
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {

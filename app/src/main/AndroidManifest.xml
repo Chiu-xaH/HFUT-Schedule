@@ -176,6 +176,12 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+        <provider
+            android:name=".provider.PrefsProvider"
+            android:authorities="com.hfut.schedule.prefs.provider"
+            android:exported="true"
+            android:grantUriPermissions="true" />
+
         <receiver
             android:name=".receiver.UpdateReceiver"
             android:exported="false" />

@@ -3,6 +3,7 @@ package com.xah.transition.component
 import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -18,27 +19,33 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
+import com.xah.transition.style.TransitionLevel
 
+private val spring = spring(
+    dampingRatio = TransitionConfig.curveStyle.dampingRatio,
+    stiffness = TransitionConfig.curveStyle.stiffness.toFloat(),
+    visibilityThreshold = Rect.VisibilityThreshold
+)
 // 容器共享元素 如果两个容器颜色不同，可以启用渐变fade参数
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun Modifier.containerShare(
     route : String,
     roundShape : Shape = MaterialTheme.shapes.small,
-) : Modifier  {
+) : Modifier {
+    if(TransitionConfig.transitionBackgroundStyle.level == TransitionLevel.NONE_ALL) {
+        return this
+    }
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedContentScope = LocalAnimatedContentScope.current
     with(sharedTransitionScope) {
         val isAnimating = this.isTransitionActive
         val state = rememberSharedContentState(key = "container_$route")
-        val exitTransition = spring(
-            dampingRatio = TransitionConfig.curveStyle.dampingRatio,
-            stiffness = TransitionConfig.curveStyle.stiffness.toFloat(),
-            visibilityThreshold = Rect.VisibilityThreshold
-        )
+
         val boundsTransform = BoundsTransform { _,_ ->
-            exitTransition
+            spring
         }
 
         return this@containerShare
@@ -52,9 +59,7 @@ fun Modifier.containerShare(
             )
             .let {
                 if(isAnimating)
-                    it
-                        // 防止透明度变化时，重叠透明
-                        .clip(roundShape)
+                    it.clip(roundShape)
                 else
                     it
             }
@@ -73,11 +78,7 @@ fun Modifier.singleElementShare(
     return with(sharedTransitionScope) {
         this@singleElementShare.sharedElement(
             boundsTransform = BoundsTransform { _,_ ->
-                spring(
-                    dampingRatio = TransitionConfig.curveStyle.dampingRatio,
-                    stiffness = TransitionConfig.curveStyle.stiffness.toFloat(),
-                    visibilityThreshold = Rect.VisibilityThreshold
-                )
+                spring
             },
             sharedContentState = rememberSharedContentState(key = "${title}_$route"),
             animatedVisibilityScope = animatedContentScope,

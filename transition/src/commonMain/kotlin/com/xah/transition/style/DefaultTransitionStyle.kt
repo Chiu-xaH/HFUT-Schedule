@@ -29,9 +29,9 @@ object DefaultTransitionStyle {
     )
 
     private const val SPRING = 0.875f
-    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = DEFAULT_ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = SPRING) + fadeIn(animationSpec = tween(durationMillis = DEFAULT_ANIMATION_SPEED/2))
+    private val enterAnimation2 = scaleIn(animationSpec =  tween(durationMillis = DEFAULT_ANIMATION_SPEED, easing = LinearOutSlowInEasing), initialScale = 0.9f, ) + fadeIn(animationSpec = tween(durationMillis = DEFAULT_ANIMATION_SPEED-100,easing = LinearOutSlowInEasing))
 
-    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = DEFAULT_ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = SPRING) + fadeOut(animationSpec = tween(durationMillis = DEFAULT_ANIMATION_SPEED/2))
+    private val exitAnimation2 = scaleOut(animationSpec =  tween(durationMillis = DEFAULT_ANIMATION_SPEED,easing = LinearOutSlowInEasing), targetScale = 0.9f, ) + fadeOut(animationSpec = tween(durationMillis = DEFAULT_ANIMATION_SPEED-100,easing = LinearOutSlowInEasing))
 
     val centerAnimation = TransferAnimation("向中心运动",enterAnimation2, exitAnimation2)
 

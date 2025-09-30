@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
+import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.transition.util.isCurrentRouteWithoutArgs
@@ -52,14 +53,11 @@ fun restoreTransition() {
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun TransitionScaffold(
-    roundShape : Shape = MaterialTheme.shapes.medium,
+    roundShape : Shape = MaterialTheme.shapes.small,
     route: String,
     navHostController : NavHostController,
-    modifier: Modifier = Modifier.clip(roundShape)
-        .transitionBackground(navHostController, route).containerShare(
-        route,
-        roundShape,
-    ),
+    modifier: Modifier = Modifier
+        .transitionBackground(navHostController, route).containerShare(route, roundShape,),
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
     floatingActionButton: @Composable (() -> Unit) = {},
@@ -68,7 +66,7 @@ fun TransitionScaffold(
     enablePredictive : Boolean = true,
     content: @Composable ((PaddingValues) -> Unit)
 ) {
-    if(route in TransitionConfig.firstStartRoute) {
+    if(route in TransitionConfig.firstStartRoute || TransitionConfig.transitionBackgroundStyle.level == TransitionLevel.NONE_ALL) {
         // 首页 无需进行延迟显示
         Scaffold(
             modifier = modifier,

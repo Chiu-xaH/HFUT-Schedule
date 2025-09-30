@@ -236,7 +236,7 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
     // 👍 NONE
-    if(transition == TransitionLevel.NONE.code) {
+    if(transition <= TransitionLevel.NONE.code) {
         return this
     }
 
