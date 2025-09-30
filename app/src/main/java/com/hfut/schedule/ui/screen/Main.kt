@@ -11,9 +11,11 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material3.DrawerState
@@ -37,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
@@ -45,8 +48,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -57,6 +62,8 @@ import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.component.webview.getPureUrl
@@ -120,6 +127,8 @@ import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SP
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
 import com.xah.transition.state.TransitionConfig
@@ -782,15 +791,4 @@ fun MainHost(
             }
         }
     }
-}
-
-@Composable
-//@androidx.compose.ui.tooling.preview.Preview
-fun TransitionSpeedTest() {
-    com.xah.transition.util.SpeedTest(
-        spring(
-            dampingRatio = Spring.DampingRatioNoBouncy,
-            stiffness = 225f
-        )
-    )
 }

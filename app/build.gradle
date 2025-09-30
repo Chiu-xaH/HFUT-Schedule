@@ -222,7 +222,7 @@ dependencies {
     // 拖拽
     implementation(libs.reorderable)
     // 液态玻璃
-//    implementation(libs.androidliquidglass)
+    implementation(libs.liquid.glass)
     // 权限
 //    implementation(libs.accompanist.permissions)
 //     适配大屏 自适应布局

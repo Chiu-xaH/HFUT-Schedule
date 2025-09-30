@@ -38,6 +38,9 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
@@ -134,7 +137,17 @@ fun Modifier.topBarBlur(
         )
     }
 }
-
+@Composable
+fun Modifier.backDropSource(
+    backdrop : LayerBackdrop
+): Modifier {
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_LIQUID_GLASS)
+    return if(enableLiquidGlass) {
+        this.layerBackdrop(backdrop)
+    } else {
+        this
+    }
+}
 
 @Composable
 fun Modifier.normalTopBarBlur(

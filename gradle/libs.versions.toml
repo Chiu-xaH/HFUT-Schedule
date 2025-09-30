@@ -1,5 +1,5 @@
 [versions]
-androidliquidglass = "1.0.0-alpha06"
+androidliquidglass = "1.0.0-alpha15"
 leakcanaryAndroid = "2.14"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
@@ -60,7 +60,7 @@ androidx-testExt = "1.2.1"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
-androidliquidglass = { module = "com.github.Kyant0:AndroidLiquidGlass", version.ref = "androidliquidglass" }
+liquid-glass = { module = "com.github.Kyant0:AndroidLiquidGlass", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }

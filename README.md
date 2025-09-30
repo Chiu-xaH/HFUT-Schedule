@@ -52,22 +52,23 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [Zxing](https://github.com/zxing/zxing) 二维码
 
-[Haze](https://github.com/chrisbanes/haze) 实时模糊
+[Haze](https://github.com/chrisbanes/haze) 层级模糊
 
-[Accompanist](https://github.com/google/accompanist) 用做实现透明状态栏
+[Accompanist](https://github.com/google/accompanist) 扩展工具包
 
-[Glide](https://github.com/bumptech/glide) 网络图片
+[Glide](https://github.com/bumptech/glide) 图片
 
 [EdDSA Java](https://github.com/str4d/ed25519-java) 加密(供和风天气API使用)
 
-[Konfetti](https://github.com/DanielMartinus/Konfetti) 礼花🎉动画
+[Konfetti](https://github.com/DanielMartinus/Konfetti) 礼花动画
 
 [Tesseract4Android](https://github.com/adaptech-cz/Tesseract4Android) 封装Tesseract (供识别图片验证码)
 
-[MaterialKolor](https://github.com/jordond/MaterialKolor) 自定义取色
+[MaterialKolor](https://github.com/jordond/MaterialKolor) 取色
 
 [Reorderable](https://github.com/Calvin-LL/Reorderable) 列表拖拽
 
+[AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) 液态玻璃
 
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新(自己)
 

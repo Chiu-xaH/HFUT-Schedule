@@ -56,6 +56,8 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.LiquidButtonText
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -63,6 +65,9 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -216,50 +221,70 @@ fun TimeTableScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TimeTable.route }
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.TimeTable.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route,AppNavRoute.TimeTable.icon)
-                    },
-                    actions = {
-                        FilledTonalButton(
-                            onClick = {
-                                scope.launch {
-                                    if(url == null) {
-                                        showToast("正在从云端获取数据")
-                                    } else {
-                                        Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
-                                        showToast("即将打开网页链接,可自行下载或保存图片")
-                                    }
+    val backdrop = rememberLayerBackdrop()
+
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.TimeTable.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route,AppNavRoute.TimeTable.icon)
+                },
+                actions = {
+                    LiquidButton(
+                        onClick = {
+                            scope.launch {
+                                if(url == null) {
+                                    showToast("正在从云端获取数据")
+                                } else {
+                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
+                                    showToast("即将打开网页链接,可自行下载或保存图片")
                                 }
-                            },
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                        ) {
-                            Text("校历")
-                        }
+                            }
+                        },
+                        backdrop = backdrop,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                    ) {
+                        LiquidButtonText("校历")
                     }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                TimeTableUI()
-                InnerPaddingHeight(innerPadding,false)
-            }
+//                    FilledTonalButton(
+//                        onClick = {
+//                            scope.launch {
+//                                if(url == null) {
+//                                    showToast("正在从云端获取数据")
+//                                } else {
+//                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
+//                                    showToast("即将打开网页链接,可自行下载或保存图片")
+//                                }
+//                            }
+//                        },
+//                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+//                    ) {
+//                        Text("校历")
+//                    }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            TimeTableUI()
+            InnerPaddingHeight(innerPadding,false)
         }
+    }
 //    }
 }
 

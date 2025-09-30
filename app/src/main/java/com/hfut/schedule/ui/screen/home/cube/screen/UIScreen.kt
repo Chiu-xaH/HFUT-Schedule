@@ -176,6 +176,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
+        val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_LIQUID_GLASS)
 
         val scope = rememberCoroutineScope()
 
@@ -534,6 +535,32 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                     steps = 1,
                     valueRange = 0f..2f,
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text(text = "玻璃材质按钮(Beta)")
+                    },
+                    supportingContent = {
+                        Text(text = "将部分顶部或底部上的按钮渲染为带折射的玻璃材质效果" + (if(!AppVersion.CAN_LIQUID_GLASS) "(需为Android 13+)" else "") )
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.filter_vintage),null)
+                    },
+                    trailingContent = {
+                        Switch(checked = enableLiquidGlass, enabled = AppVersion.CAN_LIQUID_GLASS, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveLiquidGlass(!enableLiquidGlass)
+                            }
+                        })
+                    },
+                    modifier = Modifier.clickable {
+                        if(AppVersion.CAN_LIQUID_GLASS) {
+                            scope.launch {
+                                DataStoreManager.saveLiquidGlass(!enableLiquidGlass)
+                            }
+                        }
+                    }
                 )
                 PaddingHorizontalDivider()
 //                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))

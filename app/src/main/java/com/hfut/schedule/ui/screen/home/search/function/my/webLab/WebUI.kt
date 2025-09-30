@@ -226,88 +226,83 @@ fun WebNavigationScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.WebNavigation.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.WebNavigation.icon)
-                    },
-                    actions = {
-                        Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            Schools(hazeState)
-                        }
-                    }
-                )
-            },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { showBottomSheet_Add = true }
-                ) {
-                    Icon(painterResource(R.drawable.add_2),null)
-                }
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
-                    Column(
-                        modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(input)),
-                    ) {
-                        CustomTextField(
-                            input = input,
-                            label = { Text("输入合法链接") },
-                            singleLine = false,
-                            trailingIcon = {
-                                IconButton(
-                                    enabled = isValidWebUrl(input),
-                                    onClick = {
-                                        scope.launch {
-                                            Starter.startWebView(
-                                                navController=navController,
-                                                url = input,
-                                                title = getPureUrl(input),
-                                                cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
-                                            )
-                                        }
-                                    },
-                                ) {
-                                    Icon(Icons.Default.ArrowForward,null)
-                                }
-                            }
-                        ) { input = it }
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 
-                        Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
-                        CustomTextField(
-                            input = inputCookies,
-                            label = { Text("输入Cookies(可选)") },
-                            singleLine = false,
-                        ) { inputCookies = it }
-                    }
-                }
-                DividerTextExpandedWith(text = "固定项") {
-                    WebItem()
-                }
-                DividerTextExpandedWith(text = "实验室") {
-                    LabUI()
-                }
-                DividerTextExpandedWith(text = "本地收藏夹(点击刷新)") {
-                    StorageWeb(hazeState)
-                }
-                InnerPaddingHeight(innerPadding,false)
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.WebNavigation.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.WebNavigation.icon)
+                },
+            )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { showBottomSheet_Add = true }
+            ) {
+                Icon(painterResource(R.drawable.add_2),null)
             }
         }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
+                Column(
+                    modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(input)),
+                ) {
+                    CustomTextField(
+                        input = input,
+                        label = { Text("输入合法链接") },
+                        singleLine = false,
+                        trailingIcon = {
+                            IconButton(
+                                enabled = isValidWebUrl(input),
+                                onClick = {
+                                    scope.launch {
+                                        Starter.startWebView(
+                                            navController=navController,
+                                            url = input,
+                                            title = getPureUrl(input),
+                                            cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
+                                        )
+                                    }
+                                },
+                            ) {
+                                Icon(Icons.Default.ArrowForward,null)
+                            }
+                        }
+                    ) { input = it }
+
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP/3))
+                    CustomTextField(
+                        input = inputCookies,
+                        label = { Text("输入Cookies(可选)") },
+                        singleLine = false,
+                    ) { inputCookies = it }
+                }
+            }
+            DividerTextExpandedWith(text = "固定项") {
+                WebItem()
+            }
+            DividerTextExpandedWith(text = "实验室") {
+                LabUI()
+            }
+            DividerTextExpandedWith(text = "本地收藏夹(点击刷新)") {
+                StorageWeb(hazeState)
+            }
+            InnerPaddingHeight(innerPadding,false)
+        }
+    }
 //    }
 }
 
