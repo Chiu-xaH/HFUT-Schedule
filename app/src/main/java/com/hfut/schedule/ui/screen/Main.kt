@@ -161,7 +161,6 @@ suspend fun DrawerState.animationClose() = this.animateTo(DrawerValue.Closed, tw
 suspend fun DrawerState.animationOpen() = this.animateTo(DrawerValue.Open, spring(dampingRatio = 0.8f, stiffness = 125f))
 
 
-
 private fun haveImportantUpdate() : Boolean {
     try {
         val lastVersionName =  prefs.getString("versionName", "上版本") ?: return true
@@ -169,6 +168,10 @@ private fun haveImportantUpdate() : Boolean {
 
         if(lastVersionName == nowVersionName) {
             return false
+        }
+
+        if(lastVersionName == "上版本") {
+            return true
         }
 
         val lastVersion = lastVersionName.split('.')

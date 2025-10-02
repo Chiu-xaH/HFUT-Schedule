@@ -91,6 +91,7 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 ## 📄 [接口文档](/docs/API.md)(停更了)
 
 ## ⚙️ [一些工具](/tools)
+[图片验证码训练模型](/tools/Captcha-Ocr) [所有培养方案爬取](tools\All-Programs-Get-Python) [校园网登录](/tools/Login-Web-Python) [WebVpn](tools/WebVpn) [用户流量统计](/tools/SQL-Chart-Python) [PC版(集成WebVpn、校园网等工具)(待开发)](/tools/Lite-For-PC)
 
 ## 😥 适配
 

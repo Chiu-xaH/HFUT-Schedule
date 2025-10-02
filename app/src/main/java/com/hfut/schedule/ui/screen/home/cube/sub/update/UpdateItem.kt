@@ -54,7 +54,7 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 自动CAS登录")
-            UpdateItems("新增 引入液态玻璃按钮","需Android 13+")
+            UpdateItems("新增 引入液态玻璃材质","需Android 13+")
             UpdateItems("新增 转场动画支持调整为Level0","削弱效果，以减少等待时间")
             UpdateItems("优化 转场动画的容器透明度过渡、首次卡顿问题")
 //            UpdateItems("新增 崩溃的自动处理")
