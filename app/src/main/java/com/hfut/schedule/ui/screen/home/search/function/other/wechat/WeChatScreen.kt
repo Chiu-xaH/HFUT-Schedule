@@ -52,6 +52,8 @@ import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
@@ -81,6 +83,7 @@ fun WeChatScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     var showedUrl by remember { mutableStateOf("") }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
+    val backDrop = rememberLayerBackdrop()
 
     if (showBottomSheetQRCode) {
         HazeBottomSheet (
@@ -102,82 +105,84 @@ fun WeChatScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Wechat.route }
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Wechat.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Wechat.icon)
-                    },
-                    actions = {
-                        StartAppIconButton(
-                            Starter.AppPackages.WECHAT,
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                        )
-                    }
-                )
-            },
-            ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Wechat.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.Wechat.icon)
+                },
+                actions = {
+                    StartAppIconButton(
+                        backDrop,
+                        Starter.AppPackages.WECHAT,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                    )
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
 //                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            CardListItem(
+                headlineContent = { Text("由于微信的垄断，以及一些功能只设计了微信登陆方式，无法接入，只能由用户自己去微信使用")},
+                leadingContent = { Icon(painterResource(R.drawable.info),null)}
+            )
+            DividerTextExpandedWith("网页") {
                 CardListItem(
-                    headlineContent = { Text("由于微信的垄断，以及一些功能只设计了微信登陆方式，无法接入，只能由用户自己去微信使用")},
+                    headlineContent = { Text("点击展示二维码，长按复制链接，到微信打开")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
-                DividerTextExpandedWith("网页") {
-                    CardListItem(
-                        headlineContent = { Text("点击展示二维码，长按复制链接，到微信打开")},
-                        leadingContent = { Icon(painterResource(R.drawable.info),null)}
-                    )
-                    for(i in list2) {
-                        with(i) {
-                            CardListItem(
-                                headlineContent = { Text(name)} ,
-                                supportingContent = text?.let { { Text(it) } },
-                                overlineContent = { Text(url) },
-                                leadingContent = { Icon(painterResource(icon),null)},
-                                modifier = Modifier.combinedClickable(
-                                    onClick = {
-                                        showedUrl = url
-                                        showBottomSheetQRCode = true
-                                    },
-                                    onLongClick = { ClipBoardUtils.copy(url) },
-                                )
+                for(i in list2) {
+                    with(i) {
+                        CardListItem(
+                            headlineContent = { Text(name)} ,
+                            supportingContent = text?.let { { Text(it) } },
+                            overlineContent = { Text(url) },
+                            leadingContent = { Icon(painterResource(icon),null)},
+                            modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    showedUrl = url
+                                    showBottomSheetQRCode = true
+                                },
+                                onLongClick = { ClipBoardUtils.copy(url) },
                             )
-                        }
+                        )
                     }
                 }
-                DividerTextExpandedWith("小程序") {
-                    CardListItem(
-                        headlineContent = { Text("点击复制名称，自行搜索小程序使用")},
-                        leadingContent = { Icon(painterResource(R.drawable.info),null)},
-                    )
-                    for(i in list1) {
-                        with(i) {
-                            CardListItem(
-                                headlineContent = { Text(name)},
-                                supportingContent = text?.let { { Text(it) } },
-                                leadingContent = { Icon(painterResource(icon),null)},
-                                modifier = Modifier.clickable { ClipBoardUtils.copy(name) }
-                            )
-                        }
-                    }
-                }
-                BottomTip("若有更多 欢迎来信贡献")
-                InnerPaddingHeight(innerPadding,false)
             }
+            DividerTextExpandedWith("小程序") {
+                CardListItem(
+                    headlineContent = { Text("点击复制名称，自行搜索小程序使用")},
+                    leadingContent = { Icon(painterResource(R.drawable.info),null)},
+                )
+                for(i in list1) {
+                    with(i) {
+                        CardListItem(
+                            headlineContent = { Text(name)},
+                            supportingContent = text?.let { { Text(it) } },
+                            leadingContent = { Icon(painterResource(icon),null)},
+                            modifier = Modifier.clickable { ClipBoardUtils.copy(name) }
+                        )
+                    }
+                }
+            }
+            BottomTip("若有更多 欢迎来信贡献")
+            InnerPaddingHeight(innerPadding,false)
         }
+    }
 //    }
 }

@@ -6,8 +6,16 @@ import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.random.Random
 
 object Crypto {
+    @JvmStatic
+    fun uuid32(): String {
+        val chars = "0123456789abcdefghijklmnopqrstuvwxyz"
+        return (1..32)
+            .map { chars[Random.nextInt(chars.length)] }
+            .joinToString("")
+    }
     @JvmStatic
     fun encryptAES(input:String, password:String): String {
         return try {
@@ -129,4 +137,8 @@ object Crypto {
         encodeToBase64("{\"alg\":\"HS256\",\"typ\":\"JWT\"}").replace("=","") +
                 "." +encodeToBase64("{\"iss\":\"supabase\",\"ref\":\"uadgxvstybecnhqemxvj\",\"role\":\"anon\",\"iat\":1744637621,\"exp\":2060213621}").replace("=","") + "." +
                 decryptXiaoWuXing("KyeSUi9QTi1x6PYvq5W/kvSs6LWMdvq1/7cGFYlElE7ewQ7JMV1PjTZw+nfShdGb")
+}
+
+fun main() {
+    println(Crypto.uuid32())
 }

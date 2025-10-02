@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +37,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
+import com.hfut.schedule.R
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.drawBackdrop
@@ -53,12 +57,7 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.tanh
-@Composable
-fun LiquidButtonText(
-    text : String
-) {
-    Text(text, style = LocalTextStyle.current.copy(fontSize = 14.5.sp))
-}
+
 private const val SHADER = """
 uniform float2 size;
 layout(color) uniform half4 color;
@@ -72,16 +71,24 @@ half4 main(float2 coord) {
     return color * intensity;
 }"""
 
+val BUTTON_PADDING = 4.dp
+
+
 @Composable
 fun LiquidButton(
     onClick: () -> Unit,
     backdrop: Backdrop,
     modifier: Modifier = Modifier,
+    enabled : Boolean = true,
     isCircle : Boolean = false,
-    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(.45f),
+    innerPadding : Dp = if(!isCircle) 20.dp else 9.5.dp,
+    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).5f else .9f),
     content: @Composable RowScope.() -> Unit
 ) {
-    val isInteractive = true
+    val textStyle = LocalTextStyle.current.copy(
+        fontSize = 14.5.sp,
+        color = if(!enabled) Color.Gray else Color.Unspecified
+    )
     val tint = Color.Unspecified
     val animationScope = rememberCoroutineScope()
     val progressAnimation = remember { Animatable(0f) }
@@ -105,11 +112,11 @@ fun LiquidButton(
                 shape = { CircleShape },
                 effects = {
                     vibrancy()
-                    blur(1.75f.dp.toPx())
+                    blur(2f.dp.toPx())
                     refraction(12f.dp.toPx(), 24f.dp.toPx())
                 },
                 shadow = null,
-                layerBlock = if (isInteractive) {
+                layerBlock = if (enabled) {
                     {
                         val width = size.width
                         val height = size.height
@@ -146,7 +153,7 @@ fun LiquidButton(
                     if (surfaceColor.isSpecified) {
                         drawRect(surfaceColor)
                     }
-                    if (isInteractive) {
+                    if (enabled) {
                         val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
                         if (progress > 0f) {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
@@ -179,14 +186,20 @@ fun LiquidButton(
                     }
                 }
             )
-            .clickable(
-                interactionSource = null,
-                indication = if (isInteractive) null else LocalIndication.current,
-                role = Role.Button,
-                onClick = onClick
-            )
+            .let {
+                if (enabled) {
+                    it.clickable(
+                        interactionSource = null,
+                        indication = null ,
+                        role = Role.Button,
+                        onClick = onClick
+                    )
+                } else {
+                    it
+                }
+            }
             .then(
-                if (isInteractive) {
+                if (enabled) {
                     Modifier.pointerInput(animationScope) {
                         val progressAnimationSpec = spring(0.5f, 300f, 0.001f)
                         val offsetAnimationSpec = spring(1f, 300f, Offset.VisibilityThreshold)
@@ -217,9 +230,20 @@ fun LiquidButton(
                 }
             )
             .height(42f.dp)
-            .padding(horizontal = if(!isCircle) 20.dp else 9.75.dp),
+            .padding(horizontal = innerPadding),
         horizontalArrangement = Arrangement.spacedBy(8f.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
-        content = content
-    )
+    ) {
+        val c = LocalContentColor.current
+        CompositionLocalProvider(
+            LocalTextStyle provides textStyle,
+            if(!enabled) {
+                LocalContentColor provides Color.Gray.copy(.75f)
+            } else {
+                LocalContentColor provides c
+            }
+        ) {
+            content()
+        }
+    }
 }

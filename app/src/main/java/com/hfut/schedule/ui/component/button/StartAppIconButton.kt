@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.kyant.backdrop.Backdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -31,13 +32,17 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 @Composable
 fun StartAppIconButton(
+    backdrop: Backdrop,
     app : Starter.AppPackages,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    FilledTonalIconButton (
+    LiquidButton  (
+        isCircle = true,
+        backdrop = backdrop,
         onClick = { Starter.startAppLaunch(app,context) },
-        modifier = modifier
+        modifier = modifier,
+        innerPadding = 6.5.dp
     ) {
         Image(
             painterResource(app.icon),

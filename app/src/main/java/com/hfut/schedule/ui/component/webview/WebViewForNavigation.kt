@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -90,7 +91,10 @@ import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.awaitTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -417,201 +421,200 @@ fun WebViewScreenForNavigation(
         }
     }
 
-
-        CustomTransitionScaffold (
-            enablePredictive = false,
-            route = route,
-            navHostController = navController,
-            topBar = {
-                AnimatedVisibility(
-                    visible = !fullScreen,
-                    enter = AppAnimationManager.toTopAnimation.enter,
-                    exit = AppAnimationManager.toTopAnimation.exit
-                ) {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = topColor ?: MaterialTheme.colorScheme.surface,
-                            titleContentColor = topBarTitleColor,
-                            scrolledContainerColor = Color.Transparent,
-                        ),
-                        actions = {
-                            Row{
-                                if(!visible) {
-                                    IconButton(
-                                        onClick = { visible = true }
-                                    ) {
-                                        Icon(painterResource(R.drawable.more_vert),null, tint = topBarTitleColor)
-                                    }
-                                }
-                            }
-                        },
-                        navigationIcon = {
-                            WebViewBackIcon(webView,icon,navController,route,topBarTitleColor)
-                        },
-                        title = {
-                            Column {
-                                ScrollText(currentTitle)
-                                ScrollText(
-                                    getPureUrl(currentUrl),
-                                    modifier = Modifier.padding(start = 2.dp),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-                        },
-                    )
-                }
-            },
-        ) { innerPadding ->
-            val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
-//            val top = innerPadding.calculateTopPadding().value.toInt()
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                AnimatedVisibility(
-                    visible = visible,
-                    enter = AppAnimationManager.hiddenRightAnimation.enter,
-                    exit = AppAnimationManager.hiddenRightAnimation.exit,
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd).zIndex(1f)
-                ) {
-                    VerticalFloatingToolbar (
-                        expanded = true,
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .padding(horizontal = APP_HORIZONTAL_DP)
-                    ) {
-                        tools()
-                        IconButton(onClick = { visible = false }) { Icon(
-                            painterResource(id = R.drawable.visibility_off), contentDescription = "") }
-                    }
-                }
-                if(loading) {
-                    LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter).padding(innerPadding).zIndex(2f)
-                    )
-                }
-                AndroidView(
-                    factory = { context ->
-                        WebView(context).apply {
-                            settings.javaScriptEnabled = true
-                            settings.domStorageEnabled = true
-                            settings.builtInZoomControls = true
-                            settings.displayZoomControls = false
-                            settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                            enableSlowWholeDocumentDraw()
-                            setWebContentsDebuggingEnabled(true)
-                            settings.safeBrowsingEnabled = false
-                            // 深色模式
-                            if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                                // Android 13+
-                                WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
-                            } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                                // Android 10‑12
-                                val mode = if (isDark)
-                                    WebSettingsCompat.FORCE_DARK_ON
-                                else
-                                    WebSettingsCompat.FORCE_DARK_OFF
-                                WebSettingsCompat.setForceDark(settings, mode)
-                            }
-
-                            // 启用 Cookie
-                            val cookieManager = CookieManager.getInstance()
-                            cookieManager.setAcceptCookie(true)
-                            cookieManager.setAcceptThirdPartyCookies(this, true)
-                            // 设置 Cookie
-                            // **清除已有 Cookie**
-                            cookieManager.removeSessionCookies(null)
-                            cookieManager.removeAllCookies(null)
-                            cookieManager.flush()
-
-                            // **异步设置 Cookie，并确保生效后再加载 URL**
-                            cookies?.let {
-                                cookieManager.setCookie(url, it) {
-                                    cookieManager.flush()
-                                    post {
-                                        loadUrl(url)
-                                    }
-                                }
-                            } ?: run {
-                                loadUrl(url) // 没有 Cookie 直接加载
-                            }
-                            // 标题获取
-                            if(!currentUrl.startsWith("file://")) {
-                                webChromeClient = object : WebChromeClient() {
-                                    override fun onReceivedTitle(view: WebView?, title: String?) {
-                                        if (title != null) {
-                                            currentTitle = title
-                                        }
-                                        super.onReceivedTitle(view, title)
-                                    }
-                                }
-                            }
-
-                            webViewClient = object : WebViewClient() {
-                                override fun onPageFinished(view: WebView?, url: String?) {
-                                    super.onPageFinished(view, url)
-                                    if (url != null) {
-                                        currentUrl = url
-                                    }
-                                    webView = this@apply
-                                    if (isDark && webViewDark) {
-                                        val js = FORCE_DARK_JS.trimIndent()
-                                        view?.evaluateJavascript(js, null)
-                                    }
-
-                                    selectColor(view) { topColor = it }
-                                    // document.body.style.paddingTop = '${top}px';
-                                    // 注入 JS，为网页内容添加 padding（单位 px）
-                                    view?.evaluateJavascript(getPaddingPxJs(null,bottom), null)
-                                    loading = false
-                                }
-
-                                override fun shouldInterceptRequest(
-                                    view: WebView?,
-                                    request: WebResourceRequest?
-                                ): WebResourceResponse? {
-                                    val req = request
-                                    if(req != null) {
-                                        val c = req.requestHeaders["Cookie"]
-                                        if(currentUrl.startsWith(MyApplication.PE_URL)) {
-                                            cookieManager.setCookie(req.url.toString(), cookies)
-                                            cookieManager.flush()
-                                        } else
-                                        if(cookies != null && c?.contains(cookies) == false) {
-                                            cookieManager.setCookie(req.url.toString(), cookies)
-                                            cookieManager.flush()
-                                        }
-                                    }
-
-                                    return super.shouldInterceptRequest(view, request)
-                                }
-                                override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                                    loading = true
-                                    val urlS = request?.url.toString()
-
-                                    if (urlS.contains("download")) { // 识别下载链接
-                                        Starter.startWebUrl(context,urlS)
-                                        return true // 拦截 WebView 处理
-                                    }
-
-                                    return false // 继续让 WebView 处理
-                                }
-                            }
-                            // 监听 WebView 滚动事件
-                            setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-                                if (scrollY > oldScrollY) {
-                                    visible = false // 向下滚动时隐藏 Toolbar
-                                } else if (scrollY < oldScrollY) {
-//                                visible = true // 向上滚动时显示 Toolbar
+    CustomTransitionScaffold (
+        enablePredictive = false,
+        route = route,
+        navHostController = navController,
+        topBar = {
+            AnimatedVisibility(
+                visible = !fullScreen,
+                enter = AppAnimationManager.toTopAnimation.enter,
+                exit = AppAnimationManager.toTopAnimation.exit
+            ) {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = topColor ?: MaterialTheme.colorScheme.surface,
+                        titleContentColor = topBarTitleColor,
+                        scrolledContainerColor = Color.Transparent,
+                    ),
+                    actions = {
+                        Row{
+                            if(!visible) {
+                                IconButton(
+                                    onClick = { visible = true }
+                                ) {
+                                    Icon(painterResource(R.drawable.more_vert),null, tint = topBarTitleColor)
                                 }
                             }
                         }
                     },
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
+                    navigationIcon = {
+                        WebViewBackIcon(webView,icon,navController,route,topBarTitleColor)
+                    },
+                    title = {
+                        Column {
+                            ScrollText(currentTitle)
+                            ScrollText(
+                                getPureUrl(currentUrl),
+                                modifier = Modifier.padding(start = 2.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                    },
                 )
             }
+        },
+    ) { innerPadding ->
+        val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
+//            val top = innerPadding.calculateTopPadding().value.toInt()
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            AnimatedVisibility(
+                visible = visible,
+                enter = AppAnimationManager.hiddenRightAnimation.enter,
+                exit = AppAnimationManager.hiddenRightAnimation.exit,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd).zIndex(1f)
+            ) {
+                VerticalFloatingToolbar (
+                    expanded = true,
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                ) {
+                    tools()
+                    IconButton(onClick = { visible = false }) { Icon(
+                        painterResource(id = R.drawable.visibility_off), contentDescription = "") }
+                }
+            }
+            if(loading) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth().align(Alignment.TopCenter).padding(innerPadding).zIndex(2f)
+                )
+            }
+            AndroidView(
+                factory = { context ->
+                    WebView(context).apply {
+                        settings.javaScriptEnabled = true
+                        settings.domStorageEnabled = true
+                        settings.builtInZoomControls = true
+                        settings.displayZoomControls = false
+                        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        enableSlowWholeDocumentDraw()
+                        setWebContentsDebuggingEnabled(true)
+                        settings.safeBrowsingEnabled = false
+                        // 深色模式
+                        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
+                            // Android 13+
+                            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
+                        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
+                            // Android 10‑12
+                            val mode = if (isDark)
+                                WebSettingsCompat.FORCE_DARK_ON
+                            else
+                                WebSettingsCompat.FORCE_DARK_OFF
+                            WebSettingsCompat.setForceDark(settings, mode)
+                        }
+
+                        // 启用 Cookie
+                        val cookieManager = CookieManager.getInstance()
+                        cookieManager.setAcceptCookie(true)
+                        cookieManager.setAcceptThirdPartyCookies(this, true)
+                        // 设置 Cookie
+                        // **清除已有 Cookie**
+                        cookieManager.removeSessionCookies(null)
+                        cookieManager.removeAllCookies(null)
+                        cookieManager.flush()
+
+                        // **异步设置 Cookie，并确保生效后再加载 URL**
+                        cookies?.let {
+                            cookieManager.setCookie(url, it) {
+                                cookieManager.flush()
+                                post {
+                                    loadUrl(url)
+                                }
+                            }
+                        } ?: run {
+                            loadUrl(url) // 没有 Cookie 直接加载
+                        }
+                        // 标题获取
+                        if(!currentUrl.startsWith("file://")) {
+                            webChromeClient = object : WebChromeClient() {
+                                override fun onReceivedTitle(view: WebView?, title: String?) {
+                                    if (title != null) {
+                                        currentTitle = title
+                                    }
+                                    super.onReceivedTitle(view, title)
+                                }
+                            }
+                        }
+
+                        webViewClient = object : WebViewClient() {
+                            override fun onPageFinished(view: WebView?, url: String?) {
+                                super.onPageFinished(view, url)
+                                if (url != null) {
+                                    currentUrl = url
+                                }
+                                webView = this@apply
+                                if (isDark && webViewDark) {
+                                    val js = FORCE_DARK_JS.trimIndent()
+                                    view?.evaluateJavascript(js, null)
+                                }
+
+                                selectColor(view) { topColor = it }
+                                // document.body.style.paddingTop = '${top}px';
+                                // 注入 JS，为网页内容添加 padding（单位 px）
+                                view?.evaluateJavascript(getPaddingPxJs(null,bottom), null)
+                                loading = false
+                            }
+
+                            override fun shouldInterceptRequest(
+                                view: WebView?,
+                                request: WebResourceRequest?
+                            ): WebResourceResponse? {
+                                val req = request
+                                if(req != null) {
+                                    val c = req.requestHeaders["Cookie"]
+                                    if(currentUrl.startsWith(MyApplication.PE_URL)) {
+                                        cookieManager.setCookie(req.url.toString(), cookies)
+                                        cookieManager.flush()
+                                    } else
+                                        if(cookies != null && c?.contains(cookies) == false) {
+                                            cookieManager.setCookie(req.url.toString(), cookies)
+                                            cookieManager.flush()
+                                        }
+                                }
+
+                                return super.shouldInterceptRequest(view, request)
+                            }
+                            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                                loading = true
+                                val urlS = request?.url.toString()
+
+                                if (urlS.contains("download")) { // 识别下载链接
+                                    Starter.startWebUrl(context,urlS)
+                                    return true // 拦截 WebView 处理
+                                }
+
+                                return false // 继续让 WebView 处理
+                            }
+                        }
+                        // 监听 WebView 滚动事件
+                        setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+                            if (scrollY > oldScrollY) {
+                                visible = false // 向下滚动时隐藏 Toolbar
+                            } else if (scrollY < oldScrollY) {
+//                                visible = true // 向上滚动时显示 Toolbar
+                            }
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
+            )
         }
+    }
 //    }
 }
 

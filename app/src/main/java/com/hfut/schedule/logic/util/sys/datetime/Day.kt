@@ -73,13 +73,13 @@ fun getCelebration() : Celebration {
         return Celebration(true,"生日快乐",2L)
     }
     if(isInGraduation()) {
-        return Celebration(true,"毕业季",1L)
+        return Celebration(true,"毕业季",0L)
     }
     if(isAppBirthday()) {
-        return Celebration(true,"${getAppAge()}周年",1L)
+        return Celebration(true,"${getAppAge()}周年",0L)
     }
     getTodayHoliday()?.let {
-        return Celebration(true,it,1L)
+        return Celebration(true,it,0L)
     }
     if(getAPICelebration()) {
         return Celebration(true,null,1L)

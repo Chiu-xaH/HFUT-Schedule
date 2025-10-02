@@ -539,10 +539,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "玻璃材质按钮(Beta)")
+                        Text(text = "玻璃材质(Beta)")
                     },
                     supportingContent = {
-                        Text(text = "将部分顶部或底部上的按钮渲染为带折射的玻璃材质效果" + (if(!AppVersion.CAN_LIQUID_GLASS) "(需为Android 13+)" else "") )
+                        Text(text = "将部分位于内容之上的容器渲染为带折射的玻璃材质效果" + (if(!AppVersion.CAN_LIQUID_GLASS) "(需为Android 13+)" else "") )
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.filter_vintage),null)

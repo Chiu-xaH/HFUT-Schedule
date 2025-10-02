@@ -11,8 +11,10 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,7 +57,9 @@ import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
@@ -66,9 +70,12 @@ import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 private val items = listOf(
@@ -134,67 +141,73 @@ fun GradeScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-        CustomTransitionScaffold (
-            route = targetRoute,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navTopController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Grade.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navTopController,targetRoute,AppNavRoute.Grade.icon)
-                    },
-                    actions = {
-                        Row {
-                            if(!ifSaved) {
-                                IconButton(onClick = {
-                                    showSearch = !showSearch
-                                }) {
-                                    Icon(painter = painterResource(id = R.drawable.search), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
-                                }
+    val backDrop = rememberLayerBackdrop()
+    CustomTransitionScaffold (
+        route = targetRoute,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navTopController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Grade.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navTopController,targetRoute,AppNavRoute.Grade.icon)
+                },
+                actions = {
+                    Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        if(!ifSaved) {
+                            LiquidButton (
+                                onClick = { showSearch = !showSearch },
+                                isCircle = true,
+                                backdrop = backDrop
+                            ) {
+                                Icon(painter = painterResource(id = R.drawable.search),null)
                             }
-                            IconButton(onClick = {
-                                showBottomSheet = true
-                            }) {
-                                Icon(painter = painterResource(id = R.drawable.info), contentDescription = "",tint = MaterialTheme.colorScheme.primary)
-                            }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                        }
+                        LiquidButton(
+                            onClick = { showBottomSheet = true } ,
+                            isCircle = true,
+                            backdrop = backDrop
+                        ) {
+                            Icon(painter = painterResource(id = R.drawable.info),null)
                         }
                     }
-                )
-            },
-            bottomBar = {
-                HazeBottomBar(hazeState,items,navController)
-            }
-        ) { innerPadding ->
-            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
-            NavHost(navController = navController,
-                startDestination = GradeBarItems.GRADE.name,
-                enterTransition = { animation.enter },
-                exitTransition = { animation.exit },
-                modifier = Modifier.hazeSource(state = hazeState)
-            ) {
-                composable(GradeBarItems.GRADE.name) {
-                    Scaffold(
-                    ) {
-                        if (ifSaved) GradeItemUI(vm,innerPadding)
-                        else GradeItemUIJXGLSTU(innerPadding,vm,showSearch,hazeState)
-                    }
                 }
-                composable(GradeBarItems.COUNT.name) {
-                    Scaffold(
-                    ) {
-                        AnalysisScreen(vm,innerPadding)
+            )
+        },
+        bottomBar = {
+            HazeBottomBar(hazeState,items,navController)
+        }
+    ) { innerPadding ->
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+
+        NavHost(navController = navController,
+            startDestination = GradeBarItems.GRADE.name,
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(state = hazeState)
+        ) {
+            composable(GradeBarItems.GRADE.name) {
+                Scaffold(
+                ) {
+                    if (ifSaved) GradeItemUI(vm,innerPadding)
+                    else GradeItemUIJXGLSTU(innerPadding,vm,showSearch,hazeState)
+                }
+            }
+            composable(GradeBarItems.COUNT.name) {
+                Scaffold(
+                ) {
+                    AnalysisScreen(vm,innerPadding)
 //                        GradeCountUI(vm,innerPadding)
-                    }
                 }
             }
         }
+    }
 //    }
 
 }

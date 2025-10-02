@@ -49,7 +49,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.button.LiquidButtonText
+
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardBottomButtons
@@ -124,7 +124,7 @@ fun WebVpnScreen(
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
 //                        Icon(painterResource(R.drawable.search),null)
-                        LiquidButtonText("${if(GlobalUIStateHolder.webVpn) "已" else "未"}登录WebVpn")
+                        Text("${if(GlobalUIStateHolder.webVpn) "已" else "未"}登录WebVpn")
                     }
 //                        FilledTonalButton(
 //                            onClick = {

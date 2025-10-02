@@ -37,26 +37,6 @@ interface LoginService {
         @Query("service") url : String? = CasLoginType.JXGLSTU.service
     ) : Call<ResponseBody>
 
-   //信息门户登录
-//    @GET("cas/oauth2.0/authorize?response_type=code&client_id=BsHfutEduPortal&redirect_uri=https%3A//one.hfut.edu.cn/home/index")
-//    @Headers(MyApplication.PC_UA)
-//    fun oneGoto(
-//        @Header("Cookie") cookiesWithTgc : String
-//    ) : Call<ResponseBody>
-//    //慧新易校
-//    @GET("cas/oauth2.0/authorize?response_type=code&client_id=Hfut2023Ydfwpt&redirect_uri=http%3A%2F%2F121.251.19.62%2Fberserker-auth%2Fcas%2Foauth2url%3Foauth2url%3Dhttp%3A%2F%2F121.251.19.62%2Fberserker-base%2Fredirect%3FappId%3D24%26type%3Dapp")
-//    @Headers(MyApplication.PC_UA)
-//    fun gotoHuiXin(
-//        @Header("Cookie") cookiesWithTgc : String
-//    ) : Call<ResponseBody>
-
-
-//    @GET("cas/login")
-//    fun loginStu(
-//        @Query("service") platform : String = "https://stu.hfut.edu.cn/xsfw/sys/swmzhcptybbapp/*default/index.do",
-//        @Header("Cookie") cookie : String
-//    ) : Call<ResponseBody>
-
     // 待重构 这个接口可以供教务、信息门户、学工系统等登录，传入不同的serviceURL，但是早期不会这些，写的时候没解耦合，懒得重构了，等有空的
     @GET("cas/login")
     @Headers(MyApplication.PC_UA)
@@ -76,15 +56,27 @@ interface LoginService {
 
 
     @GET("cas/password/getContactInfo")
-    fun getUserInfo(
+    fun queryExist(
         @Query("username") username : String
     ) : Call<ResponseBody>
-    // https://community.hfut.edu.cn/
-    // https://stu.hfut.edu.cn/xsfw/sys/swmzhcptybbapp/*default/index.do
-    // http://jxglstu.hfut.edu.cn/eams5-student/neusoft-sso/login
 
-    //社区登录
-//    @GET("cas/login?service=https%3A%2F%2Fcommunity.hfut.edu.cn%2F")
-//    @Headers(MyApplication.PC_UA)
-//    fun loginCommunity(@Header("Cookie") Cookie : String) : Call<ResponseBody>
+    @GET("cas/app/query")
+    fun queryVerified(
+        @Query("uuid") uuid : String
+    ) : Call<ResponseBody> // VERIFIED
+
+    @GET("cas/app/qrCode")
+    fun postUuid(
+        @Query("uuid") uuid : String
+    ) : Call<ResponseBody>// success
+
+    @GET("cas/app/saveTGC")
+    fun getTgc(
+        @Query("uuid") uuid : String
+    ) : Call<ResponseBody> // Set-Cookie//TGC=
+
+    // 用TGC=XX作为Cookie，发送loginGoTo或loginGoToOauth登录其他平台
+
+
+
 }

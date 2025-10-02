@@ -14,10 +14,6 @@ fun preprocessCaptcha(bitmap: Bitmap): Bitmap {
         val height = bitmap.height
         val dst = createBitmap(width, height)
 
-        // 红色阈值参数（可调）
-        val minRed = 120       // 红色强度阈值
-        val diff = 50          // 红色与其他通道的差值要求
-
         for (y in 0 until height) {
             for (x in 0 until width) {
                 val pixel = bitmap[x, y]
@@ -25,12 +21,10 @@ fun preprocessCaptcha(bitmap: Bitmap): Bitmap {
                 val g = Color.green(pixel)
                 val b = Color.blue(pixel)
 
-                // 判断是否为红色像素
-                if (r > minRed && r > g + diff && r > b + diff) {
-                    dst[x, y] = Color.BLACK // 保留为黑色
-                } else {
-                    dst[x, y] = Color.WHITE // 背景置白
-                }
+                // 灰度化
+                val gray = (0.299 * r + 0.587 * g + 0.114 * b).toInt()
+                val newPixel = Color.rgb(gray, gray, gray)
+                dst[x, y] = newPixel
             }
         }
 

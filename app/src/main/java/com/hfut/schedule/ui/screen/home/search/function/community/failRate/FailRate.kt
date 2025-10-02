@@ -48,6 +48,9 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -108,61 +111,65 @@ fun FailRateScreen(
     }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                Column (
-                    modifier = Modifier.topBarBlur(hazeState),
-                ){
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.FailRate.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route, AppNavRoute.FailRate.icon)
-                        }
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("输入科目名称" ) },
-                            singleLine = true,
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {
-                                        scope.launch { refreshNetwork() }
-                                    }) {
-                                    Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
-                                }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
+    val backdrop = rememberLayerBackdrop()
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
+            Column (
+                modifier = Modifier.topBarBlur(hazeState),
+            ){
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.FailRate.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.FailRate.icon)
                     }
-                }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
-            ) {
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                    FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding,hazeState)
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                        ,
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("输入科目名称" ) },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    scope.launch { refreshNetwork() }
+                                }) {
+                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
                 }
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .backDropSource(backdrop)
+                .fillMaxSize()
+        ) {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+                FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding,hazeState)
+            }
         }
+    }
 //    }
 }
 

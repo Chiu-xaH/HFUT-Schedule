@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -45,6 +46,9 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
+
 import com.hfut.schedule.ui.component.button.StartAppIconButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -57,9 +61,16 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.refraction
+import com.kyant.backdrop.effects.vibrancy
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -100,55 +111,69 @@ fun StuTodayCampusScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.StuTodayCampus.route }
     val context = LocalContext.current
-
+    val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf("") }
 
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                Column (
-                    modifier = Modifier.topBarBlur(hazeState),
-                ){
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.StuTodayCampus.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route, AppNavRoute.StuTodayCampus.icon)
-                        },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                StartAppIconButton(Starter.AppPackages.TODAY_CAMPUS)
-//                                Spacer(Modifier.width(CARD_NORMAL_DP))
-                                FilledTonalButton(onClick = {
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+        navHostController = navController,
+        topBar = {
+            Column (
+                modifier = Modifier.topBarBlur(hazeState),
+            ){
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.StuTodayCampus.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.StuTodayCampus.icon)
+                    },
+                    actions = {
+                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                            StartAppIconButton(backDrop,Starter.AppPackages.TODAY_CAMPUS)
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                backdrop = backDrop,
+                                onClick = {
                                     Starter.startWebUrl(context,MyApplication.STU_URL)
-                                }) {
-                                    Text("学工系统")
-                                }
+                                },
+                            ) {
+                                Text("学工系统")
                             }
+//                            FilledTonalButton(onClick = {
+//                                Starter.startWebUrl(context,MyApplication.STU_URL)
+//                            }) {
+//                                Text("学工系统")
+//                            }
                         }
-                    )
-                    CustomTextField(
-                        input = input,
-                        label = { Text("检索功能") },
-                        leadingIcon = { Icon(painterResource(R.drawable.search),null) },
-                    ) {
-                        input = it
                     }
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                )
+                val s = MaterialTheme.shapes.medium
+                CustomTextField(
+                    modifier = Modifier
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
+                    input = input,
+                    label = { Text("检索功能") },
+                    leadingIcon = { Icon(painterResource(R.drawable.search),null) },
+                ) {
+                    input = it
                 }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().hazeSource(hazeState)
-            ) {
-                StuAppsScreen(vm,input,innerPadding,navController)
+                Spacer(Modifier.height(CARD_NORMAL_DP))
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+        ) {
+            StuAppsScreen(vm,input,innerPadding,navController)
         }
+    }
 //    }
 }
 

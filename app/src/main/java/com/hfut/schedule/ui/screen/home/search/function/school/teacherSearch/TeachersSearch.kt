@@ -43,12 +43,20 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.refraction
+import com.kyant.backdrop.effects.vibrancy
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -99,77 +107,83 @@ fun TeacherSearchScreen(
         vm.teacherSearchData.emitPrepare()
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState, )
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.TeacherSearch.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route, AppNavRoute.TeacherSearch.icon)
-                        },
-                        actions = {
-                            FilledTonalIconButton(
-                                onClick = { scope.launch { refreshNetwork() } },
-                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                            ) {
-                                Icon(painterResource(R.drawable.search), contentDescription = "")
-                            }
-                        }
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = APP_HORIZONTAL_DP),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(.5f),
-                            value = name,
-                            onValueChange = {
-                                name = it
-                            },
-                            label = { Text("姓名" ) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        TextField(
-                            modifier = Modifier
-                                .weight(.5f),
-                            value = direction,
-                            onValueChange = {
-                                direction = it
-                            },
-                            label = { Text("研究方向" ) },
-                            singleLine = true,
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
-                    }
-                }
-
-            },
-        ) { innerPadding ->
+    val backDrop = rememberLayerBackdrop()
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
             Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .fillMaxSize()
+                modifier = Modifier.topBarBlur(hazeState, )
             ) {
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
-                    TeacherListUI(vm,innerPadding)
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.TeacherSearch.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.TeacherSearch.icon)
+                    },
+                    actions = {
+                        LiquidButton(
+                            backdrop = backDrop,
+                            isCircle = true,
+                            onClick = { scope.launch { refreshNetwork() } },
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                        ) {
+                            Icon(painterResource(R.drawable.search), contentDescription = "")
+                        }
+                    }
+                )
+                val s = MaterialTheme.shapes.medium
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                            .weight(.5f),
+                        value = name,
+                        onValueChange = {
+                            name = it
+                        },
+                        label = { Text("姓名" ) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    TextField(
+                        modifier = Modifier
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                            .weight(.5f),
+                        value = direction,
+                        onValueChange = {
+                            direction = it
+                        },
+                        label = { Text("研究方向" ) },
+                        singleLine = true,
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
                 }
             }
+
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+                TeacherListUI(vm,innerPadding)
+            }
         }
+    }
 //    }
 }
 

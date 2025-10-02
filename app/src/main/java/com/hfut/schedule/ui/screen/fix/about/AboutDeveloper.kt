@@ -267,6 +267,6 @@ fun About(vm : NetWorkViewModel) {
                 }
             }
         }
-        Party(show = !loading)
+//        Party(show = !loading)
     }
 }

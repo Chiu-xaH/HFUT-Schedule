@@ -27,6 +27,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.button.LiquidButton
+
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -34,8 +36,10 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.cube.sub.update.VersionInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -78,41 +82,46 @@ fun VersionInfoScreen(
             }
         }
     }
-
+    val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.VersionInfo.route }
-        CustomTransitionScaffold (
-            route = route,
-            navHostController = navController,
-            roundShape = MaterialTheme.shapes.medium,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.VersionInfo.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.VersionInfo.icon)
-                    },
-                    actions = {
-                        FilledTonalButton(onClick = { showBottomSheetUpdate = true }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                            Text("历史更新日志")
-                        }
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        roundShape = MaterialTheme.shapes.medium,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.VersionInfo.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.VersionInfo.icon)
+                },
+                actions = {
+                    LiquidButton (
+                        onClick = { showBottomSheetUpdate = true },
+                        modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                        backdrop = backDrop
+                    ) {
+                        Text("历史更新日志")
                     }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                VersionInfo()
-                InnerPaddingHeight(innerPadding,false)
-            }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            VersionInfo()
+            InnerPaddingHeight(innerPadding,false)
         }
+    }
 //    }
 }

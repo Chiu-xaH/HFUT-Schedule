@@ -161,6 +161,32 @@ suspend fun DrawerState.animationClose() = this.animateTo(DrawerValue.Closed, tw
 suspend fun DrawerState.animationOpen() = this.animateTo(DrawerValue.Open, spring(dampingRatio = 0.8f, stiffness = 125f))
 
 
+
+private fun haveImportantUpdate() : Boolean {
+    try {
+        val lastVersionName =  prefs.getString("versionName", "上版本") ?: return true
+        val nowVersionName = AppVersion.getVersionName()
+
+        if(lastVersionName == nowVersionName) {
+            return false
+        }
+
+        val lastVersion = lastVersionName.split('.')
+        if(lastVersion.size < 2) {
+            return false
+        }
+
+        val nowVersion = nowVersionName.split('.')
+        if(nowVersion.size < 2) {
+            return false
+        }
+
+        return !(nowVersion[1] == lastVersion[1] && nowVersion[0] == lastVersion[0])
+    } catch (e : Exception) {
+        e.printStackTrace()
+        return false
+    }
+}
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("NewApi")
 @Composable
@@ -182,7 +208,7 @@ fun MainHost(
     val first by remember { mutableStateOf(
         if(prefs.getBoolean("canUse",false)) {
             startRoute
-                ?: if(prefs.getString("versionName", "上版本") == AppVersion.getVersionName()) {
+                ?: if(!haveImportantUpdate()) {
                     AppNavRoute.Home.route
                 } else {
                     AppNavRoute.UpdateSuccess.route
@@ -326,7 +352,7 @@ fun MainHost(
                 else it
             }
         ) {
-            Party(show = celebration.use, timeSecond = celebration.time*500)
+            Party(show = celebration.use && celebration.time != 0L, timeSecond = celebration.time*500)
             // 磁钉体系
             TransitionNavHost(
                 navController = navController,
@@ -374,7 +400,7 @@ fun MainHost(
                 transitionComposable(AppNavRoute.UseAgreement.route) {
                     Box {
                         UseAgreementScreen(navController)
-                        Party()
+//                        Party()
                     }
                 }
                 // 更新完成引导

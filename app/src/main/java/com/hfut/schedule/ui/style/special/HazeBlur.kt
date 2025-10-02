@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -41,6 +42,10 @@ import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.refraction
+import com.kyant.backdrop.effects.vibrancy
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
@@ -149,6 +154,22 @@ fun Modifier.backDropSource(
     }
 }
 
+fun Modifier.containerBackDrop(
+    backdrop: Backdrop,
+    shape: Shape
+) : Modifier {
+    return this.drawBackdrop(
+        highlight = null,
+        backdrop = backdrop,
+        shape = { shape },
+        effects = {
+            vibrancy()
+            blur(7.5f.dp.toPx())
+            refraction(15f.dp.toPx(), 25f.dp.toPx())
+        },
+        shadow = null,
+    )
+}
 @Composable
 fun Modifier.normalTopBarBlur(
     hazeState: HazeState,

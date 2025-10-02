@@ -98,7 +98,6 @@ fun DormitoryScoreScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
 //    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.DormitoryScore.route }
-
     val titles = remember { listOf("合肥","宣城") }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampusRegion()) {

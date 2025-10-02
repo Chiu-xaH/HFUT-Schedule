@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.community.workRest
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -44,34 +42,28 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-   
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.button.LiquidButtonText
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigateForTransition
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.kyant.backdrop.backdrops.layerBackdrop
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -252,7 +244,7 @@ fun TimeTableScreen(
                         backdrop = backdrop,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
-                        LiquidButtonText("校历")
+                        Text("校历")
                     }
 //                    FilledTonalButton(
 //                        onClick = {

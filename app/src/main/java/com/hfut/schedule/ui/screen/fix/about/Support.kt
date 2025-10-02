@@ -65,17 +65,17 @@ fun Support(innerPadding : PaddingValues) {
             true,true,true,true,true,true,true,true
         ),"Android 8-11 无顶栏、底栏模糊，且模糊渲染稍缓\nAndroid 12 无底栏模糊，且顶栏模糊渐变效果较差"),
         SupportItemBean("预测式返回","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%E9%A2%84%E6%B5%8B%E5%BC%8F%E8%BF%94%E5%9B%9E", listOf(
-            false,false,true,false,false,true,null,true
+            false,true,true,true,true,true,true,true
         )),
         SupportItemBean("16KB页大小","Android 15+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#16kb%E9%A1%B5%E5%A4%A7%E5%B0%8F", listOf(
-            false,false,null,null,null,null,null,true
-        )),
-        SupportItemBean("进度实时通知","Android 16+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             false,null,null,null,null,null,null,true
         )),
         SupportItemBean("运动模糊","Android 12+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             true,true,true,true,true,true,true,true
-        ),"Android 12在启动台静止时无实时模糊")
+        )),
+        SupportItemBean("液态玻璃","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+            false,true,true,true,true,true,true,true
+        ))
     )
     LazyColumn(modifier = Modifier.padding(innerPadding)) {
         item {

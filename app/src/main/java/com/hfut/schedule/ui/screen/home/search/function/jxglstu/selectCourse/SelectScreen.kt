@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -84,6 +85,9 @@ import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
+
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
@@ -106,11 +110,13 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Api
 import com.hfut.schedule.ui.screen.home.updateCourses
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -163,12 +169,12 @@ fun SelectCourseScreen(
             refreshNetwork(false)
         }
     })
+    val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
     CustomTransitionScaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
         navHostController = navController,
         topBar = {
             MediumTopAppBar(
@@ -181,23 +187,32 @@ fun SelectCourseScreen(
                 },
                 actions = {
                     Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                        FilledTonalIconButton(onClick = {
-                            scope.launch{ updateCourses(vm, vmUI) }
-                            showToast("已刷新课表与课程汇总")
-                        }) {
+                        LiquidButton (
+                            onClick = {
+                                scope.launch{
+                                    updateCourses(vm, vmUI)
+                                    showToast("已刷新课表与课程汇总")
+                                }
+                            },
+                            backdrop = backDrop,
+                            isCircle = true
+                        ) {
                             Icon(painterResource(R.drawable.event_repeat),null)
                         }
-                        FilledTonalButton(onClick = {
-                            scope.launch {
-                                Starter.startWebView(
-                                    navController,
-                                    url = url,
-                                    title = "教务系统",
-                                    cookie = cookie
-                                )
-                            }
-                        },
-                            modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url))
+                        Spacer(Modifier.width(BUTTON_PADDING))
+                        LiquidButton (
+                            onClick = {
+                                scope.launch {
+                                    Starter.startWebView(
+                                        navController,
+                                        url = url,
+                                        title = "教务系统",
+                                        cookie = cookie
+                                    )
+                                }
+                            },
+                            modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url)),
+                            backdrop = backDrop
                         ) {
                             Text(text = "冲突预览")
                         }
@@ -208,6 +223,7 @@ fun SelectCourseScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .backDropSource(backDrop)
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {

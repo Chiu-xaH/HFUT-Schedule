@@ -36,7 +36,7 @@ import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.button.LiquidButtonText
+
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -92,7 +92,7 @@ fun ClassmatesScreen(
                         },
                         backdrop = backdrop
                     ) {
-                        LiquidButtonText(
+                        Text(
                             if(nameSort)"按姓名" else "按学号"
                         )
                     }

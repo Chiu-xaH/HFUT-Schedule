@@ -53,20 +53,18 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 引入液态玻璃按钮","暂时在同班同学、作息、WebVpn三个界面进行测试，需Android 13+")
+            UpdateItems("新增 自动CAS登录")
+            UpdateItems("新增 引入液态玻璃按钮","需Android 13+")
             UpdateItems("新增 转场动画支持调整为Level0","削弱效果，以减少等待时间")
             UpdateItems("优化 转场动画的容器透明度过渡、首次卡顿问题")
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
 //            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
-//            UpdateItems("新增 自动刷新登录状态","使用CAS的二维码接口再后台进行自我授权登录")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")
 //            UpdateItems("修复 课程表界面捏合手势不灵敏的Bug")
-//            UpdateItems("修复 借阅图书界面崩溃的Bug")
 //            UpdateItems("修复 从聚焦首页转场后再回退翻页重置的Bug")
-//            UpdateItems("修复 深色模式下预测式返回或转场动画背景出现异常反色的Bug")
 //            UpdateItems("修复 首次开屏时层级模糊暂时失效的Bug")
 //            UpdateItems("新增 电费记录","位于 查询中心-寝室电费，可记录当前时间及电费余额于本地，供回溯")
 //            UpdateItems("新增 启动台支持固定项目，长按最近记录中的项目")

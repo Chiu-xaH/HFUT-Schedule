@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMap
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
@@ -65,12 +67,17 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
+
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -106,7 +113,7 @@ fun WorkScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Work.route }
-
+    val backDrop = rememberLayerBackdrop()
     var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
 
     val types = remember { listOf(
@@ -121,67 +128,73 @@ fun WorkScreen(
     val pagerState = rememberPagerState(pageCount = { types.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                Column (
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.Work.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route, AppNavRoute.Work.icon)
-                        },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                val url = when(campus) {
-                                    CampusRegion.HEFEI -> MyApplication.WORK_URL
-                                    CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
-                                }
-                                val iconRoute =  AppNavRoute.WebView.shareRoute(url)
-                                FilledTonalIconButton(
-                                    onClick = {
-                                        scope.launch {
-                                            Starter.startWebView(
-                                                navController,
-                                                url = url,
-                                                title = "就业网(${campus.description})",
-                                                icon = R.drawable.net,
-                                                transplantBackground = true
-                                            )
-                                        }
-                                    },
-                                ) {
-                                    Icon(painterResource(R.drawable.net), contentDescription = null,modifier = Modifier.iconElementShare( route = iconRoute))
-                                }
-                                FilledTonalButton(
-                                    onClick = {
-                                        campus = when(campus) {
-                                            CampusRegion.HEFEI -> CampusRegion.XUANCHENG
-                                            CampusRegion.XUANCHENG -> CampusRegion.HEFEI
-                                        }
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            Column (
+                modifier = Modifier.topBarBlur(hazeState, ),
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Work.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Work.icon)
+                    },
+                    actions = {
+                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                            val url = when(campus) {
+                                CampusRegion.HEFEI -> MyApplication.WORK_URL
+                                CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
+                            }
+                            val iconRoute =  AppNavRoute.WebView.shareRoute(url)
+                            LiquidButton(
+                                backdrop = backDrop,
+                                onClick = {
+                                    scope.launch {
+                                        Starter.startWebView(
+                                            navController,
+                                            url = url,
+                                            title = "就业网(${campus.description})",
+                                            icon = R.drawable.net,
+                                            transplantBackground = true
+                                        )
                                     }
-                                ) {
-                                    Text(campus.description)
-                                }
+                                },
+                                isCircle = true
+                            ) {
+                                Icon(painterResource(R.drawable.net), contentDescription = null,modifier = Modifier.iconElementShare( route = iconRoute))
+                            }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                backdrop = backDrop,
+                                onClick = {
+                                    campus = when(campus) {
+                                        CampusRegion.HEFEI -> CampusRegion.XUANCHENG
+                                        CampusRegion.XUANCHENG -> CampusRegion.HEFEI
+                                    }
+                                },
+                            ) {
+                                Text(campus.description)
                             }
                         }
-                    )
-                    CustomTabRow(pagerState,types.fastMap { it.description })
-                }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
-            ) {
-                WorkSearchUI(vm,campus,pagerState,innerPadding,navController)
+                    }
+                )
+                CustomTabRow(pagerState,types.fastMap { it.description })
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            WorkSearchUI(vm,campus,pagerState,innerPadding,navController)
         }
+    }
 //    }
 }
 // 模范写法

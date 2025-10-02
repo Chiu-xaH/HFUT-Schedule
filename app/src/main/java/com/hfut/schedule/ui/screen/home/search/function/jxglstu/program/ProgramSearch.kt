@@ -65,13 +65,18 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
 import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.component.button.LiquidButton
+
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -91,80 +96,86 @@ fun ProgramSearchScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     var campus by remember { mutableStateOf( getCampusRegion() ) }
     var input by remember { mutableStateOf("") }
+    val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.ProgramSearch.receiveRoute() }
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.ProgramSearch.label) },
-                        navigationIcon = {
-                            TopBarNavigateIcon(navController)
-                        },
-                        actions = {
-                            FilledTonalButton(
-                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-                                onClick = {
-                                    campus = when(campus) {
-                                        HEFEI -> XUANCHENG
-                                        XUANCHENG -> HEFEI
-                                    }
-                                },
-                            ) {
-                                Text(
-                                    when(campus) {
-                                        HEFEI -> "合肥"
-                                        XUANCHENG -> "宣城"
-                                    }
-                                )
-                            }
-                        }
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("搜索") },
-                            singleLine = true,
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {}) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search),
-                                        contentDescription = "description"
-                                    )
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+        navHostController = navController,
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.ProgramSearch.label) },
+                    navigationIcon = {
+                        TopBarNavigateIcon(navController)
+                    },
+                    actions = {
+                        LiquidButton (
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            onClick = {
+                                campus = when(campus) {
+                                    HEFEI -> XUANCHENG
+                                    XUANCHENG -> HEFEI
                                 }
                             },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant()
-                        )
+                            backdrop = backdrop
+                        ) {
+                            Text(
+                                when(campus) {
+                                    HEFEI -> "合肥"
+                                    XUANCHENG -> "宣城"
+                                }
+                            )
+                        }
                     }
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backdrop, MaterialTheme.shapes.medium)
+                            .weight(1f)
+                            ,
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("搜索") },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {}) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant()
+                    )
                 }
-
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
-            ) {
-                ProgramSearch(vm,ifSaved,hazeState,campus,innerPadding,input)
             }
+
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            ProgramSearch(vm,ifSaved,hazeState,campus,innerPadding,input)
         }
+    }
 //    }
 }
 

@@ -92,6 +92,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
@@ -554,6 +555,9 @@ fun LoginScreen(
                                     }
                                 },
                             )
+                            PaddingHorizontalDivider()
+                            CheckExistUI(networkVm)
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
                         }
                     }
                     DividerTextExpandedWith("范围") {
@@ -858,7 +862,7 @@ private fun TwoTextField(
 }
 
 
-data class CasPlatform(
+private data class CasPlatform(
     val name : String,
     val canWebVpn : Boolean,
     val canWithoutJxglstu : Boolean,
@@ -893,24 +897,36 @@ fun preloadDnsFromUrl2(url: String): String? {
     }
 }
 
-fun main() {
-    preloadDnsFromUrl2(MyApplication.JXGLSTU_URL)
-    preloadDnsFromUrl2(MyApplication.CAS_LOGIN_URL)
-    preloadDnsFromUrl2(MyApplication.WEBVPN_URL)
-}
-
 @Composable
-//@Preview
-fun A() {
-    LaunchedEffect(Unit) {
-        launch {
-            Log.d("DNS解析JXGLSTU_URL",preloadDnsFromUrl(MyApplication.JXGLSTU_URL).toString())
-        }
-        launch {
-            Log.d("DNS解析CAS_LOGIN_URL",preloadDnsFromUrl(MyApplication.CAS_LOGIN_URL).toString())
-        }
-        launch {
-            Log.d("DNS解析WEBVPN_URL",preloadDnsFromUrl(MyApplication.WEBVPN_URL).toString())
-        }
+fun  CheckExistUI(
+    vm: NetWorkViewModel
+) {
+    val refreshNetwork = suspend {
+
     }
+    val scope = rememberCoroutineScope()
+    var input by remember { mutableStateOf(prefs.getString("Username","")?:"") }
+    TransplantListItem(
+        headlineContent = { Text("账号查询") },
+        supportingContent = { Text("验证账号是否因离校被删除或新生未录入") },
+        leadingContent = {
+            Icon(painterResource(R.drawable.person_check),null)
+        }
+    )
+    CustomTextField(
+        input = input,
+        singleLine = true,
+        label = { Text("输入学号") },
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        refreshNetwork()
+                    }
+                }
+            ) {
+                Icon(painterResource(R.drawable.search),null)
+            }
+        }
+    ) { input = it }
 }

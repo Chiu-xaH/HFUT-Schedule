@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -58,9 +60,13 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -100,122 +106,124 @@ fun OfficeHallScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val imageSize = remember { 25.dp }
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.OfficeHall.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(
-                                navController,
-                                route,
-                                AppNavRoute.OfficeHall.icon
-                            )
-                        },
-                    )
-                    CustomTextField(
-                        input = input,
-                        label = { Text("搜索") },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {
-                                    scope.launch { refreshNetwork() }
-                                }
-                            ) {
-                                Icon(painterResource(R.drawable.search),null)
-                            }
-                        }
-                    ) { input = it }
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
-                }
-            },
-        ) { innerPadding ->
+    val backdrop = rememberLayerBackdrop()
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
             Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
-                val context = LocalContext.current
-                val uiState by vm.officeHallSearchResponse.state.collectAsState()
-                LaunchedEffect(page) {
-                    refreshNetwork()
-                }
-                val listState = rememberLazyListState()
-                CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-                    val list = (uiState as UiState.Success).data
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        LazyColumn(state = listState) {
-                            item { InnerPaddingHeight(innerPadding,true) }
-                            items(list.size, key = { list[it].id }) { index ->
-                                val item = list[index]
-                                with(item) {
-                                    val needLogin = serviceMode == OfficeHallType.HANDLE.serviceMode
-                                    CustomCard (
-                                        color = cardNormalColor(),
-                                        modifier = Modifier.clickable {
-                                            scope.launch {
-                                                openDetail(context,item,needLogin)
-                                            }
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.OfficeHall.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(
+                            navController,
+                            route,
+                            AppNavRoute.OfficeHall.icon
+                        )
+                    },
+                )
+                CustomTextField(
+                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).containerBackDrop(backdrop, MaterialTheme.shapes.medium),
+                    input = input,
+                    label = { Text("搜索") },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                scope.launch { refreshNetwork() }
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.search),null)
+                        }
+                    }
+                ) { input = it }
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            val context = LocalContext.current
+            val uiState by vm.officeHallSearchResponse.state.collectAsState()
+            LaunchedEffect(page) {
+                refreshNetwork()
+            }
+            val listState = rememberLazyListState()
+            CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                val list = (uiState as UiState.Success).data
+                Box(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(state = listState) {
+                        item { InnerPaddingHeight(innerPadding,true) }
+                        items(list.size, key = { list[it].id }) { index ->
+                            val item = list[index]
+                            with(item) {
+                                val needLogin = serviceMode == OfficeHallType.HANDLE.serviceMode
+                                CustomCard (
+                                    color = cardNormalColor(),
+                                    modifier = Modifier.clickable {
+                                        scope.launch {
+                                            openDetail(context,item,needLogin)
                                         }
-                                    ){
+                                    }
+                                ){
+                                    TransplantListItem(
+                                        headlineContent = {
+                                            Text(name)
+                                        },
+                                        overlineContent = {
+                                            Text(serviceDpt)
+                                        },
+                                        leadingContent = {
+                                            UrlImage(photoUrl, width = imageSize, height = imageSize, useCut = false, roundSize = 0.dp)
+                                        },
+                                        trailingContent = if(needLogin) {
+                                            { Text("需登录") }
+                                        } else null
+                                    )
+                                    if(serviceTime == null && processingPlace == null) {
+                                        return@CustomCard
+                                    }
+                                    PaddingHorizontalDivider()
+                                    serviceTime?.let {
                                         TransplantListItem(
                                             headlineContent = {
-                                                Text(name)
+                                                Text(it)
                                             },
-                                            overlineContent = {
-                                                Text(serviceDpt)
-                                            },
+                                            overlineContent = { Text("时间") },
                                             leadingContent = {
-                                                UrlImage(photoUrl, width = imageSize, height = imageSize, useCut = false, roundSize = 0.dp)
-                                            },
-                                            trailingContent = if(needLogin) {
-                                                { Text("需登录") }
-                                            } else null
+                                                Icon(painterResource(R.drawable.schedule),null)
+                                            }
                                         )
-                                        if(serviceTime == null && processingPlace == null) {
-                                            return@CustomCard
-                                        }
-                                        PaddingHorizontalDivider()
-                                        serviceTime?.let {
-                                            TransplantListItem(
-                                                headlineContent = {
-                                                    Text(it)
-                                                },
-                                                overlineContent = { Text("时间") },
-                                                leadingContent = {
-                                                    Icon(painterResource(R.drawable.schedule),null)
-                                                }
-                                            )
-                                        }
-                                        processingPlace?.let {
-                                            TransplantListItem(
-                                                headlineContent = {
-                                                    Text(it)
-                                                },
-                                                overlineContent = { Text("地点") },
-                                                leadingContent = {
-                                                    Icon(painterResource(R.drawable.near_me),null)
-                                                }
-                                            )
-                                        }
+                                    }
+                                    processingPlace?.let {
+                                        TransplantListItem(
+                                            headlineContent = {
+                                                Text(it)
+                                            },
+                                            overlineContent = { Text("地点") },
+                                            leadingContent = {
+                                                Icon(painterResource(R.drawable.near_me),null)
+                                            }
+                                        )
                                     }
                                 }
                             }
-                            item { PaddingForPageControllerButton() }
-                            item { InnerPaddingHeight(innerPadding,false) }
                         }
-                        PageController(listState,page, nextPage = { page = it }, previousPage = { page = it })
+                        item { PaddingForPageControllerButton() }
+                        item { InnerPaddingHeight(innerPadding,false) }
                     }
+                    PageController(listState,page, nextPage = { page = it }, previousPage = { page = it })
                 }
             }
         }
+    }
 //    }
 }

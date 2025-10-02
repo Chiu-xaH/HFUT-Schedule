@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.component.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable

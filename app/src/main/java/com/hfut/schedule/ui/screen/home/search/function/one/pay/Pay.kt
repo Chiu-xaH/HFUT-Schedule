@@ -56,6 +56,8 @@ import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.LiquidButton
+
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -63,6 +65,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -99,39 +103,46 @@ fun FeeScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Fee.route }
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Fee.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route,AppNavRoute.Fee.icon)
-                    },
-                    actions = {
-                        FilledTonalButton(
-                            onClick = { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) },
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-                            ) { Text(text = "缴费") }
+    val backDrop = rememberLayerBackdrop()
+
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Fee.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route,AppNavRoute.Fee.icon)
+                },
+                actions = {
+                    LiquidButton(
+                        onClick = { Starter.startWebUrl(context,MyApplication.PAY_FEE_URL) },
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        backdrop = backDrop
+                    ) {
+                        Text("缴费")
                     }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                PayUI(vm,hazeState)
-                InnerPaddingHeight(innerPadding,false)
-            }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            PayUI(vm,hazeState)
+            InnerPaddingHeight(innerPadding,false)
         }
+    }
 //    }
 }
 

@@ -38,12 +38,16 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -86,42 +90,50 @@ fun SurveyScreen(
     val route = remember { AppNavRoute.Survey.route }
     var refresh by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val backDrop = rememberLayerBackdrop()
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Survey.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Survey.icon)
-                    },
-                    actions = {
-                        Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            SurveyAllButton(vm) {
-                                refresh = !refresh
-                            }
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Survey.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.Survey.icon)
+                },
+                actions = {
+                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        SurveyAllButton(vm,backDrop) {
+                            refresh = !refresh
                         }
                     }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
-            ) {
-                SurveyUI(vm,hazeState,refresh,innerPadding)
-            }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            SurveyUI(vm,hazeState,refresh,innerPadding)
         }
+    }
 //    }
 }
 
 @Composable
-private fun SurveyAllButton(vm: NetWorkViewModel,refresh : suspend () -> Unit) {
+private fun SurveyAllButton(
+    vm: NetWorkViewModel,
+    backDrop : Backdrop,
+    refresh : suspend () -> Unit
+) {
     val surveyListData by vm.surveyListData.state.collectAsState()
     val surveyData by vm.surveyData.state.collectAsState()
     val scope = rememberCoroutineScope()
@@ -134,7 +146,7 @@ private fun SurveyAllButton(vm: NetWorkViewModel,refresh : suspend () -> Unit) {
         }
     }
     var loading by remember { mutableStateOf(false) }
-    FilledTonalButton(
+    LiquidButton (
         onClick = {
             // 未评教的教师们
             scope.launch(Dispatchers.IO) {
@@ -161,6 +173,8 @@ private fun SurveyAllButton(vm: NetWorkViewModel,refresh : suspend () -> Unit) {
                 refresh()
             }
         },
+        isCircle = loading,
+        backdrop = backDrop,
         enabled = surveyListData is UiState.Success && !loading
     ) {
         if(loading) {

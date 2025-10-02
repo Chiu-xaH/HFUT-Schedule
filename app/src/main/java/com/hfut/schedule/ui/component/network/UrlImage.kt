@@ -108,10 +108,9 @@ fun UrlImageWithAutoOcr(
     ) {
         val imageState = loadImage(url, cookie = cookie)
         imageState.value?.let { bitmap ->
-            val preProgressed = bitmap
-//                preprocessCaptcha(bitmap)
+            val preProgressed = preprocessCaptcha(bitmap)
             Image(
-                bitmap = preProgressed.asImageBitmap(),
+                bitmap = bitmap.asImageBitmap(),
                 contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
