@@ -1,0 +1,67 @@
+{
+  "version": 3,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.hfut.schedule",
+  "variantName": "nonMinifiedRelease",
+  "elements": [
+    {
+      "type": "UNIVERSAL",
+      "filters": [],
+      "attributes": [],
+      "versionCode": 225,
+      "versionName": "4.18.1 Preview",
+      "outputFile": "app-universal-nonMinifiedRelease.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "x86_64"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2254,
+      "versionName": "4.18.1 Preview",
+      "outputFile": "4.18.1 Preview-x86_64-nonMinifiedRelease.apk"
+    },
+    {
+      "type": "ONE_OF_MANY",
+      "filters": [
+        {
+          "filterType": "ABI",
+          "value": "arm64-v8a"
+        }
+      ],
+      "attributes": [],
+      "versionCode": 2252,
+      "versionName": "4.18.1 Preview",
+      "outputFile": "4.18.1 Preview-arm64-v8a-nonMinifiedRelease.apk"
+    }
+  ],
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/app-universal-nonMinifiedRelease.dm",
+        "baselineProfiles/1/4.18.1 Preview-x86_64-nonMinifiedRelease.dm",
+        "baselineProfiles/1/4.18.1 Preview-arm64-v8a-nonMinifiedRelease.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/app-universal-nonMinifiedRelease.dm",
+        "baselineProfiles/0/4.18.1 Preview-x86_64-nonMinifiedRelease.dm",
+        "baselineProfiles/0/4.18.1 Preview-arm64-v8a-nonMinifiedRelease.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 26
+}

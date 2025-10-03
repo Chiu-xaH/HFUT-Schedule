@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.webview.getPureUrl
+import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.sys.Starter

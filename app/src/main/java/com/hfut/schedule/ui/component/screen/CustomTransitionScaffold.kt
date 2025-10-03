@@ -30,10 +30,10 @@ import kotlinx.coroutines.delay
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CustomTransitionScaffold(
+    modifier: Modifier = Modifier,
     roundShape : Shape = MaterialTheme.shapes.small,
     route: String,
     navHostController : NavHostController,
-    modifier: Modifier = Modifier,
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
     floatingActionButton: @Composable (() -> Unit) = {},

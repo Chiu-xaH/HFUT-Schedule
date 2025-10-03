@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,9 +71,11 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAB_LEFT = 0
 private const val TAB_RIGHT = 1
@@ -100,43 +103,48 @@ fun TodayScreen(
     val scope = rememberCoroutineScope()
     val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
-            async { refreshing = true }.await()
-            async { DateTimeManager.updateTime { timeNow = it } }.await()
-            async { initNetworkRefresh(vm,vmUI,ifSaved) }.await()
-            launch { netCourseList = getNetCourse() }
-            launch { scheduleList = getSchedule() }
-            launch { refreshing = false }
+            refreshing = true
+            async {
+                launch { DateTimeManager.updateTime { timeNow = it } }
+                launch { initNetworkRefresh(vm, vmUI, ifSaved) }
+                launch { netCourseList = getNetCourse() }
+                launch { scheduleList = getSchedule() }
+            }.await()
+            refreshing = false
         }
     })
 
     var refreshDB by remember { mutableStateOf(false) }
 
     val scrollState = rememberLazyListState()
-
-    val courseDataSource = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
-
+    val courseDataSource = remember { prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) }
     var lastTime by remember { mutableStateOf("00:00") }
     var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
     var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
     var jxglstuLastTime by remember { mutableStateOf("00:00") }
     var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
-
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
-
-    var specialWorkToday  by remember { mutableStateOf<String?>(null) }
-    var specialWorkTomorrow by remember { mutableStateOf<String?>(null) }
     val specialWorkDayChange by remember { derivedStateOf { vmUI.specialWOrkDayChange } }
-
-    LaunchedEffect(specialWorkDayChange) {
-        specialWorkToday = DataBaseManager.specialWorkDayDao.searchToday()
-        specialWorkTomorrow = DataBaseManager.specialWorkDayDao.searchTomorrow()
+    val specialWorkToday by produceState<String?>(initialValue = null, key1 = specialWorkDayChange) {
+        value = withContext(Dispatchers.IO) {
+            DataBaseManager.specialWorkDayDao.searchToday()
+        }
+    }
+    val specialWorkTomorrow by produceState<String?>(initialValue = null, key1 = specialWorkDayChange) {
+        value = withContext(Dispatchers.IO) {
+            DataBaseManager.specialWorkDayDao.searchTomorrow()
+        }
+    }
+    // 加载数据库
+    LaunchedEffect(refreshDB) {
+        launch { customScheduleList = getCustomEvent() }
     }
 
     // 初始化
     LaunchedEffect(specialWorkToday,specialWorkTomorrow) {
         // 初始化UI数据
-        launch {
+        launch(Dispatchers.IO) {
             when(courseDataSource) {
                 CourseType.COMMUNITY.code -> {
                     val weekDayTomorrow = DateTimeManager.dayWeek + 1
@@ -172,12 +180,10 @@ fun TodayScreen(
             if(refreshing == false) {
                 return@launch
             }
-            initNetworkRefresh(vm,vmUI,ifSaved)
+            async {
+                initNetworkRefresh(vm,vmUI,ifSaved)
+            }.await()
             refreshing = false
-        }
-        // 加载数据库
-        launch {
-            customScheduleList = getCustomEvent()
         }
         // 一分钟更新时间 触发重组
         launch {
@@ -188,13 +194,7 @@ fun TodayScreen(
         }
     }
 
-    val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpanded } }
 
-    LaunchedEffect(refreshDB,isAddUIExpanded) {
-        if(!isAddUIExpanded) {
-            launch { customScheduleList = getCustomEvent() }
-        }
-    }
     LaunchedEffect(sortType,sortReversed) {
         customScheduleList =  when(sortType) {
             SortType.TIME_LINE -> customScheduleList.sortedBy { when(it.type) {
@@ -221,7 +221,7 @@ fun TodayScreen(
                 }
                 else -> true
             }
-            Scaffold {
+            Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = scrollState) {
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {

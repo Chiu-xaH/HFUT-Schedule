@@ -42,6 +42,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.other.parseQRCode
+import com.hfut.schedule.logic.util.parse.isWifiContent
+import com.hfut.schedule.logic.util.parse.parseWifiQrCode
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
@@ -105,7 +107,7 @@ fun ScanScreen(
                         CardListItem(
                             headlineContent = { Text("使用提示") },
                             supportingContent = {
-                                Text("打开CAS统一认证登录页面，选择右上角的扫码登录；通过扫码登录的平台，关闭后登录就会失效")
+                                Text("打开CAS统一认证登录页面，选择右上角的扫码登录(还可扫网页或Wifi码,可在系统控制中心添加磁贴)")
                             },
                             color = color.copy(.8f),
                         )
@@ -162,13 +164,29 @@ fun ScanScreen(
                             Column {
                                 TransplantListItem(
                                     headlineContent = { Text("识别结果") },
-                                    supportingContent = { Text(if (!isCas) resultText else "点击进行CAS统一认证登录") },
+                                    supportingContent = { Text(
+                                        if(isCas) {
+                                            "点击进行CAS统一认证登录"
+                                        } else if(isValidWebUrl(resultText)) {
+                                            resultText
+                                        } else if(isWifiContent(resultText)) {
+                                            parseWifiQrCode(resultText).toString()
+                                        } else {
+                                           resultText
+                                        }
+                                    ) },
                                     leadingContent = {
                                         Icon(painterResource(
                                             if(isCas) {
                                                 R.drawable.login
                                             } else if(isValidWebUrl(resultText)) {
                                                 R.drawable.net
+                                            } else if(isWifiContent(resultText)) {
+                                                if(parseWifiQrCode(resultText)?.password == null) {
+                                                    R.drawable.wifi
+                                                } else{
+                                                    R.drawable.wifi_password
+                                                }
                                             } else {
                                                 R.drawable.qr_code_2
                                             }
@@ -187,7 +205,9 @@ fun ScanScreen(
                                         }
                                     } else null
                                 )
-                                if (!isCas) {
+                                if(isCas) {
+
+                                } else if(isValidWebUrl(resultText)) {
                                     CardBottomButtons(
                                         listOf(
                                             CardBottomButton("复制") {
@@ -197,6 +217,29 @@ fun ScanScreen(
                                                 scope.launch {
                                                     Starter.startWebView(context,resultText)
                                                 }
+                                            },
+                                            CardBottomButton("隐藏") {
+                                                resultText = ""
+                                            },
+                                        )
+                                    )
+                                } else if(isWifiContent(resultText)) {
+                                    CardBottomButtons(
+                                        listOf(
+                                            CardBottomButton("连接") {
+                                                parseWifiQrCode(resultText)?.password?.let { ClipBoardUtils.copy(it) }
+                                                Starter.startWlanSettings(context)
+                                            },
+                                            CardBottomButton("隐藏") {
+                                                resultText = ""
+                                            },
+                                        )
+                                    )
+                                } else {
+                                    CardBottomButtons(
+                                        listOf(
+                                            CardBottomButton("复制") {
+                                                ClipBoardUtils.copy(resultText)
                                             },
                                             CardBottomButton("隐藏") {
                                                 resultText = ""

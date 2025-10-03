@@ -115,8 +115,10 @@ fun TransitionScaffold(
         }
     }
 
-    TransitionPredictiveBackHandler(navHostController,useBackHandler && enablePredictive && route !in TransitionConfig.firstStartRoute) {
-        scale = it
+    if(enablePredictive) {
+        TransitionPredictiveBackHandler(navHostController,useBackHandler && route !in TransitionConfig.firstStartRoute) {
+            scale = it
+        }
     }
 
     // 回退后恢复上一个页面的显示状态

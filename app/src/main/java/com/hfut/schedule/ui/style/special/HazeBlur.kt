@@ -78,7 +78,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.c
             style = HazeStyle(
                 tint = HazeTint(color = color.copy(0.35f)),
                 backgroundColor = color,
-                blurRadius = MyApplication.BLUR_RADIUS* 1.2f,
+                blurRadius = MyApplication.BLUR_RADIUS.dp* 1.2f,
                 noiseFactor = 0f
             ),
             block = fun HazeEffectScope.() {
@@ -117,7 +117,7 @@ fun Modifier.topBarBlur(
             style = HazeStyle(
                 tint = HazeTint(color = color.let { if(it == Color.Transparent) it else it.copy(.35f) }),
                 backgroundColor = backgroundColor,
-                blurRadius = MyApplication.BLUR_RADIUS*1.2f,
+                blurRadius = MyApplication.BLUR_RADIUS.dp*1.2f,
                 noiseFactor = 0f
             ),
             block = fun HazeEffectScope.() {
@@ -183,7 +183,7 @@ fun Modifier.normalTopBarBlur(
             style = HazeStyle(
                 tint = HazeTint(color = color.let { if(it == Color.Transparent) it else it.copy(.35f) }),
                 backgroundColor = backgroundColor,
-                blurRadius = MyApplication.BLUR_RADIUS*1.2f,
+                blurRadius = MyApplication.BLUR_RADIUS.dp*1.2f,
                 noiseFactor = 0f
             ),
         )
@@ -206,7 +206,7 @@ private fun Modifier.blurStyle(
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint.copy(alpha)),
             backgroundColor = tint,
-            blurRadius = MyApplication.BLUR_RADIUS*radius,
+            blurRadius = MyApplication.BLUR_RADIUS.dp*radius,
             noiseFactor = 0f
         ))
     } else {
@@ -339,7 +339,7 @@ fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
 @Composable
 fun Modifier.coverBlur(
     showBlur: Boolean,
-    radius: Dp = MyApplication.BLUR_RADIUS/2,
+    radius: Dp = MyApplication.BLUR_RADIUS.dp/2,
     tweenDuration: Int = AppAnimationManager.ANIMATION_SPEED / 2
 ): Modifier {
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)

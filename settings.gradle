@@ -21,8 +21,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "肥工课程表"
 include ':app'
-include ':benchmark'
 include ':transition'
 include ':uiCommon'
 include ':shared'
 include ':lite'
+include ':baselineProfile'

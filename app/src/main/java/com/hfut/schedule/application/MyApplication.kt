@@ -17,7 +17,7 @@ class MyApplication : Application() {
         // 全局上下文
         lateinit var context: Context
         // HAZE模糊半径
-        val BLUR_RADIUS = 20.dp
+        const val BLUR_RADIUS = 20
         // 宣城校区免费流量额度 GiB
         const val DEFAULT_MAX_FREE_FLOW = 30
         // 默认每页数量
@@ -31,7 +31,7 @@ class MyApplication : Application() {
         // WEBVPN 有时无法访问
         const val WEBVPN_URL = "https://webvpn.hfut.edu.cn/"
         // 教务系统-WEBVPN 校外访问
-        val JXGLSTU_WEBVPN_URL = WebVpnUtil.getWebVpnUrl(JXGLSTU_URL)
+        val JXGLSTU_WEBVPN_URL by lazy { WebVpnUtil.getWebVpnUrl(JXGLSTU_URL) }
         // 通知公告 有些通知需校园网
         const val NEWS_URL = "https://news.hfut.edu.cn/"
         // 办事大厅
@@ -129,11 +129,13 @@ class MyApplication : Application() {
         const val UNIPUS_URL = "https://u.unipus.cn/"
         const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"
         // 三个校区的经纬度 来自高德地图坐标拾取器
-        val campusLocations = mapOf<Campus,Location>(
-            Campus.FCH to Location(117.20346,31.77014),
-            Campus.TXL to Location(117.29597,31.843905),
-            Campus.XC to Location(118.710182,30.903593)
-        )
+        val campusLocations by lazy {
+            mapOf<Campus, Location>(
+                Campus.FCH to Location(117.20346, 31.77014),
+                Campus.TXL to Location(117.29597, 31.843905),
+                Campus.XC to Location(118.710182, 30.903593)
+            )
+        }
         const val GITHUB_URL = "https://github.com/"
         // Github常量池
         const val GITHUB_USER_ID = 116127902
@@ -148,70 +150,66 @@ class MyApplication : Application() {
         // PC UA
         const val PC_UA = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17"
         // 预置作息 当无法从教务系统获取到时使用
-        val XC_TXL1: List<CourseUnitBean> = listOf(
-            CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
-            CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
-            CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
-            CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
-            CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
-            CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
-            CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
-            CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
-            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-        )
-        val FCH1: List<CourseUnitBean> = listOf(
-            CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
-            CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
-            CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
-            CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
-            CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
-            CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
-            CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
-            CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
-            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-        )
-        val TXL2: List<CourseUnitBean> = listOf(
-            CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
-            CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
-            CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
-            CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
-            CourseUnitBean("第五节", 1430, 1520, "14:30", "15:20"),
-            CourseUnitBean("第六节", 1530, 1620, "15:30", "16:20"),
-            CourseUnitBean("第七节", 1630, 1720, "16:30", "17:20"),
-            CourseUnitBean("第八节", 1730, 1820, "17:30", "18:20"),
-            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-        )
-        val FCH2: List<CourseUnitBean> = listOf(
-            CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
-            CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
-            CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
-            CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
-            CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
-            CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
-            CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
-            CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
-            CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-            CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-            CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-        )
-//        // 合肥校区本科生电费
-//        data class ElectricRoomHeFei(
-//            val campus : Campus,
-//            val buildings : Int,
-//            val direction : ElectricRoomHeFeiDirection,
-//            val isLight : Boolean,
-//        ) {
-//            override fun toString() : String = "${campus.description}校区${buildings}号${direction.description}楼${if(isLight) "照明" else "空调"}"
-//        }
-//        enum class ElectricRoomHeFeiDirection(val description : String) {
-//            NORTH("北"),SOUTH("南"),MID("中")
-//        }
+        val XC_TXL1 by lazy {
+            listOf(
+                CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
+                CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
+                CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
+                CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
+                CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
+                CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
+                CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
+                CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
+                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+            )
+        }
+        val FCH1 by lazy {
+            listOf(
+                CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
+                CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
+                CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
+                CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
+                CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
+                CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
+                CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
+                CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
+                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+            )
+        }
+        val TXL2 by lazy {
+            listOf(
+                CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
+                CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
+                CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
+                CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
+                CourseUnitBean("第五节", 1430, 1520, "14:30", "15:20"),
+                CourseUnitBean("第六节", 1530, 1620, "15:30", "16:20"),
+                CourseUnitBean("第七节", 1630, 1720, "16:30", "17:20"),
+                CourseUnitBean("第八节", 1730, 1820, "17:30", "18:20"),
+                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+            )
+        }
+        val FCH2 by lazy {
+            listOf(
+                CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
+                CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
+                CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
+                CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
+                CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
+                CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
+                CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
+                CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
+                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
+                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
+                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
+            )
+        }
     }
 
     override fun onCreate() {
@@ -219,5 +217,4 @@ class MyApplication : Application() {
         context = applicationContext
     }
 }
-
 

@@ -1,160 +1,45 @@
 package com.hfut.schedule.ui.component.webview
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.webkit.CookieManager
-import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
-import android.webkit.WebSettings
 import android.webkit.WebView
-import android.webkit.WebView.enableSlowWholeDocumentDraw
-import android.webkit.WebView.setWebContentsDebuggingEnabled
 import android.webkit.WebViewClient
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.VerticalFloatingToolbar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.compose.ui.zIndex
-import androidx.webkit.WebSettingsCompat
-import androidx.webkit.WebViewFeature
 import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.database.entity.WebURLType
-import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
-import com.hfut.schedule.logic.util.sys.ShareTo
-import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.util.webview.WebViewBackHandler
+import com.hfut.schedule.ui.util.webview.WebViewBackIcon
+import com.hfut.schedule.ui.util.webview.WebViewContent
+import com.hfut.schedule.ui.util.webview.WebViewTools
+import com.hfut.schedule.ui.util.webview.WebViewTopBar
+import com.hfut.schedule.ui.util.webview.evaluateJs
+import com.hfut.schedule.ui.util.webview.getPureUrl
+import com.hfut.schedule.ui.util.webview.getWebView
+import com.hfut.schedule.ui.util.webview.isThemeDark
+import com.hfut.schedule.ui.util.webview.scrollListener
+import com.hfut.schedule.ui.util.webview.setInitial
+import com.hfut.schedule.ui.util.webview.sharedInterceptRequest
+import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
+import com.hfut.schedule.ui.util.webview.updateTitle
+import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.xah.transition.component.awaitTransition
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.DefaultTransitionStyle
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-private fun WebViewBackIcon(
-    webView: WebView?,
-    icon : Int? = null,
-    color : Color,
-    onExit : () -> Unit
-) {
-    val back : () -> Unit = {
-        if(webView?.canGoBack() == true) {
-            webView.goBack()
-        } else {
-            onExit()
-        }
-    }
-    val cIcon = if(webView?.canGoBack() == true) {
-        Icons.Default.ArrowBack
-    } else {
-        Icons.Default.Close
-    }
-    val button = @Composable { content  : @Composable () -> Unit ->
-        Box(
-            modifier = Modifier
-                .combinedClickable(
-                    onClick = back,
-                    onLongClick = {
-                        onExit()
-                    }
-                )
-        ) {
-            content()
-        }
-    }
-    if(icon == null) {
-        button {
-            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-        }
-    } else {
-        var show by remember { mutableStateOf(true) }
-        LaunchedEffect(Unit) {
-            show = true
-            delay(TransitionConfig.curveStyle.speedMs*1L)
-            delay(1500L)
-            show = false
-        }
-
-        button {
-            Box() {
-                AnimatedVisibility(
-                    visible = show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-                AnimatedVisibility(
-                    visible = !show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-            }
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -162,404 +47,123 @@ private fun WebViewBackIcon(
 fun WebViewScreenForActivity(
     url: String,
     cookies : String? = null,
-    title : String,
-    icon : Int
+    title : String = getPureUrl(url),
+    icon : Int = R.drawable.net
 ) {
     var webView by remember { mutableStateOf<WebView?>(null) }
     var visible by remember { mutableStateOf(true) }
     val isDark = isThemeDark()
     val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
-    var backCount by remember { mutableIntStateOf(1) }
     var currentUrl by remember { mutableStateOf(url) }
     var currentTitle by remember { mutableStateOf(title) }
-    val activity = LocalActivity.current
     var fullScreen by remember { mutableStateOf(false) }
-    var click by remember { mutableStateOf(false) }
-    val isExist by produceState(initialValue = false, key1 = click) {
-        value = DataBaseManager.webUrlDao.isExist(currentUrl)
-    }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    var on by remember { mutableStateOf<(String) -> Unit>({}) }
-    var operationFavorite by remember { mutableStateOf(false) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        if(operationFavorite) {
-            var input by remember { mutableStateOf(currentTitle) }
-            suspend fun favorite(useCurrent : Boolean) {
-                val favoriteUrl = if(useCurrent) currentUrl else url
-                if(isExist) {
-                    DataBaseManager.webUrlDao.delFromUrl(favoriteUrl)
-                    showToast("已取消收藏")
-                } else {
-                    DataBaseManager.webUrlDao.insert(
-                        WebUrlDTO(
-                            name = input,
-                            type = WebURLType.COLLECTION,
-                            url = favoriteUrl
-                        ).toEntity()
-                    )
-                    showToast("收藏成功")
-                }
-                click = !click
-            }
-            CustomBottomSheet (
-                onDismissRequest = { showBottomSheet = false },
-                showBottomSheet = showBottomSheet,
-                autoShape = false
-            ) {
-                Column(
-                    modifier = Modifier.verticalScroll(rememberScrollState())
-                ) {
-                    HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
-                    CustomTextField(
-                        input = input,
-                        label = { Text("标题") },
-                        singleLine = false
-                    ) { input = it }
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
-                    CardListItem(
-                        headlineContent = { Text(currentUrl) },
-                        overlineContent = { Text("现链接") },
-                        modifier = Modifier.clickable {
-                            scope.launch {
-                                favorite(true)
-                                showBottomSheet = false
-                            }
-                        }
-                    )
-                    CardListItem(
-                        headlineContent = { Text(url) },
-                        overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
-                        modifier = Modifier.clickable {
-                            scope.launch {
-                                favorite(false)
-                                showBottomSheet = false
-                            }
-                        }
-                    )
-                    Spacer(Modifier
-                        .height(APP_HORIZONTAL_DP)
-                        .navigationBarsPadding())
-                }
-            }
-        } else {
-            if(currentUrl == url) {
-                on(url)
-            } else {
-                CustomBottomSheet (
-                    onDismissRequest = { showBottomSheet = false },
-                    showBottomSheet = showBottomSheet,
-                    isFullExpand = false,
-                    autoShape = false
-                ) {
-                    Column {
-                        HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
-                        CardListItem(
-                            headlineContent = { Text(currentUrl) },
-                            overlineContent = { Text("现链接") },
-                            modifier = Modifier.clickable {
-                                on(currentUrl)
-                                showBottomSheet = false
-                            }
-                        )
-                        CardListItem(
-                            headlineContent = { Text(url) },
-                            overlineContent = { Text("初始链接(若用于WebVpn链接转换，推荐此项)") },
-                            modifier = Modifier.clickable {
-                                on(url)
-                                showBottomSheet = false
-                            }
-                        )
-                        Spacer(Modifier
-                            .height(APP_HORIZONTAL_DP)
-                            .navigationBarsPadding())
-                    }
-                }
-            }
-        }
-    }
-    val tools = @Composable {
-        if(webView?.canGoBack() == true) {
-            IconButton(onClick = {
-                webView?.goBack()
-            }) { Icon(Icons.Default.ArrowBack, contentDescription = "") }
-        } else {
-            IconButton(onClick = {
-                activity?.finish()
-            }) { Icon(Icons.Default.Close, contentDescription = "") }
-        }
-
-        IconButton(onClick = {
-            webView?.clearCache(true)
-            webView?.clearHistory()
-            webView?.reload()
-        }) { Icon(
-            painterResource(id = R.drawable.rotate_right), contentDescription = "") }
-
-        IconButton(onClick = {
-            on = { Starter.startWebUrl(context,it) }
-            showBottomSheet = true
-        }) { Icon(
-            painterResource(id = R.drawable.net), contentDescription = "") }
-
-        IconButton(onClick = {
-            if(!fullScreen) {
-                fullScreen = true
-                visible = true
-            } else {
-                fullScreen = false
-                visible = false
-            }
-        }) { Icon(
-            painterResource(id = if(!fullScreen)R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "") }
-        IconButton(onClick = {
-            on = {}
-            operationFavorite = true
-            showBottomSheet = true
-        }) { Icon(
-            painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = "") }
-        IconButton(onClick = {
-            on = { ClipBoardUtils.copy(it) }
-            showBottomSheet = true
-        }) { Icon(
-            painterResource(id = R.drawable.copy_all), contentDescription = "") }
-
-        IconButton(onClick = {
-            on = { ShareTo.shareString(currentUrl) }
-            showBottomSheet = true
-        }) { Icon(
-            painterResource(id = R.drawable.ios_share), contentDescription = "") }
-    }
     var loading by remember { mutableStateOf(true) }
     var topColor by remember { mutableStateOf<Color?>(null) }
     val topBarTitleColor = topColor?.let {
         if (it.luminance() < 0.5f) Color.White else Color.Black
     } ?: MaterialTheme.colorScheme.primary
 
-    BackHandler {
-        if(fullScreen) {
-            fullScreen = false
+    val activity = LocalActivity.current
+
+    DisposableEffect(Unit) {
+        onDispose {
+            webView?.destroy()
         }
-        if (webView?.canGoBack() == true) {
-            webView?.goBack()
-        } else {
-            if(backCount > 0 && loading == false) {
-                showToast("再滑一次退出")
-                backCount--
-            } else {
-                activity?.finish()
+    }
+
+    WebViewBackHandler(
+        webView,
+        fullScreen,
+        loading,
+        { fullScreen = it },
+    ) {
+        activity?.finish()
+    }
+
+    val tools = @Composable {
+        WebViewTools(
+            webView,
+            {  activity?.finish() },
+            fullScreen,
+            currentUrl,
+            currentTitle,
+            url,
+            {
+                fullScreen = it
+                visible = it
             }
-        }
+        )
     }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = topColor ?: MaterialTheme.colorScheme.primary,
         topBar = {
-            AnimatedVisibility(
-                visible = !fullScreen,
-                enter = AppAnimationManager.toTopAnimation.enter,
-                exit = AppAnimationManager.toTopAnimation.exit
-            ) {
-                Column {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = topColor ?: MaterialTheme.colorScheme.surface,
-                            titleContentColor = topBarTitleColor,
-                            scrolledContainerColor = Color.Transparent,
-
-                        ),
-                        actions = {
-                            Row {
-                                if (!visible) {
-                                    IconButton(
-                                        onClick = { visible = true }
-                                    ) {
-                                        Icon(
-                                            painterResource(R.drawable.more_vert),
-                                            null,
-                                            tint = topBarTitleColor
-                                        )
-                                    }
-                                }
-                            }
-                        },
-                        navigationIcon = {
-                            WebViewBackIcon(webView=webView, color = topBarTitleColor,icon = icon) {
-                                activity?.finish()
-                            }
-                        },
-                        title = {
-                            Column {
-                                ScrollText(currentTitle)
-                                ScrollText(
-                                    getPureUrl(currentUrl),
-                                    modifier = Modifier.padding(start = 2.dp),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            }
-                        },
-                    )
-                }
-            }
+            WebViewTopBar(
+                fullScreen,
+                topColor,
+                topBarTitleColor,
+                visible,
+                { visible = it },
+                {
+                    WebViewBackIcon(webView = webView, color = topBarTitleColor, icon = icon, route = null) {
+                        activity?.finish()
+                    }
+                },
+                currentTitle,
+                currentUrl
+            )
         },
     ) { innerPadding ->
         val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
-//        val top = innerPadding.calculateTopPadding().value.toInt()
-        Box(modifier = Modifier.fillMaxSize()) {
-            AnimatedVisibility(
-                visible = visible,
-                enter = AppAnimationManager.hiddenRightAnimation.enter,
-                exit = AppAnimationManager.hiddenRightAnimation.exit,
-                modifier = Modifier
-                    .align(Alignment.CenterEnd)
-                    .zIndex(1f)
-            ) {
-                VerticalFloatingToolbar (
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(horizontal = APP_HORIZONTAL_DP),
-                    expanded = true,
-                ) {
-                    tools()
-                    IconButton(onClick = { visible = false }) { Icon(
-                        painterResource(id = R.drawable.visibility_off), contentDescription = "") }
+        WebViewContent(
+            innerPadding,
+            visible,
+            tools,
+            { visible = it },
+            loading,
+        ) { context ->
+            webView = getWebView(context) {
+                // 初始加载
+                val cookieManager = CookieManager.getInstance()
+                setInitial(cookieManager,cookies, url)
+                // 标题获取
+                updateTitle(currentUrl) {
+                    currentTitle = it
                 }
 
-            }
-            if(loading) {
-                LinearProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.TopCenter)
-                        .padding(innerPadding)
-                        .zIndex(2f)
-                )
-            }
-            AndroidView(
-                factory = { context ->
-                    WebView(context).apply {
-                        settings.javaScriptEnabled = true
-                        settings.domStorageEnabled = true
-                        settings.builtInZoomControls = true
-                        settings.displayZoomControls = false
-                        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        enableSlowWholeDocumentDraw()
-                        setWebContentsDebuggingEnabled(true)
-                        settings.safeBrowsingEnabled = false
-
-                        // 深色模式
-                        if (WebViewFeature.isFeatureSupported(WebViewFeature.ALGORITHMIC_DARKENING)) {
-                            // Android 13+
-                            WebSettingsCompat.setAlgorithmicDarkeningAllowed(settings, true)
-                        } else if (WebViewFeature.isFeatureSupported(WebViewFeature.FORCE_DARK)) {
-                            // Android 10‑12
-                            val mode = if (isDark)
-                                WebSettingsCompat.FORCE_DARK_ON
-                            else
-                                WebSettingsCompat.FORCE_DARK_OFF
-                            WebSettingsCompat.setForceDark(settings, mode)
+                webViewClient = object : WebViewClient() {
+                    override fun onPageFinished(view: WebView?, url: String?) {
+                        super.onPageFinished(view, url)
+                        // 更新
+                        webView = view
+                        updateUrl(url) {
+                            currentUrl = it
                         }
-
-                        // 启用 Cookie
-                        val cookieManager = CookieManager.getInstance()
-                        cookieManager.setAcceptCookie(true)//true
-                        cookieManager.setAcceptThirdPartyCookies(this, true)//true
-                        // 设置 Cookie
-                        // **清除已有 Cookie**
-                        cookieManager.removeSessionCookies(null)
-                        cookieManager.removeAllCookies(null)
-                        cookieManager.flush()
-
-                        // **异步设置 Cookie，并确保生效后再加载 URL**
-                        cookies?.let {
-                            cookieManager.setCookie(url, it) {
-                                cookieManager.flush()
-                                post {
-                                    loadUrl(url)
-                                }
-                            }
-                        } ?: run {
-                            loadUrl(url) // 没有 Cookie 直接加载
+                        view?.evaluateJs(isDark, webViewDark, bottom) {
+                            topColor = it
                         }
-                        // 标题获取
-                        if(!currentUrl.startsWith("file://")) {
-                            webChromeClient = object : WebChromeClient() {
-                                override fun onReceivedTitle(view: WebView?, title: String?) {
-                                    if (title != null) {
-                                        currentTitle = title
-                                    }
-                                    super.onReceivedTitle(view, title)
-                                }
-                            }
-                        }
-                        webViewClient = object : WebViewClient() {
-                            override fun onPageFinished(view: WebView?, url: String?) {
-                                super.onPageFinished(view, url)
-                                if (url != null) {
-                                    currentUrl = url
-                                }
-                                webView = this@apply
-                                if (isDark && webViewDark) {
-                                    val js = FORCE_DARK_JS.trimIndent()
-                                    view?.evaluateJavascript(js, null)
-                                }
-                                selectColor(view) { topColor = it }
-                                // 注入 JS，为网页内容添加 padding（单位 px）
-                                view?.evaluateJavascript(getPaddingPxJs(null,bottom), null)
-                                loading = false
-                            }
-
-                            override fun shouldInterceptRequest(
-                                view: WebView?,
-                                request: WebResourceRequest?
-                            ): WebResourceResponse? {
-                                val req = request
-                                if(req != null) {
-                                    val c = req.requestHeaders["Cookie"]
-                                    if(currentUrl.startsWith(MyApplication.PE_URL)) {
-                                        cookieManager.setCookie(req.url.toString(), cookies)
-                                        cookieManager.flush()
-                                    } else
-                                    if(cookies != null && c?.contains(cookies) == false) {
-                                        cookieManager.setCookie(req.url.toString(), cookies)
-                                        cookieManager.flush()
-                                    }
-                                }
-
-                                return super.shouldInterceptRequest(view, request)
-                            }
-                            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                                loading = true
-                                val urlS = request?.url.toString()
-
-                                if (urlS.contains("download")) { // 识别下载链接
-                                    Starter.startWebUrl(context,urlS)
-                                    return true // 拦截 WebView 处理
-                                }
-
-                                return false // 继续让 WebView 处理
-                            }
-                        }
-                        webView = this
-                        // 监听 WebView 滚动事件
-                        setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
-                            if (scrollY > oldScrollY) {
-                                // 向下滚动
-                                // 隐藏topbar
-                                visible = false
-                            } else if (scrollY < oldScrollY) {
-                                // 向上滚动
-                                // 显示topbar
-                            }
-                        }
+                        loading = false
                     }
-                },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            )
+
+                    override fun shouldInterceptRequest(
+                        view: WebView?,
+                        request: WebResourceRequest?
+                    ): WebResourceResponse? {
+                        sharedInterceptRequest(request,currentUrl,cookies,cookieManager)
+                        return super.shouldInterceptRequest(view, request)
+                    }
+                    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean =
+                        sharedOverrideUrlLoading(request,context) {
+                            loading = it
+                        }
+                }
+                // 监听滚动
+                scrollListener {
+                    visible = it
+                }
+            }
+            webView!!
         }
     }
 }

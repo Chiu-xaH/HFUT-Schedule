@@ -8,7 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.webview.WebViewScreenForActivity
-import com.hfut.schedule.ui.component.webview.getPureUrl
+import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.theme.AppTheme
 
 class WebViewActivity : ComponentActivity() {

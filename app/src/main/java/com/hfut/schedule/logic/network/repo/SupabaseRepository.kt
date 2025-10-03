@@ -165,7 +165,7 @@ object SupabaseRepository {
 
     suspend fun supabaseGetMyEvents(holder : StateHolder<List<SupabaseEventsInput>>) =
         launchRequestSimple(
-            holder = holder,// authorization = "Bearer $jwt"
+            holder = holder,
             request = {
                 supabase.getEvents(endTime = null, email = "eq." + getSchoolEmail()).awaitResponse()
             },
@@ -195,6 +195,8 @@ object SupabaseRepository {
             },
             transformSuccess = { _, _ -> true }
         )
+
+
     suspend fun postUser() = launchRequestNone {
         supabase.postUsage().awaitResponse()
     }

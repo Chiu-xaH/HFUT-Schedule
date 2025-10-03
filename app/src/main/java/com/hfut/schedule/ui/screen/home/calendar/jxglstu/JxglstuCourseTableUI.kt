@@ -111,6 +111,7 @@ import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
@@ -573,9 +574,9 @@ fun JxglstuCourseTableUI(
            if(loadingJxglstu == false) return@LaunchedEffect
            val cookie = getJxglstuCookie()
 
-           launch  {
+           launch {
                onEnabled(false)
-               val job = async {
+               val job = async(Dispatchers.IO) {
                    if(casCookies == null) {
                        showToast("异常 中止登录其他平台")
                        return@async
@@ -736,20 +737,30 @@ fun JxglstuCourseTableUI(
                onEnabled(true)
            }
            // 教务系统
-           launch jxglstu@ {
+           launch(Dispatchers.IO) jxglstu@ {
                if(GlobalUIStateHolder.excludeJxglstu) {
                    return@jxglstu
                }
                cookie?: return@jxglstu
                vm.getStudentId(cookie)
-               val studentId = (vm.studentId.state.value as? UiState.Success)?.data ?: return@jxglstu
+               val studentId = (vm.studentId.state.value as? UiState.Success)?.data
+               if(studentId == null) {
+                   showToast("获取studentId失败 教务登录中止")
+                   loadingJxglstu = false
+                   return@jxglstu
+               }
                launch { vm.getInfo(cookie) }
                launch {
                    if (prefs.getString("photo", "") == null || prefs.getString("photo", "") == "")
                        vm.getPhoto(cookie)
                }
                vm.getBizTypeId(cookie,studentId)
-               val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data ?: return@jxglstu
+               val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data
+               if(bizTypeId == null) {
+                   showToast("获取bizTypeId失败 教务登录中止")
+                   loadingJxglstu = false
+                   return@jxglstu
+               }
                launch {
                    vm.getLessonIds(cookie, studentId = studentId, bizTypeId = bizTypeId)
                    val lessonResponse = (vm.lessonIds.state.value as? UiState.Success)?.data ?: return@launch
@@ -776,7 +787,7 @@ fun JxglstuCourseTableUI(
 
     if(loadingJxglstu) {
         CenterScreen {
-            LoadingUI(if(webVpn) "请等待,若加载超过10s则为超时,可重新登录" else null)
+            LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
         }
     } else {
         // 课程表布局

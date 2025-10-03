@@ -4,20 +4,12 @@ import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -31,15 +23,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
@@ -48,10 +37,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
@@ -62,11 +49,8 @@ import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.LiquidButton
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
-import com.hfut.schedule.ui.component.webview.getPureUrl
 import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
@@ -124,23 +108,16 @@ import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.welcome.VersionInfoScreen
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
+import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.TransitionCurveStyle
-import com.xah.transition.util.isCurrentRouteWithoutArgs
-import com.xah.uicommon.style.align.CenterScreen
+import com.xah.transition.util.currentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import kotlin.text.toInt
 
 private const val OFFSET_KEY = "OFFSET_DRAWERS"
 suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(Dispatchers.IO) {
@@ -159,7 +136,6 @@ suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(D
 
 suspend fun DrawerState.animationClose() = this.animateTo(DrawerValue.Closed, tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing))
 suspend fun DrawerState.animationOpen() = this.animateTo(DrawerValue.Open, spring(dampingRatio = 0.8f, stiffness = 125f))
-
 
 private fun haveImportantUpdate() : Boolean {
     try {
@@ -190,6 +166,21 @@ private fun haveImportantUpdate() : Boolean {
         return false
     }
 }
+
+private fun firstPage(
+    startRoute : String?
+) : String {
+    return if(prefs.getBoolean("canUse",false)) {
+        startRoute
+            ?: if(!haveImportantUpdate()) {
+                AppNavRoute.Home.route
+            } else {
+                AppNavRoute.UpdateSuccess.route
+            }
+    } else {
+        AppNavRoute.UseAgreement.route
+    }
+}
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("NewApi")
 @Composable
@@ -199,81 +190,58 @@ fun MainHost(
     uiVm : UIViewModel,
     login : Boolean,
     isSuccessActivity: Boolean,
-//    isSuccessActivityWebVpn : Boolean,
     startRoute : String? = null
 ) {
-    val switchUpload by remember { mutableStateOf(prefs.getBoolean("SWITCHUPLOAD",true )) }
-    val startActivity by produceState<Boolean>(initialValue = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false)) {
-        value = DataStoreManager.enableQuickStart.first()
-    }
+    val startActivity by DataStoreManager.enableQuickStart.collectAsState(initial = true)
     val celebration = remember { getCelebration() }
     val navController = rememberNavController()
-    val first by remember { mutableStateOf(
-        if(prefs.getBoolean("canUse",false)) {
-            startRoute
-                ?: if(!haveImportantUpdate()) {
-                    AppNavRoute.Home.route
-                } else {
-                    AppNavRoute.UpdateSuccess.route
-                }
-        } else {
-            AppNavRoute.UseAgreement.route
-        }
-    ) }
-    var value by remember { mutableIntStateOf(0) }
     // 初始化网络请求
-    if(!isSuccessActivity)
+    if(!isSuccessActivity) {
         LaunchedEffect(Unit) {
-            launch {
+            launch(Dispatchers.IO) {
                 if(isUserBirthday()) {
                     showToast("祝您${getUserAge()}周岁🎈生日快乐🎂")
-                }
-            }
-            launch {
-                // 修正之前的Bug
-                val auth = prefs.getString("auth","") ?: return@launch
-                if(auth.contains("&")) {
-                    SharedPrefs.saveString("auth",auth.substringBefore("&"))
-                    showToast("已自动修复一卡通登录状态无效的Bug")
                 }
             }
             // 如果进入的是登陆界面 未登录做准备
             if(!(startActivity && login)) {
                 //从服务器获取信息
-                launch { networkVm.getMyApi() }
-                launch { loginVm.getCookie() }
-                launch {  loginVm.getKey() }
-                launch {
-                    loginVm.getTicket()
-                    val cookie = (loginVm.webVpnTicket.state.value as? UiState.Success)?.data ?: return@launch
-                    loginVm.putKey(cookie)
-                    val status = (loginVm.status.state.value as? UiState.Success)?.data ?: return@launch
-                    if(status) {
-                        loginVm.getKeyWebVpn()
+                launch(Dispatchers.IO) {
+                    launch { networkVm.getMyApi() }
+                    launch { loginVm.getCookie() }
+                    launch {  loginVm.getKey() }
+                    launch {
+                        loginVm.getTicket()
+                        val cookie = (loginVm.webVpnTicket.state.value as? UiState.Success)?.data ?: return@launch
+                        loginVm.putKey(cookie)
+                        val status = (loginVm.status.state.value as? UiState.Success)?.data ?: return@launch
+                        if(status) {
+                            loginVm.getKeyWebVpn()
+                        }
                     }
                 }
-            } else { // 否则进入的是主界面
+            } else {
                 //上传用户统计数据
-                if(switchUpload && value == 0 && !AppVersion.isPreview() && !AppVersion.isInDebugRunning()) {
-                    launch {
+                launch(Dispatchers.IO) {
+                    val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
+                    if(switchUpload && !AppVersion.isPreview() && !AppVersion.isInDebugRunning()) {
                         networkVm.postUser()
-                        value++
                     }
                 }
             }
         }
+    }
+
     val configuration = LocalConfiguration.current
     var screenWidth by remember { mutableIntStateOf(0) }
     val drawerState =  rememberDrawerState(DrawerValue.Closed)
-    var maxOffset by rememberSaveable { mutableFloatStateOf(
-        prefs.getFloat(OFFSET_KEY,0f)
-    ) }
+    var maxOffset by rememberSaveable { mutableFloatStateOf(prefs.getFloat(OFFSET_KEY,0f)) }
     val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
-    val isWebView = navController.isCurrentRouteWithoutArgs(AppNavRoute.WebView.route) || navController.isCurrentRouteWithoutArgs(AppNavRoute.UseAgreement.route)
-    val isScan = navController.isCurrentRouteWithoutArgs(AppNavRoute.Scan.route)
-
-    val enableGesture = enableControlCenter && !isWebView
+    val currentRoute = navController.currentRouteWithoutArgs()
+    val disabledGesture = currentRoute == AppNavRoute.WebView.route || currentRoute == AppNavRoute.UseAgreement.route
+    val disabledBlur = currentRoute == AppNavRoute.Scan.route
+    val enableGesture = enableControlCenter && !disabledGesture
     var containerColor by remember { mutableStateOf<Color?>(null) }
     LaunchedEffect(configuration,enableControlCenter) {
         if(enableControlCenter) {
@@ -326,10 +294,11 @@ fun MainHost(
             }
         }
     }
-    val alpha = if(motionBlur && !isScan) {
+    val alpha = if(motionBlur && !disabledBlur) {
         0.4f
-    } else 1f
-    //0.35f//45f  0.425f
+    } else {
+        1f
+    }
 
     ModalNavigationDrawer  (
         scrimColor = MaterialTheme.colorScheme.surface.copy(alpha),
@@ -337,11 +306,7 @@ fun MainHost(
         gesturesEnabled = enableGesture,
         drawerContent = {
             ControlCenterScreen(
-                if(isWebView) {
-                    containerColor?.copy(if(motionBlur) 0.425f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
-                } else {
-                    null
-                }
+                containerColor?.copy(if(motionBlur) 0.425f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
                 ,navController) {
                 scope.launch {
                     drawerState.animationClose()
@@ -359,18 +324,16 @@ fun MainHost(
             // 磁钉体系
             TransitionNavHost(
                 navController = navController,
-                startDestination = first,
+                startDestination = firstPage(startRoute),
                 modifier = Modifier
-                    .let {
-                        if(isWebView) {
-                            containerColor?.let { color ->
-                                it.background(color)
-                            } ?: it
+                    .background(
+                        if(disabledGesture) {
+                            containerColor ?: MaterialTheme.colorScheme.surface
+                        } else {
+                            MaterialTheme.colorScheme.surface
                         }
-                        else
-                            it.background(MaterialTheme.colorScheme.surface)
-                    }
-                    .let{ if(motionBlur && enableControlCenter && !isScan) it.blur(blurDp) else it }
+                    )
+                    .let{ if(motionBlur && enableControlCenter && !disabledBlur) it.blur(blurDp) else it }
                     .let { if(enableControlCenter) it.scale(scale) else it },
             )  {
                 // 主UI

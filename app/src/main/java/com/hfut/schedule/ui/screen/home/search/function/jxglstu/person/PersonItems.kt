@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -61,6 +62,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.coverBlur
@@ -69,12 +71,21 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.uicommon.component.status.LoadingScreen
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.style.align.CenterScreen
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 
 
@@ -88,35 +99,71 @@ fun PersonScreen(
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Person.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var loading by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val refreshNetwork  =  {
+        scope.launch(Dispatchers.IO) {
+            val cookie = getJxglstuCookie() ?: return@launch
+            loading = true
+            async {
+                launch {
+                    vm.getInfo(cookie)
+                }
+                launch {
+                    vm.getPhoto(cookie)
+                }
+            }.await()
+            loading = false
+        }
+    }
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Person.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Person.icon)
-                    },
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
+    val backdrop = rememberLayerBackdrop()
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Person.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.Person.icon)
+                },
+                actions = {
+                    LiquidButton(
+                        onClick = {
+                            refreshNetwork()
+                        },
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        isCircle = true,
+                        backdrop = backdrop
+                    ) {
+                        Icon(painterResource(R.drawable.rotate_right),null)
+                    }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            if(loading) {
+                CenterScreen {
+                    LoadingUI()
+                }
+            } else {
                 InnerPaddingHeight(innerPadding,true)
                 PersonItems(vm,navController)
                 InnerPaddingHeight(innerPadding,false)
             }
         }
+    }
 //    }
 }
 @SuppressLint("SuspiciousIndentation")

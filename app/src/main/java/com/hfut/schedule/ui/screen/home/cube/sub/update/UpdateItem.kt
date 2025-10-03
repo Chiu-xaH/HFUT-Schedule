@@ -54,9 +54,11 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 自动CAS登录")
+            UpdateItems("新增 扫码对Wifi二维码的支持")
             UpdateItems("新增 引入液态玻璃材质","需Android 13+")
             UpdateItems("新增 转场动画支持调整为Level0","削弱效果，以减少等待时间")
             UpdateItems("优化 转场动画的容器透明度过渡、首次卡顿问题")
+            UpdateItems("优化 冷启动速度","在高通骁龙855设备上实测由原1050ms缩短至600ms，提高42.9%", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
 //            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")
@@ -74,6 +76,13 @@ fun VersionInfo() {
 //            UpdateItems("新增 为选项适配了新的转场动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
+//            UpdateItems("回归 成绩-统计")
+//            UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
+//            UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
+//            UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
+//            UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
+//            UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
+//            UpdateItems("新增 智慧后勤")
             /*
             就业二级界面 通知公告二级界面
             教师检索二级界面 课程详情查教师三级界面
@@ -81,16 +90,6 @@ fun VersionInfo() {
             课程详情查挂科率三级界面 挂科率二级界面
             一卡通搜索，一卡通付款码，一卡通范围支出，一卡通慧新易校
              */
-//            UpdateItems("回归 从外部文件导入课表的功能")
-//            UpdateItems("回归 成绩-统计")
-            // 未实现
-//        UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)
-//        UpdateItems("新增 本地聚焦卡片快速转化为云端卡片，一键共享本地卡片", null, UpdateType.ADD)
-//        UpdateItems("新增 对共建平台已上传卡片的信息编辑", null, UpdateType.ADD)
-//        UpdateItems("重构 部分界面，使其适配平板、折叠屏等大屏设备", null, UpdateType.RENEW)
-//        UpdateItems("优化 添加聚焦卡片适用范围的添加班级逻辑", null, UpdateType.OPTIMIZE)
-            // 下版本规划
-//        UpdateItems("修复 体测平台、报修打开白屏的Bug")
         }
     }
 }
@@ -110,7 +109,9 @@ private enum class UpdateType(val res : Int) {
     OTHER(R.drawable.more_vert),
     UPDATE(R.drawable.arrow_upward),
     // 回归
-    COME_BACK(R.drawable.rotate_right)
+    COME_BACK(R.drawable.rotate_right),
+    // 性能
+    PERFORMANCE(R.drawable.flash_on)
 }
 
 @Composable
@@ -140,4 +141,5 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
+
 

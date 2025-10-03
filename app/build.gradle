@@ -4,12 +4,13 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.googleKsp)
     alias(libs.plugins.kotlinParcelize)
+    alias(libs.plugins.baselineProfile)
 }
 
 def moduleTransition = ":transition"
 def moduleUiCommon = ":uiCommon"
 def moduleShared = ":shared"
-
+def moduleBaseline = ":baselineProfile"
 android {
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
     def keystoreProperties = new Properties()
@@ -81,6 +82,10 @@ android {
         }
     }
 
+//    baselineProfile {
+//        automaticGenerationDuringBuild true
+//    }
+
     buildTypes {
         release {
             // R8
@@ -90,11 +95,7 @@ android {
             // 最终构建的元数据中包含 VCS(Git)的信息
             vcsInfo.include false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-        benchmark {
-            signingConfig signingConfigs.debug
-            matchingFallbacks = ['release']
-            debuggable false
+            signingConfig signingConfigs.chiu
         }
     }
 
@@ -146,6 +147,10 @@ dependencies {
 //    androidTestImplementation(libs.androidx.espresso.core)
 //    androidTestImplementation(libs.androidx.ui.test.junit4)
 //    androidTestImplementation platform(libs.androidx.compose.bom)
+    // 基准测试依赖
+    androidTestImplementation(libs.androidx.benchmark.macro.junit4)
+    androidTestImplementation(libs.androidx.uiautomator)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.ui.tooling.preview)
@@ -237,4 +242,5 @@ dependencies {
     implementation(project(moduleTransition))
     implementation(project(moduleUiCommon))
     implementation(project(moduleShared))
+    baselineProfile project(moduleBaseline)
 }

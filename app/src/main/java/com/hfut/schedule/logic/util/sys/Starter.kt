@@ -23,7 +23,7 @@ import com.hfut.schedule.activity.util.WebViewActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.util.network.WebVpnUtil
-import com.hfut.schedule.ui.component.webview.getPureUrl
+import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
