@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-10-04") },
+                overlineContent = { Text(text = "2025-10-05") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,10 +53,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-//            UpdateItems("新增 自动CAS登录")
-//            UpdateItems("新增 崩溃的自动处理")
+            UpdateItems("新增 自动CAS登录")
+            UpdateItems("新增 崩溃的自动处理")
+            UpdateItems("新增 为低版本Android用户的开屏显示")
+            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
-//            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")

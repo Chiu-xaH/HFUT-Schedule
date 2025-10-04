@@ -77,11 +77,12 @@ object FileDataManager : FileDataCache(CACHE_DIR_NAME) {
     const val PROGRAM = "program"
     const val PROGRAM_PERFORMANCE = "program_performance"
     const val PHOTO = "jxglstu_photo"
-    // 待迁移大文本 不是特别大 影响不大 慢慢迁移
-    const val EXAM = "exam"//examJXGLSTU
-    const val COURSES = "courses"//courses
-    const val PERSON_INFO = "jxglstu_info"//info
-    const val PERSON_PROFILE = "jxglstu_profile"//profile
+    // 待迁移大文本 不是特别大 可慢慢迁移
+    const val EXAM = "exam"//examJXGLSTU 大
+    const val COURSES = "courses"//courses 大
+    const val PERSON_INFO = "jxglstu_info"//info 大
+    const val PERSON_PROFILE = "jxglstu_profile"//profile 大
+    // 远期规划迁移 非常小的JSON 影响不大
     const val MY = "my" //my
     const val HOLIDAY = "holiday"//HOLIDAY
     const val WX_PERSON_INFO = "wx_person_info" //WX_PERSON_INFO
@@ -90,7 +91,6 @@ object FileDataManager : FileDataCache(CACHE_DIR_NAME) {
     const val FRIENDS = "community_friends" //friends
     const val COMMUNITY_COURSES = "community_courses"//Course
     const val HUI_XIN_INFO = "hui_xin_info"//card_yue
-
 
     // 迁移函数 从SharePrefs迁移到这里并删除
     private suspend fun move(context: Context,oldKey : String,newKey : String) {
@@ -122,6 +122,22 @@ object FileDataManager : FileDataCache(CACHE_DIR_NAME) {
                 // 课程表
                 move(context,"json",DATUM)
             }
+//            launch {
+                // 考试
+//                move(context,"examJXGLSTU",EXAM)
+//            }
+//            launch {
+                // 课程汇总
+//                move(context,"courses",COURSES)
+//            }
+//            launch {
+                // 个人信息
+//                move(context,"info",PERSON_INFO)
+//            }
+//            launch {
+                // 个人信息2
+//                move(context,"profile",PERSON_PROFILE)
+//            }
         }
     }
 }
