@@ -3,12 +3,14 @@ package com.hfut.schedule.logic.util.sys
 import android.app.Activity
 import android.content.ContentUris
 import android.content.ContentValues
+import android.content.Context
 import android.provider.CalendarContract
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -72,7 +74,7 @@ private suspend fun checkExistEvent(dateTime: DateTime, title: String, activity:
 }
 private const val CALENDAR_COURSE_TAG = "聚在工大-"
 
-suspend fun delAllCourseEvent(vmUI: UIViewModel,activity: Activity) = withContext(Dispatchers.IO) {
+suspend fun delAllCourseEvent(context: Context,activity: Activity) = withContext(Dispatchers.IO) {
     checkAndRequestCalendarPermission(activity)
     try {
         // 删除所有remark为常量CALENDAR_COURSE_TAG的日程
@@ -96,7 +98,8 @@ suspend fun delAllCourseEvent(vmUI: UIViewModel,activity: Activity) = withContex
 
         // 然后删除title等于下面列表里it.courseName的日程
         var rowsTitle = 0
-        vmUI.jxglstuCourseScheduleList.map { it.courseName }
+        val jxglstuCourseScheduleList = getJxglstuCourseSchedule(context=context)
+        jxglstuCourseScheduleList.map { it.courseName }
             .distinct() // 避免重复课程名多次删除
             .forEach { courseName ->
                 val whereTitle = """
@@ -110,7 +113,7 @@ suspend fun delAllCourseEvent(vmUI: UIViewModel,activity: Activity) = withContex
                     argsTitle
                 )
             }
-        vmUI.jxglstuCourseScheduleList.map {
+        jxglstuCourseScheduleList.map {
             it.courseName
         }
 
@@ -319,8 +322,15 @@ fun parseStrToDateTimeBean(date: String, time: String) : DateTimeBean? {
 
 data class JxglstuCourseSchedule(val time : DateTime, val place : String?, val courseName : String)
 
-fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule>  {
-    val json = jstr ?: prefs.getString("json", "")
+suspend fun getJxglstuCourseSchedule(
+    jsonStr : String? = null,
+    context: Context,
+) : List<JxglstuCourseSchedule>  {
+    val json = jsonStr ?: FileDataManager.read(context, FileDataManager.DATUM)
+    if(json == null) {
+        return emptyList()
+    }
+
     val list = mutableListOf<JxglstuCourseSchedule>()
     try {
         val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
@@ -367,12 +377,12 @@ fun getJxglstuCourseSchedule(jstr : String? = null) : List<JxglstuCourseSchedule
     return list
 }
 
-suspend fun addCourseToEvent(vmUI : UIViewModel,activity: Activity,time : Int) : Int = withContext(Dispatchers.IO) {
+suspend fun addCourseToEvent(context: Context,activity: Activity,time : Int) : Int = withContext(Dispatchers.IO) {
     var failedCount = 0
     async { checkAndRequestCalendarPermission(activity) }.await()
     launch {
         try {
-            val list = vmUI.jxglstuCourseScheduleList
+            val list = getJxglstuCourseSchedule(context = context)
             for(item in list) {
                 val itemTime = item.time
                 val itemName = item.courseName

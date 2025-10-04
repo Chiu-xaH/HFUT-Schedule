@@ -47,6 +47,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramPartThree
 import com.hfut.schedule.logic.model.jxglstu.ProgramResponse
 import com.hfut.schedule.logic.model.jxglstu.item
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -78,6 +79,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
+    val context = LocalContext.current
     val programData by produceState<ProgramResponse?>(initialValue = null) {
         if(!ifSaved) {
             onListenStateHolder(vm.programData) { data ->
@@ -85,7 +87,11 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
             }
         } else {
             value = try {
-                Gson().fromJson(prefs.getString("program",""), ProgramResponse::class.java)
+                val content = FileDataManager.read(context,FileDataManager.PROGRAM)
+                if(content == null) {
+                    null
+                }
+                Gson().fromJson(content, ProgramResponse::class.java)
             } catch (e : Exception) {
                 null
             }

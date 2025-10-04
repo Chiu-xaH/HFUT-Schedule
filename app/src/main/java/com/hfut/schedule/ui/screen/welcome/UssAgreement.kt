@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -39,11 +40,14 @@ import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateAndClear
@@ -75,7 +79,8 @@ fun UseAgreementScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
-    val context = LocalActivity.current
+    val activity = LocalActivity.current
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     Scaffold(
         topBar = {
@@ -124,7 +129,11 @@ fun UseAgreementScreen(
                                         launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
                                         launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
                                     }.await()
-                                    navController.navigateAndClear(route)
+                                    if(getPersonInfo().name != null) {
+                                        navController.navigateAndClear(route)
+                                    } else {
+                                        Starter.refreshLogin(context)
+                                    }
                                 }
                             },
                             shape = MaterialTheme.shapes.extraLarge,
@@ -139,7 +148,7 @@ fun UseAgreementScreen(
                         FilledTonalButton(
                             onClick = {
                                 showToast("已关闭APP")
-                                context?.finish()
+                                activity?.finish()
                             },
                             modifier = Modifier
                                 .fillMaxWidth()

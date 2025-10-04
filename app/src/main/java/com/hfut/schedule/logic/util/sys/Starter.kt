@@ -104,7 +104,7 @@ object Starter {
     @JvmStatic
     fun refreshLogin(context: Context) {
         val it = Intent(context, MainActivity::class.java).apply {
-            putExtra("nologin",false)
+            putExtra("login",true)
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
@@ -114,7 +114,7 @@ object Starter {
     @JvmStatic
     fun goToMain(context: Context) {
         val it = Intent(context, MainActivity::class.java).apply {
-            putExtra("nologin",true)
+            putExtra("login",false)
             if (context !is Activity) {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }

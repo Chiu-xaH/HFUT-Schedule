@@ -95,7 +95,6 @@ fun APPScreen(
         val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
         var showfocus by remember { mutableStateOf(switch_focus) }
 
-        val firstStart by DataStoreManager.enableQuickStart.collectAsState(initial = prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
         val controlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
 
         val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
@@ -202,17 +201,6 @@ fun APPScreen(
         }
         DividerTextExpandedWith("配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = { Text(text = "快速启动") },
-                    supportingContent = { Text(text = "打开后,再次打开应用时将默认打开免登录二级界面,而不是登陆教务页面,但您仍可通过查询中心中的选项以登录") },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.speed),
-                        contentDescription = "Localized description"
-                    ) },
-                    trailingContent = { Switch(checked = firstStart, onCheckedChange = { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }) },
-                    modifier = Modifier.clickable { scope.launch { DataStoreManager.saveFastStart(!firstStart) } }
-                )
-
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(value.toDouble(),0)}GiB")},

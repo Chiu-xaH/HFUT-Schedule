@@ -11,8 +11,8 @@ import com.xah.shared.JxglstuCourseGroup
 
 
 class RemoteService : Service() {
-    private fun getJxglstuCourseGroup(): List<JxglstuCourseGroup> {
-        val list = getJxglstuCourseSchedule().map {
+    private suspend fun getJxglstuCourseGroup(): List<JxglstuCourseGroup> {
+        val list = getJxglstuCourseSchedule(context = this).map {
             Course(
                 dateTime = Pair(it.time.start.toTimestamp(),it.time.end.toTimestamp()),
                 place = it.place,
@@ -28,7 +28,8 @@ class RemoteService : Service() {
 
     private val binder = object : IJxglstuAidlInterface.Stub() {
         override fun getJxglstuCourseGroups(): List<JxglstuCourseGroup> {
-            return getJxglstuCourseGroup()
+//            return getJxglstuCourseGroup()
+            return emptyList()
         }
     }
     override fun onBind(intent: Intent?): IBinder = binder

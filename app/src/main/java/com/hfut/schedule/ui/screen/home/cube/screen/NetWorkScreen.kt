@@ -105,8 +105,8 @@ fun NetWorkScreen(navController: NavHostController,
         DividerTextExpandedWith("其它") {
             CustomCard(color = MaterialTheme.colorScheme.surface){
                 TransplantListItem(
-                    headlineContent = { Text(text = "用户统计数据") },
-                    supportingContent = { Text(text = "允许上传非敏感数据,以帮助更好的改进体验") },
+                    headlineContent = { Text(text = "数据上报") },
+                    supportingContent = { Text(text = "允许上传崩溃日志等非敏感数据,以帮助更好的改进体验") },
                     leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
                     trailingContent = { Switch(checked = upload, onCheckedChange = { uploadch -> upload = uploadch }, enabled = true) }
                 )

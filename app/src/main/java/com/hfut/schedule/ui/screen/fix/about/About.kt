@@ -271,7 +271,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = { Text(text = "疑难解答与修复") },
-                        supportingContent = { Text(text = "当出现问题时,可从此处进入或长按桌面图标选择修复")},
+                        supportingContent = { Text(text = "当出现崩溃或无法更新时,可从此处进入或长按桌面图标选择修复")},
                         leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
                         modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
                     )

@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
@@ -48,6 +49,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApply
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Headers
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -558,9 +560,9 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseDatum(json : String) : String {
+    private suspend fun parseDatum(json : String) : String {
         if (json.contains("result")) {
-            SharedPrefs.saveString("json", json)
+            FileDataManager.save(MyApplication.context, FileDataManager.DATUM,json)
             try {
                 return json
             } catch (e : Exception) {
@@ -638,8 +640,8 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseProgram(result: String) : ProgramResponse {
-        SharedPrefs.saveString("program", result)
+    private suspend fun parseProgram(result: String) : ProgramResponse {
+        FileDataManager.save(MyApplication.context,FileDataManager.PROGRAM,result)
         return try {
             Gson().fromJson(result, ProgramResponse::class.java)
         } catch (e : Exception) {
@@ -673,8 +675,8 @@ object JxglstuRepository {
         )
     }
     @JvmStatic
-    private fun parseProgramPerformance(json : String) : ProgramBean = try {
-        SharedPrefs.saveString("PROGRAM_PERFORMANCE", json)
+    private suspend fun parseProgramPerformance(json : String) : ProgramBean = try {
+        FileDataManager.save(MyApplication.context,FileDataManager.PROGRAM_PERFORMANCE,json)
         Gson().fromJson(json, ProgramBean::class.java)
     } catch (e : Exception) { throw e }
 
@@ -773,7 +775,7 @@ object JxglstuRepository {
         })
     }
 
-    suspend fun getPhoto(cookie : String,studentId : StateHolder<Int>){
+    suspend fun getPhoto(cookie : String,studentId : StateHolder<Int>) = withContext(Dispatchers.IO) {
         onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
             val call = jxglstu.getPhoto(cookie, sId.toString())
 
@@ -782,16 +784,7 @@ object JxglstuRepository {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    //保存图片
-                    // 将响应体转换为字节数组
-                    try {
-                        val bytes = response.body()?.bytes()
-                        // 将字节数组转换为Base64编码的字符串
-                        val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
-                        // 保存编码后的字符串
-                        SharedPrefs.saveString("photo", base64String)
-                    } catch (_: Exception) {
-                    }
+                    launch { savePhoto(response)  }
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -799,6 +792,16 @@ object JxglstuRepository {
                 }
             })
         }
+    }
+
+    private suspend fun savePhoto(response: Response<ResponseBody>) = try {
+        val bytes = response.body()?.bytes()
+        // 将字节数组转换为Base64编码的字符串
+        val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
+        // 保存编码后的字符串
+        FileDataManager.save(MyApplication.context,FileDataManager.PHOTO,base64String)
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 
     suspend fun getCourseBook(

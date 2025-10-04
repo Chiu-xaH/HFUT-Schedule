@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home
 
+import android.content.Context
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.HolidayBean
@@ -15,6 +16,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -54,7 +56,7 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     return cookie
 }
 // 应用冷启动主界面时的网络请求
-suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean) = withContext(
+suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean,context: Context) = withContext(
     Dispatchers.IO) {
     val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
     val communityToken = prefs.getString("TOKEN","")
@@ -95,7 +97,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
     }
     // 更新课程表
     if(!ifSaved)
-        launch { updateCourses(vm,vmUI) }
+        launch { updateCourses(vm, context) }
     // 更新社区
     communityToken?.let {
         launch { vm.getCoursesFromCommunity(it) }
@@ -165,7 +167,7 @@ private suspend fun refreshWxAuth(vm: NetWorkViewModel) : String? = withContext(
 }
 
 //更新教务课表与课程汇总
-suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext(Dispatchers.IO) {
+suspend fun updateCourses(vm: NetWorkViewModel, context: Context) = withContext(Dispatchers.IO) {
     val webVpnCookie = DataStoreManager.webVpnCookies.first { it.isNotEmpty() }
 
     val cookie = if (!GlobalUIStateHolder.webVpn) {
@@ -191,7 +193,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, vmUI: UIViewModel) = withContext
     vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
     vm.getDatum(cookie,lessonResponse.lessonIds)
     val datum = (vm.datumData.state.value as? UiState.Success)?.data ?: return@withContext
-    vmUI.refreshJxglstuCourseScheduleList(datum)
+    FileDataManager.save(context, FileDataManager.DATUM,datum)
 }
 
 private fun getHoliday() : HolidayResponse? {

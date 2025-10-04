@@ -51,6 +51,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -180,7 +181,7 @@ fun MultiScheduleSettings(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 HazeBottomSheetTopBar("上课提醒(以教务课表为数据源)", isPaddingStatusBar = false)
-                EventUI(vmUI,activity)
+                EventUI()
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
@@ -430,8 +431,10 @@ fun MultiScheduleSettings(
                             Icon(painterResource(id = R.drawable.ios_share), contentDescription = "")
                         },
                         modifier = Modifier.clickable {
-                            prefs.getString("json","")?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
-                            shareTextFile("HFUT-Schedule-Share.txt")
+                            scope.launch {
+                                FileDataManager.read(context, FileDataManager.DATUM)?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
+                                shareTextFile("HFUT-Schedule-Share.txt")
+                            }
                         }
                     )
                     PaddingHorizontalDivider()
@@ -589,7 +592,9 @@ fun InfoUI() {
 
 
 @Composable
-private fun EventUI(vmUI: UIViewModel,context : Activity?) {
+private fun EventUI() {
+    val activity = LocalActivity.current
+    val context = LocalContext.current
     var time by remember { mutableIntStateOf(20) }
     val cor = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
@@ -639,11 +644,11 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
             },
             leadingContent = { Icon(painterResource(R.drawable.event_upcoming),null) },
             modifier = Modifier.clickable {
-                context?.let {
+                activity?.let {
                     cor.launch {
                         async { loading = true }.await()
-                        async { delAllCourseEvent(vmUI,activity = it) }.await()
-                        async { addCourseToEvent(vmUI,activity = it,time) }.await()
+                        async { delAllCourseEvent(context,activity = it) }.await()
+                        async { addCourseToEvent(context,activity = it,time) }.await()
                         launch { loading = false }
                     }
                 }
@@ -659,10 +664,10 @@ private fun EventUI(vmUI: UIViewModel,context : Activity?) {
             },
             leadingContent = { Icon(painterResource(R.drawable.event_busy),null) },
             modifier = Modifier.clickable {
-                context?.let {
+                activity?.let {
                     cor.launch {
                         async { loading = true }.await()
-                        async { delAllCourseEvent(vmUI,activity = it) }.await()
+                        async { delAllCourseEvent(context,activity = it) }.await()
                         launch { loading = false }
                     }
                 }

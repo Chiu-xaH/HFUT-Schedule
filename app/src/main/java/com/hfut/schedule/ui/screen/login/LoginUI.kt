@@ -99,6 +99,7 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.card.function.main.RefreshHuiXin
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.bottomBarBlur
@@ -245,11 +246,8 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
 }
 
 
+fun isAnonymity() : Boolean = getPersonInfo().name == null
 
-fun isAnonymity() : Boolean {
-    val json = prefs.getString("json", "")
-    return json?.contains("result") != true
-}
 private val TAB_LOGIN = 0
 private val TAB_SETTRINGS = 1
 
@@ -826,7 +824,6 @@ private fun TwoTextField(
                 LargeButton(
                     onClick = {
                         scope.launch {
-                            DataStoreManager.saveFastStart(true)
                             Starter.goToMain(context)
                         }
                     },

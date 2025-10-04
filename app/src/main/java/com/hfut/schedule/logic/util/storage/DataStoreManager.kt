@@ -85,7 +85,6 @@ object DataStoreManager {
 
 
     private val ANIMATION_TYPE = intPreferencesKey("animation_types")
-    private val STU_COOKIE = stringPreferencesKey("stu_cookie")
     private val PURE_DARK = booleanPreferencesKey("pure_dark")
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
@@ -103,10 +102,8 @@ object DataStoreManager {
     private val COURSE_TABLE_TIME = stringPreferencesKey("course_table_time")
     private val COURSE_TABLE_TIME_NEXT = stringPreferencesKey("course_table_time_next")
     private val WEBVPN_COOKIE = stringPreferencesKey("webvpn_cookie")
-    private val FIRST_USE = booleanPreferencesKey("first_use")
     private val AUTO_TERM = booleanPreferencesKey("auto_term")
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
-    private val TODAY_CAMPUS_TIP = booleanPreferencesKey("today_campus_tip")
     private val COURSE_BOOK = stringPreferencesKey("course_book")
     private val WEB_VIEW_DARK = booleanPreferencesKey("web_view_dark")
     private val PREDICTIVE = booleanPreferencesKey("predictive")
@@ -119,7 +116,6 @@ object DataStoreManager {
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
     private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
-    private val USUALLY_ITEMS = stringPreferencesKey("usually_items")
     private val HIDE_EMPTY_CALENDAR_SQUARE = booleanPreferencesKey("hide_empry_calendar_square")
     private val HEFEI_ROOM_NUMBER = stringPreferencesKey("hefei_room_number")
     private val HEFEI_BUILDING_NUMBER = stringPreferencesKey("hefei_building_number")
@@ -129,7 +125,6 @@ object DataStoreManager {
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
-    suspend fun saveStuCookie(value: String) = saveValue(STU_COOKIE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
@@ -139,17 +134,14 @@ object DataStoreManager {
     suspend fun saveSupabaseRefreshToken(value: String) = saveValue(SUPABASE_REFRESH_TOKEN,value)
     suspend fun saveSupabaseFilterEvent(value: Boolean) = saveValue(SUPABASE_FILTER_EVENT,value)
     suspend fun saveSupabaseAutoCheck(value: Boolean) = saveValue(SUPABASE_AUTO_CHECK,value)
-    suspend fun saveFocusShowShower(value: Boolean) = saveValue(FOCUS_SHOW_SHOWER,value)
     suspend fun saveFocusShowWeatherWarn(value: Boolean) = saveValue(FOCUS_SHOW_WEATHER_WARN,value)
     suspend fun saveCardPassword(value: String) = saveValue(CARD_PASSWORD,value)
     suspend fun saveUseDefaultCardPassword(value: Boolean) = saveValue(USE_DEFAULT_CARD_PASSWORD,value)
     suspend fun saveDefaultCalendarAccount(value: Long) = saveValue(DEFAULT_CALENDAR_ACCOUNT,value)
     suspend fun saveCourseTable(value: String) = saveValue(COURSE_TABLE_TIME,value)
     suspend fun saveWebVpnCookie(value: String) = saveValue(WEBVPN_COOKIE,value)
-    suspend fun saveFastStart(value: Boolean) = saveValue(FIRST_USE,value)
     suspend fun saveAutoTerm(value: Boolean) = saveValue(AUTO_TERM,value)
     suspend fun saveAutoTermValue(value: Int) = saveValue(AUTO_TERM_VALUE,value)
-    suspend fun saveTodayCampusTip(value: Boolean) = saveValue(TODAY_CAMPUS_TIP,value)
     suspend fun saveCourseBook(value: String) = saveValue(COURSE_BOOK,value)
     suspend fun saveCustomColorStyle(value: ColorStyle) = saveValue(CUSTOM_COLOR_STYLE,value.code)
     suspend fun saveWebViewDark(value: Boolean) = saveValue(WEB_VIEW_DARK,value)
@@ -162,7 +154,6 @@ object DataStoreManager {
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
-    suspend fun saveUsuallyItems(value: List<String>) = saveValue(USUALLY_ITEMS, value.joinToString(","))
     suspend fun saveHideEmptyCalendarSquare(value: Boolean) = saveValue(HIDE_EMPTY_CALENDAR_SQUARE,value)
     private suspend fun saveHefeiBuildingNumber(value: String) = saveValue(HEFEI_BUILDING_NUMBER, value)
     private suspend fun saveHefeiElectricName(value: String) = saveValue(HEFEI_ELECTRIC, value)
@@ -177,15 +168,8 @@ object DataStoreManager {
             launch { saveHefeiElectricName(name) }
         }
     }
-    suspend fun emptyHefeiElectric() = withContext(Dispatchers.IO) {
-        launch { saveHefeiRoomNumber(EMPTY_STRING) }
-        launch { saveHefeiBuildingNumber(EMPTY_STRING) }
-        launch { saveHefeiElectricName(EMPTY_STRING) }
-    }
-
 
     val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
-    val stuCookies = getFlow(STU_COOKIE,EMPTY_STRING)
     val enablePureDark = getFlow(PURE_DARK,false)
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
@@ -204,7 +188,6 @@ object DataStoreManager {
     val courseTableTimeNextValue = getFlow(COURSE_TABLE_TIME_NEXT,EMPTY_STRING)
     val webVpnCookies = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val enableAutoTerm = getFlow(AUTO_TERM,true)
-    val showTodayCampusTip = getFlow(TODAY_CAMPUS_TIP,true)
     val enablePredictive = getFlow(PREDICTIVE,CAN_PREDICTIVE)
     val enableForceWebViewDark = getFlow(WEB_VIEW_DARK,true)
     val enableControlCenter = getFlow(CONTROL_CENTER,false)
@@ -216,12 +199,10 @@ object DataStoreManager {
     val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
-    val enableQuickStart = getFlow(FIRST_USE,prefs.getBoolean("SWITCHFASTSTART",prefs.getString("TOKEN","")?.isNotEmpty() ?: false))
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_LIQUID_GLASS)
     val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
-    val usuallyItems = getFlow(USUALLY_ITEMS,EMPTY_STRING)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC,getCampusRegion() == CampusRegion.HEFEI)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)

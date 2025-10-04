@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -46,6 +47,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramCompetitionType
 import com.hfut.schedule.logic.model.jxglstu.getProgramCompetitionType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
@@ -128,7 +130,7 @@ private fun ProgramPerformance(
     innerPadding : PaddingValues,
     navController : NavHostController,
 ) {
-
+    val context = LocalContext.current
     val uiState by vm.programPerformanceData.state.collectAsState()
     val data by produceState<ProgramBean?>(initialValue = null) {
         if(!ifSaved || uiState is UiState.Success) {
@@ -137,7 +139,11 @@ private fun ProgramPerformance(
             }
         } else {
             val bean = try {
-                Gson().fromJson(prefs.getString("PROGRAM_PERFORMANCE",""),ProgramBean::class.java)
+                val json = FileDataManager.read(context, FileDataManager.PROGRAM_PERFORMANCE)
+                if(json == null) {
+                    null
+                }
+                Gson().fromJson(json,ProgramBean::class.java)
             } catch (e : Exception) {
                 null
             }

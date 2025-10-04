@@ -67,6 +67,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -137,9 +138,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectCourseScreen(
     vm: NetWorkViewModel,
-    vmUI : UIViewModel,
     navController : NavHostController,
 ) {
+    val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.SelectCourse.route }
@@ -190,7 +191,7 @@ fun SelectCourseScreen(
                         LiquidButton (
                             onClick = {
                                 scope.launch{
-                                    updateCourses(vm, vmUI)
+                                    updateCourses(vm, context)
                                     showToast("已刷新课表与课程汇总")
                                 }
                             },

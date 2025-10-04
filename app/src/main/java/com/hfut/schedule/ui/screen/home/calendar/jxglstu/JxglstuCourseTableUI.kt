@@ -52,6 +52,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -73,6 +74,7 @@ import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
@@ -214,6 +216,7 @@ fun JxglstuCourseTableUI(
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit
 ) {
+    val context = LocalContext.current
     val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
@@ -278,6 +281,11 @@ fun JxglstuCourseTableUI(
         value = parseTimeTable(times)
     }
 
+    val json by produceState<String?>(initialValue = null) {
+        value = FileDataManager.read(context, FileDataManager.DATUM)
+    }
+
+
     var exception by remember { mutableStateOf<Exception?>(null) }
 
     fun refreshUI() {
@@ -292,8 +300,7 @@ fun JxglstuCourseTableUI(
 
         try {
             // 组装
-            val json = prefs.getString("json", "")
-            if(json == null || json.isBlank() == true || json.isEmpty() == true) {
+            if(json == null) {
                 return
             }
             val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
@@ -554,12 +561,10 @@ fun JxglstuCourseTableUI(
         refreshUI()
     }
 
-
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
         val tgcCookie = prefs.getString("TGC", "")
         val nextBoolean = remember { isNextOpen() }
-
 
        LaunchedEffect(Unit) {
            // 如果已经加载过 跳过
@@ -751,8 +756,9 @@ fun JxglstuCourseTableUI(
                }
                launch { vm.getInfo(cookie) }
                launch {
-                   if (prefs.getString("photo", "") == null || prefs.getString("photo", "") == "")
+                   if (FileDataManager.read(context, FileDataManager.PHOTO) == null) {
                        vm.getPhoto(cookie)
+                   }
                }
                vm.getBizTypeId(cookie,studentId)
                val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data

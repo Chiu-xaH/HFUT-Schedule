@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.app.Activity
+import android.content.Context
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -537,6 +538,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
             value = data
         }
     }
+    val context = LocalContext.current
     val noDataUI = @Composable {
         when {
             isHolidayTomorrow() -> {
@@ -562,15 +564,17 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
                 when(weekdayTomorrow) {
                     1 -> week += 1
                 }
-                val time : Int? = try {
-                    if(courseDataSource == CourseType.JXGLSTU.code) {
-                        getTomorrowJxglstuCourse(vmUI).firstOrNull()?.time?.start?.hour
-                    } else {
-                        val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
-                        if(list.isEmpty()) null else list[0][0].classTime.substringBefore(":").toIntOrNull()
+                val time : Int? by produceState(initialValue = null) {
+                    value = try {
+                        if(courseDataSource == CourseType.JXGLSTU.code) {
+                            getTomorrowJxglstuCourse(context).firstOrNull()?.time?.start?.hour
+                        } else {
+                            val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
+                            if(list.isEmpty()) null else list[0][0].classTime.substringBefore(":").toIntOrNull()
+                        }
+                    } catch (e : Exception) {
+                        null
                     }
-                } catch (e : Exception) {
-                    null
                 }
                 val result = when {
                     time == null -> {
@@ -588,7 +592,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
                     time == 11 -> {
                         Pair("有早十",R.drawable.sentiment_dissatisfied)
                     }
-                    time >= 14 -> {
+                    time!! >= 14 -> {
                         Pair("睡懒觉",R.drawable.sentiment_very_satisfied)
                     }
                     else -> {
@@ -786,8 +790,8 @@ fun JxglstuTomorrowCourseItem(
 }
 
 // 传入今天日期 YYYY-MM-DD 返回当天课程
-fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSchedule> {
-    val list = vmUI.jxglstuCourseScheduleList
+suspend fun getJxglstuCourse(date : String,context: Context) : List<JxglstuCourseSchedule> {
+    val list = getJxglstuCourseSchedule(context = context)
     try {
         val bean = date.split("-")
         if(bean.size != 3) return emptyList()
@@ -807,8 +811,8 @@ fun getJxglstuCourse(date : String,vmUI : UIViewModel) : List<JxglstuCourseSched
     }
 }
 
-fun getTodayJxglstuCourse(vmUI : UIViewModel) : List<JxglstuCourseSchedule> = getJxglstuCourse(
-    DateTimeManager.Date_yyyy_MM_dd,vmUI)
+suspend fun getTodayJxglstuCourse(context: Context) : List<JxglstuCourseSchedule> = getJxglstuCourse(
+    DateTimeManager.Date_yyyy_MM_dd,context)
 
-fun getTomorrowJxglstuCourse(vmUI : UIViewModel) : List<JxglstuCourseSchedule> = getJxglstuCourse(
-    DateTimeManager.tomorrow_YYYY_MM_DD,vmUI)
+suspend fun getTomorrowJxglstuCourse(context: Context) : List<JxglstuCourseSchedule> = getJxglstuCourse(
+    DateTimeManager.tomorrow_YYYY_MM_DD,context)

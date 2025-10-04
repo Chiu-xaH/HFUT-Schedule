@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-09-29") },
+                overlineContent = { Text(text = "2025-10-04") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,12 +53,12 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 自动CAS登录")
+//            UpdateItems("新增 自动CAS登录")
             UpdateItems("新增 扫码对Wifi二维码的支持")
             UpdateItems("新增 引入液态玻璃材质","需Android 13+")
             UpdateItems("新增 转场动画支持调整为Level0","削弱效果，以减少等待时间")
             UpdateItems("优化 转场动画的容器透明度过渡、首次卡顿问题")
-            UpdateItems("优化 冷启动速度","在高通骁龙855设备上实测由原1050ms缩短至600ms，提高42.9%", type = UpdateType.PERFORMANCE)
+            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
 //            UpdateItems("新增 对外接口","位于 选项-维护关于-对外接口，通过AIDL为其他App提供课程表、考试等信息")

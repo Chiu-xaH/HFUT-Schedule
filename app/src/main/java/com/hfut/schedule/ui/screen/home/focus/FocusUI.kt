@@ -31,6 +31,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
@@ -95,6 +96,7 @@ fun TodayScreen(
     sortReversed : Boolean,
     navController : NavHostController,
 ) {
+    val context = LocalContext.current
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
     var refreshing by rememberSaveable { mutableStateOf(true) }
@@ -106,7 +108,7 @@ fun TodayScreen(
             refreshing = true
             async {
                 launch { DateTimeManager.updateTime { timeNow = it } }
-                launch { initNetworkRefresh(vm, vmUI, ifSaved) }
+                launch { initNetworkRefresh(vm, vmUI, ifSaved, context) }
                 launch { netCourseList = getNetCourse() }
                 launch { scheduleList = getSchedule() }
             }.await()
@@ -162,8 +164,8 @@ fun TodayScreen(
                     tomorrowCourseList = getCourseInfoFromCommunity(weekDayTomorrow,nextWeek).flatten().distinct()
                 }
                 CourseType.JXGLSTU.code -> {
-                    todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it,vmUI) } ?: getTodayJxglstuCourse(vmUI)
-                    tomorrowJxglstuList = specialWorkTomorrow?.let { getJxglstuCourse(it,vmUI) } ?: getTomorrowJxglstuCourse(vmUI)
+                    todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it, context ) } ?: getTodayJxglstuCourse(context)
+                    tomorrowJxglstuList = specialWorkTomorrow?.let { getJxglstuCourse(it,context) } ?: getTomorrowJxglstuCourse(context)
                     val jxglstuLastCourse = todayJxglstuList.lastOrNull()
                     jxglstuLastTime = jxglstuLastCourse?.time?.end?.let {
                         parseTimeItem(it.hour) +  ":" + parseTimeItem(it.minute)
@@ -181,7 +183,7 @@ fun TodayScreen(
                 return@launch
             }
             async {
-                initNetworkRefresh(vm,vmUI,ifSaved)
+                initNetworkRefresh(vm,vmUI,ifSaved,context)
             }.await()
             refreshing = false
         }

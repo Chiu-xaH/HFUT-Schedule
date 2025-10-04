@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -33,6 +34,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.button.LargeButton
@@ -58,6 +60,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -68,6 +71,7 @@ fun Program(
     val iconRoute = remember { AppNavRoute.ProgramSearch.receiveRoute() }
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Program.label) },
@@ -85,10 +89,14 @@ fun Program(
             }
         },
         modifier = Modifier.clickable {
-            if (prefs.getString("program","")?.contains("children") == true || !ifSaved) {
-                navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
+            scope.launch {
+                val json = FileDataManager.read(context,FileDataManager.PROGRAM)
+
+                if (json?.contains("children") == true || !ifSaved) {
+                    navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
+                }
+                else refreshLogin(context)
             }
-            else refreshLogin(context)
         }
     )
 }
@@ -116,6 +124,7 @@ fun ProgramScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
     val backDrop = rememberLayerBackdrop()
+    val scope = rememberCoroutineScope()
     CustomTransitionScaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         roundShape = MaterialTheme.shapes.extraExtraLarge,
@@ -131,8 +140,11 @@ fun ProgramScreen(
                     LargeButton(
                         iconModifier = Modifier.iconElementShare( route = competitionRoute),
                         onClick = {
-                            if(prefs.getString("PROGRAM_PERFORMANCE","")?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
-                            else refreshLogin(context)
+                            scope.launch {
+                                val json = FileDataManager.read(context, FileDataManager.PROGRAM_PERFORMANCE)
+                                if(json?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
+                                else refreshLogin(context)
+                            }
                         },
                         icon = AppNavRoute.ProgramCompetition.icon,
                         text = AppNavRoute.ProgramCompetition.label,

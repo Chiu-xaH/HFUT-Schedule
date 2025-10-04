@@ -192,19 +192,13 @@ fun MainHost(
     isSuccessActivity: Boolean,
     startRoute : String? = null
 ) {
-    val startActivity by DataStoreManager.enableQuickStart.collectAsState(initial = true)
     val celebration = remember { getCelebration() }
     val navController = rememberNavController()
     // 初始化网络请求
     if(!isSuccessActivity) {
         LaunchedEffect(Unit) {
-            launch(Dispatchers.IO) {
-                if(isUserBirthday()) {
-                    showToast("祝您${getUserAge()}周岁🎈生日快乐🎂")
-                }
-            }
             // 如果进入的是登陆界面 未登录做准备
-            if(!(startActivity && login)) {
+            if(login) {
                 //从服务器获取信息
                 launch(Dispatchers.IO) {
                     launch { networkVm.getMyApi() }
@@ -221,11 +215,9 @@ fun MainHost(
                     }
                 }
             } else {
-                //上传用户统计数据
                 launch(Dispatchers.IO) {
-                    val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true )
-                    if(switchUpload && !AppVersion.isPreview() && !AppVersion.isInDebugRunning()) {
-                        networkVm.postUser()
+                    if(isUserBirthday()) {
+                        showToast("祝您${getUserAge()}周岁🎈生日快乐🎂")
                     }
                 }
             }
@@ -347,7 +339,7 @@ fun MainHost(
                                 isLogin = true,
                                 navHostTopController = navController,
                             )
-                        } else if(startActivity && login) {
+                        } else if(!login) {
                             MainScreen(
                                 networkVm,
                                 uiVm,
@@ -543,7 +535,7 @@ fun MainHost(
                 }
                 // 选课
                 transitionComposable(AppNavRoute.SelectCourse.route) {
-                    SelectCourseScreen(networkVm, uiVm,navController)
+                    SelectCourseScreen(networkVm,navController)
                 }
                 // 网址导航
                 transitionComposable(AppNavRoute.WebNavigation.route) {

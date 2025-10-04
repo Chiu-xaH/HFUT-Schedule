@@ -38,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -62,6 +63,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.storage.FileDataManager
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -146,18 +148,16 @@ fun PersonScreen(
             )
         },
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .backDropSource(backdrop)
-                .hazeSource(hazeState)
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-        ) {
-            if(loading) {
-                CenterScreen {
-                    LoadingUI()
-                }
-            } else {
+        if(loading) {
+            LoadingScreen()
+        } else {
+            Column(
+                modifier = Modifier
+                    .backDropSource(backdrop)
+                    .hazeSource(hazeState)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+            ) {
                 InnerPaddingHeight(innerPadding,true)
                 PersonItems(vm,navController)
                 InnerPaddingHeight(innerPadding,false)
@@ -175,8 +175,11 @@ private fun PersonItems(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {
+    val context = LocalContext.current
+    val photo by produceState<String?>(initialValue = null) {
+        value = FileDataManager.read(context, FileDataManager.PHOTO)
+    }
 
-    val photo = prefs.getString("photo",null)
     val info = getPersonInfo()
 
     val studentnumber = info.studentId

@@ -20,13 +20,4 @@ class UIViewModel : ViewModel()  {
     var specialWOrkDayChange by mutableIntStateOf(0)
 
     var isAddUIExpandedSupabase by mutableStateOf(false)
-
-    // 缓存复用 由于数据过大
-    var jxglstuCourseScheduleList by mutableStateOf(
-        getJxglstuCourseSchedule()
-    )
-    fun refreshJxglstuCourseScheduleList(json : String) {
-        jxglstuCourseScheduleList = getJxglstuCourseSchedule(json)
-    }
-
 }

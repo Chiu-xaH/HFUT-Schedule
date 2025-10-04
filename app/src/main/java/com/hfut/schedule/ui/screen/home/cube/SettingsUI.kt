@@ -105,7 +105,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             composable(FixBarItems.Fix.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    FixUI(innerPadding = innerPaddings,vm,hazeState,navController)
+                    FixUI(innerPadding = innerPaddings,vm,navController)
                 }
             }
             composable(Screen.DebugScreen.route) {
