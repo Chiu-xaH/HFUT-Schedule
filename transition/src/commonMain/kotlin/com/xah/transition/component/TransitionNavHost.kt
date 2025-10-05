@@ -9,12 +9,15 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
@@ -38,8 +41,9 @@ fun TransitionNavHost(
     startDestination: String,
     enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
         if(TransitionConfig.transitionBackgroundStyle.level != TransitionLevel.NONE_ALL) {
-            fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs,),
-//            initialAlpha = if(TransitionConfig.action == NavAction.Pop) 1f else 0f
+            fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
+            // 缺陷 打断动画
+//            initialAlpha = if(!TransitionConfig.transplantBackground && TransitionConfig.action == NavAction.Pop) 1f else 0f
             )
         } else {
             fadeIn()
@@ -49,7 +53,8 @@ fun TransitionNavHost(
         if(TransitionConfig.transitionBackgroundStyle.level != TransitionLevel.NONE_ALL) {
             fadeOut(
                 animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
-//            targetAlpha = if(TransitionConfig.action == NavAction.Push) 1f else 0f
+            // 缺陷 打断动画
+//                targetAlpha = if(!TransitionConfig.transplantBackground && TransitionConfig.action == NavAction.Push) 1f else 0f
             )
         } else {
             fadeOut()

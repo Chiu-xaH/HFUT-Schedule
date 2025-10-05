@@ -14,4 +14,11 @@ fun RefreshIndicator(
     refreshing: Boolean,
     state: PullRefreshState,
     modifier: Modifier = Modifier
-) = PullRefreshIndicator(refreshing = refreshing, state =  state, modifier = modifier,backgroundColor = MaterialTheme.colorScheme.secondaryContainer, contentColor = MaterialTheme.colorScheme.secondary,scale = true)
+) = PullRefreshIndicator(
+    refreshing = refreshing,
+    state =  state,
+    modifier = modifier,
+    backgroundColor = MaterialTheme.colorScheme.secondaryContainer,
+    contentColor = MaterialTheme.colorScheme.secondary,
+    scale = true
+)

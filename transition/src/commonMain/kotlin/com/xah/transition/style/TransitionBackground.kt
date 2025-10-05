@@ -5,16 +5,19 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.xah.transition.state.TransitionConfig
+import com.xah.transition.style.transitionDefaultBackground
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 @Composable
@@ -35,16 +38,22 @@ fun Modifier.transitionDefaultBackground(
 
     val backgroundColor by animateFloatAsState(
         targetValue = if(isExpanded) {
-            backgroundDark
+            if(level == TransitionLevel.HIGH)
+                backgroundDark*2/3
+            else
+                backgroundDark
         } else 0f,
         animationSpec = tween(speed, easing = FastOutSlowInEasing),
     )
     // 蒙版 遮罩
-    val darkModifier = this@transitionDefaultBackground.let {
+    val darkModifier = this@transitionDefaultBackground
+        .let {
         if(!transplantBackground && level.code >= TransitionLevel.LOW.code) {
-            it.drawWithContent {
-                drawContent()
-                drawRect(Color.Black.copy(alpha = backgroundColor))
+            it.drawWithCache {
+                onDrawWithContent {
+                    drawContent()
+                    drawRect(Color.Black.copy(alpha = backgroundColor))
+                }
             }
         } else it
     }
@@ -59,11 +68,14 @@ fun Modifier.transitionDefaultBackground(
         targetValue = if (isExpanded) {
             scale
         } else 1f,
-        animationSpec = tween(speed*4/3, easing = FastOutSlowInEasing)
+        animationSpec = tween(speed*7/5, easing = FastOutSlowInEasing)
     )
     //👍 MEDIUM
     if(level == TransitionLevel.MEDIUM) {
-        return darkModifier.scale(scale.value)
+        return darkModifier.graphicsLayer {
+            scaleX = scale.value
+            scaleY = scale.value
+        }
     }
 
     // 稍微晚于运动结束
@@ -72,11 +84,16 @@ fun Modifier.transitionDefaultBackground(
             blurRadius
         } else 0.dp,
         label = "",
-        animationSpec = tween(speed*7/5, easing = FastOutSlowInEasing)
+        animationSpec = tween(speed*6/5, easing = FastOutSlowInEasing)
     )
 
     //👍 HIGH
-    return darkModifier.blur(blurSize).scale(scale.value)
+    return darkModifier
+        .blur(blurSize)
+        .graphicsLayer {
+            scaleX = scale.value
+            scaleY = scale.value
+        }
 }
 
 
@@ -94,3 +111,5 @@ fun Modifier.transitionSkip(
     }
     return background
 }
+
+
