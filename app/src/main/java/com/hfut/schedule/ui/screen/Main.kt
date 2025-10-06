@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -35,8 +36,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -108,6 +111,7 @@ import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.welcome.VersionInfoScreen
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
+import com.hfut.schedule.ui.util.shaderSelf
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -133,6 +137,21 @@ suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(D
         return@withContext currentValue
     }
 }
+
+//private data class BackgroundStyle(
+//    val scale : Float,
+//    val blur : Dp,
+//    val alpha : Float,
+//)
+
+//private fun backgroundStyle(isLarge: Boolean): BackgroundStyle {
+//    return if (isLarge) {
+//        BackgroundStyle(0.85f, 42.5.dp, 0.4f)
+//    } else {
+//        BackgroundStyle(0.875f,5.dp, 0.25f)
+//    }
+//}
+
 
 suspend fun DrawerState.animationClose() = this.animateTo(DrawerValue.Closed, tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing))
 suspend fun DrawerState.animationOpen() = this.animateTo(DrawerValue.Open, spring(dampingRatio = 0.8f, stiffness = 125f))
@@ -245,6 +264,8 @@ fun MainHost(
                 }
         }
     }
+//    val isLarge = false
+//    val backgroundStyle = backgroundStyle(isLarge)
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val blurDp by remember {
         derivedStateOf {
@@ -252,7 +273,7 @@ fun MainHost(
                 0.dp // 未校准前不模糊
             } else {
                 val fraction = 1 - (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-                (fraction * 42.5).dp//37.5
+                (fraction * 42.5).dp//42.5 0.85f 0.4f
             }
         }
     }
@@ -262,7 +283,7 @@ fun MainHost(
                 1f
             } else {
                 val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
-                (0.85f) * (1 - fraction) + fraction// 0.85f else 0.8875
+                (0.85f) * (1 - fraction) + fraction
             }
         }
     }
@@ -286,14 +307,14 @@ fun MainHost(
             }
         }
     }
-    val alpha = if(motionBlur && !disabledBlur) {
-        0.4f
+    val backgroundColor = if(motionBlur && !disabledBlur) {
+        MaterialTheme.colorScheme.surface.copy(.4f)
     } else {
-        1f
+        MaterialTheme.colorScheme.surface.copy(if(AppVersion.CAN_SHADER) .88f else 1f)
     }
 
     ModalNavigationDrawer  (
-        scrimColor = MaterialTheme.colorScheme.surface.copy(alpha),
+        scrimColor = backgroundColor,
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {
@@ -319,14 +340,31 @@ fun MainHost(
                 startDestination = firstPage(startRoute),
                 modifier = Modifier
                     .background(
-                        if(disabledGesture) {
-                            containerColor ?: MaterialTheme.colorScheme.surface
-                        } else {
+                        if(AppVersion.CAN_SHADER) {
                             MaterialTheme.colorScheme.surface
+                        } else {
+                            if(disabledGesture) {
+                                containerColor ?: MaterialTheme.colorScheme.surface
+                            } else {
+                                MaterialTheme.colorScheme.surface
+                            }
                         }
                     )
                     .let{ if(motionBlur && enableControlCenter && !disabledBlur) it.blur(blurDp) else it }
-                    .let { if(enableControlCenter) it.scale(scale) else it },
+                    .let {
+                        if(AppVersion.CAN_SHADER) {
+                            it.shaderSelf(scale,RoundedCornerShape(0.dp))
+                        } else {
+                            it.let {
+                                if(enableControlCenter) {
+                                    it.graphicsLayer {
+                                        scaleX = scale
+                                        scaleY = scale
+                                    }
+                                } else it
+                            }
+                        }
+                    },
             )  {
                 // 主UI
                 transitionComposable(AppNavRoute.Home.route) {

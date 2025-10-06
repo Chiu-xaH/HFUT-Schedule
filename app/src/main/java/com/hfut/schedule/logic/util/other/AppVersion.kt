@@ -66,7 +66,7 @@ object AppVersion {
 
     val CAN_PREDICTIVE = sdkInt >= 33
 
-    val CAN_LIQUID_GLASS = sdkInt >= 33
+    val CAN_SHADER = sdkInt >= 33
 
     fun isInDebugRunning() : Boolean = deviceName.startsWith("sdk_gphone") == true
     fun isPreview() : Boolean = getVersionName().contains("Preview")

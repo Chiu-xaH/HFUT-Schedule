@@ -146,7 +146,7 @@ fun Modifier.topBarBlur(
 fun Modifier.backDropSource(
     backdrop : LayerBackdrop
 ): Modifier {
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_LIQUID_GLASS)
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     return if(enableLiquidGlass) {
         this.layerBackdrop(backdrop)
     } else {

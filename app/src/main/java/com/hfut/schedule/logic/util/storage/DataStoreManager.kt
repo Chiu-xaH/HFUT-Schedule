@@ -201,7 +201,7 @@ object DataStoreManager {
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
-    val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_LIQUID_GLASS)
+    val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC,getCampusRegion() == CampusRegion.HEFEI)

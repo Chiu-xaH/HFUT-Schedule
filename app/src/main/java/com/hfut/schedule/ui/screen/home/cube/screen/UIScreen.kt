@@ -176,7 +176,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
-        val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_LIQUID_GLASS)
+        val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
         val scope = rememberCoroutineScope()
 
@@ -542,26 +542,42 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text(text = "玻璃材质(Beta)")
                     },
                     supportingContent = {
-                        Text(text = "将部分位于内容之上的容器渲染为带折射的玻璃材质效果" + (if(!AppVersion.CAN_LIQUID_GLASS) "(需为Android 13+)" else "") )
+                        Text(text = "将部分位于内容之上的容器渲染为带折射的玻璃材质效果" + (if(!AppVersion.CAN_SHADER) "(需为Android 13+)" else "") )
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.filter_vintage),null)
                     },
                     trailingContent = {
-                        Switch(checked = enableLiquidGlass, enabled = AppVersion.CAN_LIQUID_GLASS, onCheckedChange = {
+                        Switch(checked = enableLiquidGlass, enabled = AppVersion.CAN_SHADER, onCheckedChange = {
                             scope.launch {
                                 DataStoreManager.saveLiquidGlass(!enableLiquidGlass)
                             }
                         })
                     },
                     modifier = Modifier.clickable {
-                        if(AppVersion.CAN_LIQUID_GLASS) {
+                        if(AppVersion.CAN_SHADER) {
                             scope.launch {
                                 DataStoreManager.saveLiquidGlass(!enableLiquidGlass)
                             }
                         }
                     }
                 )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text(text = "镜面效果")
+                    },
+                    supportingContent = {
+                        Text(text = "将启动台背景渲染为内容向中心缩小，四周用镜面反射填充的效果" + (if(!AppVersion.CAN_SHADER) "(需为Android 13+)" else "") )
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.filter_vintage),null)
+                    },
+                    trailingContent = {
+                        Switch(checked =  AppVersion.CAN_SHADER, enabled = AppVersion.CAN_SHADER, onCheckedChange = {})
+                    },
+                )
+
                 PaddingHorizontalDivider()
 //                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 //                LoopingRectangleCenteredTrail2(it)

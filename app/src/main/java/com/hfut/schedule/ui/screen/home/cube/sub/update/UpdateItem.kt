@@ -59,6 +59,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 启动台背景升级为镜像缩放(仅Android 13+)")
             UpdateItems("新增 自动CAS登录")
             UpdateItems("新增 崩溃的自动处理")
             UpdateItems("新增 为低版本Android用户的开屏显示")
