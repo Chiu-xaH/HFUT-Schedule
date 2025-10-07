@@ -16,7 +16,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -53,6 +52,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -72,6 +72,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -84,32 +85,37 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.SimpleVideo2
+import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.extractColor
 import com.hfut.schedule.ui.util.hsvToLong
-import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.util.longToHexColor
 import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.parseColor
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
-import com.hfut.schedule.ui.screen.home.cube.sub.TransitionExample
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.style.align.RowHorizontal
-import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.shaderSelf
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionInitializer
 import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.status.LoadingUI
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -180,6 +186,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+        val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
 
@@ -196,6 +203,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
             }
         }
+        val context = LocalContext.current
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) { uri ->
@@ -499,6 +507,18 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("动效") {
+            if(!isControlCenter) {
+                val video by produceState<String?>(initialValue = null) {
+                    value = checkOrDownloadVideo(context,"example.mp4","https://chiu-xah.github.io/example.mp4")
+                }
+                video?.let {
+                    SimpleVideo2FromFile(
+                        filePath = it,
+                        aspectRatio = 16/9f,
+                    )
+                    BottomTip("演示视频")
+                }
+            }
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "运动模糊") },
@@ -562,6 +582,30 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                             scope.launch {
                                 DataStoreManager.saveLiquidGlass(!enableLiquidGlass)
                             }
+                        }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text(text = "相机实时渲染")
+                    },
+                    supportingContent = {
+                        Text(text = "将摄像头的画面实时渲染在UI图层上，以实现支持启动台的背景模糊，开启后将带来一些渲染压力")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.screen_record),null)
+                    },
+                    trailingContent = {
+                        Switch(checked = enableCameraDynamicRecord, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveCameraDynamicRecord(!enableCameraDynamicRecord)
+                            }
+                        })
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveCameraDynamicRecord(!enableCameraDynamicRecord)
                         }
                     }
                 )
@@ -866,9 +910,6 @@ private fun ShaderIcon(shader : Boolean) {
     val scale by animateFloatAsState(
         if(shader) 0.6f else 1f
     )
-    val alpha by animateFloatAsState(
-        if(shader) 0.1f else 0f
-    )
     val color = MaterialTheme.colorScheme.onSurface
 
     Box(modifier = Modifier.size(24.dp).background(Color.Transparent, shape = CircleShape)){
@@ -879,19 +920,28 @@ private fun ShaderIcon(shader : Boolean) {
                 .align(Alignment.Center)
                 .fillMaxSize()
                 .shaderSelf(scale,CircleShape)
-                .let {
-                    if(shader) {
-                        it.drawWithCache {
-                            onDrawWithContent {
-                                drawContent()
-                                drawRect(color.copy(alpha = alpha))
-                            }
-                        }
-                    } else {
-                        it
-                    }
-                }
+                .mask(
+                    targetAlpha = 0.1f,
+                    show = shader
+                )
         )
+    }
+}
+
+@Composable
+fun Modifier.mask(
+    color : Color = MaterialTheme.colorScheme.onSurface,
+    targetAlpha : Float,
+    show : Boolean
+) : Modifier {
+    val alpha by animateFloatAsState(
+        if(show) targetAlpha else 0f
+    )
+    return this.drawWithCache {
+        onDrawWithContent {
+            drawContent()
+            drawRect(color.copy(alpha = alpha))
+        }
     }
 }
 

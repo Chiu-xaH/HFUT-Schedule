@@ -65,6 +65,7 @@ fun VersionInfo() {
             UpdateItems("新增 为低版本Android用户的开屏显示")
             UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
             UpdateItems("优化 转场动画的流畅度和效果微调")
+            UpdateItems("优化 扫码时潜在的内存泄漏")
 //            UpdateItems("优化 水波纹")
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
@@ -146,5 +147,6 @@ private fun UpdateItems(
         leadingContent = { Icon(painter = painterResource(id = type.res), contentDescription = "") }
     )
 }
+
 
 

@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen.shower.home.function
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
-import androidx.camera.core.ImageAnalysis
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -52,18 +51,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.core.content.ContextCompat
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
-import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.xah.uicommon.component.text.BottomTip
-import com.hfut.schedule.ui.component.camera.CameraScan
+import com.hfut.schedule.ui.component.camera.ScanQrCodeView
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -126,22 +123,6 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val imageAnalysis = ImageAnalysis.Builder() .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888).build().also {
-        it.setAnalyzer(ContextCompat.getMainExecutor(context), QRCodeAnalyzer { result ->
-            result?.let {
-                // 处理扫描结果
-                if(result.text.contains("KLCXKJ-Water")) {
-                    try {
-                        val list = result.text.split(",")
-                        input = list[2]
-                        show = false
-                    } catch (_:Exception) {
-                        showToast("解析出错")
-                    }
-                }
-            }
-        })
-    }
     var list by remember { mutableStateOf<List<ShowerLabelEntity>>(emptyList()) }
     LaunchedEffect(showDialog_Del,showDialog) {
         list = DataBaseManager.showerLabelDao.getAll()
@@ -164,7 +145,18 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
             }
         ) {
             Box(modifier = Modifier.height(height)) {
-                CameraScan(imageAnalysis, modifier = Modifier.fillMaxSize())
+                ScanQrCodeView(modifier = Modifier.fillMaxSize()) { result ->
+                    val text = result.text
+                    if(text.contains("KLCXKJ-Water")) {
+                        try {
+                            val list = text.split(",")
+                            input = list[2]
+                            show = false
+                        } catch (_:Exception) {
+                            showToast("解析出错")
+                        }
+                    }
+                }
 
                 FilledTonalIconButton (
                     onClick = { show = false },

@@ -251,7 +251,13 @@ fun MainHost(
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentRouteWithoutArgs()
     val disabledGesture = currentRoute == AppNavRoute.WebView.route || currentRoute == AppNavRoute.UseAgreement.route
-    val disabledBlur = currentRoute == AppNavRoute.Scan.route
+
+    val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
+    val disabledBlur = if(enableCameraDynamicRecord) {
+        false
+    } else {
+        currentRoute == AppNavRoute.Scan.route
+    }
     val enableGesture = enableControlCenter && !disabledGesture
     var containerColor by remember { mutableStateOf<Color?>(null) }
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)

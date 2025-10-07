@@ -4,10 +4,7 @@ import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.camera.core.ImageAnalysis
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -35,12 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.other.parseQRCode
 import com.hfut.schedule.logic.util.parse.isWifiContent
 import com.hfut.schedule.logic.util.parse.parseWifiQrCode
@@ -50,7 +45,9 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.logic.util.shortcut.AppShortcutManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.camera.CameraScan
+import com.hfut.schedule.ui.component.camera.ScanQrCode
+import com.hfut.schedule.ui.component.camera.ScanQrCodeView
+import com.hfut.schedule.ui.component.camera.ScanQrCodeView2
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
 import com.hfut.schedule.ui.component.container.CardBottomButtons
@@ -64,8 +61,6 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -284,30 +279,21 @@ fun ScanScreen(
                 AppShortcutManager.createScanShortcut(context)
                 activity?.let { PermissionSet.checkAndRequestCameraPermission(it) }
             }
-            val imageAnalysis = ImageAnalysis
-                .Builder()
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                .build()
-                .also {
-                    it.setAnalyzer(ContextCompat.getMainExecutor(context), QRCodeAnalyzer { result ->
-                    result?.let {
-                        val resultT = result.text
-                        // 处理扫描结果
-                        if(resultT.isNotEmpty() || resultT.isNotBlank()) {
-                            try {
-                                resultText = resultT
-                            } catch (_:Exception) {
-                                showToast("解析出错")
-                            }
-                        }
-                    }
-                    })
-                }
-
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                CameraScan(imageAnalysis, modifier = Modifier.fillMaxSize())
+                ScanQrCode(modifier = Modifier.fillMaxSize()) { result ->
+                    val text = result.text
+                    // 处理扫描结果
+                    if(text.isNotEmpty() || text.isNotBlank()) {
+                        try {
+                            resultText = text
+                        } catch (e:Exception) {
+                            e.printStackTrace()
+                            showToast("解析出错")
+                        }
+                    }
+                }
             }
         }
 //    }

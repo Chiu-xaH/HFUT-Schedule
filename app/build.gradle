@@ -235,6 +235,7 @@ dependencies {
 //    implementation(libs.androidx.adaptive.navigation)
     // 内存泄漏
     debugImplementation(libs.leakcanary.android)
+    // 视频播放
     // 模块
     implementation(project(moduleTransition))
     implementation(project(moduleUiCommon))

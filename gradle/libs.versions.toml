@@ -6,6 +6,7 @@ junitVersion = "1.1.5"
 leakcanaryAndroid = "2.14"
 materialKolor = "3.0.0-beta05"#3.0.0-beta05 3.0.0-alpha03 // 不要升级版本
 maxAndroidVersion = "36"
+media3Exoplayer = "1.8.0"
 minAndroidVersion = "26"
 accompanistSystemuicontroller = "0.31.0-alpha"
 activityCompose = "1.10.1"
@@ -66,6 +67,8 @@ materialVersion = "1.13.0"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3Exoplayer" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Exoplayer" }
 liquid-glass = { module = "com.github.Kyant0:AndroidLiquidGlass", version.ref = "androidliquidglass" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
 androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptive" }

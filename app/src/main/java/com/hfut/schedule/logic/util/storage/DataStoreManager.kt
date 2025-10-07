@@ -123,6 +123,7 @@ object DataStoreManager {
     private val HEFEI_ELECTRIC_FEE = stringPreferencesKey("hefei_electric_fee")
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
+    private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -161,6 +162,7 @@ object DataStoreManager {
     suspend fun saveHefeiElectricFee(value: String) = saveValue(HEFEI_ELECTRIC_FEE, value)
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
+    suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -201,6 +203,7 @@ object DataStoreManager {
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
     val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
+    val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")

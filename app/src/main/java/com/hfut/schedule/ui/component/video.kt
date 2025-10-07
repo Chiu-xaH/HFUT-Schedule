@@ -1,0 +1,287 @@
+package com.hfut.schedule.ui.component
+
+import android.content.Context
+import android.graphics.SurfaceTexture
+import android.media.MediaPlayer
+import android.view.Surface
+import android.view.TextureView
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
+import androidx.core.net.toUri
+import com.hfut.schedule.R
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.screen.home.cube.screen.mask
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
+@Composable
+fun SimpleVideo2(
+    url: String,
+    modifier: Modifier = Modifier,
+    color: Color? = null,
+    shadow: Dp = 0.dp,
+    shape: Shape = MaterialTheme.shapes.medium,
+    autoPlay: Boolean = true,
+    mute: Boolean = true,
+    loop: Boolean = true,
+    aspectRatio: Float? = null
+) {
+    CustomCard(
+        color = color,
+        shadow = shadow,
+        shape = shape,
+        modifier = modifier
+    ) {
+        AndroidView(
+            factory = { ctx ->
+                TextureView(ctx).apply {
+                    // 创建 MediaPlayer 实例
+                    val mediaPlayer = MediaPlayer().apply {
+                        setDataSource(ctx, url.toUri())
+                        isLooping = loop
+                        setOnPreparedListener { mp ->
+                            if (mute) mp.setVolume(0f, 0f)
+                            if (autoPlay) mp.start()
+                        }
+                        prepareAsync()
+                    }
+
+                    surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                        override fun onSurfaceTextureAvailable(
+                            surfaceTexture: SurfaceTexture,
+                            width: Int,
+                            height: Int
+                        ) {
+                            mediaPlayer.setSurface(Surface(surfaceTexture))
+                        }
+
+                        override fun onSurfaceTextureSizeChanged(
+                            surface: SurfaceTexture,
+                            width: Int,
+                            height: Int
+                        ) = Unit
+
+                        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                            mediaPlayer.release()
+                            return true
+                        }
+
+                        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .let { m ->
+                    aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
+                }
+        )
+    }
+}
+
+
+@Composable
+fun SimpleVideo2FromFile(
+    filePath: String,
+    modifier: Modifier = Modifier,
+    color: Color? = null,
+    shadow: Dp = 0.dp,
+    shape: Shape = MaterialTheme.shapes.medium,
+    autoPlay: Boolean = true,
+    mute: Boolean = true,
+    loop: Boolean = true,
+    aspectRatio: Float? = null
+) {
+    val mediaPlayer = remember {
+        MediaPlayer().apply {
+            setDataSource(filePath)
+            isLooping = loop
+            setOnPreparedListener { mp ->
+                if (mute) mp.setVolume(0f, 0f)
+                if (autoPlay) mp.start()
+            }
+            prepareAsync()
+        }
+    }
+    var showButton by remember { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(autoPlay) }
+    val blur by animateDpAsState(
+        if(!isPlaying) 10.dp else 0.dp
+    )
+    val scale by animateFloatAsState(
+        if(!isPlaying) 0.8f else 1f
+    )
+    LaunchedEffect(showButton) {
+        if(showButton) {
+            delay(5000L)
+            showButton = false
+        }
+    }
+    val backdrop = rememberLayerBackdrop()
+    CustomCard(
+        color = color,
+        shadow = shadow,
+        shape = shape,
+        modifier = modifier.clickable {
+            showButton = !showButton
+        }
+    ) {
+        Box() {
+            AnimatedVisibility(
+                visible = showButton,
+                enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+                exit = fadeOut(targetAlpha = 1.5f) + fadeOut(),
+                modifier = Modifier.align(Alignment.Center).zIndex(2f)
+            ) {
+                LiquidButton(
+                    onClick = {
+                        if(isPlaying) {
+                            mediaPlayer.pause()
+                        } else {
+                            mediaPlayer.start()
+                            showButton = false
+                        }
+                        isPlaying = mediaPlayer.isPlaying
+                    },
+                    backdrop = backdrop,
+                    isCircle = true,
+                ) {
+                    Icon(painterResource(
+                        if(!isPlaying)
+                            R.drawable.play_arrow
+                        else
+                            R.drawable.pause
+                    ),null)
+                }
+            }
+            AndroidView(
+                factory = { ctx ->
+                    TextureView(ctx).apply {
+                        surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                            override fun onSurfaceTextureAvailable(
+                                surfaceTexture: SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) {
+                                mediaPlayer.setSurface(Surface(surfaceTexture))
+                            }
+
+                            override fun onSurfaceTextureSizeChanged(
+                                surface: SurfaceTexture,
+                                width: Int,
+                                height: Int
+                            ) = Unit
+
+                            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                                mediaPlayer.release()
+                                return true
+                            }
+
+                            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .let { m ->
+                        aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
+                    }
+                    .clip(shape)
+                    .backDropSource(backdrop)
+                    .blur(blur)
+//                    .mask(
+//                        color = MaterialTheme.colorScheme.surface,
+//                        targetAlpha = 0.2f,
+//                        show = showButton || !isPlaying
+//                    )
+//                    .shaderSelf(scale,shape)
+            )
+        }
+    }
+}
+
+
+
+/**
+ * 检查视频文件是否存在，不存在则自动下载。
+ *
+ * @param context 上下文
+ * @param fileName 文件名（如 "demo.mp4"）
+ * @param downloadUrl 下载链接
+ * @return 本地视频路径或 null（下载失败）
+ */
+suspend fun checkOrDownloadVideo(
+    context: Context,
+    fileName: String,
+    downloadUrl: String
+): String? = withContext(Dispatchers.IO) {
+    val dir = File(context.getExternalFilesDir(null), "videos")
+    if (!dir.exists()) dir.mkdirs()
+
+    val videoFile = File(dir, fileName)
+
+    // 已存在 直接返回路径
+    if (videoFile.exists()) return@withContext videoFile.absolutePath
+
+    val client = OkHttpClient()
+    val request = Request.Builder().url(downloadUrl).build()
+
+    try {
+        client.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) return@withContext null
+
+            response.body?.byteStream()?.use { input ->
+                FileOutputStream(videoFile).use { output ->
+                    input.copyTo(output)
+                }
+            }
+
+            // 下载完成 返回路径
+            return@withContext videoFile.absolutePath
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+        videoFile.delete() // 删除半下载文件
+        return@withContext null
+    }
+}
+
+
+
+
