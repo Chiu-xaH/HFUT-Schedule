@@ -10,6 +10,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -60,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
@@ -101,6 +103,7 @@ import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.shaderSelf
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionInitializer
@@ -539,13 +542,13 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "玻璃材质(Beta)")
+                        Text(text = "着色器渲染")
                     },
                     supportingContent = {
-                        Text(text = "将部分位于内容之上的容器渲染为带折射的玻璃材质效果" + (if(!AppVersion.CAN_SHADER) "(需为Android 13+)" else "") )
+                        Text(text = "将部分位于内容之上的层级渲染为折射或镜面的材质效果" + (if(!AppVersion.CAN_SHADER) "(需为Android 13+)" else "") )
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.filter_vintage),null)
+                        ShaderIcon(enableLiquidGlass)
                     },
                     trailingContent = {
                         Switch(checked = enableLiquidGlass, enabled = AppVersion.CAN_SHADER, onCheckedChange = {
@@ -563,22 +566,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     }
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = {
-                        Text(text = "镜面效果")
-                    },
-                    supportingContent = {
-                        Text(text = "将启动台背景渲染为内容向中心缩小，四周用镜面反射填充的效果" + (if(!AppVersion.CAN_SHADER) "(需为Android 13+)" else "") )
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.filter_vintage),null)
-                    },
-                    trailingContent = {
-                        Switch(checked =  AppVersion.CAN_SHADER, enabled = AppVersion.CAN_SHADER, onCheckedChange = {})
-                    },
-                )
-
-                PaddingHorizontalDivider()
 //                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 //                LoopingRectangleCenteredTrail2(it)
 //                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
@@ -592,7 +579,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     supportingContent = {
                         Text(text = "界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3,Level0效率最高")
                     },
-                    leadingContent = { Icon(painterResource(R.drawable.transition_fade), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.airline_stops), contentDescription = "Localized description",) },
                 )
                 CustomSlider(
                     value = transition.toFloat(),
@@ -739,12 +726,6 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
     val primary = MaterialTheme.colorScheme.primary
     val container = MaterialTheme.colorScheme.primaryContainer
 
-    // 居中颜色插值（基于正向偏移百分比）
-//    val containColor = MaterialTheme.colorScheme.primary
-//        remember(offsetX.value) {
-//        val fraction = ((offsetX.value + delta.value) / (2 * delta.value)).coerceIn(0f, 1f)
-//        lerp(container, primary, fraction)
-//    }
 
     LaunchedEffect(animationSpeed) {
         delay(AppAnimationManager.ANIMATION_SPEED*1L)
@@ -788,10 +769,7 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
             Box(
                 modifier = Modifier
                     .offset { IntOffset(trail.dp.roundToPx(), 0) }
-                    .size(
-                        boxSize
-//                            * sizeFactor
-                    )
+                    .size(boxSize)
                     .graphicsLayer {
                         this.alpha = alpha * 0.4f
                     }
@@ -813,7 +791,8 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
 
 @Composable
 private fun MotionBlurIcon(motionBlur : Boolean) {
-    Box(modifier = Modifier.size(24.dp).background(MaterialTheme.colorScheme.surfaceContainer, shape = CircleShape)){
+    //MaterialTheme.colorScheme.surfaceContainer
+    Box(modifier = Modifier.size(24.dp).background(Color.Transparent, shape = CircleShape)){
         val infiniteTransition = rememberInfiniteTransition()
         val scale by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -877,6 +856,41 @@ private fun MotionBlurIcon(motionBlur : Boolean) {
                 }
                 .blur(radius = if(motionBlur) (2.5-blur).dp else 0.dp)
                 .scale(1-scale)
+        )
+    }
+}
+
+
+@Composable
+private fun ShaderIcon(shader : Boolean) {
+    val scale by animateFloatAsState(
+        if(shader) 0.6f else 1f
+    )
+    val alpha by animateFloatAsState(
+        if(shader) 0.1f else 0f
+    )
+    val color = MaterialTheme.colorScheme.onSurface
+
+    Box(modifier = Modifier.size(24.dp).background(Color.Transparent, shape = CircleShape)){
+        Icon(
+            painter = painterResource(R.drawable.filter_vintage),
+            contentDescription = "Localized description",
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxSize()
+                .shaderSelf(scale,CircleShape)
+                .let {
+                    if(shader) {
+                        it.drawWithCache {
+                            onDrawWithContent {
+                                drawContent()
+                                drawRect(color.copy(alpha = alpha))
+                            }
+                        }
+                    } else {
+                        it
+                    }
+                }
         )
     }
 }

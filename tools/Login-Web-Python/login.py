@@ -50,9 +50,5 @@ def logout() :
     else:
         print("注销失败")
 
-def query() :
-    # 自行发挥
-    return None
-
 # 执行区
 login()

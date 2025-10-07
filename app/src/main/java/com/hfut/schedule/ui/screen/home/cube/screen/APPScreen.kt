@@ -351,7 +351,7 @@ fun APPScreen(
                     headlineContent = { Text(text = "预测式返回") },
                     supportingContent = {
                         if(AppVersion.CAN_PREDICTIVE) {
-                            Text(text = "同Activity之间的部分转场可使用跟手的返回手势")
+                            Text(text = "同Activity之间的部分界面返回手势不松手时有跟手的界面缩小(打断动画时自动屏蔽)")
                         } else {
                             Text(text = "需为 Android 13+")
                         }

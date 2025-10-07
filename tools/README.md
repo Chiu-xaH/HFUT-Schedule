@@ -1,8 +1,8 @@
 # 工具
 
 ## [全校培养方案爬取](/All-Programs-Get-Python)
-## [呱呱物联洗浴Apple快捷指令](/Guagua-Shower-Apple-ShortCut/)
-## [校园网登录(宣区)](/Login-XuanCheng-Web-Python/)
-## [聚在工大分发、管理端(弃用)](/Manager-Android/)
-## [聚在工大数据库](/SQL-PHP/)
-## [聚在工大数据库统计图生成](/SQL-Chart-Python/)
+## [校园网登录](/Login-Web-Python/)
+## [用户数据库统计图](/SQL-Chart-Python/)
+## [图片验证码训练模型](/Captcha-Ocr)
+## [PC Lite版(待开发)](/Lite-For-PC)
+## [WebVpn互转](/WebVpn)

@@ -59,14 +59,13 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 启动台背景升级为镜像缩放(仅Android 13+)")
+            UpdateItems("新增 Android 13+的启动台背景升级为镜面缩放效果，使背景观感更饱满")
             UpdateItems("新增 自动CAS登录")
             UpdateItems("新增 崩溃的自动处理")
             UpdateItems("新增 为低版本Android用户的开屏显示")
             UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
-            UpdateItems("优化 转场动画最高等级下的时长微调")
-            UpdateItems("优化 水波纹")
-            UpdateItems("优化 转场动画的流畅度")
+            UpdateItems("优化 转场动画的流畅度和效果微调")
+//            UpdateItems("优化 水波纹")
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")

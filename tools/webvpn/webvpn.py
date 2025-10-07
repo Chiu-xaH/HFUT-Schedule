@@ -1,79 +1,56 @@
-from argparse import ArgumentParser
 from binascii import hexlify, unhexlify
-from Crypto.Cipher import AES
+from Cryptodome.Cipher import AES
 
+key = "wrdvpnisthebest!".encode('utf-8')
+iv = "wrdvpnisthebest!".encode('utf-8')
+host = "webvpn.hfut.edu.cn"
+size = 128
 
-def getCiphertext(plaintext, key, cfb_iv, size = 128):
-    '''From plantext hostname to ciphertext'''
-    
+def getCiphertext(plaintext: str) -> str:
     message = plaintext.encode('utf-8')
-    
-    cfb_cipher_encrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size = size)       # Must include segment_size
-    mid = cfb_cipher_encrypt.encrypt(message)
-
-    return hexlify(mid).decode()
+    cipher = AES.new(key, AES.MODE_CFB, iv, segment_size=size)
+    encrypted = cipher.encrypt(message)
+    return hexlify(encrypted).decode('utf-8')
 
 
-def getPlaintext(ciphertext, key, cfb_iv, size = 128):
-    '''From ciphertext hostname to plaintext'''
-    
+def getPlaintext(ciphertext: str) -> str:
     message = unhexlify(ciphertext.encode('utf-8'))
-    
-    cfb_cipher_decrypt = AES.new(key, AES.MODE_CFB, cfb_iv, segment_size = size)
-    cfb_msg_decrypt = cfb_cipher_decrypt.decrypt(message).decode('utf-8')
-    
-    return cfb_msg_decrypt
+    cipher = AES.new(key, AES.MODE_CFB, iv, segment_size=size)
+    decrypted = cipher.decrypt(message)
+    return decrypted.decode('utf-8')
 
 
-def getVPNUrl(url):
-    '''From ordinary url to webVPN url'''
-
+def getVPNUrl(url: str) -> str:
     parts = url.split('://')
     pro = parts[0]
     add = parts[1]
-    
+
     hosts = add.split('/')
     domain = hosts[0].split(':')[0]
-    port = '-' + hosts[0].split(':')[1] if ":" in hosts[0] else ''
-    cph = getCiphertext(domain, key=key_, cfb_iv=iv_)
+    port = '-' + hosts[0].split(':')[1] if ':' in hosts[0] else ''
+    cph = getCiphertext(domain)
     fold = '/'.join(hosts[1:])
 
-    key = hexlify(iv_).decode('utf-8')
-    
-    return 'https://' + institution + '/' + pro + port + '/' + key + cph + '/' + fold
+    iv_hex = hexlify(iv).decode('utf-8')
+    return f'https://{host}/{pro}{port}/{iv_hex}{cph}/{fold}'
 
 
-def getOrdinaryUrl(url):
-    '''From webVPN url to ordinary url'''
-
+def getOrdinaryUrl(url: str) -> str:
     parts = url.split('/')
     pro = parts[3]
     key_cph = parts[4]
-    
-    hostname = getPlaintext(key_cph[32:], key=key_, cfb_iv=iv_)
+
+    hostname = getPlaintext(key_cph[32:])
     fold = '/'.join(parts[5:])
+    return f'{pro}://{hostname}/{fold}'
 
-    return pro + "://" + hostname + '/' + fold
 
 
-if __name__ == '__main__':
-    parser = ArgumentParser(description="convert between webVPN url and ordinary url")
-    parser.add_argument("url", help="url to be converted")
-    codec = parser.add_mutually_exclusive_group(required=True)
-    codec.add_argument("-e", "--encode", action="store_true", help="convert ordinary url to webVPN url")
-    codec.add_argument("-d", "--decode", action="store_true", help="convert webVPN url to ordinary url")
-    parser.add_argument("--key", default="wrdvpnisthebest!", help="crypto key")
-    parser.add_argument("--iv", default="wrdvpnisthebest!", help="crypto iv")
-    parser.add_argument("-i", "--institution", default="webvpn.hfut.edu.cn", help="hostname of institution (only work at encode mode)")
+# 示例
+if __name__ == "__main__":
+    url = "http://jxglstu.hfut.edu.cn/eams5-student/home/"
+    vpn_url = getVPNUrl(url)
+    print("VPN URL:", vpn_url)
 
-    args = parser.parse_args()
-    url = args.url
-    key_ = args.key.encode('utf-8')
-    iv_ = args.iv.encode('utf-8')
-
-    if args.encode:
-        institution = args.institution
-        print(getVPNUrl(url))
-    elif args.decode:
-        institution = url.split('/')[2]
-        print(getOrdinaryUrl(url))
+    ordinary_url = getOrdinaryUrl(vpn_url)
+    print("Ordinary URL:", ordinary_url)

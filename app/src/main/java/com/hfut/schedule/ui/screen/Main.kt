@@ -254,6 +254,8 @@ fun MainHost(
     val disabledBlur = currentRoute == AppNavRoute.Scan.route
     val enableGesture = enableControlCenter && !disabledGesture
     var containerColor by remember { mutableStateOf<Color?>(null) }
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+
     LaunchedEffect(configuration,enableControlCenter) {
         if(enableControlCenter) {
             snapshotFlow { configuration.screenWidthDp }
@@ -264,8 +266,6 @@ fun MainHost(
                 }
         }
     }
-//    val isLarge = false
-//    val backgroundStyle = backgroundStyle(isLarge)
     val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
     val blurDp by remember {
         derivedStateOf {
@@ -310,7 +310,7 @@ fun MainHost(
     val backgroundColor = if(motionBlur && !disabledBlur) {
         MaterialTheme.colorScheme.surface.copy(.4f)
     } else {
-        MaterialTheme.colorScheme.surface.copy(if(AppVersion.CAN_SHADER) .88f else 1f)
+        MaterialTheme.colorScheme.surface.copy(if(enableLiquidGlass) .88f else 1f)
     }
 
     ModalNavigationDrawer  (
@@ -340,7 +340,7 @@ fun MainHost(
                 startDestination = firstPage(startRoute),
                 modifier = Modifier
                     .background(
-                        if(AppVersion.CAN_SHADER) {
+                        if(enableLiquidGlass) {
                             MaterialTheme.colorScheme.surface
                         } else {
                             if(disabledGesture) {
@@ -352,15 +352,12 @@ fun MainHost(
                     )
                     .let{ if(motionBlur && enableControlCenter && !disabledBlur) it.blur(blurDp) else it }
                     .let {
-                        if(AppVersion.CAN_SHADER) {
+                        if(enableLiquidGlass) {
                             it.shaderSelf(scale,RoundedCornerShape(0.dp))
                         } else {
                             it.let {
                                 if(enableControlCenter) {
-                                    it.graphicsLayer {
-                                        scaleX = scale
-                                        scaleY = scale
-                                    }
+                                    it.scale(scale)
                                 } else it
                             }
                         }
