@@ -571,7 +571,7 @@ fun WebView.scrollListener(
     setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
         if (scrollY > oldScrollY) {
             // 向下滚动
-            // 隐藏topbar
+            // 隐藏ar
             onVisible(false)
         }
 //        else if (scrollY < oldScrollY) {

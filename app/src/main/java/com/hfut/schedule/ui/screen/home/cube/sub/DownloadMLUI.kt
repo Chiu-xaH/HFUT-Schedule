@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -59,7 +59,7 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
     var scale by remember { mutableFloatStateOf(1f) }
     navController?.let {
         val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-        TransitionPredictiveBackHandler(it,enablePredictive) {
+        TransitionBackHandler(it,enablePredictive) {
             scale = it
         }
     }

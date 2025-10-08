@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -85,7 +86,6 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.SimpleVideo2
 import com.hfut.schedule.ui.component.SimpleVideo2FromFile
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -94,7 +94,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -106,15 +105,12 @@ import com.hfut.schedule.ui.util.parseColor
 import com.hfut.schedule.ui.util.shaderSelf
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
+import com.xah.transition.util.TransitionBackHandler
 import com.xah.transition.util.TransitionInitializer
-import com.xah.transition.util.TransitionPredictiveBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
-import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -146,7 +142,7 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     UISettingsScreen(
@@ -287,6 +283,18 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
 
+        if(!isControlCenter) {
+            val video by produceState<String?>(initialValue = null) {
+                value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
+            }
+            video?.let {
+                SimpleVideo2FromFile(
+                    filePath = it,
+                    aspectRatio = 16/9f,
+                )
+            }
+        }
+
         DividerTextExpandedWith("深浅色") {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
@@ -351,50 +359,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         }
         DividerTextExpandedWith("主题色") {
             CustomCard(color = backgroundColor) {
-                RowHorizontal(
-                    modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP - 10.dp)) {
-                    val size = 40.dp
-                    val padding = APP_HORIZONTAL_DP/2
-                    val shadow = if(isControlCenter) 0.dp else APP_HORIZONTAL_DP
-                    Surface(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = CircleShape,
-                        shadowElevation = shadow,
-                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("Primary") }
-                    ) {}
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondary,
-                        shape = CircleShape,
-                        shadowElevation = shadow,
-                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("Secondary") }
-                    ) {}
-                    Surface(
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = CircleShape,
-                        shadowElevation = shadow,
-                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("PrimaryContainer") }
-                    ) {}
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = CircleShape,
-                        shadowElevation = shadow,
-                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("SecondaryContainer") }
-                    ) {}
-                    Surface(
-                        color = MaterialTheme.colorScheme.surfaceVariant,
-                        shape = CircleShape,
-                        shadowElevation = shadow,
-                        modifier = Modifier.padding(end = padding).size(size).clickableWithScale { showToast("SurfaceVariant") }
-                    ) {}
-                    Surface(
-                        color = if(isControlCenter) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.surfaceContainer,
-                        shape = CircleShape,
-                        shadowElevation = shadow,
-                        modifier = Modifier.size(size).clickableWithScale { showToast(if(isControlCenter) "Surface" else "SurfaceContainer") }
-                    ) {}
-                }
+                Colors(isControlCenter)
                 DividerTextExpandedWith("默认取色") {
                     TransplantListItem(
                         headlineContent = { Text(text = "原生取色") },
@@ -506,19 +471,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
             }
         }
-        DividerTextExpandedWith("动效") {
-            if(!isControlCenter) {
-                val video by produceState<String?>(initialValue = null) {
-                    value = checkOrDownloadVideo(context,"example.mp4","https://chiu-xah.github.io/example.mp4")
-                }
-                video?.let {
-                    SimpleVideo2FromFile(
-                        filePath = it,
-                        aspectRatio = 16/9f,
-                    )
-                    BottomTip("演示视频")
-                }
-            }
+        DividerTextExpandedWith("特效") {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "运动模糊") },
@@ -609,11 +562,22 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     }
                 )
-                PaddingHorizontalDivider()
-//                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-//                LoopingRectangleCenteredTrail2(it)
-//                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-//                PaddingHorizontalDivider()
+            }
+        }
+        DividerTextExpandedWith("动效") {
+            if(!isControlCenter) {
+                val video by produceState<String?>(initialValue = null) {
+                    value = checkOrDownloadVideo(context,"example_transition.mp4","https://chiu-xah.github.io/videos/example_transition.mp4")
+                }
+                video?.let {
+                    SimpleVideo2FromFile(
+                        filePath = it,
+                        aspectRatio = 16/9f,
+                    )
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP-CARD_NORMAL_DP))
+                }
+            }
+            CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Column {
@@ -652,7 +616,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
-
         DividerTextExpandedWith("课程表") {
             val useCustomBackground = customBackground != ""
             CustomCard(color = backgroundColor) {
@@ -977,5 +940,52 @@ private fun HazeBlurIcon(blur : Int) {
                 }
                 .blur(if (blur >= HazeBlurLevel.MID.code) 2.5.dp else 0.dp) // 模糊半径
         )
+    }
+}
+@Composable
+private fun Colors(isControlCenter : Boolean) {
+    val list = listOf(
+        Pair(MaterialTheme.colorScheme.primary,"Primary"),
+        Pair(MaterialTheme.colorScheme.secondary,"Secondary"),
+        Pair(MaterialTheme.colorScheme.primaryContainer,"PrimaryContainer"),
+        Pair(MaterialTheme.colorScheme.secondaryContainer,"SecondaryContainer"),
+        Pair(MaterialTheme.colorScheme.surfaceVariant,"SurfaceVariant"),
+        Pair(
+            if(isControlCenter)
+                MaterialTheme.colorScheme.surface
+            else
+                MaterialTheme.colorScheme.surfaceContainer,
+            if(isControlCenter)
+                "Surface"
+            else
+                "SurfaceContainer"
+        )
+    )
+    RowHorizontal(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = APP_HORIZONTAL_DP, bottom = APP_HORIZONTAL_DP - 10.dp)) {
+        val size = 40.dp
+        val padding = APP_HORIZONTAL_DP/2
+
+        LazyRow {
+            items(list.size,key = { list[it].second}) { index ->
+                val item = list[index]
+                Surface(
+                    color = item.first,
+                    shape = CircleShape,
+                    modifier = Modifier
+                        .padding(end =
+                            if(index == list.size-1) 0.dp
+                            else padding
+                        )
+                        .size(size)
+                        .clip(CircleShape)
+                        .clickable {
+                            showToast(item.second)
+                        }
+                ) {}
+            }
+        }
     }
 }

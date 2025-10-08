@@ -31,14 +31,14 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
 import kotlinx.coroutines.launch
 
 @Composable
 fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostController) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     val activity = LocalActivity.current

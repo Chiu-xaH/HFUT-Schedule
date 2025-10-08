@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -58,15 +59,16 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.isSuccessTransfer
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
 import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.status.CustomSwitch
+import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.util.SaveComposeAsImage
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.text.BottomTip
 import kotlinx.coroutines.async
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,7 +79,7 @@ fun APPScreen(
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     val context = LocalContext.current
@@ -116,11 +118,70 @@ fun APPScreen(
         val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
         val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemseterWithoutSuspend())
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
-        var value by remember { mutableFloatStateOf(maxFlow.toFloat()) }
+        var freeFeevalue by remember { mutableFloatStateOf(maxFlow.toFloat()) }
         LaunchedEffect(maxFlow) {
-            value = maxFlow.toFloat()
+            freeFeevalue = maxFlow.toFloat()
         }
 
+        val video by produceState<String?>(initialValue = null) {
+            value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
+        }
+        video?.let {
+            SimpleVideo2FromFile(
+                filePath = it,
+                aspectRatio = 16/9f,
+            )
+        }
+        DividerTextExpandedWith("交互") {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = { Text(text = "预测式返回") },
+                    supportingContent = {
+                        if(AppVersion.CAN_PREDICTIVE) {
+                            Text(text = "同Activity之间的部分界面返回手势不松手时有跟手的界面缩小(打断动画时自动屏蔽)")
+                        } else {
+                            Text(text = "需为 Android 13+")
+                        }
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
+                    trailingContent = {
+                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("启动台") },
+                    supportingContent = {
+                        Text("从顶栏位置的向右轻扫唤出(部分界面暂未支持)，可快速切换到最近打开的窗口和调整一些设置;打开后上下滑动的灵敏度可能会降低")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.flash_on),null)
+                    },
+                    trailingContent = {
+                        Switch(checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text("交互学习") },
+                    supportingContent = {
+                        Text("学习APP的手势交互操作")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.gesture),null)
+                    },
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.GestureStudyScreen.route)
+                    }
+                )
+            }
+        }
         DividerTextExpandedWith("偏好") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
@@ -197,13 +258,12 @@ fun APPScreen(
                     modifier = Modifier.clickable { showEnded = !showEnded }
                 )
             }
-
         }
         DividerTextExpandedWith("配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(value.toDouble(),0)}GiB")},
+                    headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(freeFeevalue.toDouble(),0)}GiB")},
                     supportingContent = {
                         Text("用于计算和显示使用百分比 (初始值为${MyApplication.DEFAULT_MAX_FREE_FLOW}GiB)")
                     },
@@ -212,13 +272,13 @@ fun APPScreen(
                     },
                 )
                 CustomSlider(
-                    value = value,
+                    value = freeFeevalue,
                     onValueChange = {
-                        value = it
+                        freeFeevalue = it
                     },
                     onValueChangeFinished = {
                         scope.launch {
-                            DataStoreManager.saveMaxFlow(formatDecimal(value.toDouble(),0).toInt())
+                            DataStoreManager.saveMaxFlow(formatDecimal(freeFeevalue.toDouble(),0).toInt())
                         }
                     },
                     steps = 37,
@@ -326,87 +386,6 @@ fun APPScreen(
                             val result = async { cleanCache(context) }.await()
                             showToast("已清理 $result MB")
                         }
-                    }
-                )
-            }
-        }
-        DividerTextExpandedWith("交互") {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
-                //                TransplantListItem(
-//                    headlineContent = { Text("长截图") },
-//                    leadingContent = { Icon(painterResource(R.drawable.screenshot_frame),null)},
-//                    supportingContent = {
-//                        Text("开启后，在支持长截图的界面中，可自动滚动并保存截图")
-//                    },
-//                    trailingContent = {
-//                        Switch(checked = false, onCheckedChange = { })
-//                    },
-//                    modifier = Modifier.clickable {
-//                        saveTrigger.value = 1
-//                    }
-//                )
-//                PaddingHorizontalDivider()
-
-                TransplantListItem(
-                    headlineContent = { Text(text = "预测式返回") },
-                    supportingContent = {
-                        if(AppVersion.CAN_PREDICTIVE) {
-                            Text(text = "同Activity之间的部分界面返回手势不松手时有跟手的界面缩小(打断动画时自动屏蔽)")
-                        } else {
-                            Text(text = "需为 Android 13+")
-                        }
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
-                    trailingContent = {
-                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
-                    }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text("启动台") },
-                    supportingContent = {
-                        Text("从顶栏位置的左边缘向内轻扫唤出(部分界面暂未支持)，可快速切换到最近打开的窗口")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.flash_on),null)
-                    },
-                    trailingContent = {
-                        Switch(checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
-                    }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text("交互学习") },
-                    supportingContent = {
-                        Text("学习APP的手势交互操作")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.gesture),null)
-                    },
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.GestureStudyScreen.route)
-                    }
-                )
-            }
-        }
-        DividerTextExpandedWith("对外") {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = { Text("自定义Shortcut") },
-                    supportingContent = {
-                        Text("自定义桌面APP图标长按菜单项目或控制中心按钮")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.menu),null)
-                    },
-                    modifier = Modifier.clickable {
-                        showToast("正在开发")
                     }
                 )
             }

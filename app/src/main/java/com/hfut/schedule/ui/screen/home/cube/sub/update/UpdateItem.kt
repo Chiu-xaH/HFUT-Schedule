@@ -59,14 +59,17 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 一卡通账单支持切换排序方式")
+            UpdateItems("新增 启动台支持对扫码界面进行背景模糊","位于 选项-外观与效果-相机实时渲染")
             UpdateItems("新增 Android 13+的启动台背景升级为镜面缩放效果，使背景观感更饱满")
-            UpdateItems("新增 自动CAS登录")
-            UpdateItems("新增 崩溃的自动处理")
-            UpdateItems("新增 为低版本Android用户的开屏显示")
-            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
+            UpdateItems("修复 开启预测式返回下转场动画返回时图标错位的Bug")
             UpdateItems("优化 转场动画的流畅度和效果微调")
             UpdateItems("优化 扫码时潜在的内存泄漏")
-//            UpdateItems("优化 水波纹")
+            UpdateItems("优化 部分界面的显示")
+//            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
+//            UpdateItems("新增 自动CAS登录")
+//            UpdateItems("新增 崩溃的自动处理")
+//            UpdateItems("新增 为低版本Android用户的开屏显示")
 //            UpdateItems("新增 轻量版","只保留 聚焦课程显示、课程表方格、课程汇总")
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")

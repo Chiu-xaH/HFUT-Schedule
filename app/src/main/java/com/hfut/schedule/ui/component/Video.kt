@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
@@ -34,12 +34,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
-import androidx.core.net.toUri
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.screen.mask
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,72 +49,6 @@ import okhttp3.Request
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-
-@Composable
-fun SimpleVideo2(
-    url: String,
-    modifier: Modifier = Modifier,
-    color: Color? = null,
-    shadow: Dp = 0.dp,
-    shape: Shape = MaterialTheme.shapes.medium,
-    autoPlay: Boolean = true,
-    mute: Boolean = true,
-    loop: Boolean = true,
-    aspectRatio: Float? = null
-) {
-    CustomCard(
-        color = color,
-        shadow = shadow,
-        shape = shape,
-        modifier = modifier
-    ) {
-        AndroidView(
-            factory = { ctx ->
-                TextureView(ctx).apply {
-                    // 创建 MediaPlayer 实例
-                    val mediaPlayer = MediaPlayer().apply {
-                        setDataSource(ctx, url.toUri())
-                        isLooping = loop
-                        setOnPreparedListener { mp ->
-                            if (mute) mp.setVolume(0f, 0f)
-                            if (autoPlay) mp.start()
-                        }
-                        prepareAsync()
-                    }
-
-                    surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-                        override fun onSurfaceTextureAvailable(
-                            surfaceTexture: SurfaceTexture,
-                            width: Int,
-                            height: Int
-                        ) {
-                            mediaPlayer.setSurface(Surface(surfaceTexture))
-                        }
-
-                        override fun onSurfaceTextureSizeChanged(
-                            surface: SurfaceTexture,
-                            width: Int,
-                            height: Int
-                        ) = Unit
-
-                        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-                            mediaPlayer.release()
-                            return true
-                        }
-
-                        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
-                    }
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .let { m ->
-                    aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
-                }
-        )
-    }
-}
-
 
 @Composable
 fun SimpleVideo2FromFile(
@@ -128,17 +62,27 @@ fun SimpleVideo2FromFile(
     loop: Boolean = true,
     aspectRatio: Float? = null
 ) {
-    val mediaPlayer = remember {
-        MediaPlayer().apply {
-            setDataSource(filePath)
-            isLooping = loop
-            setOnPreparedListener { mp ->
-                if (mute) mp.setVolume(0f, 0f)
-                if (autoPlay) mp.start()
+    val mediaPlayer = remember { MediaPlayer() }
+    // 释放
+    DisposableEffect(filePath) {
+        mediaPlayer.setDataSource(filePath)
+        mediaPlayer.isLooping = loop
+        mediaPlayer.setOnPreparedListener { mp ->
+            if (mute) mp.setVolume(0f, 0f)
+            if (autoPlay) mp.start()
+        }
+        mediaPlayer.prepareAsync()
+
+        onDispose {
+            try {
+                mediaPlayer.stop()
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            prepareAsync()
+            mediaPlayer.release()
         }
     }
+
     var showButton by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(autoPlay) }
     val blur by animateDpAsState(
@@ -147,12 +91,15 @@ fun SimpleVideo2FromFile(
     val scale by animateFloatAsState(
         if(!isPlaying) 0.8f else 1f
     )
-    LaunchedEffect(showButton) {
-        if(showButton) {
+    LaunchedEffect(showButton,isPlaying) {
+        if(showButton && isPlaying) {
             delay(5000L)
             showButton = false
+        } else if(!isPlaying && !showButton) {
+            showButton = true
         }
     }
+
     val backdrop = rememberLayerBackdrop()
     CustomCard(
         color = color,
@@ -179,6 +126,7 @@ fun SimpleVideo2FromFile(
                         }
                         isPlaying = mediaPlayer.isPlaying
                     },
+                    surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
                     backdrop = backdrop,
                     isCircle = true,
                 ) {
@@ -209,7 +157,7 @@ fun SimpleVideo2FromFile(
                             ) = Unit
 
                             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-                                mediaPlayer.release()
+                                mediaPlayer.setSurface(null)
                                 return true
                             }
 
@@ -222,15 +170,15 @@ fun SimpleVideo2FromFile(
                     .let { m ->
                         aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
                     }
-                    .clip(shape)
                     .backDropSource(backdrop)
+                    // 深色模式压暗
+                    .mask(
+                        color = Color.Black,
+                        targetAlpha = 0.3f,
+                        show = isThemeDark()
+                    )
                     .blur(blur)
-//                    .mask(
-//                        color = MaterialTheme.colorScheme.surface,
-//                        targetAlpha = 0.2f,
-//                        show = showButton || !isPlaying
-//                    )
-//                    .shaderSelf(scale,shape)
+//                    .shaderSelf(scale, RoundedCornerShape(0.dp))
             )
         }
     }

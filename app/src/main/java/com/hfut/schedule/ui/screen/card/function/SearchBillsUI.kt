@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.card.function
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,14 +39,18 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.shared.model.BillRecordBean
 import com.xah.uicommon.style.align.RowHorizontal
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 @Composable
-fun SearchBillsUI(vm : NetWorkViewModel) {
+fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
     var input by remember { mutableStateOf("") }
     var currentPage by remember { mutableIntStateOf(1) }
     var startUse by remember { mutableStateOf(false) }
@@ -90,7 +95,7 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                     onValueChange = {
                         input = it
                     },
-                    label = { Text("输入关键字检索") },
+                    label = { Text("检索标题") },
                     singleLine = true,
                     trailingIcon = {
                         IconButton(
@@ -106,6 +111,20 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                     shape = MaterialTheme.shapes.medium,
                     colors = textFiledTransplant(),
                 )
+            }
+
+            var showBottomSheet by remember { mutableStateOf(false) }
+            var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+
+            if(showBottomSheet && infoNum != null) {
+                HazeBottomSheet (
+                    onDismissRequest = { showBottomSheet = false },
+                    autoShape = false,
+                    showBottomSheet = showBottomSheet,
+                    hazeState = hazeState
+                ){
+                    BillsInfo(infoNum!!)
+                }
             }
 
             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
@@ -127,9 +146,13 @@ fun SearchBillsUI(vm : NetWorkViewModel) {
                                     AnimationCardListItem(
                                         headlineContent = { Text(text = name) },
                                         supportingContent = { Text(text = processTranamt(item))},
-                                        overlineContent = { Text(text = item.effectdateStr)},
+                                        overlineContent = { Text(text = "交易 " + item.jndatetimeStr + "\n入账 " + item.effectdateStr)},
                                         leadingContent = { BillsIcons(name) },
-                                        index = index
+                                        index = index,
+                                        modifier = Modifier.clickable {
+                                            infoNum = item
+                                            showBottomSheet = true
+                                        }
                                     )
                                 }
                                 item { PaddingForPageControllerButton() }

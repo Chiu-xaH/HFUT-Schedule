@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -28,7 +29,8 @@ import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
+import com.xah.transition.util.allRouteStack
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import com.xah.transition.util.isInBottom
 import com.xah.transition.util.previousRouteWithArgWithoutValues
@@ -57,7 +59,8 @@ fun TransitionScaffold(
     route: String,
     navHostController : NavHostController,
     modifier: Modifier = Modifier
-        .transitionBackground(navHostController, route).containerShare(route, roundShape,),
+        .transitionBackground(navHostController, route)
+        .containerShare(route, roundShape,),
     topBar: @Composable (() -> Unit) = {},
     bottomBar: @Composable (() -> Unit) = {},
     floatingActionButton: @Composable (() -> Unit) = {},
@@ -115,8 +118,10 @@ fun TransitionScaffold(
         }
     }
 
-    if(enablePredictive) {
-        TransitionPredictiveBackHandler(navHostController,useBackHandler && route !in TransitionConfig.firstStartRoute) {
+    // 不是首屏 才使用返回拦截 首屏 需要交给系统 用于返回桌面的预测式
+    if(route !in TransitionConfig.firstStartRoute) {
+        // 启用预测式 && 动画结束 才可使用跟手缩放 否则 直接用BackHandler Pop
+        TransitionBackHandler(navHostController,enablePredictive && useBackHandler) {
             scale = it
         }
     }
@@ -131,7 +136,9 @@ fun TransitionScaffold(
 
     Scaffold(
         containerColor =  targetColor,
-        modifier = modifier.scale(scale),
+        modifier = modifier
+            .let { if(enablePredictive) it.scale(scale) else it }
+        ,
         topBar = topBar,
         bottomBar = {
             AnimatedVisibility(

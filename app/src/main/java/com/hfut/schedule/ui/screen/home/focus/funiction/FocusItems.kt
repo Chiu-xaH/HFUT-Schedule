@@ -4,8 +4,13 @@ import android.app.Activity
 import android.content.Context
 import android.os.Parcelable
 import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -429,6 +434,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
+
     if(showDialog)
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -446,6 +452,7 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
             dialogText = "要删除此项吗",
             hazeState = hazeState
         )
+
 
 
     CardListItem(

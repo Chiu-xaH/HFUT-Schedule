@@ -105,7 +105,7 @@ fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialVal
         if(uiState is UiState.Success) {
             val list = uiState.data.records
             for (item in list) {
-                val get = item.effectdateStr
+                val get = item.jndatetimeStr
                 val name = item.resume
                 val todayDate = get.substringBefore(" ")
                 var num = item.tranamt.toString()
@@ -314,9 +314,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Search
-//            sheetState = sheetState_Search,
-//            shape = bottomSheetRound(sheetState_Search)
-        ) { SearchBillsUI(vm) }
+        ) { SearchBillsUI(vm,hazeState) }
     }
 
     if (showBottomSheet_Settings) {
@@ -341,7 +339,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             showBottomSheet = showBottomSheet_Toady,
             hazeState = hazeState
         ){
-            TodayBills(vm)
+            TodayBills(vm,hazeState)
         }
     }
     if(showBottomSheet_Lost) {

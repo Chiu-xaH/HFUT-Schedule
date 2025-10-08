@@ -29,7 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,10 +53,14 @@ import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.TodayCount
+import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.theme.greenColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.shared.model.BillRecordBean
 import com.xah.uicommon.style.align.CenterScreen
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 private const val TAB_ALL = 0
@@ -64,12 +71,12 @@ private const val TAB_TERM = 3
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : PagerState) =
+fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, pagerState : PagerState,hazeState: HazeState) =
     Column {
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 when(page) {
-                    TAB_DAY -> TodayBillScreen(vm,innerPadding)
+                    TAB_DAY -> TodayBillScreen(vm,innerPadding, hazeState)
                     TAB_MONTH -> MonthBillNewScreen(vm,innerPadding)
                     TAB_TERM -> YearBillNewScreen(vm,innerPadding)
                     TAB_ALL -> PredictedScreen(vm,innerPadding,pagerState)
@@ -79,9 +86,23 @@ fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, page
     }
 
 @Composable
-private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
+private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,hazeState : HazeState) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
     CommonNetworkScreen(uiState, onReload = null) {
+        var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+        var showBottomSheet by remember { mutableStateOf(false) }
+
+        if(showBottomSheet && infoNum != null) {
+            HazeBottomSheet (
+                onDismissRequest = { showBottomSheet = false },
+                autoShape = false,
+                showBottomSheet = showBottomSheet,
+                hazeState = hazeState
+            ){
+                BillsInfo(infoNum!!)
+            }
+        }
+
         val list = (uiState as UiState.Success).data.records
         if(list.isEmpty()) {
             CenterScreen {
@@ -91,7 +112,11 @@ private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
             LazyColumn() {
                 item { InnerPaddingHeight(innerPadding,true) }
                 items(list.size) { item ->
-                    TodayCount(list[item])
+                    val bean = list[item]
+                    TodayCount(bean) {
+                        infoNum = bean
+                        showBottomSheet = true
+                    }
                 }
                 item { InnerPaddingHeight(innerPadding,false) }
             }

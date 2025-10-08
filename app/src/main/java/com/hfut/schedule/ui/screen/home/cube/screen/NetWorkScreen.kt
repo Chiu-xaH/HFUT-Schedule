@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,6 +35,8 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
@@ -42,7 +45,8 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
+import com.xah.uicommon.component.text.BottomTip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,7 +56,7 @@ fun NetWorkScreen(navController: NavHostController,
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     val context = LocalContext.current
@@ -73,6 +77,16 @@ fun NetWorkScreen(navController: NavHostController,
         val switch_server = SharedPrefs.prefs.getBoolean("SWITCHSERVER",false )
         var server by remember { mutableStateOf(switch_server) }
         saveBoolean("SWITCHSERVER",false,server)
+
+        val video by produceState<String?>(initialValue = null) {
+            value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
+        }
+        video?.let {
+            SimpleVideo2FromFile(
+                filePath = it,
+                aspectRatio = 16/9f,
+            )
+        }
 
         DividerTextExpandedWith("配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

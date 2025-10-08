@@ -46,13 +46,13 @@ import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
 
 @Composable
 fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navController : NavHostController) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     var showEditDialog by remember { mutableStateOf(false) }

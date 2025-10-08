@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -29,12 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.xah.shared.model.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
@@ -53,13 +54,14 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
-fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState) {
+fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIViewModel, hazeState : HazeState,sorted : Boolean) {
     val auth = prefs.getString("auth","")
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.huiXinBillResult.state.collectAsState()
@@ -83,22 +85,28 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
 
 
     var showBottomSheet by remember { mutableStateOf(false) }
-    var infoNum by remember { mutableIntStateOf(0) }
+    var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
 
-    if(showBottomSheet) {
+    if(showBottomSheet && infoNum != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             autoShape = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ){
-            BillsInfo(vm,infoNum)
+            BillsInfo(infoNum!!)
         }
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val data = (uiState as UiState.Success).data
-        val list = data.records.sortedByDescending { it.effectdateStr }
+        val list = data.records.sortedByDescending {
+            if(sorted) {
+                it.jndatetimeStr
+            } else {
+                it.effectdateStr
+            }
+        }
         val listState = rememberLazyListState()
 
         Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
@@ -107,27 +115,32 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                 item { InnerPaddingHeight(innerPaddings,true) }
                 if (page == 1)
                     item { CardRow(vm,vmUI, hazeState) }
-                items(list.size) { item ->
+                items(list.size, key = { list[it].orderId }) { item ->
                     val bills = list[item]
                     var name = bills.resume.replace("有限公司","")
 
-                    val time =bills.effectdateStr
-                    val getTime = time.substringBefore(" ")
-                    AnimationCardListItem(
-                        headlineContent = { Text(text = name) },
-                        supportingContent = { Text(text = processTranamt(bills)) },
-                        overlineContent = { Text(text = time) },
-                        leadingContent = { BillsIcons(name) },
-                        color =
-                            if(DateTimeManager.Date_yyyy_MM_dd == getTime)
-                                MaterialTheme.colorScheme.secondaryContainer
-                            else null,
-                        modifier = Modifier.clickable {
-                            infoNum = item
-                            showBottomSheet = true
-                        },
-                        index = item
-                    )
+                    val paidTime =bills.jndatetimeStr
+                    val finalTime = bills.effectdateStr
+                    val finalDate = finalTime.substringBefore(" ")
+                    val paidDate = paidTime.substringBefore(" ")
+                    val delay = finalDate != paidDate
+                    Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
+                        AnimationCardListItem(
+                            headlineContent = { Text(text = name) },
+                            supportingContent = { Text(text = processTranamt(bills)) },
+                            overlineContent = { Text(text = (if(sorted) paidTime else finalTime )  + (if(delay) " (延迟入账)" else "")) },
+                            leadingContent = { BillsIcons(name) },
+                            color =
+                                if(DateTimeManager.Date_yyyy_MM_dd == paidDate || DateTimeManager.Date_yyyy_MM_dd == finalDate)
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                else null,
+                            modifier = Modifier.clickable {
+                                infoNum = bills
+                                showBottomSheet = true
+                            },
+                            index = item
+                        )
+                    }
                 }
                 item {
                     BottomTip("总 ${data.total} 条")
@@ -150,10 +163,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
-    val uiState by vm.huiXinBillResult.state.collectAsState()
-    val data = (uiState as UiState.Success).data.records
-    val bills = data[Infonum]
+fun BillsInfo( bills :  BillRecordBean) {
     Column {
         HazeBottomSheetTopBar("详情", isPaddingStatusBar = false)
         CustomCard( color = cardNormalColor()){
@@ -175,7 +185,7 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
                 overlineContent = { Text(text = "类型 ${Text( bills.turnoverType)}")}
             )
             TransplantListItem(
-                headlineContent = { Text(  "出账 "+ bills.jndatetimeStr+ "\n入账 " + bills.effectdateStr ) },
+                headlineContent = { Text( "交易 "+ bills.jndatetimeStr+ "\n入账 " + bills.effectdateStr ) },
                 leadingContent = {
                     Icon(
                         painterResource(id = R.drawable.schedule),
@@ -184,7 +194,6 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
                 },
                 overlineContent = { Text(text = "时间")}
             )
-
             TransplantListItem(
                 headlineContent = { Text( processTranamt(bills)) },
                 leadingContent = {
@@ -195,8 +204,21 @@ fun BillsInfo(vm : NetWorkViewModel, Infonum : Int) {
                 },
                 overlineContent = { Text(text = "金额")}
             )
+            TransplantListItem(
+                headlineContent = { Text(bills.orderId) },
+                leadingContent = {
+                    Icon(
+                        painterResource(id = R.drawable.tag),
+                        contentDescription = "Localized description",
+                    )
+                },
+                modifier = Modifier.clickable {
+                    ClipBoardUtils.copy(bills.orderId)
+                },
+                overlineContent = { Text(text = "订单号")}
+            )
         }
-        Spacer(Modifier.height(10.dp))
+        Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
     }
 }
 
@@ -210,7 +232,7 @@ fun processTranamt(bills : BillRecordBean) : String {
     val big = BigDecimal(num)
     val numFloat = big.toFloat()
     var pay = "$numFloat 元"
-    pay = if (bills.resume.contains("充值") || bills.resume.contains("补助")) "+ $pay"
-    else "- $pay"
+    pay = if (bills.resume.contains("充值") || bills.resume.contains("补助")) "+$pay"
+    else "-$pay"
     return pay
 }

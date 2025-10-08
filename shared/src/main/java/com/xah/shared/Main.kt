@@ -14,7 +14,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-04-01 19:10:05",
-            effectdateStr = "2025-04-01 11:26:33"
+            effectdateStr = "2025-04-01 11:26:33",
+            orderId = "1"
         ),
         BillRecordBean(
             tranamt = 1200,
@@ -22,7 +23,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-04-01 19:10:05",
-            effectdateStr = "2025-04-01 11:26:33"
+            effectdateStr = "2025-04-01 11:26:33",
+            orderId = "1"
         ),
         BillRecordBean(
             tranamt = 1000,
@@ -30,7 +32,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-04-02 19:10:05",
-            effectdateStr = "2025-04-02 11:26:33"
+            effectdateStr = "2025-04-02 11:26:33",
+            orderId = "1"
         ),
         BillRecordBean(
             tranamt = 1500,
@@ -38,7 +41,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-05-02 19:10:05",
-            effectdateStr = "2025-05-02 11:26:33"
+            effectdateStr = "2025-05-02 11:26:33",
+            orderId = "1"
         ),
         BillRecordBean(
             tranamt = 700,
@@ -46,7 +50,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-05-03 19:10:05",
-            effectdateStr = "2025-05-03 11:26:33"
+            effectdateStr = "2025-05-03 11:26:33",
+            orderId = "1"
         ),
         BillRecordBean(
             tranamt = 1100,
@@ -54,7 +59,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-06-03 19:10:05",
-            effectdateStr = "2025-06-03 11:26:33"
+            effectdateStr = "2025-06-03 11:26:33",
+            orderId = "1"
         ),
         BillRecordBean(
             tranamt = 500,
@@ -62,7 +68,8 @@ fun main() {
             fromAccount = "24XXX",
             turnoverType = "消费",
             jndatetimeStr = "2025-06-03 19:10:05",
-            effectdateStr = "2025-06-03 11:26:33"
+            effectdateStr = "2025-06-03 11:26:33",
+            orderId = "1"
         ),
 
     )

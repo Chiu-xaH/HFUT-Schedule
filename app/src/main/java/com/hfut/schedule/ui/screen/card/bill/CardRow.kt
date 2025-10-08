@@ -40,6 +40,7 @@ import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.screen.card.function.main.loadTodayPay
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -65,7 +66,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ){
-           TodayBills(vm)
+           TodayBills(vm,hazeState)
         }
     }
 
@@ -97,8 +98,21 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayBills(vm: NetWorkViewModel) {
+fun TodayBills(vm: NetWorkViewModel,hazeState : HazeState) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
+    var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+
+    if(showBottomSheet && infoNum != null) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            autoShape = false,
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+        ){
+            BillsInfo(infoNum!!)
+        }
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Color.Transparent,
@@ -110,28 +124,34 @@ fun TodayBills(vm: NetWorkViewModel) {
             val list = (uiState as UiState.Success).data.records
             LazyColumn(modifier = Modifier.padding(innerPadding)) {
                 items(list.size) { item ->
-                    TodayCount(list[item] )
+                    val bean = list[item]
+                    TodayCount(bean) {
+                        infoNum = bean
+                        showBottomSheet = true
+                    }
                 }
             }
         }
     }
 }
 @Composable
-fun TodayCount(item : BillRecordBean) = with(item) {
+fun TodayCount(item : BillRecordBean,onClick : () -> Unit) = with(item) {
+
     var name = resume
     if (name.contains("有限公司")) name = name.replace("有限公司","")
 
     val time = effectdateStr
     val getTime = time.substringBefore(" ")
+    val finalTime = jndatetimeStr.substringBefore(" ")
 
-    if(DateTimeManager.Date_yyyy_MM_dd == getTime) {
+    if(DateTimeManager.Date_yyyy_MM_dd == getTime || DateTimeManager.Date_yyyy_MM_dd == finalTime) {
         CardListItem(
             headlineContent = { Text(text = name) },
             supportingContent = { Text(text = processTranamt(item)) },
-            overlineContent = { Text(text = time) },
+            overlineContent = { Text(text = "交易 $jndatetimeStr\n入账 $effectdateStr") },
             leadingContent = { BillsIcons(name) },
             modifier = Modifier.clickable {
-
+                onClick()
             }
         )
     }

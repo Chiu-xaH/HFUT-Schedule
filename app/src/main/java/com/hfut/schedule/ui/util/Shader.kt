@@ -3,6 +3,8 @@ package com.hfut.schedule.ui.util
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.graphics.Shader
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,22 +24,29 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import com.hfut.schedule.logic.util.other.AppVersion
 import org.intellij.lang.annotations.Language
+import kotlin.unaryMinus
 
 
 // 记录内容
 fun Modifier.shaderSource(
     state : ShaderState
-) : Modifier = this
-        .drawWithContent {
-            drawContent()
-            state.graphicsLayer.record {
-                this@drawWithContent.drawContent()
+) : Modifier =
+    if(!AppVersion.CAN_SHADER) {
+        this
+    } else {
+        this
+            .drawWithContent {
+                drawContent()
+                state.graphicsLayer.record {
+                    this@drawWithContent.drawContent()
+                }
             }
-        }
-        .onGloballyPositioned { layoutCoordinates ->
-            state.rect = layoutCoordinates.boundsInRoot()
-        }
+            .onGloballyPositioned { layoutCoordinates ->
+                state.rect = layoutCoordinates.boundsInRoot()
+            }
+    }
 
 
 // 绘制内容
@@ -45,80 +54,91 @@ fun Modifier.shaderLayer(
     state: ShaderState,
     clipShape: Shape,
 ) : Modifier =
-    this
-        .graphicsLayer {
-            clip = true
-            shape = clipShape
-        }
-        .drawWithCache {
-            // 模糊与反射混合效果
-            val blurEffect = RenderEffect.createBlurEffect(
-                0f,0f, Shader.TileMode.CLAMP
-            )
-
-            val runtimeShader = RuntimeShader(SHADER_CODE.trimIndent())
-
-            onDrawBehind {
-                val contentRect = state.rect ?: return@onDrawBehind
-                val surfaceRect = state.sRect ?: return@onDrawBehind
-
-                val offset = surfaceRect.topLeft - contentRect.topLeft
-
-                val renderEffect = RenderEffect
-                    .createRuntimeShaderEffect(runtimeShader, "content")
-                    .apply {
-                        runtimeShader.setFloatUniform("size", contentRect.width,contentRect.height)
-                        runtimeShader.setFloatUniform("scale", 0.9f)
-                    }
-                val combinedEffect = RenderEffect.createChainEffect(
-                    blurEffect,
-                    renderEffect,
+    if(!AppVersion.CAN_SHADER) {
+        this
+    } else {
+        this
+            .graphicsLayer {
+                clip = true
+                shape = clipShape
+            }
+            .drawWithCache {
+                // 模糊与反射混合效果
+                val blurEffect = RenderEffect.createBlurEffect(
+                    0f,0f, Shader.TileMode.CLAMP
                 )
 
-                val effect = combinedEffect.asComposeRenderEffect()
-                state.graphicsLayer.renderEffect = effect
+                val runtimeShader = RuntimeShader(SHADER_CODE.trimIndent())
 
-                withTransform({
-                    translate(-offset.x, -offset.y)
-                    clipRect(0f, 0f, contentRect.width, contentRect.height)
-                }) {
-                    drawLayer(state.graphicsLayer)
+                onDrawBehind {
+                    val contentRect = state.rect ?: return@onDrawBehind
+                    val surfaceRect = state.sRect ?: return@onDrawBehind
+
+                    val offset = surfaceRect.topLeft - contentRect.topLeft
+
+                    val renderEffect = RenderEffect
+                        .createRuntimeShaderEffect(runtimeShader, "content")
+                        .apply {
+                            runtimeShader.setFloatUniform("size", contentRect.width,contentRect.height)
+                            runtimeShader.setFloatUniform("scale", 0.9f)
+                        }
+                    val combinedEffect = RenderEffect.createChainEffect(
+                        blurEffect,
+                        renderEffect,
+                    )
+
+                    val effect = combinedEffect.asComposeRenderEffect()
+                    state.graphicsLayer.renderEffect = effect
+
+                    withTransform({
+                        translate(-offset.x, -offset.y)
+                        clipRect(0f, 0f, contentRect.width, contentRect.height)
+                    }) {
+                        drawLayer(state.graphicsLayer)
+                    }
                 }
             }
-        }
-        .onGloballyPositioned { layoutCoordinates ->
-            // 记录位置
-            state.sRect = layoutCoordinates.boundsInRoot()
-        }
+            .onGloballyPositioned { layoutCoordinates ->
+                // 记录位置
+                state.sRect = layoutCoordinates.boundsInRoot()
+            }
+    }
+
 
 
 // 绘制内容
 fun Modifier.shaderSelf(
     scale: Float = 1f,
     clipShape: Shape,
-): Modifier = composed {
-    var rect by remember { mutableStateOf<Rect?>(null) }
+): Modifier =
+    if(!AppVersion.CAN_SHADER) {
+        this
+    } else {
+        composed {
+            var rect by remember { mutableStateOf<Rect?>(null) }
 
-    this
-        .graphicsLayer {
-            clip = true
-            shape = clipShape
-            // 这里直接在图层上挂上 RenderEffect
-            val r = rect
-            if (r != null) {
-                val runtimeShader = RuntimeShader(SHADER_CODE.trimIndent())
-                runtimeShader.setFloatUniform("size", r.width, r.height)
-                runtimeShader.setFloatUniform("scale", scale)
+            this
+                .graphicsLayer {
+                    clip = true
+                    shape = clipShape
+                    // 这里直接在图层上挂上 RenderEffect
+                    val r = rect
+                    if (r != null) {
+                        val runtimeShader = RuntimeShader(SHADER_CODE.trimIndent())
+                        runtimeShader.setFloatUniform("size", r.width, r.height)
+                        runtimeShader.setFloatUniform("scale", scale)
 
-                renderEffect = RenderEffect
-                    .createRuntimeShaderEffect(runtimeShader, "content")
-                    .asComposeRenderEffect()
-            }
+                        renderEffect = RenderEffect
+                            .createRuntimeShaderEffect(runtimeShader, "content")
+                            .asComposeRenderEffect()
+                    }
+                }
+                .onGloballyPositioned { layoutCoordinates ->
+                    rect = layoutCoordinates.boundsInRoot()
+                }
         }
-        .onGloballyPositioned { layoutCoordinates ->
-            rect = layoutCoordinates.boundsInRoot()
-        }
-}
+    }
+
 
 
 

@@ -71,7 +71,7 @@ half4 main(float2 coord) {
     return color * intensity;
 }"""
 
-val BUTTON_PADDING = 4.dp
+val BUTTON_PADDING = 6.25.dp
 
 
 @Composable

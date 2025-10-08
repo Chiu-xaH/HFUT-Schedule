@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navController: NavHostController) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)

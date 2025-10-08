@@ -22,6 +22,7 @@ data class BillRecordBean(
     val resume : String,
     val fromAccount : String,
     val turnoverType : String,
+    val orderId : String,
     val jndatetimeStr : String,
     val effectdateStr : String
 )

@@ -18,12 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.style.special.dialogBlur
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeDialog
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.rememberHazeState
@@ -98,20 +97,3 @@ fun LittleDialog(
     }
 
 }
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .fillMaxHeight(fraction = .5f),
-//        AlertDialog(
-//            title = { Text(text = dialogTitle) },
-//            text = { Text(text = dialogText) },
-//            onDismissRequest = { onDismissRequest() },
-//            confirmButton = {
-//                Button(onClick = { onConfirmation() }
-//                ) { Text(conformtext) }
-//            },
-//            dismissButton = {
-//                FilledTonalButton(
-//                    onClick = { onDismissRequest() }
-//                ) { Text(dismisstext) }
-//            },
-//        )

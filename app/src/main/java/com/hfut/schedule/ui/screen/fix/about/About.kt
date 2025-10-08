@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -52,6 +53,8 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -69,7 +72,8 @@ import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
+import com.xah.uicommon.component.text.BottomTip
 import dev.chrisbanes.haze.HazeState
 import java.util.Hashtable
 
@@ -79,7 +83,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
     val context = LocalContext.current
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     Column (modifier = Modifier
@@ -201,6 +205,15 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             }
         }
 
+        val video by produceState<String?>(initialValue = null) {
+            value = checkOrDownloadVideo(context,"example_about.mp4","https://chiu-xah.github.io/videos/example_about.mp4")
+        }
+        video?.let {
+            SimpleVideo2FromFile(
+                filePath = it,
+                aspectRatio = 16/9f,
+            )
+        }
         DividerTextExpandedWith("关于") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(

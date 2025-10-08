@@ -5,4 +5,4 @@ import androidx.navigation.NavHostController
 
 
 @Composable
-actual fun TransitionPredictiveBackHandler(navController : NavHostController,enable : Boolean,onScale: (Float) -> Unit) = onScale(1f)
+actual fun TransitionBackHandler(navController : NavHostController, enablePredictive : Boolean, onScale: (Float) -> Unit) = onScale(1f)

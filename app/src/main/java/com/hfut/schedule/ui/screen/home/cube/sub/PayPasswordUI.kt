@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.transition.util.TransitionPredictiveBackHandler
+import com.xah.transition.util.TransitionBackHandler
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,7 +54,7 @@ import dev.chrisbanes.haze.HazeState
 fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavHostController) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
-    TransitionPredictiveBackHandler(navController,enablePredictive) {
+    TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
     val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)

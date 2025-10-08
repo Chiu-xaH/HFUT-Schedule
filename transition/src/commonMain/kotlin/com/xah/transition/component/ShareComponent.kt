@@ -88,8 +88,8 @@ fun Modifier.singleElementShare(
 // 标题共享元素
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Modifier.iconElementShare(route : String, ) : Modifier = singleElementShare("icon",route)
+fun Modifier.iconElementShare(route : String) : Modifier = singleElementShare("icon",route)
 // 图标共享元素
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Modifier.titleElementShare(route : String, ) : Modifier = singleElementShare("title",route)
+fun Modifier.titleElementShare(route : String) : Modifier = singleElementShare("title",route)

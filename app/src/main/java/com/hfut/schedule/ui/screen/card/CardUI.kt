@@ -6,6 +6,10 @@ package com.hfut.schedule.ui.screen.card
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -26,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -34,18 +39,25 @@ import com.hfut.schedule.logic.enumeration.CardBarItems
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.card.bill.main.BillScreen
 import com.hfut.schedule.ui.screen.card.count.BillAnalysisScreen
+import com.hfut.schedule.ui.screen.card.function.SearchBillsUI
 import com.hfut.schedule.ui.screen.card.function.main.CardHomeScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -113,8 +125,16 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         }
     }
 
-
-
+    var showBottomSheet_Search by remember { mutableStateOf(false) }
+    if (showBottomSheet_Search) {
+        HazeBottomSheet (
+            onDismissRequest = {
+                showBottomSheet_Search = false
+            },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Search
+        ) { SearchBillsUI(vm,hazeState) }
+    }
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
 // 保存上一页页码 用于决定左右动画
@@ -123,8 +143,9 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             currentPage = bottomBarItems.page
         }
     }
+    var sorted by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    val backdrop = rememberLayerBackdrop()
     val context = LocalActivity.current
     Scaffold(
 //        modifier = Modifier.fillMaxSize(),
@@ -140,6 +161,32 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
                             context?.finish()
                         }) {
                             Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                        }
+                    },
+                    actions = {
+                        if(bottomBarItems == CardBarItems.BILLS) {
+                            Row (
+                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                            ){
+                                LiquidButton(
+                                    onClick = {
+                                        showBottomSheet_Search = true
+                                    },
+                                    backdrop = backdrop,
+                                    isCircle = true,
+                                ) {
+                                    Icon(painterResource(R.drawable.search),null)
+                                }
+                                Spacer(Modifier.width(BUTTON_PADDING))
+                                LiquidButton(
+                                    onClick = {
+                                        sorted = !sorted
+                                    },
+                                    backdrop = backdrop,
+                                ) {
+                                    Text(if(sorted)"按交易时间" else "按入账时间")
+                                }
+                            }
                         }
                     }
                 )
@@ -159,6 +206,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             enterTransition = { animation.enter },
             exitTransition = { animation.exit },
             modifier = Modifier
+                .backDropSource(backdrop)
                 .hazeSource(
                     state = hazeState
                 )
@@ -170,12 +218,12 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             }
             composable(CardBarItems.BILLS.name) {
                 Scaffold {
-                    BillScreen(vm,innerPadding,vmUI, hazeState)
+                    BillScreen(vm,innerPadding,vmUI, hazeState,sorted)
                 }
             }
             composable(CardBarItems.COUNT.name) {
                 Scaffold {
-                    BillAnalysisScreen(innerPadding,vm,pagerState)
+                    BillAnalysisScreen(innerPadding,vm,pagerState,hazeState)
                 }
             }
         }
