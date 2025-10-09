@@ -46,7 +46,7 @@ suspend fun SharedTransitionScope.awaitTransition() {
 }
 
 
-fun restoreTransition() {
+private fun restoreTransition() {
     if(TransitionConfig.firstUse) {
         TransitionConfig.firstUse = false
     }
@@ -67,8 +67,10 @@ fun TransitionScaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor : Color? = null,
     enablePredictive : Boolean = true,
+    backHandler : @Composable ((Float) -> Unit)? = null, // 自定义返回 将覆盖原有逻辑 可传入预测式
     content: @Composable ((PaddingValues) -> Unit)
 ) {
+    // 不是首屏 才使用返回拦截 首屏 需要交给系统 用于返回桌面的预测式
     if(route in TransitionConfig.firstStartRoute || TransitionConfig.transitionBackgroundStyle.level == TransitionLevel.NONE_ALL) {
         // 首页 无需进行延迟显示
         Scaffold(
@@ -118,8 +120,10 @@ fun TransitionScaffold(
         }
     }
 
-    // 不是首屏 才使用返回拦截 首屏 需要交给系统 用于返回桌面的预测式
-    if(route !in TransitionConfig.firstStartRoute) {
+
+    if(backHandler != null) {
+        backHandler(scale)
+    } else {
         // 启用预测式 && 动画结束 才可使用跟手缩放 否则 直接用BackHandler Pop
         TransitionBackHandler(navHostController,enablePredictive && useBackHandler) {
             scale = it
@@ -132,13 +136,12 @@ fun TransitionScaffold(
             show = true
         }
     }
+
     val targetColor =  containerColor ?: if(TransitionConfig.transplantBackground) Color.Transparent else MaterialTheme.colorScheme.surface
 
     Scaffold(
         containerColor =  targetColor,
-        modifier = modifier
-            .let { if(enablePredictive) it.scale(scale) else it }
-        ,
+        modifier = modifier.scale(scale),
         topBar = topBar,
         bottomBar = {
             AnimatedVisibility(

@@ -86,7 +86,7 @@ import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -288,7 +288,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
             }
             video?.let {
-                SimpleVideo2FromFile(
+                SimpleVideo(
                     filePath = it,
                     aspectRatio = 16/9f,
                 )
@@ -547,7 +547,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text(text = "将摄像头的画面实时渲染在UI图层上，以实现支持启动台的背景模糊，开启后将带来一些渲染压力")
                     },
                     leadingContent = {
-                        Icon(painterResource(R.drawable.screen_record),null)
+                        Icon(painterResource(R.drawable.monochrome_photos),null)
                     },
                     trailingContent = {
                         Switch(checked = enableCameraDynamicRecord, onCheckedChange = {
@@ -570,7 +570,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     value = checkOrDownloadVideo(context,"example_transition.mp4","https://chiu-xah.github.io/videos/example_transition.mp4")
                 }
                 video?.let {
-                    SimpleVideo2FromFile(
+                    SimpleVideo(
                         filePath = it,
                         aspectRatio = 16/9f,
                     )

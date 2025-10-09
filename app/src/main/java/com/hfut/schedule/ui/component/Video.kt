@@ -50,8 +50,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
+
 @Composable
-fun SimpleVideo2FromFile(
+fun SimpleVideo(
     filePath: String,
     modifier: Modifier = Modifier,
     color: Color? = null,
@@ -114,7 +115,9 @@ fun SimpleVideo2FromFile(
                 visible = showButton,
                 enter = scaleIn(initialScale = 1.5f) + fadeIn(),
                 exit = fadeOut(targetAlpha = 1.5f) + fadeOut(),
-                modifier = Modifier.align(Alignment.Center).zIndex(2f)
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .zIndex(2f)
             ) {
                 LiquidButton(
                     onClick = {
@@ -185,12 +188,11 @@ fun SimpleVideo2FromFile(
 }
 
 
-
 /**
  * 检查视频文件是否存在，不存在则自动下载。
  *
  * @param context 上下文
- * @param fileName 文件名（如 "demo.mp4"）
+ * @param fileName 文件名
  * @param downloadUrl 下载链接
  * @return 本地视频路径或 null（下载失败）
  */

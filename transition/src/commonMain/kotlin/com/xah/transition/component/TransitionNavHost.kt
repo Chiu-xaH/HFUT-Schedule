@@ -9,15 +9,11 @@ import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
@@ -27,11 +23,8 @@ import androidx.navigation.compose.composable
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.style.TransitionLevel
-import com.xah.transition.util.TransitionInitializer
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

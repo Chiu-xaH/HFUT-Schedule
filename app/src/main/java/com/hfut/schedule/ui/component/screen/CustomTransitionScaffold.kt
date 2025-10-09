@@ -17,9 +17,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.xah.transition.component.TransitionScaffold
-import com.xah.transition.component.awaitTransition
 import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.style.transitionBackground
@@ -40,6 +38,7 @@ fun CustomTransitionScaffold(
     floatingActionButtonPosition: FabPosition = FabPosition.End,
     containerColor : Color? = null,
     enablePredictive : Boolean = true,
+    backHandler : @Composable ((Float) -> Unit)? = null, // 自定义返回 将覆盖原有逻辑 可传入预测式
     content: @Composable ((PaddingValues) -> Unit)
 ) {
     val predictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
@@ -57,7 +56,8 @@ fun CustomTransitionScaffold(
         floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = floatingActionButtonPosition,
         containerColor = containerColor,
-        content = content
+        content = content,
+        backHandler = backHandler
     )
 }
 

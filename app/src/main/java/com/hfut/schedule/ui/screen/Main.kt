@@ -118,6 +118,9 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
+import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.transition.state.NavAction
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -137,21 +140,6 @@ suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(D
         return@withContext currentValue
     }
 }
-
-//private data class BackgroundStyle(
-//    val scale : Float,
-//    val blur : Dp,
-//    val alpha : Float,
-//)
-
-//private fun backgroundStyle(isLarge: Boolean): BackgroundStyle {
-//    return if (isLarge) {
-//        BackgroundStyle(0.85f, 42.5.dp, 0.4f)
-//    } else {
-//        BackgroundStyle(0.875f,5.dp, 0.25f)
-//    }
-//}
-
 
 suspend fun DrawerState.animationClose() = this.animateTo(DrawerValue.Closed, tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing))
 suspend fun DrawerState.animationOpen() = this.animateTo(DrawerValue.Open, spring(dampingRatio = 0.8f, stiffness = 125f))
@@ -345,26 +333,36 @@ fun MainHost(
                 navController = navController,
                 startDestination = firstPage(startRoute),
                 modifier = Modifier
+                    // 启动台背景
                     .background(
                         if(enableLiquidGlass) {
                             MaterialTheme.colorScheme.surface
                         } else {
                             if(disabledGesture) {
+                                // 网页
                                 containerColor ?: MaterialTheme.colorScheme.surface
                             } else {
                                 MaterialTheme.colorScheme.surface
                             }
                         }
                     )
-                    .let{ if(motionBlur && enableControlCenter && !disabledBlur) it.blur(blurDp) else it }
+                    // 启动台模糊
                     .let {
+                        if(motionBlur && enableControlCenter && !disabledBlur)
+                            it.blur(blurDp)
+                        else it
+                    }
+                    // 启动台缩放
+                    .let {
+                        // 转场动画时必须关闭 否则打开动画会闪烁
                         if(enableLiquidGlass) {
-                            it.shaderSelf(scale,RoundedCornerShape(0.dp))
+                            it.shaderSelf(scale)
                         } else {
                             it.let {
                                 if(enableControlCenter) {
                                     it.scale(scale)
-                                } else it
+                                } else
+                                    it
                             }
                         }
                     },

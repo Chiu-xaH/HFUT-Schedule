@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.SharedPrefs
 import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -82,7 +82,7 @@ fun NetWorkScreen(navController: NavHostController,
             value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
         }
         video?.let {
-            SimpleVideo2FromFile(
+            SimpleVideo(
                 filePath = it,
                 aspectRatio = 16/9f,
             )

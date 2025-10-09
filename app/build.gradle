@@ -48,7 +48,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 226
-        versionName "4.18.2 Preview"
+        versionName "4.18.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -235,7 +235,6 @@ dependencies {
 //    implementation(libs.androidx.adaptive.navigation)
     // 内存泄漏
     debugImplementation(libs.leakcanary.android)
-    // 视频播放
     // 模块
     implementation(project(moduleTransition))
     implementation(project(moduleUiCommon))

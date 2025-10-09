@@ -94,16 +94,6 @@ fun WebViewScreenForNavigation(
         }
     }
 
-    WebViewBackHandler(
-        webView,
-        fullScreen,
-        loading,
-        { fullScreen = it },
-    ) {
-        navController.popBackStack()
-    }
-
-
     val tools = @Composable {
         WebViewTools(
             webView,
@@ -148,6 +138,16 @@ fun WebViewScreenForNavigation(
                 currentUrl
             )
         },
+        backHandler = {
+            WebViewBackHandler(
+                webView,
+                fullScreen,
+                loading,
+                { fullScreen = it },
+            ) {
+                navController.popBackStack()
+            }
+        }
     ) { innerPadding ->
         val bottom = innerPadding.calculateBottomPadding().value.toInt() + APP_HORIZONTAL_DP.value.toInt()
         WebViewContent(

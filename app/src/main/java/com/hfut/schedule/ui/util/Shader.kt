@@ -3,8 +3,7 @@ package com.hfut.schedule.ui.util
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.graphics.Shader
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,9 +23,9 @@ import androidx.compose.ui.graphics.layer.drawLayer
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.other.AppVersion
 import org.intellij.lang.annotations.Language
-import kotlin.unaryMinus
 
 
 // 记录内容
@@ -109,21 +108,20 @@ fun Modifier.shaderLayer(
 // 绘制内容
 fun Modifier.shaderSelf(
     scale: Float = 1f,
-    clipShape: Shape,
+    clipShape: Shape = RoundedCornerShape(0.dp),
 ): Modifier =
-    if(!AppVersion.CAN_SHADER) {
+    if(scale == 1f || !AppVersion.CAN_SHADER) {
         this
     } else {
         composed {
+            // 绘制面
             var rect by remember { mutableStateOf<Rect?>(null) }
 
             this
                 .graphicsLayer {
                     clip = true
                     shape = clipShape
-                    // 这里直接在图层上挂上 RenderEffect
-                    val r = rect
-                    if (r != null) {
+                    rect?.let { r ->
                         val runtimeShader = RuntimeShader(SHADER_CODE.trimIndent())
                         runtimeShader.setFloatUniform("size", r.width, r.height)
                         runtimeShader.setFloatUniform("scale", scale)

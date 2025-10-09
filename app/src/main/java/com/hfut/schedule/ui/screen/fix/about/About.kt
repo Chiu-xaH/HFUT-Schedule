@@ -53,7 +53,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -209,7 +209,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             value = checkOrDownloadVideo(context,"example_about.mp4","https://chiu-xah.github.io/videos/example_about.mp4")
         }
         video?.let {
-            SimpleVideo2FromFile(
+            SimpleVideo(
                 filePath = it,
                 aspectRatio = 16/9f,
             )

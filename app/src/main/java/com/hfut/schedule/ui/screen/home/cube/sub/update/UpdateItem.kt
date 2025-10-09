@@ -1,9 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import android.annotation.SuppressLint
-import android.graphics.Shader
-import android.os.Build
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -11,9 +8,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.graphics.RenderEffect
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -23,7 +17,6 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.transition.state.LocalSharedTransitionScope
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -33,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-10-05") },
+                overlineContent = { Text(text = "2025-10-09") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -59,13 +52,13 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 一卡通账单支持切换排序方式")
-            UpdateItems("新增 启动台支持对扫码界面进行背景模糊","位于 选项-外观与效果-相机实时渲染")
-            UpdateItems("新增 Android 13+的启动台背景升级为镜面缩放效果，使背景观感更饱满")
-            UpdateItems("修复 开启预测式返回下转场动画返回时图标错位的Bug")
+            UpdateItems("新增 一卡通账单支持切换排序方式和对入账与交易时间的优化")
+            UpdateItems("新增 启动台支持对相机画面进行背景处理","位于 选项-外观与效果-相机实时渲染")
+            UpdateItems("新增 Android 13+的启动台背景升级为镜面缩放效果，使背景观感更饱满","位于 选项-外观与效果-着色器渲染")
+            UpdateItems("修复 开启预测式返回下转场动画返回时图标错位及顿挫的Bug")
             UpdateItems("优化 转场动画的流畅度和效果微调")
             UpdateItems("优化 扫码时潜在的内存泄漏")
-            UpdateItems("优化 部分界面的显示")
+            UpdateItems("优化 部分界面的分类与显示")
 //            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("新增 崩溃的自动处理")

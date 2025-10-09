@@ -1,28 +1,21 @@
 package com.hfut.schedule.ui.component.button
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.DataStoreManager
 import com.kyant.backdrop.Backdrop
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.awaitTransition
@@ -40,10 +33,8 @@ fun TopBarNavigationIcon(
     navController : NavHostController,
     route : String,
     icon : Int,
-) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    TopBarNavigateIcon(navController,route, painterResource(icon),!enablePredictive)
-}
+) = TopBarNavigateIcon(navController,route, painterResource(icon))
+
 
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -54,7 +45,6 @@ fun LiquidTopBarNavigateIcon(
     route : String,
     icon :  Int,
 ) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     val sharedTransitionScope = LocalSharedTransitionScope.current
     var show by remember { mutableStateOf(true) }
     if(!TransitionConfig.transplantBackground) {
@@ -63,10 +53,6 @@ fun LiquidTopBarNavigateIcon(
             sharedTransitionScope.awaitTransition()
             delay(1500L)
             show = false
-            if(!enablePredictive) {
-                delay(3000L)
-                show = true
-            }
         }
     }
 

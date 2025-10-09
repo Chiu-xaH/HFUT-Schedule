@@ -64,7 +64,7 @@ import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.transition.util.TransitionBackHandler
 import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.SimpleVideo2FromFile
+import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.util.SaveComposeAsImage
 import com.xah.uicommon.component.slider.CustomSlider
@@ -127,7 +127,7 @@ fun APPScreen(
             value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
         }
         video?.let {
-            SimpleVideo2FromFile(
+            SimpleVideo(
                 filePath = it,
                 aspectRatio = 16/9f,
             )

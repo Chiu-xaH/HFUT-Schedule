@@ -20,12 +20,14 @@ actual fun TransitionBackHandler(
         PredictiveBackHandler { progress: Flow<BackEventCompat> ->
             // code for gesture back started
             try {
+                var currentScale = 1f
                 progress.collect { backEvent ->
                     // code for progress
-                    onScale(1f - (targetScale * backEvent.progress))
+                    currentScale = 1f - (targetScale * backEvent.progress)
+                    onScale(currentScale)
                 }
                 // code for completion
-                onScale(0f)
+                onScale(currentScale)
                 navController.popBackStackForTransition()
             } catch (e: CancellationException) {
                 // code for cancellation

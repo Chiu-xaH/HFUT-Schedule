@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
+import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.popBackStackForTransition
 import kotlinx.coroutines.delay
 
@@ -32,7 +33,7 @@ fun TopBarNavigateIcon(
     navController : NavHostController,
     route : String,
     icon :  Painter,
-    restoreIcon : Boolean = true
+    restoreIcon : Boolean = TransitionConfig.transitionBackgroundStyle.level == TransitionLevel.NONE_ALL
 ) {
     val sharedTransitionScope = LocalSharedTransitionScope.current
     var show by remember { mutableStateOf(true) }
