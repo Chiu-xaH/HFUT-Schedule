@@ -72,10 +72,11 @@ fun Modifier.transitionDefaultBackground(
     )
     //👍 MEDIUM
     if(level == TransitionLevel.MEDIUM) {
-        return darkModifier.graphicsLayer {
-            scaleX = scale.value
-            scaleY = scale.value
-        }
+        return darkModifier.scaleMirror(scale.value)
+//            .graphicsLayer {
+//            scaleX = scale.value
+//            scaleY = scale.value
+//        }
     }
 
     // 稍微晚于运动结束
@@ -90,10 +91,11 @@ fun Modifier.transitionDefaultBackground(
     //👍 HIGH
     return darkModifier
         .blur(blurSize)
-        .graphicsLayer {
-            scaleX = scale.value
-            scaleY = scale.value
-        }
+        .scaleMirror(scale.value)
+//        .graphicsLayer {
+//            scaleX = scale.value
+//            scaleY = scale.value
+//        }
 }
 
 

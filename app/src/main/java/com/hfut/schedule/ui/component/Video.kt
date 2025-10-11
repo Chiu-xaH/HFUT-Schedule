@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.screen.mask
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.util.shaderSelf
 import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import kotlinx.coroutines.Dispatchers
@@ -181,7 +182,7 @@ fun SimpleVideo(
                         show = isThemeDark()
                     )
                     .blur(blur)
-//                    .shaderSelf(scale, RoundedCornerShape(0.dp))
+                    .shaderSelf(scale)
             )
         }
     }

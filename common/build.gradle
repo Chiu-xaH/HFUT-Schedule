@@ -32,9 +32,8 @@ android {
 }
 
 dependencies {
-    implementation libs.androidx.material3
-//    implementation libs.androidx.material
+    implementation(libs.androidx.material3)
     // 透明状态栏
-    implementation libs.accompanist.systemuicontroller
-    implementation libs.androidx.activity.compose
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.androidx.activity.compose)
 }

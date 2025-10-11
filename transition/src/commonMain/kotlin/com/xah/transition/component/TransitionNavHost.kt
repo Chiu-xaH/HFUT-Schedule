@@ -34,9 +34,9 @@ fun TransitionNavHost(
     startDestination: String,
     enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = {
         if(TransitionConfig.transitionBackgroundStyle.level != TransitionLevel.NONE_ALL) {
-            fadeIn(animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
-            // 缺陷 打断动画
-//            initialAlpha = if(!TransitionConfig.transplantBackground && TransitionConfig.action == NavAction.Pop) 1f else 0f
+//            EnterTransition.None
+            fadeIn(
+                animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
             )
         } else {
             fadeIn()
@@ -46,9 +46,8 @@ fun TransitionNavHost(
         if(TransitionConfig.transitionBackgroundStyle.level != TransitionLevel.NONE_ALL) {
             fadeOut(
                 animationSpec = tween(durationMillis = TransitionConfig.curveStyle.speedMs),
-            // 缺陷 打断动画
-//                targetAlpha = if(!TransitionConfig.transplantBackground && TransitionConfig.action == NavAction.Push) 1f else 0f
             )
+//            ExitTransition.None
         } else {
             fadeOut()
         }

@@ -56,8 +56,6 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-//                implementation(libs.androidx.navigationevent.navigationevent)
-//                implementation(compose.components.resources)
                 implementation(libs.navigation.compose)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
@@ -72,14 +70,12 @@ kotlin {
 
         androidMain {
             dependencies {
-//                implementation(libs.navigation.compose)
                 implementation(libs.androidx.activity.compose)
             }
         }
 
         wasmJsMain {
             dependencies {
-//                implementation(libs.navigation.compose.new)
             }
         }
 
@@ -93,12 +89,10 @@ kotlin {
 
         iosMain {
             dependencies {
-//                implementation(libs.navigation.compose.new)
             }
         }
         jvmMain {
             dependencies {
-//                implementation(libs.navigation.compose.new)
             }
         }
     }

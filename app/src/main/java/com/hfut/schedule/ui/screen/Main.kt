@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -36,10 +35,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -118,9 +115,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.transition.state.NavAction
-import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -402,7 +396,7 @@ fun MainHost(
                 }
                 // 更新完成引导
                 transitionComposable(AppNavRoute.UpdateSuccess.route) {
-                    UpdateSuccessScreen(navController, )
+                    UpdateSuccessScreen(navController )
                 }
                 // 本版本新特性
                 transitionComposable(AppNavRoute.VersionInfo.route) {
@@ -510,11 +504,11 @@ fun MainHost(
                 }
                 // 微信专区
                 transitionComposable(route = AppNavRoute.Wechat.route) {
-                    WeChatScreen(navController ,)
+                    WeChatScreen(navController)
                 }
                 // 作息
                 transitionComposable(route = AppNavRoute.TimeTable.route) {
-                    TimeTableScreen(navController ,)
+                    TimeTableScreen(navController)
                 }
                 // 海乐生活
                 transitionComposable(route = AppNavRoute.HaiLeWashing.route) {

@@ -13,6 +13,8 @@ import com.xah.transition.style.TransitionBackgroundStyle
 import com.xah.transition.style.TransitionCurveStyle
 
 object TransitionConfig {
+    // 使用镜面背景缩放 可以自适应不同的背景
+    val enableMirror = false
     // 是否使用透明背景 无需改
     var transplantBackground = false
     // 从此处修改动画曲线

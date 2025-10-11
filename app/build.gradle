@@ -7,10 +7,6 @@ plugins {
     alias(libs.plugins.baselineProfile)
 }
 
-def moduleTransition = ":transition"
-def moduleUiCommon = ":uiCommon"
-def moduleShared = ":shared"
-def moduleBaseline = ":baselineProfile"
 android {
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
     def keystoreProperties = new Properties()
@@ -37,7 +33,6 @@ android {
             // 启用 ABI 分割
             enable true
             reset()
-//            'armeabi-v7a', 'x86',
             include 'arm64-v8a',  'x86_64'
             universalApk true
         }
@@ -47,8 +42,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 226
-        versionName "4.18.2"
+        versionCode 227
+        versionName "4.18.2.1 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -85,11 +80,13 @@ android {
 
     buildTypes {
         release {
-            // R8
+            // R8混淆
+            // 开启前 需要制定proguard-rules.pro规则文件，否则会有些功能被误删
             minifyEnabled false
             // 压缩未使用资源
             shrinkResources false
-            // 最终构建的元数据中包含 VCS(Git)的信息
+            // 最终构建的元数据中包含VCS(Git)的信息
+            // 关闭以防止F-Droid构建时与本包不同
             vcsInfo.include false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.chiu
@@ -147,7 +144,9 @@ dependencies {
     // 基准测试依赖
     androidTestImplementation(libs.androidx.benchmark.macro.junit4)
     androidTestImplementation(libs.androidx.uiautomator)
-
+    // 内存泄漏
+    debugImplementation(libs.leakcanary.android)
+    // 测试
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     debugImplementation(libs.androidx.ui.tooling.preview)
@@ -180,9 +179,8 @@ dependencies {
     // Material Design 3
     implementation(libs.androidx.material3) {
         version {
-            // 锁死版本 新版本没有 Drawer回弹、BottomSheet界面问题
-            def version = libs.versions.material3.get()
-            strictly(version)
+            // 锁死版本 新版本Drawer回弹被砍、BottomSheet状态栏填充无法关掉
+            strictly(libs.versions.material3.get())
         }
     }
     // 透明状态栏
@@ -198,8 +196,6 @@ dependencies {
     implementation(libs.glide)
     // DataStore
     implementation(libs.androidx.datastore.preferences)
-    // 生物识别 指纹
-//    implementation(libs.androidx.biometric)
     // 用于和风天气密钥生成的JWT
     implementation(libs.eddsa)
     // 礼花
@@ -225,19 +221,24 @@ dependencies {
     implementation(libs.reorderable)
     // 液态玻璃
     implementation(libs.liquid.glass)
+    // 生物识别 指纹
+    // implementation(libs.androidx.biometric)
     // 权限
-//    implementation(libs.accompanist.permissions)
-//     适配大屏 自适应布局
-//    implementation(libs.androidx.window)
-//    implementation(libs.androidx.adaptive)
-//    implementation(libs.androidx.material3.adaptive.navigation.suite)
-//    implementation(libs.androidx.adaptive.layout)
-//    implementation(libs.androidx.adaptive.navigation)
-    // 内存泄漏
-    debugImplementation(libs.leakcanary.android)
+    // implementation(libs.accompanist.permissions)
+    // 适配大屏 自适应布局
+    // implementation(libs.androidx.window)
+    // implementation(libs.androidx.adaptive)
+    // implementation(libs.androidx.material3.adaptive.navigation.suite)
+    // implementation(libs.androidx.adaptive.layout)
+    // implementation(libs.androidx.adaptive.navigation)
+
     // 模块
-    implementation(project(moduleTransition))
-    implementation(project(moduleUiCommon))
-    implementation(project(moduleShared))
-    baselineProfile project(moduleBaseline)
+    // 转场动画
+    implementation(project(":transition"))
+    implementation implementation(project(':common'))
+    // 可单独使用的UI
+    // 消费预测及共用代码
+    implementation(project(":shared"))
+    // 基准文件
+    baselineProfile project(":baselineProfile")
 }
