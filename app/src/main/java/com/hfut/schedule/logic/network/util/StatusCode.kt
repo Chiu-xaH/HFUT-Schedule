@@ -7,7 +7,7 @@ enum class StatusCode(val code: Int,val description: String) {
     NO_CONTENT(204,"删除数据成功"),
     MOVED(301,"接口变更"),
     REDIRECT(302,"重定向"),
-    NOT_MODIFIED(304,"未修改"),
+    NOT_MODIFIED(304,"资源未修改,可用缓存"),
     BAD_REQUEST(400,"错误非法请求，例如缺少必须参数"),
     UNAUTHORIZED(401,"未登录，需要登录"),
     FORBIDDEN(403,"禁止访问，权限不足"),

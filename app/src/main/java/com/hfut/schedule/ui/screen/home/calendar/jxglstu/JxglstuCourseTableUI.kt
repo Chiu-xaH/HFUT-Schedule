@@ -102,6 +102,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.shader.ShaderState
+import com.hfut.schedule.ui.util.shader.blurLayer
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
@@ -826,13 +828,17 @@ fun JxglstuCourseTableUI(
                     } else {
                         Card(
                             shape = style.containerCorner,
-                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
+                            colors = CardDefaults.cardColors(containerColor =
+                                if(backGroundHaze != null) Color.Transparent
+                                else style.containerColor
+                            ),
                             modifier = Modifier
                                 .height(style.height)
                                 .padding(style.everyPadding)
                                 .let {
                                     backGroundHaze?.let { haze ->
-                                        it
+                                            it
+                                        //                                            .blurLayer(backGroundHaze,style.containerCorner)
                                             .clip(style.containerCorner)
                                             .containerBlur(haze, style.containerColor)
                                     } ?: it

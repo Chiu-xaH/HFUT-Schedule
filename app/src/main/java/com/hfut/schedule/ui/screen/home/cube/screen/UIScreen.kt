@@ -102,7 +102,7 @@ import com.hfut.schedule.ui.util.hsvToLong
 import com.hfut.schedule.ui.util.longToHexColor
 import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.parseColor
-import com.hfut.schedule.ui.util.shaderSelf
+import com.hfut.schedule.ui.util.shader.scaleMirror
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
@@ -882,7 +882,7 @@ private fun ShaderIcon(shader : Boolean) {
             modifier = Modifier
                 .align(Alignment.Center)
                 .fillMaxSize()
-                .shaderSelf(scale,CircleShape)
+                .scaleMirror(scale, clipShape = CircleShape)
                 .mask(
                     targetAlpha = 0.1f,
                     show = shader

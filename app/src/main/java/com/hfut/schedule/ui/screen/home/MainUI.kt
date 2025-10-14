@@ -154,6 +154,8 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.shader.blurSource
+import com.hfut.schedule.ui.util.shader.rememberShaderState
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
@@ -656,6 +658,7 @@ fun MainScreen(
                     // 背景图层
                     val backGroundHaze =
                         rememberHazeState(blurEnabled = blur >= HazeBlurLevel.FULL.code)
+//                    val backGroundSource = rememberShaderState()
                     if (useCustomBackground) {
                         GlideImage(
                             model = customBackground,
@@ -663,6 +666,7 @@ fun MainScreen(
                             contentScale = ContentScale.Crop,
                             alpha = alpha,
                             modifier = Modifier
+//                                .blurSource(backGroundSource, blur = 20.dp)
                                 .hazeSource(backGroundHaze)
                                 .fillMaxSize()
                         )

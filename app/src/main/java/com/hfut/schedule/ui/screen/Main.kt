@@ -108,7 +108,7 @@ import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.welcome.VersionInfoScreen
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
-import com.hfut.schedule.ui.util.shaderSelf
+import com.hfut.schedule.ui.util.shader.scaleMirror
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -350,7 +350,7 @@ fun MainHost(
                     .let {
                         // 转场动画时必须关闭 否则打开动画会闪烁
                         if(enableLiquidGlass) {
-                            it.shaderSelf(scale)
+                            it.scaleMirror(scale)
                         } else {
                             it.let {
                                 if(enableControlCenter) {
