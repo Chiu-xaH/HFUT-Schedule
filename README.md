@@ -83,10 +83,17 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [Tesseract](https://github.com/tesseract-ocr/tesseract) 用于训练OCR识别验证码的[基础模型](https://github.com/tesseract-ocr/tessdata)
 
-### APP
+### 开源社区
 初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App，还有对一些操作系统的借鉴，在此不一一列举了
 
-感谢其他高校开发者对本项目的肯定与参考，聚在工大将永远为所有人提供游客模式的入口，在此不一一列举了
+感谢其他高校开发者对本项目的肯定与参考，在此不一一列举了
+
+linsui帮助上架F-Droid
+
+若干用户的帮助
+- James-Zhang2提供GPA评定数据源
+- tinyvan提交RR修复Bug
+- 其他用户帮助推广、提供及时的反馈和思路等，在此不一一列举了
 
 ## 📑 [更新日志](docs/update)
 
