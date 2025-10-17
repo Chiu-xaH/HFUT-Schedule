@@ -5,9 +5,9 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.encodeUrl
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import okhttp3.Headers

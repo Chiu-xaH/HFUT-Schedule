@@ -42,15 +42,15 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseterWithoutSuspend
 import com.hfut.schedule.logic.util.parse.SemseterParser.reverseGetSemester
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
-import com.hfut.schedule.logic.util.storage.cleanCache
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.cube.Screen
@@ -68,7 +68,6 @@ import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.util.SaveComposeAsImage
 import com.xah.uicommon.component.slider.CustomSlider
-import com.xah.uicommon.component.text.BottomTip
 import kotlinx.coroutines.async
 
 @OptIn(ExperimentalMaterial3Api::class)

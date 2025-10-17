@@ -57,8 +57,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.model.huixin.ShowerFeeResponse
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.loginGuaGua
 import com.hfut.schedule.logic.util.sys.Starter.startGuaGua

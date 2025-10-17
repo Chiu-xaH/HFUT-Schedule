@@ -8,7 +8,7 @@ import com.hfut.schedule.logic.network.servicecreator.login.LoginWeb2ServiceCrea
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebHefeiServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebServiceCreator
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo

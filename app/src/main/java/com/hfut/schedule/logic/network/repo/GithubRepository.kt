@@ -21,7 +21,7 @@ import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call

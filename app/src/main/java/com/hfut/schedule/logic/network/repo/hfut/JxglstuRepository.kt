@@ -38,9 +38,9 @@ import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemseterParser
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.FileDataManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
@@ -562,7 +562,7 @@ object JxglstuRepository {
     @JvmStatic
     private suspend fun parseDatum(json : String) : String {
         if (json.contains("result")) {
-            FileDataManager.save(MyApplication.context, FileDataManager.DATUM,json)
+            LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.DATUM,json)
             try {
                 return json
             } catch (e : Exception) {
@@ -641,7 +641,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private suspend fun parseProgram(result: String) : ProgramResponse {
-        FileDataManager.save(MyApplication.context,FileDataManager.PROGRAM,result)
+        LargeStringDataManager.save(MyApplication.context,LargeStringDataManager.PROGRAM,result)
         return try {
             Gson().fromJson(result, ProgramResponse::class.java)
         } catch (e : Exception) {
@@ -676,7 +676,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private suspend fun parseProgramPerformance(json : String) : ProgramBean = try {
-        FileDataManager.save(MyApplication.context,FileDataManager.PROGRAM_PERFORMANCE,json)
+        LargeStringDataManager.save(MyApplication.context,LargeStringDataManager.PROGRAM_PERFORMANCE,json)
         Gson().fromJson(json, ProgramBean::class.java)
     } catch (e : Exception) { throw e }
 
@@ -799,7 +799,7 @@ object JxglstuRepository {
         // 将字节数组转换为Base64编码的字符串
         val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
         // 保存编码后的字符串
-        FileDataManager.save(MyApplication.context,FileDataManager.PHOTO,base64String)
+        LargeStringDataManager.save(MyApplication.context,LargeStringDataManager.PHOTO,base64String)
     } catch (e: Exception) {
         e.printStackTrace()
     }

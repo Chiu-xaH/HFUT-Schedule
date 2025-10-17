@@ -73,11 +73,11 @@ import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.FileDataManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.LIBRARY_TOKEN
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -284,7 +284,7 @@ fun JxglstuCourseTableUI(
     }
 
     val json by produceState<String?>(initialValue = null) {
-        value = FileDataManager.read(context, FileDataManager.DATUM)
+        value = LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
     }
 
 
@@ -758,7 +758,7 @@ fun JxglstuCourseTableUI(
                }
                launch { vm.getInfo(cookie) }
                launch {
-                   if (FileDataManager.read(context, FileDataManager.PHOTO) == null) {
+                   if (LargeStringDataManager.read(context, LargeStringDataManager.PHOTO) == null) {
                        vm.getPhoto(cookie)
                    }
                }

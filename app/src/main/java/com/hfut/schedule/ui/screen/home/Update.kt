@@ -6,8 +6,8 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.HolidayBean
 import com.hfut.schedule.logic.model.HolidayResponse
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.getElectricFromHuiXin
@@ -16,7 +16,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
-import com.hfut.schedule.logic.util.storage.FileDataManager
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -193,7 +193,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, context: Context) = withContext(
     vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
     vm.getDatum(cookie,lessonResponse.lessonIds)
     val datum = (vm.datumData.state.value as? UiState.Success)?.data ?: return@withContext
-    FileDataManager.save(context, FileDataManager.DATUM,datum)
+    LargeStringDataManager.save(context, LargeStringDataManager.DATUM,datum)
 }
 
 private fun getHoliday() : HolidayResponse? {

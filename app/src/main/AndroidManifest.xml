@@ -38,6 +38,8 @@
         android:theme="@style/Theme.App.Starting"
         tools:targetApi="tiramisu" >
 
+        <profileable android:shell="true" />
+
         <activity
             android:name=".activity.util.WebViewActivity"
             android:exported="false"
@@ -165,7 +167,6 @@
             </intent-filter>
         </service>
 
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -176,17 +177,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <provider
-            android:name=".provider.PrefsProvider"
-            android:authorities="com.hfut.schedule.prefs.provider"
-            android:exported="true"
-            android:grantUriPermissions="true" />
-
         <receiver
             android:name=".receiver.UpdateReceiver"
             android:exported="false" />
-
-        <profileable android:shell="true" />
 
         <!-- 小组件 -->
         <!-- <receiver android:name=".ui.widget.MyAppWidgetReceiver" -->

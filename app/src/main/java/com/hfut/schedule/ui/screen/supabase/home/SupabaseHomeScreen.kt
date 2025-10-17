@@ -58,7 +58,7 @@ import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.network.util.toStr
 import com.hfut.schedule.logic.network.util.toTimestampWithOutT
-import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.input.CustomTextField

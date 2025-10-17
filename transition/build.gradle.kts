@@ -56,7 +56,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.navigation.compose)
+                implementation(libs.navigation2)
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
             }

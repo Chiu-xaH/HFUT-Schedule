@@ -28,9 +28,9 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 
@@ -95,7 +95,7 @@ fun GuaGuaSettings(innerPadding: PaddingValues,navHostController: NavHostControl
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null) {
-    var input by remember { mutableStateOf(SharedPrefs.prefs.getString("loginCode","") ?: "") }
+    var input by remember { mutableStateOf(prefs.getString("loginCode","") ?: "") }
 
     Row(
         modifier = Modifier.fillMaxWidth(),

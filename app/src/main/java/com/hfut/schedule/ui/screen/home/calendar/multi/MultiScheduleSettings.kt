@@ -51,8 +51,8 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.storage.FileDataManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
@@ -432,7 +432,7 @@ fun MultiScheduleSettings(
                         },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                FileDataManager.read(context, FileDataManager.DATUM)?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
+                                LargeStringDataManager.read(context, LargeStringDataManager.DATUM)?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
                                 shareTextFile("HFUT-Schedule-Share.txt")
                             }
                         }

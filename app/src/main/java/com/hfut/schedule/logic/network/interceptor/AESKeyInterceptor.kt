@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import okhttp3.Interceptor
 import okhttp3.Response
 //获取AESKey保存到SharedPreferences

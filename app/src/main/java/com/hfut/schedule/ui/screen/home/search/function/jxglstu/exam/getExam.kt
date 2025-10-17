@@ -5,7 +5,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.logic.model.community.ExamResponse
 import com.hfut.schedule.logic.model.community.examArrangementList
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Locale

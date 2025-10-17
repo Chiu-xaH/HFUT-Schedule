@@ -1,10 +1,8 @@
-package com.hfut.schedule.logic.util.storage
+package com.hfut.schedule.logic.util.storage.file
 
 import android.content.Context
 import android.os.Environment
 import android.webkit.WebStorage
-import android.webkit.WebView
-import com.hfut.schedule.application.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

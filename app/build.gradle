@@ -145,11 +145,11 @@ dependencies {
     androidTestImplementation(libs.androidx.benchmark.macro.junit4)
     androidTestImplementation(libs.androidx.uiautomator)
     // 内存泄漏
-    debugImplementation(libs.leakcanary.android)
+    debugImplementation(libs.leakcanary)
     // 测试
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    debugImplementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.tooling.preview)
     // LifeCycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -165,15 +165,15 @@ dependencies {
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)
     // 二维码
-    implementation(libs.core)
+    implementation(libs.zxing)
     // Jsoup
     implementation(libs.jsoup)
     // OkHttp
     implementation(libs.okhttp)
     // Retrofit
     implementation(libs.retrofit)
-    implementation(libs.converter.scalars)
-    implementation(libs.converter.gson)
+    implementation(libs.scalars)
+    implementation(libs.gson)
     // Material Design 1
     implementation(libs.androidx.material)
     // Material Design 3
@@ -186,7 +186,7 @@ dependencies {
     // 透明状态栏
     implementation(libs.accompanist.systemuicontroller)
     // 导航
-    implementation(libs.navigation.compose)
+    implementation(libs.navigation2)
     // 开屏显示
     implementation(libs.androidx.core.splashscreen)
     // 模糊库
@@ -199,13 +199,13 @@ dependencies {
     // 用于和风天气密钥生成的JWT
     implementation(libs.eddsa)
     // 礼花
-    implementation(libs.konfetti.compose)
+    implementation(libs.konfetti)
     // 图片验证码识别
-    implementation(libs.tesseract4android)
+    implementation(libs.tesseract)
     // 预编译
     implementation(libs.androidx.profileinstaller)
     // 增量更新
-    implementation(libs.bsdiff.lib)
+    implementation(libs.bsdiff)
     // Room
     implementation(libs.androidx.room.runtime)
     // KSP Room
@@ -225,12 +225,6 @@ dependencies {
     // implementation(libs.androidx.biometric)
     // 权限
     // implementation(libs.accompanist.permissions)
-    // 适配大屏 自适应布局
-    // implementation(libs.androidx.window)
-    // implementation(libs.androidx.adaptive)
-    // implementation(libs.androidx.material3.adaptive.navigation.suite)
-    // implementation(libs.androidx.adaptive.layout)
-    // implementation(libs.androidx.adaptive.navigation)
 
     // 模块
     // 转场动画

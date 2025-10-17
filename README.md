@@ -17,7 +17,7 @@
 
 功能：历经200+版本迭代，当之无愧的HFUT中功能最丰富的App；几乎全部功能为本地端侧运行
 
-更新：平均每周至少都有新更新，带来新的功能、重构及优化；无团队，割裂感弱
+更新：平均每周至少都有新更新，带来新的功能、重构及优化；全个人开发，割裂感弱
 
 性能：冷启动迅速，开屏即展示关键信息(聚焦)；内存与存储占用适中
 
@@ -43,7 +43,7 @@ OpenJDK v17.0.0.1
 SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 ## 🫶 鸣谢
-### 库/依赖
+### 第三方依赖
 [OkHttp](https://github.com/square/okhttp) 网络请求
 
 [Retrofit](https://github.com/square/retrofit) 网络请求
@@ -76,13 +76,17 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [Navigation-Transition-Share](https://github.com/Chiu-xaH/Compose-Transition-Sample) 转场动画(自己)
 
-### 工具
-[holiday-cn](https://github.com/NateScarlet/holiday-cn) 节假日
+### 开源项目
+[holiday-cn](https://github.com/NateScarlet/holiday-cn) 节假日数据源
 
-[webvpn-dlut](https://github.com/ESWZY/webvpn-dlut) WENVPN URL转换
+[webvpn-dlut](https://github.com/ESWZY/webvpn-dlut) WebVpn转换
+
+[Tesseract](https://github.com/tesseract-ocr/tesseract) 用于训练OCR识别验证码的[基础模型](https://github.com/tesseract-ocr/tessdata)
 
 ### APP
-早期参考了Space课表的一些功能设计，后期参考了一些使用Material You设计的开源App，还有对一些系统UI的借鉴，在此不一一列举了
+初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App，还有对一些操作系统的借鉴，在此不一一列举了
+
+感谢其他高校开发者对本项目的肯定与参考，聚在工大将永远为所有人提供游客模式的入口，在此不一一列举了
 
 ## 📑 [更新日志](docs/update)
 
@@ -90,24 +94,18 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 ## 📧 [联系方式](zsh0908@outlook.com) zsh0908@outlook.com
 
-## 📄 [接口文档](/docs/API.md)(停更了)
-
 ## ⚙️ [一些工具](/tools)
 [图片验证码训练模型](/tools/Captcha-Ocr) [所有培养方案爬取](tools\All-Programs-Get-Python) [校园网登录](/tools/Login-Web-Python) [WebVpn](tools/WebVpn) [用户流量统计](/tools/SQL-Chart-Python) [PC版(集成WebVpn、校园网等工具)(待开发)](/tools/Lite-For-PC)
 
-## 😥 适配
+## 🫥 未来适配
 
-App大部分功能可以完全独立运行，按这几年的维护经验，学校接口应该不会轻易变动，可以坚持几年，如果有问题联系我，应该可以修，后续也能加入一些新功能，但是频率一定是非常低了，不过我觉得出现更好的平替只是时间问题
+开发者将在2027年毕业，App大部分功能都是端侧处理，可以独立运行，如果学校抽风了换接口，可以联系我，应该可以修，或者有能力者提交PR
 
-**低于Android 8的设备**有使用需求可以**联系我**，可以向下适配
-
-**鸿蒙NEXT**可以用**卓易通**运行本App
-
-**iOS**，我能理解iOS用户的呼声，我自己主力机就是苹果，也想学Swift开发的，但是我没苹果本子，就为了开发一个App买本子，太贵了... 开发者作为一个双持用户，能感受到iOS在大学某些方面不如安卓便利，建议**搞一台安卓**，不用配置太好，日常很方便的，比如小窗拍题
-
-**桌面端**，电脑用学校的网页体验也很好了，非要用也是可以的，Windows 10+可以用**WSA**运行本App，得益于强大的桌面CPU，甚至在WSA运行本APP能流畅使用满血动效
-
-最后，唯一的跨平台适配可能性交给**Kotlin Multiplatform**，这是最低成本的方案了，可以将现有Android项目改造成兼容iOS、Desktop、Web的跨平台项目，但是这其中需要完全重写网络层，由Retrofit&OkHttp换为Ktor(除非Retrofit&OkHttp适配了跨平台)，而且逻辑层都需要做分平台适配，对代码的改动要比较大，好在这项技术可以让本App已有的Compose UI能够跨平台，UI层基本不需要重新写了
+- **低于Android 8的设备**有使用需求可以**联系我**，可以向下适配
+- **鸿蒙NEXT**可以用**卓易通**运行本App
+- **iOS**，理解iOS用户的呼声，我自己主力机就是苹果，但是我没苹果本子，就为了开发一个App太贵了... iOS在大学某些方面不如安卓便利，建议**搞一台安卓**，日常很方便的
+- **桌面端**，电脑用学校的网页体验也很好了，非要用也是可以的，Windows 10+可以用**WSA**运行本App，后续可能会出PC版集成一些WebVpn、校园网功能
+- 唯一的跨平台适配可能性交给**Kotlin/Compose Multiplatform**，这是最低成本的方案了，可以将现有Android项目改造成跨平台项目，但是这其中需要完全重写网络层，由Retrofit&OkHttp换为Ktor，而且逻辑层很多内容都需要做分平台适配，好在这项技术可以让本App已有的Compose写的UI能够跨平台，UI层改动小一些
 
 
 

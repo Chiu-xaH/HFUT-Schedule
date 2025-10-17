@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.FileDataManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -90,7 +90,7 @@ fun Program(
         },
         modifier = Modifier.clickable {
             scope.launch {
-                val json = FileDataManager.read(context,FileDataManager.PROGRAM)
+                val json = LargeStringDataManager.read(context,LargeStringDataManager.PROGRAM)
 
                 if (json?.contains("children") == true || !ifSaved) {
                     navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
@@ -141,7 +141,7 @@ fun ProgramScreen(
                         iconModifier = Modifier.iconElementShare( route = competitionRoute),
                         onClick = {
                             scope.launch {
-                                val json = FileDataManager.read(context, FileDataManager.PROGRAM_PERFORMANCE)
+                                val json = LargeStringDataManager.read(context, LargeStringDataManager.PROGRAM_PERFORMANCE)
                                 if(json?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
                                 else refreshLogin(context)
                             }

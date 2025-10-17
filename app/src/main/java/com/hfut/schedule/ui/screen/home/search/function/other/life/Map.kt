@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.model.community.NodeV
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImageNoCrop
 

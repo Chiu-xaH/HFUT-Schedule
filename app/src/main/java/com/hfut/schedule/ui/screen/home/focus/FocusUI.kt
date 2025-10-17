@@ -44,7 +44,7 @@ import com.hfut.schedule.logic.network.util.MyApiParse.getSchedule
 import com.hfut.schedule.logic.network.util.toTimestampWithOutT
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.ui.component.screen.RefreshIndicator

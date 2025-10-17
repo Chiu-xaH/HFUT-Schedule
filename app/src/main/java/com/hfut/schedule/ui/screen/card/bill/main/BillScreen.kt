@@ -34,7 +34,7 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.xah.shared.model.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.AnimationCardListItem

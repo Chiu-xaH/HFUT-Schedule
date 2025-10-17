@@ -35,8 +35,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.FriendsList
 import com.hfut.schedule.logic.model.community.FriendsResopnse
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.storage.SharedPrefs
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -68,7 +68,7 @@ fun getFriendsList() : List<FriendsList?> {
 }
 
 fun getFriendsCourse(studentId : String,vm : NetWorkViewModel) {
-    val CommuityTOKEN = SharedPrefs.prefs.getString("TOKEN","")
+    val CommuityTOKEN = prefs.getString("TOKEN","")
     CommuityTOKEN?.let { vm.getCoursesFromCommunity(it,studentId) }
 }
 

@@ -8,7 +8,7 @@ import com.hfut.schedule.logic.model.Lessons
 import com.hfut.schedule.logic.model.MyAPIResponse
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.SettingsInfo
-import com.hfut.schedule.logic.util.storage.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

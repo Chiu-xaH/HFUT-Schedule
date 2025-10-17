@@ -2,7 +2,7 @@ package com.hfut.schedule.logic.util.parse
 
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
-import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import kotlinx.coroutines.flow.first
 
 object SemseterParser {

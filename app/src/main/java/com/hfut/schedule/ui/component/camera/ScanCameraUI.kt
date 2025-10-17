@@ -31,7 +31,7 @@ import com.google.zxing.MultiFormatReader
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
-import com.hfut.schedule.logic.util.storage.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.xah.uicommon.component.status.LoadingScreen
 
 

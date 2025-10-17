@@ -26,8 +26,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.DataStoreManager.ColorMode
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ColorMode
 import com.xah.uicommon.style.color.TransparentSystemBars
 import com.hfut.schedule.ui.util.deepen
 import com.materialkolor.rememberDynamicColorScheme

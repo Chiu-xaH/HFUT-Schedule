@@ -14,8 +14,8 @@ import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebVpnServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import okhttp3.Headers

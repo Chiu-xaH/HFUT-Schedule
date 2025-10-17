@@ -6,7 +6,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.util.BaseActivity
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import kotlinx.coroutines.Dispatchers

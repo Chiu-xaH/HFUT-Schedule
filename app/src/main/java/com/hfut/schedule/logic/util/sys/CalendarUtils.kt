@@ -9,10 +9,10 @@ import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.parse.SemseterParser
-import com.hfut.schedule.logic.util.storage.DataStoreManager
-import com.hfut.schedule.logic.util.storage.FileDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -326,7 +326,7 @@ suspend fun getJxglstuCourseSchedule(
     jsonStr : String? = null,
     context: Context,
 ) : List<JxglstuCourseSchedule>  {
-    val json = jsonStr ?: FileDataManager.read(context, FileDataManager.DATUM)
+    val json = jsonStr ?: LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
     if(json == null) {
         return emptyList()
     }

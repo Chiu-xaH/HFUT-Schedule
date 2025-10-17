@@ -1,4 +1,4 @@
-package com.hfut.schedule.logic.util.storage
+package com.hfut.schedule.logic.util.storage.kv
 
 import android.content.Context
 import android.net.Uri
@@ -16,9 +16,8 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.other.AppVersion.CAN_PREDICTIVE
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.storage.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.storage.kv.IDataStore
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.materialkolor.PaletteStyle
@@ -34,12 +33,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-object DataStoreManager {
+object DataStoreManager : IDataStore {
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
-    private val dataStore = MyApplication.context.dataStore
+    private val dataStore = MyApplication.Companion.context.dataStore
     enum class ColorMode(val code : Int) {
         LIGHT(1),DARK(2),AUTO(0)
     }
@@ -58,10 +57,12 @@ object DataStoreManager {
 
     private const val EMPTY_STRING = ""
 
-    private suspend fun <T> saveValue(key: Preferences.Key<T>, value: T) = dataStore.edit { it[key] = value }
-    private fun <T> getFlow(key: Preferences.Key<T>, default: T): Flow<T> = dataStore.data.map { it[key] ?: default }
+    override suspend fun <T> saveValue(key: Preferences.Key<T>, value: T) {
+        dataStore.edit { it[key] = value }
+    }
+    override fun <T> getFlow(key: Preferences.Key<T>, default: T): Flow<T> = dataStore.data.map { it[key] ?: default }
     @OptIn(ExperimentalCoroutinesApi::class)
-    private fun <T> getFlowSuspend(
+    override fun <T> getFlowSuspend(
         key: Preferences.Key<T>,
         defaultProvider: suspend () -> T
     ): Flow<T> {
@@ -171,10 +172,10 @@ object DataStoreManager {
         }
     }
 
-    val animationType = getFlow(ANIMATION_TYPE,AppAnimationManager.AnimationTypes.CenterAnimation.code)
+    val animationType = getFlow(ANIMATION_TYPE, AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val enablePureDark = getFlow(PURE_DARK,false)
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
-    val enableMotionBlur = getFlow(MOTION_BLUR,AppVersion.CAN_MOTION_BLUR)
+    val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, HazeBlurLevel.MID.code)
     val transitionLevel = getFlow(TRANSITION, TransitionLevel.MEDIUM.code)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
@@ -190,7 +191,7 @@ object DataStoreManager {
     val courseTableTimeNextValue = getFlow(COURSE_TABLE_TIME_NEXT,EMPTY_STRING)
     val webVpnCookies = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val enableAutoTerm = getFlow(AUTO_TERM,true)
-    val enablePredictive = getFlow(PREDICTIVE,CAN_PREDICTIVE)
+    val enablePredictive = getFlow(PREDICTIVE, AppVersion.CAN_PREDICTIVE)
     val enableForceWebViewDark = getFlow(WEB_VIEW_DARK,true)
     val enableControlCenter = getFlow(CONTROL_CENTER,false)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
@@ -200,14 +201,14 @@ object DataStoreManager {
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
-    val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: getSemseter() }
-    val maxFlow = getFlow(MAX_FLOW, MyApplication.DEFAULT_MAX_FREE_FLOW)
+    val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemseterParser.getSemseter() }
+    val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
-    val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC,getCampusRegion() == CampusRegion.HEFEI)
+    val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
@@ -215,9 +216,9 @@ object DataStoreManager {
         val hefeiBuildingNumber = hefeiBuildingNumber.first()
         val hefeiRoomNumber = hefeiRoomNumber.first()
         val hefeiElectric = hefeiElectric.first()
-        if(hefeiRoomNumber == EMPTY_STRING || hefeiElectric == EMPTY_STRING || hefeiBuildingNumber == EMPTY_STRING) {
+        if (hefeiRoomNumber == EMPTY_STRING || hefeiElectric == EMPTY_STRING || hefeiBuildingNumber == EMPTY_STRING) {
             return@withContext null
         }
-        return@withContext HefeiElectricStorage(hefeiBuildingNumber,hefeiRoomNumber,hefeiElectric)
+        return@withContext HefeiElectricStorage(hefeiBuildingNumber, hefeiRoomNumber, hefeiElectric)
     }
 }
