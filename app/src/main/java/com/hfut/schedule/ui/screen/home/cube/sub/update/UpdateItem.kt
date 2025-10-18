@@ -53,16 +53,18 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
 //            UpdateItems("新增 自动CAS登录")
-//            UpdateItems("新增 课程表方格支持教师的显示")
             UpdateItems("新增 成绩的缓存机制")//
-            UpdateItems("新增 地图和校车支持为游客显示了")
-            UpdateItems("修复 课程表界面捏合手势不灵敏的Bug")
-            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
-            UpdateItems("修复 智慧社区课表当本节任课老师多于一个教师时显示重复的Bug")
-            UpdateItems("修复 冲突预览不显示课表的Bug")
-            UpdateItems("修复 窗口变化与深浅色切换而导致启动台自动收起的Bug")
-            UpdateItems("优化 不同界面下层级模糊的底色")
-//            UpdateItems("优化 课程表方格模糊渲染压力")
+            UpdateItems("新增 添加聚焦日程时支持显示第几周")//
+            UpdateItems("新增 课程表方格支持显示自行添加的聚焦日程","注意：网课类型课程不会显示")//
+            UpdateItems("修复 智慧社区课表当本节任课老师多于一个教师时显示重复的Bug")//
+            UpdateItems("优化 课程表界面捏合手势的灵敏度")//
+//            UpdateItems("新增 课程表方格支持教师的显示")
+//            UpdateItems("新增 课程表方格支持按开始结束时间显示为不同的长度")
+//            UpdateItems("新增 地图和校车支持为游客显示了")
+//            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
+//            UpdateItems("修复 冲突预览不显示课表的Bug")
+//            UpdateItems("修复 窗口变化与深浅色切换而导致启动台自动收起的Bug")
+//            UpdateItems("优化 不同界面下层级模糊的底色")
 //            UpdateItems("优化 启动台跳转时的卡顿")
 //            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
 //            UpdateItems("优化 降低转场动画的渲染压力", type = UpdateType.PERFORMANCE)

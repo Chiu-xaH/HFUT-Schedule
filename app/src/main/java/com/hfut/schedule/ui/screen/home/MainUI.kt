@@ -660,21 +660,23 @@ fun MainScreen(
                                 .fillMaxSize()
                         )
                     }
+
                     Scaffold(
                         containerColor = if (!useCustomBackground) {
                             MaterialTheme.colorScheme.background
                         } else {
                             Color.Transparent
                         },
+                        // 捏合手势
                         modifier = Modifier.pointerInput(Unit) {
                             detectTransformGestures { _, _, zoom, _ ->
-                                if (zoom >= 1f) {
-                                    showAll = false
-                                } else if (zoom < 1f) {
-                                    showAll = true
+                                when {
+                                    zoom > 1f -> showAll = false
+                                    zoom < 1f -> showAll = true
                                 }
                             }
-                        }) {
+                        }
+                    ) {
                         val isFriend = CourseType.entries.all { swapUI > it.code }
                         if (!isFriend) {
                             // 非好友课表

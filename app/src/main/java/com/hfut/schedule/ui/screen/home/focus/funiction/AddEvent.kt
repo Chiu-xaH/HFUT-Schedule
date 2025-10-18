@@ -121,6 +121,8 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.StatusUI
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus
@@ -674,7 +676,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
 //            DividerTextExpandedWith("配置") {
                 CardListItem(
                     headlineContent = { Text("类型: " + if(isScheduleType) "日程" else "网课" ) },
-                    supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终；\n添加后，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine)；\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
+                    supportingContent = { Text(if(isScheduleType) "日程类型旨在用户自行添加额外的课程、实验、会议等，强调线下活动、有始有终;\n添加后，将同时显示在课程表方格中，在未开始时位于其他事项，进行期间会显示为重要事项" else "网课类型旨在用户自行添加需要在截止日期之前的网络作业、实验报告等，强调线上活动、无始有终，相比日程类型只注意结束时间(即DeadLine);\n添加后，除了当天即将到达截止时位于重要事项，其余均位于其他事项" ) },
                     leadingContent = {
                         FilledTonalIconButton(
                             onClick = { isScheduleType = !isScheduleType },
@@ -692,9 +694,16 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
                 CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
                 Spacer(Modifier.height(5.dp ))
-                CustomCard(color = cardNormalColor()) {
+            val weekInfoStart = dateToWeek(date.first)
+            val weekInfoEnd = dateToWeek(date.second)
+
+
+            CustomCard(color = cardNormalColor()) {
                     TransplantListItem(
-                        headlineContent = { Text((if(isScheduleType)"开始 ${date.first + " " + time.first}\n" else "") + "结束 ${date.second + " " + time.second}") },
+                        headlineContent = { Text(
+                            (if(isScheduleType)"开始 ${date.first + (weekInfoStart?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: "") + " " + time.first}\n" else "")
+                                    + "结束 ${date.second +  (weekInfoEnd?.let { " (第${it.first}周 周${numToChinese(it.second)})" } ?: "") +" " + time.second}"
+                        ) },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
                     CardBottomButtons(
@@ -711,6 +720,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                 Spacer(Modifier.height(5.dp))
                 CustomTextField(input = remark, label = { Text("自定义时间显示") }, singleLine = false) { remark = it }
                 Spacer(Modifier.height(5.dp - CARD_NORMAL_DP*0f))
+
 
                 if(isSupabase) {
                     var isEditMode by remember { mutableStateOf(false) }

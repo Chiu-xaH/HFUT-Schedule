@@ -43,9 +43,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,10 +58,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.entity.CustomEventType
+import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.network.util.toStr
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -70,6 +77,7 @@ import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
@@ -85,7 +93,15 @@ import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
-
+fun distinctUnitForCommunity(list : List<SnapshotStateList<courseDetailDTOList>>) {
+    for(t in list) {
+        val uniqueItems = t.distinctBy {
+            it.name + it.place + it.week + it.section
+        }
+        t.clear()
+        t.addAll(uniqueItems)
+    }
+}
 @Composable
 fun CommunityCourseTableUI(
     showAll: Boolean,
@@ -101,7 +117,7 @@ fun CommunityCourseTableUI(
     val context = LocalContext.current
     var examList: List<ExamToCalenderBean> by remember { mutableStateOf(emptyList()) }
     LaunchedEffect(Unit) {
-        examList = if(weeksBetween < 1) {
+        examList = if(weeksBetween < 1 || friendUserName != null) {
             emptyList()
         } else {
             examToCalendar(context)
@@ -387,9 +403,9 @@ fun CommunityCourseTableUI(
             }
             // 去重
             if(showAll) {
-                distinctUnit(tableAll)
+                distinctUnitForCommunity(tableAll)
             } else {
-                distinctUnit(table)
+                distinctUnitForCommunity(table)
             }
         } catch (e : Exception) {
             e.printStackTrace()
@@ -434,6 +450,137 @@ fun CommunityCourseTableUI(
     }
     val dateList  = getScheduleDate(showAll,today)
 
+    val focusList by produceState(initialValue = emptyList()) {
+        value = if(friendUserName == null){
+            DataBaseManager.customEventDao.getAll(CustomEventType.SCHEDULE.name).map {
+                entityToDto(it)
+            }
+        } else {
+            emptyList()
+        }
+    }
+
+    LaunchedEffect(examList,currentWeek,showAll) {
+        //存在待考时
+        for(item in examList) {
+            val startTime = item.startTime ?: continue
+            val startDate = item.day ?: continue
+            val weekInfo = dateToWeek(startDate) ?: continue
+            // 是同一周
+            if(weekInfo.first != currentWeek.toInt()) {
+                continue
+            }
+            val name = item.course
+            val place = item.place
+            val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
+            val index = weekInfo.second - 1
+            val offset = if(showAll) 7 else 5
+            if(hour <= 9) {
+                val finalIndex = index+offset*0
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+            } else if(hour in 10..12) {
+                val finalIndex = index+offset*1
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+            } else if(hour in 13..15) {
+                val finalIndex = index+offset*2
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+            } else if(hour in 16..17) {
+                val finalIndex = index+offset*3
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+            } else if(hour >= 18) {
+                val finalIndex = index+offset*4
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+            }
+        }
+    }
+
+    LaunchedEffect(focusList,currentWeek,showAll) {
+        for(item in focusList) {
+            val start = item.dateTime.start.toStr().split(" ")
+            if(start.size != 2) {
+                continue
+            }
+            val startDate = start[0]
+            val startTime = start[1]
+            val weekInfo = dateToWeek(startDate) ?: continue
+            // 是同一周
+            if(weekInfo.first != currentWeek.toInt()) {
+                continue
+            }
+            val name = item.title
+            val place = item.description
+            val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
+            val index = weekInfo.second - 1
+            val offset = if(showAll) 7 else 5
+            if(hour <= 9) {
+                val finalIndex = index+offset*0
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+            } else if(hour in 10..12) {
+                val finalIndex = index+offset*1
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+            } else if(hour in 13..15) {
+                val finalIndex = index+offset*2
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+            } else if(hour in 16..17) {
+                val finalIndex = index+offset*3
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+            } else if(hour >= 18) {
+                val finalIndex = index+offset*4
+                if(showAll) {
+                    tableAll[finalIndex]
+                } else {
+                    table[finalIndex]
+                }
+                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+            }
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
             Box {
                 val scrollState = rememberLazyGridState()
@@ -471,7 +618,12 @@ fun CommunityCourseTableUI(
                                     .clickableWithScale(ClickScale.SMALL.scale) {
                                         if (texts.size == 1) {
                                             // 如果是考试
-                                            if (friendUserName == null && texts[0].contains("考试")) {
+                                            if (texts[0].contains("考试")) {
+                                                showToast(texts[0].replace("\n"," "))
+                                                return@clickableWithScale
+                                            }
+                                            if (texts[0].contains("日程")) {
+                                                showToast(texts[0].replace("\n"," "))
                                                 return@clickableWithScale
                                             }
                                             sheet = itemList[0]
@@ -485,36 +637,22 @@ fun CommunityCourseTableUI(
                                         }
                                     }
                             ) {
-                                //存在待考时
-                                if(examList.isNotEmpty() && friendUserName == null){
-                                    val numa = if(showAll) 7 else 5
-                                    val i = cell % numa
-                                    val j = cell / numa
-                                    val date = dateList[i]
-                                    examList.forEach {
-                                        if(date == it.day) {
-                                            val hour = it.startTime?.substringBefore(":")?.toIntOrNull() ?: 99
-                                            val data  = it.startTime + "\n" + it.course  + "(考试)"+ "\n" + it.place?.replace("学堂","")
-                                            if(hour in 7..9 && j == 0) {
-                                                texts.add(data)
-                                            } else if(hour in 10..12 && j == 1) {
-                                                texts.add(data)
-                                            } else if(hour in 13..15  && j == 2) {
-                                                texts.add(data)
-                                            } else if(hour in 16..17  && j == 3) {
-                                                texts.add(data)
-                                            } else if(hour >= 18  && j == 4) {
-                                                texts.add(data)
-                                            }
-                                        }
-                                    }
-                                }
-
                                 if(texts.size == 1) {
                                     val l = texts[0].split("\n")
+                                    if(l.size < 2) {
+                                        return@Card
+                                    }
                                     val time = l[0]
                                     val name = l[1]
-                                    val place = l[2]
+                                    val place = if(l.size == 3) {
+                                        val p = l[2]
+                                        if(p == "null" || p.isBlank() || p.isEmpty()) {
+                                            null
+                                        } else {
+                                            p
+                                        }
+                                    } else null
+
                                     Column(
                                         modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
                                         verticalArrangement = Arrangement.SpaceBetween,
@@ -540,27 +678,54 @@ fun CommunityCourseTableUI(
                                                 modifier = Modifier.fillMaxWidth()
                                             )
                                         }
-                                        Text(
-                                            text = place,
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
+                                        place?.let {
+                                            Text(
+                                                text = it,
+                                                fontSize = style.textSize,
+                                                textAlign = TextAlign.Center,
+                                                modifier = Modifier.fillMaxWidth()
+                                            )
+                                        }
                                     }
-                                } else {
+                                } else if(texts.size > 1) {
+                                    val name = texts.map {
+                                        it.split("\n")[1][0]
+                                    }.joinToString(",")
+                                    val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
                                     Column(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .verticalScroll(rememberScrollState())
+                                            .padding(horizontal = CARD_NORMAL_DP) ,
+                                        verticalArrangement = Arrangement.SpaceBetween,
+                                        horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Text(
-                                            text =
-                                                if(texts.size == 1) texts[0]
-                                                else if(texts.size > 1) "${texts[0].substringBefore("\n")}\n" + "${texts.size}节课冲突\n点击查看"
-                                                else "",
+                                            text = texts[0].substringBefore("\n"),
                                             fontSize = style.textSize,
                                             textAlign = TextAlign.Center,
-                                            fontWeight = if(friendUserName == null && texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                                            modifier = Modifier.fillMaxWidth(),
+                                            fontWeight = isExam
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .weight(1f) // 占据中间剩余的全部空间
+                                                .fillMaxWidth(),
+                                            contentAlignment = Alignment.TopCenter
+                                        ) {
+                                            Text(
+                                                text = "${texts.size}节课冲突",
+                                                fontSize = style.textSize,
+                                                textAlign = TextAlign.Center,
+                                                overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                                modifier = Modifier.fillMaxWidth(),
+                                                fontWeight = isExam
+                                            )
+                                        }
+                                        Text(
+                                            text = name,
+                                            fontSize = style.textSize,
+                                            textAlign = TextAlign.Center,
+                                            modifier = Modifier.fillMaxWidth()
                                         )
                                     }
                                 }
@@ -624,27 +789,6 @@ fun CommunityCourseTableUI(
                         }
                     }
                 }
-
-//                androidx.compose.animation.AnimatedVisibility(
-//                    visible = !shouldShowAddButton,
-//                    enter = scaleIn(),
-//                    exit = scaleOut(),
-//                    modifier = Modifier
-//                        .align(Alignment.BottomCenter)
-//                        .padding(innerPaddings)
-//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-//                ) {
-//                    TextButton(onClick = {  }) {
-//                        Text(
-//                            text = parseSemseter(getSemseter()) + " 第${currentWeek}周",
-//                            style = TextStyle(shadow = Shadow(
-//                                color = Color.Gray,
-//                                offset = Offset(5.0f,5.0f),
-//                                blurRadius = 10.0f
-//                            ))
-//                        )
-//                    }
-//                }
 
                 androidx.compose.animation.AnimatedVisibility(
                     visible = shouldShowAddButton,

@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import kotlinx.coroutines.async
@@ -64,6 +66,9 @@ fun DateRangePickerModal(
             startDateString = DateTimeManager.simpleFormatter_YYYY_MM_DD.format(startDate)
         }
     }
+
+    val weekInfoStart = startDateString?.let { dateToWeek(it) }
+    val weekInfoEnd = endDateString?.let { dateToWeek(it) }
 
     DatePickerDialog(
         onDismissRequest = onDismiss,
@@ -98,10 +103,15 @@ fun DateRangePickerModal(
                 }
             }
 
+
+
             DateRangePicker(
                 state = dateRangePickerState,
                 title = {  },
-                headline = { Text("开始 ${startDateString ?: ""}\n结束 ${endDateString ?: ""}" , modifier = Modifier.padding(
+                headline = { Text(
+                    "开始 ${startDateString ?: ""}" + (weekInfoStart?.let { " (第${it.first}周)" } ?: "")
+                            + "\n" +  "结束 ${endDateString ?: ""}" + (weekInfoEnd?.let { " (第${it.first}周)" } ?: "")
+                    , modifier = Modifier.padding(
                     APP_HORIZONTAL_DP
                 )) },
                 showModeToggle = true,

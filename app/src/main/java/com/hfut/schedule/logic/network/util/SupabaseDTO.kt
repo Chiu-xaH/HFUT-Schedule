@@ -130,3 +130,4 @@ fun supabaseEventForkDtoToEntity(eventId : Int) : SupabaseEventForkEntity = Supa
 fun DateTimeBean.toStr() : String = with(this) {
     return@with "$year-${parseTimeItem(month)}-${parseTimeItem(day)} ${parseTimeItem(hour)}:${parseTimeItem(minute)}"
 }
+
