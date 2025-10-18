@@ -73,8 +73,8 @@ import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
@@ -85,6 +85,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.ExamToCalenderBean
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
@@ -102,8 +103,6 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
-import com.hfut.schedule.ui.util.shader.ShaderState
-import com.hfut.schedule.ui.util.shader.blurLayer
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
@@ -260,7 +259,14 @@ fun JxglstuCourseTableUI(
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<String>() } }
 
     val dateList  = getScheduleDate(showAll, today)
-    var examList by remember { mutableStateOf(examToCalendar()) }
+    var examList: List<ExamToCalenderBean> by remember { mutableStateOf(emptyList()) }
+    LaunchedEffect(Unit) {
+        examList = if(DateTimeManager.weeksBetweenJxglstu < 1) {
+            emptyList()
+        } else {
+            examToCalendar(context)
+        }
+    }
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
@@ -268,7 +274,6 @@ fun JxglstuCourseTableUI(
                 getNewWeek()
             } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
                 onDateChange(getJxglstuStartDate())
-                examList = emptyList()
                 1L
             } else {
                 DateTimeManager.weeksBetweenJxglstu

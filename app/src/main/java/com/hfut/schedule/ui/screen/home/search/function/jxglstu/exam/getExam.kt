@@ -1,11 +1,16 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
 
 import android.annotation.SuppressLint
+import android.content.Context
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.community.ExamResponse
 import com.hfut.schedule.logic.model.community.examArrangementList
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuExam
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -49,34 +54,21 @@ fun getNewExam() : MutableList<examArrangementList> {
     }
 }
 
+data class JxglstuExam(
+    val name : String,
+    val dateTime : String,
+    val place : String?
+)
 
 
-fun getExamJXGLSTU() : List<Map<String,String>>{
+suspend fun getExamFromCache(context: Context) : List<JxglstuExam> = withContext(Dispatchers.IO) {
     //考试解析
-    val html = prefs.getString("examJXGLSTU", "") ?: return emptyList()
+    val html = LargeStringDataManager.read(context, LargeStringDataManager.EXAM) ?: return@withContext emptyList()
     try {
-        val doc = Jsoup.parse(html).select("tbody tr")
-        val data = doc.map { row ->
-            val elements = row.select("td")
-            val courseName = elements[0].text()
-            val examRoom = elements[2].text()
-            val  examtime = elements[1].text()
-            mapOf("课程名称" to courseName,
-                "日期时间" to examtime,
-                "考场" to examRoom)
-        }
-
-        //合理性检查
-        /*data的每个元素 必须满足以下条件：
-        [日期时间]的格式必须是 YYYY-MM-DD HH:MM~HH-MM
-        */
-        val filteredData = data.filter {
-            isValidDateTime(it["日期时间"] ?: "")
-        }.sortedBy { it["日期时间"] }
-        return filteredData
-    } catch (e:Exception) {
+        parseJxglstuExam(html)
+    } catch (e : Exception) {
         e.printStackTrace()
-        return emptyList()
+        emptyList()
     }
 }
 //[日期时间]的格式必须是 YYYY-MM-DD HH:MM~HH-MM

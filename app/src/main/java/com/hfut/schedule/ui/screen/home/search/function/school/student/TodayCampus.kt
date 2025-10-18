@@ -1,24 +1,25 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.student
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
@@ -33,7 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -48,12 +55,13 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
-
 import com.hfut.schedule.ui.component.button.StartAppIconButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -67,14 +75,13 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.refraction
-import com.kyant.backdrop.effects.vibrancy
+import com.xah.mirror.shader.GlassStyle
+import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.util.ShaderState
+import com.xah.mirror.util.rememberShaderState
+import com.xah.mirror.util.shaderSource
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -142,11 +149,6 @@ fun StuTodayCampusScreen(
                             ) {
                                 Text("学工系统")
                             }
-//                            FilledTonalButton(onClick = {
-//                                Starter.startWebUrl(context,MyApplication.STU_URL)
-//                            }) {
-//                                Text("学工系统")
-//                            }
                         }
                     }
                 )
@@ -154,7 +156,10 @@ fun StuTodayCampusScreen(
                 CustomTextField(
                     modifier = Modifier
                         .padding(horizontal = APP_HORIZONTAL_DP)
-                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
+//                        .clip(s)
+                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                    ,
+//                        ,
                     input = input,
                     label = { Text("检索功能") },
                     leadingIcon = { Icon(painterResource(R.drawable.search),null) },
@@ -169,6 +174,7 @@ fun StuTodayCampusScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .backDropSource(backDrop)
+//                .shaderSource(shaderState)
                 .hazeSource(hazeState)
         ) {
             StuAppsScreen(vm,input,innerPadding,navController)
@@ -176,6 +182,7 @@ fun StuTodayCampusScreen(
     }
 //    }
 }
+
 
 @Composable
 fun StuAppsScreen(

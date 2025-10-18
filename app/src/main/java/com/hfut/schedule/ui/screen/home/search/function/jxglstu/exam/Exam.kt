@@ -2,9 +2,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +23,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,26 +34,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigateForTransition
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -91,6 +87,7 @@ fun Exam(
 fun ExamScreen(
     navController : NavHostController,
 ) {
+    val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
     val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
     val route = remember { AppNavRoute.Exam.route }
@@ -116,7 +113,9 @@ fun ExamScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                val list = remember { getExamJXGLSTU() }
+                val list by produceState(initialValue = emptyList()) {
+                    value = getExamFromCache(context)
+                }
                 if(list.isEmpty()) {
                     CenterScreen {
                         EmptyUI()
@@ -124,7 +123,7 @@ fun ExamScreen(
                 } else {
                     LazyColumn {
                         item { InnerPaddingHeight(innerPadding,true) }
-                        items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,true)}
+                        items(list.size) { index -> JxglstuExamUI(list[index],true)}
                         item { InnerPaddingHeight(innerPadding,false) }
                     }
                 }
@@ -181,26 +180,26 @@ private fun ExamItems(item : Int,status : Boolean) {
 
 //status参数判断是聚焦还是界面，若为聚焦则解析显示未考的，若为界面都显示
 @Composable
-fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
+fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
     //时隔一年修补这里的Bug
     val newDate = DateTimeManager.Date_yyyy_MM_dd
     val newToday = newDate.replace("-","").toLongOrNull() ?: 0
-    val examDate = item["日期时间"]
-    val examDateNum = examDate?.substringBefore(" ")?.replace("-","")?.toLongOrNull() ?: 0
+    val examDate = item.dateTime
+    val examDateNum = examDate.substringBefore(" ").replace("-","").toLongOrNull() ?: 0
 
     val activity = LocalActivity.current
 
-    val course = item["课程名称"]
-    val time = item["日期时间"]
-    val place  = item["考场"]
+    val course = item.name
+    val time = item.dateTime
+    val place  = item.place
 
-    val year = time?.substringBefore("-")
-    val month = time?.substring(5,7)
-    val day = time?.substring(8,10)
-    val startTimeHour = time?.substringAfter(" ")?.substringBefore(":")
-    val startTimeMinute = time?.substringAfter(":")?.substringBefore("~")
-    val endTimeHour = time?.substringAfter("~")?.substringBefore(":")
-    val endTimeMinute = time?.substringAfter("~")?.substringAfter(":")
+    val year = time.substringBefore("-")
+    val month = time.substring(5,7)
+    val day = time.substring(8,10)
+    val startTimeHour = time.substringAfter(" ").substringBefore(":")
+    val startTimeMinute = time.substringAfter(":").substringBefore("~")
+    val endTimeHour = time.substringAfter("~").substringBefore(":")
+    val endTimeMinute = time.substringAfter("~").substringAfter(":")
 
     if(status) {
         // 判断是否考完
@@ -211,7 +210,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
             Column() {
                 CardListItem(
                     headlineContent = {  Text(text = course.toString(), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
-                    overlineContent = { examDate?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
+                    overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
                     supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
                     leadingContent = {
                         if(!isFinished)
@@ -223,11 +222,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                         else {
                             if(examDateNum == newToday) Text("今日")
                             else {
-                                time?.substringBefore(" ")?.let {
-//                                                Row(horizontalArrangement = Arrangement.Center) {
-                                    Text("${DateTimeManager.daysBetween(it)}天")
-//                                                }
-                                }
+                                Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
                             }
                         }
                     },
@@ -255,16 +250,16 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
           //  Log.d("打印测试","${year}年 ${month}月 ${day}日 起始 ${startTimeHour}时 ${startTimeMinute}分 结束 ${endTimeHour}时 ${endTimeMinute}分")
             val scope = rememberCoroutineScope()
             //今天 && 已经考完
-            if("$month-$day" == DateTimeManager.Date_MM_dd
-                && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
+            if(
+                "$month-$day" == DateTimeManager.Date_MM_dd && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
 
             } else {
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                     Column() {
 //                        MyCustomCard {
                             CardListItem(
-                                headlineContent = {  Text(text = "$course") },
-                                overlineContent = { Text(text = "${time?.substringAfter("-")}") },
+                                headlineContent = {  Text(text = course) },
+                                overlineContent = { Text(text = time.substringAfter("-")) },
                                 supportingContent = { Text(text = "$place") },
                                 leadingContent = {
 //                                if("$month-$day" == DateTimeManager.Date_MM_dd) {
@@ -286,27 +281,23 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                                 onClick = {
                                                     scope.launch {
                                                         try {
-                                                            val startDateList = year?.let { month?.let { it1 ->
-                                                                day?.let { it2 ->
-                                                                    startTimeHour?.let { it3 ->
-                                                                        startTimeMinute?.let { it4 ->
-                                                                            listOf(it.toInt(),
-                                                                                it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
-                                                                        }
+                                                            val startDateList =
+                                                                listOf(year.toInt(), month.toInt(), day.toInt(), startTimeHour.toInt(), startTimeMinute.toInt())
+                                                            val endDateList =
+                                                                listOf(
+                                                                    year.toInt(),
+                                                                    month.toInt(),
+                                                                    day.toInt(),
+                                                                    endTimeHour.toInt(),
+                                                                    endTimeMinute.toInt()
+                                                                )
+                                                            activity?.let { it0 ->
+                                                                course.let {
+                                                                    place?.let { it1 ->
+                                                                        addToCalendars(startDateList, endDateList, it1, it,"考试", it0, remind = true)
                                                                     }
                                                                 }
-                                                            } }
-                                                            val endDateList = year?.let { month?.let { it1 ->
-                                                                day?.let { it2 ->
-                                                                    endTimeHour?.let { it3 ->
-                                                                        endTimeMinute?.let { it4 ->
-                                                                            listOf(it.toInt(),
-                                                                                it1.toInt(), it2.toInt(), it3.toInt(), it4.toInt())
-                                                                        }
-                                                                    }
-                                                                }
-                                                            } }
-                                                            activity?.let { it0 -> course?.let { place?.let { it1 -> startDateList?.let { it2 -> endDateList?.let { it3 -> addToCalendars(it2, it3, it1, it,"考试", it0, remind = true) } } } } }
+                                                            }
                                                         } catch (e : Exception) {
                                                             e.printStackTrace()
                                                         }
@@ -314,11 +305,7 @@ fun JxglstuExamUI(item : Map<String,String>,status : Boolean) {
                                                 }) {
                                                 Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = "")
                                             }
-                                            time?.substringBefore(" ")?.let {
-//                                                Row(horizontalArrangement = Arrangement.Center) {
-                                                    Text("${DateTimeManager.daysBetween(it)}天")
-//                                                }
-                                            }
+                                            Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
                                         }
                                     }
                                 },

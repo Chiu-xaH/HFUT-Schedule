@@ -42,6 +42,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
@@ -440,40 +442,51 @@ object JxglstuRepository {
         launchRequestSimple(
             holder = jxglstuGradeData,
             request = { jxglstu.getGrade(cookie, sId.toString(), semester).awaitResponse() },
-            transformSuccess = { _, html -> parseJxglstuGrade(html) }
+            transformSuccess = { _, html -> parseJxglstuGradeInner(html) }
         )
     }
+
     @JvmStatic
-    private fun parseJxglstuGrade(html: String): List<GradeJxglstuDTO> = try {
-        val doc = Jsoup.parse(html)
-        val termElements = doc.select("h3")
-        val tableElements = doc.select("table.student-grade-table")
-
-        val result = mutableListOf<GradeJxglstuDTO>()
-
-        for ((index, termElement) in termElements.withIndex()) {
-            val term = termElement.text()
-            val table = tableElements.getOrNull(index) ?: continue
-            val rows = table.select("tr")
-            val list = mutableListOf<GradeResponseJXGLSTU>()
-
-            for(row in rows) {
-                val tds = row.select("td") // 选择tr标签下的所有td标签
-                if(!tds.isEmpty()) {
-                    val titles = tds[0].text()
-                    val codes = tds[2].text()
-                    val scores =tds[3].text()
-                    val gpa = tds[4].text()
-                    val totalGrade = tds[5].text()
-                    val grades = tds[6].text()
-                    list.add(GradeResponseJXGLSTU(titles, scores, gpa, grades, totalGrade, codes))
-                }
-            }
-            result.add(GradeJxglstuDTO(term, list))
-        }
-        result
+    suspend fun parseJxglstuGradeInner(html: String): List<GradeJxglstuDTO> = try {
+        LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.GRADE,html)
+        parseJxglstuGrade(html)
     } catch (e: Exception) {
         throw e
+    }
+
+    @JvmStatic
+    suspend fun parseJxglstuGrade(html: String): List<GradeJxglstuDTO> = withContext(Dispatchers.Default) {
+        try {
+            val doc = Jsoup.parse(html)
+            val termElements = doc.select("h3")
+            val tableElements = doc.select("table.student-grade-table")
+
+            val result = mutableListOf<GradeJxglstuDTO>()
+
+            for ((index, termElement) in termElements.withIndex()) {
+                val term = termElement.text()
+                val table = tableElements.getOrNull(index) ?: continue
+                val rows = table.select("tr")
+                val list = mutableListOf<GradeResponseJXGLSTU>()
+
+                for(row in rows) {
+                    val tds = row.select("td") // 选择tr标签下的所有td标签
+                    if(!tds.isEmpty()) {
+                        val titles = tds[0].text()
+                        val codes = tds[2].text()
+                        val scores =tds[3].text()
+                        val gpa = tds[4].text()
+                        val totalGrade = tds[5].text()
+                        val grades = tds[6].text()
+                        list.add(GradeResponseJXGLSTU(titles, scores, gpa, grades, totalGrade, codes))
+                    }
+                }
+                result.add(GradeJxglstuDTO(term, list))
+            }
+            result
+        } catch (e: Exception) {
+            throw e
+        }
     }
 
     fun jxglstuLogin(cookie : String) {
@@ -856,27 +869,41 @@ object JxglstuRepository {
         emptyList<lessons>()
     }
 
-    suspend fun getExamJXGLSTU(cookie: String,studentId : StateHolder<Int>) {
+
+    suspend fun getExamJXGLSTU(cookie: String,studentId : StateHolder<Int>,examHolder : StateHolder<List<JxglstuExam>>) {
         onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
-            val call = jxglstu.getExam(cookie, sId.toString())
-
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    val code = response.code()
-                    if (code == StatusCode.OK.code) {
-                        SharedPrefs.saveString("examJXGLSTU", response.body()?.string())
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
+            launchRequestSimple(
+                holder = examHolder,
+                transformSuccess = { _,html -> parseJxglstuExamInner(html) },
+                request = { jxglstu.getExam(cookie, sId.toString()).awaitResponse() }
+            )
         }
     }
+
+    @JvmStatic
+    suspend fun parseJxglstuExam(html : String) : List<JxglstuExam> = try {
+        LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.EXAM,html)
+        val doc = Jsoup.parse(html).select("tbody tr")
+        val data = doc.map { row ->
+            val elements = row.select("td")
+            JxglstuExam(
+                name = elements[0].text(),
+                dateTime = elements[1].text(),
+                place = elements[2].text()
+            )
+        }
+
+        val filteredData = data
+            .filter { isValidDateTime(it.dateTime) }
+            .sortedBy { it.dateTime }
+        filteredData
+    } catch (e:Exception) { throw e }
+
+    @JvmStatic
+    private suspend fun parseJxglstuExamInner(html : String) : List<JxglstuExam> = try {
+        LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.EXAM,html)
+        parseJxglstuExam(html)
+    } catch (e:Exception) { throw e }
 
     suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int,holder : StateHolder<lessonResponse>) =
         launchRequestSimple(

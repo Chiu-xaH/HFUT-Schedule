@@ -13,7 +13,7 @@ animationGraphicsAndroid = "1.6.1"
 appcompat = "1.6.1"
 benchmarkMacroJunit4 = "1.3.4"
 biometric = "1.1.0"
-bsdiffLib = "1.0.2"
+bsdiffLib = "1.0.3"
 cameraCamera2 = "1.4.2"
 glideCompose = "1.0.0-alpha.1"
 composeBom = "2023.03.00"  # 别动版本
@@ -34,6 +34,7 @@ lifecycleRuntimeKtx = "2.3.1"
 lifecycleViewmodelKtx = "2.6.2"
 material = "1.0.5"
 material3 = "1.4.0-alpha12" # 1.4.0-alpha12 别动 bottomsheet又改了UI，还要适配
+mirror = "0.1-alpha02"
 navigationCompose = "2.7.5" # 2.9.1 2.7.5
 navigationComposeVersion = "2.7.0-alpha07" # 2.9.0-beta04
 okhttp = "4.9.0"
@@ -87,6 +88,7 @@ androidx-material3 = { module = "androidx.compose.material3:material3", version.
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3" }
 #androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 leakcanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakcanaryAndroid" }
+mirror = { module = "com.github.Chiu-xaH:Mirror-Android", version.ref = "mirror" }
 navigation2 = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-palette = { module = "androidx.palette:palette", version.ref = "palette" }
 androidx-profileinstaller = { module = "androidx.profileinstaller:profileinstaller", version.ref = "profileinstaller" }
@@ -101,7 +103,7 @@ androidx-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "uiautomator" }
 androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
-bsdiff = { module = "com.github.Chiu-xaH:Bsdiff-Lib", version.ref = "bsdiffLib" }
+bsdiff = { module = "com.github.Chiu-xaH:Bsdiff-Android-Library", version.ref = "bsdiffLib" }
 glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }

@@ -59,6 +59,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -102,7 +103,8 @@ import com.hfut.schedule.ui.util.hsvToLong
 import com.hfut.schedule.ui.util.longToHexColor
 import com.hfut.schedule.ui.util.longToHue
 import com.hfut.schedule.ui.util.parseColor
-import com.hfut.schedule.ui.util.shader.scaleMirror
+import com.xah.mirror.shader.scaleMirror
+import com.xah.mirror.style.mask
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
@@ -884,27 +886,11 @@ private fun ShaderIcon(shader : Boolean) {
                 .fillMaxSize()
                 .scaleMirror(scale, clipShape = CircleShape)
                 .mask(
+                    color = MaterialTheme.colorScheme.onSurface,
                     targetAlpha = 0.1f,
                     show = shader
                 )
         )
-    }
-}
-
-@Composable
-fun Modifier.mask(
-    color : Color = MaterialTheme.colorScheme.onSurface,
-    targetAlpha : Float,
-    show : Boolean
-) : Modifier {
-    val alpha by animateFloatAsState(
-        if(show) targetAlpha else 0f
-    )
-    return this.drawWithCache {
-        onDrawWithContent {
-            drawContent()
-            drawRect(color.copy(alpha = alpha))
-        }
     }
 }
 

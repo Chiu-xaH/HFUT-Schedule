@@ -2,23 +2,19 @@ package com.hfut.schedule.ui.screen.home.focus
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -42,11 +38,11 @@ import com.hfut.schedule.logic.network.util.MyApiParse.getCustomEvent
 import com.hfut.schedule.logic.network.util.MyApiParse.getNetCourse
 import com.hfut.schedule.logic.network.util.MyApiParse.getSchedule
 import com.hfut.schedule.logic.network.util.toTimestampWithOutT
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -64,13 +60,11 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamJXGLSTU
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
+import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -137,6 +131,9 @@ fun TodayScreen(
         value = withContext(Dispatchers.IO) {
             DataBaseManager.specialWorkDayDao.searchTomorrow()
         }
+    }
+    val exams by produceState(initialValue = emptyList()) {
+        value = getExamFromCache(context)
     }
     // 加载数据库
     LaunchedEffect(refreshDB) {
@@ -281,7 +278,7 @@ fun TodayScreen(
                             }
 
                             //考试
-                            items(getExamJXGLSTU()) { item -> JxglstuExamUI(item,false) }
+                            items(exams.size) { index -> JxglstuExamUI(exams[index],false) }
                             //网课
                             netCourseList.let { list ->
                                 items(list.size) { item ->

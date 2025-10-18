@@ -37,11 +37,11 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.screen.home.cube.screen.mask
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.util.shader.scaleMirror
 import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.shader.scaleMirror
+import com.xah.mirror.style.mask
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext

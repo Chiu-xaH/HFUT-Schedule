@@ -28,6 +28,8 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME) {
     const val FRIENDS = "community_friends" //friends
     const val COMMUNITY_COURSES = "community_courses"//Course
     const val HUI_XIN_INFO = "hui_xin_info"//card_yue
+    // 新增
+    const val GRADE = "grade"
 
     // 迁移函数 从SharePrefs迁移到这里并删除
     private suspend fun move(context: Context, oldKey : String, newKey : String) {
@@ -59,10 +61,10 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME) {
                 // 课程表
                 move(context, "json", DATUM)
             }
-//            launch {
-            // 考试
-//                move(context,"examJXGLSTU",EXAM)
-//            }
+            launch {
+                // 考试
+                move(context,"examJXGLSTU",EXAM)
+            }
 //            launch {
             // 课程汇总
 //                move(context,"courses",COURSES)

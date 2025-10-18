@@ -94,6 +94,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
@@ -439,7 +440,8 @@ class NetWorkViewModel() : ViewModel() {
     val checkCommunityResponse = StateHolder<Boolean>()
     suspend fun checkCommunityLogin(token: String) = CommunityRepository.checkCommunityLogin(token,checkCommunityResponse)
 
-    suspend fun getExamJXGLSTU(cookie: String) = JxglstuRepository.getExamJXGLSTU(cookie,studentId)
+    val examResponse = StateHolder<List<JxglstuExam>>()
+    suspend fun getExamJXGLSTU(cookie: String) = JxglstuRepository.getExamJXGLSTU(cookie,studentId,examResponse)
 
     val gradeFromCommunityResponse = StateHolder<GradeResult>()
     suspend fun getGrade(token: String, year : String, term : String) = CommunityRepository.getGrade(token,year,term,gradeFromCommunityResponse)

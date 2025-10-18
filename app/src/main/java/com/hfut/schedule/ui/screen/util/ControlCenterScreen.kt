@@ -254,29 +254,29 @@ fun ControlCenterScreen(
                     },
                 )
                 if(tab == TAB_SEARCH) {
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = APP_HORIZONTAL_DP),
-                        value = input,
-                        onValueChange = {
-                            showToast("正在开发")
-                            input = it
-                        },
-                        label = { Text("全局搜索") },
-                        leadingIcon = { Icon(painterResource(R.drawable.search),null) },
-                        singleLine = true,
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
-                    )
-                    val height by animateDpAsState(
-                        targetValue = if(isAtStart) {
-                            CARD_NORMAL_DP
-                        } else {
-                            APP_HORIZONTAL_DP
-                        }
-                    )
-                    Spacer(Modifier.height(height -DividerDefaults.Thickness))
+//                    TextField(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(horizontal = APP_HORIZONTAL_DP),
+//                        value = input,
+//                        onValueChange = {
+//                            showToast("正在开发")
+//                            input = it
+//                        },
+//                        label = { Text("全局搜索") },
+//                        leadingIcon = { Icon(painterResource(R.drawable.search),null) },
+//                        singleLine = true,
+//                        shape = MaterialTheme.shapes.medium,
+//                        colors = textFiledTransplant(),
+//                    )
+//                    val height by animateDpAsState(
+//                        targetValue = if(isAtStart) {
+//                            CARD_NORMAL_DP
+//                        } else {
+//                            APP_HORIZONTAL_DP
+//                        }
+//                    )
+//                    Spacer(Modifier.height(height -DividerDefaults.Thickness))
                 }
                 ScrollHorizontalTopDivider(state, startPadding = false,endPadding = false)
             }

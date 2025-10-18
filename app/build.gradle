@@ -225,7 +225,8 @@ dependencies {
     // implementation(libs.androidx.biometric)
     // 权限
     // implementation(libs.accompanist.permissions)
-
+    // 自己写的镜面效果
+    implementation(libs.mirror)
     // 模块
     // 转场动画
     implementation(project(":transition"))

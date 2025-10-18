@@ -80,7 +80,10 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 private val items = listOf(
     NavigationBarItemData(
-        GradeBarItems.GRADE.name,"学期", R.drawable.article, R.drawable.article_filled
+        GradeBarItems.GRADE.name,"教务源", R.drawable.article, R.drawable.article_filled
+    ),
+    NavigationBarItemData(
+        GradeBarItems.COMMUNITY.name,"社区源", R.drawable.article, R.drawable.article_filled
     ),
     NavigationBarItemData(
         GradeBarItems.COUNT.name,"计算", R.drawable.leaderboard,R.drawable.leaderboard_filled
@@ -107,6 +110,7 @@ fun GradeScreen(
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         GradeBarItems.GRADE.name ->GradeBarItems.GRADE
         GradeBarItems.COUNT.name -> GradeBarItems.COUNT
+        GradeBarItems.COMMUNITY.name -> GradeBarItems.COMMUNITY
         else -> GradeBarItems.GRADE
     }
     // 保存上一页页码 用于决定左右动画
@@ -157,7 +161,7 @@ fun GradeScreen(
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                        if(!ifSaved) {
+                        if(targetPage == GradeBarItems.GRADE) {
                             LiquidButton (
                                 onClick = { showSearch = !showSearch },
                                 isCircle = true,
@@ -195,15 +199,19 @@ fun GradeScreen(
             composable(GradeBarItems.GRADE.name) {
                 Scaffold(
                 ) {
-                    if (ifSaved) GradeItemUI(vm,innerPadding)
-                    else GradeItemUIJXGLSTU(innerPadding,vm,showSearch,hazeState)
+                    GradeItemUIJXGLSTU(innerPadding,vm,showSearch,hazeState,ifSaved)
                 }
             }
             composable(GradeBarItems.COUNT.name) {
                 Scaffold(
                 ) {
                     AnalysisScreen(vm,innerPadding)
-//                        GradeCountUI(vm,innerPadding)
+                }
+            }
+            composable(GradeBarItems.COMMUNITY.name) {
+                Scaffold(
+                ) {
+                    GradeItemUI(vm,innerPadding)
                 }
             }
         }

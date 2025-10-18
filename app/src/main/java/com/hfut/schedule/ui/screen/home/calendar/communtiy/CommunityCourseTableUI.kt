@@ -50,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -63,7 +64,8 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
- 
+import com.hfut.schedule.ui.screen.home.calendar.ExamToCalenderBean
+
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
@@ -96,7 +98,15 @@ fun CommunityCourseTableUI(
     hazeState: HazeState,
     backGroundHaze : HazeState?
 ) {
-    var examList by remember { mutableStateOf(examToCalendar()) }
+    val context = LocalContext.current
+    var examList: List<ExamToCalenderBean> by remember { mutableStateOf(emptyList()) }
+    LaunchedEffect(Unit) {
+        examList = if(weeksBetween < 1) {
+            emptyList()
+        } else {
+            examToCalendar(context)
+        }
+    }
     val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     //切换周数
@@ -106,7 +116,6 @@ fun CommunityCourseTableUI(
                 getNewWeek()
             } else if(weeksBetween < 1) {
                 onDateChange(getStartWeekFromCommunity())
-                examList = emptyList()
                 1
             } else weeksBetween
         )

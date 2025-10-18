@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -43,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
@@ -72,6 +74,10 @@ import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuGrade
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -81,68 +87,29 @@ import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
+import com.xah.uicommon.style.align.CenterScreen
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSearch : Boolean, hazeState: HazeState) {
-    val uiState by vm.jxglstuGradeData.state.collectAsState()
-
-    val refreshNetwork: suspend () -> Unit = {
-        val cookie = getJxglstuCookie()
-        cookie?.let {
-            vm.jxglstuGradeData.clear()
-            vm.getGradeFromJxglstu(cookie,null)
-        }
-    }
-    val refreshing = uiState is UiState.Loading
-
-    LaunchedEffect(Unit) {
-        if(refreshing) {
-            refreshNetwork()
-        }
-    }
-
-    val scope = rememberCoroutineScope()
-    val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
-        scope.launch { refreshNetwork() }
-    })
-
-    var showBottomSheet by remember { mutableStateOf(false) }
+fun GradeItemUIJXGLSTU(
+    innerPadding: PaddingValues,
+    vm: NetWorkViewModel,
+    showSearch : Boolean,
+    hazeState: HazeState,
+    ifSaved : Boolean
+) {
+    val context = LocalContext.current
+    var input by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("成绩详情") }
     var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
-    var showBottomSheet_Survey by remember { mutableStateOf(false) }
-    var surveyCode by remember { mutableStateOf("") }
-
-    if (showBottomSheet_Survey) {
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet_Survey = false },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheet_Survey
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("评教 $surveyCode")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    SurveyUI(vm,hazeState,true,innerPadding,surveyCode)
-                }
-            }
-        }
-    }
-
+    var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         var party by remember { mutableStateOf(false) }
         HazeBottomSheet (
@@ -172,7 +139,172 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
         }
     }
 
-    var input by remember { mutableStateOf("") }
+    var showBottomSheet_Survey by remember { mutableStateOf(false) }
+    var surveyCode by remember { mutableStateOf("") }
+    if (showBottomSheet_Survey) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet_Survey = false },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet_Survey
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("评教 $surveyCode")
+                },
+            ) { innerPadding ->
+                Column(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize()
+                ) {
+                    SurveyUI(vm,hazeState,true,innerPadding,surveyCode)
+                }
+            }
+        }
+    }
+
+
+    val Item = @Composable { grade : GradeResponseJXGLSTU ->
+        val isFailed = grade.GPA.toFloatOrNull() == 0f
+        val needSurvey = grade.grade.contains("评教")
+        CardListItem(
+            headlineContent = {  Text(grade.title) },
+            overlineContent = { Text(
+                if(!needSurvey)
+                    "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
+                else grade.code
+            ) },
+            leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+            supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
+            color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
+            modifier = Modifier.clickable {
+                if(needSurvey) {
+                    if(ifSaved) {
+                        showToast("未评教，请登录后评教")
+                        Starter.refreshLogin(context)
+                    } else {
+                        surveyCode = grade.code
+                        showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+                        showBottomSheet_Survey = true
+                    }
+                } else {
+                    title = grade.title
+                    num = grade
+                    showBottomSheet = true
+                }
+            },
+        )
+    }
+    val scope = rememberCoroutineScope()
+
+    var searchList = mutableListOf<GradeResponseJXGLSTU>()
+
+    val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
+        Column {
+            if(showSearch) {
+                InnerPaddingHeight(innerPadding,true)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP),
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("搜索 课程名、代码") },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {}) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
+                }
+                gradeList.flatMap { it.list }.forEach { item ->
+                    if (item.title.contains(input) || item.title.contains(input)) {
+                        searchList.add(item)
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+            }
+            if(gradeList.isEmpty()) {
+                CenterScreen {
+                    EmptyUI()
+                }
+            }
+            else {
+                if(showSearch) {
+                    LazyColumn{
+                        items(searchList.size) { item ->
+                            Item(searchList[item])
+                        }
+                        item { InnerPaddingHeight(innerPadding,false) }
+                    }
+                } else {
+                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                        InnerPaddingHeight(innerPadding,true)
+                        Spacer(modifier = Modifier.height(5.dp))
+                        for(i in gradeList) {
+                            DividerTextExpandedWith(i.term) {
+                                for(j in i.list) {
+                                    Item(j)
+                                }
+                            }
+                        }
+                        InnerPaddingHeight(innerPadding,false)
+                    }
+                }
+            }
+        }
+    }
+
+    if(ifSaved) {
+        val gradeList by produceState<List<GradeJxglstuDTO>?>(initialValue = null) {
+            scope.launch(Dispatchers.IO) {
+                LargeStringDataManager.read(context, LargeStringDataManager.GRADE)?.let {
+                    value = parseJxglstuGrade(it)
+                }
+            }
+        }
+
+        gradeList?.let { ui(it) }
+        return
+    }
+
+    val uiState by vm.jxglstuGradeData.state.collectAsState()
+
+    val refreshNetwork: suspend () -> Unit = {
+        val cookie = getJxglstuCookie()
+        cookie?.let {
+            vm.jxglstuGradeData.clear()
+            vm.getGradeFromJxglstu(cookie,null)
+        }
+    }
+    val refreshing = uiState is UiState.Loading
+
+    LaunchedEffect(Unit) {
+        if(refreshing) {
+            refreshNetwork()
+        }
+    }
+
+    val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch { refreshNetwork() }
+    })
 
     Box(modifier = Modifier
         .fillMaxHeight()
@@ -182,98 +314,7 @@ fun GradeItemUIJXGLSTU(innerPadding: PaddingValues, vm: NetWorkViewModel, showSe
             .align(Alignment.TopCenter))
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val gradeList = (uiState as UiState.Success).data
-            var searchList = mutableListOf<GradeResponseJXGLSTU>()
-
-            val Item = @Composable { grade : GradeResponseJXGLSTU ->
-                val isFailed = grade.GPA.toFloatOrNull() == 0f
-                val needSurvey = grade.grade.contains("评教")
-                CardListItem(
-                    headlineContent = {  Text(grade.title) },
-                    overlineContent = { Text(
-                        if(!needSurvey)
-                            "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
-                        else grade.code
-                    ) },
-                    leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                    supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
-                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
-                    modifier = Modifier.clickable {
-                        if(needSurvey) {
-                            surveyCode = grade.code
-                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
-                            showBottomSheet_Survey = true
-                        } else {
-                            title = grade.title
-                            num = grade
-                            showBottomSheet = true
-                        }
-                    },
-                )
-            }
-            Column {
-                if(showSearch) {
-                    InnerPaddingHeight(innerPadding,true)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("搜索 课程名、代码") },
-                            singleLine = true,
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {}) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search),
-                                        contentDescription = "description"
-                                    )
-                                }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
-                    }
-                    gradeList.flatMap { it.list }.forEach { item ->
-                        if (item.title.contains(input) || item.title.contains(input)) {
-                            searchList.add(item)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                }
-                if(gradeList.isEmpty()) EmptyUI()
-                else {
-                    if(showSearch) {
-                        LazyColumn{
-                            items(searchList.size) { item ->
-                                Item(searchList[item])
-                            }
-                            item { InnerPaddingHeight(innerPadding,false) }
-                        }
-                    } else {
-                        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                            InnerPaddingHeight(innerPadding,true)
-                            Spacer(modifier = Modifier.height(5.dp))
-                            for(i in gradeList) {
-                                DividerTextExpandedWith(i.term) {
-                                    for(j in i.list) {
-                                        Item(j)
-                                    }
-                                }
-                            }
-                            InnerPaddingHeight(innerPadding,false)
-                        }
-                    }
-                }
-            }
+            ui(gradeList)
         }
     }
 }

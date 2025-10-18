@@ -108,11 +108,11 @@ import com.hfut.schedule.ui.screen.welcome.UpdateSuccessScreen
 import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.welcome.VersionInfoScreen
 import com.hfut.schedule.ui.util.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
-import com.hfut.schedule.ui.util.shader.scaleMirror
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.shader.scaleMirror
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -296,7 +296,7 @@ fun MainHost(
         }
     }
     val backgroundColor = if(motionBlur && !disabledBlur) {
-        MaterialTheme.colorScheme.surface.copy(.4f)
+        MaterialTheme.colorScheme.surface.copy(.4f)//.4f
     } else {
         MaterialTheme.colorScheme.surface.copy(if(enableLiquidGlass) .88f else 1f)
     }
