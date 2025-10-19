@@ -1,5 +1,10 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +26,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -44,9 +50,12 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.text.BottomTip
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,15 +86,24 @@ fun NetWorkScreen(navController: NavHostController,
         val switch_server = SharedPrefs.prefs.getBoolean("SWITCHSERVER",false )
         var server by remember { mutableStateOf(switch_server) }
         saveBoolean("SWITCHSERVER",false,server)
-
+        val scope = rememberCoroutineScope()
         val video by produceState<String?>(initialValue = null) {
-            value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
+            scope.launch {
+                delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
+            }
         }
-        video?.let {
-            SimpleVideo(
-                filePath = it,
-                aspectRatio = 16/9f,
-            )
+        AnimatedVisibility(
+            visible = video != null,
+            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+            exit = scaleOut(targetScale = 1.5f) + fadeOut()
+        ) {
+            video?.let {
+                SimpleVideo(
+                    filePath = it,
+                    aspectRatio = 16/9f,
+                )
+            }
         }
 
         DividerTextExpandedWith("配置") {

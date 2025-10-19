@@ -18,10 +18,13 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import com.xah.transition.state.LocalAnimatedContentScope
+import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
+import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 private val spring = spring(
     dampingRatio = TransitionConfig.curveStyle.dampingRatio,

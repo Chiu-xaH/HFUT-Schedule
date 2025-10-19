@@ -114,8 +114,8 @@ fun NextCourseScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var showAll by rememberSaveable { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     var next by remember { mutableStateOf(isNextOpen()) }
     val route = remember { AppNavRoute.NextCourse.receiveRoute() }
         CustomTransitionScaffold (

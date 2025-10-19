@@ -50,7 +50,7 @@ fun CourseTotal(
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
+    val route = remember { AppNavRoute.TotalCourse.withArgs(ifSaved,"SEARCH") }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.TotalCourse.label) },
@@ -58,7 +58,7 @@ fun CourseTotal(
             Icon(painterResource(AppNavRoute.TotalCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TotalCourse,AppNavRoute.TotalCourse.withArgs(ifSaved))
+            navController.navigateForTransition(AppNavRoute.TotalCourse,route)
         }
     )
 
@@ -69,19 +69,19 @@ fun CourseTotal(
 @Composable
 fun TotalCourseScreen(
     vm : NetWorkViewModel,
+    origin : String,
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
     var next by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(true) }
 
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
         CustomTransitionScaffold (
             route = route,
-            
             navHostController = navController,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
@@ -91,7 +91,7 @@ fun TotalCourseScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.TotalCourse.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.TotalCourse.icon)
+                        TopBarNavigationIcon(navController, AppNavRoute.TotalCourse.withArgs(ifSaved,origin), AppNavRoute.TotalCourse.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

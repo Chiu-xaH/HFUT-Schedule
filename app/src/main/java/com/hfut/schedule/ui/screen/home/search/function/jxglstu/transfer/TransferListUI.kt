@@ -72,6 +72,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
@@ -93,9 +94,12 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -117,8 +121,8 @@ fun TransferScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Transfer.route }
     val scope = rememberCoroutineScope()
@@ -295,12 +299,12 @@ fun TransferDetailScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TransferDetail.withArgs(isHidden,batchId,title) }
     var showBottomSheet_apply by remember { mutableStateOf(false) }
-
+    val backDrop = rememberLayerBackdrop()
     if (showBottomSheet_apply) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },
@@ -327,76 +331,81 @@ fun TransferDetailScreen(
     }
     var input by remember { mutableStateOf("") }
 
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                Column (
-                    modifier = Modifier.topBarBlur(hazeState),
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            Column (
+                modifier = Modifier.topBarBlur(hazeState),
 
                 ){
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(title) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(
-                                navController,
-                                route,
-                                AppNavRoute.TransferDetail.icon
-                            )
-                        },
-                        actions = {
-                            Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                                FilledTonalButton(
-                                    onClick = { showBottomSheet_apply = true },
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(title) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(
+                            navController,
+                            route,
+                            AppNavRoute.TransferDetail.icon
+                        )
+                    },
+                    actions = {
+                        Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                            LiquidButton(
+                                onClick = {
+                                    showBottomSheet_apply = true
+                                },
+                                backdrop = backDrop
                                 ) {
-                                    Text("我的申请")
-                                }
+                                Text("我的申请")
                             }
                         }
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("搜索学院或专业") },
-                            singleLine = true,
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {}) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search),
-                                        contentDescription = "description"
-                                    )
-                                }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
                     }
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                        ,
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("搜索学院或专业") },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {}) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
                 }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
-            ) {
-                TransferUI(vm,batchId,hazeState,isHidden,input,innerPadding)
+                Spacer(Modifier.height(CARD_NORMAL_DP))
             }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backDrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            TransferUI(vm,batchId,hazeState,isHidden,input,innerPadding)
         }
+    }
 //    }
 }
 

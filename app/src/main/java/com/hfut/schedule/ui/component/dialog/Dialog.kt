@@ -37,19 +37,19 @@ fun LittleDialog(
     dismissText : String = "取消",
     hazeState: HazeState? = null
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val modifier = if(blur >= HazeBlurLevel.MID.code && hazeState != null) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val modifier = if(blur && hazeState != null) {
         Modifier.dialogBlur(hazeState)
     } else {
         Modifier
     }
     HazeDialog(
-        hazeState = hazeState ?: rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code),
+        hazeState = hazeState ?: rememberHazeState(blurEnabled = blur),
         onDismissRequest = onDismissRequest,
     ) {
         Surface(
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surface.copy(if(blur >= HazeBlurLevel.MID.code) 1f else 0.95f),
+            color = MaterialTheme.colorScheme.surface.copy(if(blur) 1f else 0.95f),
             modifier = Modifier.Companion.padding(APP_HORIZONTAL_DP)
         ) {
             Column(modifier = modifier) {

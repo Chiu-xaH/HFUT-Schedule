@@ -263,8 +263,8 @@ fun LoginScreen(
     val scope = rememberCoroutineScope()
     val activity = LocalActivity.current
 //    var webVpn by rememberSaveable { mutableStateOf(false) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val Savedusername = prefs.getString("Username", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

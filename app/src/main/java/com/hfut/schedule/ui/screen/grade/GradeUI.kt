@@ -98,8 +98,8 @@ fun GradeScreen(
     navTopController : NavHostController,
 ) {
     val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
 
     var showSearch by remember { mutableStateOf(false) }

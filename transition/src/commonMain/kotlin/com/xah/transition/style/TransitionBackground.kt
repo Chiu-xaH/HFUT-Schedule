@@ -7,17 +7,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.transitionDefaultBackground
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 @Composable
@@ -73,10 +68,6 @@ fun Modifier.transitionDefaultBackground(
     //👍 MEDIUM
     if(level == TransitionLevel.MEDIUM) {
         return darkModifier.scaleMirror(scale.value)
-//            .graphicsLayer {
-//            scaleX = scale.value
-//            scaleY = scale.value
-//        }
     }
 
     // 稍微晚于运动结束
@@ -92,10 +83,6 @@ fun Modifier.transitionDefaultBackground(
     return darkModifier
         .blur(blurSize)
         .scaleMirror(scale.value)
-//        .graphicsLayer {
-//            scaleX = scale.value
-//            scaleY = scale.value
-//        }
 }
 
 

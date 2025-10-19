@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -68,6 +69,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
@@ -82,6 +84,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -176,7 +179,7 @@ fun JxglstuCourseTableTwo(
     dataSource : TotalCourseDataSource,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
-    backGroundHaze : HazeState?
+    backGroundHaze : ShaderState?
 ) {
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
@@ -210,7 +213,7 @@ fun JxglstuCourseTableSearch(
     list : List<lessons>,
     onDateChange: ((LocalDate) ->Unit)? = null,
     today: LocalDate? = null,
-    backGroundHaze : HazeState? = null
+    backGroundHaze : ShaderState? = null
 ) {
     var numItem by remember { mutableIntStateOf(0) }
     val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
@@ -277,6 +280,9 @@ fun JxglstuCourseTableSearch(
             }
         }
     ) }
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     fun refreshUI() {
         // 清空
@@ -543,6 +549,7 @@ fun JxglstuCourseTableSearch(
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
+        val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(style.rowCount),
@@ -557,18 +564,30 @@ fun JxglstuCourseTableSearch(
                 } else {
                     Card(
                         shape = style.containerCorner,
-                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
+                        colors = CardDefaults.cardColors(containerColor = color),
                         modifier = Modifier
                             .fillMaxWidth() // 填满列宽
                             // 高度由内容撑开
                             .height(style.height)
                             .padding(style.everyPadding)
                             .let {
-                                backGroundHaze?.let { haze ->
+                                if(backGroundHaze != null) {
                                     it
                                         .clip(style.containerCorner)
-                                        .containerBlur(haze,style.containerColor)
-                                } ?: it
+                                        .let {
+                                            if(AppVersion.CAN_SHADER) {
+                                                it.calendarSquareGlass(
+                                                    backGroundHaze,
+                                                    style.containerColor.copy(customBackgroundAlpha),
+                                                    enableLiquidGlass
+                                                )
+                                            } else {
+                                                it
+                                            }
+                                        }
+                                } else {
+                                    it
+                                }
                             }
                             .clickableWithScale(ClickScale.SMALL.scale){
                                 // 只有一节课

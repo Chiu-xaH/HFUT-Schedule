@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
@@ -84,6 +85,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
@@ -100,6 +102,7 @@ import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
@@ -119,7 +122,7 @@ fun ZhiJianCourseTableUI(
     studentId : String,
     today: LocalDate,
     onDateChange: (LocalDate) ->Unit,
-    backGroundHaze : HazeState?,
+    backGroundHaze : ShaderState?,
     hazeState: HazeState,
 ) {
     val uiState by vm.zhiJianCourseResp.state.collectAsState()
@@ -187,6 +190,9 @@ fun ZhiJianCourseTableUI(
     }
 
 
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -431,6 +437,7 @@ fun ZhiJianCourseTableUI(
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
+        val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
 
         Box {
             LazyVerticalGrid(
@@ -455,16 +462,28 @@ fun ZhiJianCourseTableUI(
                     } else {
                         Card(
                             shape = style.containerCorner,
-                            colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
+                            colors = CardDefaults.cardColors(containerColor = color),
                             modifier = Modifier
                                 .height(style.height)
                                 .padding(style.everyPadding)
                                 .let {
-                                    backGroundHaze?.let { haze ->
+                                    if(backGroundHaze != null) {
                                         it
                                             .clip(style.containerCorner)
-                                            .containerBlur(haze,style.containerColor)
-                                    } ?: it
+                                            .let {
+                                                if(AppVersion.CAN_SHADER) {
+                                                    it.calendarSquareGlass(
+                                                        backGroundHaze,
+                                                        style.containerColor.copy(customBackgroundAlpha),
+                                                        enableLiquidGlass
+                                                    )
+                                                } else {
+                                                    it
+                                                }
+                                            }
+                                    } else {
+                                        it
+                                    }
                                 }
                                 .clickableWithScale(ClickScale.SMALL.scale) {
                                     if (itemList.size == 1) {

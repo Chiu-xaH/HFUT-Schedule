@@ -113,8 +113,8 @@ fun ProgramScreen(
     ifSaved: Boolean,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val titles = remember { listOf("完成情况","教学计划") }
     val pageState = rememberPagerState(

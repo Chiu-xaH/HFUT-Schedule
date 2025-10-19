@@ -5,6 +5,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -14,6 +15,10 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -59,11 +64,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.CornerRadius
@@ -133,7 +136,6 @@ object AppTransitionInitializer : TransitionInitializer {
 
 
 
-val animationList =  DataStoreManager.AnimationSpeed.entries.sortedBy { it.speed }
 val styleList = DataStoreManager.ColorStyle.entries
 
 
@@ -170,7 +172,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             InnerPaddingHeight(innerPaddings,true)
         }
 
-        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+        val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
 
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
@@ -180,6 +182,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
         val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
+        val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
@@ -214,7 +217,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         val transitionLevels = remember { TransitionLevel.entries }
-        val hazeBlurLevels = remember { HazeBlurLevel.entries }
 
         LaunchedEffect(transition) {
             TransitionConfig.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
@@ -287,13 +289,22 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
 
         if(!isControlCenter) {
             val video by produceState<String?>(initialValue = null) {
-                value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
+                scope.launch {
+                    delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                    value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
+                }
             }
-            video?.let {
-                SimpleVideo(
-                    filePath = it,
-                    aspectRatio = 16/9f,
-                )
+            AnimatedVisibility(
+                visible = video != null,
+                enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+                exit = scaleOut(targetScale = 1.5f) + fadeOut()
+            ) {
+                video?.let {
+                    SimpleVideo(
+                        filePath = it,
+                        aspectRatio = 16/9f,
+                    )
+                }
             }
         }
 
@@ -495,25 +506,19 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "层级实时模糊" + " | " + "Level${blur+1} (${hazeBlurLevels.find { it.code == blur}?.title})")
+                        Text(text = "层级实时模糊")
                     },
                     supportingContent = {
-                        Text(text = "层级使用实时模糊区分\n平衡性能与美观,推荐为Level2" )
+                        Text(text = "层级使用实时模糊区分\n平衡性能与美观,推荐打开" )
                     },
                     leadingContent = {
                         HazeBlurIcon(blur)
                     },
-                )
-                CustomSlider(
-                    value = blur.toFloat(),
-                    onValueChange = { value ->
-                        val level = hazeBlurLevels.find { it.code == value.toInt() } ?: return@CustomSlider
-                        scope.launch { DataStoreManager.saveHazeBlur(level) }
+                    modifier = Modifier.clickable {
+                        scope.launch { DataStoreManager.saveHazeBlur(!blur) }
                     },
-                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                    steps = 1,
-                    valueRange = 0f..2f,
-                )
+                    trailingContent = {  Switch(checked = blur, onCheckedChange = { scope.launch { DataStoreManager.saveHazeBlur(!blur) } }) },
+               )
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
@@ -569,14 +574,22 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         DividerTextExpandedWith("动效") {
             if(!isControlCenter) {
                 val video by produceState<String?>(initialValue = null) {
-                    value = checkOrDownloadVideo(context,"example_transition.mp4","https://chiu-xah.github.io/videos/example_transition.mp4")
+                    scope.launch {
+                        delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                        value = checkOrDownloadVideo(context,"example_transition.mp4","https://chiu-xah.github.io/videos/example_transition.mp4")
+                    }
                 }
-                video?.let {
-                    SimpleVideo(
-                        filePath = it,
-                        aspectRatio = 16/9f,
-                    )
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP-CARD_NORMAL_DP))
+                AnimatedVisibility(
+                    visible = video != null,
+                    enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+                    exit = scaleOut(targetScale = 1.5f) + fadeOut()
+                ) {
+                    video?.let {
+                        SimpleVideo(
+                            filePath = it,
+                            aspectRatio = 16/9f,
+                        )
+                    }
                 }
             }
             CustomCard(color = backgroundColor) {
@@ -626,7 +639,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text("背景图片")
                     },
                     supportingContent = {
-                        Text(if(!useCustomBackground) "选择图片，作为课程表的背景，同时也会改变色彩" else "混色(值越小，图片越淡) ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
+                        Text("选择图片，作为课程表的背景，同时也会改变色彩")
                     },
                     modifier = Modifier.clickable {
                         pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -649,14 +662,42 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     }
                 )
                 if(useCustomBackground) {
-                    var alpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
+                    var backgroundAlpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
+                    TransplantListItem(
+                        headlineContent = {
+                            Text("背景混色 ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
+                        },
+                        supportingContent = {
+                            Text("值越小，图片越淡")
+                        }
+                    )
                     CustomSlider(
-                        value = alpha,
+                        value = backgroundAlpha,
                         onValueChange = {
-                            alpha = it
+                            backgroundAlpha = it
                         },
                         onValueChangeFinished =  {
-                            scope.launch { DataStoreManager.saveCustomBackgroundAlpha(alpha) }
+                            scope.launch { DataStoreManager.saveCustomBackgroundAlpha(backgroundAlpha) }
+                        },
+                        valueRange = 0f..1f,
+                        showProcessText = true
+                    )
+                    var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
+                    TransplantListItem(
+                        headlineContent = {
+                            Text("方格混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
+                        },
+                        supportingContent = {
+                            Text("值越小，方格越透明")
+                        }
+                    )
+                    CustomSlider(
+                        value = squareAlpha,
+                        onValueChange = {
+                            squareAlpha = it
+                        },
+                        onValueChangeFinished =  {
+                            scope.launch { DataStoreManager.saveCustomSquareAlpha(squareAlpha) }
                         },
                         modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                         valueRange = 0f..1f,
@@ -896,7 +937,7 @@ private fun ShaderIcon(shader : Boolean) {
 
 
 @Composable
-private fun HazeBlurIcon(blur : Int) {
+private fun HazeBlurIcon(blur : Boolean) {
     val size = 24.dp
     Box(modifier = Modifier.size(size)) {
         Icon(
@@ -924,7 +965,7 @@ private fun HazeBlurIcon(blur : Int) {
                         this@drawWithContent.drawContent()
                     }
                 }
-                .blur(if (blur >= HazeBlurLevel.MID.code) 2.5.dp else 0.dp) // 模糊半径
+                .blur(if (blur) 2.5.dp else 0.dp) // 模糊半径
         )
     }
 }

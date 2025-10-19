@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -63,6 +64,7 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.network.util.toStr
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
@@ -76,6 +78,7 @@ import com.hfut.schedule.ui.screen.home.calendar.ExamToCalenderBean
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
@@ -89,9 +92,11 @@ import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 fun distinctUnitForCommunity(list : List<SnapshotStateList<courseDetailDTOList>>) {
     for(t in list) {
@@ -112,7 +117,7 @@ fun CommunityCourseTableUI(
     today: LocalDate,
     vm : NetWorkViewModel,
     hazeState: HazeState,
-    backGroundHaze : HazeState?
+    backGroundHaze : ShaderState?
 ) {
     val context = LocalContext.current
     var examList: List<ExamToCalenderBean> by remember { mutableStateOf(emptyList()) }
@@ -137,10 +142,21 @@ fun CommunityCourseTableUI(
         )
     }
 
+    val focusList by produceState(initialValue = emptyList()) {
+        value = if(friendUserName == null){
+            DataBaseManager.customEventDao.getAll(CustomEventType.SCHEDULE.name).map {
+                entityToDto(it)
+            }
+        } else {
+            emptyList()
+        }
+    }
+
     val table = remember { List(30) { mutableStateListOf<courseDetailDTOList>() } }
     val tableAll = remember { List(42) { mutableStateListOf<courseDetailDTOList>() } }
     var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
-    
+    val scope = rememberCoroutineScope()
+
     //填充UI与更新
     fun refreshUI() {
         // 清空
@@ -152,261 +168,387 @@ fun CommunityCourseTableUI(
         Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
 
         try {
-            for (j in 0 until 7 ) {
-                val lists = getCourseInfoFromCommunity(j +1 ,currentWeek.toInt(),friendUserName)
+            scope.launch {
+                launch course@ {
+                    // 组装课表
+                    for (j in 0 until 7 ) {
+                        val lists = getCourseInfoFromCommunity(j +1 ,currentWeek.toInt(),friendUserName)
 
-                for(i in 0 until lists.size) {
-                    val data = lists[i]
-                    for(text in data) {
-                        if(showAll) {
-                            when (j) {
-                                0 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[0].add(text)
+                        for(i in 0 until lists.size) {
+                            val data = lists[i]
+                            for(text in data) {
+                                if(showAll) {
+                                    when (j) {
+                                        0 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[0].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[7].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[14].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[21].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[28].add(text)
+                                                }
+                                            }
                                         }
-                                        3,4 -> {
-                                            tableAll[7].add(text)
+                                        1 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[1].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[8].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[15].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[22].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[29].add(text)
+                                                }
+                                            }
                                         }
-                                        5,6 -> {
-                                            tableAll[14].add(text)
+                                        2 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[2].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[9].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[16].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[23].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[30].add(text)
+                                                }
+                                            }
                                         }
-                                        7,8 -> {
-                                            tableAll[21].add(text)
+                                        3 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[3].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[10].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[17].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[24].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[31].add(text)
+                                                }
+                                            }
                                         }
-                                        9,10,11 -> {
-                                            tableAll[28].add(text)
+                                        4 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[4].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[11].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[18].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[25].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[32].add(text)
+                                                }
+                                            }
                                         }
-                                    }
-                                }
-                                1 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[1].add(text)
+                                        5 -> {
+                                            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[5].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[12].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[19].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[26].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[33].add(text)
+                                                }
+                                            }
                                         }
-                                        3,4 -> {
-                                            tableAll[8].add(text)
-                                        }
-                                        5,6 -> {
-                                            tableAll[15].add(text)
-                                        }
-                                        7,8 -> {
-                                            tableAll[22].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            tableAll[29].add(text)
-                                        }
-                                    }
-                                }
-                                2 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[2].add(text)
-                                        }
-                                        3,4 -> {
-                                            tableAll[9].add(text)
-                                        }
-                                        5,6 -> {
-                                            tableAll[16].add(text)
-                                        }
-                                        7,8 -> {
-                                            tableAll[23].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            tableAll[30].add(text)
-                                        }
-                                    }
-                                }
-                                3 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[3].add(text)
-                                        }
-                                        3,4 -> {
-                                            tableAll[10].add(text)
-                                        }
-                                        5,6 -> {
-                                            tableAll[17].add(text)
-                                        }
-                                        7,8 -> {
-                                            tableAll[24].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            tableAll[31].add(text)
-                                        }
-                                    }
-                                }
-                                4 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[4].add(text)
-                                        }
-                                        3,4 -> {
-                                            tableAll[11].add(text)
-                                        }
-                                        5,6 -> {
-                                            tableAll[18].add(text)
-                                        }
-                                        7,8 -> {
-                                            tableAll[25].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            tableAll[32].add(text)
-                                        }
-                                    }
-                                }
-                                5 -> {
-                                    Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[5].add(text)
-                                        }
-                                        3,4 -> {
-                                            tableAll[12].add(text)
-                                        }
-                                        5,6 -> {
-                                            tableAll[19].add(text)
-                                        }
-                                        7,8 -> {
-                                            tableAll[26].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            tableAll[33].add(text)
-                                        }
-                                    }
-                                }
-                                6 -> {
-                                    Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
-                                    when(text.section) {
-                                        1,2 -> {
-                                            tableAll[6].add(text)
-                                        }
-                                        3,4 -> {
-                                            tableAll[13].add(text)
-                                        }
-                                        5,6 -> {
-                                            tableAll[20].add(text)
-                                        }
-                                        7,8 -> {
-                                            tableAll[27].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            tableAll[34].add(text)
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            when (j) {
-                                0 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            table[0].add(text)
-                                        }
-                                        3,4 -> {
-                                            table[5].add(text)
-                                        }
-                                        5,6 -> {
-                                            table[10].add(text)
-                                        }
-                                        7,8 -> {
-                                            table[15].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            table[20].add(text)
+                                        6 -> {
+                                            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    tableAll[6].add(text)
+                                                }
+                                                3,4 -> {
+                                                    tableAll[13].add(text)
+                                                }
+                                                5,6 -> {
+                                                    tableAll[20].add(text)
+                                                }
+                                                7,8 -> {
+                                                    tableAll[27].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    tableAll[34].add(text)
+                                                }
+                                            }
                                         }
                                     }
-                                }
-                                1 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            table[1].add(text)
+                                } else {
+                                    when (j) {
+                                        0 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    table[0].add(text)
+                                                }
+                                                3,4 -> {
+                                                    table[5].add(text)
+                                                }
+                                                5,6 -> {
+                                                    table[10].add(text)
+                                                }
+                                                7,8 -> {
+                                                    table[15].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    table[20].add(text)
+                                                }
+                                            }
                                         }
-                                        3,4 -> {
-                                            table[6].add(text)
+                                        1 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    table[1].add(text)
+                                                }
+                                                3,4 -> {
+                                                    table[6].add(text)
+                                                }
+                                                5,6 -> {
+                                                    table[11].add(text)
+                                                }
+                                                7,8 -> {
+                                                    table[16].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    table[21].add(text)
+                                                }
+                                            }
                                         }
-                                        5,6 -> {
-                                            table[11].add(text)
+                                        2 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    table[2].add(text)
+                                                }
+                                                3,4 -> {
+                                                    table[7].add(text)
+                                                }
+                                                5,6 -> {
+                                                    table[12].add(text)
+                                                }
+                                                7,8 -> {
+                                                    table[17].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    table[22].add(text)
+                                                }
+                                            }
                                         }
-                                        7,8 -> {
-                                            table[16].add(text)
+                                        3 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    table[3].add(text)
+                                                }
+                                                3,4 -> {
+                                                    table[8].add(text)
+                                                }
+                                                5,6 -> {
+                                                    table[13].add(text)
+                                                }
+                                                7,8 -> {
+                                                    table[18].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    table[23].add(text)
+                                                }
+                                            }
                                         }
-                                        9,10,11 -> {
-                                            table[21].add(text)
+                                        4 -> {
+                                            when(text.section) {
+                                                1,2 -> {
+                                                    table[4].add(text)
+                                                }
+                                                3,4 -> {
+                                                    table[9].add(text)
+                                                }
+                                                5,6 -> {
+                                                    table[14].add(text)
+                                                }
+                                                7,8 -> {
+                                                    table[19].add(text)
+                                                }
+                                                9,10,11 -> {
+                                                    table[24].add(text)
+                                                }
+                                            }
+                                        }
+                                        in 5..6 -> {
+                                            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
                                         }
                                     }
-                                }
-                                2 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            table[2].add(text)
-                                        }
-                                        3,4 -> {
-                                            table[7].add(text)
-                                        }
-                                        5,6 -> {
-                                            table[12].add(text)
-                                        }
-                                        7,8 -> {
-                                            table[17].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            table[22].add(text)
-                                        }
-                                    }
-                                }
-                                3 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            table[3].add(text)
-                                        }
-                                        3,4 -> {
-                                            table[8].add(text)
-                                        }
-                                        5,6 -> {
-                                            table[13].add(text)
-                                        }
-                                        7,8 -> {
-                                            table[18].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            table[23].add(text)
-                                        }
-                                    }
-                                }
-                                4 -> {
-                                    when(text.section) {
-                                        1,2 -> {
-                                            table[4].add(text)
-                                        }
-                                        3,4 -> {
-                                            table[9].add(text)
-                                        }
-                                        5,6 -> {
-                                            table[14].add(text)
-                                        }
-                                        7,8 -> {
-                                            table[19].add(text)
-                                        }
-                                        9,10,11 -> {
-                                            table[24].add(text)
-                                        }
-                                    }
-                                }
-                                in 5..6 -> {
-                                    Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
                                 }
                             }
                         }
                     }
+                    // 去重
+                    if(showAll) {
+                        distinctUnitForCommunity(tableAll)
+                    } else {
+                        distinctUnitForCommunity(table)
+                    }
+                }
+                launch focus@ {
+                    // 组装日程
+                    for(item in focusList) {
+                        val start = item.dateTime.start.toStr().split(" ")
+                        if(start.size != 2) {
+                            continue
+                        }
+                        val startDate = start[0]
+                        val startTime = start[1]
+                        val weekInfo = dateToWeek(startDate) ?: continue
+                        // 是同一周
+                        if(weekInfo.first != currentWeek.toInt()) {
+                            continue
+                        }
+                        val name = item.title
+                        val place = item.description
+                        val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
+                        val index = weekInfo.second - 1
+                        val offset = if(showAll) 7 else 5
+                        if(hour <= 9) {
+                            val finalIndex = index+offset*0
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+                        } else if(hour in 10..12) {
+                            val finalIndex = index+offset*1
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+                        } else if(hour in 13..15) {
+                            val finalIndex = index+offset*2
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+                        } else if(hour in 16..17) {
+                            val finalIndex = index+offset*3
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+                        } else if(hour >= 18) {
+                            val finalIndex = index+offset*4
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
+                        }
+                    }
+                }
+                launch exam@ {
+                    // 组装考试
+                    for(item in examList) {
+                        val startTime = item.startTime ?: continue
+                        val startDate = item.day ?: continue
+                        val weekInfo = dateToWeek(startDate) ?: continue
+                        // 是同一周
+                        if(weekInfo.first != currentWeek.toInt()) {
+                            continue
+                        }
+                        val name = item.course
+                        val place = item.place
+                        val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
+                        val index = weekInfo.second - 1
+                        val offset = if(showAll) 7 else 5
+                        if(hour <= 9) {
+                            val finalIndex = index+offset*0
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+                        } else if(hour in 10..12) {
+                            val finalIndex = index+offset*1
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+                        } else if(hour in 13..15) {
+                            val finalIndex = index+offset*2
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+                        } else if(hour in 16..17) {
+                            val finalIndex = index+offset*3
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+                        } else if(hour >= 18) {
+                            val finalIndex = index+offset*4
+                            if(showAll) {
+                                tableAll[finalIndex]
+                            } else {
+                                table[finalIndex]
+                            }
+                                .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
+                        }
+                    }
                 }
             }
-            // 去重
-            if(showAll) {
-                distinctUnitForCommunity(tableAll)
-            } else {
-                distinctUnitForCommunity(table)
-            }
+
         } catch (e : Exception) {
             e.printStackTrace()
         }
@@ -448,144 +590,17 @@ fun CommunityCourseTableUI(
             DetailInfos(sheet,friendUserName != null, vm = vm, hazeState )
         }
     }
-    val dateList  = getScheduleDate(showAll,today)
 
-    val focusList by produceState(initialValue = emptyList()) {
-        value = if(friendUserName == null){
-            DataBaseManager.customEventDao.getAll(CustomEventType.SCHEDULE.name).map {
-                entityToDto(it)
-            }
-        } else {
-            emptyList()
-        }
-    }
-
-    LaunchedEffect(examList,currentWeek,showAll) {
-        //存在待考时
-        for(item in examList) {
-            val startTime = item.startTime ?: continue
-            val startDate = item.day ?: continue
-            val weekInfo = dateToWeek(startDate) ?: continue
-            // 是同一周
-            if(weekInfo.first != currentWeek.toInt()) {
-                continue
-            }
-            val name = item.course
-            val place = item.place
-            val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
-            val index = weekInfo.second - 1
-            val offset = if(showAll) 7 else 5
-            if(hour <= 9) {
-                val finalIndex = index+offset*0
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
-            } else if(hour in 10..12) {
-                val finalIndex = index+offset*1
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
-            } else if(hour in 13..15) {
-                val finalIndex = index+offset*2
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
-            } else if(hour in 16..17) {
-                val finalIndex = index+offset*3
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
-            } else if(hour >= 18) {
-                val finalIndex = index+offset*4
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(考试)","空"))
-            }
-        }
-    }
-
-    LaunchedEffect(focusList,currentWeek,showAll) {
-        for(item in focusList) {
-            val start = item.dateTime.start.toStr().split(" ")
-            if(start.size != 2) {
-                continue
-            }
-            val startDate = start[0]
-            val startTime = start[1]
-            val weekInfo = dateToWeek(startDate) ?: continue
-            // 是同一周
-            if(weekInfo.first != currentWeek.toInt()) {
-                continue
-            }
-            val name = item.title
-            val place = item.description
-            val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
-            val index = weekInfo.second - 1
-            val offset = if(showAll) 7 else 5
-            if(hour <= 9) {
-                val finalIndex = index+offset*0
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
-            } else if(hour in 10..12) {
-                val finalIndex = index+offset*1
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
-            } else if(hour in 13..15) {
-                val finalIndex = index+offset*2
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
-            } else if(hour in 16..17) {
-                val finalIndex = index+offset*3
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
-            } else if(hour >= 18) {
-                val finalIndex = index+offset*4
-                if(showAll) {
-                    tableAll[finalIndex]
-                } else {
-                    table[finalIndex]
-                }
-                    .add(courseDetailDTOList(-1,-1,place?.replace("学堂",""),"空",startTime,emptyList(),-1,name  + "(日程)","空"))
-            }
-        }
-    }
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     Column(modifier = Modifier.fillMaxSize()) {
             Box {
                 val scrollState = rememberLazyGridState()
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
                 val style = CalendarStyle(showAll)
+                val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
 
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(style.rowCount),
@@ -602,18 +617,28 @@ fun CommunityCourseTableUI(
                         } else {
                             Card(
                                 shape = style.containerCorner,
-                                colors = CardDefaults.cardColors(containerColor =
-                                    if(backGroundHaze != null) Color.Transparent else style.containerColor
-                                ),
+                                colors = CardDefaults.cardColors(containerColor = color),
                                 modifier = Modifier
                                     .height(style.height)
                                     .padding(style.everyPadding)
                                     .let {
-                                        backGroundHaze?.let { haze ->
+                                        if(backGroundHaze != null) {
                                             it
                                                 .clip(style.containerCorner)
-                                                .containerBlur(haze,style.containerColor)
-                                        } ?: it
+                                                .let {
+                                                    if(AppVersion.CAN_SHADER) {
+                                                        it.calendarSquareGlass(
+                                                            backGroundHaze,
+                                                            style.containerColor.copy(customBackgroundAlpha),
+                                                            enableLiquidGlass
+                                                        )
+                                                    } else {
+                                                        it
+                                                    }
+                                                }
+                                        } else {
+                                            it
+                                        }
                                     }
                                     .clickableWithScale(ClickScale.SMALL.scale) {
                                         if (texts.size == 1) {

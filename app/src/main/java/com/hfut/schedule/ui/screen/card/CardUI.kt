@@ -103,8 +103,8 @@ private val items = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val bottomBarItems = when(navController.currentRouteWithoutArgs()) {
         CardBarItems.HOME.name ->CardBarItems.HOME

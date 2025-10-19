@@ -59,6 +59,7 @@ import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -67,6 +68,7 @@ import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
@@ -78,6 +80,7 @@ import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
@@ -114,7 +117,7 @@ fun JxglstuCourseTableUINext(
     hazeState: HazeState,
     navController: NavHostController,
     innerPadding : PaddingValues,
-    backGroundHaze : HazeState?,
+    backGroundHaze : ShaderState?,
 ) {
     val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
@@ -427,11 +430,15 @@ fun JxglstuCourseTableUINext(
     LaunchedEffect(showAll,currentWeek,times) {
         refreshUI()
     }
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     Box(modifier = Modifier.fillMaxHeight()) {
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
+        val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(style.rowCount),
@@ -447,16 +454,28 @@ fun JxglstuCourseTableUINext(
                 } else {
                     Card(
                         shape = style.containerCorner,
-                        colors = CardDefaults.cardColors(containerColor = if(backGroundHaze != null) Color.Transparent else style.containerColor),
+                        colors = CardDefaults.cardColors(containerColor = color),
                         modifier = Modifier
                             .height(style.height)
                             .padding(style.everyPadding)
                             .let {
-                                backGroundHaze?.let { haze ->
+                                if(backGroundHaze != null) {
                                     it
                                         .clip(style.containerCorner)
-                                        .containerBlur(haze,style.containerColor)
-                                } ?: it
+                                        .let {
+                                            if(AppVersion.CAN_SHADER) {
+                                                it.calendarSquareGlass(
+                                                    backGroundHaze,
+                                                    style.containerColor.copy(customBackgroundAlpha),
+                                                    enableLiquidGlass
+                                                )
+                                            } else {
+                                                it
+                                            }
+                                        }
+                                } else {
+                                    it
+                                }
                             }
                             .clickableWithScale(ClickScale.SMALL.scale) {
                                 // 只有一节课
@@ -475,23 +494,27 @@ fun JxglstuCourseTableUINext(
                                 }
                             }
                             .let {
-                                val route = if(texts.size == 1) {
-                                    val name = parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
-                                    if (name != null) {
-                                        AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_NEXT.t + "$index")
+                                if(enableTransition) {
+                                    val route = if(texts.size == 1) {
+                                        val name = parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
+                                        if (name != null) {
+                                            AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_NEXT.t + "$index")
+                                        } else {
+                                            null
+                                        }
                                     } else {
                                         null
                                     }
-                                } else {
-                                    null
-                                }
 
-                                route?.let { it1 ->
-                                    it.containerShare(
-                                        route = it1,
-                                        roundShape = MaterialTheme.shapes.extraSmall,
-                                    )
-                                } ?: it
+                                    route?.let { it1 ->
+                                        it.containerShare(
+                                            route = it1,
+                                            roundShape = MaterialTheme.shapes.extraSmall,
+                                        )
+                                    } ?: it
+                                } else{
+                                    it
+                                }
                             }
                     ) {
                         if(texts.size == 1) {

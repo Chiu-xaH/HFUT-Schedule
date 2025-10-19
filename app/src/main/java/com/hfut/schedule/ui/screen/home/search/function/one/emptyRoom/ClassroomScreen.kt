@@ -76,8 +76,8 @@ fun ClassroomScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Classroom.route }
     val pagerState = rememberPagerState(initialPage =
@@ -174,8 +174,8 @@ fun ClassroomDetailScreen(
     code : String,
     name: String
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.ClassroomDetail.withArgs(BuildingBean(name,code)) }
 
     val uiState by vm.classroomResponse.state.collectAsState()

@@ -223,11 +223,13 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object CourseSearch : AppNavRoute("COURSE_SEARCH","开课查询",R.drawable.search)
     object TotalCourse : AppNavRoute("TOTAL_COURSE","课程汇总",R.drawable.category) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
-            IF_SAVED("ifSaved", NavType.BoolType,true,false)
+            IF_SAVED("ifSaved", NavType.BoolType,true,false),
+            ORIGIN("origin", NavType.StringType,"",true)
         }
         fun receiveRoute() = receiveRoutePair(Args.entries)
-        fun withArgs(ifSaved: Boolean): String = withArgs(
-            Args.IF_SAVED.argName to ifSaved
+        fun withArgs(ifSaved: Boolean,origin : String): String = withArgs(
+            Args.IF_SAVED.argName to ifSaved,
+            Args.ORIGIN.argName to origin
         )
     }
     object ProgramCompetition : AppNavRoute("PROGRAM_COMPETITION","培养方案完成情况",R.drawable.leaderboard) {

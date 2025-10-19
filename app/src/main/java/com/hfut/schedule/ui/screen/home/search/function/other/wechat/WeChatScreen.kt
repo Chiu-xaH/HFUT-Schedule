@@ -79,8 +79,8 @@ private val list2 = listOf(
 fun WeChatScreen(
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     var showedUrl by remember { mutableStateOf("") }
     var showBottomSheetQRCode by remember { mutableStateOf(false) }
     val backDrop = rememberLayerBackdrop()

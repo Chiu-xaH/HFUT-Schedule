@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -699,9 +700,11 @@ fun MainHost(
                     arguments = getArgs(AppNavRoute.TotalCourse.Args.entries)
                 ) { backStackEntry ->
                     val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.TotalCourse.Args.IF_SAVED.argName) ?: (AppNavRoute.TotalCourse.Args.IF_SAVED.default as Boolean)
+                    val origin = backStackEntry.arguments?.getString(AppNavRoute.TotalCourse.Args.ORIGIN.argName) ?: (AppNavRoute.TotalCourse.Args.ORIGIN.default as String)
 
                     TotalCourseScreen(
                         networkVm,
+                        origin,
                         ifSaved,
                         navController,
                     )

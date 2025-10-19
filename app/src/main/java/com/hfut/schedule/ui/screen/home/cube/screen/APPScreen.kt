@@ -1,5 +1,10 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -66,9 +71,11 @@ import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.ui.util.SaveComposeAsImage
 import com.xah.uicommon.component.slider.CustomSlider
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -121,15 +128,23 @@ fun APPScreen(
         LaunchedEffect(maxFlow) {
             freeFeevalue = maxFlow.toFloat()
         }
-
         val video by produceState<String?>(initialValue = null) {
-            value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
+            scope.launch {
+                delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
+            }
         }
-        video?.let {
-            SimpleVideo(
-                filePath = it,
-                aspectRatio = 16/9f,
-            )
+        AnimatedVisibility(
+            visible = video != null,
+            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+            exit = scaleOut(targetScale = 1.5f) + fadeOut()
+        ) {
+            video?.let {
+                SimpleVideo(
+                    filePath = it,
+                    aspectRatio = 16/9f,
+                )
+            }
         }
         DividerTextExpandedWith("交互") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

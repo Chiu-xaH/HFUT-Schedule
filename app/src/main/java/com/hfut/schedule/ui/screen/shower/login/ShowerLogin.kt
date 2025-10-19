@@ -80,8 +80,8 @@ fun ShowerLogin(vm : GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
     var show by remember { mutableStateOf(false) }
     val Savedusername = prefs.getString("PHONENUM", "")
     var username by remember { mutableStateOf(Savedusername ?: "") }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     Scaffold(
         topBar = {
             LargeTopAppBar(

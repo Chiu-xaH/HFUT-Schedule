@@ -96,8 +96,8 @@ private val items = listOf(
 @Composable
 fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI : UIViewModel) {
     val navController = rememberNavController()
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val bottomBarItems = when(navController.currentRouteWithoutArgs()) {
         SupabaseScreen.HOME.name -> SupabaseScreen.HOME
         SupabaseScreen.SETTINGS.name -> SupabaseScreen.SETTINGS

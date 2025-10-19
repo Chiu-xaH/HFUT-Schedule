@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -78,6 +79,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -110,8 +112,8 @@ fun WorkScreen(
     vm: NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Work.route }
     val backDrop = rememberLayerBackdrop()
     var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
@@ -152,6 +154,10 @@ fun WorkScreen(
                             val iconRoute =  AppNavRoute.WebView.shareRoute(url)
                             LiquidButton(
                                 backdrop = backDrop,
+                                modifier = Modifier.containerShare(
+                                    AppNavRoute.WebView.shareRoute(url),
+                                    CircleShape
+                                ),
                                 onClick = {
                                     scope.launch {
                                         Starter.startWebView(
@@ -159,7 +165,6 @@ fun WorkScreen(
                                             url = url,
                                             title = "就业网(${campus.description})",
                                             icon = R.drawable.net,
-                                            transplantBackground = true
                                         )
                                     }
                                 },

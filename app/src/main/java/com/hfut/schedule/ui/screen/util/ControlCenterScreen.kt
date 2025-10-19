@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.util
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -71,6 +73,10 @@ import com.hfut.schedule.ui.style.special.normalTopBarBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.measureDpSize
 import com.hfut.schedule.ui.util.navigateForTransition
+import com.xah.mirror.shader.GlassStyle
+import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.util.rememberShaderState
+import com.xah.mirror.util.shaderSource
 import com.xah.transition.component.awaitTransition
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.state.TransitionConfig
@@ -132,6 +138,8 @@ private const val TAB_STACK = 0
 private const val TAB_SETTINGS = 1
 private const val TAB_SEARCH = 2
 
+
+
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -143,8 +151,8 @@ fun ControlCenterScreen(
     val state = rememberScrollState()
     // 项目到达底部
     val isAtStart by remember { derivedStateOf { state.value == 0 } }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code && !isAtStart)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur && !isAtStart)
     val queue = GlobalUIStateHolder.routeQueue
 //    val currentStack by navController.currentBackStack.collectAsState()
 //    val stack = currentStack.reversed()
@@ -153,17 +161,25 @@ fun ControlCenterScreen(
     var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
+//    val shaderState = rememberShaderState()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = Color.Transparent,
         topBar = {
             Column(
                 modifier = Modifier.let {
-                    if(isAtStart) {
-                        it
-                    } else {
-                        it.normalTopBarBlur(hazeState,color ?: MaterialTheme.colorScheme.surface)
-                    }
+                    it
+//                    if(isAtStart) {
+//                        it.glassLayer(state=shaderState, style = GlassStyle(
+//                            blur = 1.dp,
+//                            border = 25f,
+//                            dispersion = 0f,
+//                             distortFactor = 0.0f
+//                        ),
+//                        )
+//                    } else {
+//                        it.normalTopBarBlur(hazeState,color ?: MaterialTheme.colorScheme.surface)
+//                    }
                 },
             ) {
                 MediumTopAppBar(
@@ -190,7 +206,7 @@ fun ControlCenterScreen(
                                                 }
                                             }
                                             showToast("已回到首页")
-                                            delay(TransitionConfig.curveStyle.speedMs*1L)
+                                            delay(TransitionConfig.curveStyle.speedMs*1L+ 100)
                                             onExit()
                                         }
                                     },
@@ -278,17 +294,19 @@ fun ControlCenterScreen(
 //                    )
 //                    Spacer(Modifier.height(height -DividerDefaults.Thickness))
                 }
-                ScrollHorizontalTopDivider(state, startPadding = false,endPadding = false)
+                ScrollHorizontalTopDivider(state, startPadding = true,endPadding = true)
             }
         },
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .hazeSource(hazeState)
+//                .hazeSource(hazeState)
+//                .shaderSource(shaderState)
+                .padding(innerPadding)
                 .verticalScroll(state)
                 .fillMaxSize()
         ) {
-            InnerPaddingHeight(innerPadding,true)
+//            InnerPaddingHeight(innerPadding,true)
             Box() {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = tab == TAB_SEARCH,
@@ -373,7 +391,7 @@ fun ControlCenterScreen(
                                                 onClick = {
                                                     scope.launch {
                                                         navController.navigateForTransition(item.app,item.route)
-                                                        delay(TransitionConfig.curveStyle.speedMs*1L)
+                                                        delay(TransitionConfig.curveStyle.speedMs*1L + 100)
                                                         onExit()
                                                     }
                                                 },
@@ -416,7 +434,7 @@ fun ControlCenterScreen(
                                             } else {
                                                 scope.launch {
                                                     navController.navigateForTransition(item.app,item.route)
-                                                    delay(TransitionConfig.curveStyle.speedMs*1L)
+                                                    delay(TransitionConfig.curveStyle.speedMs*1L+ 100)
                                                     onExit()
                                                 }
                                             }
@@ -428,7 +446,7 @@ fun ControlCenterScreen(
                     }
                 }
             }
-            InnerPaddingHeight(innerPadding,false)
+//            InnerPaddingHeight(innerPadding,false)
         }
     }
 }

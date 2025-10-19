@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.calendar.multi
 
-import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,9 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -47,10 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.database.entity.CustomCourseTableSummary
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
-import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
@@ -63,20 +56,16 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
+import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.component.status.LoadingUI
-import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
@@ -99,58 +88,15 @@ fun MultiScheduleSettings(
     select : Int,
     onSelectedChange : (Int) -> Unit,
     vm : NetWorkViewModel,
-    vmUI : UIViewModel,
-    hazeState: HazeState,
-//    currentWeek : Int,
-//    onWeekChange : (Int) -> Unit
 ) {
-    val activity = LocalActivity.current
     val context = LocalContext.current
 
-    var customList by remember { mutableStateOf<List<CustomCourseTableSummary>>(emptyList()) }
-    var showDialog by remember { mutableStateOf(false) }
-    var showDialog_Del by remember { mutableStateOf(false) }
     var showBottomSheet_add by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    //长按要删除的
-    var selectedDelTitle  by remember { mutableStateOf("课表") }
-    var selectedDelId  by remember { mutableIntStateOf(0) }
-    LaunchedEffect(showDialog,showDialog_Del) {
-        customList = DataBaseManager.customCourseTableDao.get()
-    }
-    if(showDialog) {
-        LittleDialog(
-            onDismissRequest = { showDialog = false },
-            onConfirmation = {
-                scope.launch {
-                    async { DataBaseManager.customCourseTableDao.del(selectedDelId) }.await()
-                    launch { showDialog = false }
-                }
-            },
-            dialogText = "要删除 $selectedDelTitle 吗",
-            hazeState = hazeState
-        )
-    }
-
-    if(showDialog_Del) {
-        LittleDialog(
-            onDismissRequest = { showDialog_Del = false },
-            onConfirmation = {
-                scope.launch {
-                    async { DataBaseManager.customCourseTableDao.clearAll() }.await()
-                    launch { showDialog_Del = false }
-                }
-            },
-            dialogText = "要删除自定义添加的全部课表吗",
-            hazeState = hazeState
-        )
-    }
-
     if (showBottomSheet_add) {
-        HazeBottomSheet (onDismissRequest = { showBottomSheet_add = false },
+        CustomBottomSheet (onDismissRequest = { showBottomSheet_add = false },
             showBottomSheet = showBottomSheet_add,
-            hazeState = hazeState,
             isFullExpand = false
         ) {
             Scaffold(
@@ -162,7 +108,7 @@ fun MultiScheduleSettings(
                 Column(modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()) {
-                    AddCourseUI(vm,hazeState)
+                    AddCourseUI(vm)
                 }
             }
         }
@@ -171,10 +117,9 @@ fun MultiScheduleSettings(
     var showBottomSheet_loading by remember { mutableStateOf(false) }
 
     if (showBottomSheet_loading) {
-        HazeBottomSheet (
+        CustomBottomSheet (
             onDismissRequest = { showBottomSheet_loading = false },
             showBottomSheet = showBottomSheet_loading,
-            hazeState = hazeState,
             autoShape = false
         ) {
             Column(
@@ -193,7 +138,6 @@ fun MultiScheduleSettings(
 
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
-    var week by remember { mutableFloatStateOf(1f) }
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
@@ -256,11 +200,7 @@ fun MultiScheduleSettings(
                     Box(modifier = Modifier.fillMaxSize()){
                         ColumnVertical(modifier = Modifier.align(Alignment.Center)) {
                             Text(
-                                "教务系统",
-                                fontWeight = if (select == CourseType.JXGLSTU2.code) FontWeight.Bold else FontWeight.Light
-                            )
-                            Text(
-                                "备用",
+                                "教务备用",
                                 fontWeight = if (select == CourseType.JXGLSTU2.code) FontWeight.Bold else FontWeight.Light
                             )
                         }
@@ -355,34 +295,6 @@ fun MultiScheduleSettings(
                     }
                 }
             }
-//            //文件导入课表
-//            items(customList.size) { index ->
-//                val item = customList[index]
-//                val indexOffset = index + 4
-//                OutlinedCard (
-//                    modifier = Modifier
-//                        .size(width = 100.dp, height = 70.dp)
-//                        .padding(horizontal = 4.dp)
-//                        .combinedClickable(
-//                            onClick = {
-//                                indexOffset
-//                            },
-//                            onLongClick = {
-//                                //s删除
-//                                selectedDelTitle = item.title
-//                                selectedDelId = item.id
-//                                showDialog = true
-//                            }
-//                        ),
-//                    colors = if(selected == indexOffset) selectedColor else normalColor
-//                ) {
-//                    Box(modifier = Modifier.fillMaxSize()) {
-//                        Text(
-//                            item.title, modifier = Modifier.align(Alignment.Center),
-//                            fontWeight = if(selected == indexOffset) FontWeight.Bold else FontWeight.Thin)
-//                    }
-//                }
-//            }
             //添加按钮
             item {
                 Card (
@@ -407,22 +319,20 @@ fun MultiScheduleSettings(
         // 第${formatDecimal(week.toDouble(),0)}周
         DividerTextExpandedWith(text = "操作") {
             CustomCard (color = cardNormalColor()){
-                CustomSlider(
-                    value = week,
-                    onValueChange = {
-                        week = it
-                    },
-                    onValueChangeFinished = {
-//                        onWeekChange(week)
-                        showToast("正在开发")
-                    },
-                    steps = 18,
-                    valueRange = 1f..20f,
-                    showProcessText = true,
-                    processText = "${formatDecimal(week.toDouble(),0)}周"
-                )
-                DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP))
-//                PaddingHorizontalDivider()
+//                CustomSlider(
+//                    value = week,
+//                    onValueChange = {
+//                        week = it
+//                    },
+//                    onValueChangeFinished = {
+//                        showToast("正在开发")
+//                    },
+//                    steps = 18,
+//                    valueRange = 1f..20f,
+//                    showProcessText = true,
+//                    processText = "${formatDecimal(week.toDouble(),0)}周"
+//                )
+//                DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP))
                 if(select == CourseType.JXGLSTU.code) {
                     TransplantListItem(
                         headlineContent = { Text(text = "导出教务课表") },
@@ -485,66 +395,6 @@ fun MultiScheduleSettings(
     }
 }
 
-
-//fun Add(title : String) {
-//    val dbwritableDatabase =  dataBaseSchedule.writableDatabase
-//    dataBaseSchedule.writableDatabase
-//    val values1 = ContentValues().apply {
-//        put("title", title)
-//    }
-//    dbwritableDatabase.insert("Schedule", null, values1)
-//}
-
-//fun Remove(id : Int) {
-//    saveString("SCHEDULE" + getIndex(id),null)
-//    val dbwritableDatabase = dataBaseSchedule.writableDatabase
-//    // 执行删除操作
-//    dbwritableDatabase.delete("Schedule", "id = ?", arrayOf(id.toString()))
-//}
-
-//fun getNum() : Int {
-//    return try {
-//        val db =  dataBaseSchedule.readableDatabase
-//        val cursor = db.rawQuery("SELECT COUNT(*) FROM Schedule", null)
-//        cursor.moveToFirst()
-//        val count = cursor.getInt(0)
-//        cursor.close()
-//        db.close()
-//        count
-//    } catch (_:Exception) {
-//        0
-//    }
-//}
-
-//fun getIndex(id : Int) : String? {
-//    return try {
-//        val db = dataBaseSchedule.readableDatabase
-//        val cursor = db.rawQuery("SELECT title FROM Schedule WHERE id = ?", arrayOf(id.toString()))
-//        var title: String? = null
-//        if (cursor.moveToFirst()) {
-//            title = cursor.getString(cursor.getColumnIndexOrThrow("title"))
-//        }
-//        cursor.close()
-//        db.close()
-//        return title
-//    } catch (_:Exception) {
-//        null
-//    }
-//}
-
-//fun isNextOpen() : Boolean {
-//    return try {
-//        getMy()!!.Next
-//    } catch (_:Exception) {
-//        false
-//    }
-//}
-
-//fun DeleteAll() {
-//    MyApplication.context.deleteDatabase("Schedule.db")
-//}
-
-
 fun saveTextToFile( fileName: String, content: String) {
     val file = File(MyApplication.context.getExternalFilesDir(null), fileName)
     file.writeText(content)
@@ -560,34 +410,6 @@ fun shareTextFile(fileName: String) {
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     MyApplication.context.startActivity(Intent.createChooser(shareIntent, "分享课表给他人").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-}
-
-@Composable
-fun InfoUI() {
-//    MyCustomCard {
-    CardListItem(
-            headlineContent = { Text(text = "数据说明") },
-            supportingContent = { Text(text = "每个课表都是独立的数据源,用户可以自行切换,也可自行导入好友分享或者自行从教务系统提取到的文件")}
-        )
-//    }
-//    MyCustomCard{
-    CardListItem(
-            headlineContent = { Text(text = "教务系统课表") },
-            supportingContent = { Text(text = "此课表随用户每次登录更新,须由用户手动刷新(刷新登陆状态 选项),此课表的数据也是最权威的,选退调课后刷新教务课表会立刻变化")}
-        )
-//    }
-//    MyCustomCard {
-    CardListItem(
-            headlineContent = { Text(text = "智慧社区课表") },
-            supportingContent = { Text(text = "此课表自动刷新,自动跟随学期,只要用户登陆过就会记住登陆状态,但是此课表的数据更新稍微有延迟,退选调课之后大概次日才会更新")}
-        )
-//    }
-//    MyCustomCard {
-    CardListItem(
-            headlineContent = { Text(text = "下学期课表") },
-            supportingContent = { Text(text = "在每学期末尾时教务系统会排出下学期的课表,但此时学期仍未变化,可以从这里预先查看下学期安排")}
-        )
-//    }
 }
 
 

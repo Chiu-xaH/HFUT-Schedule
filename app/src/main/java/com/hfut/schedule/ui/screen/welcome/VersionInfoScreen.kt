@@ -54,8 +54,8 @@ fun VersionInfoScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
 
     var showBottomSheetUpdate by remember { mutableStateOf(false) }
 

@@ -92,8 +92,8 @@ fun ProgramSearchScreen(
     ifSaved: Boolean,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     var campus by remember { mutableStateOf( getCampusRegion() ) }
     var input by remember { mutableStateOf("") }
     val backdrop = rememberLayerBackdrop()

@@ -3,6 +3,11 @@ package com.hfut.schedule.ui.screen.fix.about
 
 import android.graphics.Bitmap
 import android.graphics.Color
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -32,6 +37,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
@@ -71,10 +77,13 @@ import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
 import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.text.BottomTip
 import dev.chrisbanes.haze.HazeState
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Hashtable
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -204,16 +213,26 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 }
             }
         }
-
+        val scope = rememberCoroutineScope()
         val video by produceState<String?>(initialValue = null) {
-            value = checkOrDownloadVideo(context,"example_about.mp4","https://chiu-xah.github.io/videos/example_about.mp4")
+            scope.launch {
+                delay(AppAnimationManager.ANIMATION_SPEED*1L)
+                value = checkOrDownloadVideo(context,"example_about.mp4","https://chiu-xah.github.io/videos/example_about.mp4")
+            }
         }
-        video?.let {
-            SimpleVideo(
-                filePath = it,
-                aspectRatio = 16/9f,
-            )
+        AnimatedVisibility(
+            visible = video != null,
+            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+            exit = scaleOut(targetScale = 1.5f) + fadeOut()
+        ) {
+            video?.let {
+                SimpleVideo(
+                    filePath = it,
+                    aspectRatio = 16/9f,
+                )
+            }
         }
+
         DividerTextExpandedWith("关于") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(

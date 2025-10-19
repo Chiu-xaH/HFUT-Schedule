@@ -47,6 +47,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.divider.DashedDivider
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
@@ -391,6 +393,9 @@ fun DetailItems(
 
                     }
                     val teacherNum = lessons.teacherAssignmentList?.size ?: 0
+                    if(teacherNum > 1) {
+                        PaddingHorizontalDivider(isDashed = true)
+                    }
                     for (i in 0 until teacherNum) {
                         val teacherList = lessons.teacherAssignmentList?.get(i)
                         Row(modifier = Modifier.clickable {
@@ -425,7 +430,15 @@ fun DetailItems(
                                 },
                                 overlineContent = {
                                     if (teacherList != null) {
-                                        Text(text =  if(teacherList.age  != null)  "年龄 " + teacherList.age else "年龄未知")
+                                        Text(text =
+                                            teacherList.age?.let { age ->
+                                                if(age < 100) {
+                                                    "年龄 $age"
+                                                } else {
+                                                    "年龄未知"
+                                                }
+                                            } ?: "年龄未知"
+                                        )
                                     }
                                 },
                                 leadingContent = {
@@ -438,6 +451,9 @@ fun DetailItems(
                                     .weight(.5f),
                             )
                         }
+                    }
+                    if(teacherNum > 1) {
+                        PaddingHorizontalDivider(isDashed = true)
                     }
                     Row {
                         var department = lessons.openDepartment.nameZh

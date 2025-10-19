@@ -73,7 +73,7 @@ fun Support(innerPadding : PaddingValues) {
         SupportItemBean("运动模糊","Android 12+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             true,true,true,true,true,true,true,true
         )),
-        SupportItemBean("液态玻璃","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
+        SupportItemBean("着色器","Android 13+","${MyApplication.GITHUB_REPO_URL}/blob/main/docs/CONTRAST.md#%e8%bf%9b%e5%ba%a6%e5%ae%9e%e6%97%b6%e9%80%9a%e7%9f%a5", listOf(
             false,true,true,true,true,true,true,true
         ))
     )

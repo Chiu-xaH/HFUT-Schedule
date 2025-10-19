@@ -155,8 +155,13 @@ fun HazeBottomBarDynamic(
     list : List<NavigationBarItemDataDynamic>,
     navController : NavController,
     enabled : Boolean = true,
+    color : Color? = MaterialTheme.colorScheme.surface,
 ) {
-    Column(modifier = Modifier.bottomBarBlur(hazeState)) {
+    Column(modifier = Modifier.let {
+        color?.let { c ->
+            it.bottomBarBlur(hazeState,c)
+        } ?: it
+    }) {
         NavigationBarSpacer()
         NavigationBar(containerColor = Color.Transparent) {
             BottomBarContentDynamic(list,navController,enabled)

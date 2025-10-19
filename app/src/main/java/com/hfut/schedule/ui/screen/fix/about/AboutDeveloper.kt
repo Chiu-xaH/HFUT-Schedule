@@ -72,11 +72,12 @@ private val openSourceProjects = listOf(
     OpenSource("EdDSA Java" ,"供和风天气Api加密","${MyApplication.GITHUB_URL}str4d/ed25519-java"),
     OpenSource("Konfetti" ,"礼花动画","${MyApplication.GITHUB_URL}DanielMartinus/Konfetti"),
     OpenSource("Tesseract4Android" ,"Tesseract4(供图片验证码识别)","${MyApplication.GITHUB_URL}adaptech-cz/Tesseract4Android"),
-    OpenSource("Bsdiff-Lib" , "增量更新","${MyApplication.GITHUB_URL}Chiu-xaH/Bsdiff-Lib"),
+    OpenSource("Bsdiff-Lib" , "增量更新","${MyApplication.GITHUB_URL}Chiu-xaH/Bsdiff-Android-Library"),
     OpenSource("MaterialKolor" , "取色","${MyApplication.GITHUB_URL}jordond/MaterialKolor"),
     OpenSource("Reorderable" , "列表拖拽","${MyApplication.GITHUB_URL}Calvin-LL/Reorderable"),
     OpenSource("Transition" , "转场动画","${MyApplication.GITHUB_URL}Chiu-xaH/Navigation-Transition-Share"),
     OpenSource("AndroidLiquidGlass" , "液态玻璃","${MyApplication.GITHUB_URL}Kyant0/AndroidLiquidGlass"),
+    OpenSource("Mirror-Android" , "镜面效果","${MyApplication.GITHUB_URL}Chiu-xaH/Mirror-Android"),
 )
 
 private data class OpenSource(val name : String,val description: String,val url : String?)

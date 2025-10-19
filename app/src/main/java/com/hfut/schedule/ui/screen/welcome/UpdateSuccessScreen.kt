@@ -89,8 +89,8 @@ fun UpdateSuccessScreen(
 ) {
     val context = LocalContext.current
     val route = remember { AppNavRoute.UpdateSuccess.route }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val oldVersion = prefs.getString("versionName","上版本")
     val scope = rememberCoroutineScope()
 

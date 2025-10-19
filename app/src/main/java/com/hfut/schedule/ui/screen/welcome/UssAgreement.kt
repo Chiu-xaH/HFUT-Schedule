@@ -77,8 +77,8 @@ val arguments = listOf(
 fun UseAgreementScreen(
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val activity = LocalActivity.current
     val context = LocalContext.current
     val scope = rememberCoroutineScope()

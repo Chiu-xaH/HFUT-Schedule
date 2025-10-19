@@ -34,6 +34,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -93,7 +94,6 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
@@ -141,6 +141,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Tota
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.AppAnimationManager
@@ -149,8 +150,11 @@ import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.util.rememberShaderState
+import com.xah.mirror.util.shaderSource
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -180,8 +184,8 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     var isEnabled by rememberSaveable { mutableStateOf(!isLogin) }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
 
     val update by produceState<GiteeReleaseResponse?>(initialValue = null) {
         value = getUpdates(vm)
@@ -221,10 +225,9 @@ fun MainScreen(
     val alpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
 
     if (showBottomSheet_multi) {
-        HazeBottomSheet(
+        CustomBottomSheet (
             showBottomSheet = showBottomSheet_multi,
             onDismissRequest = { showBottomSheet_multi = false },
-            hazeState = hazeState,
             autoShape = false
         ) {
             Column {
@@ -233,8 +236,6 @@ fun MainScreen(
                         swapUI = newSelected
                     },
                     vm,
-                    vmUI,
-                    hazeState,
                 )
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -396,12 +397,14 @@ fun MainScreen(
             }
         }
     }
+    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+    val useCustomBackground = customBackground != ""
     val context = LocalContext.current
     var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
     CustomTransitionScaffold(
         navHostController = navHostTopController,
         route = AppNavRoute.Home.route,
-        roundShape = MaterialTheme.shapes.extraLarge,
+        roundShape = RoundedCornerShape(0.dp),
         modifier = Modifier.let {
             if (targetPage != COURSES) {
                 it.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -419,8 +422,6 @@ fun MainScreen(
                 FloatingActionButton(
                     modifier = Modifier
                         .containerShare(
-//                                sharedTransitionScope,
-//                                animatedContentScope,
                             addRoute,
                             FloatingActionButtonDefaults.shape
                         ),
@@ -441,7 +442,18 @@ fun MainScreen(
             }
         },
         topBar = {
-            Column(modifier = Modifier.topBarBlur(hazeState)) {
+            Column(
+                modifier = Modifier.let {
+                    if(targetPage == COURSES && useCustomBackground) {
+                       it
+                    } else {
+                        it.topBarBlur(
+                            hazeState,
+                            backgroundColor = if(targetPage == SETTINGS) MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.surface
+                        )
+                    }
+                }
+            ) {
                 if (targetPage != COURSES) {
                     MediumTopAppBar(
                         colors = topBarTransplantColor(),
@@ -504,7 +516,7 @@ fun MainScreen(
                                 else -> {}
                             }
                         },
-                        scrollBehavior = scrollBehavior
+                        scrollBehavior = scrollBehavior,
                     )
                     when (targetPage) {
                         FOCUS -> CustomTabRow(pagerState, titles)
@@ -532,14 +544,17 @@ fun MainScreen(
                             if (isFriend) {
                                 ApiForTimeTable(swapUI.toString(), hazeState)
                             } else {
-                                CourseTotalForApi(
-                                    vm = vm,
-                                    isIconOrText = true,
-                                    next = swapUI == CourseType.NEXT.code,
-                                    onNextChange = {},
-                                    hazeState = hazeState,
-                                    ifSaved = ifSaved
-                                )
+                                val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
+                                IconButton(onClick = {
+                                    navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
+                                }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.category),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.iconElementShare(route)
+                                    )
+                                }
                             }
 
                             IconButton(onClick = {
@@ -628,7 +643,7 @@ fun MainScreen(
                     }
                 )
             )
-            HazeBottomBarDynamic(hazeState,items,navController,isEnabled)
+            HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == COURSES && useCustomBackground)  null else MaterialTheme.colorScheme.surface)
         },
     ) { innerPadding ->
         val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)
@@ -641,13 +656,9 @@ fun MainScreen(
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
             composable(COURSES.name) {
-                val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-                val useCustomBackground = customBackground != ""
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
-                    val backGroundHaze =
-                        rememberHazeState(blurEnabled = blur >= HazeBlurLevel.FULL.code)
-//                    val backGroundSource = rememberShaderState()
+                    val backGroundSource = rememberShaderState()
                     if (useCustomBackground) {
                         GlideImage(
                             model = customBackground,
@@ -655,8 +666,7 @@ fun MainScreen(
                             contentScale = ContentScale.Crop,
                             alpha = alpha,
                             modifier = Modifier
-//                                .blurSource(backGroundSource, blur = 20.dp)
-                                .hazeSource(backGroundHaze)
+                                .shaderSource(backGroundSource)
                                 .fillMaxSize()
                         )
                     }
@@ -689,7 +699,7 @@ fun MainScreen(
                                     hazeState,
                                     navHostTopController,
                                     innerPadding,
-                                    backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null
                                 )
                                 // 社区
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(
@@ -700,7 +710,7 @@ fun MainScreen(
                                     today = today,
                                     vm = vm,
                                     hazeState = hazeState,
-                                    backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null
                                 )
                                 // 教务
                                 CourseType.JXGLSTU.code -> JxglstuCourseTableUI(
@@ -714,7 +724,7 @@ fun MainScreen(
                                     today,
                                     hazeState,
                                     navHostTopController,
-                                    if (useCustomBackground) backGroundHaze else null,
+                                    if (useCustomBackground) backGroundSource else null,
                                     isEnabled
                                 ) { isEnabled = it }
                                 // 教务2
@@ -727,7 +737,7 @@ fun MainScreen(
                                     TotalCourseDataSource.MINE,
                                     onDateChange = { new -> today = new },
                                     today = today,
-                                    backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null
                                 )
                                 // 指尖工大
                                 CourseType.ZHI_JIAN.code -> ZhiJianCourseTableUI(
@@ -738,7 +748,7 @@ fun MainScreen(
                                     zhiJianStudentId,
                                     today = today,
                                     onDateChange = { new -> today = new },
-                                    backGroundHaze = if (useCustomBackground) backGroundHaze else null,
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     hazeState,
                                 )
                                 // 自定义导入课表 数据库id+3=swapUI
@@ -754,7 +764,7 @@ fun MainScreen(
                                 today = today,
                                 vm,
                                 hazeState,
-                                backGroundHaze = if (useCustomBackground) backGroundHaze else null
+                                backGroundHaze = if (useCustomBackground) backGroundSource else null
                             )
                     }
                 }
@@ -894,8 +904,8 @@ fun SearchEditScreen(
         ),
         label = "rotation"
     )
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     var showDialog by remember { mutableStateOf(false) }
     if(showDialog) {
         LittleDialog(

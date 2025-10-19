@@ -112,6 +112,7 @@ import com.hfut.schedule.ui.screen.home.updateCourses
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigateForTransition
@@ -141,8 +142,8 @@ fun SelectCourseScreen(
     navController : NavHostController,
 ) {
     val context = LocalContext.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.SelectCourse.route }
     val scope = rememberCoroutineScope()
     val cookie by produceState(initialValue = "") {
@@ -251,12 +252,11 @@ fun SelectCourseDetailScreen(
     title : String,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.SelectCourseDetail.withArgs(courseId,title) }
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    val backDrop = rememberLayerBackdrop()
     var input by rememberSaveable { mutableStateOf("") }
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie()
@@ -270,7 +270,6 @@ fun SelectCourseDetailScreen(
     CustomTransitionScaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
         navHostController = navController,
         topBar = {
             Column(
@@ -289,19 +288,22 @@ fun SelectCourseDetailScreen(
                     },
                     actions = {
                         Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                            FilledTonalIconButton(
+                            LiquidButton(
                                 onClick = {
                                     refreshCount++
                                     showToast("已刷新人数")
                                 },
+                                isCircle = true,
+                                backdrop = backDrop
                             ) {
                                 Icon(painterResource(R.drawable.rotate_right), null)
                             }
-                            FilledTonalButton(
+                            LiquidButton(
                                 onClick = {
                                     navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
                                 },
-                                modifier = Modifier.containerShare( AppNavRoute.DropCourse.route)
+                                modifier = Modifier.containerShare( AppNavRoute.DropCourse.route),
+                                backdrop = backDrop
                             ) {
                                 Text(text = "退课")
                             }
@@ -315,7 +317,9 @@ fun SelectCourseDetailScreen(
                     TextField(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(horizontal = APP_HORIZONTAL_DP),
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                        ,
                         value = input,
                         onValueChange = {
                             input = it
@@ -341,6 +345,7 @@ fun SelectCourseDetailScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
+                .backDropSource(backDrop)
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
@@ -366,8 +371,8 @@ fun DropCourseScreen(
     title : String,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.DropCourse.route }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

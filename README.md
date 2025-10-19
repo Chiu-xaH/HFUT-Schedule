@@ -72,9 +72,11 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) 液态玻璃
 
-[Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Lib) 增量更新(自己)
+[Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Android-Library) 增量更新(自己)
 
 [Navigation-Transition-Share](https://github.com/Chiu-xaH/Compose-Transition-Sample) 转场动画(自己)
+
+[Mirror-Android](https://github.com/Chiu-xaH/Mirror-Android) 镜面效果(自己)
 
 ### 开源项目
 [holiday-cn](https://github.com/NateScarlet/holiday-cn) 节假日数据源

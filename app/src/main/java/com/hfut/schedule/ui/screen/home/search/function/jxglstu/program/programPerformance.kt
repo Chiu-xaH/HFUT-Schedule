@@ -90,8 +90,8 @@ fun ProgramCompetitionScreen(
     ifSaved: Boolean,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -308,8 +308,8 @@ fun ProgramCompetitionDetailScreen(
     moduleIndex : Int,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     var input by remember { mutableStateOf("") }
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

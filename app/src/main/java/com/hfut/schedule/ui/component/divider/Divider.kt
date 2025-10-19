@@ -2,6 +2,11 @@ package com.hfut.schedule.ui.component.divider
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ScrollState
@@ -21,20 +26,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.AppAnimationManager
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import kotlin.math.PI
+import kotlin.math.sin
 
 @Composable
 fun PaddingHorizontalDivider(
     startPadding : Boolean = true,
     endPadding : Boolean = true,
     isDashed : Boolean = false,
-    color : Color = if(isDashed) MaterialTheme.colorScheme.outline.copy(.5f) else DividerDefaults.color.copy(.5f),
+    color : Color = if(isDashed) MaterialTheme.colorScheme.outline.copy(.5f) else defaultDividerColor(),
 ) = if(isDashed) {
     Box(
         modifier = Modifier.padding(
@@ -88,9 +98,9 @@ fun DashedDivider(
 
 
 @Composable
-private fun dividerColor(isAtStart : Boolean): Color {
+private fun dividerColor(isAtStart : Boolean,color : Color = defaultDividerColor()): Color {
     val color by animateColorAsState(
-        targetValue = if(isAtStart) Color.Transparent else DividerDefaults.color.copy(.5f),
+        targetValue = if(isAtStart) Color.Transparent else color,
         animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
         label = "",
     )
@@ -102,9 +112,10 @@ fun ScrollHorizontalTopDivider(
     state: LazyListState,
     startPadding : Boolean = true,
     endPadding : Boolean = true,
+    color : Color = defaultDividerColor()
 ) {
     val isAtStart by remember { derivedStateOf { state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0 } }
-    PaddingHorizontalDivider(color = dividerColor(isAtStart),startPadding = startPadding, endPadding = endPadding)
+    PaddingHorizontalDivider(color = dividerColor(isAtStart,color),startPadding = startPadding, endPadding = endPadding)
 }
 
 @Composable
@@ -112,6 +123,7 @@ fun ScrollHorizontalBottomDivider(
     state: LazyListState,
     startPadding : Boolean = true,
     endPadding : Boolean = true,
+    color : Color = defaultDividerColor()
 ) {
     val isAtEnd by remember {
         derivedStateOf {
@@ -129,7 +141,7 @@ fun ScrollHorizontalBottomDivider(
             }
         }
     }
-    PaddingHorizontalDivider(color = dividerColor(isAtEnd), startPadding = startPadding, endPadding = endPadding)
+    PaddingHorizontalDivider(color = dividerColor(isAtEnd,color), startPadding = startPadding, endPadding = endPadding)
 }
 
 @Composable
@@ -137,9 +149,10 @@ fun ScrollHorizontalTopDivider(
     state: ScrollState,
     startPadding : Boolean = true,
     endPadding : Boolean = true,
+    color : Color = defaultDividerColor()
 ) {
     val isAtStart by remember { derivedStateOf { state.value == 0 } }
-    PaddingHorizontalDivider(color = dividerColor(isAtStart), startPadding = startPadding, endPadding = endPadding)
+    PaddingHorizontalDivider(color = dividerColor(isAtStart,color), startPadding = startPadding, endPadding = endPadding)
 }
 
 @Composable
@@ -147,9 +160,10 @@ fun ScrollHorizontalBottomDivider(
     state: ScrollState,
     startPadding : Boolean = true,
     endPadding : Boolean = true,
+    color : Color = defaultDividerColor()
 ) {
     val isAtEnd by remember { derivedStateOf { state.value == state.maxValue } }
-    PaddingHorizontalDivider(color = dividerColor(isAtEnd), startPadding = startPadding, endPadding = endPadding)
+    PaddingHorizontalDivider(color = dividerColor(isAtEnd,color), startPadding = startPadding, endPadding = endPadding)
 }
 
 
@@ -158,17 +172,21 @@ fun ScrollHorizontalTopDivider(
     state: LazyGridState,
     startPadding : Boolean = true,
     endPadding : Boolean = true,
+    color : Color = defaultDividerColor()
 ) {
     val isAtStart by remember { derivedStateOf { state.firstVisibleItemIndex == 0 && state.firstVisibleItemScrollOffset == 0 } }
-    PaddingHorizontalDivider(color = dividerColor(isAtStart),startPadding = startPadding, endPadding = endPadding)
+    PaddingHorizontalDivider(color = dividerColor(isAtStart,color),startPadding = startPadding, endPadding = endPadding)
 }
 
+@Composable
+fun defaultDividerColor() = DividerDefaults.color.copy(.5f)
 
 @Composable
 fun ScrollHorizontalBottomDivider(
     state: LazyGridState,
     startPadding : Boolean = true,
     endPadding : Boolean = true,
+    color : Color = defaultDividerColor()
 ) {
     val isAtEnd by remember {
         derivedStateOf {
@@ -180,5 +198,6 @@ fun ScrollHorizontalBottomDivider(
                     (last.offset.y + last.size.height) <= info.viewportEndOffset
         }
     }
-    PaddingHorizontalDivider(color = dividerColor(isAtEnd), startPadding = startPadding, endPadding = endPadding)
+    PaddingHorizontalDivider(color = dividerColor(isAtEnd,color), startPadding = startPadding, endPadding = endPadding)
 }
+

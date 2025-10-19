@@ -63,13 +63,13 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
-fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,1.5f,color,.5f, level = HazeBlurLevel.FULL, limit = CAN_HAZE_BLUR_BAR)
+fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,1.5f,color,.5f, limit = CAN_HAZE_BLUR_BAR)
 @Composable
 fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     return if(
         !GlobalUIStateHolder.isTransiting &&
-        blur >= HazeBlurLevel.MID.code
+        blur
         && CAN_HAZE_BLUR_BAR
         && !HAZE_BLUR_FOR_S
         ) {
@@ -110,8 +110,8 @@ fun Modifier.topBarBlur(
     backgroundColor : Color = MaterialTheme.colorScheme.surface,
     color : Color = backgroundColor
 ) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    return if(!GlobalUIStateHolder.isTransiting && blur >= HazeBlurLevel.MID.code && CAN_HAZE_BLUR_BAR) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    return if(!GlobalUIStateHolder.isTransiting && blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -176,8 +176,8 @@ fun Modifier.normalTopBarBlur(
     backgroundColor : Color = MaterialTheme.colorScheme.surface,
     color : Color = Color.Transparent
 ) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    return if(blur >= HazeBlurLevel.MID.code && CAN_HAZE_BLUR_BAR) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    return if(blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -198,11 +198,10 @@ private fun Modifier.blurStyle(
     radius : Float = 1f,
     tint : Color = MaterialTheme.colorScheme.surface,
     alpha : Float = .3f,
-    level : HazeBlurLevel,
     limit : Boolean = true
 ) : Modifier {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    return if(blur >= level.code && limit) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    return if(blur&& limit) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint.copy(alpha)),
             backgroundColor = tint,
@@ -215,10 +214,10 @@ private fun Modifier.blurStyle(
 }
 
 @Composable
-fun Modifier.dialogBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState,2.5f, MaterialTheme.colorScheme.surface,0f, level = HazeBlurLevel.MID)
+fun Modifier.dialogBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState,2.5f, MaterialTheme.colorScheme.surface,0f,)
 
 @Composable
-fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState, 3f, MaterialTheme.colorScheme.surface,.3f, level = HazeBlurLevel.MID)
+fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeState, 3f, MaterialTheme.colorScheme.surface,.3f,)
 
 
 @OptIn(ExperimentalMaterial3Api::class)

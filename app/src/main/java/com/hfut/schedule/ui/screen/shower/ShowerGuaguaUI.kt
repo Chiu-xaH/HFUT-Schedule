@@ -78,8 +78,8 @@ private val items = listOf(
 fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostController: NavHostController) {
     val navController = rememberNavController()
     val context = LocalActivity.current
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         ShowerBarItems.HOME.name -> ShowerBarItems.HOME

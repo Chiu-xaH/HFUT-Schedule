@@ -97,8 +97,8 @@ fun PersonScreen(
     vm: NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = HazeBlurLevel.MID.code)
-    val hazeState = rememberHazeState(blurEnabled = blur >= HazeBlurLevel.MID.code)
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Person.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var loading by remember { mutableStateOf(false) }
