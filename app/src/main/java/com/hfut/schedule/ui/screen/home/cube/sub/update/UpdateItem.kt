@@ -52,17 +52,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 教务成绩的缓存机制")
-            UpdateItems("新增 添加聚焦日程时支持显示第几周")
-            UpdateItems("新增 课程表支持显示自行添加的聚焦日程","注意：网课类型课程不会显示")
-            UpdateItems("新增 支持调整课程表方格的透明度，并引入自研的镜面材质(Android13+)","位于 选项-界面与显示")
-            UpdateItems("修复 智慧社区课表当本节任课老师多于一个教师时显示重复的Bug")
-            UpdateItems("优化 课程表界面捏合手势的灵敏度")
-            UpdateItems("优化 在一些复杂颜色场景下顶栏底栏和启动台顶栏的混色")
-            UpdateItems("优化 转场动画背景缩放使用镜面填充")
-            UpdateItems("优化 部分逻辑的运行性能")
-            UpdateItems("优化 部分界面的显示")
-            UpdateItems("移除 层级模糊的等级设定")
+            UpdateItems("修复 课程表在5x布局下聚焦日程布局有误的Bug")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 课程表方格支持教师的显示")
