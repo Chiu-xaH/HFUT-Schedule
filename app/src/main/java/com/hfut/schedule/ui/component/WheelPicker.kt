@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.component
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -13,23 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.util.measureDpSize
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlin.math.roundToInt
 
 //滚轮 组件

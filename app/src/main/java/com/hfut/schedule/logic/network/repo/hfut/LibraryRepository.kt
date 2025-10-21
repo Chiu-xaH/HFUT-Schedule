@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestNone
 import com.hfut.schedule.logic.network.util.launchRequestSimple
-import com.hfut.schedule.logic.util.getPageSize
+import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import retrofit2.awaitResponse

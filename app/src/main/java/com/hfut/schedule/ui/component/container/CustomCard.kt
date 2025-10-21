@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.coverBlur
-import com.hfut.schedule.ui.util.AppAnimationManager.ANIMATION_SPEED
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.ANIMATION_SPEED
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.shimmerEffect
 

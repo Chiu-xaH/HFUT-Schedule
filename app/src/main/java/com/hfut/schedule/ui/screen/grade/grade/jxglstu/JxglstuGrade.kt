@@ -83,7 +83,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData

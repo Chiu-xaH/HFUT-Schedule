@@ -47,9 +47,9 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTable
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.iconElementShare

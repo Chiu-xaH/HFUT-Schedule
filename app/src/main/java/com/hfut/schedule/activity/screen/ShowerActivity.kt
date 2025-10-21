@@ -8,7 +8,7 @@ import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.ui.screen.shower.ShowerGuaGua
 import com.hfut.schedule.ui.screen.shower.login.ShowerLogin
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 
 class ShowerActivity : BaseActivity() {

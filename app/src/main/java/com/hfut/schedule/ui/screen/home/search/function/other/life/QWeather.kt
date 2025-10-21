@@ -53,7 +53,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.MID
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAppNavController

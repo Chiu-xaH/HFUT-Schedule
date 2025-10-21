@@ -11,7 +11,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 // 容器共享切换
 @OptIn(ExperimentalSharedTransitionApi::class)

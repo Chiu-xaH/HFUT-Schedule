@@ -1,6 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.logic.util.getPageSize
+import com.hfut.schedule.logic.util.network.getPageSize
 import retrofit2.Call
 import okhttp3.ResponseBody
 import retrofit2.http.GET

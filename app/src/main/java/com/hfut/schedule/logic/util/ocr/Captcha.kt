@@ -1,9 +1,7 @@
-package com.hfut.schedule.logic.util
+package com.hfut.schedule.logic.util.ocr
 
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Paint
 import androidx.core.graphics.createBitmap
 import androidx.core.graphics.get
 import androidx.core.graphics.set

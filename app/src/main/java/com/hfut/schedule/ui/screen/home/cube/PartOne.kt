@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate

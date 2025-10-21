@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen

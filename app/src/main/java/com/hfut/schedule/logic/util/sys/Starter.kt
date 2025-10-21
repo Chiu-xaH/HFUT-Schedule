@@ -26,8 +26,8 @@ import com.hfut.schedule.logic.util.network.WebVpnUtil
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 
 object Starter {
     enum class AppPackages(

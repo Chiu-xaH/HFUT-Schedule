@@ -70,7 +70,7 @@ import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie

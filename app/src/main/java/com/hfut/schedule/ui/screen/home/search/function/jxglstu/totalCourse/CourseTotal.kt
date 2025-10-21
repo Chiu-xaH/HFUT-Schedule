@@ -33,7 +33,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.xah.transition.component.iconElementShare

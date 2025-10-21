@@ -36,7 +36,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope

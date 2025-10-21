@@ -75,7 +75,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.uicommon.component.text.ScrollText

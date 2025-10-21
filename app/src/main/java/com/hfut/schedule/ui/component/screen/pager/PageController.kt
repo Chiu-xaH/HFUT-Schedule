@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.toBottomExit
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.toBottomExit
 import kotlinx.coroutines.launch
 
 @Composable

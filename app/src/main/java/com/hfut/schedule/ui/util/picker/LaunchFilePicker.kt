@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.picker
 
 import android.content.Context
 import android.net.Uri

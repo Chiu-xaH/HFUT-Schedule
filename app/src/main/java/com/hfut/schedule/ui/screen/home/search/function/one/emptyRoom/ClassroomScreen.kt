@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare

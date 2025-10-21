@@ -99,7 +99,7 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.containerBlur
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.util.ShaderState

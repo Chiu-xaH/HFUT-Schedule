@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.layout
 
 import android.app.Activity
 import android.graphics.Bitmap

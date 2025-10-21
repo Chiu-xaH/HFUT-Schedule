@@ -29,7 +29,6 @@ import com.hfut.schedule.logic.model.zhijian.ZhiJianCoursesResponse
 import com.hfut.schedule.logic.network.api.AdmissionService
 import com.hfut.schedule.logic.network.api.DormitoryScore
 import com.hfut.schedule.logic.network.api.HaiLeWashingService
-import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.api.OfficeHallService
 import com.hfut.schedule.logic.network.api.PeService
 import com.hfut.schedule.logic.network.api.StuService
@@ -40,19 +39,15 @@ import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.AdmissionServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.HaiLeWashingServiceCreator
-import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.OfficeHallServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.PeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZhiJianServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.util.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import kotlinx.coroutines.flow.first

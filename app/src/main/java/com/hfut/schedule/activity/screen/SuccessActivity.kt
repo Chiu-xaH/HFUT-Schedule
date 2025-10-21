@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.screen.MainHost
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

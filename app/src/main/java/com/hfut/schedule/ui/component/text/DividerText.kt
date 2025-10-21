@@ -32,7 +32,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 val DIVIDER_TEXT_VERTICAL_PADDING = 9.dp

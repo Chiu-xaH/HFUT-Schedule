@@ -15,12 +15,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.recognizeCaptcha
-import com.hfut.schedule.logic.util.other.loadImage
-import com.hfut.schedule.logic.util.preprocessCaptcha
+import com.hfut.schedule.logic.util.other.rememberImageState
+import com.hfut.schedule.logic.util.ocr.preprocessCaptcha
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
@@ -57,7 +59,7 @@ fun UrlImage(
                }
             }
     ) {
-        val imageState = loadImage(url, cookie = cookie)
+        val imageState = rememberImageState(url, cookie = cookie)
         imageState.value?.let { bitmap ->
             Image(
                 bitmap = bitmap.asImageBitmap(),
@@ -65,7 +67,13 @@ fun UrlImage(
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-        }
+        } ?:
+        Image(
+            painterResource(R.drawable.ic_launcher_background),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
 
@@ -77,7 +85,7 @@ fun UrlImageNoCrop(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val imageState = loadImage(url, cookie = cookie)
+    val imageState = rememberImageState(url, cookie = cookie)
     imageState.value?.let { bitmap ->
         Image(
             bitmap = bitmap.asImageBitmap(),
@@ -89,7 +97,17 @@ fun UrlImageNoCrop(
             },
             contentScale = ContentScale.Fit
         )
-    }
+    } ?:
+    Image(
+        painterResource(R.drawable.ic_launcher_background),
+        contentDescription = null,
+        modifier = modifier.clickable {
+            scope.launch {
+                Starter.startWebView(context,url,"图片",cookie)
+            }
+        },
+        contentScale = ContentScale.Fit
+    )
 }
 
 @Composable
@@ -106,7 +124,7 @@ fun UrlImageWithAutoOcr(
             .clip(RoundedCornerShape(roundSize))
             .size(width = width,height= height)
     ) {
-        val imageState = loadImage(url, cookie = cookie)
+        val imageState = rememberImageState(url, cookie = cookie)
         imageState.value?.let { bitmap ->
             val preProgressed = preprocessCaptcha(bitmap)
             Image(
@@ -117,10 +135,15 @@ fun UrlImageWithAutoOcr(
             )
             val switch_open = prefs.getBoolean("SWITCH_ML",false)
             if(switch_open) {
-                    val result = recognizeCaptcha(preProgressed)
-                    onResult(result)
+                onResult(recognizeCaptcha(preProgressed))
             }
-        }
+        } ?:
+        Image(
+            painterResource(R.drawable.ic_launcher_background),
+            contentDescription = null,
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
+        )
     }
 }
 

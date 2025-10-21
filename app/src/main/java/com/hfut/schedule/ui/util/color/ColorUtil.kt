@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.color
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -20,6 +20,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.materialkolor.ktx.themeColors
+import kotlin.math.abs
 
 fun parseColor(input: String): Long? {
     return try {
@@ -71,7 +72,7 @@ suspend fun extractColor(context: Context,@DrawableRes resId: Int): Long? {
         val bitmap = resToBitmap(context,resId)
             ?: return@withContext null
         val palette = Palette.from(bitmap).generate()
-        palette.getDominantColor(android.graphics.Color.GRAY).toLong()
+        palette.getDominantColor(AColor.GRAY).toLong()
     }
 }
 
@@ -105,7 +106,7 @@ fun longToHue(colorLong: Long): Float {
 fun Color.deepen(factor: Float = 0.1f, isInDark: Boolean): Color {
     if (factor == 0f) return this
 
-    val f = kotlin.math.abs(factor)
+    val f = abs(factor)
 
     return if (!isInDark) {
         // 亮色模式

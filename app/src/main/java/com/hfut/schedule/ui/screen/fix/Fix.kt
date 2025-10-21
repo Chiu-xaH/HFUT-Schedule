@@ -31,8 +31,8 @@ import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.color.topBarTransplantColor

@@ -34,8 +34,7 @@ import com.hfut.schedule.logic.network.util.launchRequestNone
 import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.util.getPageSize
+import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -49,7 +48,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeM
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

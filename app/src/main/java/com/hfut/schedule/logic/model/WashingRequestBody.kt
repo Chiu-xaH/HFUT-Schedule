@@ -2,8 +2,7 @@ package com.hfut.schedule.logic.model
 
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.util.getPageSize
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.network.getPageSize
 
 data class HaiLeNearPositionRequestBody(
     val lng : Double,// 经度

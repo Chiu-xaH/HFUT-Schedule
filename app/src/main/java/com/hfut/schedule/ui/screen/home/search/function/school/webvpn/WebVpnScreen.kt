@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.layerBackdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop

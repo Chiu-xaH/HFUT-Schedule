@@ -92,10 +92,10 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigateForBottomBar
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare

@@ -18,8 +18,8 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.kv.IDataStore
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.materialkolor.PaletteStyle
 import com.xah.transition.style.TransitionLevel
 import kotlinx.coroutines.Dispatchers
@@ -152,7 +152,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveControlCenter(value: Boolean) = saveValue(CONTROL_CENTER,value)
     suspend fun saveWxAuth(value: String) = saveValue(WX_AUTH, "Bearer $value")
     suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
-    suspend fun saveCustomBackground(value: Uri?) = saveValue(CUSTOM_BACKGROUND, value?.toString() ?: EMPTY_STRING)
+    suspend fun saveCustomBackground(value: String?) = saveValue(CUSTOM_BACKGROUND, value ?: EMPTY_STRING)
     suspend fun saveCustomBackgroundAlpha(value: Float) = saveValue(CUSTOM_BACKGROUND_ALPHA,value)
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
@@ -201,8 +201,7 @@ object DataStoreManager : IDataStore {
     val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)
     val customColor = getFlow(CUSTOM_COLOR,-1)
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
-    val customBackgroundAlpha = getFlow(CUSTOM_BACKGROUND_ALPHA,1f)
-    val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,1f)
+    val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,0.75f)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
     val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemseterParser.getSemseter() }
     val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)

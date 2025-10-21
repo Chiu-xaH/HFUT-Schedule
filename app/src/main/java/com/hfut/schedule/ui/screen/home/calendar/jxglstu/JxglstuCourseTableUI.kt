@@ -120,8 +120,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJ
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.shader.GlassStyle

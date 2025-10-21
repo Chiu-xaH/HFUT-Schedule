@@ -17,7 +17,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel

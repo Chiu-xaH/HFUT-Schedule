@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 

@@ -70,7 +70,7 @@ import com.hfut.schedule.ui.component.status.StatusUI2
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers

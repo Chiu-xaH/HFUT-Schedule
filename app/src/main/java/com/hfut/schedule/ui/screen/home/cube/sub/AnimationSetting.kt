@@ -74,7 +74,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.titleElementShare
 import com.xah.transition.state.TransitionConfig

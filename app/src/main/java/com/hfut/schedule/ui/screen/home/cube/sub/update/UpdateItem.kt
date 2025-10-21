@@ -53,6 +53,9 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("修复 课程表在5x布局下聚焦日程布局有误的Bug")
+            UpdateItems("修复 课程表背景若干天后消失的Bug")
+            UpdateItems("移除 课程表背景混色调整","为了保证可读性，所有文字和图标将被包裹，不需要调整背景混色了")
+            UpdateItems("优化 潜在的内存泄漏")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 课程表方格支持教师的显示")

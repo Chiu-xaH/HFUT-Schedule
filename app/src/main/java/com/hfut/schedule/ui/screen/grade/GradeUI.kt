@@ -65,9 +65,9 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource

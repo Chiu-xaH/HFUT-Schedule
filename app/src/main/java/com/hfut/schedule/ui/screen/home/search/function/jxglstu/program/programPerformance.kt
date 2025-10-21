@@ -67,7 +67,7 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope

@@ -58,7 +58,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare

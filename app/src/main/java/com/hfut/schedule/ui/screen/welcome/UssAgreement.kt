@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigateAndClear
+import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope

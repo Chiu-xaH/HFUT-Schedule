@@ -97,7 +97,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare

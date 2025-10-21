@@ -1,9 +1,10 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.navigation
 
 import androidx.navigation.NavController
 import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.transition.util.navigateAndSaveForTransition
 import com.xah.transition.util.navigateWithSave
 

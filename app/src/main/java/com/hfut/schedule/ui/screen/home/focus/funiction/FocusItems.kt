@@ -82,7 +82,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare

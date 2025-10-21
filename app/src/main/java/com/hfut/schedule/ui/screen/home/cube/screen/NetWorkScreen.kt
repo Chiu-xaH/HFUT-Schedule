@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.text.BottomTip

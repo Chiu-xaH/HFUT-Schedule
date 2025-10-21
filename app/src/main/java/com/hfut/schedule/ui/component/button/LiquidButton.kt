@@ -44,7 +44,7 @@ import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur

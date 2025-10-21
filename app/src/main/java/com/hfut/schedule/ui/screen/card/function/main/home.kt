@@ -87,8 +87,8 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.WashingUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.coverBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import dev.chrisbanes.haze.HazeState

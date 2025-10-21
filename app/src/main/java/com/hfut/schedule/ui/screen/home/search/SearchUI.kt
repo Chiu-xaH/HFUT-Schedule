@@ -93,7 +93,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Tea
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.WebVpn
 import com.hfut.schedule.ui.screen.home.search.function.school.work.Work
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare

@@ -77,7 +77,7 @@ import com.hfut.schedule.ui.screen.home.cube.GithubDownloadUI
 import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.screen.home.focus.funiction.openOperation
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.text.BottomTip

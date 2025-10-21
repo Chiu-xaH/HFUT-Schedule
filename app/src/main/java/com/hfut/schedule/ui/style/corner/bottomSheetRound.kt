@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

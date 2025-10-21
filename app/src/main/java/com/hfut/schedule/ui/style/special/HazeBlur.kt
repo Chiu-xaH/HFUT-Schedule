@@ -37,8 +37,8 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.LayerBackdrop
 import com.kyant.backdrop.backdrops.layerBackdrop

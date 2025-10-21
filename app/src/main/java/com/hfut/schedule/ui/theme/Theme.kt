@@ -29,7 +29,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ColorMode
 import com.xah.uicommon.style.color.TransparentSystemBars
-import com.hfut.schedule.ui.util.deepen
+import com.hfut.schedule.ui.util.color.deepen
 import com.materialkolor.rememberDynamicColorScheme
 
 private val list = DataStoreManager.ColorStyle.entries

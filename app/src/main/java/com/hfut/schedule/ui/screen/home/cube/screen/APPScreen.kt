@@ -71,8 +71,8 @@ import kotlinx.coroutines.launch
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.SaveComposeAsImage
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.layout.SaveComposeAsImage
 import com.xah.uicommon.component.slider.CustomSlider
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay

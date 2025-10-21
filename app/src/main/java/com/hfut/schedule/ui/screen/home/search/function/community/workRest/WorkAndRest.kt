@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getF
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText

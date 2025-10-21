@@ -23,7 +23,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
-import com.hfut.schedule.ui.util.GlobalUIStateHolder.postedUse
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.postedUse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

@@ -60,8 +60,8 @@ import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.coverBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch

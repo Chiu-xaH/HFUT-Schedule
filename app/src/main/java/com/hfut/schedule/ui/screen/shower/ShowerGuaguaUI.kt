@@ -49,11 +49,11 @@ import com.xah.uicommon.style.padding.NavigationBarSpacer
 import com.hfut.schedule.ui.screen.shower.bill.GuaguaBills
 import com.hfut.schedule.ui.screen.shower.cube.GuaGuaSettings
 import com.hfut.schedule.ui.screen.shower.home.GuaguaStart
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 //import com.hfut.schedule.ui.utils.NavigateAndAnimationManager.turnTo
 
-import com.hfut.schedule.ui.util.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor

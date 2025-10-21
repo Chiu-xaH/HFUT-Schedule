@@ -62,7 +62,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope

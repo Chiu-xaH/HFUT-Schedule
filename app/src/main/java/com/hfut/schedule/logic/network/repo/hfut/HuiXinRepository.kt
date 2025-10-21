@@ -17,7 +17,7 @@ import com.hfut.schedule.logic.model.huixin.PayStep3Response
 import com.hfut.schedule.logic.network.api.HuiXinService
 import com.hfut.schedule.logic.network.util.launchRequestSimple
 import com.hfut.schedule.logic.network.servicecreator.HuiXinServiceCreator
-import com.hfut.schedule.logic.util.getPageSize
+import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState

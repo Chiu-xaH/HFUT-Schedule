@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.state
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

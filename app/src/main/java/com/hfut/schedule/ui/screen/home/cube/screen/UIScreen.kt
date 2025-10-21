@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
+import android.content.Context
+import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -84,7 +86,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -92,7 +93,6 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -100,18 +100,17 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.extractColor
-import com.hfut.schedule.ui.util.hsvToLong
-import com.hfut.schedule.ui.util.longToHexColor
-import com.hfut.schedule.ui.util.longToHue
-import com.hfut.schedule.ui.util.parseColor
+import com.hfut.schedule.ui.util.color.extractColor
+import com.hfut.schedule.ui.util.color.hsvToLong
+import com.hfut.schedule.ui.util.color.longToHexColor
+import com.hfut.schedule.ui.util.color.longToHue
+import com.hfut.schedule.ui.util.color.parseColor
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
-import com.xah.transition.util.TransitionInitializer
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
@@ -119,21 +118,10 @@ import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-
-object AppTransitionInitializer : TransitionInitializer {
-    override suspend fun init() {
-        withContext(Dispatchers.IO) {
-            launch {
-                val transition = DataStoreManager.transitionLevel.first()
-                TransitionConfig.transitionBackgroundStyle.level = TransitionLevel.entries.find { it.code == transition } ?: TransitionLevel.NONE
-            }
-        }
-    }
-}
-
+import java.io.File
+import java.io.FileOutputStream
 
 
 val styleList = DataStoreManager.ColorStyle.entries
@@ -158,6 +146,40 @@ fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
     )
 }
 
+private suspend fun persistImage(context: Context, uri: Uri): String? {
+    return withContext(Dispatchers.IO) {
+        try {
+            val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext null
+            val file = File(context.filesDir, "custom_background_${System.currentTimeMillis()}.jpg")
+            inputStream.use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            file.absolutePath
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+}
+
+private suspend fun deleteCustomBackground(context: Context) = withContext(Dispatchers.IO) {
+    try {
+        // 清空 DataStore 记录
+        DataStoreManager.saveCustomBackground(null)
+        // 批量删除所有以 custom_background_ 开头的文件
+        context.filesDir.listFiles()?.forEach { file ->
+            if (file.name.startsWith("custom_background_")) {
+                file.delete()
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -181,8 +203,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-        val customBackgroundAlpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
-        val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+        val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 0.75f)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
@@ -190,21 +211,25 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
+        val context = LocalContext.current
 
         val pickMultipleMedia = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) { uri ->
             uri?.let { imageUri ->
                 scope.launch {
-                    DataStoreManager.saveCustomBackground(imageUri)
-                    showToast("已设置背景")
-                    extractColor(imageUri)?.let {
-                        DataStoreManager.saveCustomColor(it)
+                    deleteCustomBackground(context)
+                    val savedPath = persistImage(context, imageUri)
+                    savedPath?.let {
+                        DataStoreManager.saveCustomBackground(it)
+                        showToast("已设置背景")
+                        extractColor(imageUri)?.let { color ->
+                            DataStoreManager.saveCustomColor(color)
+                        }
                     }
                 }
             }
         }
-        val context = LocalContext.current
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) { uri ->
@@ -614,11 +639,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
                 )
-//                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-//                RowHorizontal {
-//                    TransitionExample()
-//                }
-//                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "底栏转场动画") },
@@ -639,7 +659,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text("背景图片")
                     },
                     supportingContent = {
-                        Text("选择图片，作为课程表的背景，同时也会改变色彩")
+                        Text("选择图片作为课程表的背景，同时也会改变色彩")
                     },
                     modifier = Modifier.clickable {
                         pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -649,46 +669,26 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     },
                     trailingContent = {
                         if(useCustomBackground) {
-                            FilledTonalButton(
+                            FilledTonalIconButton(
                                 onClick = {
                                     scope.launch {
-                                        DataStoreManager.saveCustomBackground(null)
+                                        deleteCustomBackground(context)
                                     }
                                 }
                             ) {
-                                Text("清除")
+                                Icon(painterResource(R.drawable.delete),null)
                             }
                         }
                     }
                 )
                 if(useCustomBackground) {
-                    var backgroundAlpha by remember { mutableFloatStateOf(customBackgroundAlpha) }
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("背景混色 ${formatDecimal((customBackgroundAlpha*100).toDouble(),0)}%")
-                        },
-                        supportingContent = {
-                            Text("值越小，图片越淡")
-                        }
-                    )
-                    CustomSlider(
-                        value = backgroundAlpha,
-                        onValueChange = {
-                            backgroundAlpha = it
-                        },
-                        onValueChangeFinished =  {
-                            scope.launch { DataStoreManager.saveCustomBackgroundAlpha(backgroundAlpha) }
-                        },
-                        valueRange = 0f..1f,
-                        showProcessText = true
-                    )
                     var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
                     TransplantListItem(
                         headlineContent = {
-                            Text("方格混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
+                            Text("前景混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
                         },
                         supportingContent = {
-                            Text("值越小，方格越透明")
+                            Text("值越小，方格和按钮等内容越透明")
                         }
                     )
                     CustomSlider(
@@ -728,10 +728,33 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Icon(painterResource(if(!enableHideEmptyCalendarSquare) R.drawable.visibility else R.drawable.visibility_off),null)
                     },
                 )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("使用新UI(Beta)")
+                    },
+                    supportingContent = {
+                        Text("重绘课程表，以时间线为设计，纵向分布")
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            showToast("正在开发")
+                        }
+                    },
+                    trailingContent = {
+                        Switch(checked = false, enabled = false, onCheckedChange = {
+                            scope.launch {
+                                showToast("正在开发")
+                            }
+                        })
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.fiber_new),null)
+                    },
+                )
             }
         }
         DividerTextExpandedWith("标签") {
-//            val useCustomBackground = customBackground != ""
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {

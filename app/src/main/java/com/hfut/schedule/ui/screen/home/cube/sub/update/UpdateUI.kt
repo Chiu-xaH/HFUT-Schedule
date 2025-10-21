@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.xah.uicommon.component.status.LoadingUI
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate

@@ -93,8 +93,8 @@ import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare

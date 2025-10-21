@@ -67,12 +67,12 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Tota
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope

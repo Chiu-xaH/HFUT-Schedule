@@ -28,7 +28,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.special.bottomBarBlur
-import com.hfut.schedule.ui.util.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.xah.transition.util.isCurrentRouteWithoutArgs
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import dev.chrisbanes.haze.HazeState

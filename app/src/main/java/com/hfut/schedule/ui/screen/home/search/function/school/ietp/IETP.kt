@@ -23,7 +23,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
    
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope

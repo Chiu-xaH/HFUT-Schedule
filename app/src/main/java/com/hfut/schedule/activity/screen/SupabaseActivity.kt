@@ -17,7 +17,7 @@ import com.hfut.schedule.ui.component.status.StatusUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.SupabaseHome
 import com.hfut.schedule.ui.screen.supabase.login.SupabaseLoginScreen
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 class SupabaseActivity : BaseActivity() {
     @Composable

@@ -98,10 +98,8 @@ import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
@@ -110,7 +108,6 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
@@ -119,7 +116,6 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.StatusUI
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
@@ -129,13 +125,10 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEven
 import com.hfut.schedule.ui.screen.supabase.home.getInsertedEventId
 import com.hfut.schedule.ui.screen.supabase.login.loginSupabaseWithCheck
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.special.bottomBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.measureDpSize
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP

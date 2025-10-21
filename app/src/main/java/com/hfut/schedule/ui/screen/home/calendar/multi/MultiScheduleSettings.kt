@@ -63,7 +63,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP

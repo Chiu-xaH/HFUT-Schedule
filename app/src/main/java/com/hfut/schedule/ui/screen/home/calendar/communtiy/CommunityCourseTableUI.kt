@@ -89,7 +89,7 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.containerBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState

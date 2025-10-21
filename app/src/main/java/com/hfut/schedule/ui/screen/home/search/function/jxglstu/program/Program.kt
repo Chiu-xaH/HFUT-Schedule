@@ -47,8 +47,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare

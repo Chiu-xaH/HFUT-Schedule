@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.GlobalUIStateHolder.isSupabaseRegistering
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState

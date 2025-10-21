@@ -104,7 +104,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI

@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -64,10 +63,10 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.measureDpSize
-import com.hfut.schedule.ui.util.navigateAndClear
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.layout.measureDpSize
+import com.hfut.schedule.ui.util.navigation.navigateAndClear
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP

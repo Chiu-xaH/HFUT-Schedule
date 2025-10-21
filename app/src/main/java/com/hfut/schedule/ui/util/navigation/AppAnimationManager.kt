@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition

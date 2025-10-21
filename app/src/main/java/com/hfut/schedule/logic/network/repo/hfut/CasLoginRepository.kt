@@ -13,7 +13,7 @@ import com.hfut.schedule.logic.network.servicecreator.login.GetAESKeyServiceCrea
 import com.hfut.schedule.logic.network.servicecreator.login.GetCookieServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import okhttp3.Headers
 import org.jsoup.Jsoup
 import retrofit2.awaitResponse

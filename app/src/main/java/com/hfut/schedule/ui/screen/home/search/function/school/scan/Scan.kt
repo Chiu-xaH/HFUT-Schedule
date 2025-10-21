@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.iconElementShare
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,

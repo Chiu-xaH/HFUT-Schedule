@@ -56,7 +56,7 @@ import com.xah.uicommon.component.status.LoadingUI
  
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.util.GlobalUIStateHolder.isSupabaseRegistering
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.isSupabaseRegistering
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import kotlinx.coroutines.launch
 

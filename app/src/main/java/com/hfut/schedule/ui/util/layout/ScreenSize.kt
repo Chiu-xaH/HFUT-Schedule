@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.util
+package com.hfut.schedule.ui.util.layout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity

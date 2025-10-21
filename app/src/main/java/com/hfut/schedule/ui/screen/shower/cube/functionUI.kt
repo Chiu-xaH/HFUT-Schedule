@@ -40,7 +40,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.util.navigateForBottomBar
+import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 
 @OptIn(ExperimentalMaterial3Api::class)

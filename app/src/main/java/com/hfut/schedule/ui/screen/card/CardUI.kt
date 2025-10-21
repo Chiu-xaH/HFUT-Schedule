@@ -51,8 +51,8 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop

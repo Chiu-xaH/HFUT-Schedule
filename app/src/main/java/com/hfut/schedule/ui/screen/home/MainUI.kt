@@ -144,10 +144,10 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.AppAnimationManager
-import com.hfut.schedule.ui.util.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.util.rememberShaderState
@@ -164,6 +164,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
+import java.io.File
 
 private val titles = listOf("重要安排","其他事项")
 
@@ -222,7 +223,6 @@ fun MainScreen(
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-    val alpha by DataStoreManager.customBackgroundAlpha.collectAsState(initial = 1f)
 
     if (showBottomSheet_multi) {
         CustomBottomSheet (
@@ -661,10 +661,9 @@ fun MainScreen(
                     val backGroundSource = rememberShaderState()
                     if (useCustomBackground) {
                         GlideImage(
-                            model = customBackground,
+                            model = File(customBackground),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
-                            alpha = alpha,
                             modifier = Modifier
                                 .shaderSource(backGroundSource)
                                 .fillMaxSize()
