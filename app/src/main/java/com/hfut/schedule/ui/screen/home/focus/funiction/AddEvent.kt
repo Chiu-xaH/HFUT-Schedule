@@ -253,12 +253,20 @@ fun AddEventScreen(
                     TopBarNavigationIcon(navController,route, AppNavRoute.AddEvent.icon)
                 },
                 actions = {
-                    if(!isSupabase)
+                    FilledTonalIconButton(
+                        onClick = {
+                            showToast("正在开发")
+                        }
+                    ) {
+                        Icon(painterResource(R.drawable.wand_stars),null)
+                    }
+                    if(!isSupabase) {
                         FilledTonalButton(onClick = {
                             Starter.startSupabase(context)
                         }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                             Text("云端共建")
                         }
+                    }
                 }
             )
         },

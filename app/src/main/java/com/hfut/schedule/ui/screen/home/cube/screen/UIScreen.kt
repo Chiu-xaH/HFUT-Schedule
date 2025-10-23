@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -86,6 +87,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -184,8 +186,8 @@ private suspend fun deleteCustomBackground(context: Context) = withContext(Dispa
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
 fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValues, isControlCenter : Boolean ) {
-    val backgroundColor = if(isControlCenter) {
-        cardNormalColor()
+    val backgroundColor =  if(isControlCenter) {
+        MaterialTheme.colorScheme.surface.copy(0.85f)
     } else {
         MaterialTheme.colorScheme.surface
     }
@@ -206,9 +208,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 0.75f)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
-        val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
+        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -319,10 +321,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     value = checkOrDownloadVideo(context,"example_color.mp4","https://chiu-xah.github.io/videos/example_color.mp4")
                 }
             }
-            AnimatedVisibility(
-                visible = video != null,
-                enter = scaleIn(initialScale = 1.5f) + fadeIn(),
-                exit = scaleOut(targetScale = 1.5f) + fadeOut()
+            CustomCard (
+                modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+                color = MaterialTheme.colorScheme.surface,
             ) {
                 video?.let {
                     SimpleVideo(
@@ -597,26 +598,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("动效") {
-            if(!isControlCenter) {
-                val video by produceState<String?>(initialValue = null) {
-                    scope.launch {
-                        delay(AppAnimationManager.ANIMATION_SPEED*1L)
-                        value = checkOrDownloadVideo(context,"example_transition.mp4","https://chiu-xah.github.io/videos/example_transition.mp4")
-                    }
-                }
-                AnimatedVisibility(
-                    visible = video != null,
-                    enter = scaleIn(initialScale = 1.5f) + fadeIn(),
-                    exit = scaleOut(targetScale = 1.5f) + fadeOut()
-                ) {
-                    video?.let {
-                        SimpleVideo(
-                            filePath = it,
-                            aspectRatio = 16/9f,
-                        )
-                    }
-                }
-            }
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
@@ -683,9 +664,13 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
                 if(useCustomBackground) {
                     var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
+                    PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
                             Text("前景混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.visibility),null)
                         },
                         supportingContent = {
                             Text("值越小，方格和按钮等内容越透明")
@@ -707,51 +692,51 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text("隐藏空方格")
+                        Text("方格高度 ${formatDecimal(calendarSquareHeight.toDouble(),0)}")
                     },
                     supportingContent = {
-                        Text("隐藏无内容的方格")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            DataStoreManager.saveHideEmptyCalendarSquare(!enableHideEmptyCalendarSquare)
-                        }
-                    },
-                    trailingContent = {
-                        Switch(checked = enableHideEmptyCalendarSquare, onCheckedChange = {
-                            scope.launch {
-                                DataStoreManager.saveHideEmptyCalendarSquare(!enableHideEmptyCalendarSquare)
-                            }
-                        })
+                        Text("自定义方格的高度(默认值为125)，方格中部文字溢出的部分将用省略号代替")
                     },
                     leadingContent = {
-                        Icon(painterResource(if(!enableHideEmptyCalendarSquare) R.drawable.visibility else R.drawable.visibility_off),null)
+                        Icon(painterResource(R.drawable.height),null)
                     },
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = {
-                        Text("使用新UI(Beta)")
+
+                CustomSlider(
+                    value = calendarSquareHeight,
+                    onValueChange = {
+                        scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
                     },
-                    supportingContent = {
-                        Text("重绘课程表，以时间线为设计，纵向分布")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            showToast("正在开发")
-                        }
-                    },
-                    trailingContent = {
-                        Switch(checked = false, enabled = false, onCheckedChange = {
-                            scope.launch {
-                                showToast("正在开发")
-                            }
-                        })
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.fiber_new),null)
-                    },
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                    valueRange = 50f..200f,
+                    showProcessText = true,
+                    steps = 149,
+                    processText = formatDecimal(calendarSquareHeight.toDouble(),0)
                 )
+//                PaddingHorizontalDivider()
+//                TransplantListItem(
+//                    headlineContent = {
+//                        Text("使用新UI(Beta)")
+//                    },
+//                    supportingContent = {
+//                        Text("重绘课程表，以时间线为设计，纵向分布")
+//                    },
+//                    modifier = Modifier.clickable {
+//                        scope.launch {
+//                            showToast("正在开发")
+//                        }
+//                    },
+//                    trailingContent = {
+//                        Switch(checked = false, enabled = false, onCheckedChange = {
+//                            scope.launch {
+//                                showToast("正在开发")
+//                            }
+//                        })
+//                    },
+//                    leadingContent = {
+//                        Icon(painterResource(R.drawable.fiber_new),null)
+//                    },
+//                )
             }
         }
         DividerTextExpandedWith("标签") {

@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.util.storage.kv
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.ui.unit.Dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -101,7 +102,6 @@ object DataStoreManager : IDataStore {
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
     private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
     private val COURSE_TABLE_TIME = stringPreferencesKey("course_table_time")
-    private val COURSE_TABLE_TIME_NEXT = stringPreferencesKey("course_table_time_next")
     private val WEBVPN_COOKIE = stringPreferencesKey("webvpn_cookie")
     private val AUTO_TERM = booleanPreferencesKey("auto_term")
     private val AUTO_TERM_VALUE = intPreferencesKey("auto_term_value")
@@ -113,12 +113,10 @@ object DataStoreManager : IDataStore {
     private val CUSTOM_COLOR = longPreferencesKey("custom_color")
     private val CUSTOM_BACKGROUND = stringPreferencesKey("custom_background")
     private val CUSTOM_COLOR_STYLE = intPreferencesKey("custom_color_style_2")
-    private val CUSTOM_BACKGROUND_ALPHA = floatPreferencesKey("custom_background_alpha")
     private val CUSTOM_CALENDAR_SQUARE_ALPHA = floatPreferencesKey("custom_calendar_square_alpha")
     private val SEARCH_SORT = stringPreferencesKey("search_sort")
     private val MAX_FLOW = intPreferencesKey("max_flow")
     private val SHOW_BOTTOM_BAR_LABEL = booleanPreferencesKey("show_bottom_bar_label")
-    private val HIDE_EMPTY_CALENDAR_SQUARE = booleanPreferencesKey("hide_empry_calendar_square")
     private val HEFEI_ROOM_NUMBER = stringPreferencesKey("hefei_room_number")
     private val HEFEI_BUILDING_NUMBER = stringPreferencesKey("hefei_building_number")
     private val HEFEI_ELECTRIC = stringPreferencesKey("hefei_electric")
@@ -126,6 +124,7 @@ object DataStoreManager : IDataStore {
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
+    private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -153,12 +152,10 @@ object DataStoreManager : IDataStore {
     suspend fun saveWxAuth(value: String) = saveValue(WX_AUTH, "Bearer $value")
     suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
     suspend fun saveCustomBackground(value: String?) = saveValue(CUSTOM_BACKGROUND, value ?: EMPTY_STRING)
-    suspend fun saveCustomBackgroundAlpha(value: Float) = saveValue(CUSTOM_BACKGROUND_ALPHA,value)
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
     suspend fun saveShowBottomBarLabel(value: Boolean) = saveValue(SHOW_BOTTOM_BAR_LABEL,value)
-    suspend fun saveHideEmptyCalendarSquare(value: Boolean) = saveValue(HIDE_EMPTY_CALENDAR_SQUARE,value)
     private suspend fun saveHefeiBuildingNumber(value: String) = saveValue(HEFEI_BUILDING_NUMBER, value)
     private suspend fun saveHefeiElectricName(value: String) = saveValue(HEFEI_ELECTRIC, value)
     private suspend fun saveHefeiRoomNumber(value: String) = saveValue(HEFEI_ROOM_NUMBER, value)
@@ -166,6 +163,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
+    suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -189,8 +187,6 @@ object DataStoreManager : IDataStore {
     val customCardPassword = getFlow(CARD_PASSWORD,EMPTY_STRING)
     val enableUseDefaultCardPassword = getFlow(USE_DEFAULT_CARD_PASSWORD,true)
     val defaultCalendarAccountId = getFlow(DEFAULT_CALENDAR_ACCOUNT,1)
-    val courseTableTimeValue = getFlow(COURSE_TABLE_TIME,EMPTY_STRING)
-    val courseTableTimeNextValue = getFlow(COURSE_TABLE_TIME_NEXT,EMPTY_STRING)
     val webVpnCookies = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val enableAutoTerm = getFlow(AUTO_TERM,true)
     val enablePredictive = getFlow(PREDICTIVE, AppVersion.CAN_PREDICTIVE)
@@ -208,9 +204,9 @@ object DataStoreManager : IDataStore {
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
-    val enableHideEmptyCalendarSquare = getFlow(HIDE_EMPTY_CALENDAR_SQUARE,false)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
+    val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)

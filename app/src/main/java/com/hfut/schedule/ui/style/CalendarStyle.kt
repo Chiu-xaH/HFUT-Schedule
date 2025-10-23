@@ -13,7 +13,6 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 data class CalendarStyle(val showAll: Boolean) {
     val everyPadding = if (showAll) 1.dp else 1.75.dp
     val textSize = if (showAll) 12.sp else 14.sp
-    val height = 125.dp
     val rowCount = if (showAll) 7 else 5
     val columnCount = 6
 

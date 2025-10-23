@@ -108,7 +108,6 @@ fun NextCourse(
 @Composable
 fun NextCourseScreen(
     vm: NetWorkViewModel,
-    vmUI: UIViewModel,
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
@@ -145,7 +144,9 @@ fun NextCourseScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize()
             ) {
-                JxglstuCourseTableUINext(showAll,vm,vmUI,hazeState,navController,innerPadding,null)
+                JxglstuCourseTableUINext(showAll,vm,hazeState,navController,innerPadding,null) {
+                    showAll = it
+                }
             }
         }
 //    }

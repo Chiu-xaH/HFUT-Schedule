@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -134,10 +136,9 @@ fun APPScreen(
                 value = checkOrDownloadVideo(context,"example_gesture.mp4","https://chiu-xah.github.io/videos/example_gesture.mp4")
             }
         }
-        AnimatedVisibility(
-            visible = video != null,
-            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
-            exit = scaleOut(targetScale = 1.5f) + fadeOut()
+        CustomCard (
+            modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surface,
         ) {
             video?.let {
                 SimpleVideo(
@@ -146,6 +147,7 @@ fun APPScreen(
                 )
             }
         }
+
         DividerTextExpandedWith("交互") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
@@ -373,6 +375,18 @@ fun APPScreen(
                         contentDescription = "Localized description"
                     ) },
                     modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "大模型") },
+                    supportingContent = {
+                        Text(text = "用户提供ApiKey，通过与大模型对话，为App提供更多可能")
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.wand_stars),
+                        contentDescription = "Localized description"
+                    ) },
+                    modifier = Modifier.clickable { showToast("正在开发") }
                 )
             }
         }

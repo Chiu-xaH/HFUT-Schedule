@@ -56,9 +56,6 @@ import java.io.IOException
 fun SimpleVideo(
     filePath: String,
     modifier: Modifier = Modifier,
-    color: Color? = null,
-    shadow: Dp = 0.dp,
-    shape: Shape = MaterialTheme.shapes.medium,
     autoPlay: Boolean = true,
     mute: Boolean = true,
     loop: Boolean = true,
@@ -103,88 +100,83 @@ fun SimpleVideo(
     }
 
     val backdrop = rememberLayerBackdrop()
-    CustomCard(
-        color = color,
-        shadow = shadow,
-        shape = shape,
+    Box(
         modifier = modifier.clickable {
             showButton = !showButton
         }
     ) {
-        Box() {
-            AnimatedVisibility(
-                visible = showButton,
-                enter = scaleIn(initialScale = 1.5f) + fadeIn(),
-                exit = fadeOut(targetAlpha = 1.5f) + fadeOut(),
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .zIndex(2f)
-            ) {
-                LiquidButton(
-                    onClick = {
-                        if(isPlaying) {
-                            mediaPlayer.pause()
-                        } else {
-                            mediaPlayer.start()
-                            showButton = false
-                        }
-                        isPlaying = mediaPlayer.isPlaying
-                    },
-                    surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
-                    backdrop = backdrop,
-                    isCircle = true,
-                ) {
-                    Icon(painterResource(
-                        if(!isPlaying)
-                            R.drawable.play_arrow
-                        else
-                            R.drawable.pause
-                    ),null)
-                }
-            }
-            AndroidView(
-                factory = { ctx ->
-                    TextureView(ctx).apply {
-                        surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-                            override fun onSurfaceTextureAvailable(
-                                surfaceTexture: SurfaceTexture,
-                                width: Int,
-                                height: Int
-                            ) {
-                                mediaPlayer.setSurface(Surface(surfaceTexture))
-                            }
-
-                            override fun onSurfaceTextureSizeChanged(
-                                surface: SurfaceTexture,
-                                width: Int,
-                                height: Int
-                            ) = Unit
-
-                            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-                                mediaPlayer.setSurface(null)
-                                return true
-                            }
-
-                            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
-                        }
+        AnimatedVisibility(
+            visible = showButton,
+            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
+            exit = fadeOut(targetAlpha = 1.5f) + fadeOut(),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .zIndex(2f)
+        ) {
+            LiquidButton(
+                onClick = {
+                    if(isPlaying) {
+                        mediaPlayer.pause()
+                    } else {
+                        mediaPlayer.start()
+                        showButton = false
                     }
+                    isPlaying = mediaPlayer.isPlaying
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .let { m ->
-                        aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
-                    }
-                    .backDropSource(backdrop)
-                    // 深色模式压暗
-                    .mask(
-                        color = Color.Black,
-                        targetAlpha = 0.3f,
-                        show = isThemeDark()
-                    )
-                    .blur(blur)
-                    .scaleMirror(scale)
-            )
+                surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
+                backdrop = backdrop,
+                isCircle = true,
+            ) {
+                Icon(painterResource(
+                    if(!isPlaying)
+                        R.drawable.play_arrow
+                    else
+                        R.drawable.pause
+                ),null)
+            }
         }
+        AndroidView(
+            factory = { ctx ->
+                TextureView(ctx).apply {
+                    surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+                        override fun onSurfaceTextureAvailable(
+                            surfaceTexture: SurfaceTexture,
+                            width: Int,
+                            height: Int
+                        ) {
+                            mediaPlayer.setSurface(Surface(surfaceTexture))
+                        }
+
+                        override fun onSurfaceTextureSizeChanged(
+                            surface: SurfaceTexture,
+                            width: Int,
+                            height: Int
+                        ) = Unit
+
+                        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                            mediaPlayer.setSurface(null)
+                            return true
+                        }
+
+                        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) = Unit
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .let { m ->
+                    aspectRatio?.let { ratio -> m.aspectRatio(ratio) } ?: m
+                }
+                .backDropSource(backdrop)
+                // 深色模式压暗
+                .mask(
+                    color = Color.Black,
+                    targetAlpha = 0.3f,
+                    show = isThemeDark()
+                )
+                .blur(blur)
+                .scaleMirror(scale)
+        )
     }
 }
 

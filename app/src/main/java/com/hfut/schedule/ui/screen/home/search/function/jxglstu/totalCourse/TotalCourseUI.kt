@@ -257,7 +257,9 @@ fun DetailItems(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    JxglstuCourseTableSearch(showAll,vm,null,hazeState,innerPadding,listOf(lessons))
+                    JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,listOf(lessons)) {
+                        showAll = it
+                    }
                 }
             }
         }

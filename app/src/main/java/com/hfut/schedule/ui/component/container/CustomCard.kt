@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.component.container
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -89,6 +90,7 @@ fun CustomCard(
     color : Color? = null,
     shadow : Dp = 0.dp,
     shape: Shape = MaterialTheme.shapes.medium,
+    border : BorderStroke? = null,
     content: @Composable () -> Unit
 ) {
     val baseModifier = Modifier
@@ -96,6 +98,7 @@ fun CustomCard(
         .padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP)
 
     Card(
+        border = border,
         modifier = baseModifier.then(modifier),
         shape = shape,
         elevation =  CardDefaults. cardElevation(shadow),

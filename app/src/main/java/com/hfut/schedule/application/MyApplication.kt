@@ -16,6 +16,8 @@ class MyApplication : Application() {
         @SuppressLint("StaticFieldLeak")
         // 全局上下文
         lateinit var context: Context
+        // 方格默认高度
+        const val CALENDAR_SQUARE_HEIGHT = 125f
         // HAZE模糊半径
         const val BLUR_RADIUS = 20
         // 宣城校区免费流量额度 GiB

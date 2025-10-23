@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.calendar.zjgd
 
-import android.os.Handler
-import android.os.Looper
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -33,10 +31,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -62,6 +58,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -83,13 +80,10 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
@@ -98,10 +92,7 @@ import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.Api
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.special.containerBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
@@ -109,25 +100,21 @@ import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
-import java.nio.file.WatchEvent
 import java.time.LocalDate
-import kotlin.text.substringBefore
 
 @Composable
 fun ZhiJianCourseTableUI(
     showAll: Boolean,
     vm : NetWorkViewModel,
-    vmUI : UIViewModel,
     innerPadding: PaddingValues,
     studentId : String,
     today: LocalDate,
     onDateChange: (LocalDate) ->Unit,
     backGroundHaze : ShaderState?,
     hazeState: HazeState,
+    onSwapShowAll : (Boolean) -> Unit
 ) {
     val uiState by vm.zhiJianCourseResp.state.collectAsState()
-    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
-
     val table = remember { List(30) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val tableAll = remember { List(42) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val refreshNetwork = suspend m@ {
@@ -189,6 +176,7 @@ fun ZhiJianCourseTableUI(
         }
     }
 
+    var findNewCourse by remember { mutableStateOf(false) }
 
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
@@ -203,14 +191,14 @@ fun ZhiJianCourseTableUI(
             } else {
                 clearUnit(table)
             }
-            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
+            findNewCourse = false
 
             try {
                 // 组装
                 for (item in list) {
                     when(item.weekday) {
-                        6 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = true } }
-                        7 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = true } }
+                        6 -> findNewCourse = true
+                        7 -> findNewCourse = true
                     }
                     if(showAll) {
                         if (item.weekday == 1) {
@@ -434,10 +422,16 @@ fun ZhiJianCourseTableUI(
         LaunchedEffect(showAll) {
             refreshUI()
         }
+        LaunchedEffect(findNewCourse) {
+            if(findNewCourse && !showAll) {
+                onSwapShowAll(true)
+            }
+        }
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
         val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
+        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
 
         Box {
             LazyVerticalGrid(
@@ -454,17 +448,17 @@ fun ZhiJianCourseTableUI(
                 items(style.rowCount * style.columnCount) { cell ->
                     val itemList =
                         if (showAll) tableAll[cell].toMutableList() else table[cell].toMutableList()
-                    if (itemList.isEmpty() && enableHideEmptyCalendarSquare) {
+                    if (itemList.isEmpty() && backGroundHaze != null) {
                         // 隐藏
                         Box(modifier = Modifier
-                            .height(style.height)
+                            .height(calendarSquareHeight.dp)
                             .padding(style.everyPadding))
                     } else {
                         Card(
                             shape = style.containerCorner,
                             colors = CardDefaults.cardColors(containerColor = color),
                             modifier = Modifier
-                                .height(style.height)
+                                .height(calendarSquareHeight.dp)
                                 .padding(style.everyPadding)
                                 .let {
                                     if(backGroundHaze != null) {

@@ -1,15 +1,11 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson
 
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,14 +23,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +32,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -54,9 +45,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -64,34 +58,31 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.style.CalendarStyle
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.util.ShaderState
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
-import kotlin.collections.toMutableList
-import kotlin.text.split
 
 
 @Composable
@@ -173,13 +164,13 @@ private fun MultiCourseSheetUIForSearch(
 fun JxglstuCourseTableTwo(
     showAll: Boolean,
     vm: NetWorkViewModel,
-    vmUI: UIViewModel,
     hazeState: HazeState,
     innerPadding : PaddingValues,
     dataSource : TotalCourseDataSource,
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
-    backGroundHaze : ShaderState?
+    backGroundHaze : ShaderState?,
+    onSwapShowAll : (Boolean) -> Unit
 ) {
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
@@ -197,7 +188,7 @@ fun JxglstuCourseTableTwo(
         }
     }
 
-    JxglstuCourseTableSearch(showAll,vm,vmUI,hazeState,innerPadding,list,onDateChange,today,backGroundHaze)
+    JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,list,onDateChange,today,backGroundHaze,onSwapShowAll)
 }
 
 
@@ -207,16 +198,15 @@ fun JxglstuCourseTableTwo(
 fun JxglstuCourseTableSearch(
     showAll: Boolean,
     vm: NetWorkViewModel,
-    vmUI: UIViewModel? = null,
     hazeState: HazeState,
     innerPadding : PaddingValues,
     list : List<lessons>,
     onDateChange: ((LocalDate) ->Unit)? = null,
     today: LocalDate? = null,
-    backGroundHaze : ShaderState? = null
+    backGroundHaze : ShaderState? = null,
+    onSwapShowAll : (Boolean) -> Unit
 ) {
     var numItem by remember { mutableIntStateOf(0) }
-    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -283,7 +273,7 @@ fun JxglstuCourseTableSearch(
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-
+    var findNewCourse by remember { mutableStateOf(false) }
     fun refreshUI() {
         // 清空
         if(showAll) {
@@ -291,9 +281,7 @@ fun JxglstuCourseTableSearch(
         } else {
             clearUnit(table)
         }
-        vmUI?.let {
-            Handler(Looper.getMainLooper()).post { it.findNewCourse.value = false }
-        }
+        findNewCourse = false
 
         try {
             // 组装
@@ -314,11 +302,9 @@ fun JxglstuCourseTableSearch(
                     val weekRange = item.weekRange
                     if (currentWeek.toInt() in weekRange) {
 
-                        vmUI?.let {
-                            when(weekday) {
-                                6 -> { Handler(Looper.getMainLooper()).post { it.findNewCourse.value = text.isNotEmpty() } }
-                                7 -> { Handler(Looper.getMainLooper()).post { it.findNewCourse.value = text.isNotEmpty() } }
-                            }
+                        when(weekday) {
+                            6 -> findNewCourse = text.isNotEmpty()
+                            7 -> findNewCourse = text.isNotEmpty()
                         }
 
                         if(showAll) {
@@ -545,7 +531,49 @@ fun JxglstuCourseTableSearch(
     LaunchedEffect(showAll,currentWeek) {
         refreshUI()
     }
-    Box(modifier = Modifier.fillMaxHeight()) {
+    LaunchedEffect(findNewCourse) {
+        if(findNewCourse && !showAll) {
+            onSwapShowAll(true)
+        }
+    }
+    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+
+    var totalDragX by remember { mutableFloatStateOf(0f) }
+    val drag = remember { 5f }
+
+    fun nextWeek() {
+        if (currentWeek < 20) {
+            onDateChange?.let { today?.let { it1 -> it(it1.plusDays(7)) } }
+            currentWeek++
+        }
+    }
+    fun previousWeek() {
+        if (currentWeek > 1) {
+            onDateChange?.let { today?.let { it1 -> it(it1.minusDays(7)) } }
+            currentWeek--
+        }
+    }
+
+    Box(modifier = Modifier
+        .fillMaxHeight()
+        .pointerInput(today) {
+            detectHorizontalDragGestures(
+                onDragEnd = {
+                    // 手指松开后根据累积的水平拖动量决定
+                    if (totalDragX > drag) { // 阈值
+                        previousWeek()
+                    } else if (totalDragX < -drag) {
+                        nextWeek()
+                    }
+                    totalDragX = 0f // 重置
+                },
+                onHorizontalDrag = { change, dragAmount ->
+                    change.consume() // 防止滚动穿透
+                    totalDragX += dragAmount
+                }
+            )
+        }
+    ) {
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
@@ -559,8 +587,8 @@ fun JxglstuCourseTableSearch(
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
             items(style.rowCount*style.columnCount) { cell ->
                 val texts = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
-                    Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
+                if(texts.isEmpty() && backGroundHaze != null) {
+                    Box(modifier = Modifier.height(calendarSquareHeight.dp).padding(style.everyPadding))
                 } else {
                     Card(
                         shape = style.containerCorner,
@@ -568,7 +596,7 @@ fun JxglstuCourseTableSearch(
                         modifier = Modifier
                             .fillMaxWidth() // 填满列宽
                             // 高度由内容撑开
-                            .height(style.height)
+                            .height(calendarSquareHeight.dp)
                             .padding(style.everyPadding)
                             .let {
                                 if(backGroundHaze != null) {
@@ -665,73 +693,11 @@ fun JxglstuCourseTableSearch(
             }
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,false) }
         }
-        // 上一周
-        AnimatedVisibility(
-            visible = shouldShowAddButton,
-            enter = scaleIn(),
-            exit = scaleOut(),
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
-
-                .padding(
-                    horizontal = APP_HORIZONTAL_DP,
-                    vertical = APP_HORIZONTAL_DP
-                )
-        ) {
-            if (shouldShowAddButton) {
-                FloatingActionButton(
-                    onClick = {
-                        if (currentWeek > 1) {
-                            currentWeek-- - 1
-                            onDateChange?.let { today?.minusDays(7)?.let { p1 -> it(p1) } }
-                        }
-                    },
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-            }
-        }
         // 中间
         AnimatedVisibility(
             visible = shouldShowAddButton,
-            enter = scaleIn(),
-            exit = scaleOut(),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
-                .padding(
-                    horizontal = APP_HORIZONTAL_DP,
-                    vertical = APP_HORIZONTAL_DP
-                )
-        ) {
-            if (shouldShowAddButton) {
-                ExtendedFloatingActionButton(
-                    onClick = {
-                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                            currentWeek = 1
-                            onDateChange?.let { it(getJxglstuStartDate()) }
-                        } else {
-                            currentWeek = DateTimeManager.weeksBetweenJxglstu
-                            onDateChange?.let { it(LocalDate.now()) }
-                        }
-                    },
-                ) {
-                    AnimatedContent(
-                        targetState = currentWeek,
-                        transitionSpec = {
-                            scaleIn(animationSpec = tween(500)
-                            ) togetherWith(scaleOut(animationSpec = tween(500)))
-                        }, label = ""
-                    ){ n ->
-                        Text(text = "第 $n 周")
-                    }
-                }
-            }
-        }
-        // 下一周
-        AnimatedVisibility(
-            visible = shouldShowAddButton,
-            enter = scaleIn(),
-            exit = scaleOut(),
+            enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
+            exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
@@ -740,16 +706,22 @@ fun JxglstuCourseTableSearch(
                     vertical = APP_HORIZONTAL_DP
                 )
         ) {
-            if (shouldShowAddButton) {
-                FloatingActionButton(
-                    onClick = {
-                        if (currentWeek < 20) {
-                            currentWeek++ + 1
-                            onDateChange?.let { today?.plusDays(7)?.let { p1 -> it(p1) } }
-                        }
-                    },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
-            }
+            DraggableWeekButton(
+                dragThreshold = drag*2,
+                onClick = {
+                    if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                        currentWeek = 1
+                        onDateChange?.let { it(getJxglstuStartDate()) }
+                    } else {
+                        currentWeek = DateTimeManager.weeksBetweenJxglstu
+                        onDateChange?.let { it(LocalDate.now()) }
+                    }
+                },
+                currentWeek = currentWeek,
+                key = today,
+                onNext = { nextWeek() },
+                onPrevious = { previousWeek() }
+            )
         }
     }
 }

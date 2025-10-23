@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-10-19") },
+                overlineContent = { Text(text = "2025-10-23") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,10 +52,15 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 课程表在5x布局下聚焦日程布局有误的Bug")
+            UpdateItems("重构 课程表底部切换按钮","三个按钮合并为一个，既可以原方式点击两边箭头切换周数，点击中间回到本周，也可拖动按钮切换周数")
+            UpdateItems("新增 课程表支持页面左右滑动切换周数")
+            UpdateItems("新增 课程表方格高度自定义","位于 选项-界面与显示")
+            UpdateItems("新增 周末有活动时自动并强制展开课程表7x布局")
+            UpdateItems("修复 课程表在5x布局下周末的聚焦日程布局有误的Bug")
             UpdateItems("修复 课程表背景若干天后消失的Bug")
+            UpdateItems("移除 课程表隐藏方格的开关","现在，当插入背景时强制隐藏空方格，不插入背景时强制显示空方格")
             UpdateItems("移除 课程表背景混色调整","为了保证可读性，所有文字和图标将被包裹，不需要调整背景混色了")
-            UpdateItems("优化 潜在的内存泄漏")
+            UpdateItems("优化 潜在的图片内存泄漏")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 课程表方格支持教师的显示")

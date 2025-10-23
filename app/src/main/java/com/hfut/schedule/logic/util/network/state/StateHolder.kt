@@ -11,25 +11,31 @@ const val CONNECTION_ERROR_CODE = 1003
 const val UNKNOWN_ERROR_CODE = 1004
 const val OPERATION_FAST_ERROR_CODE = 1005
 
+private interface IStateHolder<in T> {
+    fun emitData(data : T)
+    fun emitError(e: Throwable?, code: Int? = null)
+    fun clear()
+    fun setLoading()
+}
 
-class StateHolder<T> {
+class StateHolder<T> : IStateHolder<T> {
     private val _state = MutableStateFlow<UiState<T>>(UiState.Loading)
     val state: StateFlow<UiState<T>> get() = _state
 
-    fun emitData(data: T) {
+    override fun emitData(data: T) {
         _state.value = UiState.Success(data)
     }
 
-    fun emitError(e: Throwable?, code: Int? = null) {
+    override fun emitError(e: Throwable?, code: Int?) {
         _state.value = UiState.Error(e, code)
     }
 
 
-    fun setLoading() {
+    override fun setLoading() {
         _state.value = UiState.Loading
     }
 
-    fun clear() {
+    override fun clear() {
         _state.value = UiState.Loading
     }
 

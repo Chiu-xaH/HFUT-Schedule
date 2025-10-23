@@ -1,14 +1,13 @@
 package com.hfut.schedule.ui.screen.home.calendar.communtiy
 
-import android.os.Handler
-import android.os.Looper
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,27 +17,23 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -53,12 +48,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
@@ -70,34 +68,34 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.calendar.ExamToCalenderBean
-
 import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
-import com.hfut.schedule.ui.screen.home.calendar.getScheduleDate
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.glassLayers
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+
 fun distinctUnitForCommunity(list : List<SnapshotStateList<courseDetailDTOList>>) {
     for(t in list) {
         val uniqueItems = t.distinctBy {
@@ -111,13 +109,13 @@ fun distinctUnitForCommunity(list : List<SnapshotStateList<courseDetailDTOList>>
 fun CommunityCourseTableUI(
     showAll: Boolean,
     innerPaddings: PaddingValues,
-    vmUI : UIViewModel,
     friendUserName : String? = null,
     onDateChange : (LocalDate) ->Unit,
     today: LocalDate,
     vm : NetWorkViewModel,
     hazeState: HazeState,
-    backGroundHaze : ShaderState?
+    backGroundHaze : ShaderState?,
+    onSwapShowAll : (Boolean) -> Unit
 ) {
     val context = LocalContext.current
     var examList: List<ExamToCalenderBean> by remember { mutableStateOf(emptyList()) }
@@ -128,7 +126,6 @@ fun CommunityCourseTableUI(
             examToCalendar(context)
         }
     }
-    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     //切换周数
     var currentWeek by rememberSaveable {
@@ -156,6 +153,7 @@ fun CommunityCourseTableUI(
     val tableAll = remember { List(42) { mutableStateListOf<courseDetailDTOList>() } }
     var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
     val scope = rememberCoroutineScope()
+    var findNewCourse by remember { mutableStateOf(false) }
 
     //填充UI与更新
     fun refreshUI() {
@@ -165,7 +163,7 @@ fun CommunityCourseTableUI(
         } else {
             clearUnit(table)
         }
-        Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
+        findNewCourse = false
 
         try {
             scope.launch {
@@ -275,7 +273,7 @@ fun CommunityCourseTableUI(
                                             }
                                         }
                                         5 -> {
-                                            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
+                                            findNewCourse = text.name.isNotEmpty()
                                             when(text.section) {
                                                 1,2 -> {
                                                     tableAll[5].add(text)
@@ -295,7 +293,7 @@ fun CommunityCourseTableUI(
                                             }
                                         }
                                         6 -> {
-                                            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
+                                            findNewCourse = text.name.isNotEmpty()
                                             when(text.section) {
                                                 1,2 -> {
                                                     tableAll[6].add(text)
@@ -413,7 +411,7 @@ fun CommunityCourseTableUI(
                                             }
                                         }
                                         in 5..6 -> {
-                                            Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.name.isNotEmpty() }
+                                            findNewCourse = text.name.isNotEmpty()
                                         }
                                     }
                                 }
@@ -446,6 +444,11 @@ fun CommunityCourseTableUI(
                         val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
                         val index = weekInfo.second - 1
                         val offset = if(showAll) 7 else 5
+                        if(!showAll && weekInfo.second in 6..7) {
+                            // 不显示
+                            findNewCourse = true
+                            continue
+                        }
                         if(hour <= 9) {
                             val finalIndex = index+offset*0
                             if(showAll) {
@@ -504,6 +507,11 @@ fun CommunityCourseTableUI(
                         val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
                         val index = weekInfo.second - 1
                         val offset = if(showAll) 7 else 5
+                        if(!showAll && weekInfo.second in 6..7) {
+                            // 不显示
+                            findNewCourse = true
+                            continue
+                        }
                         if(hour <= 9) {
                             val finalIndex = index+offset*0
                             if(showAll) {
@@ -558,6 +566,11 @@ fun CommunityCourseTableUI(
     LaunchedEffect(showAll,currentWeek) {
         refreshUI()
     }
+    LaunchedEffect(findNewCourse) {
+        if(findNewCourse && !showAll) {
+            onSwapShowAll(true)
+        }
+    }
 
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
     var multiWeekday by remember { mutableIntStateOf(0) }
@@ -575,7 +588,20 @@ fun CommunityCourseTableUI(
             MultiCourseSheetUI(week = multiWeek, weekday = multiWeekday,courses = courses ,vm = vm, hazeState = hazeState, friendUserName)
         }
     }
+    val drag = remember { 5f }
 
+    fun nextWeek() {
+        if (currentWeek < 20) {
+            onDateChange(today.plusDays(7))
+            currentWeek++
+        }
+    }
+    fun previousWeek() {
+        if (currentWeek > 1) {
+            onDateChange(today.minusDays(7))
+            currentWeek--
+        }
+    }
     //课程详情
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -590,257 +616,301 @@ fun CommunityCourseTableUI(
             DetailInfos(sheet,friendUserName != null, vm = vm, hazeState )
         }
     }
+    var totalDragX by remember { mutableFloatStateOf(0f) }
 
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
 
-    Column(modifier = Modifier.fillMaxSize()) {
-            Box {
-                val scrollState = rememberLazyGridState()
-                val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-                val style = CalendarStyle(showAll)
-                val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(style.rowCount),
-                    modifier = style.calendarPadding(),
-                    state = scrollState
-                ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,true) }
-                    items(style.rowCount*style.columnCount) { cell ->
-                        val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-                        val texts = transferSummaryCourseInfos(itemList).toMutableList()
-                        if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
-                            // 隐藏
-                            Box(modifier = Modifier.height(style.height).padding(style.everyPadding))
-                        } else {
-                            Card(
-                                shape = style.containerCorner,
-                                colors = CardDefaults.cardColors(containerColor = color),
-                                modifier = Modifier
-                                    .height(style.height)
-                                    .padding(style.everyPadding)
-                                    .let {
-                                        if(backGroundHaze != null) {
-                                            it
-                                                .clip(style.containerCorner)
-                                                .let {
-                                                    if(AppVersion.CAN_SHADER) {
-                                                        it.calendarSquareGlass(
-                                                            backGroundHaze,
-                                                            style.containerColor.copy(customBackgroundAlpha),
-                                                            enableLiquidGlass
-                                                        )
-                                                    } else {
-                                                        it
-                                                    }
-                                                }
-                                        } else {
-                                            it
-                                        }
-                                    }
-                                    .clickableWithScale(ClickScale.SMALL.scale) {
-                                        if (texts.size == 1) {
-                                            // 如果是考试
-                                            if (texts[0].contains("考试")) {
-                                                showToast(texts[0].replace("\n"," "))
-                                                return@clickableWithScale
-                                            }
-                                            if (texts[0].contains("日程")) {
-                                                showToast(texts[0].replace("\n"," "))
-                                                return@clickableWithScale
-                                            }
-                                            sheet = itemList[0]
-                                            showBottomSheet = true
-                                        } else if (itemList.size > 1) {
-                                            multiWeekday =
-                                                if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-                                            multiWeek = currentWeek.toInt()
-                                            courses = itemList
-                                            showBottomSheetMultiCourse = true
-                                        }
-                                    }
-                            ) {
-                                if(texts.size == 1) {
-                                    val l = texts[0].split("\n")
-                                    if(l.size < 2) {
-                                        return@Card
-                                    }
-                                    val time = l[0]
-                                    val name = l[1]
-                                    val place = if(l.size == 3) {
-                                        val p = l[2]
-                                        if(p == "null" || p.isBlank() || p.isEmpty()) {
-                                            null
-                                        } else {
-                                            p
-                                        }
-                                    } else null
-
-                                    Column(
-                                        modifier = Modifier.fillMaxSize().padding(horizontal = CARD_NORMAL_DP) ,
-                                        verticalArrangement = Arrangement.SpaceBetween,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = time,
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                        Box(
-                                            modifier = Modifier
-                                                .weight(1f) // 占据中间剩余的全部空间
-                                                .fillMaxWidth(),
-                                            contentAlignment = Alignment.TopCenter
-                                        ) {
-                                            Text(
-                                                text = name,
-                                                fontSize = style.textSize,
-                                                textAlign = TextAlign.Center,
-                                                overflow = TextOverflow.Ellipsis, // 超出显示省略号
-                                                modifier = Modifier.fillMaxWidth()
-                                            )
-                                        }
-                                        place?.let {
-                                            Text(
-                                                text = it,
-                                                fontSize = style.textSize,
-                                                textAlign = TextAlign.Center,
-                                                modifier = Modifier.fillMaxWidth()
-                                            )
-                                        }
-                                    }
-                                } else if(texts.size > 1) {
-                                    val name = texts.map {
-                                        it.split("\n")[1][0]
-                                    }.joinToString(",")
-                                    val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxSize()
-                                            .padding(horizontal = CARD_NORMAL_DP) ,
-                                        verticalArrangement = Arrangement.SpaceBetween,
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    ) {
-                                        Text(
-                                            text = texts[0].substringBefore("\n"),
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            fontWeight = isExam
-                                        )
-                                        Box(
-                                            modifier = Modifier
-                                                .weight(1f) // 占据中间剩余的全部空间
-                                                .fillMaxWidth(),
-                                            contentAlignment = Alignment.TopCenter
-                                        ) {
-                                            Text(
-                                                text = "${texts.size}节课冲突",
-                                                fontSize = style.textSize,
-                                                textAlign = TextAlign.Center,
-                                                overflow = TextOverflow.Ellipsis, // 超出显示省略号
-                                                modifier = Modifier.fillMaxWidth(),
-                                                fontWeight = isExam
-                                            )
-                                        }
-                                        Text(
-                                            text = name,
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-                                }
-                            }
-                        }
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pointerInput(today) {
+            detectHorizontalDragGestures(
+                onDragEnd = {
+                    // 手指松开后根据累积的水平拖动量决定
+                    if (totalDragX > drag) { // 阈值
+                        previousWeek()
+                    } else if (totalDragX < -drag) {
+                        nextWeek()
                     }
-                    item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,false) }
+                    totalDragX = 0f // 重置
+                },
+                onHorizontalDrag = { change, dragAmount ->
+                    change.consume() // 防止滚动穿透
+                    totalDragX += dragAmount
                 }
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = shouldShowAddButton,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) {
-                    if (shouldShowAddButton) {
-                        FloatingActionButton(
-                            onClick = {
-                                if (currentWeek > 1) {
-                                    currentWeek-- - 1
-                                    onDateChange(today.minusDays(7))
-                                }
-                            },
-                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-                    }
-                }
+            )
+        }
+    ) {
+        val scrollState = rememberLazyGridState()
+        val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
+        val style = CalendarStyle(showAll)
+        val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
 
-
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = shouldShowAddButton,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) {
-                    if (shouldShowAddButton) {
-                        ExtendedFloatingActionButton(
-                            onClick = {
-                                if(weeksBetween < 1) {
-                                    currentWeek = 1
-                                    onDateChange(getStartWeekFromCommunity())
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(style.rowCount),
+            modifier = style.calendarPadding(),
+            state = scrollState
+        ) {
+            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,true) }
+            items(style.rowCount*style.columnCount) { cell ->
+                val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
+                val texts = transferSummaryCourseInfos(itemList).toMutableList()
+                if(texts.isEmpty() && backGroundHaze != null) {
+                    // 隐藏
+                    Box(modifier = Modifier
+                        .height(calendarSquareHeight.dp)
+                        .padding(style.everyPadding))
+                } else {
+                    Card(
+                        shape = style.containerCorner,
+                        colors = CardDefaults.cardColors(containerColor = color),
+                        modifier = Modifier
+                            .height(calendarSquareHeight.dp)
+                            .padding(style.everyPadding)
+                            .let {
+                                if (backGroundHaze != null) {
+                                    it
+                                        .clip(style.containerCorner)
+                                        .let {
+                                            if (AppVersion.CAN_SHADER) {
+                                                it.calendarSquareGlass(
+                                                    backGroundHaze,
+                                                    style.containerColor.copy(customBackgroundAlpha),
+                                                    enableLiquidGlass
+                                                )
+                                            } else {
+                                                it
+                                            }
+                                        }
                                 } else {
-                                    currentWeek = weeksBetween
-                                    onDateChange(LocalDate.now())
+                                    it
                                 }
-                            },
-                        ) {
-                            AnimatedContent(
-                                targetState = currentWeek,
-                                transitionSpec = {
-                                    scaleIn(animationSpec = tween(500)
-                                    ) togetherWith scaleOut(animationSpec = tween(500))
-                                }, label = ""
-                            ){ n ->
-                                Text(text = "第 $n 周",)
+                            }
+                            .clickableWithScale(ClickScale.SMALL.scale) {
+                                if (texts.size == 1) {
+                                    // 如果是考试
+                                    if (texts[0].contains("考试")) {
+                                        showToast(texts[0].replace("\n", " "))
+                                        return@clickableWithScale
+                                    }
+                                    if (texts[0].contains("日程")) {
+                                        showToast(texts[0].replace("\n", " "))
+                                        return@clickableWithScale
+                                    }
+                                    sheet = itemList[0]
+                                    showBottomSheet = true
+                                } else if (itemList.size > 1) {
+                                    multiWeekday =
+                                        if (showAll) (cell + 1) % 7 else (cell + 1) % 5
+                                    multiWeek = currentWeek.toInt()
+                                    courses = itemList
+                                    showBottomSheetMultiCourse = true
+                                }
+                            }
+                    ) {
+                        if(texts.size == 1) {
+                            val l = texts[0].split("\n")
+                            if(l.size < 2) {
+                                return@Card
+                            }
+                            val time = l[0]
+                            val name = l[1]
+                            val place = if(l.size == 3) {
+                                val p = l[2]
+                                if(p == "null" || p.isBlank() || p.isEmpty()) {
+                                    null
+                                } else {
+                                    p
+                                }
+                            } else null
+
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = CARD_NORMAL_DP) ,
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = time,
+                                    fontSize = style.textSize,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f) // 占据中间剩余的全部空间
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    Text(
+                                        text = name,
+                                        fontSize = style.textSize,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                                place?.let {
+                                    Text(
+                                        text = it,
+                                        fontSize = style.textSize,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                }
+                            }
+                        } else if(texts.size > 1) {
+                            val name = texts.map {
+                                it.split("\n")[1][0]
+                            }.joinToString(",")
+                            val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = CARD_NORMAL_DP) ,
+                                verticalArrangement = Arrangement.SpaceBetween,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(
+                                    text = texts[0].substringBefore("\n"),
+                                    fontSize = style.textSize,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth(),
+                                    fontWeight = isExam
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f) // 占据中间剩余的全部空间
+                                        .fillMaxWidth(),
+                                    contentAlignment = Alignment.TopCenter
+                                ) {
+                                    Text(
+                                        text = "${texts.size}节课冲突",
+                                        fontSize = style.textSize,
+                                        textAlign = TextAlign.Center,
+                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
+                                        modifier = Modifier.fillMaxWidth(),
+                                        fontWeight = isExam
+                                    )
+                                }
+                                Text(
+                                    text = name,
+                                    fontSize = style.textSize,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
                             }
                         }
-                    }
-                }
-
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = shouldShowAddButton,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) {
-                    if (shouldShowAddButton) {
-                        FloatingActionButton(
-                            onClick = {
-                                if (currentWeek < 20) {
-                                    currentWeek++ + 1
-                                    onDateChange(today.plusDays(7))
-                                }
-                            },
-                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
                     }
                 }
             }
+            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,false) }
         }
+
+        androidx.compose.animation.AnimatedVisibility(
+            visible = shouldShowAddButton,
+            enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
+            exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(bottom = innerPaddings.calculateBottomPadding() - navigationBarHeightPadding)
+                .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+        ) {
+            DraggableWeekButton(
+                dragThreshold = drag*2,
+                onClick = {
+                    if(weeksBetween < 1) {
+                        currentWeek = 1
+                        onDateChange(getStartWeekFromCommunity())
+                    } else {
+                        currentWeek = weeksBetween
+                        onDateChange(LocalDate.now())
+                    }
+                },
+                currentWeek = currentWeek,
+                key = today,
+                onNext = { nextWeek() },
+                onPrevious = { previousWeek() }
+            )
+        }
+    }
+}
+
+
+@Composable
+fun ScheduleTopDate(
+    showAll: Boolean,
+    today : LocalDate,
+    shaderState: ShaderState,
+) {
+    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
+    val todayDate = DateTimeManager.Date_yyyy_MM_dd
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val style = CalendarStyle(showAll)
+    val size = style.rowCount
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+
+    Column(modifier = Modifier.background(Color.Transparent)) {
+        Spacer(modifier = Modifier.height(5.dp))
+        LazyVerticalGrid(columns = GridCells.Fixed(size),modifier = Modifier.padding(horizontal = 10.dp)){
+            items(size) { item ->
+
+                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
+                val isToday = date == todayDate
+
+                var animated by remember { mutableStateOf(false) }
+                val fontSize = if (showAll) 12f else 14f
+                val fontSizeAnimated by animateFloatAsState(
+                    targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
+                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
+                    finishedListener = { if (isToday) animated = false }
+                )
+                LaunchedEffect(isToday) {
+                    if (isToday) {
+                        animated = true
+                    }
+                }
+
+                Surface(
+                    shape = CircleShape,
+                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+                    modifier = Modifier
+                        .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
+                        .clip(CircleShape)
+                        .glassLayers(
+                            shaderState,
+                            smallStyle.copy(
+                                blur = 2.dp,
+                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                            ),
+                            enableLiquidGlass
+                        )
+                    ,
+                    color = Color.Transparent
+                ) {
+                    Text(
+                        text = date.substringAfter("-"),
+                        textAlign = TextAlign.Center,
+                        fontSize = fontSizeAnimated.sp,
+                        color = if (isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
+                        fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                        modifier = Modifier.padding(horizontal = CARD_NORMAL_DP)
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(5.dp))
+    }
 }
 
 @Composable
-fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
+fun ScheduleTopDate(
+    showAll: Boolean,
+    today : LocalDate,
+) {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
     val todayDate = DateTimeManager.Date_yyyy_MM_dd
 
@@ -865,27 +935,12 @@ fun ScheduleTopDate(showAll: Boolean,today : LocalDate) {
                     }
                 }
 
-                if (
-//                    if(isJxglstu) {
-//                        weeksBetweenJxglstu
-//                    } else {
-//                        weeksBetween
-//                    }
-//                > 0
-                    true
-                    )
-                    Text(
-                        text = date.substringAfter("-"),
-                        textAlign = TextAlign.Center,
-                        fontSize = fontSizeAnimated.sp,
-                        color = if(isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
-                        fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
-                    )
-                else Text(
-                    text = "未开学",
+                Text(
+                    text = date.substringAfter("-"),
                     textAlign = TextAlign.Center,
-                    color = Color.Gray,
-                    fontSize = if(showAll)12.sp else 14.sp
+                    fontSize = fontSizeAnimated.sp,
+                    color = if(isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
+                    fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }

@@ -9,7 +9,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -93,10 +95,9 @@ fun NetWorkScreen(navController: NavHostController,
                 value = checkOrDownloadVideo(context,"example_network.mp4","https://chiu-xah.github.io/videos/example_network.mp4")
             }
         }
-        AnimatedVisibility(
-            visible = video != null,
-            enter = scaleIn(initialScale = 1.5f) + fadeIn(),
-            exit = scaleOut(targetScale = 1.5f) + fadeOut()
+        CustomCard (
+            modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+            color = MaterialTheme.colorScheme.surface,
         ) {
             video?.let {
                 SimpleVideo(
@@ -105,6 +106,7 @@ fun NetWorkScreen(navController: NavHostController,
                 )
             }
         }
+
 
         DividerTextExpandedWith("配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

@@ -11,7 +11,6 @@ import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 
 class UIViewModel : ViewModel()  {
-    val findNewCourse = MutableLiveData<Boolean>()
     var cardValue by mutableStateOf<ReturnCard?>(null)
     var electricValue = MutableLiveData<String?>()
     var webValue = MutableLiveData<WebInfo>()

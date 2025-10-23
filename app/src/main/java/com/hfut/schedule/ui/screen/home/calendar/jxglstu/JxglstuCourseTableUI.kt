@@ -1,52 +1,61 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
-import android.os.Handler
-import android.os.Looper
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -60,20 +69,18 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.R
@@ -100,6 +107,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -120,19 +128,19 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJ
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.clickableWithRotation
 import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -230,7 +238,6 @@ fun JxglstuCourseTableUI(
     showAll: Boolean,
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
-    vmUI: UIViewModel,
     webVpn: Boolean,
     refreshLogin: Boolean,
     onDateChange: (LocalDate) ->Unit,
@@ -239,10 +246,10 @@ fun JxglstuCourseTableUI(
     navController: NavHostController,
     backGroundHaze : ShaderState?,
     isEnabled : Boolean,
-    onEnabled : (Boolean) -> Unit
+    onEnabled : (Boolean) -> Unit,
+    onSwapShowAll : (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    val enableHideEmptyCalendarSquare by DataStoreManager.enableHideEmptyCalendarSquare.collectAsState(initial = false)
 
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
@@ -312,15 +319,11 @@ fun JxglstuCourseTableUI(
     }
 
 
-
-    val times by DataStoreManager.courseTableTimeValue.collectAsState(initial = "")
-    val timeTable by produceState(initialValue = emptyList<CourseUnitBean>(), key1 = times) {
-        value = parseTimeTable(times)
-    }
-
     val json by produceState<String?>(initialValue = null) {
         value = LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
     }
+
+    var findNewCourse by remember { mutableStateOf(false) }
 
 
     var exception by remember { mutableStateOf<Exception?>(null) }
@@ -334,7 +337,7 @@ fun JxglstuCourseTableUI(
         } else {
             clearUnit(table)
         }
-        Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = false }
+        findNewCourse = false
         scope.launch {
             launch course@ {
                 // 组装课表
@@ -368,212 +371,212 @@ fun JxglstuCourseTableUI(
 
                         if (item.weekIndex == currentWeek.toInt()) {
                             when(item.weekday) {
-                                6 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
-                                7 -> { Handler(Looper.getMainLooper()).post { vmUI.findNewCourse.value = text.isNotEmpty() } }
+                                6 -> findNewCourse = text.isNotEmpty()
+                                7 -> findNewCourse = text.isNotEmpty()
                             }
                             if(showAll) {
                                 if (item.weekday == 1) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9) {
                                         tableAll[0].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11) {
                                         tableAll[7].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15) {
                                         tableAll[14].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17) {
                                         tableAll[21].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21) {
                                         tableAll[28].add(text)
                                     }
                                 }
                                 if (item.weekday == 2) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9) {
                                         tableAll[1].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11) {
                                         tableAll[8].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15) {
                                         tableAll[15].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17) {
                                         tableAll[22].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21) {
                                         tableAll[29].add(text)
                                     }
                                 }
                                 if (item.weekday == 3) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9) {
                                         tableAll[2].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11) {
                                         tableAll[9].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15) {
                                         tableAll[16].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17) {
                                         tableAll[23].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21) {
                                         tableAll[30].add(text)
                                     }
                                 }
                                 if (item.weekday == 4) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9) {
                                         tableAll[3].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11) {
                                         tableAll[10].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15) {
                                         tableAll[17].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17) {
                                         tableAll[24].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21) {
                                         tableAll[31].add(text)
                                     }
                                 }
                                 if (item.weekday == 5) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9) {
                                         tableAll[4].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         tableAll[11].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         tableAll[18].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         tableAll[25].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         tableAll[32].add(text)
                                     }
                                 }
                                 if (item.weekday == 6) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         tableAll[5].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         tableAll[12].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         tableAll[19].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         tableAll[26].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         tableAll[33].add(text)
                                     }
                                 }
                                 if (item.weekday == 7) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         tableAll[6].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         tableAll[13].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         tableAll[20].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         tableAll[27].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         tableAll[34].add(text)
                                     }
                                 }
                             } else {
                                 if (item.weekday == 1) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         table[0].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         table[5].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         table[10].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         table[15].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         table[20].add(text)
                                     }
                                 }
                                 if (item.weekday == 2) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         table[1].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         table[6].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         table[11].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         table[16].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         table[21].add(text)
                                     }
                                 }
                                 if (item.weekday == 3) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         table[2].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         table[7].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         table[12].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         table[17].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         table[22].add(text)
                                     }
                                 }
                                 if (item.weekday == 4) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         table[3].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         table[8].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         table[13].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         table[18].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         table[23].add(text)
                                     }
                                 }
                                 if (item.weekday == 5) {
-                                    if (startHour in 8..9 || startTime == timeTable[0].startTime || startTime == timeTable[1].startTime) {
+                                    if (startHour in 8..9 ) {
                                         table[4].add(text)
                                     }
-                                    if (startHour in 10..11 || startTime == timeTable[2].startTime || startTime == timeTable[3].startTime) {
+                                    if (startHour in 10..11 ) {
                                         table[9].add(text)
                                     }
-                                    if (startHour in 14..15 || startTime == timeTable[4].startTime || startTime == timeTable[5].startTime) {
+                                    if (startHour in 14..15 ) {
                                         table[14].add(text)
                                     }
-                                    if (startHour in 16..17 || startTime == timeTable[6].startTime || startTime == timeTable[7].startTime) {
+                                    if (startHour in 16..17 ) {
                                         table[19].add(text)
                                     }
-                                    if (startHour in 19..21 || startTime == timeTable[8].startTime || startTime == timeTable[9].startTime || startTime == timeTable[10].startTime) {
+                                    if (startHour in 19..21 ) {
                                         table[24].add(text)
                                     }
                                 }
@@ -611,6 +614,11 @@ fun JxglstuCourseTableUI(
                         val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
                         val index = weekInfo.second - 1
                         val offset = if(showAll) 7 else 5
+                        if(!showAll && weekInfo.second in 6..7) {
+                            // 不显示
+                            findNewCourse = true
+                            continue
+                        }
                         if(hour <= 9) {
                             val finalIndex = index+offset*0
                             if(showAll) {
@@ -643,7 +651,7 @@ fun JxglstuCourseTableUI(
                                 table[finalIndex]
                             }
                                 .add(startTime + "\n" + name  + "(日程)"+ "\n" + place?.replace("学堂",""))
-                        } else if(hour >= 18) {
+                        } else {
                             val finalIndex = index+offset*4
                             if(showAll) {
                                 tableAll[finalIndex]
@@ -673,6 +681,11 @@ fun JxglstuCourseTableUI(
                         val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
                         val index = weekInfo.second - 1
                         val offset = if (showAll) 7 else 5
+                        if(!showAll && weekInfo.second in 6..7) {
+                            // 不显示
+                            findNewCourse = true
+                            continue
+                        }
                         if (hour <= 9) {
                             val finalIndex = index + offset * 0
                             if (showAll) {
@@ -681,10 +694,7 @@ fun JxglstuCourseTableUI(
                                 table[finalIndex]
                             }
                                 .add(
-                                    startTime + "\n" + name + "(考试)" + "\n" + place?.replace(
-                                        "学堂",
-                                        ""
-                                    )
+                                    "$startTime\n$name(考试)\n" + place?.replace("学堂", "")
                                 )
                         } else if (hour in 10..12) {
                             val finalIndex = index + offset * 1
@@ -694,10 +704,7 @@ fun JxglstuCourseTableUI(
                                 table[finalIndex]
                             }
                                 .add(
-                                    startTime + "\n" + name + "(考试)" + "\n" + place?.replace(
-                                        "学堂",
-                                        ""
-                                    )
+                                    "$startTime\n$name(考试)\n" + place?.replace("学堂", "")
                                 )
                         } else if (hour in 13..15) {
                             val finalIndex = index + offset * 2
@@ -706,12 +713,7 @@ fun JxglstuCourseTableUI(
                             } else {
                                 table[finalIndex]
                             }
-                                .add(
-                                    startTime + "\n" + name + "(考试)" + "\n" + place?.replace(
-                                        "学堂",
-                                        ""
-                                    )
-                                )
+                                .add("$startTime\n$name(考试)\n" + place?.replace("学堂", ""))
                         } else if (hour in 16..17) {
                             val finalIndex = index + offset * 3
                             if (showAll) {
@@ -719,25 +721,15 @@ fun JxglstuCourseTableUI(
                             } else {
                                 table[finalIndex]
                             }
-                                .add(
-                                    startTime + "\n" + name + "(考试)" + "\n" + place?.replace(
-                                        "学堂",
-                                        ""
-                                    )
-                                )
-                        } else if (hour >= 18) {
+                                .add("$startTime\n$name(考试)\n" + place?.replace("学堂", ""))
+                        } else {
                             val finalIndex = index + offset * 4
                             if (showAll) {
                                 tableAll[finalIndex]
                             } else {
                                 table[finalIndex]
                             }
-                                .add(
-                                    startTime + "\n" + name + "(考试)" + "\n" + place?.replace(
-                                        "学堂",
-                                        ""
-                                    )
-                                )
+                                .add("$startTime\n$name(考试)\n" + place?.replace("学堂", ""))
                         }
                     }
                 } catch (e : Exception) {
@@ -747,8 +739,13 @@ fun JxglstuCourseTableUI(
         }
     }
 
-    LaunchedEffect(showAll,loadingJxglstu,currentWeek,times,timeTable) {
+    LaunchedEffect(showAll,loadingJxglstu,currentWeek) {
         refreshUI()
+    }
+    LaunchedEffect(findNewCourse) {
+        if(findNewCourse && !showAll) {
+            onSwapShowAll(true)
+        }
     }
 
     if(refreshLogin) {
@@ -983,13 +980,48 @@ fun JxglstuCourseTableUI(
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
+    var totalDragX by remember { mutableFloatStateOf(0f) }
+    val drag = remember { 5f }
+    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+
+    fun nextWeek() {
+        if (currentWeek < 20) {
+            onDateChange(today.plusDays(7))
+            currentWeek++
+        }
+    }
+    fun previousWeek() {
+        if (currentWeek > 1) {
+            onDateChange(today.minusDays(7))
+            currentWeek--
+        }
+    }
     if(loadingJxglstu) {
         CenterScreen {
             LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
         }
     } else {
         // 课程表布局
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .pointerInput(today) {
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        // 手指松开后根据累积的水平拖动量决定
+                        if (totalDragX > drag) { // 阈值
+                            previousWeek()
+                        } else if (totalDragX < -drag) {
+                            nextWeek()
+                        }
+                        totalDragX = 0f // 重置
+                    },
+                    onHorizontalDrag = { change, dragAmount ->
+                        change.consume() // 防止滚动穿透
+                        totalDragX += dragAmount
+                    }
+                )
+            }
+        ) {
             val scrollState = rememberLazyGridState()
             val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
             val style = CalendarStyle(showAll)
@@ -1011,16 +1043,16 @@ fun JxglstuCourseTableUI(
                 }
                 items(style.rowCount*style.columnCount, key = { it }) { index ->
                     val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
-                    if(texts.isEmpty() && enableHideEmptyCalendarSquare) {
+                    if(texts.isEmpty() && backGroundHaze != null) {
                         Box(modifier = Modifier
-                            .height(style.height)
+                            .height(calendarSquareHeight.dp)
                             .padding(style.everyPadding))
                     } else {
                         Card(
                             shape = style.containerCorner,
                             colors = CardDefaults.cardColors(containerColor = color),
                             modifier = Modifier
-                                .height(style.height)
+                                .height(calendarSquareHeight.dp)
                                 .padding(style.everyPadding)
                                 .let {
                                     if(backGroundHaze != null) {
@@ -1193,36 +1225,18 @@ fun JxglstuCourseTableUI(
                 }
                 item(span = { GridItemSpan(maxLineSpan) }) {  InnerPaddingHeight(innerPadding,false) }
             }
-            // 上一周
-            AnimatedVisibility(
-                visible = shouldShowAddButton,
-                enter = scaleIn(),
-                exit = scaleOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
-                    .padding(APP_HORIZONTAL_DP,)
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        if (currentWeek > 1) {
-                            currentWeek-- - 1
-                            onDateChange(today.minusDays(7))
-                        }
-                    },
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-            }
             // 中间
             AnimatedVisibility(
                 visible = shouldShowAddButton,
-                enter = scaleIn(),
-                exit = scaleOut(),
+                enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
+                exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
                     .padding(APP_HORIZONTAL_DP,)
             ) {
-                ExtendedFloatingActionButton(
+                DraggableWeekButton(
+                    dragThreshold = drag*2,
                     onClick = {
                         if(DateTimeManager.weeksBetweenJxglstu < 1) {
                             currentWeek = 1
@@ -1232,36 +1246,11 @@ fun JxglstuCourseTableUI(
                             onDateChange(LocalDate.now())
                         }
                     },
-                ) {
-                    AnimatedContent(
-                        targetState = currentWeek,
-                        transitionSpec = {
-                            scaleIn(animationSpec = tween(500)
-                            ) togetherWith(scaleOut(animationSpec = tween(500)))
-                        }, label = ""
-                    ){ n ->
-                        Text(text = "第 $n 周")
-                    }
-                }
-            }
-            // 下一周
-            AnimatedVisibility(
-                visible = shouldShowAddButton,
-                enter = scaleIn(),
-                exit = scaleOut(),
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
-                    .padding(APP_HORIZONTAL_DP,)
-            ) {
-                FloatingActionButton(
-                    onClick = {
-                        if (currentWeek < 20) {
-                            currentWeek++ + 1
-                            onDateChange(today.plusDays(7))
-                        }
-                    },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                    currentWeek = currentWeek,
+                    key = today,
+                    onNext = { nextWeek() },
+                    onPrevious = { previousWeek() }
+                )
             }
         }
     }
@@ -1443,23 +1432,145 @@ fun weekToDate(week : Int,weekday : Int) : String? {
     }
 }
 
-fun Modifier.calendarSquareGlass(
+
+fun Modifier.glassLayers(
     state : ShaderState,
-    color : Color,
+    style: GlassStyle = largeStyle,
     enabled : Boolean,
 ) : Modifier =
     if(enabled && !GlobalUIStateHolder.isTransiting) {
         this.glassLayer(
             state,
-            style = GlassStyle(
-                blur = 3.5.dp,
-                border = 30f,
-                dispersion = 0f,
-                distortFactor = 0.1f,
-                overlayColor = color
-            ),
+            style = style,
         )
     } else{
-        this.background(color)
+        this.background(style.overlayColor)
     }
 
+
+fun Modifier.calendarSquareGlass(
+    state : ShaderState,
+    color : Color,
+    enabled : Boolean,
+) : Modifier =
+    this.glassLayers(
+        state,
+        style = GlassStyle(
+            blur = 3.5.dp,
+            border = 30f,
+            dispersion = 0f,
+            distortFactor = 0.1f,
+            overlayColor = color
+        ),
+        enabled = enabled
+    )
+
+@Composable
+fun DraggableWeekButton(
+    modifier: Modifier = Modifier,
+    dragThreshold: Float = 5f,
+    currentWeek : Long,
+    key : Any?,
+    onNext : () -> Unit,
+    onPrevious : () -> Unit,
+    onClick: () -> Unit,
+) {
+    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) } // 动画偏移
+    var totalDragX by remember { mutableFloatStateOf(0f) }
+    val scope = rememberCoroutineScope()
+
+    Box(
+        modifier = modifier
+            .pointerInput(key) {
+                detectDragGestures(
+                    onDragEnd = {
+                        // 根据水平累积偏移触发事件
+                        when {
+                            totalDragX > dragThreshold -> onNext()
+                            totalDragX < -dragThreshold -> onPrevious()
+                        }
+                        totalDragX = 0f
+                        // 松开手指
+                        scope.launch {
+                            offset.animateTo(
+                                Offset.Zero,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            )
+                        }
+                    },
+                    onDrag = { change, dragAmount ->
+                        change.consume()
+                        val (dx, dy) = dragAmount
+                        totalDragX += dx
+                        // 手指拖动
+                        scope.launch {
+                            offset.snapTo(
+                                Offset(
+                                    x = (offset.value.x + dx / 2f).coerceIn(-50f, 50f),
+                                    y = (offset.value.y + dy / 2f).coerceIn(-50f, 50f)
+                                )
+                            )
+                        }
+                    }
+                )
+            }
+    ) {
+        ExtendedFloatingActionButton(
+            onClick = onClick,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                val iconSize = 19.dp // 图标大小
+                val textFontSize = 15.sp // 字体大小，可根据需求调整
+                val padding = 14.dp
+
+                Icon(
+                    Icons.Filled.ArrowBack,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(iconSize)
+                        .clickable { onPrevious() }
+                )
+
+                Spacer(modifier = Modifier.width(padding))
+
+
+                AnimatedContent(
+                    targetState = currentWeek,
+                    transitionSpec = {
+                        if (targetState > initialState) {
+                            slideInVertically { height -> height } + fadeIn() togetherWith
+                                    slideOutVertically { height -> -height } + fadeOut()
+                        } else {
+                            slideInVertically { height -> -height } + fadeIn() togetherWith
+                                    slideOutVertically { height -> height } + fadeOut()
+                        }
+                    }
+                ) { week ->
+                    Text(
+                        text = "第 $week 周",
+                        fontSize = textFontSize
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(padding)) // 文字与右箭头间距
+
+                Icon(
+                    Icons.Filled.ArrowForward,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(iconSize)
+                        .clickable { onNext() }
+                )
+            }
+        }
+    }
+}

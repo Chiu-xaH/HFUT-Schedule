@@ -718,7 +718,6 @@ fun MainHost(
 
                     NextCourseScreen(
                         networkVm,
-                        uiVm,
                         ifSaved,
                         navController,
                     )

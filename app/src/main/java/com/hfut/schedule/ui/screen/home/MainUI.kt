@@ -2,8 +2,6 @@ package com.hfut.schedule.ui.screen.home
 
 import android.annotation.SuppressLint
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -18,6 +16,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -34,6 +33,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -69,7 +69,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -81,7 +83,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Observer
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -99,6 +101,7 @@ import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -108,8 +111,11 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -123,6 +129,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.glassLayers
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -136,7 +143,6 @@ import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.CourseTotalForApi
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
@@ -146,15 +152,18 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.shader.largeStyle
+import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -210,7 +219,6 @@ fun MainScreen(
     }
 
     var showAll by rememberSaveable { mutableStateOf(DateTimeManager.isOnWeekend()) }
-    var findCourse by remember { mutableStateOf(false) }
 
     var ifSaved by rememberSaveable { mutableStateOf(!isLogin) }
     var swapUI by rememberSaveable { mutableIntStateOf(
@@ -242,11 +250,6 @@ fun MainScreen(
         }
     }
 
-    //监听是否周六周日有课，有则显示红点
-    val courseObserver = Observer<Boolean> { result ->
-        findCourse = result
-    }
-
     var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val pagerState = rememberPagerState(pageCount = { titles.size })
     var searchText by rememberSaveable() { mutableStateOf("") }
@@ -263,9 +266,6 @@ fun MainScreen(
                 // 检测是否教务token还有效
                 ifSaved = data == -1
             }
-        }
-        Handler(Looper.getMainLooper()).post {
-            vmUI.findNewCourse.observeForever(courseObserver)
         }
         // 等待加载完毕可切换标签
         if(isLogin) {
@@ -397,6 +397,8 @@ fun MainScreen(
             }
         }
     }
+    val backGroundSource = rememberShaderState()
+
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val useCustomBackground = customBackground != ""
     val context = LocalContext.current
@@ -534,69 +536,212 @@ fun MainScreen(
                         else -> {}
                     }
                 } else {
-                    TopAppBar(
-                        colors = topBarTransplantColor(),
-                        title = {
-                            Text(texts(COURSES))
-                        },
-                        actions = {
-                            val isFriend = CourseType.entries.all { swapUI > it.code }
-                            if (isFriend) {
-                                ApiForTimeTable(swapUI.toString(), hazeState)
-                            } else {
-                                val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
-                                IconButton(onClick = {
-                                    navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
-                                }) {
+                    if(useCustomBackground) {
+                        val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+                        val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+
+                        TopAppBar(
+                            colors = topBarTransplantColor(),
+                            navigationIcon = {
+                                Surface(
+                                    shape = CircleShape,
+                                    modifier = Modifier
+                                        .padding(horizontal = BUTTON_PADDING)
+                                        .clip(CircleShape)
+                                        .glassLayers(
+                                            backGroundSource,
+                                            smallStyle.copy(
+                                                blur = 2.dp,
+                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                            ),
+                                            enableLiquidGlass
+                                        ),
+                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)),
+                                    color = Color.Transparent
+                                ) {
+                                    Text(texts(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp, color = MaterialTheme.colorScheme.primary)
+                                }
+                            },
+                            title = {
+
+                            },
+                            actions = {
+                                val isFriend = CourseType.entries.all { swapUI > it.code }
+                                if (isFriend) {
+                                    ApiForTimeTable(swapUI.toString(), hazeState)
+                                } else {
+                                    val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
+                                    Surface(
+                                        shape = CircleShape,
+                                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .glassLayers(
+                                                backGroundSource,
+                                                smallStyle.copy(
+                                                    blur = 2.dp,
+                                                    overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                                ),
+                                                enableLiquidGlass
+                                            )
+                                            .clickable {
+                                                navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
+                                            }
+                                        ,
+                                        color = Color.Transparent
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.category),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.padding(CARD_NORMAL_DP*3).iconElementShare(route)
+                                        )
+                                    }
+                                }
+                                Spacer(Modifier.width(BUTTON_PADDING))
+                                Surface(
+                                    shape = CircleShape,
+                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .glassLayers(
+                                            backGroundSource,
+                                            smallStyle.copy(
+                                                blur = 2.dp,
+                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                            ),
+                                            enableLiquidGlass
+                                        )
+                                        .clickable {
+                                            showBottomSheet_multi = true
+                                        }
+                                    ,
+                                    color = Color.Transparent
+                                ) {
                                     Icon(
-                                        painter = painterResource(id = R.drawable.category),
+                                        painter = painterResource(id = R.drawable.tab_inactive),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.iconElementShare(route)
+                                        modifier = Modifier.padding(CARD_NORMAL_DP*3)
                                     )
                                 }
-                            }
-
-                            IconButton(onClick = {
-                                showBottomSheet_multi = true
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.tab_inactive),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.primary
+                                Spacer(Modifier.width(BUTTON_PADDING))
+                                Surface(
+                                    shape = CircleShape,
+                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .glassLayers(
+                                            backGroundSource,
+                                            smallStyle.copy(
+                                                blur = 2.dp,
+                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                            ),
+                                            enableLiquidGlass
+                                        )
+                                        .clickable {
+                                            showAll = !showAll
+                                        }
+                                    ,
+                                    color = Color.Transparent
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.padding(CARD_NORMAL_DP*3)
+                                    )
+                                }
+                                Spacer(Modifier.width(BUTTON_PADDING))
+                            },
+                        )
+                        if(swapUI == CourseType.ZHI_JIAN.code) {
+                            Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                TextField(
+                                    modifier = Modifier
+                                        .clip(MaterialTheme.shapes.medium)
+                                        .glassLayers(backGroundSource, largeStyle.copy(
+                                            blur = 2.5.dp,
+                                            overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
+                                        ),enableLiquidGlass)
+                                        .weight(1f),
+                                    value = zhiJianStudentId,
+                                    onValueChange = { zhiJianStudentId = it },
+                                    leadingIcon = {
+                                        Icon(painterResource(R.drawable.person),null)
+                                    },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
                                 )
                             }
-                            IconButton(onClick = { showAll = !showAll }) {
-                                BadgedBox(badge = {
-                                    if (findCourse) Badge()
+                            Spacer(Modifier.height(1.5.dp))
+                        }
+                        if (swapUI != CourseType.NEXT.code) {
+                            ScheduleTopDate(showAll, today,backGroundSource)
+                        }
+                    } else {
+                        TopAppBar(
+                            colors = topBarTransplantColor(),
+                            title = {
+                                Text(texts(COURSES))
+                            },
+                            actions = {
+                                val isFriend = CourseType.entries.all { swapUI > it.code }
+                                if (isFriend) {
+                                    ApiForTimeTable(swapUI.toString(), hazeState)
+                                } else {
+                                    val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
+                                    IconButton(onClick = {
+                                        navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
+                                    }) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.category),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.iconElementShare(route)
+                                        )
+                                    }
+                                }
+
+                                IconButton(onClick = {
+                                    showBottomSheet_multi = true
                                 }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.tab_inactive),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                IconButton(onClick = { showAll = !showAll }) {
                                     Icon(
                                         painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
                                         contentDescription = "",
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
+                            },
+                        )
+                        if(swapUI == CourseType.ZHI_JIAN.code) {
+                            Row(modifier = Modifier.padding(horizontal = 10.dp)) {
+                                TextField(
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    value = zhiJianStudentId,
+                                    onValueChange = { zhiJianStudentId = it },
+                                    leadingIcon = {
+                                        Icon(painterResource(R.drawable.person),null)
+                                    },
+                                    singleLine = true,
+                                    shape = MaterialTheme.shapes.medium,
+                                    colors = textFiledTransplant(),
+                                )
                             }
-                        },
-                    )
-                    if(swapUI == CourseType.ZHI_JIAN.code) {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            TextField(
-                                modifier = Modifier
-                                    .weight(1f),
-                                value = zhiJianStudentId,
-                                onValueChange = { zhiJianStudentId = it },
-                                leadingIcon = {
-                                    Icon(painterResource(R.drawable.person),null)
-                                },
-                                singleLine = true,
-                                shape = MaterialTheme.shapes.medium,
-                                colors = textFiledTransplant(),
-                            )
+                            Spacer(Modifier.height(1.5.dp))
                         }
-                    }
-                    if (swapUI != CourseType.NEXT.code) {
-                        ScheduleTopDate(showAll, today)
+                        if (swapUI != CourseType.NEXT.code) {
+                            ScheduleTopDate(showAll, today)
+                        }
                     }
                 }
             }
@@ -658,7 +803,6 @@ fun MainScreen(
             composable(COURSES.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
-                    val backGroundSource = rememberShaderState()
                     if (useCustomBackground) {
                         GlideImage(
                             model = File(customBackground),
@@ -694,29 +838,28 @@ fun MainScreen(
                                 CourseType.NEXT.code -> JxglstuCourseTableUINext(
                                     showAll,
                                     vm,
-                                    vmUI,
                                     hazeState,
                                     navHostTopController,
                                     innerPadding,
-                                    backGroundHaze = if (useCustomBackground) backGroundSource else null
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
+                                    { showAll = it }
                                 )
                                 // 社区
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(
                                     showAll,
                                     innerPadding,
-                                    vmUI,
                                     onDateChange = { new -> today = new },
                                     today = today,
                                     vm = vm,
                                     hazeState = hazeState,
-                                    backGroundHaze = if (useCustomBackground) backGroundSource else null
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
+                                    onSwapShowAll = { showAll = it }
                                 )
                                 // 教务
                                 CourseType.JXGLSTU.code -> JxglstuCourseTableUI(
                                     showAll,
                                     vm,
                                     innerPadding,
-                                    vmUI,
                                     if (isLogin) GlobalUIStateHolder.webVpn else false,
                                     isLogin,
                                     { newDate -> today = newDate },
@@ -724,31 +867,33 @@ fun MainScreen(
                                     hazeState,
                                     navHostTopController,
                                     if (useCustomBackground) backGroundSource else null,
-                                    isEnabled
-                                ) { isEnabled = it }
-                                // 教务2
+                                    isEnabled,
+                                    { isEnabled = it },
+                                    { showAll = it }
+                                )
+//                                // 教务2
                                 CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(
                                     showAll,
                                     vm,
-                                    vmUI,
                                     hazeState,
                                     innerPadding,
                                     TotalCourseDataSource.MINE,
                                     onDateChange = { new -> today = new },
                                     today = today,
-                                    backGroundHaze = if (useCustomBackground) backGroundSource else null
+                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
+                                    { showAll = it }
                                 )
                                 // 指尖工大
                                 CourseType.ZHI_JIAN.code -> ZhiJianCourseTableUI(
                                     showAll,
                                     vm,
-                                    vmUI,
                                     innerPadding,
                                     zhiJianStudentId,
                                     today = today,
                                     onDateChange = { new -> today = new },
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     hazeState,
+                                    { showAll = it }
                                 )
                                 // 自定义导入课表 数据库id+3=swapUI
 //                                else -> CustomSchedules(showAll,innerPadding,vmUI,swapUI-4,{newDate-> today = newDate}, today)
@@ -757,13 +902,13 @@ fun MainScreen(
                             CommunityCourseTableUI(
                                 showAll,
                                 innerPadding,
-                                vmUI,
                                 friendUserName = swapUI.toString(),
                                 onDateChange = { new -> today = new },
                                 today = today,
                                 vm,
                                 hazeState,
-                                backGroundHaze = if (useCustomBackground) backGroundSource else null
+                                backGroundHaze = if (useCustomBackground) backGroundSource else null,
+                                { showAll = it }
                             )
                     }
                 }
