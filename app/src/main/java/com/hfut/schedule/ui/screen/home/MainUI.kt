@@ -129,7 +129,6 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.glassLayers
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
@@ -548,7 +547,7 @@ fun MainScreen(
                                     modifier = Modifier
                                         .padding(horizontal = BUTTON_PADDING)
                                         .clip(CircleShape)
-                                        .glassLayers(
+                                        .glassLayer(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
@@ -576,7 +575,7 @@ fun MainScreen(
                                         border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                         modifier = Modifier
                                             .clip(CircleShape)
-                                            .glassLayers(
+                                            .glassLayer(
                                                 backGroundSource,
                                                 smallStyle.copy(
                                                     blur = 2.dp,
@@ -604,7 +603,7 @@ fun MainScreen(
                                     border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                     modifier = Modifier
                                         .clip(CircleShape)
-                                        .glassLayers(
+                                        .glassLayer(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
@@ -631,7 +630,7 @@ fun MainScreen(
                                     border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                     modifier = Modifier
                                         .clip(CircleShape)
-                                        .glassLayers(
+                                        .glassLayer(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
@@ -660,7 +659,7 @@ fun MainScreen(
                                 TextField(
                                     modifier = Modifier
                                         .clip(MaterialTheme.shapes.medium)
-                                        .glassLayers(backGroundSource, largeStyle.copy(
+                                        .glassLayer(backGroundSource, largeStyle.copy(
                                             blur = 2.5.dp,
                                             overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
                                         ),enableLiquidGlass)

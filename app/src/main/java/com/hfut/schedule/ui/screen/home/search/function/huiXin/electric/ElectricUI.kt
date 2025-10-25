@@ -1,12 +1,11 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.electric
 
-import android.accessibilityservice.GestureDescription
+
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -30,9 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Switch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
@@ -41,12 +37,10 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -66,55 +60,46 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.google.gson.Gson
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.model.huixin.FeeResponse
-import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.hfut.schedule.ui.component.dialog.MenuChip
-import com.hfut.schedule.ui.component.container.TransplantListItem
-   
- 
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
+import com.hfut.schedule.logic.model.huixin.FeeResponse
+import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.network.state.reEmptyLiveDta
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.HefeiElectricStorage
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.getHefeiElectric
-import com.hfut.schedule.ui.component.container.CustomCard
-import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.WheelPicker
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.LargeCard
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.dialog.MenuChip
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import org.json.JSONObject
-import kotlin.String
-import kotlin.collections.iterator
 
 private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
@@ -942,14 +927,14 @@ private fun getBuildingStr(content : Int, campus : Campus) : String {
         }
         Campus.TXL -> {
             if(content > 10) {
-                "研${numToChineses(content-7)}"
+                "研${numToChinese(content-7)}"
             } else {
                 content.toString() + "号楼"
             }
         }
     }
 }
-private fun numToChineses(num : Int) : String {
+private fun numToChinese(num : Int) : String {
     return when(num) {
         4 -> "四"
         5 -> "五"

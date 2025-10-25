@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.calendar
+package com.hfut.schedule.ui.screen.home.calendar.common
 
 import android.content.Context
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache

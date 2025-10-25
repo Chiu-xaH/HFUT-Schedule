@@ -80,11 +80,11 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.ApiForCourseSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate

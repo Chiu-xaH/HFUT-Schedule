@@ -117,8 +117,8 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.StatusUI
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.numToChinese
+import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.getEventCampus

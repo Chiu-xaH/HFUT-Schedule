@@ -1,18 +1,9 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu.next
 
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,14 +20,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -64,39 +49,32 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.DraggableWeekButton
+
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.parseTimeTable
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.containerBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.HazeState
-import java.time.LocalDate
 
 
 enum class CourseDetailOrigin(val t : String) {

@@ -1,52 +1,27 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
-import android.util.Log
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -69,7 +44,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
@@ -78,9 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.R
@@ -107,17 +79,20 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.ExamToCalenderBean
+import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.ExamToCalenderBean
+import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
-import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
+import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
@@ -128,7 +103,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJ
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -152,7 +126,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import kotlin.math.roundToInt
 
 suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<CourseUnitBean> {
     try {
@@ -1382,195 +1355,3 @@ fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: Ne
 
 }
 
-fun numToChinese(num : Int) : String {
-    return when(num) {
-        1 -> "一"
-        2 -> "二"
-        3 -> "三"
-        4 -> "四"
-        5 -> "五"
-        6 -> "六"
-        7 -> "日"
-        else -> ""
-    }
-}
-
-
-// 传入YYYY-MM-DD 返回当前第几周周几
-fun dateToWeek(date : String) : Pair<Int,Int>? {
-    try {
-        // 第一周的开始日期 为周一  LocalDate
-        val start = getJxglstuStartDate()
-        val target = LocalDate.parse(date)
-
-        val days = ChronoUnit.DAYS.between(start, target)
-        return if (days < 0) {
-            // 目标日期早于学期开始
-            null
-        } else {
-            val week = (days / 7 + 1).toInt()   // 第几周（从1开始）
-            val dayOfWeek = ((days % 7) + 1).toInt() // 周几（1=周一，7=周日）
-            Pair(week, dayOfWeek)
-        }
-    } catch (e : Exception) {
-        e.printStackTrace()
-        return null
-    }
-}
-// 反函数
-fun weekToDate(week : Int,weekday : Int) : String? {
-    try {
-        if (week < 1 || weekday !in 1..7) return null
-
-        val start = getJxglstuStartDate()
-        val daysToAdd = (week - 1) * 7L + (weekday - 1)
-        val target = start.plusDays(daysToAdd)
-        return target.toString() // 返回 "YYYY-MM-DD"
-    } catch (e : Exception) {
-        e.printStackTrace()
-        return null
-    }
-}
-
-
-fun Modifier.glassLayers(
-    state : ShaderState,
-    style: GlassStyle = largeStyle,
-    enabled : Boolean,
-) : Modifier =
-    if(enabled && !GlobalUIStateHolder.isTransiting) {
-        this.glassLayer(
-            state,
-            style = style,
-        )
-    } else{
-        this.background(style.overlayColor)
-    }
-
-
-fun Modifier.calendarSquareGlass(
-    state : ShaderState,
-    color : Color,
-    enabled : Boolean,
-) : Modifier =
-    this.glassLayers(
-        state,
-        style = GlassStyle(
-            blur = 3.5.dp,
-            border = 30f,
-            dispersion = 0f,
-            distortFactor = 0.1f,
-            overlayColor = color
-        ),
-        enabled = enabled
-    )
-
-@Composable
-fun DraggableWeekButton(
-    modifier: Modifier = Modifier,
-    dragThreshold: Float = 5f,
-    currentWeek : Long,
-    key : Any?,
-    onNext : () -> Unit,
-    onPrevious : () -> Unit,
-    onClick: () -> Unit,
-) {
-    val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) } // 动画偏移
-    var totalDragX by remember { mutableFloatStateOf(0f) }
-    val scope = rememberCoroutineScope()
-
-    Box(
-        modifier = modifier
-            .pointerInput(key) {
-                detectDragGestures(
-                    onDragEnd = {
-                        // 根据水平累积偏移触发事件
-                        when {
-                            totalDragX > dragThreshold -> onNext()
-                            totalDragX < -dragThreshold -> onPrevious()
-                        }
-                        totalDragX = 0f
-                        // 松开手指
-                        scope.launch {
-                            offset.animateTo(
-                                Offset.Zero,
-                                animationSpec = spring(
-                                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                                    stiffness = Spring.StiffnessLow
-                                )
-                            )
-                        }
-                    },
-                    onDrag = { change, dragAmount ->
-                        change.consume()
-                        val (dx, dy) = dragAmount
-                        totalDragX += dx
-                        // 手指拖动
-                        scope.launch {
-                            offset.snapTo(
-                                Offset(
-                                    x = (offset.value.x + dx / 2f).coerceIn(-50f, 50f),
-                                    y = (offset.value.y + dy / 2f).coerceIn(-50f, 50f)
-                                )
-                            )
-                        }
-                    }
-                )
-            }
-    ) {
-        ExtendedFloatingActionButton(
-            onClick = onClick,
-            modifier = Modifier
-                .align(Alignment.Center)
-                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                val iconSize = 19.dp // 图标大小
-                val textFontSize = 15.sp // 字体大小，可根据需求调整
-                val padding = 14.dp
-
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(iconSize)
-                        .clickable { onPrevious() }
-                )
-
-                Spacer(modifier = Modifier.width(padding))
-
-
-                AnimatedContent(
-                    targetState = currentWeek,
-                    transitionSpec = {
-                        if (targetState > initialState) {
-                            slideInVertically { height -> height } + fadeIn() togetherWith
-                                    slideOutVertically { height -> -height } + fadeOut()
-                        } else {
-                            slideInVertically { height -> -height } + fadeIn() togetherWith
-                                    slideOutVertically { height -> height } + fadeOut()
-                        }
-                    }
-                ) { week ->
-                    Text(
-                        text = "第 $week 周",
-                        fontSize = textFontSize
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(padding)) // 文字与右箭头间距
-
-                Icon(
-                    Icons.Filled.ArrowForward,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(iconSize)
-                        .clickable { onNext() }
-                )
-            }
-        }
-    }
-}

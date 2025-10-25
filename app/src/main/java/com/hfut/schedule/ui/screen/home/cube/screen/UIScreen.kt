@@ -212,6 +212,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
 
+        LaunchedEffect(enableLiquidGlass) {
+            TransitionConfig.enableMirror = enableLiquidGlass
+        }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
 
@@ -515,11 +518,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 TransplantListItem(
                     headlineContent = { Text(text = "运动模糊") },
                     supportingContent = {
-                        if(AppVersion.CAN_MOTION_BLUR) {
-                            Text(text = "组件的运动过程伴随实时模糊效果\n平衡性能与美观,推荐开启")
-                        } else {
-                            Text(text = "需为 Android 12+")
-                        }
+                        Text(text = "部分组件的运动过程伴随实时模糊效果" + if(!AppVersion.CAN_MOTION_BLUR) "(需为 Android 12+)" else "")
                     },
                     leadingContent = { MotionBlurIcon(motionBlur) },
                     trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
@@ -532,10 +531,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "层级实时模糊")
+                        Text(text = "层级模糊")
                     },
                     supportingContent = {
-                        Text(text = "层级使用实时模糊区分\n平衡性能与美观,推荐打开" )
+                        Text(text = "部分层级使用渐进式或带背景色的实时模糊" )
                     },
                     leadingContent = {
                         HazeBlurIcon(blur)
@@ -551,7 +550,12 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text(text = "着色器渲染")
                     },
                     supportingContent = {
-                        Text(text = "将部分位于内容之上的层级渲染为折射或镜面的材质效果" + (if(!AppVersion.CAN_SHADER) "(需为Android 13+)" else "") )
+                        Text(text = "部分内容渲染为折射或镜面的材质效果" + (
+                                if(!AppVersion.CAN_SHADER)
+                                    "(需为Android 13+)"
+                                else
+                                    ""
+                        ) )
                     },
                     leadingContent = {
                         ShaderIcon(enableLiquidGlass)
@@ -577,7 +581,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text(text = "相机实时渲染")
                     },
                     supportingContent = {
-                        Text(text = "将摄像头的画面实时渲染在UI图层上，以实现支持启动台的背景模糊，开启后将带来一些渲染压力")
+                        Text(text = "将摄像头的画面实时渲染在UI图层上，以实现支持组件化的模糊效果，开启后将带来一些渲染压力")
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.monochrome_photos),null)
@@ -606,7 +610,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     },
                     supportingContent = {
-                        Text(text = "界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3,Level0效率最高")
+                        Text(text = "界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3")
                     },
                     leadingContent = { Icon(painterResource(R.drawable.airline_stops), contentDescription = "Localized description",) },
                 )

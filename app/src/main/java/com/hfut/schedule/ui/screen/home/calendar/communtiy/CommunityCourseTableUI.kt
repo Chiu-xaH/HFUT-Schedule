@@ -6,7 +6,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -69,15 +67,14 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.home.calendar.ExamToCalenderBean
-import com.hfut.schedule.ui.screen.home.calendar.examToCalendar
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.ExamToCalenderBean
+import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.glassLayers
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.CalendarStyle
@@ -880,7 +877,7 @@ fun ScheduleTopDate(
                     modifier = Modifier
                         .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
                         .clip(CircleShape)
-                        .glassLayers(
+                        .glassLayer(
                             shaderState,
                             smallStyle.copy(
                                 blur = 2.dp,
