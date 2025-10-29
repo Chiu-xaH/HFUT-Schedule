@@ -113,6 +113,7 @@ import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.shader.enterAnimation
 import com.xah.mirror.shader.scaleMirror
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
@@ -138,7 +139,7 @@ suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(D
 
 suspend fun DrawerState.animationClose() = this.animateTo(DrawerValue.Closed, tween(CONTROL_CENTER_ANIMATION_SPEED,easing = FastOutSlowInEasing))
 suspend fun DrawerState.animationOpen() = this.animateTo(DrawerValue.Open, spring(dampingRatio = 0.8f, stiffness = 125f))
-
+// 比较版本号 前2位相同则不显示 否则显示
 private fun haveImportantUpdate() : Boolean {
     try {
         val lastVersionName =  prefs.getString("versionName", "上版本") ?: return true
@@ -241,6 +242,7 @@ fun MainHost(
     } else {
         currentRoute == AppNavRoute.Scan.route
     }
+
     val enableGesture = enableControlCenter && !disabledGesture
     var containerColor by remember { mutableStateOf<Color?>(null) }
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
@@ -360,8 +362,16 @@ fun MainHost(
                                     it
                             }
                         }
-                    },
+                    }
+                ,
             )  {
+                // 登录
+                transitionComposable(AppNavRoute.Login.route) {
+                    LoginScreen(
+                        loginVm,
+                        networkVm,
+                    )
+                }
                 // 主UI
                 transitionComposable(AppNavRoute.Home.route) {
                     val mainUI = @Composable { celebrationText : String? ->
@@ -420,8 +430,17 @@ fun MainHost(
                     LibraryBorrowedScreen(networkVm,navController)
                 }
                 // 添加聚焦日程
-                transitionComposable(AppNavRoute.AddEvent.route) {
-                    AddEventScreen(networkVm,navController, )
+                transitionComposable(
+                    route = AppNavRoute.AddEvent.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.AddEvent.Args.entries)
+                ) { backStackEntry ->
+                    val id = backStackEntry.arguments?.getInt(AppNavRoute.AddEvent.Args.ID.argName)
+                    val eventId = if(id == null || id <= 0) {
+                        -1
+                    } else {
+                        id
+                    }
+                    AddEventScreen(networkVm,navController,eventId)
                 }
                 // 导航中转空白页
                 transitionComposable(

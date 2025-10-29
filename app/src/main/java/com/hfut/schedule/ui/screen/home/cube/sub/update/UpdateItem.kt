@@ -52,8 +52,12 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 Android 12支持课程表方格背景模糊","课程表方格背景玻璃材质需Android版本为13+，12为模糊，其余低版本为颜色遮罩")
-            UpdateItems("优化 部分界面的显示")
+            UpdateItems("重构 教务课程表","完全推倒重写，新的课程表方格以时间线坐落，全新的自定义合并冲突方格")//
+            UpdateItems("新增 点击聚焦日程支持编辑","长按依旧为删除")//
+//            UpdateItems("新增 指尖工大课表支持保存常用用户")
+            UpdateItems("优化 课程表背景下底栏的可读性")//
+            UpdateItems("修复 寝室成员重复显示的Bug")//
+//            UpdateItems("新增 新的冷启动进入动画")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 课程表方格支持教师的显示")

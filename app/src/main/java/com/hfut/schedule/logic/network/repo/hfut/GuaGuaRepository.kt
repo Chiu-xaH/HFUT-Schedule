@@ -6,7 +6,7 @@ import com.hfut.schedule.logic.model.guagua.GuaGuaLoginResponse
 import com.hfut.schedule.logic.model.guagua.GuaguaBillsResponse
 import com.hfut.schedule.logic.model.guagua.UseCodeResponse
 import com.hfut.schedule.logic.network.api.GuaGuaService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.GuaGuaServiceCreator
 import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -37,50 +37,50 @@ object GuaGuaRepository {
 
 
     suspend fun guaGuaLogin(phoneNumber : String, password : String,loginResult : StateHolder<GuaGuaLoginResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = loginResult,
-            request = { guaGua.login(phoneNumber, password).awaitResponse() },
+            request = { guaGua.login(phoneNumber, password) },
             transformSuccess = { _, json -> parseGuaGuaLogin(json) },
         )
 
     suspend fun guaGuaStartShower(phoneNumber: String, macLocation : String, loginCode : String,startShowerResult : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = startShowerResult,
             request = {
                 guaGua.startShower(
                     phoneNumber = phoneNumber,
                     loginCode = loginCode,
                     macLocation = macLocation
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseGuaGuaStartShower(json) },
         )
 
     suspend fun guaGuaGetBills(billsResult : StateHolder<GuaguaBillsResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = billsResult,
             request = {
                 guaGua.getBills(
                     phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
                     loginCode = SharedPrefs.prefs.getString("loginCode", "") ?: ""
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseGuaGuaBills(json) },
         )
 
-    suspend fun guaGuaGetUseCode(useCodeResult : StateHolder<String>) = launchRequestSimple(
+    suspend fun guaGuaGetUseCode(useCodeResult : StateHolder<String>) = launchRequestState(
         holder = useCodeResult,
         request = {
             guaGua.getUseCode(
                 phoneNumber = SharedPrefs.prefs.getString("PHONENUM", "") ?: "",
                 loginCode = SharedPrefs.prefs.getString("loginCode", "") ?: ""
-            ).awaitResponse()
+            )
         },
         transformSuccess = { _, json -> parseGuaGuaUseCode(json) }
     )
 
     suspend fun guaGuaReSetUseCode(newCode : String,reSetCodeResult : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = reSetCodeResult,
             request = {
                 val psk = SharedPrefs.prefs.getString("GuaGuaPsk", "") ?: ""
@@ -90,7 +90,7 @@ object GuaGuaRepository {
                     encrypted,
                     loginCode = SharedPrefs.prefs.getString("loginCode", "") ?: "",
                     newCode
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseGuaGuaReSetUseCode(json) }
         )

@@ -40,7 +40,6 @@ private fun getCourse(friendUserName : String? = null): List<courseBasicInfoDTOL
 }
 
 private fun getCoursesFromCommunity(targetWeek : Int, friendUserName : String? = null) : List<List<MutableList<courseDetailDTOList>>> {
-//    val dayArray = Array(7) { Array<List<courseDetailDTOList>>(12) { emptyList() } }
     val dayArray : List<List<MutableList<courseDetailDTOList>>> = List(7) { List(12) { mutableListOf<courseDetailDTOList>() } }
     val result = getCourse(friendUserName)
     for (i in result.indices){

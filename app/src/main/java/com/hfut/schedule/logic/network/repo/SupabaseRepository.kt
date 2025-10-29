@@ -14,7 +14,7 @@ import com.hfut.schedule.logic.model.SupabaseUserLoginBean
 import com.hfut.schedule.logic.network.api.SupabaseService
 import com.hfut.schedule.logic.network.servicecreator.SupabaseServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.util.makeRequest
 import com.hfut.schedule.logic.network.util.supabaseEventDtoToEntity
 import com.hfut.schedule.logic.network.util.supabaseEventEntityToDto
@@ -33,14 +33,14 @@ import retrofit2.awaitResponse
 object SupabaseRepository {
     private val supabase = SupabaseServiceCreator.create(SupabaseService::class.java)
 
-    suspend fun getTodayVisit(holder : StateHolder<Int>) = launchRequestSimple(
+    suspend fun getTodayVisit(holder : StateHolder<Int>) = launchRequestState(
         holder = holder,
-        request = { supabase.getTodayVisitCount().awaitResponse() },
+        request = { supabase.getTodayVisitCount() },
         transformSuccess = { _, body -> parseTodayVisit(body) }
     )
-    suspend fun getUserCount(holder : StateHolder<Int>) = launchRequestSimple(
+    suspend fun getUserCount(holder : StateHolder<Int>) = launchRequestState(
         holder = holder,
-        request = { supabase.getUserCount().awaitResponse() },
+        request = { supabase.getUserCount() },
         transformSuccess = { _, body -> parseTodayVisit(body) }
     )
     @JvmStatic
@@ -54,25 +54,25 @@ object SupabaseRepository {
     )
 
     suspend fun supabaseLoginWithPassword(password : String,holder : StateHolder<SupabaseLoginResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 supabase.login(
                     user = SupabaseUserLoginBean(password = password),
                     loginType = "password"
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseRefreshTokenSupabase(json) }
         )
 
     suspend fun supabaseLoginWithRefreshToken(refreshToken : String,holder : StateHolder<SupabaseLoginResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 supabase.login(
                     user = SupabaseRefreshLoginBean(refreshToken),
                     loginType = "refresh_token"
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseRefreshTokenSupabase(json) }
         )
@@ -83,10 +83,10 @@ object SupabaseRepository {
 
 
     suspend fun supabaseDel(jwt : String,id : Int,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
-                supabase.delEvent(authorization = "Bearer $jwt", id = "eq.$id").awaitResponse()
+                supabase.delEvent(authorization = "Bearer $jwt", id = "eq.$id")
             },
             transformSuccess = { _, _ -> true }
         )
@@ -135,17 +135,17 @@ object SupabaseRepository {
     }
 
     suspend fun supabaseGetEventCount(jwt: String,holder : StateHolder<String?>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { supabase.getEventCount(authorization = "Bearer $jwt").awaitResponse() },
+            request = { supabase.getEventCount(authorization = "Bearer $jwt") },
             transformSuccess = { _, body -> body }
         )
 
     suspend fun supabaseGetEventLatest(jwt: String,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
-                supabase.getEventLatestTime(authorization = "Bearer $jwt").awaitResponse()
+                supabase.getEventLatestTime(authorization = "Bearer $jwt")
             },
             transformSuccess = { _, body -> parseSupabaseLatestEventTime(body) }
         )
@@ -165,10 +165,10 @@ object SupabaseRepository {
     }
 
     suspend fun supabaseGetMyEvents(holder : StateHolder<List<SupabaseEventsInput>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
-                supabase.getEvents(endTime = null, email = "eq." + getSchoolEmail()).awaitResponse()
+                supabase.getEvents(endTime = null, email = "eq." + getSchoolEmail())
             },
             transformSuccess = { _, json -> parseSupabaseMyEvents(json) }
         )
@@ -178,28 +178,28 @@ object SupabaseRepository {
     } catch(e : Exception) { throw e }
 
 
-    suspend fun supabaseCheckJwt(jwt: String,holder : StateHolder<Boolean>) = launchRequestSimple(
+    suspend fun supabaseCheckJwt(jwt: String,holder : StateHolder<Boolean>) = launchRequestState(
         holder = holder,
-        request = { supabase.checkToken(authorization = "Bearer $jwt").awaitResponse() },
+        request = { supabase.checkToken(authorization = "Bearer $jwt") },
         transformSuccess = { _, _ -> true }
     )
 
     suspend fun supabaseUpdateEvent(jwt: String, id: Int, body : Map<String,Any>,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 supabase.updateEvent(
                     authorization = "Bearer $jwt",
                     id = "eq.$id",
                     body = body
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, _ -> true }
         )
 
 
     suspend fun postUser() = launchRequestNone {
-        supabase.postUsage().awaitResponse()
+        supabase.postUsage()
     }
 
 }

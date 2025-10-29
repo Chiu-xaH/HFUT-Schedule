@@ -5,10 +5,17 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -20,16 +27,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
+import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.shader.largeStyle
+import com.xah.mirror.util.ShaderState
 import com.xah.transition.util.isCurrentRouteWithoutArgs
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import dev.chrisbanes.haze.HazeState
 
@@ -104,6 +120,7 @@ private fun BottomBarContentDynamic(
     list : List<NavigationBarItemDataDynamic>,
     navController : NavController,
     enabled : Boolean = true,
+    showColor : Boolean = true,
 ) {
     val showLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
     Row {
@@ -139,7 +156,7 @@ private fun BottomBarContentDynamic(
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .9f),
+                    indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = if(showColor) .9f else 0f),
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary
                 )
@@ -168,3 +185,37 @@ fun HazeBottomBarDynamic(
         }
     }
 }
+
+@Composable
+fun SpecialBottomBar(
+    shaderState : ShaderState,
+    list : List<NavigationBarItemDataDynamic>,
+    navController : NavController,
+    enabled : Boolean = true,
+) {
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    Column(modifier = Modifier.padding(10.dp).navigationBarsPadding()
+
+    ) {
+        Spacer(Modifier.height(CARD_NORMAL_DP))
+        Box(
+            modifier = Modifier
+                .clip(MaterialTheme.shapes.large)
+                .glassLayer(
+                    shaderState,
+                    style = largeStyle.copy(
+                        overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
+                    ),
+                    enabled = enableLiquidGlass
+                )
+        ) {
+            Column {
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+                BottomBarContentDynamic(list,navController,enabled,false)
+            }
+        }
+    }
+}
+
+

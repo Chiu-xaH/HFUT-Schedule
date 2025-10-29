@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.model.library.LibraryStatusResponse
 import com.hfut.schedule.logic.network.api.LibraryService
 import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -19,13 +19,13 @@ object LibraryRepository {
     private val library = LibraryServiceCreator.create(LibraryService::class.java)
 
     suspend fun checkLibraryNetwork() = launchRequestNone {
-        library.check().awaitResponse()
+        library.check()
     }
 
     suspend fun checkLibraryLogin(token : String,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { library.checkLogin(token).awaitResponse() },
+            request = { library.checkLogin(token) },
             transformSuccess = { _, json -> parseCheckLibraryLogin(json) }
         )
     @JvmStatic
@@ -37,9 +37,9 @@ object LibraryRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getStatus(token : String,holder : StateHolder<LibraryStatus>) = launchRequestSimple(
+    suspend fun getStatus(token : String,holder : StateHolder<LibraryStatus>) = launchRequestState(
         holder = holder,
-        request = { library.getStatus(auth = token).awaitResponse() },
+        request = { library.getStatus(auth = token) },
         transformSuccess = { _,json -> parseLibraryStatus(json) }
     )
     @JvmStatic
@@ -75,9 +75,9 @@ object LibraryRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = getPageSize(), holder : StateHolder<List<LibraryBorrowedBean>>) = launchRequestSimple(
+    suspend fun getBorrowed(token : String, page : Int, status: BorrowedStatus? = null, pageSize : Int = getPageSize(), holder : StateHolder<List<LibraryBorrowedBean>>) = launchRequestState(
         holder = holder,
-        request = { library.getBorrowed(token,page,status?.status, pageSize = pageSize ).awaitResponse() },
+        request = { library.getBorrowed(token,page,status?.status, pageSize = pageSize ) },
         transformSuccess = { _,json -> parseBorrowed(json) }
     )
     @JvmStatic

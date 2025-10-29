@@ -607,7 +607,7 @@ fun JxglstuCourseTableSearch(
                                                 it.calendarSquareGlass(
                                                     backGroundHaze,
                                                     style.containerColor.copy(customBackgroundAlpha),
-                                                    enableLiquidGlass
+                                                    enableLiquidGlass,
                                                 )
                                             } else {
                                                 it

@@ -8,7 +8,7 @@ import com.hfut.schedule.logic.network.api.AcademicService
 import com.hfut.schedule.logic.network.api.AcademicXCService
 import com.hfut.schedule.logic.network.api.NewsService
 import com.hfut.schedule.logic.network.api.XuanChengService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.AcademicServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.AcademicXCServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.NewsServiceCreator
@@ -44,11 +44,11 @@ object NewsRepository {
         })
     }
     suspend fun getXuanChengNews(page: Int,newsXuanChengResult : StateHolder<List<NewsResponse>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = newsXuanChengResult,
             request = {
                 xuanCheng.getNotications(page = page.let { if (it <= 1) "" else it.toString() })
-                    .awaitResponse()
+                    
             },
             transformSuccess = { _, html -> parseNewsXuanCheng(html) }
         )
@@ -67,9 +67,9 @@ object NewsRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getAcademicXC(type: AcademicXCType, page: Int = 1, holder : StateHolder<List<NewsResponse>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { academicXC.getNews(type.type, page).awaitResponse() },
+            request = { academicXC.getNews(type.type, page) },
             transformSuccess = { _, json -> parseAcademicNewsXC(json) },
         )
     @JvmStatic
@@ -96,13 +96,13 @@ object NewsRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getAcademic(type: AcademicType, totalPage : Int? = null, page: Int = 1, holder : StateHolder<AcademicNewsResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 if (totalPage == null || totalPage == page) {
-                    academic.getNews("${type.type}.htm").awaitResponse()
+                    academic.getNews("${type.type}.htm")
                 } else {
-                    academic.getNews("${type.type}/${totalPage - page + 1}.htm").awaitResponse()
+                    academic.getNews("${type.type}/${totalPage - page + 1}.htm")
                 }
             },
             transformSuccess = { _, json -> parseAcademicNews(json) },
@@ -131,9 +131,9 @@ object NewsRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun searchNews(title : String,page: Int = 1,newsResult : StateHolder<List<NewsResponse>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = newsResult,
-            request = { news.searchNews(Crypto.encodeToBase64(title), page).awaitResponse() },
+            request = { news.searchNews(Crypto.encodeToBase64(title), page) },
             transformSuccess = { _, html -> parseNews(html) }
         )
 

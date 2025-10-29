@@ -67,6 +67,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -93,152 +94,148 @@ fun UpdateSuccessScreen(
     val oldVersion = prefs.getString("versionName","上版本")
     val scope = rememberCoroutineScope()
 
-        CustomTransitionScaffold(
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                LargeTopAppBar(
-                    colors = topAppBarColors(
-                        containerColor = Color.Transparent,
-                        titleContentColor = MaterialTheme.colorScheme.primary
-                    ),
-                    title = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "新版本已就绪",
-                                modifier = Modifier.padding(start = 3.5.dp),
-                            )
-                        }
-                    },
-                    actions = {
-                        val targetRoute = remember { AppNavRoute.VersionInfo.route }
-
-                        FilledTonalIconButton (
-                            modifier = Modifier
-                                .padding(end = APP_HORIZONTAL_DP)
-                            ,
-                            shape = MaterialTheme.shapes.extraLarge,
-                            onClick = {
-                                navController.navigateForTransition(
-                                    AppNavRoute.VersionInfo,
-                                    targetRoute,
-                                    transplantBackground = true
-                                )
-                            }
-                        ) {
-                            Icon(
-                                painterResource(AppNavRoute.VersionInfo.icon),
-                                null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.iconElementShare(targetRoute)
-                            )
-                        }
-                    },
-                )
-            },
-            bottomBar = {
-                val targetRoute = remember { AppNavRoute.Empty.withArgs(AppNavRoute.Home.route) }
-                Button(
-                    onClick = {
-                        scope.launch {
-                            val result = async { cleanCache(context ) }.await()
-                            showToast("已清理缓存 $result MB")
-                            async {
-                                SharedPrefs.saveString(
-                                    "versionName",
-                                    AppVersion.getVersionName()
-                                )
-                            }.await()
-                            navController.navigateAndClear(targetRoute)
-                        }
-                    },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(APP_HORIZONTAL_DP)
-                        .navigationBarsPadding()
-                        .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
-                        .containerShare(targetRoute, MaterialTheme.shapes.extraLarge)
-
-                ) {
-                    Text(
-                        "开始使用",
-                        modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 2),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                }
-            },
-            modifier = Modifier.hazeSource(hazeState)
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.primaryContainer.copy(.5f),
-                                MaterialTheme.colorScheme.surface
-                            ),
-                            center = Offset.Unspecified, // 默认居中
-                            radius = 500f // 半径越大，过渡越柔和
+    CustomTransitionScaffold(
+        route = route,
+        navHostController = navController,
+        topBar = {
+            LargeTopAppBar(
+                colors = topAppBarColors(
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                ),
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "新版本已就绪",
+                            modifier = Modifier.padding(start = 3.5.dp),
                         )
-                    )
-            ) {
-                var rotated by remember { mutableStateOf(false) }
+                    }
+                },
+                actions = {
+                    val targetRoute = remember { AppNavRoute.VersionInfo.route }
 
-                LaunchedEffect(Unit) {
-                    rotated = true
-                }
-
-                val rotation by animateFloatAsState(
-                    targetValue = if (rotated) 180f else 0f,
-                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED * 2),
-                    label = "rotationAnim"
-                )
-                val scale by animateFloatAsState(
-                    targetValue = if (rotated) 1f else 0f,
-                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
-                    label = "rotationAnim"
-                )
-
-                PhoneFrame(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = APP_HORIZONTAL_DP * 2 - 6.dp)
-                        .padding(top = APP_HORIZONTAL_DP)
-                        .align(Alignment.Center),
-                    50f,
-                    APP_HORIZONTAL_DP.value
-                )
-
-                ColumnVertical(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                ) {
-                    AnimatedTextCarousel(welcomeTexts)
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                    Icon(
-                        painterResource(R.drawable.cached),
-                        null,
+                    FilledTonalIconButton (
                         modifier = Modifier
-                            .size(110.dp)
-                            .rotate(rotation)
-                            .scale(scale),
-                        tint = MaterialTheme.colorScheme.primary
+                            .padding(end = APP_HORIZONTAL_DP)
+                        ,
+                        shape = MaterialTheme.shapes.extraLarge,
+                        onClick = {
+                            navController.navigateForTransition(
+                                AppNavRoute.VersionInfo,
+                                targetRoute,
+                                transplantBackground = true
+                            )
+                        }
+                    ) {
+                        Icon(
+                            painterResource(AppNavRoute.VersionInfo.icon),
+                            null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.iconElementShare(targetRoute)
+                        )
+                    }
+                },
+            )
+        },
+        bottomBar = {
+            Button(
+                onClick = {
+                    scope.launch {
+                        val result = async { cleanCache(context ) }.await()
+                        showToast("已清理缓存 $result MB")
+                        async {
+                            SharedPrefs.saveString(
+                                "versionName",
+                                AppVersion.getVersionName()
+                            )
+                        }.await()
+                        GlobalUIStateHolder.useEnterAnimation = true
+                        navController.navigateAndClear(AppNavRoute.Home.route)
+                    }
+                },
+                shape = MaterialTheme.shapes.extraLarge,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(APP_HORIZONTAL_DP)
+                    .navigationBarsPadding()
+                    .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
+            ) {
+                Text(
+                    "开始使用",
+                    modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 2),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+        },
+        modifier = Modifier.hazeSource(hazeState)
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primaryContainer.copy(.5f),
+                            MaterialTheme.colorScheme.surface
+                        ),
+                        center = Offset.Unspecified, // 默认居中
+                        radius = 500f // 半径越大，过渡越柔和
                     )
-                    Text(
-                        text = "$oldVersion → ${AppVersion.getVersionName()}",
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(top = APP_HORIZONTAL_DP)
-                    )
-                }
+                )
+        ) {
+            var rotated by remember { mutableStateOf(false) }
+
+            LaunchedEffect(Unit) {
+                rotated = true
+            }
+
+            val rotation by animateFloatAsState(
+                targetValue = if (rotated) 180f else 0f,
+                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED * 2),
+                label = "rotationAnim"
+            )
+            val scale by animateFloatAsState(
+                targetValue = if (rotated) 1f else 0f,
+                animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
+                label = "rotationAnim"
+            )
+
+            PhoneFrame(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = APP_HORIZONTAL_DP * 2 - 6.dp)
+                    .padding(top = APP_HORIZONTAL_DP)
+                    .align(Alignment.Center),
+                50f,
+                APP_HORIZONTAL_DP.value
+            )
+
+            ColumnVertical(
+                modifier = Modifier
+                    .align(Alignment.Center)
+            ) {
+                AnimatedTextCarousel(welcomeTexts)
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                Icon(
+                    painterResource(R.drawable.cached),
+                    null,
+                    modifier = Modifier
+                        .size(110.dp)
+                        .rotate(rotation)
+                        .scale(scale),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "$oldVersion → ${AppVersion.getVersionName()}",
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = APP_HORIZONTAL_DP)
+                )
             }
         }
-//    }
+    }
 }
 
 

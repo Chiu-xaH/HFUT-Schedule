@@ -264,7 +264,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow, navController = navController) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
@@ -294,7 +294,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, navController = navController) { refreshDB = !refreshDB }
                                     }
                                 }
                             }

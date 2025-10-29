@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.model.QWeatherWarnResponse
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.api.QWeatherService
 import com.hfut.schedule.logic.network.servicecreator.QWeatherServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.other.life.getLocation
 import retrofit2.awaitResponse
@@ -18,9 +18,9 @@ object QWeatherRepository {
     private val qWeather = QWeatherServiceCreator.create(QWeatherService::class.java)
 
     suspend fun getWeatherWarn(campus: CampusRegion, weatherWarningData : StateHolder<List<QWeatherWarnBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = weatherWarningData,
-            request = { qWeather.getWeatherWarn(locationID = getLocation(campus)).awaitResponse() },
+            request = { qWeather.getWeatherWarn(locationID = getLocation(campus)) },
             transformSuccess = { _, json -> parseWeatherWarn(json) }
         )
 
@@ -30,9 +30,9 @@ object QWeatherRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getWeather(campus: CampusRegion, qWeatherResult : StateHolder<QWeatherNowBean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = qWeatherResult,
-            request = { qWeather.getWeather(locationID = getLocation(campus)).awaitResponse() },
+            request = { qWeather.getWeather(locationID = getLocation(campus)) },
             transformSuccess = { _, json -> parseWeatherNow(json) }
         )
 

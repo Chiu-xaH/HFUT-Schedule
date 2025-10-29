@@ -19,7 +19,7 @@ import com.hfut.schedule.logic.network.servicecreator.GiteeServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubRawServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.GithubServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.MyServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import okhttp3.Headers
@@ -47,7 +47,7 @@ object GithubRepository {
     }
 
     suspend fun getProgramListInfo(id : Int,campus : CampusRegion,holder : StateHolder<ProgramSearchBean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 myAPI.getProgram(
@@ -56,7 +56,7 @@ object GithubRepository {
                         HEFEI -> "hefei"
                         XUANCHENG -> "xuancheng"
                     }
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseProgramSearchInfo(json) }
         )
@@ -65,7 +65,7 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getProgramList(campus : CampusRegion,holder : StateHolder<List<ProgramListBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 myAPI.getProgramList(
@@ -73,7 +73,7 @@ object GithubRepository {
                         HEFEI -> "hefei"
                         XUANCHENG -> "xuancheng"
                     }
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseProgramSearch(json) }
         )
@@ -83,9 +83,9 @@ object GithubRepository {
         data
     } catch (e : Exception) { throw e }
 
-    suspend fun getStarNum(githubStarsData : StateHolder<Int>) = launchRequestSimple(
+    suspend fun getStarNum(githubStarsData : StateHolder<Int>) = launchRequestState(
         holder = githubStarsData,
-        request = { github.getRepoInfo().awaitResponse() },
+        request = { github.getRepoInfo() },
         transformSuccess = { _, json -> parseGithubStarNum(json) }
     )
 
@@ -95,9 +95,9 @@ object GithubRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getUpdateContents(holder : StateHolder<List<GithubFolderBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { github.getFolderContent().awaitResponse() },
+            request = { github.getFolderContent() },
             transformSuccess = { _, json -> parseUpdateContents(json) }
         )
 
@@ -123,9 +123,9 @@ object GithubRepository {
 
 
     suspend fun getUpdateFileSize(fileName : String,holder : StateHolder<Double>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { gitee.download(fileName).awaitResponse() },
+            request = { gitee.download(fileName) },
             transformSuccess = { headers -> parseGiteeFileSize(headers) }
         )
 
@@ -135,8 +135,8 @@ object GithubRepository {
         contentLength.toDouble() / (1024 * 1024)
     } catch (e: Exception) { throw e }
 
-    suspend fun getUpdate(holder : StateHolder<GiteeReleaseResponse>) = launchRequestSimple(
-        request = { gitee.getUpdate().awaitResponse() },
+    suspend fun getUpdate(holder : StateHolder<GiteeReleaseResponse>) = launchRequestState(
+        request = { gitee.getUpdate() },
         holder = holder,
         transformSuccess = { _, json -> parseGiteeUpdates(json) }
     )

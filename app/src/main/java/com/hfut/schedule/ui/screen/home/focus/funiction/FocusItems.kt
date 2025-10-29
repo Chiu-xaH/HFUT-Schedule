@@ -388,7 +388,15 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
 }
 
 @Composable
-fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,activity: Activity,showTomorrow : Boolean,refresh : () -> Unit) {
+fun CustomItem(
+    item : CustomEventDTO,
+    hazeState: HazeState,
+    isFuture: Boolean,
+    activity: Activity,
+    showTomorrow : Boolean,
+    navController : NavHostController,
+    refresh : () -> Unit
+) {
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
@@ -401,31 +409,39 @@ fun CustomItem(item : CustomEventDTO,hazeState: HazeState,isFuture: Boolean,acti
             // 显示在首页
             // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh,navController = navController)
         } else {
             // 显示在第二页
             if(isFuture)
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh)
+                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh,navController = navController)
         }
     } else {
         // 今天截止 并且尚未截止
         if((endNum / 10000 == nowTimeNum  / 10000) && (endNum % 10000 >= nowTimeNum % 10000)) {
             // 显示在首页
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh,navController = navController)
         } else {
             // 显示在第二页
             if(isFuture)
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh)
+                CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh,navController = navController)
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeState: HazeState,isOutOfDate : Boolean = false,isTomorrow : Boolean,refresh: () -> Unit) {
+fun CustomItemUI(
+    item: CustomEventDTO,
+    isFuture: Boolean,
+    activity: Activity,
+    hazeState: HazeState,
+    isOutOfDate : Boolean = false,
+    navController: NavHostController,
+    isTomorrow : Boolean,refresh: () -> Unit
+) {
     val title = item.title
     val description = item.description
     val dateTime = item.dateTime
@@ -453,9 +469,11 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
             hazeState = hazeState
         )
 
-
+    val route = remember { AppNavRoute.AddEvent.withArgs(item.id) }
 
     CardListItem(
+        color = mixedCardNormalColor(),
+        cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
@@ -513,9 +531,12 @@ fun CustomItemUI(item: CustomEventDTO,isFuture: Boolean,activity: Activity,hazeS
             }
         },
         modifier = Modifier.combinedClickable(
-            onClick = { description?.let { openOperation(it, context) } },
+            onClick = {
+                navController.navigateForTransition(AppNavRoute.AddEvent,route)
+            },
             onDoubleClick = {
                 //双击操作
+                description?.let { openOperation(it, context) }
             },
             onLongClick = {
                 //长按操作

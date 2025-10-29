@@ -675,7 +675,7 @@ fun CommunityCourseTableUI(
                                                 it.calendarSquareGlass(
                                                     backGroundHaze,
                                                     style.containerColor.copy(customBackgroundAlpha),
-                                                    enableLiquidGlass
+                                                    enableLiquidGlass,
                                                 )
                                             } else {
                                                 it
@@ -873,7 +873,7 @@ fun ScheduleTopDate(
 
                 Surface(
                     shape = CircleShape,
-                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+//                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                     modifier = Modifier
                         .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
                         .clip(CircleShape)

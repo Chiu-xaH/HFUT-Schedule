@@ -66,6 +66,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
         )
     }
     object Home : AppNavRoute("HOME","主页面",R.drawable.home)
+    object Login : AppNavRoute("LOGIN","登录",R.drawable.login)
     object UseAgreement : AppNavRoute("USE_AGREEMENT","用户协议",R.drawable.partner_exchange)
     object Empty : AppNavRoute("EMPTY","导航中转空白页",R.drawable.near_me) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
@@ -77,7 +78,15 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
         )
     }
     object UpdateSuccess : AppNavRoute("UPDATE_SUCCESSFUL","更新完成引导",R.drawable.settings)
-    object AddEvent : AppNavRoute("ADD_EVENT","添加",R.drawable.add)
+    object AddEvent : AppNavRoute("ADD_EVENT","添加",R.drawable.add) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
+            ID("id", NavType.IntType, -1,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(id : Int = -1): String = withArgs(
+            Args.ID.argName to id,
+        )
+    }
     object Admission : AppNavRoute("ADMISSION","本科招生",R.drawable.publics)
     object VersionInfo : AppNavRoute("VERSION_INFO","本版本新特性",R.drawable.info)
 //    object ArbitraryCalendar : AppNavRoute("ARBITRARY_CALENDAR","任意课程表",R.drawable.info)

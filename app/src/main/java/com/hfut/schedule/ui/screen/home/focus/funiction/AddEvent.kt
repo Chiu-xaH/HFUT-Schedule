@@ -129,6 +129,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -137,6 +138,7 @@ import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -225,18 +227,38 @@ fun AddEventFloatButton(
 fun AddEventScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
+    eventId : Int = -1
 ) {
-    val route = remember { AppNavRoute.AddEvent.route }
+    val route = remember { AppNavRoute.AddEvent.withArgs(eventId) }
 
     val isSupabase = false
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
 
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var showDialog by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val scope = rememberCoroutineScope()
+
+    if(showDialog)
+        LittleDialog(
+            onDismissRequest = { showDialog = false },
+            onConfirmation = {
+                if(eventId >= 0) {
+                    scope.launch {
+                        async { DataBaseManager.customEventDao.del(eventId) }.await()
+                        launch { showDialog = false }
+                        launch(Dispatchers.Main) {
+                            navController.popBackStackForTransition()
+                        }
+                    }
+                } else {
+                    showToast("id错误")
+                }
+            },
+            dialogText = "要删除此项吗",
+        )
 
     CustomTransitionScaffold (
         route = route,
@@ -246,25 +268,35 @@ fun AddEventScreen(
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
-//                    modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.AddEvent.label) },
+                title = { Text(if(eventId <= 0) "添加" else "修改") },
                 navigationIcon = {
                     TopBarNavigationIcon(navController,route, AppNavRoute.AddEvent.icon)
                 },
                 actions = {
-                    FilledTonalIconButton(
-                        onClick = {
-                            showToast("正在开发")
+                    if(eventId <= 0) {
+                        FilledTonalIconButton(
+                            onClick = {
+                                showToast("正在开发")
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.wand_stars),null)
                         }
-                    ) {
-                        Icon(painterResource(R.drawable.wand_stars),null)
-                    }
-                    if(!isSupabase) {
-                        FilledTonalButton(onClick = {
-                            Starter.startSupabase(context)
-                        }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                            Text("云端共建")
+                        if(!isSupabase) {
+                            FilledTonalButton(onClick = {
+                                Starter.startSupabase(context)
+                            }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                                Text("云端共建")
+                            }
+                        }
+                    } else {
+                        FilledTonalIconButton(
+                            onClick = {
+                                showDialog = true
+                            },
+                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP)
+                        ) {
+                            Icon(painterResource(R.drawable.delete),null)
                         }
                     }
                 }
@@ -282,7 +314,7 @@ fun AddEventScreen(
                     }
                 }
                 true -> {
-                    AddEventUI(vm,isSupabase) {
+                    AddEventUI(vm,isSupabase,eventId) {
                         navController.popBackStack()
                     }
                 }
@@ -315,7 +347,7 @@ private fun SharedTransitionScope.ButtonUI(
     if (isVisible) {
         FloatingActionButton(
             modifier = Modifier
-                .padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding)
+                .padding(bottom = innerPaddings.calculateBottomPadding() - navigationBarHeightPadding)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
                 .sharedBounds(
                     boundsTransform = boundsTransform,
@@ -408,13 +440,13 @@ private fun SharedTransitionScope.SurfaceUI(
                     colors = topBarTransplantColor(),
                     title = { Text("添加") },
                     actions = {
-                        if(!isSupabase)
-                        FilledTonalButton(onClick = {
-                            Starter.startSupabase(context)
-                        }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            Text("云端共建")
+                        if(!isSupabase) {
+                            FilledTonalButton(onClick = {
+                                Starter.startSupabase(context)
+                            }, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                                Text("云端共建")
+                            }
                         }
-
                     },
                     navigationIcon = {
                         IconButton(
@@ -439,7 +471,9 @@ private fun SharedTransitionScope.SurfaceUI(
             val canUse by produceState<Boolean?>(initialValue = null) {
                 value = if(isSupabase) loginSupabaseWithCheck(jwt,refreshToken,vm,context) else true
             }
-            Column(modifier = Modifier.padding(innerPadding).background(Color.Transparent)) {
+            Column(modifier = Modifier
+                .padding(innerPadding)
+                .background(Color.Transparent)) {
                 when(canUse) {
                     null -> {
                         CenterScreen {
@@ -447,7 +481,7 @@ private fun SharedTransitionScope.SurfaceUI(
                         }
                     }
                     true -> {
-                        AddEventUI(vm,isSupabase,showChange)
+                        AddEventUI(vm,isSupabase,showChange = showChange)
                     }
                     false -> {
                         CenterScreen {
@@ -467,10 +501,21 @@ private fun SharedTransitionScope.SurfaceUI(
 }
 
 @Composable
-fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -> Unit) {
+fun AddEventUI(
+    vm: NetWorkViewModel,
+    isSupabase : Boolean,
+    eventId: Int = -1,
+    showChange: (Boolean) -> Unit
+) {
     var enabled by remember { mutableStateOf(false) }
-
-    val activity = LocalActivity.current
+    val editedData by produceState<CustomEventDTO?>(initialValue = null) {
+        if(eventId <= 0) {
+            return@produceState
+        }
+        value = DataBaseManager.customEventDao.getById(eventId)?.let {
+            CustomEventMapper.entityToDto(it)
+        }
+    }
     var isScheduleType by remember { mutableStateOf(true) }
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -478,6 +523,26 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
 
     var time by remember { mutableStateOf(Pair("","")) }
     var date by remember { mutableStateOf(Pair("","")) }
+    LaunchedEffect(editedData) {
+        editedData?.let {
+            isScheduleType = it.type == CustomEventType.SCHEDULE
+            title = it.title
+            description = it.description ?: ""
+            remark = it.remark
+
+            val preDateTime = it.dateTime
+            val preStart = preDateTime.start
+            val preEnd = preDateTime.end
+            time = Pair(
+                "${parseTimeItem(preStart.hour)}:${parseTimeItem(preStart.minute)}",
+                "${parseTimeItem(preEnd.hour)}:${parseTimeItem(preEnd.minute)}"
+            )
+            date = Pair(
+                "${preStart.year}-${parseTimeItem(preStart.month)}-${parseTimeItem(preStart.day)}",
+                "${preEnd.year}-${parseTimeItem(preEnd.month)}-${parseTimeItem(preEnd.day)}"
+            )
+        }
+    }
 
     var showSelectDateDialog by remember { mutableStateOf(false) }
     var showSelectTimeDialog by remember { mutableStateOf(false) }
@@ -593,13 +658,12 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
             dialogText = "是否核对好信息无误?提交后若有问题可删除重新添加；上传的内容请遵守需符合规范，不得出现谎骗、低俗等内容"
         )
     }
-    val context = LocalContext.current
     var bottomHeight by remember { mutableStateOf(0.dp) }
     val color = MaterialTheme.colorScheme.surface
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
-                .measureDpSize { _,h ->
+                .measureDpSize { _, h ->
                     bottomHeight = h
                 }
 //                .navigationBarsPadding()
@@ -646,8 +710,19 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                                 }
                                 if(enabled && entity != null) {
                                     // 添加到数据库
-                                    DataBaseManager.customEventDao.insert(CustomEventMapper.dtoToEntity(entity))
-                                    showToast("执行完成 请检查是否显示")
+                                    val targetEntity = CustomEventMapper.dtoToEntity(entity)
+                                    val result = async {
+                                        if (editedData == null) {
+                                            DataBaseManager.customEventDao.insert(targetEntity).toInt()
+                                        } else {
+                                            DataBaseManager.customEventDao.update(targetEntity.copy(id = eventId))
+                                        }
+                                    }.await()
+                                    if(result <= 0) {
+                                        showToast("执行失败")
+                                    } else {
+                                        showToast("执行成功")
+                                    }
                                 }
                             }.await()
                             // 关闭
@@ -666,7 +741,7 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
 
             ) {
                 if(!updateLoading)
-                    Text("添加")
+                    Text(if(editedData == null)"添加" else "更新")
                 else
                     LoadingIcon()
             }
@@ -938,7 +1013,9 @@ fun AddEventUI(vm: NetWorkViewModel,isSupabase : Boolean,showChange: (Boolean) -
                     BottomTip("结果将保存在本地，若需共享请进入云端共建")
                 }
 //            }
-            Spacer(Modifier.height(bottomHeight + APP_HORIZONTAL_DP).navigationBarsPadding())
+            Spacer(Modifier
+                .height(bottomHeight + APP_HORIZONTAL_DP)
+                .navigationBarsPadding())
         }
     }
 }

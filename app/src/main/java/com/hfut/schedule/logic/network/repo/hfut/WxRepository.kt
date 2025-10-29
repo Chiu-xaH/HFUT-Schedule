@@ -11,7 +11,7 @@ import com.hfut.schedule.logic.model.wx.WXPersonInfoResponse
 import com.hfut.schedule.logic.model.wx.WXQrCodeLoginResponse
 import com.hfut.schedule.logic.model.wx.WXQrCodeResponse
 import com.hfut.schedule.logic.network.api.WXService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.WXServiceCreator
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -20,9 +20,9 @@ import retrofit2.awaitResponse
 
 object WxRepository {
     private val wx = WXServiceCreator.create(WXService::class.java)
-    suspend fun wxLogin(holder : StateHolder<String>) = launchRequestSimple(
+    suspend fun wxLogin(holder : StateHolder<String>) = launchRequestState(
         holder = holder,
-        request = { wx.login().awaitResponse() },
+        request = { wx.login() },
         transformSuccess = { _, json -> parseWxLogin(json) }
     )
     @JvmStatic
@@ -41,9 +41,9 @@ object WxRepository {
 
 
     suspend fun wxGetPersonInfo(auth : String,holder : StateHolder<WXPersonInfoBean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { wx.getMyInfo(auth).awaitResponse() },
+            request = { wx.getMyInfo(auth) },
             transformSuccess = { _, json -> parseWxPersonInfo(json) }
         )
     @JvmStatic
@@ -60,9 +60,9 @@ object WxRepository {
 
 
     suspend fun wxGetClassmates(nodeId : String,auth : String,holder : StateHolder<WXClassmatesBean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { wx.getClassmates(nodeId, auth).awaitResponse() },
+            request = { wx.getClassmates(nodeId, auth) },
             transformSuccess = { _, json -> parseWxClassmates(json) }
         )
     @JvmStatic
@@ -77,7 +77,7 @@ object WxRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun wxLoginCas(url : String,auth : String,holder : StateHolder<Pair<String, Boolean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 // 先解析原 URL
@@ -90,7 +90,7 @@ object WxRepository {
                     .toString()
                 // 处理URL 将其HOST换成
                 // 然后发送网络请求 GET 携带 @Header("Authorization") auth : String
-                wx.loginCas(newUrl, auth).awaitResponse()
+                wx.loginCas(newUrl, auth)
             },
             transformSuccess = { _, json -> parseWxLoginCas(json) }
         )
@@ -108,9 +108,9 @@ object WxRepository {
 
 
     suspend fun wxConfirmLogin(uuid : String,auth : String,holder : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { wx.confirmLogin(uuid, auth).awaitResponse() },
+            request = { wx.confirmLogin(uuid, auth) },
             transformSuccess = { _, json -> parseWxConfirmLogin(json) }
         )
     @JvmStatic

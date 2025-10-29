@@ -31,7 +31,7 @@ import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.getPageSize
@@ -74,7 +74,7 @@ object JxglstuRepository {
     }
 
     suspend fun checkJxglstuCanUse() = launchRequestNone {
-        jxglstu.checkCanUse().awaitResponse()
+        jxglstu.checkCanUse()
     }
 
     suspend fun postTransfer(
@@ -86,7 +86,7 @@ object JxglstuRepository {
         postTransferResponse: StateHolder<String>
     ) {
         onListenStateHolderForNetwork(studentId, postTransferResponse) { sId ->
-            launchRequestSimple(
+            launchRequestState(
                 holder = postTransferResponse,
                 request = {
                     jxglstu.postTransfer(
@@ -99,7 +99,7 @@ object JxglstuRepository {
                         studentID = sId.toString()
                             .toRequestBody("text/plain".toMediaTypeOrNull()),
                         telephone = phoneNumber.toRequestBody("text/plain".toMediaTypeOrNull())
-                    ).awaitResponse()
+                    )
                 },
                 transformSuccess = { _, json -> parsePostTransfer(json) }
             )
@@ -130,7 +130,7 @@ object JxglstuRepository {
         studentId : StateHolder<Int>,
         fromCookie : StateHolder<String>
     ) = onListenStateHolderForNetwork(studentId, fromCookie) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = fromCookie,
             request = {
                 jxglstu.getFormCookie(
@@ -139,7 +139,7 @@ object JxglstuRepository {
                     studentId = sId.toString(),
                     redirectUrl = "/for-std/change-major-apply/apply?PARENT_URL=/for-std/change-major-apply/index/${sId}&batchId=${batchId}&studentId=${sId}",
                     batchId = batchId
-                ).awaitResponse()
+                )
             },
             transformSuccess = { headers, _ -> parseFromCookie(headers) }
         )
@@ -158,7 +158,7 @@ object JxglstuRepository {
         studentId : StateHolder<Int>,
         cancelTransferResponse : StateHolder<Boolean>
     ) = onListenStateHolderForNetwork(studentId, cancelTransferResponse) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = cancelTransferResponse,
             request = {
                 jxglstu.cancelTransfer(
@@ -167,7 +167,7 @@ object JxglstuRepository {
                     batchId = batchId,
                     studentId = sId.toString(),
                     applyId = id
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> false },
             transformRedirect = { _ -> true }
@@ -175,7 +175,7 @@ object JxglstuRepository {
     }
 
     suspend fun verify(cookie: String) = launchRequestNone {
-        jxglstu.verify(cookie).awaitResponse()
+        jxglstu.verify(cookie)
     }
 
     suspend fun getSelectCourse(
@@ -189,9 +189,9 @@ object JxglstuRepository {
                 bizTypeIdResponse,
                 selectCourseData
             ) { bizTypeId ->
-                launchRequestSimple(
+                launchRequestState(
                     request = {
-                        jxglstu.getSelectCourse(bizTypeId, sId.toString(), cookie).awaitResponse()
+                        jxglstu.getSelectCourse(bizTypeId, sId.toString(), cookie)
                     },
                     holder = selectCourseData,
                     transformSuccess = { _, json -> parseSelectedList(json) }
@@ -206,9 +206,9 @@ object JxglstuRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getSelectCourseInfo(cookie: String, id : Int,holder : StateHolder<List<SelectCourseInfo>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { jxglstu.getSelectCourseInfo(id, cookie).awaitResponse() },
+            request = { jxglstu.getSelectCourseInfo(id, cookie) },
             transformSuccess = { _, json -> parseSelectCourseInfo(json) }
         )
     @JvmStatic
@@ -240,7 +240,7 @@ object JxglstuRepository {
         requestIdData : StateHolder<String>
     ) {
         onListenStateHolderForNetwork<Int, String>(studentId, requestIdData) { sId ->
-            launchRequestSimple(
+            launchRequestState(
                 request = {
                     jxglstu.getRequestID(
                         sId.toString(),
@@ -248,7 +248,7 @@ object JxglstuRepository {
                         courseId.toString(),
                         cookie,
                         type
-                    ).awaitResponse()
+                    )
                 },
                 holder = requestIdData,
                 transformSuccess = { _, body -> body }
@@ -263,10 +263,10 @@ object JxglstuRepository {
         selectedData : StateHolder<List<SelectCourseInfo>>
     ) {
         onListenStateHolderForNetwork<Int, List<SelectCourseInfo>>(studentId, selectedData) { sId ->
-            launchRequestSimple(
+            launchRequestState(
                 request = {
                     jxglstu.getSelectedCourse(sId.toString(), courseId.toString(), cookie)
-                        .awaitResponse()
+                        
                 },
                 holder = selectedData,
                 transformSuccess = { _, json -> parseSelectedCourses(json) }
@@ -289,9 +289,9 @@ object JxglstuRepository {
             studentId,
             selectResultData
         ) { sId ->
-            launchRequestSimple(
+            launchRequestState(
                 holder = selectResultData,
-                request = { jxglstu.postSelect(sId.toString(), requestId, cookie).awaitResponse() },
+                request = { jxglstu.postSelect(sId.toString(), requestId, cookie) },
                 transformSuccess = { _, json -> parseSelectResult(json) }
             )
         }
@@ -314,9 +314,9 @@ object JxglstuRepository {
         studentId : StateHolder<Int>,
         transferData : StateHolder<TransferResponse>
     ) = onListenStateHolderForNetwork(studentId, transferData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = transferData,
-            request = { jxglstu.getTransfer(cookie, batchId, sId).awaitResponse() },
+            request = { jxglstu.getTransfer(cookie, batchId, sId) },
             transformSuccess = { _, json -> parseTransfer(json) }
         )
     }
@@ -330,9 +330,9 @@ object JxglstuRepository {
         studentId : StateHolder<Int>,
         transferListData : StateHolder<List<ChangeMajorInfo>>
     ) = onListenStateHolderForNetwork(studentId, transferListData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = transferListData,
-            request = { jxglstu.getTransferList(cookie, sId).awaitResponse() },
+            request = { jxglstu.getTransferList(cookie, sId) },
             transformSuccess = { _, html -> parseTransferList(html) }
         )
     }
@@ -369,9 +369,9 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         myApplyData : StateHolder<MyApplyResponse>
     ) = onListenStateHolderForNetwork(studentId, myApplyData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = myApplyData,
-            request = { jxglstu.getMyTransfer(cookie, batchId, sId).awaitResponse() },
+            request = { jxglstu.getMyTransfer(cookie, batchId, sId) },
             transformSuccess = { _, json -> parseMyApply(json) }
         )
     }
@@ -386,9 +386,9 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         myApplyInfoData : StateHolder<MyApplyInfoBean>
     ) = onListenStateHolderForNetwork(studentId, myApplyInfoData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = myApplyInfoData,
-            request = { jxglstu.getMyTransferInfo(cookie, listId, sId).awaitResponse() },
+            request = { jxglstu.getMyTransferInfo(cookie, listId, sId) },
             transformSuccess = { _, html -> parseMyApplyGradeInfo(html) }
         )
     }
@@ -438,9 +438,9 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         jxglstuGradeData : StateHolder<List<GradeJxglstuDTO>>
     ) = onListenStateHolderForNetwork(studentId, jxglstuGradeData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = jxglstuGradeData,
-            request = { jxglstu.getGrade(cookie, sId.toString(), semester).awaitResponse() },
+            request = { jxglstu.getGrade(cookie, sId.toString(), semester) },
             transformSuccess = { _, html -> parseJxglstuGradeInner(html) }
         )
     }
@@ -497,9 +497,9 @@ object JxglstuRepository {
     }
 
     suspend fun getBizTypeId(cookie: String,studentId : Int,holder : StateHolder<Int>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { jxglstu.getBizTypeId(cookie, studentId).awaitResponse() },
+            request = { jxglstu.getBizTypeId(cookie, studentId) },
             transformSuccess = { _, html -> parseBizTypeId(html) }
         )
     @JvmStatic
@@ -509,9 +509,9 @@ object JxglstuRepository {
         throw e
     }
 
-    suspend fun getStudentId(cookie : String,holder : StateHolder<Int>) = launchRequestSimple(
+    suspend fun getStudentId(cookie : String,holder : StateHolder<Int>) = launchRequestState(
         holder = holder,
-        request = { jxglstu.getStudentId(cookie).awaitResponse() },
+        request = { jxglstu.getStudentId(cookie) },
         transformRedirect = { headers -> parseStudentId(headers) },
         transformSuccess = { _, _ -> -1 }
     )
@@ -532,7 +532,7 @@ object JxglstuRepository {
     }
 
     suspend fun getLessonIds(cookie : String,studentId : Int,bizTypeId : Int,holder : StateHolder<lessonResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 jxglstu.getLessonIds(
@@ -540,7 +540,7 @@ object JxglstuRepository {
                     bizTypeId.toString(),
                     SemseterParser.getSemseter().toString(),
                     studentId.toString()
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseLessonIds(json) }
         )
@@ -565,9 +565,9 @@ object JxglstuRepository {
             addProperty("studentId", sId)//学生ID
             addProperty("weekIndex", "")
         }
-        launchRequestSimple(
+        launchRequestState(
             holder = datumData,
-            request = { jxglstu.getDatum(cookie, jsonObject).awaitResponse() },
+            request = { jxglstu.getDatum(cookie, jsonObject) },
             transformSuccess = { _, json -> parseDatum(json) }
         )
     }
@@ -619,13 +619,13 @@ object JxglstuRepository {
     }
 
     suspend fun getLessonTimes(cookie: String,timeCampusId : Int,holder : StateHolder<List<CourseUnitBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 jxglstu.getLessonTimes(
                     cookie,
                     JxglstuService.LessonTimeRequest(timeCampusId)
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseLessonTimes(json) }
         )
@@ -645,9 +645,9 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         programData : StateHolder<ProgramResponse>
     ) = onListenStateHolderForNetwork(studentId, programData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = programData,
-            request = { jxglstu.getProgram(cookie, sId.toString()).awaitResponse() },
+            request = { jxglstu.getProgram(cookie, sId.toString()) },
             transformSuccess = { _, json -> parseProgram(json) }
         )
     }
@@ -662,9 +662,9 @@ object JxglstuRepository {
     }
 
     suspend fun getProgramCompletion(cookie: String,holder : StateHolder<ProgramCompletionResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { jxglstu.getProgramCompletion(cookie).awaitResponse() },
+            request = { jxglstu.getProgramCompletion(cookie) },
             transformSuccess = { _, json -> parseProgramCompletion(json) }
         )
     @JvmStatic
@@ -680,9 +680,9 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         programPerformanceData : StateHolder<ProgramBean>
     ) = onListenStateHolderForNetwork(studentId, programPerformanceData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = programPerformanceData,
-            request = { jxglstu.getProgramPerformance(cookie, sId).awaitResponse() },
+            request = { jxglstu.getProgramPerformance(cookie, sId) },
             transformSuccess = { _, json -> parseProgramPerformance(json) }
         )
     }
@@ -701,7 +701,7 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         courseSearchResponse : StateHolder<List<lessons>>
     ) = onListenStateHolderForNetwork(studentId, courseSearchResponse) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = courseSearchResponse,
             request = {
                 jxglstu.searchCourse(
@@ -712,7 +712,7 @@ object JxglstuRepository {
                     "1,${getPageSize()}",
                     courseName,
                     courseId
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseSearchCourse(json) }
         )
@@ -728,10 +728,10 @@ object JxglstuRepository {
         studentId: StateHolder<Int>,
         surveyListData : StateHolder<List<forStdLessonSurveySearchVms>>
     ) = onListenStateHolderForNetwork(studentId, surveyListData) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = surveyListData,
             request = {
-                jxglstu.getSurveyList(cookie, sId.toString(), semester).awaitResponse()
+                jxglstu.getSurveyList(cookie, sId.toString(), semester)
             },
             transformSuccess = { _, json -> parseSurveyList(json) }
         )
@@ -742,9 +742,9 @@ object JxglstuRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getSurvey(cookie: String, id : String,holder : StateHolder<SurveyResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { jxglstu.getSurveyInfo(cookie, id).awaitResponse() },
+            request = { jxglstu.getSurveyInfo(cookie, id) },
             transformSuccess = { _, json -> parseSurvey(json) }
         )
     @JvmStatic
@@ -758,14 +758,14 @@ object JxglstuRepository {
         studentId : StateHolder<Int>,
         surveyToken : StateHolder<String>
     ) = onListenStateHolderForNetwork(studentId, surveyToken) { sId ->
-        launchRequestSimple(
+        launchRequestState(
             holder = surveyToken,
             request = {
                 jxglstu.getSurveyToken(
                     cookie,
                     id,
                     "/for-std/lesson-survey/semester-index/${sId}"
-                ).awaitResponse()
+                )
             },
             transformSuccess = { headers, _ -> parseSurveyToken(headers) }
         )
@@ -824,7 +824,7 @@ object JxglstuRepository {
         courseBookResponse : StateHolder<Map<Long, CourseBookBean>>
     ) = onListenStateHolderForNetwork(studentId, courseBookResponse) { sId ->
         onListenStateHolderForNetwork(bizTypeIdResponse, courseBookResponse) { bizTypeId ->
-            launchRequestSimple(
+            launchRequestState(
                 holder = courseBookResponse,
                 request = {
                     jxglstu.getCourseBook(
@@ -832,7 +832,7 @@ object JxglstuRepository {
                         bizTypeId = bizTypeId,
                         semesterId = semester,
                         studentId = sId
-                    ).awaitResponse()
+                    )
                 },
                 transformSuccess = { _, json -> parseCourseBookNetwork(json) }
             )
@@ -871,10 +871,10 @@ object JxglstuRepository {
 
     suspend fun getExamJXGLSTU(cookie: String,studentId : StateHolder<Int>,examHolder : StateHolder<List<JxglstuExam>>) {
         onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
-            launchRequestSimple(
+            launchRequestState(
                 holder = examHolder,
                 transformSuccess = { _,html -> parseJxglstuExamInner(html) },
-                request = { jxglstu.getExam(cookie, sId.toString()).awaitResponse() }
+                request = { jxglstu.getExam(cookie, sId.toString()) }
             )
         }
     }
@@ -905,12 +905,12 @@ object JxglstuRepository {
     } catch (e:Exception) { throw e }
 
     suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int,holder : StateHolder<lessonResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 (SemseterParser.getSemseter().plus(20)).toString().let {
                     jxglstu.getLessonIds(cookie, bizTypeId.toString(), it, studentId.toString())
-                        .awaitResponse()
+                        
                 }
             },
             transformSuccess = { _, json -> parseLessonIdsNext(json) }

@@ -15,7 +15,7 @@ import com.hfut.schedule.logic.model.huixin.PayStep1Response
 import com.hfut.schedule.logic.model.huixin.PayStep2Response
 import com.hfut.schedule.logic.model.huixin.PayStep3Response
 import com.hfut.schedule.logic.network.api.HuiXinService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.HuiXinServiceCreator
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
@@ -44,9 +44,9 @@ object HuiXinRepository {
         page : Int,
         size : Int = getPageSize(),
         holder : StateHolder<BillBean>
-    ) = launchRequestSimple(
+    ) = launchRequestState(
         holder = holder,
-        request = { huiXin.Cardget(auth, page, size.toString()).awaitResponse() },
+        request = { huiXin.Cardget(auth, page, size.toString()) },
         transformSuccess = { _, json -> parseHuiXinBills(json) }
     )
     @JvmStatic
@@ -71,9 +71,9 @@ object HuiXinRepository {
         })
     }
 
-    suspend fun checkHuiXinLogin(auth : String,holder : StateHolder<Boolean>)= launchRequestSimple(
+    suspend fun checkHuiXinLogin(auth : String,holder : StateHolder<Boolean>)= launchRequestState(
         holder = holder,
-        request = { huiXin.checkLogin(auth).awaitResponse() },
+        request = { huiXin.checkLogin(auth) },
         transformSuccess = { _, json -> parseCheckLHuiXinLogin(json) }
     )
     @JvmStatic
@@ -86,9 +86,9 @@ object HuiXinRepository {
     } catch (e : Exception) { throw  e }
 
     suspend fun huiXinSingleLogin(studentId : String,password: String,holder : StateHolder<String>) {
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { huiXin.login(studentId = studentId, password = password).awaitResponse() },
+            request = { huiXin.login(studentId = studentId, password = password) },
             transformSuccess = { _, json -> parseHuiXinLogin(json) }
         )
     }
@@ -103,7 +103,7 @@ object HuiXinRepository {
     }
 
     suspend fun payStep1(auth: String, json: String, pay : Float, type: FeeType, holder : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 huiXin.pay(
@@ -119,7 +119,7 @@ object HuiXinRepository {
                     paytype = null,
                     paytypeid = null,
                     cardId = null
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseHuiXinPayStep1(json) }
         )
@@ -133,7 +133,7 @@ object HuiXinRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun payStep2(auth: String, orderId : String, type : FeeType, holder : StateHolder<Map<String, String>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 huiXin.pay(
@@ -149,7 +149,7 @@ object HuiXinRepository {
                     paytype = "CARDTSM",
                     paytypeid = type.payTypeId,
                     cardId = null
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseHuiXinPayStep2(json) }
         )
@@ -163,7 +163,7 @@ object HuiXinRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun payStep3(auth: String, orderId : String, password : String, uuid : String, type: FeeType, holder : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 huiXin.pay(
@@ -179,7 +179,7 @@ object HuiXinRepository {
                     paytypeid = type.payTypeId,
                     cardId = uuid,
                     typeId = null
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseHuiXinPayStep3(json) }
         )
@@ -193,9 +193,9 @@ object HuiXinRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun changeLimit(auth: String, json: JsonObject, holder : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { huiXin.changeLimit(auth, json).awaitResponse() },
+            request = { huiXin.changeLimit(auth, json) },
             transformSuccess = { _, json -> parseHuiXinChangeLimit(json) }
         )
     @JvmStatic
@@ -204,9 +204,9 @@ object HuiXinRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun searchDate(auth : String, timeFrom : String, timeTo : String,holder : StateHolder<Float>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { huiXin.searchDate(auth, timeFrom, timeTo).awaitResponse() },
+            request = { huiXin.searchDate(auth, timeFrom, timeTo) },
             transformSuccess = { _, json -> parseHuiXinRange(json) }
         )
     @JvmStatic
@@ -220,7 +220,7 @@ object HuiXinRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun searchBills(auth : String, info: String,page : Int,holder : StateHolder<BillBean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 huiXin.searchBills(
@@ -228,7 +228,7 @@ object HuiXinRepository {
                     info,
                     page,
                     getPageSize()
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseHuiXinSearchBills(json) }
         )
@@ -242,9 +242,9 @@ object HuiXinRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getMonthBills(auth : String, dateStr: String,holder : StateHolder<List<BillMonth>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { huiXin.getMonthYue(auth, dateStr).awaitResponse() },
+            request = { huiXin.getMonthYue(auth, dateStr) },
             transformSuccess = { _, json -> parseHuiXinMonthBills(json) }
         )
     @JvmStatic
@@ -268,7 +268,7 @@ object HuiXinRepository {
         auth: String,
         building: String?,
         holder: StateHolder<List<HuiXinHefeiBuildingBean>>
-    ) = launchRequestSimple(
+    ) = launchRequestState(
         request = {
             huiXin.getFee(
                 auth = auth,
@@ -277,7 +277,7 @@ object HuiXinRepository {
                 campus = "1sh",
                 level = if(building == null) "1" else "2",
                 building = building
-            ).awaitResponse()
+            )
         },
         holder = holder,
         transformSuccess = { _,json -> parseHefeiBuildings(json) }

@@ -12,6 +12,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 
 // 跨Activity的类似UIViewModel
 object GlobalUIStateHolder {
+    var useEnterAnimation by mutableStateOf(false)
     var postedUse = false
     var excludeJxglstu by mutableStateOf(false)
     var refreshImageCode by mutableIntStateOf(1)

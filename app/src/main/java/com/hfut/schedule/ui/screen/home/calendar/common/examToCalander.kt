@@ -9,6 +9,7 @@ import java.time.LocalDate
 data class ExamToCalenderBean(
     val day : String?,//YYYY-MM-DD
     val startTime: String?,//HH:MM
+    val endTime : String?,
     val place: String?,
     val course: String?,
 )
@@ -20,10 +21,15 @@ suspend fun examToCalendar(context: Context) : List<ExamToCalenderBean> = withCo
     return@withContext try {
         for (examMap in examMaps) {
             val day = examMap.dateTime.substringBefore(" ")
-            val startTime = examMap.dateTime.substringAfter(" ").substringBefore("~")
+            val time = examMap.dateTime.substringAfter(" ").split("~")
+            if(time.size != 2) {
+                continue
+            }
+            val startTime = time[0]
+            val endTime = time[1]
             val place = examMap.place
             val course = examMap.name
-            val examToCalendarBean = ExamToCalenderBean(day, startTime, place, course)
+            val examToCalendarBean = ExamToCalenderBean(day, startTime,endTime, place, course)
             newList.add(examToCalendarBean)
         }
         newList

@@ -211,6 +211,8 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+        val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+        val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
 
         LaunchedEffect(enableLiquidGlass) {
             TransitionConfig.enableMirror = enableLiquidGlass
@@ -717,30 +719,54 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     steps = 149,
                     processText = formatDecimal(calendarSquareHeight.toDouble(),0)
                 )
-//                PaddingHorizontalDivider()
-//                TransplantListItem(
-//                    headlineContent = {
-//                        Text("使用新UI(Beta)")
-//                    },
-//                    supportingContent = {
-//                        Text("重绘课程表，以时间线为设计，纵向分布")
-//                    },
-//                    modifier = Modifier.clickable {
-//                        scope.launch {
-//                            showToast("正在开发")
-//                        }
-//                    },
-//                    trailingContent = {
-//                        Switch(checked = false, enabled = false, onCheckedChange = {
-//                            scope.launch {
-//                                showToast("正在开发")
-//                            }
-//                        })
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.fiber_new),null)
-//                    },
-//                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("方格高度(新课程表) ${formatDecimal(calendarSquareHeightNew.toDouble(),0)}")
+                    },
+                    supportingContent = {
+                        Text("自定义方格的高度(默认值为70)，方格中部文字溢出的部分将用省略号代替")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.height),null)
+                    },
+                )
+
+                CustomSlider(
+                    value = calendarSquareHeightNew,
+                    onValueChange = {
+                        scope.launch { DataStoreManager.saveCalendarSquareHeightNew(it) }
+                    },
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                    valueRange = 25f..125f,
+                    showProcessText = true,
+                    steps = 99,
+                    processText = formatDecimal(calendarSquareHeightNew.toDouble(),0)
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("合并冲突方格(新课程表)")
+                    },
+                    supportingContent = {
+                        Text("打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格")
+                    },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveMergeSquare(!enableMergeSquare)
+                        }
+                    },
+                    trailingContent = {
+                        Switch(checked = enableMergeSquare, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveMergeSquare(!enableMergeSquare)
+                            }
+                        })
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.arrow_split),null)
+                    },
+                )
             }
         }
         DividerTextExpandedWith("标签") {

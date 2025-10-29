@@ -9,7 +9,7 @@ import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.network.repo.hfut.CasLoginRepository
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebVpnServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
@@ -128,15 +128,15 @@ class LoginViewModel : ViewModel() {
     }
 
     val status = StateHolder<Boolean>()
-    suspend fun putKey(ticket : String) = launchRequestSimple(
+    suspend fun putKey(ticket : String) = launchRequestState(
         holder = status ,
-        request = { loginWebVpn.putKey(MyApplication.WEBVPN_COOKIE_HEADER + ticket).awaitResponse() },
+        request = { loginWebVpn.putKey(MyApplication.WEBVPN_COOKIE_HEADER + ticket) },
         transformSuccess = { _,_ -> true }
     )
 
-    suspend fun getTicket() = launchRequestSimple(
+    suspend fun getTicket() = launchRequestState(
         holder = webVpnTicket,
-        request = { loginWebVpn.getTicket().awaitResponse() },
+        request = { loginWebVpn.getTicket() },
         transformSuccess = { headers,_ -> parseWebVpnCookie(headers) }
     )
     private suspend fun parseWebVpnCookie(headers: Headers) : String {

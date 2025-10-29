@@ -125,6 +125,8 @@ object DataStoreManager : IDataStore {
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
     private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
+    private val CALENDAR_SQUARE_HEIGHT_NEW = floatPreferencesKey("calendar_square_height_new")
+    private val MERGE_SQUARE = booleanPreferencesKey("merge_square")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -164,6 +166,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
     suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
+    suspend fun saveCalendarSquareHeightNew(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT_NEW, value)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -171,6 +174,8 @@ object DataStoreManager : IDataStore {
             launch { saveHefeiElectricName(name) }
         }
     }
+    suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
+
 
     val animationType = getFlow(ANIMATION_TYPE, AppAnimationManager.AnimationTypes.CenterAnimation.code)
     val enablePureDark = getFlow(PURE_DARK,false)
@@ -207,6 +212,7 @@ object DataStoreManager : IDataStore {
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)
     val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
@@ -219,4 +225,5 @@ object DataStoreManager : IDataStore {
         }
         return@withContext HefeiElectricStorage(hefeiBuildingNumber, hefeiRoomNumber, hefeiElectric)
     }
+    val enableMergeSquare = getFlow(MERGE_SQUARE,false)
 }

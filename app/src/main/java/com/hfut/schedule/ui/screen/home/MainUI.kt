@@ -114,6 +114,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -156,6 +157,7 @@ import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.shader.enterAnimation
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
@@ -163,12 +165,14 @@ import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
@@ -217,7 +221,7 @@ fun MainScreen(
         else -> first
     }
 
-    var showAll by rememberSaveable { mutableStateOf(DateTimeManager.isOnWeekend()) }
+    var showAll by rememberSaveable { mutableStateOf(false) }
 
     var ifSaved by rememberSaveable { mutableStateOf(!isLogin) }
     var swapUI by rememberSaveable { mutableIntStateOf(
@@ -397,12 +401,16 @@ fun MainScreen(
         }
     }
     val backGroundSource = rememberShaderState()
-
+    var firstStart by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        firstStart = true
+    }
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val useCustomBackground = customBackground != ""
     val context = LocalContext.current
     var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
-    CustomTransitionScaffold(
+
+    CustomTransitionScaffold (
         navHostController = navHostTopController,
         route = AppNavRoute.Home.route,
         roundShape = RoundedCornerShape(0.dp),
@@ -412,9 +420,15 @@ fun MainScreen(
             } else {
                 it
             }
-        },
+        }
+//            .let {
+//                if(GlobalUIStateHolder.useEnterAnimation) {
+//                    it.enterAnimation(firstStart)
+//                } else it
+//            }
+        ,
         floatingActionButton = {
-            val addRoute = remember { AppNavRoute.AddEvent.route }
+            val addRoute = remember { AppNavRoute.AddEvent.withArgs() }
             AnimatedVisibility(
                 enter = scaleIn(),
                 exit = scaleOut(),
@@ -430,7 +444,7 @@ fun MainScreen(
                     onClick = {
                         navHostTopController.navigateForTransition(
                             AppNavRoute.AddEvent,
-                            AppNavRoute.AddEvent.route
+                            addRoute
                         )
                     },
                 ) {
@@ -555,7 +569,7 @@ fun MainScreen(
                                             ),
                                             enableLiquidGlass
                                         ),
-                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)),
+//                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)),
                                     color = Color.Transparent
                                 ) {
                                     Text(texts(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp, color = MaterialTheme.colorScheme.primary)
@@ -567,12 +581,12 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    ApiForTimeTable(swapUI.toString(), hazeState)
+                                    ApiForTimeTable(swapUI.toString(), hazeState,backGroundSource,enableLiquidGlass,customBackgroundAlpha)
                                 } else {
                                     val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
                                     Surface(
                                         shape = CircleShape,
-                                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+//                                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                         modifier = Modifier
                                             .clip(CircleShape)
                                             .glassLayer(
@@ -600,7 +614,7 @@ fun MainScreen(
                                 Spacer(Modifier.width(BUTTON_PADDING))
                                 Surface(
                                     shape = CircleShape,
-                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+//                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                     modifier = Modifier
                                         .clip(CircleShape)
                                         .glassLayer(
@@ -627,7 +641,7 @@ fun MainScreen(
                                 Spacer(Modifier.width(BUTTON_PADDING))
                                 Surface(
                                     shape = CircleShape,
-                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
+//                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                     modifier = Modifier
                                         .clip(CircleShape)
                                         .glassLayer(
@@ -787,7 +801,11 @@ fun MainScreen(
                     }
                 )
             )
-            HazeBottomBarDynamic(hazeState,items,navController,isEnabled,if(targetPage == COURSES && useCustomBackground)  null else MaterialTheme.colorScheme.surface)
+            if(useCustomBackground && targetPage == COURSES) {
+                SpecialBottomBar(backGroundSource,items,navController,isEnabled)
+            } else {
+                HazeBottomBarDynamic(hazeState,items,navController,isEnabled)
+            }
         },
     ) { innerPadding ->
         val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)

@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.network.repo.hfut
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.api.LoginWebsService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWeb2ServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebHefeiServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebServiceCreator
@@ -29,10 +29,10 @@ object LoginSchoolNetRepository {
                     when (campus) {
                         CampusRegion.HEFEI -> {
                             val location = "123"
-                            launchRequestSimple(
+                            launchRequestState(
                                 holder = loginSchoolNetResponse,
                                 request = {
-                                    loginWebHefei.loginWeb(uid, pwd, location).awaitResponse()
+                                    loginWebHefei.loginWeb(uid, pwd, location)
                                 },
                                 transformSuccess = { _, body -> parseLoginSchoolNet(body) }
                             )
@@ -41,19 +41,19 @@ object LoginSchoolNetRepository {
                         CampusRegion.XUANCHENG -> {
                             val location = "宣州Login"
                             launch {
-                                launchRequestSimple(
+                                launchRequestState(
                                     holder = loginSchoolNetResponse,
                                     request = {
-                                        loginWeb.loginWeb(uid, pwd, location).awaitResponse()
+                                        loginWeb.loginWeb(uid, pwd, location)
                                     },
                                     transformSuccess = { _, body -> parseLoginSchoolNet(body) }
                                 )
                             }
                             launch {
-                                launchRequestSimple(
+                                launchRequestState(
                                     holder = loginSchoolNetResponse,
                                     request = {
-                                        loginWeb2.loginWeb(uid, pwd, location).awaitResponse()
+                                        loginWeb2.loginWeb(uid, pwd, location)
                                     },
                                     transformSuccess = { _, body -> parseLoginSchoolNet(body) }
                                 )
@@ -70,10 +70,10 @@ object LoginSchoolNetRepository {
                     when (campus) {
                         CampusRegion.HEFEI -> {
                             val location = "123"
-                            launchRequestSimple(
+                            launchRequestState(
                                 holder = loginSchoolNetResponse,
                                 request = {
-                                    loginWebHefei.loginWeb(uid, pwd, location).awaitResponse()
+                                    loginWebHefei.loginWeb(uid, pwd, location)
                                 },
                                 transformSuccess = { _, body -> parseLoginSchoolNet(body) }
                             )
@@ -81,16 +81,16 @@ object LoginSchoolNetRepository {
 
                         CampusRegion.XUANCHENG -> {
                             launch {
-                                launchRequestSimple(
+                                launchRequestState(
                                     holder = loginSchoolNetResponse,
-                                    request = { loginWeb.logoutWeb().awaitResponse() },
+                                    request = { loginWeb.logoutWeb() },
                                     transformSuccess = { _, body -> parseLoginSchoolNet(body) }
                                 )
                             }
                             launch {
-                                launchRequestSimple(
+                                launchRequestState(
                                     holder = loginSchoolNetResponse,
-                                    request = { loginWeb2.logoutWeb().awaitResponse() },
+                                    request = { loginWeb2.logoutWeb() },
                                     transformSuccess = { _, body -> parseLoginSchoolNet(body) }
                                 )
                             }
@@ -111,15 +111,15 @@ object LoginSchoolNetRepository {
         }
     } catch (e : Exception) { throw e }
 
-    suspend fun getWebInfo(infoWebValue : StateHolder<WebInfo>) = launchRequestSimple(
+    suspend fun getWebInfo(infoWebValue : StateHolder<WebInfo>) = launchRequestState(
         holder = infoWebValue,
-        request = { loginWeb.getInfo().awaitResponse() },
+        request = { loginWeb.getInfo() },
         transformSuccess = { _, json -> parseWebInfo(json) }
     )
 
-    suspend fun getWebInfo2(infoWebValue : StateHolder<WebInfo>) = launchRequestSimple(
+    suspend fun getWebInfo2(infoWebValue : StateHolder<WebInfo>) = launchRequestState(
         holder = infoWebValue,
-        request = { loginWeb2.getInfo().awaitResponse() },
+        request = { loginWeb2.getInfo() },
         transformSuccess = { _, json -> parseWebInfo(json) }
     )
     @JvmStatic

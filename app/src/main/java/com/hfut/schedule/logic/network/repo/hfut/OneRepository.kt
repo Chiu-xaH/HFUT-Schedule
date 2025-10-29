@@ -10,7 +10,7 @@ import com.hfut.schedule.logic.model.one.ClassroomBean
 import com.hfut.schedule.logic.model.one.ClassroomResponse
 import com.hfut.schedule.logic.model.one.getTokenResponse
 import com.hfut.schedule.logic.network.api.OneService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.OneServiceCreator
 import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -28,9 +28,9 @@ import retrofit2.awaitResponse
 object OneRepository {
     private val one = OneServiceCreator.create(OneService::class.java)
 
-    suspend fun getPay(holder : StateHolder<PayData>) = launchRequestSimple(
+    suspend fun getPay(holder : StateHolder<PayData>) = launchRequestState(
         holder = holder,
-        request = { one.getPay(getPersonInfo().studentId).awaitResponse() },
+        request = { one.getPay(getPersonInfo().studentId) },
         transformSuccess = { _, json -> parsePayFee(json) }
     )
     @JvmStatic
@@ -39,14 +39,14 @@ object OneRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getMailURL(token : String,holder : StateHolder<MailResponse>)  =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 val secret = Crypto.generateRandomHexString()
                 val email = getSchoolEmail() ?: ""
                 val chipperText = Crypto.encryptAesECB(email, secret)
                 val cookie = "secret=$secret"
-                one.getMailURL(chipperText, token, cookie).awaitResponse()
+                one.getMailURL(chipperText, token, cookie)
             },
             transformSuccess = { _, json -> parseMailUrl(json) }
         )
@@ -59,9 +59,9 @@ object OneRepository {
     } catch (e: Exception) { throw e }
 
     suspend fun getClassroomInfo(code : String,token : String,holder : StateHolder<List<ClassroomBean>>)  =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { one.getClassroomInfo(code, token).awaitResponse() },
+            request = { one.getClassroomInfo(code, token) },
             transformSuccess = { _, json -> parseClassroom(json) }
         )
     @JvmStatic
@@ -73,7 +73,7 @@ object OneRepository {
     } catch (e: Exception) { throw e }
 
     suspend fun getBuildings(campus : Campus, token : String, holder: StateHolder<Pair<Campus, List<BuildingBean>>>)  =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 val code = when (campus) {
@@ -81,7 +81,7 @@ object OneRepository {
                     Campus.FCH -> "02"
                     Campus.TXL -> "01"
                 }
-                one.getBuildings(code, token).awaitResponse()
+                one.getBuildings(code, token)
             },
             transformSuccess = { _, json -> parseBuildings(campus, json) }
         )
@@ -93,9 +93,9 @@ object OneRepository {
             throw Exception(result)
     } catch (e: Exception) { throw e }
 
-    suspend fun checkOneLogin(token : String,holder : StateHolder<Boolean>) = launchRequestSimple(
+    suspend fun checkOneLogin(token : String,holder : StateHolder<Boolean>) = launchRequestState(
         holder = holder,
-        request = { one.checkLogin(token).awaitResponse() },
+        request = { one.checkLogin(token) },
         transformSuccess = { _, json -> parseCheckOneLogin(json) }
     )
     @JvmStatic

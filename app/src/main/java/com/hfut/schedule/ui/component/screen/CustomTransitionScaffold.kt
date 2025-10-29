@@ -47,10 +47,10 @@ fun CustomTransitionScaffold(
         roundShape = roundShape,
         navHostController = navHostController,
         topBar = topBar,
-        modifier = modifier.transitionBackgroundCustom(navHostController, route).containerShare(
-            route,
-            roundShape = roundShape,
-        ),
+        modifier = modifier
+            .transitionBackgroundCustom(navHostController, route)
+            .containerShare(route, roundShape = roundShape,)
+        ,
         enablePredictive = predictive && enablePredictive,
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,

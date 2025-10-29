@@ -7,7 +7,7 @@ import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.model.CasGetFlavorResponse
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.OneGotoServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.GetAESKeyServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.GetCookieServiceCreator
@@ -25,42 +25,42 @@ object CasLoginRepository {
     private val casOauth = OneGotoServiceCreator.create(LoginService::class.java)
 
     suspend fun gotoCommunity(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.COMMUNITY.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.COMMUNITY.service, cookie = cookie)
     }
     suspend fun gotoZhiJian(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.ZHI_JIAN.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.ZHI_JIAN.service, cookie = cookie)
     }
     suspend fun gotoLibrary(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.LIBRARY.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.LIBRARY.service, cookie = cookie)
     }
     suspend fun goToStu(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.STU.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.STU.service, cookie = cookie)
     }
     suspend fun goToPe(cookie : String) = launchRequestNone {
-        login.loginGoTo(service = CasLoginType.PE.service, cookie = cookie).awaitResponse()
+        login.loginGoTo(service = CasLoginType.PE.service, cookie = cookie)
     }
     suspend fun goToOne(cookie : String) = launchRequestNone {// 创建一个Call对象，用于发送异步请求
         casOauth.loginGoToOauth(
             "BsHfutEduPortal",
             MyApplication.Companion.ONE_URL + "home/index",
             cookie
-        ).awaitResponse()
+        )
     }
     suspend fun goToHuiXin(cookie : String) = launchRequestNone {
         casOauth.loginGoToOauth(
             "Hfut2023Ydfwpt",
             MyApplication.Companion.HUI_XIN_URL + "berserker-auth/cas/oauth2url?oauth2url=${MyApplication.Companion.HUI_XIN_URL}berserker-base/redirect",
             cookie
-        ).awaitResponse()
+        )
     }
 
-    suspend fun getCasCookie(execution : StateHolder<Pair<String, String>>) = launchRequestSimple(
+    suspend fun getCasCookie(execution : StateHolder<Pair<String, String>>) = launchRequestState(
         holder = execution,
         request = {
             getCookie.getCookie(
                 if (GlobalUIStateHolder.excludeJxglstu) CasLoginType.ONE.service
                 else CasLoginType.JXGLSTU.service
-            ).awaitResponse()
+            )
         },
         transformSuccess = { headers, html -> parseCookie(headers, html) }
     )
@@ -74,9 +74,9 @@ object CasLoginRepository {
         } catch (e : Exception) { throw e }
     }
 
-    suspend fun getEncryptKey(jSessionId : StateHolder<CasGetFlavorBean>) = launchRequestSimple(
+    suspend fun getEncryptKey(jSessionId : StateHolder<CasGetFlavorBean>) = launchRequestState(
         holder = jSessionId,
-        request = { getAESKey.getKey().awaitResponse() },
+        request = { getAESKey.getKey() },
         transformSuccess = { headers, json -> parseKey(headers, json) }
     )
     @JvmStatic

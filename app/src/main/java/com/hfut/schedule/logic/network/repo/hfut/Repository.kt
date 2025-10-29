@@ -35,7 +35,7 @@ import com.hfut.schedule.logic.network.api.StuService
 import com.hfut.schedule.logic.network.api.TeachersService
 import com.hfut.schedule.logic.network.api.WorkService
 import com.hfut.schedule.logic.network.api.ZhiJianService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.AdmissionServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.DormitoryScoreServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.HaiLeWashingServiceCreator
@@ -68,9 +68,9 @@ object Repository {
 
 
 
-    suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestSimple(
+    suspend fun checkPeLogin(cookie : String,holder : StateHolder<Boolean>) = launchRequestState(
         holder = holder,
-        request = { pe.checkLogin(cookie).awaitResponse() },
+        request = { pe.checkLogin(cookie) },
         transformSuccess = { _,json -> parseCheckPeLogin(json) }
     )
     @JvmStatic
@@ -80,10 +80,10 @@ object Repository {
 
 
     suspend fun getZhiJianCourses(studentId : String, mondayDate : String, token : String,holder : StateHolder<List<ZhiJianCourseItemDto>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
-                zhiJian.getCourses(token, buildZhiJianJson(mondayDate, studentId)).awaitResponse()
+                zhiJian.getCourses(token, buildZhiJianJson(mondayDate, studentId))
             },
             transformSuccess = { _, json -> parseZhiJianCourses(json, mondayDate) }
         )
@@ -120,9 +120,9 @@ object Repository {
     } catch (e : Exception) { throw e }
 
     suspend fun zhiJianCheckLogin(token : String,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { zhiJian.checkLogin(token).awaitResponse() },
+            request = { zhiJian.checkLogin(token) },
             transformSuccess = { _, json -> parseZhiJianCheckLogin(json) }
         )
 
@@ -132,8 +132,8 @@ object Repository {
     } catch (e : Exception) { throw e }
 
     suspend fun checkStuLogin(cookie : String,checkStuLoginResp : StateHolder<Boolean>) =
-        launchRequestSimple(
-            request = { stu.checkLogin(cookie).awaitResponse() },
+        launchRequestState(
+            request = { stu.checkLogin(cookie) },
             holder = checkStuLoginResp,
             transformSuccess = { _, json -> parseCheckStuLogin(json) }
         )
@@ -151,13 +151,13 @@ object Repository {
         text : String,
         page : Int,
         holder : StateHolder<List<OfficeHallSearchBean>>
-    ) = launchRequestSimple(
+    ) = launchRequestState(
         holder = holder,
         request = {
             hall.search(
                 name = text,
                 page = page
-            ).awaitResponse()
+            )
         },
         transformSuccess = { _, json -> parseOfficeHallSearch(json) }
     )
@@ -167,13 +167,13 @@ object Repository {
     } catch (e : Exception) { throw e }
 
     suspend fun searchTeacher(name: String = "", direction: String = "",teacherSearchData : StateHolder<TeacherResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = teacherSearchData,
             request = {
                 teacher.searchTeacher(
                     name = name,
                     direction = direction,
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseTeacherSearch(json) }
         )
@@ -185,9 +185,9 @@ object Repository {
 
 
     suspend fun getAdmissionList(type : AdmissionType, holder : StateHolder<Pair<AdmissionType, Map<String, List<AdmissionMapBean>>>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { admission.getList(type.type).awaitResponse() },
+            request = { admission.getList(type.type) },
             transformSuccess = { _, json -> parseAdmissionList(type, json) }
         )
 
@@ -198,7 +198,7 @@ object Repository {
 
     suspend fun getAdmissionDetail(type : AdmissionType, bean : AdmissionMapBean, region: String, holder : StateHolder<AdmissionDetailBean>, tokenHolder : StateHolder<AdmissionTokenResponse>) =
         onListenStateHolderForNetwork(tokenHolder, holder) { token ->
-            launchRequestSimple(
+            launchRequestState(
                 holder = holder,
                 request = {
                     admission.getDetail(
@@ -210,7 +210,7 @@ object Repository {
                         bean.type,
                         MyApplication.Companion.ADMISSION_COOKIE_HEADER + token.cookie,
                         token.data
-                    ).awaitResponse()
+                    )
                 },
                 transformSuccess = { _, json -> parseAdmissionDetail(type, json) }
             )
@@ -233,7 +233,7 @@ object Repository {
 
 
     suspend fun getAdmissionToken(holder : StateHolder<AdmissionTokenResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 val state = holder.state.first()
@@ -242,7 +242,7 @@ object Repository {
                 } else {
                     MyApplication.Companion.ADMISSION_COOKIE_HEADER + state.data.cookie
                 }
-                admission.getToken(cookie = cookie).awaitResponse()
+                admission.getToken(cookie = cookie)
             },
             transformSuccess = { _, json -> parseAdmissionToken(json) }
         )
@@ -255,7 +255,7 @@ object Repository {
 
 
     suspend fun searchWorks(keyword: String?, page: Int = 1, type: Int, campus: CampusRegion, workSearchResult : StateHolder<WorkSearchResponse>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = workSearchResult,
             request = {
                 workSearch.search(
@@ -263,7 +263,7 @@ object Repository {
                     page = page,
                     type = type.let { if (it == 0) null else it },
                     token = "yxqqnn1700000" + if (campus == CampusRegion.XUANCHENG) "119" else "002"
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseWorkResponse(json) },
         )
@@ -294,9 +294,9 @@ object Repository {
     } catch (e : Exception) { throw e }
 
     suspend fun searchDormitoryXuanCheng(code : String,dormitoryResult : StateHolder<List<XuanquResponse>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = dormitoryResult,
-            request = { xuanChengDormitory.search(code).awaitResponse() },
+            request = { xuanChengDormitory.search(code) },
             transformSuccess = { _, html -> parseDormitoryXuanCheng(html) }
         )
 
@@ -315,9 +315,9 @@ object Repository {
 
 
     suspend fun getHaiLeNear(bean : HaiLeNearPositionRequestDTO, holder : StateHolder<List<HaiLeNearPositionBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { haiLe.getNearPlaces(bean.toRequestBody()).awaitResponse() },
+            request = { haiLe.getNearPlaces(bean.toRequestBody()) },
             transformSuccess = { _, json -> parseHaiLeNear(json) }
         )
 
@@ -332,9 +332,9 @@ object Repository {
 
 
     suspend fun getHaiLDeviceDetail(bean : HaiLeDeviceDetailRequestBody, holder : StateHolder<List<HaiLeDeviceDetailBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { haiLe.getDeviceDetail(bean).awaitResponse() },
+            request = { haiLe.getDeviceDetail(bean) },
             transformSuccess = { _, json -> parseHaiLeDeviceDetail(json) }
         )
 

@@ -432,7 +432,6 @@ fun ZhiJianCourseTableUI(
         val style = CalendarStyle(showAll)
         val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
         val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
-
         Box {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(style.rowCount),
@@ -469,7 +468,7 @@ fun ZhiJianCourseTableUI(
                                                     it.calendarSquareGlass(
                                                         backGroundHaze,
                                                         style.containerColor.copy(customBackgroundAlpha),
-                                                        enableLiquidGlass
+                                                        enableLiquidGlass,
                                                     )
                                                 } else {
                                                     it

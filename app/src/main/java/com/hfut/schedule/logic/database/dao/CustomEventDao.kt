@@ -16,6 +16,9 @@ import java.util.Date
 
 @Dao
 interface CustomEventDao {
+    // 获取
+    @Query("SELECT * FROM event WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Int) : CustomEventEntity?
     // 获取某类型
     @Query("SELECT * FROM event WHERE type = :type")
     suspend fun getAll(type: String) : List<CustomEventEntity>
@@ -24,13 +27,13 @@ interface CustomEventDao {
     suspend fun del(id : Int)
     // 新建
     @Insert
-    suspend fun insert(event : CustomEventEntity)
+    suspend fun insert(event : CustomEventEntity): Long
     // 获取下载的日程
     @Query("SELECT * FROM event WHERE supabase_id IS NOT NULL AND type = :type")
     suspend fun getDownloaded(type: String) : List<CustomEventEntity>
     // 更新
     @Update
-    suspend fun update(event : CustomEventEntity)
+    suspend fun update(event : CustomEventEntity): Int
     // 传入supabase_id，检查整张表里是否存在
     @Query("SELECT EXISTS(SELECT 1 FROM event WHERE supabase_id = :supabaseId)")
     suspend fun isExistBySupabaseId(supabaseId: Int): Boolean

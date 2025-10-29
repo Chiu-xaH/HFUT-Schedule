@@ -116,7 +116,7 @@ fun UseAgreementScreen(
             )
         },
         bottomBar = {
-            val route = remember { AppNavRoute.Empty.withArgs(AppNavRoute.Home.route) }
+//            val route = remember { AppNavRoute.Empty.withArgs(AppNavRoute.Home.route) }
             Column () {
                 Box(Modifier.bottomBarBlur(hazeState)) {
                     Row(modifier = Modifier
@@ -130,7 +130,7 @@ fun UseAgreementScreen(
                                         launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
                                     }.await()
                                     if(getPersonInfo().name != null) {
-                                        navController.navigateAndClear(route)
+                                        navController.navigateAndClear(AppNavRoute.Home.route)
                                     } else {
                                         Starter.refreshLogin(context)
                                     }
@@ -140,7 +140,7 @@ fun UseAgreementScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(.5f)
-                                .containerShare(route, MaterialTheme.shapes.extraLarge)
+//                                .containerShare(route, MaterialTheme.shapes.extraLarge)
                         ) {
                             Text("同意")
                         }

@@ -670,6 +670,9 @@ private fun PersonItems(
                                         headlineContent = {
                                             Text(i.realname + " | " + i.username)
                                         },
+                                        modifier = Modifier.clickable {
+                                            ClipBoardUtils.copy(i.username)
+                                        },
                                         overlineContent = { Text("寝室成员") },
                                         leadingContent = {
                                             Icon(painterResource(R.drawable.person),null)

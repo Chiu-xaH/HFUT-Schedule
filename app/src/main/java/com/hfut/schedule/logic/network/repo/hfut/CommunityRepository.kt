@@ -34,7 +34,7 @@ import com.hfut.schedule.logic.model.community.StuAppsResponse
 import com.hfut.schedule.logic.model.community.TodayResponse
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.network.api.CommunityService
-import com.hfut.schedule.logic.network.util.launchRequestSimple
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.CommunityServiceCreator
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -50,9 +50,9 @@ import retrofit2.awaitResponse
 object CommunityRepository {
     private val community = CommunityServiceCreator.create(CommunityService::class.java)
 
-    suspend fun loginCommunity(ticket : String,holder : StateHolder<String>) = launchRequestSimple(
+    suspend fun loginCommunity(ticket : String,holder : StateHolder<String>) = launchRequestState(
         holder = holder,
-        request = { community.login(ticket).awaitResponse() },
+        request = { community.login(ticket) },
         transformSuccess = { _, json -> parseCommunity(json) }
     )
     @JvmStatic
@@ -72,14 +72,14 @@ object CommunityRepository {
     }
 
     suspend fun searchFailRate(token : String, name: String, page : Int,holder : StateHolder<List<FailRateRecord>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 community.getFailRate(
                     token,
                     name,
                     page,
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseFailRate(json) }
         )
@@ -92,16 +92,16 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun checkCommunityLogin(token: String,holder : StateHolder<Boolean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { community.getExam(token).awaitResponse() },
+            request = { community.getExam(token) },
             transformSuccess = { _, _ -> true }
         )
 
     suspend fun getGrade(token: String, year : String, term : String,holder : StateHolder<GradeResult>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { community.getGrade(token, year, term).awaitResponse() },
+            request = { community.getGrade(token, year, term) },
             transformSuccess = { _, json -> parseGradeFromCommunity(json) }
         )
     @JvmStatic
@@ -112,9 +112,9 @@ object CommunityRepository {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getAvgGrade(token: String,holder : StateHolder<AvgResult>) = launchRequestSimple(
+    suspend fun getAvgGrade(token: String,holder : StateHolder<AvgResult>) = launchRequestState(
         holder = holder,
-        request = { community.getAvgGrade(token).awaitResponse() },
+        request = { community.getAvgGrade(token) },
         transformSuccess = { _, json -> parseAvgGradeFromCommunity(json) }
     )
     @JvmStatic
@@ -126,9 +126,9 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getAllAvgGrade(token: String,holder : StateHolder<List<GradeAllResult>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { community.getAllAvgGrade(token).awaitResponse() },
+            request = { community.getAllAvgGrade(token) },
             transformSuccess = { _, json -> parseAllAvgGradeFromCommunity(json) }
         )
     @JvmStatic
@@ -140,14 +140,14 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun searchBooks(token: String, name: String, page: Int,holder : StateHolder<List<LibRecord>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 community.searchBooks(
                     token,
                     name,
                     page
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseSearchBooks(json) }
         )
@@ -160,9 +160,9 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getBookPosition(token: String,callNo: String,holder : StateHolder<List<BookPositionBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { community.getBookPosition(token, callNo).awaitResponse() },
+            request = { community.getBookPosition(token, callNo) },
             transformSuccess = { _, json -> parseBookPosition(json) }
         )
     @JvmStatic
@@ -197,9 +197,9 @@ object CommunityRepository {
     }
 
     suspend fun getDormitory(token : String,holder : StateHolder<DormitoryBean>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { community.getDormitory(token).awaitResponse() },
+            request = { community.getDormitory(token) },
             transformSuccess = { _, json -> parseDormitory(json) }
         )
     @JvmStatic
@@ -217,10 +217,10 @@ object CommunityRepository {
             dormitoryFromCommunityResp,
             dormitoryInfoFromCommunityResp
         ) { d ->
-            launchRequestSimple(
+            launchRequestState(
                 holder = dormitoryInfoFromCommunityResp,
                 request = {
-                    community.getDormitoryInfo(token, d.campus, d.room, d.dormitory).awaitResponse()
+                    community.getDormitoryInfo(token, d.campus, d.room, d.dormitory)
                 },
                 transformSuccess = { _, json -> parseDormitoryInfo(json) }
             )
@@ -229,18 +229,18 @@ object CommunityRepository {
     private fun parseDormitoryInfo(result : String) : List<DormitoryUser> = try {
         if (result.contains("操作成功")) {
             val list1 = Gson().fromJson(result, DormitoryInfoResponse::class.java).result.profileList
-            list1.flatMap { it.userList }
+            list1.flatMap { it.userList }.distinct()
         }
         else
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
     suspend fun addFriendApply(token : String, username : String,holder : StateHolder<String>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 community.applyAdd(token, CommunityService.RequestJsonApply(username))
-                    .awaitResponse()
+                    
             },
             transformSuccess = { _, json -> parseApplyFriend(json) }
         )
@@ -253,12 +253,12 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getApplying(token : String,holder : StateHolder<List<ApplyingLists?>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
             request = {
                 community.getApplyingList(
                     token,
-                ).awaitResponse()
+                )
             },
             transformSuccess = { _, json -> parseApplyFriends(json) }
         )
@@ -270,9 +270,9 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getMaps(token : String,holder : StateHolder<List<MapBean>>) = launchRequestSimple(
+    suspend fun getMaps(token : String,holder : StateHolder<List<MapBean>>) = launchRequestState(
         holder = holder,
-        request = { community.getCampusMap(token).awaitResponse() },
+        request = { community.getCampusMap(token) },
         transformSuccess = { _, json -> parseMaps(json) }
     )
     @JvmStatic
@@ -284,9 +284,9 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun getStuApps(token : String,holder : StateHolder<List<StuAppBean>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = holder,
-            request = { community.getStuApps(token).awaitResponse() },
+            request = { community.getStuApps(token) },
             transformSuccess = { _, json -> parseStuApps(json) }
         )
     @JvmStatic
@@ -300,9 +300,9 @@ object CommunityRepository {
             throw Exception(result)
     } catch (e : Exception) { throw e }
 
-    suspend fun getBus(token : String,holder : StateHolder<List<BusBean>>) = launchRequestSimple(
+    suspend fun getBus(token : String,holder : StateHolder<List<BusBean>>) = launchRequestState(
         holder = holder,
-        request = { community.getBus(token).awaitResponse() },
+        request = { community.getBus(token) },
         transformSuccess = { _, json -> parseBus(json) }
     )
     @JvmStatic
@@ -315,7 +315,7 @@ object CommunityRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun communityBooks(token : String, type : LibraryItems, page : Int = 1, booksChipData : StateHolder<List<BorrowRecords>>) =
-        launchRequestSimple(
+        launchRequestState(
             holder = booksChipData,
             request = {
                 val size = 500
@@ -337,7 +337,7 @@ object CommunityRepository {
                         page.toString(),
                         size.toString()
                     )
-                }.awaitResponse()
+                }
             },
             transformSuccess = { _, json -> parseMyBookFromCommunity(json) }
         )
@@ -349,9 +349,9 @@ object CommunityRepository {
             throw Exception(json)
     } catch (e : Exception) { throw e }
 
-    suspend fun getToday(token : String,holder : StateHolder<TodayResult>) = launchRequestSimple(
+    suspend fun getToday(token : String,holder : StateHolder<TodayResult>) = launchRequestState(
         holder = holder,
-        request = { community.getToday(token).awaitResponse() },
+        request = { community.getToday(token) },
         transformSuccess = { _, json -> parseTodayFromCommunity(json) }
     )
     @JvmStatic

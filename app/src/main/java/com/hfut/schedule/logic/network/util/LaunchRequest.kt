@@ -14,6 +14,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
+import retrofit2.awaitResponse
 
 //引入接口
 // 通用的网络请求方法，支持自定义的操作
@@ -46,14 +47,14 @@ private fun <T> parseResponse(responseBody: String?): T? {
     return responseBody as? T
 }
 
-suspend fun <T> launchRequestSimple(
+suspend fun <T> launchRequestState(
     holder: StateHolder<T>,
-    request: suspend () -> Response<ResponseBody>,
+    request: suspend () -> Call<ResponseBody>,
     transformSuccess: suspend (Headers, String) -> T,
     transformRedirect: ((Headers) -> T)? = null
 ) = try {
     holder.setLoading()
-    val response = request()
+    val response = request().awaitResponse()
     val headers = response.headers()
     val bodyString = response.body()?.string().orEmpty()
 
@@ -84,15 +85,15 @@ suspend fun <T> launchRequestSimple(
 } catch (e: Exception) {
     holder.emitError(e,null)
 }
-
-suspend fun <T> launchRequestSimple(
+// 空响应
+suspend fun <T> launchRequestState(
     holder: StateHolder<T>,
-    request: suspend () -> Response<Void>,
+    request: suspend () -> Call<Void>,
     transformSuccess: suspend (Headers) -> T,
     transformRedirect: ((Headers) -> T)? = null
 ) = try {
     holder.setLoading()
-    val response = request()
+    val response = request().awaitResponse()
     val headers = response.headers()
 
     if (response.isSuccessful) {
@@ -122,11 +123,11 @@ suspend fun <T> launchRequestSimple(
 } catch (e: Exception) {
     holder.emitError(e,null)
 }
-
+// 无需关心内容 只关心请求结果
 suspend fun launchRequestNone(
-    request: suspend () -> Response<ResponseBody>,
+    request: suspend () -> Call<ResponseBody>,
 ) : Int = try {
-    val response = request()
+    val response = request().awaitResponse()
     response.code()
 } catch (e : Exception) {
     e.printStackTrace()
@@ -141,4 +142,5 @@ suspend fun launchRequestNone(
         UNKNOWN_ERROR_CODE
     }
 }
+
 

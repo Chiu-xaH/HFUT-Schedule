@@ -1,9 +1,11 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +21,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -95,6 +99,14 @@ import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseCourseName
+import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTableUI
+import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableDetail
+import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
+import com.hfut.schedule.ui.screen.home.calendar.timetable.allToTimeTableData
+import com.hfut.schedule.ui.screen.home.calendar.timetable.examToTimeTableData
+import com.hfut.schedule.ui.screen.home.calendar.timetable.focusToTimeTableData
+import com.hfut.schedule.ui.screen.home.calendar.timetable.jxglstuToTimeTableData
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
@@ -115,6 +127,7 @@ import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.clickableWithRotation
 import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -126,6 +139,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import java.util.UUID
 
 suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<CourseUnitBean> {
     try {
@@ -225,12 +239,16 @@ fun JxglstuCourseTableUI(
     val context = LocalContext.current
 
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
-    var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
+//    var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
+    var showBottomSheetDetail by remember { mutableStateOf(false) }
 
-    var courses by remember { mutableStateOf(listOf<String>()) }
-    var multiWeekday by remember { mutableIntStateOf(0) }
-    var multiWeek by remember { mutableIntStateOf(0) }
+//    var courses by remember { mutableStateOf(listOf<String>()) }
+//    var multiWeekday by remember { mutableIntStateOf(0) }
+//    var multiWeek by remember { mutableIntStateOf(0) }
+
+
+    var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
 
     if (showBottomSheetTotalCourse) {
         HazeBottomSheet (
@@ -244,39 +262,33 @@ fun JxglstuCourseTableUI(
         }
     }
 
-    if (showBottomSheetMultiCourse) {
+    if (showBottomSheetDetail) {
         HazeBottomSheet (
-            showBottomSheet = showBottomSheetMultiCourse,
             onDismissRequest = {
-                showBottomSheetMultiCourse = false
+                showBottomSheetDetail = false
             },
             autoShape = false,
+            showBottomSheet = showBottomSheetDetail,
             hazeState = hazeState
         ) {
-            MultiCourseSheetUI(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
+            bean?.let { TimeTableDetail(it) }
         }
     }
+
+//    if (showBottomSheetMultiCourse) {
+//        HazeBottomSheet (
+//            showBottomSheet = showBottomSheetMultiCourse,
+//            onDismissRequest = {
+//                showBottomSheetMultiCourse = false
+//            },
+//            autoShape = false,
+//            hazeState = hazeState
+//        ) {
+//            MultiCourseSheetUI(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
+//        }
+//    }
 
     var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
-
-    val table = rememberSaveable { List(30) { mutableStateListOf<String>() } }
-    val tableAll = rememberSaveable { List(42) { mutableStateListOf<String>() } }
-
-    var examList: List<ExamToCalenderBean> by remember { mutableStateOf(emptyList()) }
-    LaunchedEffect(Unit) {
-        examList = if(DateTimeManager.weeksBetweenJxglstu < 1) {
-            emptyList()
-        } else {
-            examToCalendar(context)
-        }
-    }
-
-    val focusList by produceState(initialValue = emptyList()) {
-        value = DataBaseManager.customEventDao.getAll(CustomEventType.SCHEDULE.name).map {
-            entityToDto(it)
-        }
-    }
-
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
@@ -291,435 +303,6 @@ fun JxglstuCourseTableUI(
         )
     }
 
-
-    val json by produceState<String?>(initialValue = null) {
-        value = LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
-    }
-
-    var findNewCourse by remember { mutableStateOf(false) }
-
-
-    var exception by remember { mutableStateOf<Exception?>(null) }
-    val scope = rememberCoroutineScope()
-
-    fun refreshUI() {
-        // 初始化
-        exception = null
-        if(showAll) {
-            clearUnit(tableAll)
-        } else {
-            clearUnit(table)
-        }
-        findNewCourse = false
-        scope.launch {
-            launch course@ {
-                // 组装课表
-                if(json == null) {
-                    return@course
-                }
-                try {
-                    val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
-                    val scheduleList = datumResponse.result.scheduleList
-                    val lessonList = datumResponse.result.lessonList
-
-                    for (i in scheduleList.indices) {
-                        val item = scheduleList[i]
-                        val startTime = item.startTime
-                        val startHour = startTime / 100
-                        val startMinute = startTime % 100
-                        val startTimeStr = "$startHour:${parseTimeItem(startMinute)}"
-
-                        var room = item.room?.nameZh
-                        var courseId = item.lessonId.toString()
-                        room = room?.replace("学堂","") ?: ""
-
-
-                        for (j in lessonList.indices) {
-                            if (courseId == lessonList[j].id) {
-                                courseId = lessonList[j].courseName
-                            }
-                        }
-
-                        val text = startTimeStr + "\n" + courseId + "\n" + room
-
-                        if (item.weekIndex == currentWeek.toInt()) {
-                            when(item.weekday) {
-                                6 -> findNewCourse = text.isNotEmpty()
-                                7 -> findNewCourse = text.isNotEmpty()
-                            }
-                            if(showAll) {
-                                if (item.weekday == 1) {
-                                    if (startHour in 8..9) {
-                                        tableAll[0].add(text)
-                                    }
-                                    if (startHour in 10..11) {
-                                        tableAll[7].add(text)
-                                    }
-                                    if (startHour in 14..15) {
-                                        tableAll[14].add(text)
-                                    }
-                                    if (startHour in 16..17) {
-                                        tableAll[21].add(text)
-                                    }
-                                    if (startHour in 19..21) {
-                                        tableAll[28].add(text)
-                                    }
-                                }
-                                if (item.weekday == 2) {
-                                    if (startHour in 8..9) {
-                                        tableAll[1].add(text)
-                                    }
-                                    if (startHour in 10..11) {
-                                        tableAll[8].add(text)
-                                    }
-                                    if (startHour in 14..15) {
-                                        tableAll[15].add(text)
-                                    }
-                                    if (startHour in 16..17) {
-                                        tableAll[22].add(text)
-                                    }
-                                    if (startHour in 19..21) {
-                                        tableAll[29].add(text)
-                                    }
-                                }
-                                if (item.weekday == 3) {
-                                    if (startHour in 8..9) {
-                                        tableAll[2].add(text)
-                                    }
-                                    if (startHour in 10..11) {
-                                        tableAll[9].add(text)
-                                    }
-                                    if (startHour in 14..15) {
-                                        tableAll[16].add(text)
-                                    }
-                                    if (startHour in 16..17) {
-                                        tableAll[23].add(text)
-                                    }
-                                    if (startHour in 19..21) {
-                                        tableAll[30].add(text)
-                                    }
-                                }
-                                if (item.weekday == 4) {
-                                    if (startHour in 8..9) {
-                                        tableAll[3].add(text)
-                                    }
-                                    if (startHour in 10..11) {
-                                        tableAll[10].add(text)
-                                    }
-                                    if (startHour in 14..15) {
-                                        tableAll[17].add(text)
-                                    }
-                                    if (startHour in 16..17) {
-                                        tableAll[24].add(text)
-                                    }
-                                    if (startHour in 19..21) {
-                                        tableAll[31].add(text)
-                                    }
-                                }
-                                if (item.weekday == 5) {
-                                    if (startHour in 8..9) {
-                                        tableAll[4].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        tableAll[11].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        tableAll[18].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        tableAll[25].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        tableAll[32].add(text)
-                                    }
-                                }
-                                if (item.weekday == 6) {
-                                    if (startHour in 8..9 ) {
-                                        tableAll[5].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        tableAll[12].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        tableAll[19].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        tableAll[26].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        tableAll[33].add(text)
-                                    }
-                                }
-                                if (item.weekday == 7) {
-                                    if (startHour in 8..9 ) {
-                                        tableAll[6].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        tableAll[13].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        tableAll[20].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        tableAll[27].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        tableAll[34].add(text)
-                                    }
-                                }
-                            } else {
-                                if (item.weekday == 1) {
-                                    if (startHour in 8..9 ) {
-                                        table[0].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        table[5].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        table[10].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        table[15].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        table[20].add(text)
-                                    }
-                                }
-                                if (item.weekday == 2) {
-                                    if (startHour in 8..9 ) {
-                                        table[1].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        table[6].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        table[11].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        table[16].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        table[21].add(text)
-                                    }
-                                }
-                                if (item.weekday == 3) {
-                                    if (startHour in 8..9 ) {
-                                        table[2].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        table[7].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        table[12].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        table[17].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        table[22].add(text)
-                                    }
-                                }
-                                if (item.weekday == 4) {
-                                    if (startHour in 8..9 ) {
-                                        table[3].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        table[8].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        table[13].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        table[18].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        table[23].add(text)
-                                    }
-                                }
-                                if (item.weekday == 5) {
-                                    if (startHour in 8..9 ) {
-                                        table[4].add(text)
-                                    }
-                                    if (startHour in 10..11 ) {
-                                        table[9].add(text)
-                                    }
-                                    if (startHour in 14..15 ) {
-                                        table[14].add(text)
-                                    }
-                                    if (startHour in 16..17 ) {
-                                        table[19].add(text)
-                                    }
-                                    if (startHour in 19..21 ) {
-                                        table[24].add(text)
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // 去重
-                    if(showAll) {
-                        distinctUnit(tableAll)
-                    } else {
-                        distinctUnit(table)
-                    }
-                } catch (e : Exception) {
-                    exception = e
-                }
-            }
-            launch focus@ {
-                // 组装日程
-                try {
-                    for(item in focusList) {
-                        val start = item.dateTime.start.toStr().split(" ")
-                        if(start.size != 2) {
-                            continue
-                        }
-                        val startDate = start[0]
-                        val startTime = start[1]
-                        val weekInfo = dateToWeek(startDate) ?: continue
-                        // 是同一周
-                        if(weekInfo.first != currentWeek.toInt()) {
-                            continue
-                        }
-                        val name = item.title
-                        val place = item.description
-                        val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
-                        val index = weekInfo.second - 1
-                        val offset = if(showAll) 7 else 5
-                        if(!showAll && weekInfo.second in 6..7) {
-                            // 不显示
-                            findNewCourse = true
-                            continue
-                        }
-                        if(hour <= 9) {
-                            val finalIndex = index+offset*0
-                            if(showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(startTime + "\n" + name  + "(日程)"+ "\n" + place?.replace("学堂",""))
-                        } else if(hour in 10..12) {
-                            val finalIndex = index+offset*1
-                            if(showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(startTime + "\n" + name  + "(日程)"+ "\n" + place?.replace("学堂",""))
-                        } else if(hour in 13..15) {
-                            val finalIndex = index+offset*2
-                            if(showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(startTime + "\n" + name  + "(日程)"+ "\n" + place?.replace("学堂",""))
-                        } else if(hour in 16..17) {
-                            val finalIndex = index+offset*3
-                            if(showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(startTime + "\n" + name  + "(日程)"+ "\n" + place?.replace("学堂",""))
-                        } else {
-                            val finalIndex = index+offset*4
-                            if(showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(startTime + "\n" + name  + "(日程)"+ "\n" + place?.replace("学堂",""))
-                        }
-                    }
-                } catch (e : Exception) {
-                    e.printStackTrace()
-                }
-            }
-            launch exam@ {
-                // 组装考试
-                try {
-                    for (item in examList) {
-                        val startTime = item.startTime ?: continue
-                        val startDate = item.day ?: continue
-                        val weekInfo = dateToWeek(startDate) ?: continue
-                        // 是同一周
-                        if (weekInfo.first != currentWeek.toInt()) {
-                            continue
-                        }
-                        val name = item.course
-                        val place = item.place
-                        val hour = startTime.substringBefore(":").toIntOrNull() ?: continue
-                        val index = weekInfo.second - 1
-                        val offset = if (showAll) 7 else 5
-                        if(!showAll && weekInfo.second in 6..7) {
-                            // 不显示
-                            findNewCourse = true
-                            continue
-                        }
-                        if (hour <= 9) {
-                            val finalIndex = index + offset * 0
-                            if (showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(
-                                    "$startTime\n$name(考试)\n" + place?.replace("学堂", "")
-                                )
-                        } else if (hour in 10..12) {
-                            val finalIndex = index + offset * 1
-                            if (showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add(
-                                    "$startTime\n$name(考试)\n" + place?.replace("学堂", "")
-                                )
-                        } else if (hour in 13..15) {
-                            val finalIndex = index + offset * 2
-                            if (showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add("$startTime\n$name(考试)\n" + place?.replace("学堂", ""))
-                        } else if (hour in 16..17) {
-                            val finalIndex = index + offset * 3
-                            if (showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add("$startTime\n$name(考试)\n" + place?.replace("学堂", ""))
-                        } else {
-                            val finalIndex = index + offset * 4
-                            if (showAll) {
-                                tableAll[finalIndex]
-                            } else {
-                                table[finalIndex]
-                            }
-                                .add("$startTime\n$name(考试)\n" + place?.replace("学堂", ""))
-                        }
-                    }
-                } catch (e : Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-    }
-
-    LaunchedEffect(showAll,loadingJxglstu,currentWeek) {
-        refreshUI()
-    }
-    LaunchedEffect(findNewCourse) {
-        if(findNewCourse && !showAll) {
-            onSwapShowAll(true)
-        }
-    }
 
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
@@ -950,12 +533,8 @@ fun JxglstuCourseTableUI(
            }
        }
     }
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
-    val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val drag = remember { 5f }
-    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
 
     fun nextWeek() {
         if (currentWeek < 20) {
@@ -974,6 +553,20 @@ fun JxglstuCourseTableUI(
             LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
         }
     } else {
+        val items by produceState(initialValue = List(20) { emptyList() }) {
+            value = allToTimeTableData(context)
+        }
+
+        LaunchedEffect(currentWeek,items) {
+            if(currentWeek >= items.size) {
+                Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
+                return@LaunchedEffect
+            } else {
+                val list = items[currentWeek.toInt()-1]
+                val weekend = list.find { it.dayOfWeek == 6 || it.dayOfWeek == 7 } != null
+                onSwapShowAll(weekend)
+            }
+        }
         // 课程表布局
         Box(modifier = Modifier
             .fillMaxSize()
@@ -995,209 +588,249 @@ fun JxglstuCourseTableUI(
                 )
             }
         ) {
-            val scrollState = rememberLazyGridState()
-            val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-            val style = CalendarStyle(showAll)
-            val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(style.rowCount),
-                modifier = style.calendarPadding(),
-                state = scrollState
-            ) {
-                item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
-                exception?.let {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        TransplantListItem(
-                            headlineContent = { Text("解析错误") },
-                            leadingContent = { Icon(painterResource(R.drawable.warning),null)},
-                            supportingContent = { Text(getKeyStackTrace(it)) }
-                        )
-                    }
-                }
-                items(style.rowCount*style.columnCount, key = { it }) { index ->
-                    val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
-                    if(texts.isEmpty() && backGroundHaze != null) {
-                        Box(modifier = Modifier
-                            .height(calendarSquareHeight.dp)
-                            .padding(style.everyPadding))
-                    } else {
-                        Card(
-                            shape = style.containerCorner,
-                            colors = CardDefaults.cardColors(containerColor = color),
-                            modifier = Modifier
-                                .height(calendarSquareHeight.dp)
-                                .padding(style.everyPadding)
-                                .let {
-                                    if(backGroundHaze != null) {
-                                        it
-                                            .clip(style.containerCorner)
-                                            .let {
-                                                if(AppVersion.CAN_SHADER) {
-                                                    it.calendarSquareGlass(
-                                                        backGroundHaze,
-                                                        style.containerColor.copy(customBackgroundAlpha),
-                                                        enableLiquidGlass
-                                                    )
-                                                } else {
-                                                    it
-                                                }
-                                            }
-                                    } else {
-                                        it
-                                    }
-                                }
-                                .clickableWithScale(ClickScale.SMALL.scale) {
-                                    // 只有一节课
-                                    if (texts.size == 1) {
-                                        // 如果是考试
-                                        if (texts[0].contains("考试")) {
-                                            showToast(texts[0].replace("\n"," "))
-                                            return@clickableWithScale
-                                        }
-                                        if (texts[0].contains("日程")) {
-                                            showToast(texts[0].replace("\n"," "))
-                                            return@clickableWithScale
-                                        }
-                                        val name =
-                                            parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
-                                        if (name != null) {
-                                            navController.navigateForTransition(
-                                                AppNavRoute.CourseDetail,
-                                                AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "$index")
-                                            )
-                                        }
-                                    } else if (texts.size > 1) {
-                                        multiWeekday =
-                                            if (showAll) (index + 1) % 7 else (index + 1) % 5
-                                        multiWeek = currentWeek.toInt()
-                                        courses = texts
-                                        showBottomSheetMultiCourse = true
-                                    }
-                                    // 空数据
-                                }
-                                .let {
-                                    if(enableTransition) {
-                                        val route = if(texts.size == 1 && !texts[0].contains("考试")) {
-                                            val name = parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
-                                            if (name != null) {
-                                                AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "$index")
-                                            } else {
-                                                null
-                                            }
-                                        } else {
-                                            null
-                                        }
+            val scrollState = rememberScrollState()
+            val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
 
-                                        route?.let { it1 ->
-                                            it.containerShare(
-                                                route = it1,
-                                                roundShape = MaterialTheme.shapes.extraSmall,
-                                            )
-                                        } ?: it
-                                    } else {
-                                        it
-                                    }
-                                }
-                        ) {
-                            if(texts.size == 1) {
-                                val l = texts[0].split("\n")
-                                if(l.size < 2) {
-                                    return@Card
-                                }
-                                val time = l[0]
-                                val name = l[1]
-                                val place = if(l.size == 3) {
-                                    val p = l[2]
-                                    if(p == "null" || p.isBlank() || p.isEmpty()) {
-                                        null
-                                    } else {
-                                        p
-                                    }
-                                } else null
-
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(horizontal = CARD_NORMAL_DP) ,
-                                    verticalArrangement = Arrangement.SpaceBetween,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = time,
-                                        fontSize = style.textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f) // 占据中间剩余的全部空间
-                                            .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
-                                    ) {
-                                        Text(
-                                            text = name,
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-                                    place?.let {
-                                        Text(
-                                            text = it,
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
-                                        )
-                                    }
-                                }
-                            } else if(texts.size > 1){
-                                val name = texts.map {
-                                    it.split("\n")[1][0]
-                                }.joinToString(",")
-                                val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(horizontal = CARD_NORMAL_DP) ,
-                                    verticalArrangement = Arrangement.SpaceBetween,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        text = texts[0].substringBefore("\n"),
-                                        fontSize = style.textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        fontWeight = isExam
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .weight(1f) // 占据中间剩余的全部空间
-                                            .fillMaxWidth(),
-                                        contentAlignment = Alignment.TopCenter
-                                    ) {
-                                        Text(
-                                            text = "${texts.size}节课冲突",
-                                            fontSize = style.textSize,
-                                            textAlign = TextAlign.Center,
-                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
-                                            modifier = Modifier.fillMaxWidth(),
-                                            fontWeight = isExam
-                                        )
-                                    }
-                                    Text(
-                                        text = name,
-                                        fontSize = style.textSize,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-                            }
+            NewTimeTableUI(
+                items,
+                currentWeek.toInt(),
+                showAll,
+                modifier = Modifier
+                    .padding(horizontal = 10.dp-CARD_NORMAL_DP)
+                    .verticalScroll(scrollState)
+                ,
+                innerPadding = innerPadding,
+                shaderState = backGroundHaze,
+            ) { list ->
+                // 只有一节课
+                if (list.size == 1) {
+                    val item = list[0]
+                    // 如果是考试
+                    when(item.type) {
+                        TimeTableType.COURSE -> {
+                            navController.navigateForTransition(AppNavRoute.CourseDetail, AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}" ))
+                        }
+                        else -> {
+                            bean = list
+                            showBottomSheetDetail = true
                         }
                     }
+                } else if (list.size > 1) {
+                    bean = list
+                    showBottomSheetDetail = true
+//                    multiWeekday = if (showAll) (index + 1) % 7 else (index + 1) % 5
+//                    multiWeek = currentWeek.toInt()
+//                    courses = texts
+//                    showBottomSheetMultiCourse = true
                 }
-                item(span = { GridItemSpan(maxLineSpan) }) {  InnerPaddingHeight(innerPadding,false) }
             }
+
+
+
+
+//            val scrollState = rememberLazyGridState()
+//            val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
+//            val style = CalendarStyle(showAll)
+//            val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
+//            LazyVerticalGrid(
+//                columns = GridCells.Fixed(style.rowCount),
+//                modifier = style.calendarPadding(),
+//                state = scrollState
+//            ) {
+//                item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
+//                exception?.let {
+//                    item(span = { GridItemSpan(maxLineSpan) }) {
+//                        TransplantListItem(
+//                            headlineContent = { Text("解析错误") },
+//                            leadingContent = { Icon(painterResource(R.drawable.warning),null)},
+//                            supportingContent = { Text(getKeyStackTrace(it)) }
+//                        )
+//                    }
+//                }
+//                items(style.rowCount*style.columnCount, key = { it }) { index ->
+//                    val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
+//                    if(texts.isEmpty() && backGroundHaze != null) {
+//                        Box(modifier = Modifier
+//                            .height(calendarSquareHeight.dp)
+//                            .padding(style.everyPadding))
+//                    } else {
+//                        Card(
+//                            shape = style.containerCorner,
+//                            colors = CardDefaults.cardColors(containerColor = color),
+//                            modifier = Modifier
+//                                .height(calendarSquareHeight.dp)
+//                                .padding(style.everyPadding)
+//                                .let {
+//                                    if(backGroundHaze != null) {
+//                                        it
+//                                            .clip(style.containerCorner)
+//                                            .let {
+//                                                if(AppVersion.CAN_SHADER) {
+//                                                    it.calendarSquareGlass(
+//                                                        backGroundHaze,
+//                                                        style.containerColor.copy(customBackgroundAlpha),
+//                                                        enableLiquidGlass,
+//                                                    )
+//                                                } else {
+//                                                    it
+//                                                }
+//                                            }
+//                                    } else {
+//                                        it
+//                                    }
+//                                }
+//                                .clickableWithScale(ClickScale.SMALL.scale) {
+//                                    // 只有一节课
+//                                    if (texts.size == 1) {
+//                                        // 如果是考试
+//                                        if (texts[0].contains("考试")) {
+//                                            showToast(texts[0].replace("\n"," "))
+//                                            return@clickableWithScale
+//                                        }
+//                                        if (texts[0].contains("日程")) {
+//                                            showToast(texts[0].replace("\n"," "))
+//                                            return@clickableWithScale
+//                                        }
+//                                        val name =
+//                                            parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
+//                                        if (name != null) {
+//                                            navController.navigateForTransition(
+//                                                AppNavRoute.CourseDetail,
+//                                                AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "$index")
+//                                            )
+//                                        }
+//                                    } else if (texts.size > 1) {
+//                                        multiWeekday =
+//                                            if (showAll) (index + 1) % 7 else (index + 1) % 5
+//                                        multiWeek = currentWeek.toInt()
+//                                        courses = texts
+//                                        showBottomSheetMultiCourse = true
+//                                    }
+//                                    // 空数据
+//                                }
+//                                .let {
+//                                    if(enableTransition) {
+//                                        val route = if(texts.size == 1 && !texts[0].contains("考试")) {
+//                                            val name = parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
+//                                            if (name != null) {
+//                                                AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "$index")
+//                                            } else {
+//                                                null
+//                                            }
+//                                        } else {
+//                                            null
+//                                        }
+//
+//                                        route?.let { it1 ->
+//                                            it.containerShare(
+//                                                route = it1,
+//                                                roundShape = MaterialTheme.shapes.extraSmall,
+//                                            )
+//                                        } ?: it
+//                                    } else {
+//                                        it
+//                                    }
+//                                }
+//                        ) {
+//                            if(texts.size == 1) {
+//                                val l = texts[0].split("\n")
+//                                if(l.size < 2) {
+//                                    return@Card
+//                                }
+//                                val time = l[0]
+//                                val name = l[1]
+//                                val place = if(l.size == 3) {
+//                                    val p = l[2]
+//                                    if(p == "null" || p.isBlank() || p.isEmpty()) {
+//                                        null
+//                                    } else {
+//                                        p
+//                                    }
+//                                } else null
+//
+//                                Column(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .padding(horizontal = CARD_NORMAL_DP) ,
+//                                    verticalArrangement = Arrangement.SpaceBetween,
+//                                    horizontalAlignment = Alignment.CenterHorizontally
+//                                ) {
+//                                    Text(
+//                                        text = time,
+//                                        fontSize = style.textSize,
+//                                        textAlign = TextAlign.Center,
+//                                        modifier = Modifier.fillMaxWidth()
+//                                    )
+//                                    Box(
+//                                        modifier = Modifier
+//                                            .weight(1f) // 占据中间剩余的全部空间
+//                                            .fillMaxWidth(),
+//                                        contentAlignment = Alignment.TopCenter
+//                                    ) {
+//                                        Text(
+//                                            text = name,
+//                                            fontSize = style.textSize,
+//                                            textAlign = TextAlign.Center,
+//                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
+//                                            modifier = Modifier.fillMaxWidth()
+//                                        )
+//                                    }
+//                                    place?.let {
+//                                        Text(
+//                                            text = it,
+//                                            fontSize = style.textSize,
+//                                            textAlign = TextAlign.Center,
+//                                            modifier = Modifier.fillMaxWidth()
+//                                        )
+//                                    }
+//                                }
+//                            } else if(texts.size > 1){
+//                                val name = texts.map {
+//                                    it.split("\n")[1][0]
+//                                }.joinToString(",")
+//                                val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
+//                                Column(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .padding(horizontal = CARD_NORMAL_DP) ,
+//                                    verticalArrangement = Arrangement.SpaceBetween,
+//                                    horizontalAlignment = Alignment.CenterHorizontally
+//                                ) {
+//                                    Text(
+//                                        text = texts[0].substringBefore("\n"),
+//                                        fontSize = style.textSize,
+//                                        textAlign = TextAlign.Center,
+//                                        modifier = Modifier.fillMaxWidth(),
+//                                        fontWeight = isExam
+//                                    )
+//                                    Box(
+//                                        modifier = Modifier
+//                                            .weight(1f) // 占据中间剩余的全部空间
+//                                            .fillMaxWidth(),
+//                                        contentAlignment = Alignment.TopCenter
+//                                    ) {
+//                                        Text(
+//                                            text = "${texts.size}节课冲突",
+//                                            fontSize = style.textSize,
+//                                            textAlign = TextAlign.Center,
+//                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
+//                                            modifier = Modifier.fillMaxWidth(),
+//                                            fontWeight = isExam
+//                                        )
+//                                    }
+//                                    Text(
+//                                        text = name,
+//                                        fontSize = style.textSize,
+//                                        textAlign = TextAlign.Center,
+//                                        modifier = Modifier.fillMaxWidth()
+//                                    )
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//                item(span = { GridItemSpan(maxLineSpan) }) {  InnerPaddingHeight(innerPadding,false) }
+//            }
             // 中间
             AnimatedVisibility(
                 visible = shouldShowAddButton,
@@ -1206,7 +839,7 @@ fun JxglstuCourseTableUI(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
-                    .padding(APP_HORIZONTAL_DP,)
+                    .padding(horizontal = 10.dp, vertical = APP_HORIZONTAL_DP)
             ) {
                 DraggableWeekButton(
                     dragThreshold = drag*2,
