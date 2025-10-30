@@ -16,7 +16,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -25,10 +25,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -40,11 +42,13 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +58,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -69,7 +74,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -84,6 +88,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -91,6 +96,10 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.database.entity.FriendEntity
+import com.hfut.schedule.logic.database.entity.WebURLType
+import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
@@ -113,15 +122,17 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
-import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
+import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -138,6 +149,7 @@ import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
@@ -145,6 +157,7 @@ import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiFo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
@@ -156,24 +169,25 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.mirror.shader.enterAnimation
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
+import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 import java.io.File
@@ -428,7 +442,7 @@ fun MainScreen(
 //            }
         ,
         floatingActionButton = {
-            val addRoute = remember { AppNavRoute.AddEvent.withArgs() }
+            val addRoute = remember { AppNavRoute.AddEvent.withArgs(origin = AddEventOrigin.FOCUS_ADD.name) }
             AnimatedVisibility(
                 enter = scaleIn(),
                 exit = scaleOut(),
@@ -559,13 +573,15 @@ fun MainScreen(
                                 Surface(
                                     shape = CircleShape,
                                     modifier = Modifier
-                                        .padding(horizontal = BUTTON_PADDING)
+                                        .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)*3)
                                         .clip(CircleShape)
                                         .glassLayer(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
-                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                    customBackgroundAlpha
+                                                )
                                             ),
                                             enableLiquidGlass
                                         ),
@@ -593,12 +609,18 @@ fun MainScreen(
                                                 backGroundSource,
                                                 smallStyle.copy(
                                                     blur = 2.dp,
-                                                    overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                                    overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                        customBackgroundAlpha
+                                                    )
                                                 ),
                                                 enableLiquidGlass
                                             )
                                             .clickable {
-                                                navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
+                                                navHostTopController.navigateForTransition(
+                                                    AppNavRoute.TotalCourse,
+                                                    route,
+                                                    transplantBackground = true
+                                                )
                                             }
                                         ,
                                         color = Color.Transparent
@@ -607,7 +629,9 @@ fun MainScreen(
                                             painter = painterResource(id = R.drawable.category),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.padding(CARD_NORMAL_DP*3).iconElementShare(route)
+                                            modifier = Modifier
+                                                .padding(CARD_NORMAL_DP * 3)
+                                                .iconElementShare(route)
                                         )
                                     }
                                 }
@@ -621,7 +645,9 @@ fun MainScreen(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
-                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                    customBackgroundAlpha
+                                                )
                                             ),
                                             enableLiquidGlass
                                         )
@@ -648,7 +674,9 @@ fun MainScreen(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
-                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                    customBackgroundAlpha
+                                                )
                                             ),
                                             enableLiquidGlass
                                         )
@@ -665,30 +693,13 @@ fun MainScreen(
                                         modifier = Modifier.padding(CARD_NORMAL_DP*3)
                                     )
                                 }
-                                Spacer(Modifier.width(BUTTON_PADDING))
+                                Spacer(Modifier.width(APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)*3))
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                TextField(
-                                    modifier = Modifier
-                                        .clip(MaterialTheme.shapes.medium)
-                                        .glassLayer(backGroundSource, largeStyle.copy(
-                                            blur = 2.5.dp,
-                                            overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                                        ),enableLiquidGlass)
-                                        .weight(1f),
-                                    value = zhiJianStudentId,
-                                    onValueChange = { zhiJianStudentId = it },
-                                    leadingIcon = {
-                                        Icon(painterResource(R.drawable.person),null)
-                                    },
-                                    singleLine = true,
-                                    shape = MaterialTheme.shapes.medium,
-                                    colors = textFiledTransplant(),
-                                )
+                            ZhiJianSearchBar(backGroundSource,customBackgroundAlpha,enableLiquidGlass,zhiJianStudentId,showAll) {
+                                zhiJianStudentId = it
                             }
-                            Spacer(Modifier.height(1.5.dp))
                         }
                         if (swapUI != CourseType.NEXT.code) {
                             ScheduleTopDate(showAll, today,backGroundSource)
@@ -736,21 +747,9 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            Row(modifier = Modifier.padding(horizontal = 10.dp)) {
-                                TextField(
-                                    modifier = Modifier
-                                        .weight(1f),
-                                    value = zhiJianStudentId,
-                                    onValueChange = { zhiJianStudentId = it },
-                                    leadingIcon = {
-                                        Icon(painterResource(R.drawable.person),null)
-                                    },
-                                    singleLine = true,
-                                    shape = MaterialTheme.shapes.medium,
-                                    colors = textFiledTransplant(),
-                                )
+                            ZhiJianSearchBar(backGroundSource,1f,false,zhiJianStudentId,showAll) {
+                                zhiJianStudentId = it
                             }
-                            Spacer(Modifier.height(1.5.dp))
                         }
                         if (swapUI != CourseType.NEXT.code) {
                             ScheduleTopDate(showAll, today)
@@ -1208,4 +1207,237 @@ fun SearchEditScreen(
 
     }
 }
+@Composable
+private fun ZhiJianSearchBar(
+    shaderState: ShaderState? = null,
+    customBackgroundAlpha : Float,
+    enableLiquidGlass : Boolean,
+    input : String,
+    showAll : Boolean,
+    onValueChange : (String) -> Unit,
+) {
+    var showDelDialog by remember { mutableStateOf(false) }
+    var showAddDialog by remember { mutableStateOf(false) }
+    var showSelectDialog by remember { mutableStateOf(false) }
+    val savedList by produceState(initialValue = emptyList(), key1 = showAddDialog, key2 = showDelDialog) {
+        value = withContext(Dispatchers.IO) {
+            DataBaseManager.friendDao.getAll()
+        }
+    }
+    var delId by remember { mutableIntStateOf(-1) }
+    val scope = rememberCoroutineScope()
+    val savedData = savedList.find { it.studentId == input }
+    val saved = savedData != null
 
+    if(showDelDialog && delId > 0) {
+        LittleDialog(
+            onDismissRequest = { showDelDialog = false },
+            dialogText = "是否删除",
+            onConfirmation = {
+                scope.launch {
+                    val result = DataBaseManager.friendDao.del(delId)
+                    if(result <= 0) {
+                        showToast("执行失败")
+                    } else {
+                        showToast("执行成功")
+                    }
+                    showDelDialog = false
+                }
+            }
+        )
+    }
+    if(showAddDialog) {
+        Dialog(
+            onDismissRequest = { showAddDialog = false }
+        ) {
+            var inputName by remember { mutableStateOf("") }
+            var inputRemark by remember { mutableStateOf("") }
+            Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)) {
+                Column(modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
+                    CustomTextField(
+                        input = inputName,
+                        label = { Text("姓名") },
+                        singleLine = true
+                    ) { inputName = it }
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
+
+                    CustomTextField(
+                        input = inputRemark,
+                        label = { Text("备注(可填专业或班级等)") },
+                        singleLine = false,
+                    ) { inputRemark = it }
+
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+
+                    RowHorizontal(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                        FilledTonalButton (
+                            onClick = {
+                                showAddDialog = false
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                        ) {
+                            Text("取消")
+                        }
+                        Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    if(inputName.isEmpty() || inputName.isBlank()) {
+                                        showToast("空名")
+                                        return@launch
+                                    }
+                                    if(input.length != 10) {
+                                        showToast("学号长度不规范(10位)")
+                                        return@launch
+                                    }
+                                    val result = DataBaseManager.friendDao.insert(FriendEntity(
+                                        name = inputName,
+                                        studentId = input,
+                                        major = inputRemark
+                                    ))
+                                    if(result <= 0) {
+                                        showToast("执行失败")
+                                    } else {
+                                        showToast("执行成功")
+                                    }
+                                    showAddDialog = false
+                                }
+                            },
+                            shape = MaterialTheme.shapes.medium,
+                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                        ) {
+                            Text("保存")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if(showSelectDialog) {
+        Dialog(
+            onDismissRequest = { showSelectDialog = false }
+        ) {
+            Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)) {
+                Column(modifier = Modifier.padding(vertical = APP_HORIZONTAL_DP)) {
+                    LazyColumn {
+                        items(savedList.size,key = { savedList[it].id }) { index ->
+                            val item = savedList[index]
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text(item.name)
+                                },
+                                supportingContent = {
+                                    item.major?.let { Text(it) }
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(
+                                        if(input == item.studentId)
+                                            R.drawable.check
+                                        else R.drawable.person
+                                    ),null)
+                                },
+                                overlineContent = {
+                                    Text(item.studentId)
+                                },
+                                trailingContent = {
+                                    FilledTonalIconButton(
+                                        onClick = {
+                                            delId = item.id
+                                            showDelDialog = true
+                                        }
+                                    ) {
+                                        Icon(painterResource(R.drawable.delete),null)
+                                    }
+                                },
+                                modifier = Modifier.clickable {
+                                    onValueChange(item.studentId)
+                                    showSelectDialog = false
+                                }
+                            )
+                                PaddingHorizontalDivider()
+                        }
+                        item {
+                            Spacer(Modifier.height(10.dp))
+                            BottomTip("新增请先将学号输入到输入框后再点击右侧保存")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    Column {
+        Row(modifier = Modifier.padding(horizontal =
+            APP_HORIZONTAL_DP - (
+                    if(shaderState == null) {
+                        (if (showAll) 1.75.dp else 2.5.dp)*3
+                    } else {
+                        if (showAll) 1.75.dp else 2.5.dp
+                    }
+            )
+        )) {
+            TextField(
+                modifier = Modifier
+                    .let {
+                        shaderState?.let { state ->
+                            it
+                                .clip(MaterialTheme.shapes.medium)
+                                .glassLayer(
+                                    state,
+                                    largeStyle.copy(
+                                        blur = 2.5.dp,
+                                        overlayColor = MaterialTheme.colorScheme.surface.copy(
+                                            customBackgroundAlpha
+                                        )
+                                    ),
+                                    enableLiquidGlass
+                                )
+                        } ?: it
+                    }
+                    .weight(1f),
+                value = input,
+                onValueChange = onValueChange,
+                leadingIcon = {
+                    if(savedList.isEmpty()) {
+                        Icon(painterResource(R.drawable.person),null)
+                    } else {
+                        IconButton(
+                            onClick = {
+                                showSelectDialog = true
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.database),null)
+                        }
+                    }
+                },
+                trailingIcon = {
+                    if(saved) {
+                        IconButton(
+                            onClick = {
+                                delId = savedData.id
+                                showDelDialog = true
+                            }
+                        ) {
+                            Icon(painterResource(R.drawable.delete),null)
+                        }
+                    } else {
+                        IconButton(
+                            onClick = {
+                                showAddDialog = true
+                            },
+                            enabled = input.length == 10
+                        ) {
+                            Icon(painterResource(R.drawable.save),null)
+                        }
+                    }
+                },
+                singleLine = true,
+                shape = MaterialTheme.shapes.medium,
+                colors = textFiledTransplant(),
+            )
+        }
+        Spacer(Modifier.height(CARD_NORMAL_DP*2))
+    }
+}

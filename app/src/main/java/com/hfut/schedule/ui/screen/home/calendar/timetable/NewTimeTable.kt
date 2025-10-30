@@ -101,7 +101,7 @@ fun Timetable(
         val columnWidthPx = totalWidthPx / columnCount.toFloat()
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
-            Spacer(Modifier.height(CARD_NORMAL_DP))
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
             InnerPaddingHeight(innerPadding,true)
             Box(
                 modifier = Modifier
@@ -113,7 +113,7 @@ fun Timetable(
                                 val w = size.width
                                 val h = size.height
                                 // 虚线在列边界
-                                for (i in 1..columnCount-1) {
+                                for (i in 0..columnCount) {
                                     val x = w * i / columnCount.toFloat()
                                     drawLine(
                                         color = dividerColor,

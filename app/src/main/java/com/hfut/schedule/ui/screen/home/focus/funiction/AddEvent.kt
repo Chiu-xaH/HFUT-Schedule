@@ -221,15 +221,18 @@ fun AddEventFloatButton(
         }
     }
 }
-
+enum class AddEventOrigin {
+    FOCUS_EDITED,FOCUS_ADD,CALENDAR
+}
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AddEventScreen(
     vm : NetWorkViewModel,
     navController : NavHostController,
-    eventId : Int = -1
+    eventId : Int = -1,
+    origin : String
 ) {
-    val route = remember { AppNavRoute.AddEvent.withArgs(eventId) }
+    val route = remember { AppNavRoute.AddEvent.withArgs(eventId,origin) }
 
     val isSupabase = false
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
@@ -263,7 +266,11 @@ fun AddEventScreen(
     CustomTransitionScaffold (
         route = route,
         navHostController = navController,
-        roundShape = FloatingActionButtonDefaults.shape,
+        roundShape = when(origin) {
+            AddEventOrigin.FOCUS_EDITED.name -> MaterialTheme.shapes.medium
+            AddEventOrigin.FOCUS_ADD.name -> FloatingActionButtonDefaults.shape
+            else -> MaterialTheme.shapes.extraSmall
+        },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(

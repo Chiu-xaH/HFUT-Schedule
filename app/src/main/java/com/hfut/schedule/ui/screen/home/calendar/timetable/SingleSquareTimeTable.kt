@@ -1,6 +1,10 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable
 
 
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -12,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -122,8 +127,18 @@ fun TimetableSingleSquare(
     val hours = endHour - startHour
     val dashEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     val dividerColor = DividerDefaults.color
-    val columnCount = if (showAll) 7 else 5
-    val everyPadding = if(showAll) 1.75.dp else 2.5.dp
+//    val columnCount = if (showAll) 7 else 5
+//    val everyPadding = if(showAll) 1.75.dp else 2.5.dp
+    // ✅ 动画化 showAll 的切换
+    val animatedFactor by animateFloatAsState(
+        targetValue = if (showAll) 1f else 0f,
+    )
+    // 平滑列数变化：从5列到7列之间
+    val columnCount = (5 + 2 * animatedFactor).coerceIn(5f, 7f)
+    // 平滑 padding 变化
+    val everyPadding by animateDpAsState(
+        targetValue = if (showAll) 1.75.dp else 2.5.dp,
+    )
 
     BoxWithConstraints(
         modifier = modifier
@@ -134,7 +149,7 @@ fun TimetableSingleSquare(
         val columnWidthPx = totalWidthPx / columnCount.toFloat()
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
-            Spacer(Modifier.height(CARD_NORMAL_DP))
+            Spacer(Modifier.height(CARD_NORMAL_DP*2))
             InnerPaddingHeight(innerPadding,true)
             Box(
                 modifier = Modifier
@@ -146,7 +161,7 @@ fun TimetableSingleSquare(
                                 val w = size.width
                                 val h = size.height
                                 // 虚线在列边界
-                                for (i in 1..columnCount-1) {
+                                for (i in 0..columnCount.toInt()) {
                                     val x = w * i / columnCount.toFloat()
                                     drawLine(
                                         color = dividerColor,

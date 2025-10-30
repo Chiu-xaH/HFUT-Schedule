@@ -101,13 +101,8 @@ data class TimeTableItem(
     val startTime: String,
     val endTime: String,
     val place : String? = null,
+    val id : Int? = null
 )
-
-
-interface TimeTableDataAdapter {
-    // 适配器
-    suspend fun<T> toTimeTableData(originalData : T) : List<List<TimeTableItem>>
-}
 
 enum class TimeTableType(
     val description: String,
@@ -135,19 +130,18 @@ suspend fun allToTimeTableData(context: Context): List<List<TimeTableItem>> = wi
     val focusList = focusDeferred.await()
     val examList = examDeferred.await()
 
-    // 三者长度相同（20 周）
-    val size = jxglstuList.size
-
     // 合并：按周（index）叠加三个来源
-    List(size) { i ->
-        jxglstuList[i] + focusList[i] + examList[i]
+    List(MyApplication.MAX_WEEK) { i ->
+        jxglstuList[i] + focusList[i]+ examList[i]
     }
 }
 
 suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> {
-    val result = List(20) { mutableStateListOf<TimeTableItem>() }
-    val json = LargeStringDataManager.read(context, LargeStringDataManager.DATUM) ?: return emptyList()
+    val json = LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
+        ?: return List(20) { emptyList<TimeTableItem>() }
     try {
+        val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
+
         val datumResponse = Gson().fromJson(json, DatumResponse::class.java)
         val scheduleList = datumResponse.result.scheduleList
         val lessonList = datumResponse.result.lessonList
@@ -170,16 +164,16 @@ suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> 
         }
         // 去重
         distinctUnit(result)
+        return result
     } catch (e : Exception) {
         e.printStackTrace()
+        return List(20) { emptyList<TimeTableItem>() }
     }
-    return result
 }
 
-
-suspend fun focusToTimeTableData() :  List<List<TimeTableItem>> {
-    val result = List(20) { mutableStateListOf<TimeTableItem>() }
+suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
     try {
+        val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         val focusList = DataBaseManager.customEventDao.getAll(CustomEventType.SCHEDULE.name).map {
             entityToDto(it)
         }
@@ -216,18 +210,19 @@ suspend fun focusToTimeTableData() :  List<List<TimeTableItem>> {
                 startTime = startTime,
                 endTime = endTime,
                 place  = place,
+                id = item.id
             ))
         }
+        return result
     } catch (e : Exception) {
         e.printStackTrace()
+        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
-    return result
 }
 
-
-suspend fun examToTimeTableData(context : Context) :  List<List<TimeTableItem>> {
-    val result = List(20) { mutableStateListOf<TimeTableItem>() }
+suspend fun examToTimeTableData(context : Context): List<List<TimeTableItem>> {
     try {
+        val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         val examList = examToCalendar(context)
         for (item in examList) {
             val startTime = item.startTime ?: continue
@@ -248,10 +243,11 @@ suspend fun examToTimeTableData(context : Context) :  List<List<TimeTableItem>> 
                 place  = place,
             ))
         }
+        return result
     } catch (e : Exception) {
         e.printStackTrace()
+        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
-    return result
 }
 
 suspend fun communityToTimeTableData() : List<List<TimeTableItem>> {
@@ -264,7 +260,6 @@ suspend fun communityToTimeTableData() : List<List<TimeTableItem>> {
     }
     return result
 }
-
 
 private fun parseTime(time : Int) : String {
     val hour = time / 100
@@ -291,10 +286,10 @@ fun NewTimeTableUI(
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
 
-    val list = if(week >= items.size) {
+    val list = if(week >= items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
         emptyList()
-    } else {
+    }  else {
         items[week-1]
     }
     val lineHeight = if(!showAll) 19.sp else 16.sp
@@ -359,8 +354,21 @@ fun NewTimeTableUI(
                         }
                     }
                     .let {
-                        if(!hasBackground && list.size == 1 && list[0].type == TimeTableType.COURSE) {
-                            it.containerShare(AppNavRoute.CourseDetail.withArgs(list[0].name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${list[0]}"), MaterialTheme.shapes.extraSmall)
+                        if(!hasBackground && list.size == 1) {
+                            val item = list[0]
+                            when(item.type) {
+                                TimeTableType.COURSE -> {
+                                    it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                }
+                                TimeTableType.FOCUS -> {
+                                    item.id?.let { id ->
+                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                    } ?: it
+                                }
+                                TimeTableType.EXAM -> {
+                                    it
+                                }
+                            }
                         } else {
                             it
                         }
@@ -524,8 +532,20 @@ fun NewTimeTableUI(
                         }
                     }
                     .let {
-                        if(!hasBackground && item.type == TimeTableType.COURSE) {
-                            it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                        if(!hasBackground) {
+                            when(item.type) {
+                                TimeTableType.COURSE -> {
+                                    it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                }
+                                TimeTableType.FOCUS -> {
+                                    item.id?.let { id ->
+                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                    } ?: it
+                                }
+                                TimeTableType.EXAM -> {
+                                    it
+                                }
+                            }
                         } else {
                             it
                         }

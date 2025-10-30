@@ -22,7 +22,7 @@ data class CalendarStyle(val showAll: Boolean) {
     val containerCorner @Composable
     get() = MaterialTheme.shapes.extraSmall
 
-    val calendarPaddingHorizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP - everyPadding * 2
+    val calendarPaddingHorizontal = APP_HORIZONTAL_DP  - everyPadding * 2
 
     fun calendarPadding() = Modifier.padding(
         horizontal = calendarPaddingHorizontal,

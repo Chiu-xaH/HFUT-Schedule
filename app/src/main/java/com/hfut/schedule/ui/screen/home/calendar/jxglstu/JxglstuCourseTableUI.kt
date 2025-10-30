@@ -5,80 +5,51 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.database.DataBaseManager
-import com.hfut.schedule.logic.database.entity.CustomEventType
-import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.network.util.isNotBadRequest
-import com.hfut.schedule.logic.network.util.toStr
-import com.hfut.schedule.logic.util.development.getKeyStackTrace
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
@@ -90,46 +61,28 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
-import com.hfut.schedule.ui.screen.home.calendar.common.ExamToCalenderBean
-import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
-import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
-import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
-import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseCourseName
 import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTableUI
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.allToTimeTableData
-import com.hfut.schedule.ui.screen.home.calendar.timetable.examToTimeTableData
-import com.hfut.schedule.ui.screen.home.calendar.timetable.focusToTimeTableData
-import com.hfut.schedule.ui.screen.home.calendar.timetable.jxglstuToTimeTableData
-import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
-import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.mirror.shader.GlassStyle
-import com.xah.mirror.shader.glassLayer
-import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.clickableWithRotation
-import com.xah.uicommon.style.clickableWithScale
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
@@ -139,7 +92,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import java.util.UUID
 
 suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<CourseUnitBean> {
     try {
@@ -237,17 +189,10 @@ fun JxglstuCourseTableUI(
     onSwapShowAll : (Boolean) -> Unit
 ) {
     val context = LocalContext.current
-
+    val scrollState = rememberScrollState()
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
-//    var showBottomSheetMultiCourse by remember { mutableStateOf(false) }
     var courseName by remember { mutableStateOf("") }
     var showBottomSheetDetail by remember { mutableStateOf(false) }
-
-//    var courses by remember { mutableStateOf(listOf<String>()) }
-//    var multiWeekday by remember { mutableIntStateOf(0) }
-//    var multiWeek by remember { mutableIntStateOf(0) }
-
-
     var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
 
     if (showBottomSheetTotalCourse) {
@@ -274,19 +219,6 @@ fun JxglstuCourseTableUI(
             bean?.let { TimeTableDetail(it) }
         }
     }
-
-//    if (showBottomSheetMultiCourse) {
-//        HazeBottomSheet (
-//            showBottomSheet = showBottomSheetMultiCourse,
-//            onDismissRequest = {
-//                showBottomSheetMultiCourse = false
-//            },
-//            autoShape = false,
-//            hazeState = hazeState
-//        ) {
-//            MultiCourseSheetUI(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
-//        }
-//    }
 
     var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
 
@@ -553,7 +485,7 @@ fun JxglstuCourseTableUI(
             LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
         }
     } else {
-        val items by produceState(initialValue = List(20) { emptyList() }) {
+        val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
             value = allToTimeTableData(context)
         }
 
@@ -564,7 +496,10 @@ fun JxglstuCourseTableUI(
             } else {
                 val list = items[currentWeek.toInt()-1]
                 val weekend = list.find { it.dayOfWeek == 6 || it.dayOfWeek == 7 } != null
-                onSwapShowAll(weekend)
+                if(weekend && !showAll) {
+                    // 展开
+                    onSwapShowAll(true)
+                }
             }
         }
         // 课程表布局
@@ -588,7 +523,6 @@ fun JxglstuCourseTableUI(
                 )
             }
         ) {
-            val scrollState = rememberScrollState()
             val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
 
             NewTimeTableUI(
@@ -596,7 +530,7 @@ fun JxglstuCourseTableUI(
                 currentWeek.toInt(),
                 showAll,
                 modifier = Modifier
-                    .padding(horizontal = 10.dp-CARD_NORMAL_DP)
+                    .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)-1.dp)
                     .verticalScroll(scrollState)
                 ,
                 innerPadding = innerPadding,
@@ -610,7 +544,12 @@ fun JxglstuCourseTableUI(
                         TimeTableType.COURSE -> {
                             navController.navigateForTransition(AppNavRoute.CourseDetail, AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}" ))
                         }
-                        else -> {
+                        TimeTableType.FOCUS -> {
+                            item.id?.let {
+                                navController.navigateForTransition(AppNavRoute.AddEvent, AppNavRoute.AddEvent.withArgs(it, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}" ))
+                            }
+                        }
+                        TimeTableType.EXAM -> {
                             bean = list
                             showBottomSheetDetail = true
                         }
@@ -618,219 +557,9 @@ fun JxglstuCourseTableUI(
                 } else if (list.size > 1) {
                     bean = list
                     showBottomSheetDetail = true
-//                    multiWeekday = if (showAll) (index + 1) % 7 else (index + 1) % 5
-//                    multiWeek = currentWeek.toInt()
-//                    courses = texts
-//                    showBottomSheetMultiCourse = true
                 }
             }
 
-
-
-
-//            val scrollState = rememberLazyGridState()
-//            val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
-//            val style = CalendarStyle(showAll)
-//            val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
-//            LazyVerticalGrid(
-//                columns = GridCells.Fixed(style.rowCount),
-//                modifier = style.calendarPadding(),
-//                state = scrollState
-//            ) {
-//                item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,true) }
-//                exception?.let {
-//                    item(span = { GridItemSpan(maxLineSpan) }) {
-//                        TransplantListItem(
-//                            headlineContent = { Text("解析错误") },
-//                            leadingContent = { Icon(painterResource(R.drawable.warning),null)},
-//                            supportingContent = { Text(getKeyStackTrace(it)) }
-//                        )
-//                    }
-//                }
-//                items(style.rowCount*style.columnCount, key = { it }) { index ->
-//                    val texts = if(showAll)tableAll[index].toMutableList() else table[index].toMutableList()
-//                    if(texts.isEmpty() && backGroundHaze != null) {
-//                        Box(modifier = Modifier
-//                            .height(calendarSquareHeight.dp)
-//                            .padding(style.everyPadding))
-//                    } else {
-//                        Card(
-//                            shape = style.containerCorner,
-//                            colors = CardDefaults.cardColors(containerColor = color),
-//                            modifier = Modifier
-//                                .height(calendarSquareHeight.dp)
-//                                .padding(style.everyPadding)
-//                                .let {
-//                                    if(backGroundHaze != null) {
-//                                        it
-//                                            .clip(style.containerCorner)
-//                                            .let {
-//                                                if(AppVersion.CAN_SHADER) {
-//                                                    it.calendarSquareGlass(
-//                                                        backGroundHaze,
-//                                                        style.containerColor.copy(customBackgroundAlpha),
-//                                                        enableLiquidGlass,
-//                                                    )
-//                                                } else {
-//                                                    it
-//                                                }
-//                                            }
-//                                    } else {
-//                                        it
-//                                    }
-//                                }
-//                                .clickableWithScale(ClickScale.SMALL.scale) {
-//                                    // 只有一节课
-//                                    if (texts.size == 1) {
-//                                        // 如果是考试
-//                                        if (texts[0].contains("考试")) {
-//                                            showToast(texts[0].replace("\n"," "))
-//                                            return@clickableWithScale
-//                                        }
-//                                        if (texts[0].contains("日程")) {
-//                                            showToast(texts[0].replace("\n"," "))
-//                                            return@clickableWithScale
-//                                        }
-//                                        val name =
-//                                            parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
-//                                        if (name != null) {
-//                                            navController.navigateForTransition(
-//                                                AppNavRoute.CourseDetail,
-//                                                AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "$index")
-//                                            )
-//                                        }
-//                                    } else if (texts.size > 1) {
-//                                        multiWeekday =
-//                                            if (showAll) (index + 1) % 7 else (index + 1) % 5
-//                                        multiWeek = currentWeek.toInt()
-//                                        courses = texts
-//                                        showBottomSheetMultiCourse = true
-//                                    }
-//                                    // 空数据
-//                                }
-//                                .let {
-//                                    if(enableTransition) {
-//                                        val route = if(texts.size == 1 && !texts[0].contains("考试")) {
-//                                            val name = parseCourseName(if (showAll) tableAll[index][0] else table[index][0])
-//                                            if (name != null) {
-//                                                AppNavRoute.CourseDetail.withArgs(name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "$index")
-//                                            } else {
-//                                                null
-//                                            }
-//                                        } else {
-//                                            null
-//                                        }
-//
-//                                        route?.let { it1 ->
-//                                            it.containerShare(
-//                                                route = it1,
-//                                                roundShape = MaterialTheme.shapes.extraSmall,
-//                                            )
-//                                        } ?: it
-//                                    } else {
-//                                        it
-//                                    }
-//                                }
-//                        ) {
-//                            if(texts.size == 1) {
-//                                val l = texts[0].split("\n")
-//                                if(l.size < 2) {
-//                                    return@Card
-//                                }
-//                                val time = l[0]
-//                                val name = l[1]
-//                                val place = if(l.size == 3) {
-//                                    val p = l[2]
-//                                    if(p == "null" || p.isBlank() || p.isEmpty()) {
-//                                        null
-//                                    } else {
-//                                        p
-//                                    }
-//                                } else null
-//
-//                                Column(
-//                                    modifier = Modifier
-//                                        .fillMaxSize()
-//                                        .padding(horizontal = CARD_NORMAL_DP) ,
-//                                    verticalArrangement = Arrangement.SpaceBetween,
-//                                    horizontalAlignment = Alignment.CenterHorizontally
-//                                ) {
-//                                    Text(
-//                                        text = time,
-//                                        fontSize = style.textSize,
-//                                        textAlign = TextAlign.Center,
-//                                        modifier = Modifier.fillMaxWidth()
-//                                    )
-//                                    Box(
-//                                        modifier = Modifier
-//                                            .weight(1f) // 占据中间剩余的全部空间
-//                                            .fillMaxWidth(),
-//                                        contentAlignment = Alignment.TopCenter
-//                                    ) {
-//                                        Text(
-//                                            text = name,
-//                                            fontSize = style.textSize,
-//                                            textAlign = TextAlign.Center,
-//                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
-//                                            modifier = Modifier.fillMaxWidth()
-//                                        )
-//                                    }
-//                                    place?.let {
-//                                        Text(
-//                                            text = it,
-//                                            fontSize = style.textSize,
-//                                            textAlign = TextAlign.Center,
-//                                            modifier = Modifier.fillMaxWidth()
-//                                        )
-//                                    }
-//                                }
-//                            } else if(texts.size > 1){
-//                                val name = texts.map {
-//                                    it.split("\n")[1][0]
-//                                }.joinToString(",")
-//                                val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-//                                Column(
-//                                    modifier = Modifier
-//                                        .fillMaxSize()
-//                                        .padding(horizontal = CARD_NORMAL_DP) ,
-//                                    verticalArrangement = Arrangement.SpaceBetween,
-//                                    horizontalAlignment = Alignment.CenterHorizontally
-//                                ) {
-//                                    Text(
-//                                        text = texts[0].substringBefore("\n"),
-//                                        fontSize = style.textSize,
-//                                        textAlign = TextAlign.Center,
-//                                        modifier = Modifier.fillMaxWidth(),
-//                                        fontWeight = isExam
-//                                    )
-//                                    Box(
-//                                        modifier = Modifier
-//                                            .weight(1f) // 占据中间剩余的全部空间
-//                                            .fillMaxWidth(),
-//                                        contentAlignment = Alignment.TopCenter
-//                                    ) {
-//                                        Text(
-//                                            text = "${texts.size}节课冲突",
-//                                            fontSize = style.textSize,
-//                                            textAlign = TextAlign.Center,
-//                                            overflow = TextOverflow.Ellipsis, // 超出显示省略号
-//                                            modifier = Modifier.fillMaxWidth(),
-//                                            fontWeight = isExam
-//                                        )
-//                                    }
-//                                    Text(
-//                                        text = name,
-//                                        fontSize = style.textSize,
-//                                        textAlign = TextAlign.Center,
-//                                        modifier = Modifier.fillMaxWidth()
-//                                    )
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//                item(span = { GridItemSpan(maxLineSpan) }) {  InnerPaddingHeight(innerPadding,false) }
-//            }
             // 中间
             AnimatedVisibility(
                 visible = shouldShowAddButton,
@@ -839,7 +568,7 @@ fun JxglstuCourseTableUI(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
-                    .padding(horizontal = 10.dp, vertical = APP_HORIZONTAL_DP)
+                    .padding(APP_HORIZONTAL_DP)
             ) {
                 DraggableWeekButton(
                     dragThreshold = drag*2,

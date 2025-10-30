@@ -93,42 +93,42 @@ fun ExamScreen(
     val route = remember { AppNavRoute.Exam.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Exam.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Exam.icon)
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
-            ) {
-                val list by produceState(initialValue = emptyList()) {
-                    value = getExamFromCache(context)
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Exam.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.Exam.icon)
                 }
-                if(list.isEmpty()) {
-                    CenterScreen {
-                        EmptyUI()
-                    }
-                } else {
-                    LazyColumn {
-                        item { InnerPaddingHeight(innerPadding,true) }
-                        items(list.size) { index -> JxglstuExamUI(list[index],true)}
-                        item { InnerPaddingHeight(innerPadding,false) }
-                    }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+        ) {
+            val list by produceState(initialValue = emptyList()) {
+                value = getExamFromCache(context)
+            }
+            if(list.isEmpty()) {
+                CenterScreen {
+                    EmptyUI()
+                }
+            } else {
+                LazyColumn {
+                    item { InnerPaddingHeight(innerPadding,true) }
+                    items(list.size) { index -> JxglstuExamUI(list[index],true)}
+                    item { InnerPaddingHeight(innerPadding,false) }
                 }
             }
         }
+    }
 //    }
 }
 @Composable

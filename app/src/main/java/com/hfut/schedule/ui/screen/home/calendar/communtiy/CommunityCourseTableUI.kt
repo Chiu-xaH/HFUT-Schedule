@@ -49,8 +49,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -851,8 +853,8 @@ fun ScheduleTopDate(
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
     Column(modifier = Modifier.background(Color.Transparent)) {
-        Spacer(modifier = Modifier.height(5.dp))
-        LazyVerticalGrid(columns = GridCells.Fixed(size),modifier = Modifier.padding(horizontal = 10.dp)){
+        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*0))
+        LazyVerticalGrid(columns = GridCells.Fixed(size),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-if (showAll) 1.75.dp else 2.5.dp)){
             items(size) { item ->
 
                 val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
@@ -892,14 +894,15 @@ fun ScheduleTopDate(
                         text = date.substringAfter("-"),
                         textAlign = TextAlign.Center,
                         fontSize = fontSizeAnimated.sp,
-                        color = if (isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
-                        fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+//                        textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
+                        color = if (isToday) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
+//                        fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
                         modifier = Modifier.padding(horizontal = CARD_NORMAL_DP)
                     )
                 }
             }
         }
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
     }
 }
 
@@ -912,8 +915,8 @@ fun ScheduleTopDate(
     val todayDate = DateTimeManager.Date_yyyy_MM_dd
 
     Column(modifier = Modifier.background(Color.Transparent)) {
-        Spacer(modifier = Modifier.height(5.dp))
-        LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = 10.dp)){
+        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*0))
+        LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-if (showAll) 1.75.dp else 2.5.dp)){
             items(if(showAll)7 else 5) { item ->
 
                 val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
@@ -935,13 +938,14 @@ fun ScheduleTopDate(
                 Text(
                     text = date.substringAfter("-"),
                     textAlign = TextAlign.Center,
+//                    textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
                     fontSize = fontSizeAnimated.sp,
-                    color = if(isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.primary,
-                    fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
+                    color = if (isToday) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
+//                    fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
     }
 }
 

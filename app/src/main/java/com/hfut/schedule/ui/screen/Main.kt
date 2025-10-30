@@ -435,12 +435,13 @@ fun MainHost(
                     arguments = getArgs(AppNavRoute.AddEvent.Args.entries)
                 ) { backStackEntry ->
                     val id = backStackEntry.arguments?.getInt(AppNavRoute.AddEvent.Args.ID.argName)
+                    val origin = backStackEntry.arguments?.getString(AppNavRoute.AddEvent.Args.ORIGIN.argName) ?: return@transitionComposable
                     val eventId = if(id == null || id <= 0) {
                         -1
                     } else {
                         id
                     }
-                    AddEventScreen(networkVm,navController,eventId)
+                    AddEventScreen(networkVm,navController,eventId,origin)
                 }
                 // 导航中转空白页
                 transitionComposable(

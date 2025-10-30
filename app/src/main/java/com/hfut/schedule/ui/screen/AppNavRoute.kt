@@ -7,6 +7,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute.NavArg
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 
 // 主导航
 sealed class AppNavRoute(val route: String, val label : String, val icon : Int) {
@@ -80,16 +81,17 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object UpdateSuccess : AppNavRoute("UPDATE_SUCCESSFUL","更新完成引导",R.drawable.settings)
     object AddEvent : AppNavRoute("ADD_EVENT","添加",R.drawable.add) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
-            ID("id", NavType.IntType, -1,false)
+            ID("id", NavType.IntType, -1,false),
+            ORIGIN("origin",NavType.StringType, AddEventOrigin.FOCUS_ADD.name,false)
         }
         fun receiveRoute() = receiveRoutePair(Args.entries)
-        fun withArgs(id : Int = -1): String = withArgs(
+        fun withArgs(id : Int = -1,origin : String = AddEventOrigin.FOCUS_EDITED.name): String = withArgs(
             Args.ID.argName to id,
+            Args.ORIGIN.argName to origin
         )
     }
     object Admission : AppNavRoute("ADMISSION","本科招生",R.drawable.publics)
     object VersionInfo : AppNavRoute("VERSION_INFO","本版本新特性",R.drawable.info)
-//    object ArbitraryCalendar : AppNavRoute("ARBITRARY_CALENDAR","任意课程表",R.drawable.info)
     object AdmissionRegionDetail : AppNavRoute("ADMISSION_REGION_DETAIL","本科招生详情",R.drawable.publics) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             INDEX("index", NavType.IntType,-1,false),

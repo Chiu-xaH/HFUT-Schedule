@@ -131,6 +131,8 @@ class MyApplication : Application() {
         // U校园
         const val UNIPUS_URL = "https://u.unipus.cn/"
         const val UNIPUS_AI_URL = "https://ucloud.unipus.cn/"
+        // 最大周
+        const val MAX_WEEK = 20
         // 三个校区的经纬度 来自高德地图坐标拾取器
         val campusLocations by lazy {
             mapOf<Campus, Location>(

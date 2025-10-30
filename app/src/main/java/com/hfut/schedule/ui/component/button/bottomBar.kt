@@ -195,7 +195,7 @@ fun SpecialBottomBar(
 ) {
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-    Column(modifier = Modifier.padding(10.dp).navigationBarsPadding()
+    Column(modifier = Modifier.padding(APP_HORIZONTAL_DP).navigationBarsPadding()
 
     ) {
         Spacer(Modifier.height(CARD_NORMAL_DP))

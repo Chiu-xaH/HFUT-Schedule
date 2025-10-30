@@ -18,9 +18,15 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -35,11 +41,16 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -71,6 +82,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -86,6 +98,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -448,8 +461,6 @@ fun CustomItemUI(
     var id by remember { mutableIntStateOf(-1) }
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-
 
     if(showDialog)
         LittleDialog(
@@ -479,19 +490,27 @@ fun CustomItemUI(
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
         leadingContent = {
             ColumnVertical {
-                Icon(
-                    painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
-                    contentDescription = "Localized description",
-                    tint = if(isOutOfDate) LocalContentColor.current.copy(.5f) else LocalContentColor.current
-                )
-                if(isTomorrow) {
+                BadgedBox(
+                    badge = {
+                        if(isTomorrow) {
+                            Badge(
+                                containerColor = MaterialTheme.colorScheme.primary.copy(0.25f),
+                                modifier = Modifier.padding(4.dp)
+                            ) {
+                                Text("+1")
+                            }
+                        }
+                    }
+                ) {
                     Icon(
-                        painterResource(R.drawable.exposure_plus_1),
+                        painterResource(if(item.type == CustomEventType.SCHEDULE) R.drawable.calendar else R.drawable.net),
                         contentDescription = "Localized description",
+                        tint = if(isOutOfDate) LocalContentColor.current.copy(.5f) else LocalContentColor.current
                     )
                 }
+                if(item.supabaseId != null)
+                    Text( "导入", style = MaterialTheme.typography.labelSmall, modifier = Modifier.padding(top = CARD_NORMAL_DP))
             }
-
         },
         trailingContent = {
             ColumnVertical {
@@ -525,9 +544,9 @@ fun CustomItemUI(
                     }
                 }
                 if(isTomorrow) {
-                    Text("明天")
+                    Text("明日")
                 }
-                Text(if(isOutOfDate) "过期" else if(item.supabaseId == null)"本地" else "导入")
+//                Text(if(isOutOfDate) "过期" else if(item.supabaseId == null)"本地" else "导入")
             }
         },
         modifier = Modifier.combinedClickable(
@@ -535,8 +554,7 @@ fun CustomItemUI(
                 navController.navigateForTransition(AppNavRoute.AddEvent,route)
             },
             onDoubleClick = {
-                //双击操作
-                description?.let { openOperation(it, context) }
+                showToast("长按删除，单击编辑")
             },
             onLongClick = {
                 //长按操作
@@ -544,6 +562,58 @@ fun CustomItemUI(
                 showDialog = true
             })
     )
+}
+@Composable
+fun IconWithBadge(
+    modifier: Modifier = Modifier,
+    mainIcon: ImageVector,
+    badgeIcon: ImageVector,
+    mainTint: Color = MaterialTheme.colorScheme.onSurface,
+    badgeTint: Color = MaterialTheme.colorScheme.primary,
+    mainSize: Dp = 48.dp,
+    badgeSize: Dp = 18.dp,
+    shadowElevation: Dp = 3.dp
+) {
+    Box(
+        modifier = modifier
+            .size(mainSize)
+            .wrapContentSize(Alignment.Center),
+        contentAlignment = Alignment.Center
+    ) {
+        // 主图标（带阴影）
+        Box(
+            modifier = Modifier
+                .size(mainSize)
+                .shadow(shadowElevation, CircleShape, clip = false)
+                .background(MaterialTheme.colorScheme.surface, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = mainIcon,
+                contentDescription = null,
+                tint = mainTint,
+                modifier = Modifier.size(mainSize * 0.6f)
+            )
+        }
+
+        // 右下角的小徽标（带更高层级阴影）
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = (-2).dp, y = (-2).dp)
+                .shadow(shadowElevation + 1.dp, CircleShape, clip = false)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .padding(3.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = badgeIcon,
+                contentDescription = null,
+                tint = badgeTint,
+                modifier = Modifier.size(badgeSize)
+            )
+        }
+    }
 }
 
 @Composable
