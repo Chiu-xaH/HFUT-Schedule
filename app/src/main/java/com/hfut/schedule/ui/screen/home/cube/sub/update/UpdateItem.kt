@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-10-30") },
+                overlineContent = { Text(text = "2025-10-31") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,12 +52,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("重构 教务课程表","完全推倒重写，新的课程表方格以时间线排版，集成三大数据源：课程、日程、考试以不同的颜色坐落，并带来全新的冲突方格显示")//
-            UpdateItems("新增 点击聚焦日程支持编辑","长按依旧为删除")//
-            UpdateItems("新增 指尖工大课表支持保存常用用户")//
-            UpdateItems("修复 寝室成员重复显示的Bug")//
-            UpdateItems("优化 课程表背景下底栏的可读性")//
-            UpdateItems("优化 部分界面的显示")//
+            UpdateItems("重构 社区数据源适配新课程表")
+            UpdateItems("新增 新课程表的支持跨天日程的显示")
 //            UpdateItems("新增 新的冷启动进入动画")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")

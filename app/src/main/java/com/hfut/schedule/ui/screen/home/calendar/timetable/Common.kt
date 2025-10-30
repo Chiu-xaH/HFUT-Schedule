@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,8 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -45,6 +50,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,7 +92,10 @@ import com.xah.uicommon.style.clickableWithScale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.LocalTime
 import kotlin.String
 
 /**
@@ -193,25 +202,57 @@ suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
             val endDate = end[0]
             val endTime = end[1]
 
-            // 跨天
-            if(endDate != startDate) {
-                continue
-            }
-
             // 是同一周
             val list = result[weekInfo.first-1]
             val name = item.title
             val place = item.description?.replace("学堂","")
 
-            list.add(TimeTableItem(
-                type = TimeTableType.FOCUS,
-                name = name,
-                dayOfWeek = weekInfo.second,
-                startTime = startTime,
-                endTime = endTime,
-                place  = place,
-                id = item.id
-            ))
+            // 跨天日程将其分裂
+            if(endDate != startDate) {
+                var currentDate = LocalDate.parse(startDate)
+                val endLocalDate = LocalDate.parse(endDate)
+
+                while (!currentDate.isAfter(endLocalDate)) {
+                    val isFirstDay = currentDate == LocalDate.parse(startDate)
+                    val isLastDay = currentDate == endLocalDate
+
+                    val currentWeek = dateToWeek(currentDate.toString()) ?: continue
+                    val list = result[currentWeek.first - 1]
+
+                    val currentStartTime = when {
+                        isFirstDay -> startTime
+                        else -> "00:00"
+                    }
+                    val currentEndTime = when {
+                        isLastDay -> endTime
+                        else -> "24:00"
+                    }
+
+                    list.add(
+                        TimeTableItem(
+                            type = TimeTableType.FOCUS,
+                            name = name,
+                            dayOfWeek = currentWeek.second,
+                            startTime = currentStartTime,
+                            endTime = currentEndTime,
+                            place = place,
+                            id = item.id
+                        )
+                    )
+                    currentDate = currentDate.plusDays(1)
+                }
+            } else {
+                // 同一天
+                list.add(TimeTableItem(
+                    type = TimeTableType.FOCUS,
+                    name = name,
+                    dayOfWeek = weekInfo.second,
+                    startTime = startTime,
+                    endTime = endTime,
+                    place  = place,
+                    id = item.id
+                ))
+            }
         }
         return result
     } catch (e : Exception) {
@@ -649,5 +690,78 @@ fun TimeTableDetail(
                 Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
             }
         }
+    }
+}
+@Composable
+fun Modifier.drawLineTimeTable(
+    columnCount : Float,
+    hourPx: Float,
+    startHour: Int ,
+    zipTime: List<Pair<Float, Float>>,
+    zipTimeFactor: Float,
+    showAll : Boolean,
+    everyPadding : Dp,
+    dividerColor : Color = DividerDefaults.color,
+    dashEffect : PathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
+    ): Modifier {
+//    var now by remember { mutableStateOf(LocalTime.now()) }
+//    var nowDate by remember { mutableStateOf(LocalDate.now()) }
+//    LaunchedEffect(Unit) {
+//        while (true) {
+//            now = LocalTime.now()
+//            nowDate = LocalDate.now()
+//            delay(60_000) // 每30秒刷新一次，分钟级足够
+//        }
+//    }
+    return this.drawBehind {
+        val w = size.width
+        val h = size.height
+        // 虚线在列边界
+        for (i in 0..columnCount.toInt()) {
+            val x = w * i / columnCount.toFloat()
+            drawLine(
+                color = dividerColor,
+                strokeWidth = 1.dp.toPx(),
+                start = Offset(x, 0f),
+                end = Offset(x, h),
+                pathEffect = dashEffect
+            )
+        }
+//        // 绘制当前时间线
+//        val nowFloat = now.hour + now.minute / 60f
+//        val nowY = timeToY(nowFloat, hourPx, startHour, zipTime, zipTimeFactor)
+//
+//        if (nowY in 0f..h) {
+//            // 获取当前星期（周一=1，周日=7）
+//            val today = nowDate.dayOfWeek.value
+//            // 计算列宽
+//            val columnWidth = w / columnCount
+//            // 根据 showAll 判定当前列索引
+//            val dayIndex =
+//                if (showAll) (today - 1).coerceIn(0, 6)
+//                else (today - 1).coerceIn(0, 4)
+//            // 当前列的起点与终点 X
+//            val startX = columnWidth * dayIndex
+//            val endX = columnWidth * (dayIndex + 1)
+//
+//            drawLine(
+//                color = dividerColor,
+//                start = Offset(startX, nowY),
+//                end = Offset(endX, nowY),
+//                strokeWidth = 1.dp.toPx()
+//            )
+//            // 小圆点
+//            val radius = everyPadding.toPx()
+//            drawCircle(
+//                color = dividerColor,
+//                radius = radius,
+//                center = Offset(startX, nowY)
+//            )
+//            drawCircle(
+//                color = dividerColor,
+//                radius = radius,
+//                center = Offset(endX, nowY)
+//            )
+//        }
     }
 }

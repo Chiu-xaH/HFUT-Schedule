@@ -1,10 +1,8 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable
 
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,13 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
@@ -125,11 +119,7 @@ fun TimetableSingleSquare(
     content : @Composable (TimeTableItem) -> Unit
 ) {
     val hours = endHour - startHour
-    val dashEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-    val dividerColor = DividerDefaults.color
-//    val columnCount = if (showAll) 7 else 5
-//    val everyPadding = if(showAll) 1.75.dp else 2.5.dp
-    // ✅ 动画化 showAll 的切换
+    // 动画化 showAll 的切换
     val animatedFactor by animateFloatAsState(
         targetValue = if (showAll) 1f else 0f,
     )
@@ -157,23 +147,8 @@ fun TimetableSingleSquare(
                     .fillMaxWidth()
                     .let {
                         if(showLine) {
-                            it.drawBehind {
-                                val w = size.width
-                                val h = size.height
-                                // 虚线在列边界
-                                for (i in 0..columnCount.toInt()) {
-                                    val x = w * i / columnCount.toFloat()
-                                    drawLine(
-                                        color = dividerColor,
-                                        strokeWidth = 1.dp.toPx(),
-                                        start = Offset(x, 0f),
-                                        end = Offset(x, h),
-                                        pathEffect = dashEffect
-                                    )
-                                }
-                            }
-                        } else
-                            it
+                            it.drawLineTimeTable(columnCount,hourPx,startHour,zipTime,zipTimeFactor,showAll,everyPadding)
+                        } else it
                     }
             ) {
                 // 按天分组并布局
