@@ -80,7 +80,7 @@ fun Timetable(
     innerPadding : PaddingValues,
     startHour: Int = 8,
     endHour: Int = 24,
-    hourHeight: Dp = 70.dp,
+    hourHeight: Dp = 65.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(

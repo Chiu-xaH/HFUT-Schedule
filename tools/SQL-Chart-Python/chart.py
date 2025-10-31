@@ -12,7 +12,7 @@ def parse_datetime_flexible(s):
     except ValueError:
         return datetime.strptime(s, "%Y-%m-%d %H:%M:%S")
 
-def merge_small_categories(series, threshold=0.01):
+def merge_small_categories(series, threshold=0.01, show_subitems=True):
     total = series.sum()
     small_items = [idx for idx, val in series.items() if val / total < threshold]
 
@@ -22,16 +22,20 @@ def merge_small_categories(series, threshold=0.01):
     grouped = series.groupby(group_func).sum()
 
     if '其他' in grouped.index and small_items:
-        # 省略学院
-        other_items = [
-            str(x)[:2] if "学院" in str(x) else str(x)
-            for x in small_items
+        if show_subitems:
+            # 省略学院
+            other_items = [
+                str(x)[:2] if "学院" in str(x) else str(x)
+                for x in small_items
             ]
-        other_label = f"其他({','.join(other_items)})" if other_items else "其他"
+            other_label = f"其他({','.join(other_items)})" if other_items else "其他"
+        else:
+            other_label = "其他"
 
         grouped = grouped.rename(index={'其他': other_label})
 
     return grouped
+
 
 def get_last_time() :
     query = "SELECT * FROM user_app_usage"  # 替换为你的表名
@@ -144,7 +148,7 @@ WHERE rn = 1;
     fig.text(0.5, -0.05, get_last_time(), ha='center', fontsize=10)
     plt.savefig("pie_charts.png", bbox_inches="tight",dpi=300)
 
-def build_app_version_chart() :
+def build_app_version_chart():
     # 从数据库中获取最新版本数据
     query = """
 WITH usage_with_max_date AS (
@@ -173,14 +177,13 @@ FROM latest_version_per_user
 ORDER BY app_version_code DESC, student_id;
 """
 
-
     df_latest = pd.read_sql_query(query, conn)
 
     # 按版本名称统计
     version_counts = df_latest['app_version_name'].value_counts()
 
     # 合并小类（可选）
-    version_counts = merge_small_categories(version_counts, threshold=0.005)
+    version_counts = merge_small_categories(version_counts, threshold=0.0025, show_subitems=False)
 
     # 放大图像
     plt.figure(figsize=(14, 14))
@@ -192,11 +195,16 @@ ORDER BY app_version_code DESC, student_id;
     )
 
     plt.ylabel("")
-    plt.figtext(0.25, 0.5, get_last_time(), ha='center', fontsize=10)
-    plt.title('应用版本分布', fontsize=20)  # 标题大一点
-    plt.tight_layout()
-    plt.savefig("app_version.png", bbox_inches="tight", dpi=300)  # 提高分辨率)
 
+    # 设置标题居中在图上方
+    plt.title('应用版本分布', fontsize=20, y=1.05)  # y>1可以把标题稍微移出图形区域
+
+    # 在标题下方放置时间信息
+    plt.figtext(0.5, 0.02, get_last_time(), ha='center', fontsize=10)  # y位置靠下
+
+    plt.tight_layout()
+    plt.savefig("app_version.png", bbox_inches="tight", dpi=300)
+    plt.close()
 
 if(__name__ == "__main__"):
     # 设置全局字体为支持中文的字体（根据系统设置不同）

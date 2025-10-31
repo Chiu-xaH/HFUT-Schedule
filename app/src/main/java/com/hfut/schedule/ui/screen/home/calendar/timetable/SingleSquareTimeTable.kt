@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
@@ -109,7 +110,7 @@ fun TimetableSingleSquare(
     innerPadding : PaddingValues,
     startHour: Int = 8,
     endHour: Int = 24,
-    hourHeight: Dp = 70.dp,
+    hourHeight: Dp = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(
@@ -160,21 +161,21 @@ fun TimetableSingleSquare(
 
                     val positioned = layoutSquaresForDay(dayCourses)
 
-                    positioned.forEach { p ->
+                    positioned.forEach { item ->
                         // 每列的左右各留 paddingPx 给虚线
                         // 列内并列的 item 之间也应有 gap = paddingPx
                         val xBase = dayIndex * columnWidthPx
                         val innerAvailablePx = columnWidthPx - 2 * paddingPx // 去掉列左右留白
-                        val columns = p.totalColumns.coerceAtLeast(1)
+                        val columns = item.totalColumns.coerceAtLeast(1)
                         val gapPx = paddingPx // 并列间隙使用 same everyPadding
                         val totalGapsWidth = gapPx * (columns - 1)
                         val singleWidthPx = (innerAvailablePx - totalGapsWidth) / columns
                         // 防止负宽（极端情况）
                         val safeSingleWidthPx = if (singleWidthPx > 0f) singleWidthPx else (innerAvailablePx / columns)
 
-                        val xOffset = xBase + paddingPx + (safeSingleWidthPx + gapPx) * p.columnIndex
-                        val yStart = timeToY(p.start, hourPx, startHour, zipTime,zipTimeFactor)
-                        val yEnd = timeToY(p.end, hourPx, startHour,zipTime,zipTimeFactor)
+                        val xOffset = xBase + paddingPx + (safeSingleWidthPx + gapPx) * item.columnIndex
+                        val yStart = timeToY(item.start, hourPx, startHour, zipTime,zipTimeFactor)
+                        val yEnd = timeToY(item.end, hourPx, startHour,zipTime,zipTimeFactor)
                         val heightPx = yEnd - yStart
 
                         Box (
@@ -183,7 +184,7 @@ fun TimetableSingleSquare(
                                 .width(with(density) { safeSingleWidthPx.toDp() })
                                 .height(with(density) { heightPx.toDp() }),
                         ) {
-                            content(p.course)
+                            content(item.course)
                         }
                     }
                 }
