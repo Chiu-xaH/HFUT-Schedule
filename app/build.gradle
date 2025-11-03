@@ -124,7 +124,6 @@ android {
     }
 }
 
-
 dependencies {
     implementation platform(libs.kotlin.bom)
     implementation(libs.androidx.core.ktx)
@@ -133,14 +132,14 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(platform(libs.androidx.compose.bom))
-
+    // Appcompat
     implementation(libs.androidx.appcompat)
     // 测试
-//    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.testExt.junit)
-//    androidTestImplementation(libs.androidx.espresso.core)
-//    androidTestImplementation(libs.androidx.ui.test.junit4)
-//    androidTestImplementation platform(libs.androidx.compose.bom)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation platform(libs.androidx.compose.bom)
     // 基准测试依赖
     androidTestImplementation(libs.androidx.benchmark.macro.junit4)
     androidTestImplementation(libs.androidx.uiautomator)
@@ -153,7 +152,7 @@ dependencies {
     // LifeCycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
-//    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.extensions)
     // 动画
@@ -221,19 +220,21 @@ dependencies {
     implementation(libs.reorderable)
     // 液态玻璃
     implementation(libs.liquid.glass)
+    // 小组件
+    implementation(libs.androidx.glance.appwidget)
+//    implementation(libs.androidx.glance.material3)
+    // 权限
+    implementation(libs.accompanist.permissions)
     // 生物识别 指纹
     // implementation(libs.androidx.biometric)
-    // 权限
-    // implementation(libs.accompanist.permissions)
     // 镜面效果
     implementation(libs.mirror)
-    // 模块
-    // 转场动画
+    // 转场动画模块
     implementation(project(":transition"))
+    // 可单独使用的UI模块
     implementation implementation(project(':common'))
-    // 可单独使用的UI
-    // 消费预测及共用代码
+    // 消费预测及共用代码模块
     implementation(project(":shared"))
-    // 基准文件
+    // 基准文件模块
     baselineProfile project(":baselineProfile")
 }

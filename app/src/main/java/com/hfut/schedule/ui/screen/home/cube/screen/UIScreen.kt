@@ -725,7 +725,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text("方格高度(新课程表) ${formatDecimal(calendarSquareHeightNew.toDouble(),0)}")
                     },
                     supportingContent = {
-                        Text("自定义方格的高度(默认值为70)，方格中部文字溢出的部分将用省略号代替")
+                        Text("自定义方格的高度(默认值为65)，方格中部文字溢出的部分将用省略号代替")
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.height),null)
@@ -769,7 +769,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
             }
         }
-        DividerTextExpandedWith("标签") {
+        DividerTextExpandedWith("底栏") {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
@@ -785,6 +785,37 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Icon(painterResource(R.drawable.label),null)
                     },
                     trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("浮动底栏")
+                    },
+                    supportingContent = {
+                        Text("底栏呈现浮动样式并随滑动收起")
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(if(false) R.drawable.shelf_auto_hide else R.drawable.dock_to_bottom),null)
+                    },
+                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showToast("正在开发") }) },
+                )
+            }
+        }
+        DividerTextExpandedWith("桌面组件") {
+            CustomCard(color = backgroundColor) {
+                TransplantListItem(
+                    headlineContent = {
+                        Text("正在开发")
+                    },
+                    supportingContent = {
+                        Text("正在开发")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.widgets),null)
+                    },
                 )
             }
         }

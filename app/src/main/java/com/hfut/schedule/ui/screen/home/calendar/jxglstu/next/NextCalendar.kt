@@ -598,29 +598,24 @@ fun JxglstuCourseTableUINext(
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,false) }
         }
         // 中间
-        AnimatedVisibility(
-            visible = shouldShowAddButton,
-            enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
-            exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
+        DraggableWeekButton(
+            shaderState = backGroundHaze,
+            expanded = shouldShowAddButton,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding)
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP
-                )
-        ) {
-            DraggableWeekButton(
-                dragThreshold = drag*2,
-                onClick = {
-                    currentWeek = 1
-                },
-                currentWeek = currentWeek,
-                key = null,
-                onNext = { nextWeek() },
-                onPrevious = { previousWeek() }
-            )
-        }
+                ),
+            onClick = {
+                currentWeek = 1
+            },
+            currentWeek = currentWeek,
+            key = null,
+            onNext = { nextWeek() },
+            onPrevious = { previousWeek() }
+        )
     }
 }
 

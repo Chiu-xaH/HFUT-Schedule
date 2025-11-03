@@ -694,35 +694,30 @@ fun JxglstuCourseTableSearch(
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPadding,false) }
         }
         // 中间
-        AnimatedVisibility(
-            visible = shouldShowAddButton,
-            enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
-            exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
+        DraggableWeekButton(
+            shaderState = backGroundHaze,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPadding.calculateBottomPadding() - if(onDateChange != null) navigationBarHeightPadding else 0.dp).let { if(onDateChange == null) it.navigationBarsPadding() else it }
                 .padding(
                     horizontal = APP_HORIZONTAL_DP,
                     vertical = APP_HORIZONTAL_DP
-                )
-        ) {
-            DraggableWeekButton(
-                dragThreshold = drag*2,
-                onClick = {
-                    if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                        currentWeek = 1
-                        onDateChange?.let { it(getJxglstuStartDate()) }
-                    } else {
-                        currentWeek = DateTimeManager.weeksBetweenJxglstu
-                        onDateChange?.let { it(LocalDate.now()) }
-                    }
-                },
-                currentWeek = currentWeek,
-                key = today,
-                onNext = { nextWeek() },
-                onPrevious = { previousWeek() }
-            )
-        }
+                ),
+            expanded = shouldShowAddButton,
+            onClick = {
+                if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                    currentWeek = 1
+                    onDateChange?.let { it(getJxglstuStartDate()) }
+                } else {
+                    currentWeek = DateTimeManager.weeksBetweenJxglstu
+                    onDateChange?.let { it(LocalDate.now()) }
+                }
+            },
+            currentWeek = currentWeek,
+            key = today,
+            onNext = { nextWeek() },
+            onPrevious = { previousWeek() }
+        )
     }
 }
 

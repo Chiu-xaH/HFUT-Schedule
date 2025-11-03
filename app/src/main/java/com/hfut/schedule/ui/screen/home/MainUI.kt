@@ -139,7 +139,7 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.ScheduleTopDate
+import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext

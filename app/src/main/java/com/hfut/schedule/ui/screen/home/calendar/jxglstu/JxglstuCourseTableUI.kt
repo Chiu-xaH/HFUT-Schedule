@@ -1,10 +1,8 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
-import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
@@ -33,7 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -55,9 +53,9 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
@@ -76,6 +74,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPerson
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -560,33 +559,31 @@ fun JxglstuCourseTableUI(
                 }
             }
 
+
             // 中间
-            AnimatedVisibility(
-                visible = shouldShowAddButton,
-                enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
-                exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
+            DraggableWeekButton(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                expanded = shouldShowAddButton,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
                     .padding(APP_HORIZONTAL_DP)
-            ) {
-                DraggableWeekButton(
-                    dragThreshold = drag*2,
-                    onClick = {
-                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                            currentWeek = 1
-                            onDateChange(getJxglstuStartDate())
-                        } else {
-                            currentWeek = DateTimeManager.weeksBetweenJxglstu
-                            onDateChange(LocalDate.now())
-                        }
-                    },
-                    currentWeek = currentWeek,
-                    key = today,
-                    onNext = { nextWeek() },
-                    onPrevious = { previousWeek() }
-                )
-            }
+                ,
+                onClick = {
+                    if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                        currentWeek = 1
+                        onDateChange(getJxglstuStartDate())
+                    } else {
+                        currentWeek = DateTimeManager.weeksBetweenJxglstu
+                        onDateChange(LocalDate.now())
+                    }
+                },
+                shaderState = backGroundHaze,
+                currentWeek = currentWeek,
+                key = today,
+                onNext = { nextWeek() },
+                onPrevious = { previousWeek() }
+            )
         }
     }
 }

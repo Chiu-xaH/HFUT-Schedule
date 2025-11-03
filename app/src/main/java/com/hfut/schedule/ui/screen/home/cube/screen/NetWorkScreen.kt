@@ -130,7 +130,7 @@ fun NetWorkScreen(navController: NavHostController,
                     headlineContent = { Text(text = "自动刷新登录状态") },
                     supportingContent = { Text(text = "冷启动App后，自动在后台进行CAS统一认证登录，请按需开启，这是一个耗时的操作，并非每次使用都需要刷新登录状态") },
                     leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
-                    trailingContent = { Switch(checked = false, onCheckedChange = { showToast("正在开发") })},
+                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showToast("正在开发") })},
                     modifier = Modifier.clickable { showToast("正在开发") }
                 )
             }

@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<appwidget-provider
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:description="@string/card"
-
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_course"
+    android:initialLayout="@layout/glance_default_loading_layout"
+    android:label="@string/widget_course"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen"
-    />
-<!--    android:initialLayout="@layout/glance_default_loading_layout"-->
+    android:widgetCategory="home_screen|keyguard"
+    >
+</appwidget-provider>
+<!--    android:previewImage="@drawable"-->
+
+    <!--    android:resizeMode="horizontal|vertical"-->
+    <!--    android:widgetCategory="home_screen"-->
+
 

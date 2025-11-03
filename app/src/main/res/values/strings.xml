@@ -4,6 +4,7 @@
     <string name="title_activity_schedule">聚在工大</string>
     <string name="title_activity_card">一卡通</string>
     <string name="card">一卡通</string>
+    <string name="widget_course">聚焦</string>
     <string name="main">主界面</string>
     <string name="fix">修复</string>
     <string name="hot_water">热水</string>

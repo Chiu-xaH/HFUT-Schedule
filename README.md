@@ -13,11 +13,9 @@
 ## ✨ 亮点
 界面: 使用现代化技术栈开发；将实时模糊元素与Material Design 3融合，既有统一的风格、规范，又有独特的设计
 
-动效：构建[全局转场动画体系](https://github.com/Chiu-xaH/Compose-Transition-Sample)，遵循收放自如的原则
+动效：构建[全局转场动画体系](https://github.com/Chiu-xaH/Compose-Transition-Sample)，遵循一镜到底、收放自如的原则
 
-功能：历经200+版本迭代，当之无愧的HFUT中功能最丰富的App；几乎全部功能为本地端侧运行
-
-更新：平均每周至少都有新更新，带来新的功能、重构及优化；全个人开发，割裂感弱
+更新：200+版本迭代，平均每周都有新更新，带来新的功能、重构及优化
 
 性能：冷启动迅速，开屏即展示关键信息(聚焦)；内存与存储占用适中
 
@@ -70,6 +68,8 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [Reorderable](https://github.com/Calvin-LL/Reorderable) 列表拖拽
 
+[LeakCanary](https://github.com/square/leakcanary) 内存泄漏工具
+
 [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) 液态玻璃
 
 [Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Android-Library) 增量更新(自己)
@@ -95,7 +95,7 @@ linsui帮助上架F-Droid
 若干用户的帮助
 - James-Zhang2提供GPA评定数据源
 - tinyvan提交RR修复Bug
-- 其他用户帮助推广、提供及时的反馈和思路等，在此不一一列举了
+- 其他用户帮助推广、通过邮件、issue等提供反馈和建议等，在此不一一列举了
 
 ## 📑 [更新日志](docs/update)
 

@@ -1,17 +1,12 @@
 package com.hfut.schedule.ui.screen.home.calendar.communtiy
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,11 +15,8 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,13 +41,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
@@ -64,27 +53,23 @@ import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.network.util.toStr
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ExamToCalenderBean
-import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
+import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.mirror.shader.glassLayer
-import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
@@ -809,145 +794,31 @@ fun CommunityCourseTableUI(
             item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,false) }
         }
 
-        androidx.compose.animation.AnimatedVisibility(
-            visible = shouldShowAddButton,
-            enter = scaleIn(transformOrigin = TransformOrigin(1f,1f)),
-            exit = scaleOut(transformOrigin = TransformOrigin(1f,1f)),
+        DraggableWeekButton(
+            shaderState = backGroundHaze,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPaddings.calculateBottomPadding() - navigationBarHeightPadding)
-                .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-        ) {
-            DraggableWeekButton(
-                dragThreshold = drag*2,
-                onClick = {
-                    if(weeksBetween < 1) {
-                        currentWeek = 1
-                        onDateChange(getStartWeekFromCommunity())
-                    } else {
-                        currentWeek = weeksBetween
-                        onDateChange(LocalDate.now())
-                    }
-                },
-                currentWeek = currentWeek,
-                key = today,
-                onNext = { nextWeek() },
-                onPrevious = { previousWeek() }
-            )
-        }
+                .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
+            expanded = shouldShowAddButton,
+            onClick = {
+                if(weeksBetween < 1) {
+                    currentWeek = 1
+                    onDateChange(getStartWeekFromCommunity())
+                } else {
+                    currentWeek = weeksBetween
+                    onDateChange(LocalDate.now())
+                }
+            },
+            currentWeek = currentWeek,
+            key = today,
+            onNext = { nextWeek() },
+            onPrevious = { previousWeek() }
+        )
     }
 }
 
 
-@Composable
-fun ScheduleTopDate(
-    showAll: Boolean,
-    today : LocalDate,
-    shaderState: ShaderState,
-) {
-    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-    val todayDate = DateTimeManager.Date_yyyy_MM_dd
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
-    val style = CalendarStyle(showAll)
-    val size = style.rowCount
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-
-    Column(modifier = Modifier.background(Color.Transparent)) {
-        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*0))
-        LazyVerticalGrid(columns = GridCells.Fixed(size),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-if (showAll) 1.75.dp else 2.5.dp)){
-            items(size) { item ->
-
-                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
-                val isToday = date == todayDate
-
-                var animated by remember { mutableStateOf(false) }
-                val fontSize = if (showAll) 12f else 14f
-                val fontSizeAnimated by animateFloatAsState(
-                    targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
-                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
-                    finishedListener = { if (isToday) animated = false }
-                )
-                LaunchedEffect(isToday) {
-                    if (isToday) {
-                        animated = true
-                    }
-                }
-
-                Surface(
-                    shape = CircleShape,
-//                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
-                    modifier = Modifier
-                        .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
-                        .clip(CircleShape)
-                        .glassLayer(
-                            shaderState,
-                            smallStyle.copy(
-                                blur = 2.dp,
-                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
-                            ),
-                            enableLiquidGlass
-                        )
-                    ,
-                    color = Color.Transparent
-                ) {
-                    Text(
-                        text = date.substringAfter("-"),
-                        textAlign = TextAlign.Center,
-                        fontSize = fontSizeAnimated.sp,
-//                        textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
-                        color = if (isToday) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
-//                        fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
-                        modifier = Modifier.padding(horizontal = CARD_NORMAL_DP)
-                    )
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
-    }
-}
-
-@Composable
-fun ScheduleTopDate(
-    showAll: Boolean,
-    today : LocalDate,
-) {
-    val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
-    val todayDate = DateTimeManager.Date_yyyy_MM_dd
-
-    Column(modifier = Modifier.background(Color.Transparent)) {
-        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*0))
-        LazyVerticalGrid(columns = GridCells.Fixed(if(showAll)7 else 5),modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP-if (showAll) 1.75.dp else 2.5.dp)){
-            items(if(showAll)7 else 5) { item ->
-
-                val date = mondayOfCurrentWeek.plusDays(item.toLong()).toString() //YYYY-MM-DD 与考试对比
-                val isToday = date == todayDate
-
-                var animated by remember { mutableStateOf(false) }
-                val fontSize = if (showAll) 12f else 14f
-                val fontSizeAnimated by animateFloatAsState(
-                    targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
-                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
-                    finishedListener = { if (isToday) animated = false }
-                )
-                LaunchedEffect(isToday) {
-                    if (isToday) {
-                        animated = true
-                    }
-                }
-
-                Text(
-                    text = date.substringAfter("-"),
-                    textAlign = TextAlign.Center,
-//                    textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
-                    fontSize = fontSizeAnimated.sp,
-                    color = if (isToday) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.primary,
-//                    fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
-    }
-}
 
 private fun transferSummaryCourseInfo(text : courseDetailDTOList) : String {
     val name = text.name
