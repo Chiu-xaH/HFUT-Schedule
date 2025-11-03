@@ -55,6 +55,7 @@ fun VersionInfo() {
             UpdateItems("新增 社区数据源适配新课程表")
             UpdateItems("新增 新课程表的支持跨天日程的显示")
             UpdateItems("新增 小组件")
+            UpdateItems("新增 课程表文字大小支持调整")
             UpdateItems("优化 新课程表的默认方格长度和翻页器显示")
 //            UpdateItems("新增 新的冷启动进入动画")
 //            UpdateItems("新增 自动CAS登录")

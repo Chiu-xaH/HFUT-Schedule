@@ -326,6 +326,8 @@ fun NewTimeTableUI(
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
+    val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
 
     val list = if(week >= items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -333,10 +335,9 @@ fun NewTimeTableUI(
     }  else {
         items[week-1]
     }
-    val lineHeight = if(!showAll) 19.sp else 16.sp
-    val timeTextSize = if(!showAll) 12.sp else 10.sp
-    val textSize = if(!showAll) 13.sp else 11.sp
-    val placeTextSize = if(!showAll) 12.sp else 10.sp
+    val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextPadding
+    val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
+    val timeTextSize = (textSize.value-1).sp
     val hasBackground = shaderState != null
 
     val earliestTime = list.minOfOrNull { it.startTime }?.substringBefore(":")?.toIntOrNull() ?: 8
@@ -452,7 +453,7 @@ fun NewTimeTableUI(
                         item.place?.let {
                             Text(
                                 text = it,
-                                fontSize = placeTextSize,
+                                fontSize = timeTextSize,
                                 textAlign = TextAlign.Center,
                                 lineHeight = lineHeight,
                                 modifier = Modifier.fillMaxWidth(),
@@ -490,7 +491,7 @@ fun NewTimeTableUI(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "${list.size}节课冲突",
+                                text = "冲突${list.size}项",
                                 fontSize = textSize,
                                 lineHeight = lineHeight,
                                 textAlign = TextAlign.Center,
@@ -500,7 +501,7 @@ fun NewTimeTableUI(
                         }
                         Text(
                             text = courses,
-                            fontSize = placeTextSize,
+                            fontSize = timeTextSize,
                             textAlign = TextAlign.Center,
                             lineHeight = lineHeight,
                             modifier = Modifier.fillMaxWidth()
@@ -630,7 +631,7 @@ fun NewTimeTableUI(
                         item.place?.let {
                             Text(
                                 text = it,
-                                fontSize = placeTextSize,
+                                fontSize = timeTextSize,
                                 lineHeight = lineHeight,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth(),

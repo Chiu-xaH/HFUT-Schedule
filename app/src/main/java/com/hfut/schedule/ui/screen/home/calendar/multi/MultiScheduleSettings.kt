@@ -20,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,6 +61,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -135,18 +137,42 @@ fun MultiScheduleSettings(
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie() ?: ""
     }
-
+    var showUiSettings by remember { mutableStateOf(false) }
+    if (showUiSettings) {
+        CustomBottomSheet (
+            onDismissRequest = { showUiSettings = false },
+            showBottomSheet = showUiSettings,
+            autoShape = false
+        ) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                HazeBottomSheetTopBar("课程表外观", isPaddingStatusBar = false)
+                CustomCard(
+                    color=cardNormalColor()
+                ) {
+                    CalendarUISettings(true)
+                }
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+            }
+        }
+    }
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
             Row() {
+                FilledTonalButton(onClick = { showUiSettings = !showUiSettings}) {
+                    Text("外观")
+                }
                 FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {
                     Icon(painterResource(id = R.drawable.add), contentDescription = "")
                 }
             }
         }
+
+
         val friendList = getFriendsList()
 
         LazyRow {

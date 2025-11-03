@@ -225,7 +225,7 @@ fun DraggableWeekButton(
                             onClick()
                         },
                 ) {
-                    Box(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP*2, vertical = CARD_NORMAL_DP/2)) {
+                    Box(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP*3, vertical = CARD_NORMAL_DP/2)) {
                         textUI()
                     }
                 }

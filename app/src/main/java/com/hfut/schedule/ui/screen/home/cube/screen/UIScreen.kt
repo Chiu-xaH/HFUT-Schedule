@@ -23,6 +23,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -81,9 +82,13 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -101,6 +106,12 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
+import com.hfut.schedule.ui.screen.home.calendar.timetable.timeToY
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.util.color.extractColor
 import com.hfut.schedule.ui.util.color.hsvToLong
@@ -110,13 +121,17 @@ import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
+import com.xah.transition.component.containerShare
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -124,6 +139,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.roundToInt
 
 
 val styleList = DataStoreManager.ColorStyle.entries
@@ -204,15 +220,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
-        val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-        val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 0.75f)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
-        val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
-        val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
-        val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
 
         LaunchedEffect(enableLiquidGlass) {
             TransitionConfig.enableMirror = enableLiquidGlass
@@ -220,23 +231,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
 
-        val pickMultipleMedia = rememberLauncherForActivityResult(
-            ActivityResultContracts.PickVisualMedia()
-        ) { uri ->
-            uri?.let { imageUri ->
-                scope.launch {
-                    deleteCustomBackground(context)
-                    val savedPath = persistImage(context, imageUri)
-                    savedPath?.let {
-                        DataStoreManager.saveCustomBackground(it)
-                        showToast("已设置背景")
-                        extractColor(imageUri)?.let { color ->
-                            DataStoreManager.saveCustomColor(color)
-                        }
-                    }
-                }
-            }
-        }
+
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) { uri ->
@@ -639,135 +634,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
         DividerTextExpandedWith("课程表") {
-            val useCustomBackground = customBackground != ""
             CustomCard(color = backgroundColor) {
-                TransplantListItem(
-                    headlineContent = {
-                        Text("背景图片")
-                    },
-                    supportingContent = {
-                        Text("选择图片作为课程表的背景，同时也会改变色彩")
-                    },
-                    modifier = Modifier.clickable {
-                        pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.image),null)
-                    },
-                    trailingContent = {
-                        if(useCustomBackground) {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    scope.launch {
-                                        deleteCustomBackground(context)
-                                    }
-                                }
-                            ) {
-                                Icon(painterResource(R.drawable.delete),null)
-                            }
-                        }
-                    }
-                )
-                if(useCustomBackground) {
-                    var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
-                    PaddingHorizontalDivider()
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("前景混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.visibility),null)
-                        },
-                        supportingContent = {
-                            Text("值越小，方格和按钮等内容越透明")
-                        }
-                    )
-                    CustomSlider(
-                        value = squareAlpha,
-                        onValueChange = {
-                            squareAlpha = it
-                        },
-                        onValueChangeFinished =  {
-                            scope.launch { DataStoreManager.saveCustomSquareAlpha(squareAlpha) }
-                        },
-                        modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                        valueRange = 0f..1f,
-                        showProcessText = true
-                    )
-                }
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = {
-                        Text("方格高度 ${formatDecimal(calendarSquareHeight.toDouble(),0)}")
-                    },
-                    supportingContent = {
-                        Text("自定义方格的高度(默认值为125)，方格中部文字溢出的部分将用省略号代替")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.height),null)
-                    },
-                )
-
-                CustomSlider(
-                    value = calendarSquareHeight,
-                    onValueChange = {
-                        scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
-                    },
-                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                    valueRange = 50f..200f,
-                    showProcessText = true,
-                    steps = 149,
-                    processText = formatDecimal(calendarSquareHeight.toDouble(),0)
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = {
-                        Text("方格高度(新课程表) ${formatDecimal(calendarSquareHeightNew.toDouble(),0)}")
-                    },
-                    supportingContent = {
-                        Text("自定义方格的高度(默认值为65)，方格中部文字溢出的部分将用省略号代替")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.height),null)
-                    },
-                )
-
-                CustomSlider(
-                    value = calendarSquareHeightNew,
-                    onValueChange = {
-                        scope.launch { DataStoreManager.saveCalendarSquareHeightNew(it) }
-                    },
-                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-                    valueRange = 25f..125f,
-                    showProcessText = true,
-                    steps = 99,
-                    processText = formatDecimal(calendarSquareHeightNew.toDouble(),0)
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = {
-                        Text("合并冲突方格(新课程表)")
-                    },
-                    supportingContent = {
-                        Text("打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                        }
-                    },
-                    trailingContent = {
-                        Switch(checked = enableMergeSquare, onCheckedChange = {
-                            scope.launch {
-                                DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                            }
-                        })
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.arrow_split),null)
-                    },
-                )
+                CalendarUISettings()
             }
+            BottomTip("建议截图保存修改后的配置")
         }
         DividerTextExpandedWith("底栏") {
             CustomCard(color = backgroundColor) {
@@ -827,6 +697,328 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
     }
 }
 
+
+@Composable
+fun CalendarUISettings(
+    tiny : Boolean  = false
+) {
+    val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
+    val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
+    val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
+    val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
+    val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 0.75f)
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val useCustomBackground = customBackground != ""
+    val pickMultipleMedia = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        uri?.let { imageUri ->
+            scope.launch {
+                deleteCustomBackground(context)
+                val savedPath = persistImage(context, imageUri)
+                savedPath?.let {
+                    DataStoreManager.saveCustomBackground(it)
+                    showToast("已设置背景")
+                    extractColor(imageUri)?.let { color ->
+                        DataStoreManager.saveCustomColor(color)
+                    }
+                }
+            }
+        }
+    }
+
+
+    Column {
+        TransplantListItem(
+            headlineContent = {
+                Text("合并冲突方格")
+            },
+            supportingContent = {
+                if(!tiny)
+                    Text("打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格")
+            },
+            modifier = Modifier.clickable {
+                scope.launch {
+                    DataStoreManager.saveMergeSquare(!enableMergeSquare)
+                }
+            },
+            trailingContent = {
+                Switch(checked = enableMergeSquare, onCheckedChange = {
+                    scope.launch {
+                        DataStoreManager.saveMergeSquare(!enableMergeSquare)
+                    }
+                })
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.arrow_split),null)
+            },
+        )
+        if(!tiny)
+            PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text("背景图片")
+            },
+            supportingContent = {
+                if(!tiny)
+                    Text("选择图片作为课程表的背景，同时也会改变色彩")
+            },
+            modifier = Modifier.clickable {
+                pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.image),null)
+            },
+            trailingContent = {
+                if(useCustomBackground) {
+                    FilledTonalIconButton(
+                        onClick = {
+                            scope.launch {
+                                deleteCustomBackground(context)
+                            }
+                        }
+                    ) {
+                        Icon(painterResource(R.drawable.delete),null)
+                    }
+                }
+            }
+        )
+        if(useCustomBackground) {
+            var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
+            if(!tiny)
+                PaddingHorizontalDivider()
+            TransplantListItem(
+                headlineContent = {
+                    Text("前景混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.visibility),null)
+                },
+                supportingContent = {
+                    if(!tiny)
+                        Text("值越小，方格和按钮等内容越透明")
+                }
+            )
+            CustomSlider(
+                value = squareAlpha,
+                onValueChange = {
+                    squareAlpha = it
+                },
+                onValueChangeFinished =  {
+                    scope.launch { DataStoreManager.saveCustomSquareAlpha(squareAlpha) }
+                },
+                modifier = Modifier.let {
+                    if(tiny) it
+                    else it.padding(bottom = APP_HORIZONTAL_DP)
+                },
+                valueRange = 0f..1f,
+                showProcessText = true
+            )
+        }
+        if(!tiny)
+            PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text("方格高度(旧) ${formatDecimal(calendarSquareHeight.toDouble(),0)}")
+            },
+            supportingContent = {
+                if(!tiny)
+                    Text("自定义方格的高度(默认值为125)")
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.height),null)
+            },
+        )
+
+        CustomSlider(
+            value = calendarSquareHeight,
+            onValueChange = {
+                scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
+            },
+            modifier = Modifier.let {
+                if(tiny) it
+                else it.padding(bottom = APP_HORIZONTAL_DP)
+            },
+            valueRange = 50f..200f,
+            showProcessText = true,
+            steps = 149,
+            processText = formatDecimal(calendarSquareHeight.toDouble(),0)
+        )
+        if(!tiny)
+            PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text("方格高度 ${formatDecimal(calendarSquareHeightNew.toDouble(),0)}")
+            },
+            supportingContent = {
+                if(!tiny)
+                    Text("自定义方格的高度(默认值为65)")
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.height),null)
+            },
+        )
+
+        CustomSlider(
+            value = calendarSquareHeightNew,
+            onValueChange = {
+                scope.launch { DataStoreManager.saveCalendarSquareHeightNew(it) }
+            },
+            modifier = Modifier.let {
+                if(tiny) it
+                else it.padding(bottom = APP_HORIZONTAL_DP)
+            },
+            valueRange = 25f..125f,
+            showProcessText = true,
+            steps = 99,
+            processText = formatDecimal(calendarSquareHeightNew.toDouble(),0)
+        )
+        if(!tiny)
+            PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text("方格文字大小 ${formatDecimal(calendarSquareTextSize.toDouble()*100,0)}%")
+            },
+            supportingContent = {
+                if(!tiny)
+                    Text("自定义方格内文字的大小(默认值为100%)")
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.translate),null)
+            },
+        )
+
+        CustomSlider(
+            value = calendarSquareTextSize,
+            onValueChange = {
+                scope.launch { DataStoreManager.saveCalendarSquareTextSize(it) }
+            },
+            modifier = Modifier.let {
+                if(tiny) it
+                else it.padding(bottom = APP_HORIZONTAL_DP)
+            },
+            valueRange = 0.25f..2f,
+            showProcessText = true,
+            processText = formatDecimal(calendarSquareTextSize.toDouble()*100,0)
+        )
+        if(!tiny)
+            PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = {
+                Text("方格文字行距 ${formatDecimal(calendarSquareTextPadding.toDouble()*100,0)}%")
+            },
+            supportingContent = {
+                if(!tiny)
+                    Text("自定义方格内文字的大小(默认值为100%)，越小则每行之间越紧密")
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.translate),null)
+            },
+        )
+
+        CustomSlider(
+            value = calendarSquareTextPadding,
+            onValueChange = {
+                scope.launch { DataStoreManager.saveCalendarSquareTextPadding(it) }
+            },
+            modifier = Modifier.let {
+                if(tiny) it
+                else it.padding(bottom = APP_HORIZONTAL_DP)
+            },
+            valueRange = 0.25f..2f,
+            showProcessText = true,
+            processText = formatDecimal(calendarSquareTextPadding.toDouble()*100,0)
+        )
+        if(!tiny) {
+            val color : Pair<Color,Color> = Pair(MaterialTheme.colorScheme.primaryContainer,MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f))
+            val showAll = false
+            val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextPadding
+            val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
+            val timeTextSize = (textSize.value-1).sp
+            val item = TimeTableItem(
+                type = TimeTableType.COURSE,
+                name = "高等数学B(上)",
+                dayOfWeek = 1,
+                startTime = "08:00",
+                endTime = "09:50",
+                place = "敬亭999"
+            )
+
+
+            ColumnVertical {
+                Box (
+                    modifier = Modifier
+                        .height((calendarSquareHeightNew*1.5).dp),
+                ) {
+                    Surface(
+                        color = color.first,
+                        shape = MaterialTheme.shapes.extraSmall,
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.SpaceBetween,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "08:00",
+                                fontSize = timeTextSize,
+                                lineHeight = lineHeight,
+                                textAlign = TextAlign.Center,
+                                overflow = TextOverflow.Clip,
+                                maxLines = 1,
+                                color = color.second,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Box(
+                                modifier = Modifier
+                                    .weight(1f) // 占据中间剩余的全部空间
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = item.name,
+                                    lineHeight = lineHeight,
+                                    fontSize = textSize,
+                                    textAlign = TextAlign.Center,
+                                    overflow = TextOverflow.Ellipsis,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                item.place?.let {
+                                    Text(
+                                        text = it,
+                                        fontSize = timeTextSize,
+                                        lineHeight = lineHeight,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth(),
+                                    )
+                                }
+                                Text(
+                                    text = item.endTime,
+                                    fontSize = timeTextSize,
+                                    textAlign = TextAlign.Center,
+                                    lineHeight = lineHeight,
+                                    overflow = TextOverflow.Clip,
+                                    maxLines = 1,
+                                    color = color.second,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
