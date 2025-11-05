@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/widget_course"
-    android:initialLayout="@layout/glance_default_loading_layout"
     android:label="@string/widget_course"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen|keyguard"
@@ -12,4 +11,5 @@
     <!--    android:resizeMode="horizontal|vertical"-->
     <!--    android:widgetCategory="home_screen"-->
 
+<!--    android:initialLayout="@layout/glance_default_loading_layout"-->
 

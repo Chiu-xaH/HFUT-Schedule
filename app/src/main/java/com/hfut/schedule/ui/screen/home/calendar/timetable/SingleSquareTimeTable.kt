@@ -69,13 +69,13 @@ private fun layoutSquaresForDay(items: List<TimeTableItem>): List<PositionedSqua
 fun timeToY(
     hour: Float,
     hourPx: Float,
-    startHour: Int,
+    startTime: Float,
     compressList: List<Pair<Float, Float>>,
-    compressFactor: Float = 0.6f
+    compressFactor: Float
 ): Float {
     // 累积时间段位移
     var offset = 0f
-    var lastEnd = startHour.toFloat()
+    var lastEnd = startTime
 
     for ((compressStart, compressEnd) in compressList.sortedBy { it.first }) {
         when {
@@ -102,14 +102,16 @@ fun timeToY(
     return offset + (hour - lastEnd) * hourPx
 }
 
-
+/**
+@param startTime开始时间 建议最早的日程 调用parseTimeToFloat函数
+ */
 @Composable
 fun TimetableSingleSquare(
     items: List<TimeTableItem>,
     modifier: Modifier = Modifier,
     innerPadding : PaddingValues,
-    startHour: Int = 8,
-    endHour: Int = 24,
+    startTime: Float = DEFAULT_START_TIME,
+    endTime : Float = DEFAULT_END_TIME,
     hourHeight: Dp = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
@@ -119,7 +121,6 @@ fun TimetableSingleSquare(
     zipTimeFactor : Float = 0.1f,
     content : @Composable (TimeTableItem) -> Unit
 ) {
-    val hours = endHour - startHour
     // 动画化 showAll 的切换
     val animatedFactor by animateFloatAsState(
         targetValue = if (showAll) 1f else 0f,
@@ -137,6 +138,7 @@ fun TimetableSingleSquare(
         val density = LocalDensity.current
         val totalWidthPx = with(density) { maxWidth.toPx() }
         val hourPx = with(density) { hourHeight.toPx() }
+        val yEnd = timeToY(endTime, hourPx, startTime,zipTime,zipTimeFactor)
         val columnWidthPx = totalWidthPx / columnCount.toFloat()
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
@@ -144,11 +146,12 @@ fun TimetableSingleSquare(
             InnerPaddingHeight(innerPadding,true)
             Box(
                 modifier = Modifier
-                    .height(hourHeight * hours)
+                    // 从起始时间到24:00
+                    .height(with(density) { yEnd.toDp() })
                     .fillMaxWidth()
                     .let {
                         if(showLine) {
-                            it.drawLineTimeTable(columnCount,hourPx,startHour,zipTime,zipTimeFactor,showAll,everyPadding)
+                            it.drawLineTimeTable(columnCount)
                         } else it
                     }
             ) {
@@ -174,8 +177,9 @@ fun TimetableSingleSquare(
                         val safeSingleWidthPx = if (singleWidthPx > 0f) singleWidthPx else (innerAvailablePx / columns)
 
                         val xOffset = xBase + paddingPx + (safeSingleWidthPx + gapPx) * item.columnIndex
-                        val yStart = timeToY(item.start, hourPx, startHour, zipTime,zipTimeFactor)
-                        val yEnd = timeToY(item.end, hourPx, startHour,zipTime,zipTimeFactor)
+                        // 时间压缩
+                        val yStart = timeToY(item.start, hourPx, startTime, zipTime,zipTimeFactor)
+                        val yEnd = timeToY(item.end, hourPx, startTime,zipTime,zipTimeFactor)
                         val heightPx = yEnd - yStart
 
                         Box (

@@ -7,33 +7,20 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.clickableWithRotation
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
-
-
 
 private data class PositionedSquareGroup(
     val courses: List<TimeTableItem>,
@@ -78,8 +65,8 @@ fun Timetable(
     items: List<TimeTableItem>,
     modifier: Modifier = Modifier,
     innerPadding : PaddingValues,
-    startHour: Int = 8,
-    endHour: Int = 24,
+    startTime: Float = DEFAULT_START_TIME,
+    endTime : Float = DEFAULT_END_TIME,
     hourHeight: Dp = 65.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
@@ -89,9 +76,6 @@ fun Timetable(
     zipTimeFactor : Float = 0.1f,
     content : @Composable (List<TimeTableItem>) -> Unit
 ) {
-    val hours = endHour - startHour
-    val dashEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-    val dividerColor = DividerDefaults.color
     // 动画化 showAll 的切换
     val animatedFactor by animateFloatAsState(
         targetValue = if (showAll) 1f else 0f,
@@ -108,6 +92,7 @@ fun Timetable(
         val density = LocalDensity.current
         val totalWidthPx = with(density) { maxWidth.toPx() }
         val hourPx = with(density) { hourHeight.toPx() }
+        val yEnd = timeToY(endTime, hourPx, startTime,zipTime,zipTimeFactor)
         val columnWidthPx = totalWidthPx / columnCount.toFloat()
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
@@ -115,11 +100,11 @@ fun Timetable(
             InnerPaddingHeight(innerPadding,true)
             Box(
                 modifier = Modifier
-                    .height(hourHeight * hours)
+                    .height(with(density) { yEnd.toDp() })
                     .fillMaxWidth()
                     .let {
                         if(showLine) {
-                            it.drawLineTimeTable(columnCount,hourPx,startHour,zipTime,zipTimeFactor,showAll,everyPadding)
+                            it.drawLineTimeTable(columnCount)
                         } else
                             it
                     }
@@ -139,8 +124,8 @@ fun Timetable(
                         val xOffset = xBase + paddingPx
                         val innerAvailablePx = columnWidthPx - 2 * paddingPx
 
-                        val yStart = timeToY(group.start, hourPx, startHour, zipTime,zipTimeFactor)
-                        val yEnd = timeToY(group.end, hourPx, startHour,zipTime,zipTimeFactor)
+                        val yStart = timeToY(group.start, hourPx, startTime, zipTime,zipTimeFactor)
+                        val yEnd = timeToY(group.end, hourPx, startTime,zipTime,zipTimeFactor)
                         val heightPx = yEnd - yStart
                         Box(
                             modifier = Modifier

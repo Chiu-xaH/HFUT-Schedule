@@ -7,7 +7,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -17,10 +16,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -82,7 +77,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -96,22 +90,19 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
-import com.hfut.schedule.ui.screen.home.calendar.timetable.timeToY
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.util.color.extractColor
 import com.hfut.schedule.ui.util.color.hsvToLong
@@ -121,17 +112,14 @@ import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
-import com.xah.transition.component.containerShare
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -139,7 +127,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.roundToInt
 
 
 val styleList = DataStoreManager.ColorStyle.entries
@@ -322,7 +309,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
             }
             CustomCard (
-                modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+                modifier = Modifier
+                    .aspectRatio(16 / 9f)
+                    .fillMaxWidth(),
                 color = MaterialTheme.colorScheme.surface,
             ) {
                 video?.let {
@@ -707,6 +696,7 @@ fun CalendarUISettings(
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
     val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
+    val enableCalendarShowTeacher by DataStoreManager.enableCalendarShowTeacher.collectAsState(initial = ShowTeacherConfig.ONLY_MULTI.code)
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
     val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 0.75f)
     val context = LocalContext.current
@@ -732,6 +722,51 @@ fun CalendarUISettings(
 
 
     Column {
+        TransplantListItem(
+            headlineContent = {
+                Text("方格内显示教师")
+            },
+            supportingContent = {
+                Column {
+                    Row {
+                        FilterChip(
+                            onClick = {
+                                scope.launch {
+                                    DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.NONE)
+                                }
+                            },
+                            label = { Text(text = ShowTeacherConfig.NONE.description) },
+                            selected = enableCalendarShowTeacher == ShowTeacherConfig.NONE.code
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        FilterChip(
+                            onClick = {
+                                scope.launch {
+                                    DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ALL)
+                                }
+                            },
+                            label = { Text(text = ShowTeacherConfig.ALL.description) },
+                            selected = enableCalendarShowTeacher == ShowTeacherConfig.ALL.code
+                        )
+                    }
+                    FilterChip(
+                        onClick = {
+                            scope.launch {
+                                DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ONLY_MULTI)
+                            }
+                        },
+                        label = { Text(text = ShowTeacherConfig.ONLY_MULTI.description) },
+                        selected = enableCalendarShowTeacher == ShowTeacherConfig.ONLY_MULTI.code
+                    )
+                }
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.group),null)
+            },
+        )
+
+        if(!tiny)
+            PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
                 Text("合并冲突方格")
@@ -786,6 +821,7 @@ fun CalendarUISettings(
                 }
             }
         )
+
         if(useCustomBackground) {
             var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
             if(!tiny)
@@ -855,7 +891,7 @@ fun CalendarUISettings(
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格的高度(默认值为65)")
+                    Text("自定义方格的高度(默认值为${formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.toDouble(),0)})")
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.height),null)
@@ -1103,7 +1139,9 @@ private fun LoopingRectangleCenteredTrail2(animationSpeed: Int) {
 @Composable
 private fun MotionBlurIcon(motionBlur : Boolean) {
     //MaterialTheme.colorScheme.surfaceContainer
-    Box(modifier = Modifier.size(24.dp).background(Color.Transparent, shape = CircleShape)){
+    Box(modifier = Modifier
+        .size(24.dp)
+        .background(Color.Transparent, shape = CircleShape)){
         val infiniteTransition = rememberInfiniteTransition()
         val scale by infiniteTransition.animateFloat(
             initialValue = 0f,
@@ -1153,7 +1191,7 @@ private fun MotionBlurIcon(motionBlur : Boolean) {
                 .graphicsLayer {
                     rotationZ = rotation
                 }
-                .blur(radius = if(motionBlur) blur.dp else 0.dp)
+                .blur(radius = if (motionBlur) blur.dp else 0.dp)
                 .scale(scale)
         )
         Icon(
@@ -1165,8 +1203,8 @@ private fun MotionBlurIcon(motionBlur : Boolean) {
                 .graphicsLayer {
                     rotationZ = -rotation
                 }
-                .blur(radius = if(motionBlur) (2.5-blur).dp else 0.dp)
-                .scale(1-scale)
+                .blur(radius = if (motionBlur) (2.5 - blur).dp else 0.dp)
+                .scale(1 - scale)
         )
     }
 }
@@ -1179,7 +1217,9 @@ private fun ShaderIcon(shader : Boolean) {
     )
     val color = MaterialTheme.colorScheme.onSurface
 
-    Box(modifier = Modifier.size(24.dp).background(Color.Transparent, shape = CircleShape)){
+    Box(modifier = Modifier
+        .size(24.dp)
+        .background(Color.Transparent, shape = CircleShape)){
         Icon(
             painter = painterResource(R.drawable.filter_vintage),
             contentDescription = "Localized description",
@@ -1263,9 +1303,10 @@ private fun Colors(isControlCenter : Boolean) {
                     color = item.first,
                     shape = CircleShape,
                     modifier = Modifier
-                        .padding(end =
-                            if(index == list.size-1) 0.dp
-                            else padding
+                        .padding(
+                            end =
+                                if (index == list.size - 1) 0.dp
+                                else padding
                         )
                         .size(size)
                         .clip(CircleShape)

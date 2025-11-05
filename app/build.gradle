@@ -43,7 +43,7 @@ android {
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
         versionCode 230
-        versionName "4.18.4.1 Preview"
+        versionName "4.18.4.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -221,7 +221,7 @@ dependencies {
     // 液态玻璃
     implementation(libs.liquid.glass)
     // 小组件
-    implementation(libs.androidx.glance.appwidget)
+//    implementation(libs.androidx.glance.appwidget)
 //    implementation(libs.androidx.glance.material3)
     // 权限
     implementation(libs.accompanist.permissions)

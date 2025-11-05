@@ -18,7 +18,7 @@ fun Modifier.calendarSquareGlass(
             blur = 3.5.dp ,
             border = 30f,
             dispersion = 0f,
-            distortFactor = 0.1f,
+            distortFactor = 0f,
             stretchFactor = 0.4f,
             overlayColor = color
         ),

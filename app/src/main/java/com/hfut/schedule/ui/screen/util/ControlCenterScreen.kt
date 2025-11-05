@@ -144,26 +144,11 @@ fun ControlCenterScreen(
     var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
-//    val shaderState = rememberShaderState()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = Color.Transparent,
         topBar = {
             Column(
-                modifier = Modifier.let {
-                    it
-//                    if(isAtStart) {
-//                        it.glassLayer(state=shaderState, style = GlassStyle(
-//                            blur = 1.dp,
-//                            border = 25f,
-//                            dispersion = 0f,
-//                             distortFactor = 0.0f
-//                        ),
-//                        )
-//                    } else {
-//                        it.normalTopBarBlur(hazeState,color ?: MaterialTheme.colorScheme.surface)
-//                    }
-                },
             ) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,

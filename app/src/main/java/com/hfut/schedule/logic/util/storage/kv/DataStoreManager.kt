@@ -85,6 +85,10 @@ object DataStoreManager : IDataStore {
         val name : String
     )
 
+    enum class ShowTeacherConfig(val code : Int,val description: String) {
+        ONLY_MULTI(0,"只对多老师的课程显示"),ALL(1,"全部显示"),NONE(2,"不显示")
+    }
+
 
     private val ANIMATION_TYPE = intPreferencesKey("animation_types")
     private val PURE_DARK = booleanPreferencesKey("pure_dark")
@@ -124,6 +128,7 @@ object DataStoreManager : IDataStore {
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
+    private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
     private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
     private val CALENDAR_SQUARE_HEIGHT_NEW = floatPreferencesKey("calendar_square_height_new")
     private val MERGE_SQUARE = booleanPreferencesKey("merge_square")
@@ -166,6 +171,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveHefeiElectricFee(value: String) = saveValue(HEFEI_ELECTRIC_FEE, value)
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
+    suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
     suspend fun saveCameraDynamicRecord(value: Boolean) = saveValue(CAMERA_DYNAMIC_RECORD, value)
     suspend fun saveCalendarSquareHeight(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT, value)
     suspend fun saveCalendarSquareHeightNew(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT_NEW, value)
@@ -212,6 +218,7 @@ object DataStoreManager : IDataStore {
     val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
+    val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")
     val useHefeiElectric = getFlow(USE_HEFEI_ELECTRIC, getCampusRegion() == CampusRegion.HEFEI)

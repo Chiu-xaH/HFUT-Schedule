@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,46 +11,27 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
@@ -65,12 +45,9 @@ import com.hfut.schedule.logic.network.util.toStr
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.BUTTON_PADDING
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.status.DevelopingUI
-import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
@@ -80,23 +57,17 @@ import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.hfut.schedule.ui.style.CalendarStyle
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCoursesFromCommunity
 import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
-import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.clickableWithRotation
 import com.xah.uicommon.style.clickableWithScale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.time.LocalTime
-import kotlin.String
 
 /**
  * @param startTime 传入HH-MM
@@ -110,7 +81,8 @@ data class TimeTableItem(
     val startTime: String,
     val endTime: String,
     val place : String? = null,
-    val id : Int? = null
+    val teacher : String? = null,
+    val id : Int? = null,
 )
 
 enum class TimeTableType(
@@ -129,6 +101,25 @@ fun parseTimeToFloat(time: String): Float {
 }
 
 // 分配20周
+suspend fun allToTimeTableData(context: Context,friendStudentId: String?): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
+    // 并发调用三个数据源
+    val jxglstuDeferred = async { communityToTimeTableData(friendStudentId) }
+    if(friendStudentId != null) {
+        return@withContext jxglstuDeferred.await()
+    }
+    val focusDeferred = async { focusToTimeTableData() }
+    val examDeferred = async { examToTimeTableData(context) }
+
+    val jxglstuList = jxglstuDeferred.await()
+    val focusList = focusDeferred.await()
+    val examList = examDeferred.await()
+
+    // 合并：按周（index）叠加三个来源
+    List(MyApplication.MAX_WEEK) { i ->
+        jxglstuList[i] + focusList[i]+ examList[i]
+    }
+}
+
 suspend fun allToTimeTableData(context: Context): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
     // 并发调用三个数据源
     val jxglstuDeferred = async { jxglstuToTimeTableData(context) }
@@ -145,9 +136,9 @@ suspend fun allToTimeTableData(context: Context): List<List<TimeTableItem>> = wi
     }
 }
 
-suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> {
+private suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> {
     val json = LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
-        ?: return List(20) { emptyList<TimeTableItem>() }
+        ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
 
@@ -155,16 +146,33 @@ suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> 
         val scheduleList = datumResponse.result.scheduleList
         val lessonList = datumResponse.result.lessonList
         // 根据id得到课程名
-        val hashMap = mutableMapOf<String, String>()
+        val courseNameMap = mutableMapOf<String, String>()
+        val multiTeacherMap = mutableMapOf<String, Int>()
         for(item in lessonList) {
-            hashMap[item.id] = item.courseName
+            courseNameMap[item.id] = item.courseName
+            multiTeacherMap[item.id] = item.teacherAssignmentList.size
         }
+        val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
 
         for(item in scheduleList) {
             val list = result[item.weekIndex-1]
+            val teacher = when(enableCalendarShowTeacher) {
+                ShowTeacherConfig.ALL.code -> item.personName
+                ShowTeacherConfig.ONLY_MULTI.code -> {
+                    multiTeacherMap[item.lessonId.toString()]?.let { size ->
+                        if(size > 1) {
+                            item.personName
+                        } else {
+                            null
+                        }
+                    }
+                }
+                else -> null
+            }
             list.add(TimeTableItem(
+                teacher = teacher,
                 type = TimeTableType.COURSE,
-                name = item.lessonId.toString().let { hashMap[it] ?: it },
+                name = item.lessonId.toString().let { courseNameMap[it] ?: it },
                 dayOfWeek = item.weekday,
                 startTime = parseTime(item.startTime),
                 endTime = parseTime(item.endTime),
@@ -176,11 +184,11 @@ suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> 
         return result
     } catch (e : Exception) {
         e.printStackTrace()
-        return List(20) { emptyList<TimeTableItem>() }
+        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }
 
-suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
+private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         val focusList = DataBaseManager.customEventDao.getAll(CustomEventType.SCHEDULE.name).map {
@@ -261,7 +269,7 @@ suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
     }
 }
 
-suspend fun examToTimeTableData(context : Context): List<List<TimeTableItem>> {
+private suspend fun examToTimeTableData(context : Context): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         val examList = examToCalendar(context)
@@ -291,13 +299,46 @@ suspend fun examToTimeTableData(context : Context): List<List<TimeTableItem>> {
     }
 }
 
-suspend fun communityToTimeTableData() : List<List<TimeTableItem>> {
-    val result = List(20) { mutableStateListOf<TimeTableItem>() }
+private suspend fun communityToTimeTableData(friendStudentId : String? = null) : List<List<TimeTableItem>> {
+    val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
     try {
-//        val originalData = getCourseInfoFromCommunity()
-        // TODO
+        val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
+
+        repeat(MyApplication.MAX_WEEK) { week ->
+            val originalData = getCoursesFromCommunity(targetWeek = week+1, friendUserName = friendStudentId)
+            val list = result[week]
+            repeat(7) { weekday ->
+                val data = originalData[weekday].flatMap { it }
+                for(item in data) {
+                    val time = item.classTime.split("-")
+                    if(time.size != 2) {
+                        continue
+                    }
+                    val teacher = when(enableCalendarShowTeacher) {
+                        ShowTeacherConfig.ALL.code -> item.teacher
+                        else -> null
+                    }
+                    list.add(TimeTableItem(
+                        teacher = teacher,
+                        type = TimeTableType.COURSE,
+                        name = item.name,
+                        dayOfWeek = weekday+1,
+                        startTime = time[0],
+                        endTime = time[1],
+                        place  = item.place?.replace("学堂",""),
+                    ))
+                }
+            }
+        }
     } catch (e : Exception) {
         e.printStackTrace()
+    }
+    for(t in result) {
+        val uniqueItems = t.distinctBy {
+            it.name + it.place + it.dayOfWeek + it.startTime + it.endTime
+        }
+        t.clear()
+        t.addAll(uniqueItems)
     }
     return result
 }
@@ -307,10 +348,9 @@ private fun parseTime(time : Int) : String {
     val minute = time % 100
     return "${parseTimeItem(hour)}:${parseTimeItem(minute)}"
 }
-
-
-
-
+// 早八
+const val DEFAULT_START_TIME = 8f
+const val DEFAULT_END_TIME = 24f
 @Composable
 fun NewTimeTableUI(
     items: List<List<TimeTableItem>>,
@@ -340,9 +380,10 @@ fun NewTimeTableUI(
     val timeTextSize = (textSize.value-1).sp
     val hasBackground = shaderState != null
 
-    val earliestTime = list.minOfOrNull { it.startTime }?.substringBefore(":")?.toIntOrNull() ?: 8
-    val startHour = minOf(earliestTime,8)
-
+    val earliestTime = list.minOfOrNull { it.startTime }
+    val startTime = earliestTime?.let {
+        minOf(parseTimeToFloat(it),DEFAULT_START_TIME)
+    } ?: DEFAULT_START_TIME
     if(enableMergeSquare) {
         Timetable(
             items = list,
@@ -351,7 +392,7 @@ fun NewTimeTableUI(
             showLine = !hasBackground,
             innerPadding = innerPadding,
             hourHeight = calendarSquareHeight.dp,
-            startHour = startHour
+            startTime = startTime
         ) { list ->
             val color : Pair<Color,Color> = if(!hasBackground) {
                 when {
@@ -400,11 +441,11 @@ fun NewTimeTableUI(
                             val item = list[0]
                             when(item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                    it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"), MaterialTheme.shapes.extraSmall)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"), MaterialTheme.shapes.extraSmall)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
@@ -442,7 +483,7 @@ fun NewTimeTableUI(
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = item.name,
+                                text = item.name + (item.teacher?.let { "@$it" } ?: ""),
                                 fontSize = textSize,
                                 textAlign = TextAlign.Center,
                                 lineHeight = lineHeight,
@@ -528,7 +569,7 @@ fun NewTimeTableUI(
             showLine = !hasBackground,
             innerPadding = innerPadding,
             hourHeight = calendarSquareHeight.dp,
-            startHour = startHour
+            startTime = startTime,
         ) { item ->
             val color : Pair<Color,Color> = if(!hasBackground) {
                 when(item.type) {
@@ -577,11 +618,11 @@ fun NewTimeTableUI(
                         if(!hasBackground) {
                             when(item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                    it.containerShare(AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"), MaterialTheme.shapes.extraSmall)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item}"), MaterialTheme.shapes.extraSmall)
+                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"), MaterialTheme.shapes.extraSmall)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
@@ -608,7 +649,6 @@ fun NewTimeTableUI(
                         color = color.second,
                         modifier = Modifier.fillMaxWidth()
                     )
-
                     Box(
                         modifier = Modifier
                             .weight(1f) // 占据中间剩余的全部空间
@@ -616,7 +656,7 @@ fun NewTimeTableUI(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = item.name,
+                            text = item.name + (item.teacher?.let { "@$it" } ?: ""),
                             lineHeight = lineHeight,
                             fontSize = textSize,
                             textAlign = TextAlign.Center,
@@ -693,27 +733,13 @@ fun TimeTableDetail(
         }
     }
 }
+
 @Composable
 fun Modifier.drawLineTimeTable(
     columnCount : Float,
-    hourPx: Float,
-    startHour: Int ,
-    zipTime: List<Pair<Float, Float>>,
-    zipTimeFactor: Float,
-    showAll : Boolean,
-    everyPadding : Dp,
-    dividerColor : Color = DividerDefaults.color,
-    dashEffect : PathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f),
-    ): Modifier {
-//    var now by remember { mutableStateOf(LocalTime.now()) }
-//    var nowDate by remember { mutableStateOf(LocalDate.now()) }
-//    LaunchedEffect(Unit) {
-//        while (true) {
-//            now = LocalTime.now()
-//            nowDate = LocalDate.now()
-//            delay(60_000) // 每30秒刷新一次，分钟级足够
-//        }
-//    }
+    width : Dp = 1.dp,
+    color : Color = DividerDefaults.color
+): Modifier {
     return this.drawBehind {
         val w = size.width
         val h = size.height
@@ -721,48 +747,12 @@ fun Modifier.drawLineTimeTable(
         for (i in 0..columnCount.toInt()) {
             val x = w * i / columnCount.toFloat()
             drawLine(
-                color = dividerColor,
-                strokeWidth = 1.dp.toPx(),
+                color = color,
+                strokeWidth = width.toPx(),
                 start = Offset(x, 0f),
                 end = Offset(x, h),
-                pathEffect = dashEffect
+                pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
             )
         }
-//        // 绘制当前时间线
-//        val nowFloat = now.hour + now.minute / 60f
-//        val nowY = timeToY(nowFloat, hourPx, startHour, zipTime, zipTimeFactor)
-//
-//        if (nowY in 0f..h) {
-//            // 获取当前星期（周一=1，周日=7）
-//            val today = nowDate.dayOfWeek.value
-//            // 计算列宽
-//            val columnWidth = w / columnCount
-//            // 根据 showAll 判定当前列索引
-//            val dayIndex =
-//                if (showAll) (today - 1).coerceIn(0, 6)
-//                else (today - 1).coerceIn(0, 4)
-//            // 当前列的起点与终点 X
-//            val startX = columnWidth * dayIndex
-//            val endX = columnWidth * (dayIndex + 1)
-//
-//            drawLine(
-//                color = dividerColor,
-//                start = Offset(startX, nowY),
-//                end = Offset(endX, nowY),
-//                strokeWidth = 1.dp.toPx()
-//            )
-//            // 小圆点
-//            val radius = everyPadding.toPx()
-//            drawCircle(
-//                color = dividerColor,
-//                radius = radius,
-//                center = Offset(startX, nowY)
-//            )
-//            drawCircle(
-//                color = dividerColor,
-//                radius = radius,
-//                center = Offset(endX, nowY)
-//            )
-//        }
     }
 }

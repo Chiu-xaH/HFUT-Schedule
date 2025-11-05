@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-11-02") },
+                overlineContent = { Text(text = "2025-11-05") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,11 +52,12 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 社区数据源适配新课程表")
+            UpdateItems("新增 智慧社区及其好友课表适配新课程表")
             UpdateItems("新增 新课程表的支持跨天日程的显示")
-            UpdateItems("新增 小组件")
-            UpdateItems("新增 课程表文字大小支持调整")
-            UpdateItems("优化 新课程表的默认方格长度和翻页器显示")
+            UpdateItems("新增 新课程表支持方格内显示教师","位于 选项-外观与显示-课程表")
+            UpdateItems("新增 课程表文字大小与行距支持调整")
+            UpdateItems("优化 课程表的翻页器显示")
+//            UpdateItems("新增 小组件")
 //            UpdateItems("新增 新的冷启动进入动画")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")

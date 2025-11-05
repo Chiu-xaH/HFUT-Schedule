@@ -869,7 +869,8 @@ fun MainScreen(
                                     vm = vm,
                                     hazeState = hazeState,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
-                                    onSwapShowAll = { showAll = it }
+                                    onSwapShowAll = { showAll = it },
+                                    navController = navHostTopController
                                 )
                                 // 教务
                                 CourseType.JXGLSTU.code -> JxglstuCourseTableUI(
@@ -924,7 +925,8 @@ fun MainScreen(
                                 vm,
                                 hazeState,
                                 backGroundHaze = if (useCustomBackground) backGroundSource else null,
-                                { showAll = it }
+                                onSwapShowAll = { showAll = it },
+                                navController = navHostTopController
                             )
                     }
                 }
