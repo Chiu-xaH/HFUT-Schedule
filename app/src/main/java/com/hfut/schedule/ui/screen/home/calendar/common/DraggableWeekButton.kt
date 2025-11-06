@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -175,7 +176,7 @@ fun DraggableWeekButton(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = if(shaderState == null) contentColor else Color.Unspecified,
+                            tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
                             modifier = Modifier
                                 .size(iconSize)
                                 .clickable { onPrevious() }
@@ -191,7 +192,7 @@ fun DraggableWeekButton(
                         Icon(
                             Icons.Filled.ArrowForward,
                             contentDescription = null,
-                            tint = if(shaderState == null) contentColor else Color.Unspecified,
+                            tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
                             modifier = Modifier
                                 .size(iconSize)
                                 .clickable { onNext() }

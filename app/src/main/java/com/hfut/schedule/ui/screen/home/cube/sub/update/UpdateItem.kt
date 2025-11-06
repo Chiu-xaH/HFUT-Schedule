@@ -53,10 +53,12 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("新增 云端共建支持再编辑")
+            UpdateItems("新增 小组件")
             UpdateItems("修复 修改下载后的聚焦日程后不显示导入的Bug")//
             UpdateItems("优化 考试方格对学堂的处理")//
+            UpdateItems("优化 课程表背景下的部分组件的可读性")//
+            UpdateItems("优化 调节课程表方格长度和字体以及背景时的便捷性")//
             UpdateItems("移除 新课程表自定义方格文字行距","改为跟随文字大小调整")//
-//            UpdateItems("新增 小组件")
 //            UpdateItems("新增 新的冷启动进入动画")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")

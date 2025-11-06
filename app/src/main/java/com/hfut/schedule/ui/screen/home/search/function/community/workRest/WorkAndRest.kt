@@ -328,7 +328,7 @@ fun ApiForTimeTable(
                 backGroundSource,
                 smallStyle.copy(
                     blur = 2.dp,
-                    overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                    overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
                 ),
                 enableLiquidGlass
             )

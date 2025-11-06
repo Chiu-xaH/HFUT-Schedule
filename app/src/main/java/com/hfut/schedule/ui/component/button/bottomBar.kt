@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -157,8 +158,10 @@ private fun BottomBarContentDynamic(
                 },
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = if(showColor) .9f else 0f),
-                    selectedIconColor = MaterialTheme.colorScheme.primary,
-                    selectedTextColor = MaterialTheme.colorScheme.primary
+                    selectedIconColor = if(showColor) MaterialTheme.colorScheme.primary else IconButtonDefaults.iconButtonColors().contentColor,
+                    selectedTextColor = if(showColor) MaterialTheme.colorScheme.primary else IconButtonDefaults.iconButtonColors().contentColor,
+                    unselectedIconColor = if(showColor) Color.Unspecified else IconButtonDefaults.iconButtonColors().contentColor,
+                    unselectedTextColor = if(showColor) Color.Unspecified else IconButtonDefaults.iconButtonColors().contentColor,
                 )
             )
         }
