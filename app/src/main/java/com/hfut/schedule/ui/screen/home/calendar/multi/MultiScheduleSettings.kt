@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -89,6 +90,7 @@ fun MultiScheduleSettings(
     ifSaved : Boolean,
     select : Int,
     onSelectedChange : (Int) -> Unit,
+    onShowUiSettings  : (Boolean) -> Unit,
     vm : NetWorkViewModel,
 ) {
     val context = LocalContext.current
@@ -137,33 +139,14 @@ fun MultiScheduleSettings(
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie() ?: ""
     }
-    var showUiSettings by remember { mutableStateOf(false) }
-    if (showUiSettings) {
-        CustomBottomSheet (
-            onDismissRequest = { showUiSettings = false },
-            showBottomSheet = showUiSettings,
-            autoShape = false
-        ) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
-            ) {
-                HazeBottomSheetTopBar("课程表外观", isPaddingStatusBar = false)
-                CustomCard(
-                    color=cardNormalColor()
-                ) {
-                    CalendarUISettings(true)
-                }
-                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
-            }
-        }
-    }
+
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
 
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         HazeBottomSheetTopBar("多课表", isPaddingStatusBar = false) {
             Row() {
-                FilledTonalButton(onClick = { showUiSettings = !showUiSettings}) {
+                FilledTonalButton(onClick = { onShowUiSettings(true) }) {
                     Text("外观")
                 }
                 FilledTonalIconButton(onClick = { showBottomSheet_add = true }) {

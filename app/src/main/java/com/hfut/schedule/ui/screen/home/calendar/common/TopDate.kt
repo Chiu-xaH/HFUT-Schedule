@@ -65,7 +65,6 @@ fun ScheduleTopDate(
 
                 Surface(
                     shape = CircleShape,
-                    border = if(isToday) BorderStroke(1.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)) else null,
                     modifier = Modifier
                         .padding(end = if(item ==size-1) 0.dp else style.everyPadding)
                         .clip(CircleShape)
@@ -73,7 +72,7 @@ fun ScheduleTopDate(
                             shaderState,
                             smallStyle.copy(
                                 blur = 2.dp,
-                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)
+                                overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
                             ),
                             enableLiquidGlass
                         )
@@ -85,7 +84,6 @@ fun ScheduleTopDate(
                         text = date.substringAfter("-"),
                         textAlign = TextAlign.Center,
                         fontSize = fontSize.sp,
-                        color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(horizontal = CARD_NORMAL_DP)
                     )
                 }

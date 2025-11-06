@@ -722,7 +722,8 @@ fun AddEventUI(
                                         if (editedData == null) {
                                             DataBaseManager.customEventDao.insert(targetEntity).toInt()
                                         } else {
-                                            DataBaseManager.customEventDao.update(targetEntity.copy(id = eventId))
+                                            val sId = editedData!!.supabaseId
+                                            DataBaseManager.customEventDao.update(targetEntity.copy(id = eventId, supabaseId = sId))
                                         }
                                     }.await()
                                     if(result <= 0) {

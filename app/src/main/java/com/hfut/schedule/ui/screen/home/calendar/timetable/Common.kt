@@ -282,7 +282,7 @@ private suspend fun examToTimeTableData(context : Context): List<List<TimeTableI
             val list = result[weekInfo.first-1]
 
             val name = item.course ?: continue
-            val place = item.place
+            val place = item.place?.replace("学堂","")
             list.add(TimeTableItem(
                 type = TimeTableType.EXAM,
                 name = name,
@@ -367,7 +367,6 @@ fun NewTimeTableUI(
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
-    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
 
     val list = if(week >= items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -375,7 +374,7 @@ fun NewTimeTableUI(
     }  else {
         items[week-1]
     }
-    val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextPadding
+    val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextSize
     val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
     val timeTextSize = (textSize.value-1).sp
     val hasBackground = shaderState != null
@@ -414,7 +413,7 @@ fun NewTimeTableUI(
                                     if(AppVersion.CAN_SHADER) {
                                         it.calendarSquareGlass(
                                             shaderState,
-                                            color.first.copy(customBackgroundAlpha),
+                                            MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha),
                                             enableLiquidGlass,
                                         )
                                     } else {
@@ -592,7 +591,7 @@ fun NewTimeTableUI(
                                     if(AppVersion.CAN_SHADER) {
                                         it.calendarSquareGlass(
                                             shaderState,
-                                            color.first.copy(customBackgroundAlpha),
+                                            MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha),
                                             enableLiquidGlass,
                                         )
                                     } else {

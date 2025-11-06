@@ -694,7 +694,6 @@ fun CalendarUISettings(
     val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
-    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val enableCalendarShowTeacher by DataStoreManager.enableCalendarShowTeacher.collectAsState(initial = ShowTeacherConfig.ONLY_MULTI.code)
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
@@ -722,75 +721,76 @@ fun CalendarUISettings(
 
 
     Column {
-        TransplantListItem(
-            headlineContent = {
-                Text("方格内显示教师")
-            },
-            supportingContent = {
-                Column {
-                    Row {
+        if(!tiny){
+            TransplantListItem(
+                headlineContent = {
+                    Text("方格内显示教师")
+                },
+                supportingContent = {
+                    Column {
+                        Row {
+                            FilterChip(
+                                onClick = {
+                                    scope.launch {
+                                        DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.NONE)
+                                    }
+                                },
+                                label = { Text(text = ShowTeacherConfig.NONE.description) },
+                                selected = enableCalendarShowTeacher == ShowTeacherConfig.NONE.code
+                            )
+                            Spacer(modifier = Modifier.width(10.dp))
+                            FilterChip(
+                                onClick = {
+                                    scope.launch {
+                                        DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ALL)
+                                    }
+                                },
+                                label = { Text(text = ShowTeacherConfig.ALL.description) },
+                                selected = enableCalendarShowTeacher == ShowTeacherConfig.ALL.code
+                            )
+                        }
                         FilterChip(
                             onClick = {
                                 scope.launch {
-                                    DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.NONE)
+                                    DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ONLY_MULTI)
                                 }
                             },
-                            label = { Text(text = ShowTeacherConfig.NONE.description) },
-                            selected = enableCalendarShowTeacher == ShowTeacherConfig.NONE.code
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        FilterChip(
-                            onClick = {
-                                scope.launch {
-                                    DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ALL)
-                                }
-                            },
-                            label = { Text(text = ShowTeacherConfig.ALL.description) },
-                            selected = enableCalendarShowTeacher == ShowTeacherConfig.ALL.code
+                            label = { Text(text = ShowTeacherConfig.ONLY_MULTI.description) },
+                            selected = enableCalendarShowTeacher == ShowTeacherConfig.ONLY_MULTI.code
                         )
                     }
-                    FilterChip(
-                        onClick = {
-                            scope.launch {
-                                DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ONLY_MULTI)
-                            }
-                        },
-                        label = { Text(text = ShowTeacherConfig.ONLY_MULTI.description) },
-                        selected = enableCalendarShowTeacher == ShowTeacherConfig.ONLY_MULTI.code
-                    )
-                }
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.group),null)
-            },
-        )
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.group), null)
+                },
+            )
 
-        if(!tiny)
             PaddingHorizontalDivider()
-        TransplantListItem(
-            headlineContent = {
-                Text("合并冲突方格")
-            },
-            supportingContent = {
-                if(!tiny)
-                    Text("打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格")
-            },
-            modifier = Modifier.clickable {
-                scope.launch {
-                    DataStoreManager.saveMergeSquare(!enableMergeSquare)
-                }
-            },
-            trailingContent = {
-                Switch(checked = enableMergeSquare, onCheckedChange = {
+            TransplantListItem(
+                headlineContent = {
+                    Text("合并冲突方格")
+                },
+                supportingContent = {
+                    if (!tiny)
+                        Text("打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格")
+                },
+                modifier = Modifier.clickable {
                     scope.launch {
                         DataStoreManager.saveMergeSquare(!enableMergeSquare)
                     }
-                })
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.arrow_split),null)
-            },
-        )
+                },
+                trailingContent = {
+                    Switch(checked = enableMergeSquare, onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveMergeSquare(!enableMergeSquare)
+                        }
+                    })
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.arrow_split), null)
+                },
+            )
+        }
         if(!tiny)
             PaddingHorizontalDivider()
         TransplantListItem(
@@ -823,7 +823,7 @@ fun CalendarUISettings(
         )
 
         if(useCustomBackground) {
-            var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
+//            var squareAlpha by remember { mutableFloatStateOf(customSquareAlpha) }
             if(!tiny)
                 PaddingHorizontalDivider()
             TransplantListItem(
@@ -839,13 +839,12 @@ fun CalendarUISettings(
                 }
             )
             CustomSlider(
-                value = squareAlpha,
+                value = customSquareAlpha,
                 onValueChange = {
-                    squareAlpha = it
+                    scope.launch { DataStoreManager.saveCustomSquareAlpha(it) }
                 },
-                onValueChangeFinished =  {
-                    scope.launch { DataStoreManager.saveCustomSquareAlpha(squareAlpha) }
-                },
+//                onValueChangeFinished =  {
+//                },
                 modifier = Modifier.let {
                     if(tiny) it
                     else it.padding(bottom = APP_HORIZONTAL_DP)
@@ -854,37 +853,38 @@ fun CalendarUISettings(
                 showProcessText = true
             )
         }
-        if(!tiny)
+        if(!tiny) {
             PaddingHorizontalDivider()
-        TransplantListItem(
-            headlineContent = {
-                Text("方格高度(旧) ${formatDecimal(calendarSquareHeight.toDouble(),0)}")
-            },
-            supportingContent = {
-                if(!tiny)
-                    Text("自定义方格的高度(默认值为125)")
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.height),null)
-            },
-        )
+            TransplantListItem(
+                headlineContent = {
+                    Text("方格高度(旧) ${formatDecimal(calendarSquareHeight.toDouble(),0)}")
+                },
+                supportingContent = {
+                    if(!tiny)
+                        Text("自定义方格的高度(默认值为125)")
+                },
+                leadingContent = {
+                    Icon(painterResource(R.drawable.height),null)
+                },
+            )
 
-        CustomSlider(
-            value = calendarSquareHeight,
-            onValueChange = {
-                scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
-            },
-            modifier = Modifier.let {
-                if(tiny) it
-                else it.padding(bottom = APP_HORIZONTAL_DP)
-            },
-            valueRange = 50f..200f,
-            showProcessText = true,
-            steps = 149,
-            processText = formatDecimal(calendarSquareHeight.toDouble(),0)
-        )
-        if(!tiny)
+            CustomSlider(
+                value = calendarSquareHeight,
+                onValueChange = {
+                    scope.launch { DataStoreManager.saveCalendarSquareHeight(it) }
+                },
+                modifier = Modifier.let {
+                    if(tiny) it
+                    else it.padding(bottom = APP_HORIZONTAL_DP)
+                },
+                valueRange = 50f..200f,
+                showProcessText = true,
+                steps = 149,
+                processText = formatDecimal(calendarSquareHeight.toDouble(),0)
+            )
             PaddingHorizontalDivider()
+        }
+
         TransplantListItem(
             headlineContent = {
                 Text("方格高度 ${formatDecimal(calendarSquareHeightNew.toDouble(),0)}")
@@ -920,7 +920,7 @@ fun CalendarUISettings(
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格内文字的大小(默认值为100%)")
+                    Text("自定义方格内文字的大小及其行距(默认值为100%)")
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.translate),null)
@@ -932,46 +932,15 @@ fun CalendarUISettings(
             onValueChange = {
                 scope.launch { DataStoreManager.saveCalendarSquareTextSize(it) }
             },
-            modifier = Modifier.let {
-                if(tiny) it
-                else it.padding(bottom = APP_HORIZONTAL_DP)
-            },
+            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
             valueRange = 0.25f..2f,
             showProcessText = true,
             processText = formatDecimal(calendarSquareTextSize.toDouble()*100,0)
         )
-        if(!tiny)
-            PaddingHorizontalDivider()
-        TransplantListItem(
-            headlineContent = {
-                Text("方格文字行距 ${formatDecimal(calendarSquareTextPadding.toDouble()*100,0)}%")
-            },
-            supportingContent = {
-                if(!tiny)
-                    Text("自定义方格内文字的大小(默认值为100%)，越小则每行之间越紧密")
-            },
-            leadingContent = {
-                Icon(painterResource(R.drawable.translate),null)
-            },
-        )
-
-        CustomSlider(
-            value = calendarSquareTextPadding,
-            onValueChange = {
-                scope.launch { DataStoreManager.saveCalendarSquareTextPadding(it) }
-            },
-            modifier = Modifier.let {
-                if(tiny) it
-                else it.padding(bottom = APP_HORIZONTAL_DP)
-            },
-            valueRange = 0.25f..2f,
-            showProcessText = true,
-            processText = formatDecimal(calendarSquareTextPadding.toDouble()*100,0)
-        )
         if(!tiny) {
             val color : Pair<Color,Color> = Pair(MaterialTheme.colorScheme.primaryContainer,MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f))
             val showAll = false
-            val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextPadding
+            val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextSize
             val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
             val timeTextSize = (textSize.value-1).sp
             val item = TimeTableItem(

@@ -461,6 +461,7 @@ fun JxglstuCourseTableUINext(
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
         val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
+        val squareColor =  style.containerColor.copy(customBackgroundAlpha)
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(style.rowCount),
@@ -487,7 +488,7 @@ fun JxglstuCourseTableUINext(
                                             if(AppVersion.CAN_SHADER) {
                                                 it.calendarSquareGlass(
                                                     backGroundHaze,
-                                                    style.containerColor.copy(customBackgroundAlpha),
+                                                    squareColor,
                                                     enableLiquidGlass,
                                                 )
                                             } else {

@@ -51,6 +51,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -126,6 +127,7 @@ import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -147,6 +149,7 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
 import com.hfut.schedule.ui.screen.home.focus.TodayScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
@@ -169,6 +172,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.mirror.shader.enterAnimation
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
@@ -249,6 +253,18 @@ fun MainScreen(
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
 
+    var showUiSettings by remember { mutableStateOf(false) }
+    if (showUiSettings) {
+        Dialog(
+            onDismissRequest = { showUiSettings = false }
+        ) {
+            CustomCard(
+                color= MaterialTheme.colorScheme.surface
+            ) {
+                CalendarUISettings(true)
+            }
+        }
+    }
     if (showBottomSheet_multi) {
         CustomBottomSheet (
             showBottomSheet = showBottomSheet_multi,
@@ -256,11 +272,17 @@ fun MainScreen(
             autoShape = false
         ) {
             Column {
-                MultiScheduleSettings(ifSaved,swapUI,
+                MultiScheduleSettings(
+                    ifSaved = ifSaved,
+                    select = swapUI,
                     onSelectedChange = { newSelected ->
                         swapUI = newSelected
                     },
-                    vm,
+                    onShowUiSettings = {
+                        showUiSettings = it
+                        showBottomSheet_multi = false
+                    },
+                    vm = vm,
                 )
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
@@ -435,11 +457,7 @@ fun MainScreen(
                 it
             }
         }
-//            .let {
-//                if(GlobalUIStateHolder.useEnterAnimation) {
-//                    it.enterAnimation(firstStart)
-//                } else it
-//            }
+//            .enterAnimation(firstStart)
         ,
         floatingActionButton = {
             val addRoute = remember { AppNavRoute.AddEvent.withArgs(origin = AddEventOrigin.FOCUS_ADD.name) }
@@ -566,7 +584,7 @@ fun MainScreen(
                     if(useCustomBackground) {
                         val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
                         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-
+                        val iconColor = IconButtonDefaults.iconButtonColors().contentColor
                         TopAppBar(
                             colors = topBarTransplantColor(),
                             navigationIcon = {
@@ -579,16 +597,15 @@ fun MainScreen(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
-                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                     customBackgroundAlpha
                                                 )
                                             ),
                                             enableLiquidGlass
                                         ),
-//                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surfaceContainer.copy(customBackgroundAlpha)),
                                     color = Color.Transparent
                                 ) {
-                                    Text(texts(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp, color = MaterialTheme.colorScheme.primary)
+                                    Text(texts(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
                                 }
                             },
                             title = {
@@ -602,14 +619,13 @@ fun MainScreen(
                                     val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
                                     Surface(
                                         shape = CircleShape,
-//                                        border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                         modifier = Modifier
                                             .clip(CircleShape)
                                             .glassLayer(
                                                 backGroundSource,
                                                 smallStyle.copy(
                                                     blur = 2.dp,
-                                                    overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                    overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                         customBackgroundAlpha
                                                     )
                                                 ),
@@ -625,10 +641,11 @@ fun MainScreen(
                                         ,
                                         color = Color.Transparent
                                     ) {
+
                                         Icon(
+                                            tint = iconColor,
                                             painter = painterResource(id = R.drawable.category),
                                             contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier
                                                 .padding(CARD_NORMAL_DP * 3)
                                                 .iconElementShare(route)
@@ -638,14 +655,13 @@ fun MainScreen(
                                 Spacer(Modifier.width(BUTTON_PADDING))
                                 Surface(
                                     shape = CircleShape,
-//                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                     modifier = Modifier
                                         .clip(CircleShape)
                                         .glassLayer(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
-                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                     customBackgroundAlpha
                                                 )
                                             ),
@@ -660,21 +676,20 @@ fun MainScreen(
                                     Icon(
                                         painter = painterResource(id = R.drawable.tab_inactive),
                                         contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.primary,
+                                        tint = iconColor,
                                         modifier = Modifier.padding(CARD_NORMAL_DP*3)
                                     )
                                 }
                                 Spacer(Modifier.width(BUTTON_PADDING))
                                 Surface(
                                     shape = CircleShape,
-//                                    border = BorderStroke(0.5.dp, MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)),
                                     modifier = Modifier
                                         .clip(CircleShape)
                                         .glassLayer(
                                             backGroundSource,
                                             smallStyle.copy(
                                                 blur = 2.dp,
-                                                overlayColor = MaterialTheme.colorScheme.surfaceContainer.copy(
+                                                overlayColor = MaterialTheme.colorScheme.surface.copy(
                                                     customBackgroundAlpha
                                                 )
                                             ),
@@ -689,8 +704,8 @@ fun MainScreen(
                                     Icon(
                                         painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
                                         contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.padding(CARD_NORMAL_DP*3)
+                                        modifier = Modifier.padding(CARD_NORMAL_DP*3),
+                                        tint = iconColor,
                                     )
                                 }
                                 Spacer(Modifier.width(APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)*3))
@@ -734,7 +749,7 @@ fun MainScreen(
                                     Icon(
                                         painter = painterResource(id = R.drawable.tab_inactive),
                                         contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.primary
+                                        tint = MaterialTheme.colorScheme.primary,
                                     )
                                 }
                                 IconButton(onClick = { showAll = !showAll }) {

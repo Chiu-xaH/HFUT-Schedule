@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -252,21 +253,6 @@ fun TimeTableScreen(
                     ) {
                         Text("校历")
                     }
-//                    FilledTonalButton(
-//                        onClick = {
-//                            scope.launch {
-//                                if(url == null) {
-//                                    showToast("正在从云端获取数据")
-//                                } else {
-//                                    Starter.startWebView(context,url!!,"校历", icon = R.drawable.schedule)
-//                                    showToast("即将打开网页链接,可自行下载或保存图片")
-//                                }
-//                            }
-//                        },
-//                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-//                    ) {
-//                        Text("校历")
-//                    }
                 }
             )
         },
@@ -283,7 +269,6 @@ fun TimeTableScreen(
             InnerPaddingHeight(innerPadding,false)
         }
     }
-//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -333,6 +318,7 @@ fun ApiForTimeTable(
     enableLiquidGlass : Boolean,
     customBackgroundAlpha : Float,
 ) {
+    val iconColor = IconButtonDefaults.iconButtonColors().contentColor
     var showBottomSheet by remember { mutableStateOf(false) }
     Surface(
         shape = CircleShape,
@@ -355,7 +341,7 @@ fun ApiForTimeTable(
         Icon(
             painterResource(R.drawable.info),
             null,
-            tint = MaterialTheme.colorScheme.primary,
+            tint = iconColor,
             modifier = Modifier.padding(CARD_NORMAL_DP*3)
         )
     }

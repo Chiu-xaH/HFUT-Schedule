@@ -93,7 +93,7 @@ fun DraggableWeekButton(
             Text(
                 text =  if(expanded) "第 $week 周" else "第${week}周",
                 fontSize = 15.sp,
-                color = contentColor
+                color = if(shaderState == null) contentColor else Color.Unspecified
             )
         }
     }
@@ -175,7 +175,7 @@ fun DraggableWeekButton(
                         Icon(
                             Icons.Filled.ArrowBack,
                             contentDescription = null,
-                            tint = contentColor,
+                            tint = if(shaderState == null) contentColor else Color.Unspecified,
                             modifier = Modifier
                                 .size(iconSize)
                                 .clickable { onPrevious() }
@@ -191,7 +191,7 @@ fun DraggableWeekButton(
                         Icon(
                             Icons.Filled.ArrowForward,
                             contentDescription = null,
-                            tint = contentColor,
+                            tint = if(shaderState == null) contentColor else Color.Unspecified,
                             modifier = Modifier
                                 .size(iconSize)
                                 .clickable { onNext() }
