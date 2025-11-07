@@ -52,7 +52,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(23,"热水",R.drawable.water_voc),
         SearchAppBeanLite(24, AppNavRoute.Classroom.label,AppNavRoute.Classroom.icon),
         SearchAppBeanLite(25,"体测平台",R.drawable.sports_volleyball),
-        SearchAppBeanLite(26, AppNavRoute.TimeTable.label, AppNavRoute.TimeTable.icon),
+        SearchAppBeanLite(26, AppNavRoute.WorkAndRest.label, AppNavRoute.WorkAndRest.icon),
         SearchAppBeanLite(27,"学信网", R.drawable.school),
         SearchAppBeanLite(28, AppNavRoute.Life.label,AppNavRoute.Life.icon),
         SearchAppBeanLite(29, AppNavRoute.Transfer.label,  AppNavRoute.Transfer.icon),
@@ -72,6 +72,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(43, AppNavRoute.OfficeHall.label,  AppNavRoute.OfficeHall.icon),
         SearchAppBeanLite(44,"慧新易校" ,R.drawable.corporate_fare),
         SearchAppBeanLite(45, AppNavRoute.SecondClass.label,AppNavRoute.SecondClass.icon),
+        SearchAppBeanLite(46, AppNavRoute.Appointment.label,AppNavRoute.Appointment.icon),
     )
 
     val funcMaps = funcDefault.toMutableStateList()

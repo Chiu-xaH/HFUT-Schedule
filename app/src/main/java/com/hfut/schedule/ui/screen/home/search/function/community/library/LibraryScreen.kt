@@ -660,7 +660,7 @@ fun LibraryMineUI(
                             Text("研讨间预约")
                         },
                         supportingContent = {
-                            Text("合肥&宣城校区(需校园网)")
+                            Text("合肥&宣城校区(需校园网)(应前往图书馆线下预约)")
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.meeting_room),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL)))

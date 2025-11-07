@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.function.community.appointment.Appointment
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRate
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryItem
@@ -190,7 +191,7 @@ fun SearchScreen(
                 SearchAppBean(23,"饮水机 热水机 趣智校园", { HotWater() }),
                 SearchAppBean(24,"${AppNavRoute.Classroom.label} 空教室", { Classroom(navController ) },AppNavRoute.Classroom.route),
                 SearchAppBean(25,"体育 云运动 乐跑 校园跑 体测 体育测试 体检", { LePaoYun(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.PE_HOME_URL)),
-                SearchAppBean(26,"${AppNavRoute.TimeTable.label} 校历", { WorkAndRest(navController ) },AppNavRoute.TimeTable.route),
+                SearchAppBean(26,"${AppNavRoute.WorkAndRest.label} 校历", { WorkAndRest(navController ) },AppNavRoute.WorkAndRest.withArgs()),
                 SearchAppBean(27,"学信网", { XueXin(navController ) },AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL)),
                 SearchAppBean(28,"${AppNavRoute.Life.label} 校园 校园 天气 教学楼 建筑 学堂", { Life(navController ) },AppNavRoute.Life.withArgs(false)),
                 SearchAppBean(29,"${AppNavRoute.Transfer.label}", { Transfer(ifSaved,navController ) }, AppNavRoute.Transfer.route),
@@ -210,7 +211,7 @@ fun SearchScreen(
                 SearchAppBean(43,"${AppNavRoute.OfficeHall.label}", { OfficeHall(navController ) },AppNavRoute.OfficeHall.route),
                 SearchAppBean(44,"慧新易校 一卡通 校园卡 账单 充值 缴费 合肥" , { HuiXin(navController ) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
                 SearchAppBean(45,"${AppNavRoute.SecondClass.label}", { SecondClass(navController ) }, AppNavRoute.SecondClass.route),
-//                SearchAppBean(46,"${AppNavRoute..label}", { (navController ) }, AppNavRoute..route),
+                SearchAppBean(46,"${AppNavRoute.Appointment.label} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment(navController ) }, AppNavRoute.Appointment.route),
             )
         )
     }

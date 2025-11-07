@@ -19,6 +19,8 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.kv.IDataStore
+import com.hfut.schedule.ui.util.color.ColorMode
+import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.materialkolor.PaletteStyle
@@ -40,19 +42,6 @@ object DataStoreManager : IDataStore {
      */
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "DataStore")
     private val dataStore = MyApplication.Companion.context.dataStore
-    enum class ColorMode(val code : Int) {
-        LIGHT(1),DARK(2),AUTO(0)
-    }
-
-    enum class AnimationSpeed(val code : Int,val speed : Int,val title : String) {
-        SLOW(3,550,"慢"),NORMAL(0,400,"正常"),FAST(1,250,"快"),NONE(2,0,"无")
-    }
-    enum class ColorStyle(val code : Int,val description: String,val style : PaletteStyle) {
-        DEFAULT(2,"正常", PaletteStyle.TonalSpot),
-        LIGHT(1,"淡雅", PaletteStyle.Neutral),
-        DEEP(3,"艳丽", PaletteStyle.Vibrant),
-        BLACK(0,"黑白", PaletteStyle.Monochrome),
-    }
 
     val SEARCH_DEFAULT_STR = GlobalUIStateHolder.funcDefault.map { it.id }.joinToString(",")
 

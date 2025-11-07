@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.calendar.timetable
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,10 +15,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
@@ -74,6 +78,9 @@ fun Timetable(
         Pair(parseTimeToFloat("12:10"),parseTimeToFloat("14:00")),
     ),
     zipTimeFactor : Float = 0.1f,
+    onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
+    onLongTapBlankRegion : ((Offset) -> Unit)? = null,
+    onTapBlankRegion : ((Offset) -> Unit)? = null,
     content : @Composable (List<TimeTableItem>) -> Unit
 ) {
     // 动画化 showAll 的切换
@@ -107,6 +114,13 @@ fun Timetable(
                             it.drawLineTimeTable(columnCount)
                         } else
                             it
+                    }
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = onDoubleTapBlankRegion,
+                            onLongPress = onLongTapBlankRegion,
+                            onTap = onTapBlankRegion
+                        )
                     }
             ) {
                 // 按天分组并布局

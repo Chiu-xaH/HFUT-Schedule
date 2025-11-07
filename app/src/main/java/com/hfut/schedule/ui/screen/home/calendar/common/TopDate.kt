@@ -23,7 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -127,8 +130,14 @@ fun ScheduleTopDate(
                     textAlign = TextAlign.Center,
                     textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
                     fontSize = fontSizeAnimated.sp,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = MaterialTheme.colorScheme.surface.copy(alpha = 1f),
+                            offset = Offset(0f, 0f),
+                            blurRadius = 10f
+                        )
+                    ),
                     color = MaterialTheme.colorScheme.primary
-//                    fontWeight = if(isToday) FontWeight.Bold else FontWeight.Normal
                 )
             }
         }

@@ -4,12 +4,7 @@
     android:label="@string/widget_course"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen|keyguard"
+    android:initialLayout="@layout/glance_default_loading_layout"
     >
 </appwidget-provider>
 <!--    android:previewImage="@drawable"-->
-
-    <!--    android:resizeMode="horizontal|vertical"-->
-    <!--    android:widgetCategory="home_screen"-->
-
-<!--    android:initialLayout="@layout/glance_default_loading_layout"-->
-

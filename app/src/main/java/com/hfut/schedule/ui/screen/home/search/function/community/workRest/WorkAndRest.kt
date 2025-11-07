@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
@@ -58,6 +59,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
+import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -77,7 +79,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @Composable
-fun TimeTableUI(friendUserName : String? = null) {
+private fun TimeTableUI(friendUserName : String? = null) {
     val data = remember { getFormCommunity(friendUserName) } ?: return
     with(data) {
         val startDate = start.substringBefore(" ")
@@ -189,15 +191,15 @@ fun TimeTableUI(friendUserName : String? = null) {
 fun WorkAndRest(
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.TimeTable.route }
+    val route = remember { AppNavRoute.WorkAndRest.withArgs() }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.TimeTable.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.WorkAndRest.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TimeTable.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TimeTable,route)
+            navController.navigateForTransition(AppNavRoute.WorkAndRest,route)
         }
     )
 }
@@ -206,6 +208,7 @@ fun WorkAndRest(
 @Composable
 fun TimeTableScreen(
     navController : NavHostController,
+    friendId : String?
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -219,22 +222,21 @@ fun TimeTableScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TimeTable.route }
+    val route = remember { AppNavRoute.WorkAndRest.withArgs(friendId) }
     val backdrop = rememberLayerBackdrop()
 
     CustomTransitionScaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         route = route,
-
         navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.TimeTable.label) },
+                title = { Text(AppNavRoute.WorkAndRest.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route,AppNavRoute.TimeTable.icon)
+                    TopBarNavigationIcon(navController,route,AppNavRoute.WorkAndRest.icon)
                 },
                 actions = {
                     LiquidButton(
@@ -265,111 +267,10 @@ fun TimeTableScreen(
                 .fillMaxSize()
         ) {
             InnerPaddingHeight(innerPadding,true)
-            TimeTableUI()
+            TimeTableUI(friendId)
             InnerPaddingHeight(innerPadding,false)
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ApiForTimeTable(friendUserName: String, hazeState: HazeState) {
-    var showBottomSheet by remember { mutableStateOf(false) }
 
-    IconButton(
-        onClick = { showBottomSheet = true }
-    ) {
-        Icon(painterResource(R.drawable.info),null, tint = MaterialTheme.colorScheme.primary)
-    }
-    if (showBottomSheet) {
-        HazeBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("$friendUserName 作息")
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ){
-                    TimeTableUI(friendUserName)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ApiForTimeTable(
-    friendUserName: String,
-    hazeState: HazeState,
-    backGroundSource : ShaderState,
-    enableLiquidGlass : Boolean,
-    customBackgroundAlpha : Float,
-) {
-    val iconColor = IconButtonDefaults.iconButtonColors().contentColor
-    var showBottomSheet by remember { mutableStateOf(false) }
-    Surface(
-        shape = CircleShape,
-        modifier = Modifier
-            .clip(CircleShape)
-            .glassLayer(
-                backGroundSource,
-                smallStyle.copy(
-                    blur = 2.dp,
-                    overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
-                ),
-                enableLiquidGlass
-            )
-            .clickable {
-                showBottomSheet = true
-            }
-        ,
-        color = Color.Transparent
-    ) {
-        Icon(
-            painterResource(R.drawable.info),
-            null,
-            tint = iconColor,
-            modifier = Modifier.padding(CARD_NORMAL_DP*3)
-        )
-    }
-
-    if (showBottomSheet) {
-        HazeBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("$friendUserName 作息")
-                },) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ){
-                    TimeTableUI(friendUserName)
-                    Spacer(modifier = Modifier.height(20.dp))
-                }
-            }
-        }
-    }
-}

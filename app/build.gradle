@@ -9,20 +9,6 @@ plugins {
 
 android {
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
-    def keystoreProperties = new Properties()
-    def keystorePropertiesFile = rootProject.file("local.properties")
-    if (keystorePropertiesFile.exists()) {
-        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-    }
-
-    signingConfigs {
-        chiu {
-            storeFile file(keystoreProperties["RELEASE_STORE_FILE"])
-            storePassword keystoreProperties["RELEASE_STORE_PASSWORD"]
-            keyAlias keystoreProperties["RELEASE_KEY_ALIAS"]
-            keyPassword keystoreProperties["RELEASE_KEY_PASSWORD"]
-        }
-    }
 
     namespace 'com.hfut.schedule'
 
@@ -89,7 +75,6 @@ android {
             // 关闭以防止F-Droid构建时与本包不同
             vcsInfo.include false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.chiu
         }
     }
 
@@ -221,7 +206,7 @@ dependencies {
     // 液态玻璃
     implementation(libs.liquid.glass)
     // 小组件
-//    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.appwidget)
 //    implementation(libs.androidx.glance.material3)
     // 权限
     implementation(libs.accompanist.permissions)

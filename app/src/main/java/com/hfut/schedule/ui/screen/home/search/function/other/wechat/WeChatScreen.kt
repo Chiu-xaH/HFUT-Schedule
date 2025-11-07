@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.wechat
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -38,40 +36,36 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.StartAppIconButton
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
-private data class ItemBean2(val name : String,val text : String?,val icon : Int,val url : String)
+private data class ItemBean2(val name : String,val text : String?,val url : String)
 
-private data class ItemBean(val name : String,val text : String?,val icon : Int)
+private data class ItemBean(val name : String,val text : String?)
 
 
 private val list1 = listOf(
-    ItemBean("校务行","亮点功能: 官方成绩单",R.drawable.article),
-    ItemBean("第二课堂","亮点功能: 二课成绩单",R.drawable.school),
-    ItemBean("合工大校友服务平台","亮点功能: 校友卡回校",R.drawable.local_library),
-    ItemBean("海乐生活","洗衣机用，部分接口已经被聚在工大集成，支付相关功能仍需使用微信",R.drawable.laundry),
+    ItemBean("校务行","可查官方成绩单"),
+    ItemBean("第二课堂","可查二课成绩"),
+    ItemBean("合工大校友服务平台","校友卡回校"),
+    ItemBean("海乐生活","宣城校区洗衣机用，部分接口已经被聚在工大集成，支付相关功能仍需使用微信"),
 )
 private val list2 = listOf(
-    ItemBean2("合工大教务","亮点功能: 教室课表、同班同学、无需教评可查看成绩",R.drawable.search,"https://jwglapp.hfut.edu.cn/uniapp/"),
+    ItemBean2("合工大教务","教室课表、同班同学、无需教评可查看成绩等功能","https://jwglapp.hfut.edu.cn/uniapp/"),
 )
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -132,7 +126,6 @@ fun WeChatScreen(
             modifier = Modifier
                 .backDropSource(backDrop)
                 .hazeSource(hazeState)
-//                    .padding(innerPadding)
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
         ) {
@@ -152,7 +145,6 @@ fun WeChatScreen(
                             headlineContent = { Text(name)} ,
                             supportingContent = text?.let { { Text(it) } },
                             overlineContent = { Text(url) },
-                            leadingContent = { Icon(painterResource(icon),null)},
                             modifier = Modifier.combinedClickable(
                                 onClick = {
                                     showedUrl = url
@@ -174,7 +166,6 @@ fun WeChatScreen(
                         CardListItem(
                             headlineContent = { Text(name)},
                             supportingContent = text?.let { { Text(it) } },
-                            leadingContent = { Icon(painterResource(icon),null)},
                             modifier = Modifier.clickable { ClipBoardUtils.copy(name) }
                         )
                     }
@@ -184,5 +175,4 @@ fun WeChatScreen(
             InnerPaddingHeight(innerPadding,false)
         }
     }
-//    }
 }

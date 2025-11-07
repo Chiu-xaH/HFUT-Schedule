@@ -104,6 +104,8 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
+import com.hfut.schedule.ui.util.color.ColorMode
+import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
 import com.hfut.schedule.ui.util.color.hsvToLong
 import com.hfut.schedule.ui.util.color.longToHexColor
@@ -129,7 +131,7 @@ import java.io.File
 import java.io.FileOutputStream
 
 
-val styleList = DataStoreManager.ColorStyle.entries
+private val styleList = ColorStyle.entries
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -205,9 +207,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
         val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
-        val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = DataStoreManager.ColorMode.AUTO.code)
+        val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
-        val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
+        val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
@@ -355,30 +357,30 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Row {
                             FilterChip(
                                 onClick = {
-                                    scope.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.LIGHT) }
+                                    scope.launch { DataStoreManager.saveColorMode(ColorMode.LIGHT) }
                                 },
-                                label = { Text(text = "浅色") }, selected = currentColorModeIndex == DataStoreManager.ColorMode.LIGHT.code
+                                label = { Text(text = "浅色") }, selected = currentColorModeIndex == ColorMode.LIGHT.code
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             FilterChip(
                                 onClick = {
-                                    scope.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.DARK) }
+                                    scope.launch { DataStoreManager.saveColorMode(ColorMode.DARK) }
                                 },
-                                label = { Text(text = "深色") }, selected = currentColorModeIndex == DataStoreManager.ColorMode.DARK.code
+                                label = { Text(text = "深色") }, selected = currentColorModeIndex == ColorMode.DARK.code
                             )
                             Spacer(modifier = Modifier.width(10.dp))
                             FilterChip(
                                 onClick = {
-                                    scope.launch { DataStoreManager.saveColorMode(DataStoreManager.ColorMode.AUTO) }
+                                    scope.launch { DataStoreManager.saveColorMode(ColorMode.AUTO) }
                                 },
-                                label = { Text(text = "跟随系统") }, selected = currentColorModeIndex == DataStoreManager.ColorMode.AUTO.code
+                                label = { Text(text = "跟随系统") }, selected = currentColorModeIndex == ColorMode.AUTO.code
                             )
                         }
                     },
                     leadingContent = { Icon(painterResource(
                         when(currentColorModeIndex) {
-                            DataStoreManager.ColorMode.DARK.code -> R.drawable.dark_mode
-                            DataStoreManager.ColorMode.LIGHT.code -> R.drawable.light_mode
+                            ColorMode.DARK.code -> R.drawable.dark_mode
+                            ColorMode.LIGHT.code -> R.drawable.light_mode
                             else -> R.drawable.routine
                         }
                     ), contentDescription = "Localized description",) },

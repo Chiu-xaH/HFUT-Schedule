@@ -76,7 +76,7 @@ fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.c
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = color.copy(0.35f)),
+                tint = HazeTint(color = color.copy(0.4f)),
                 backgroundColor = color,
                 blurRadius = MyApplication.BLUR_RADIUS.dp* 1.2f,
                 noiseFactor = 0f
@@ -115,7 +115,7 @@ fun Modifier.topBarBlur(
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
-                tint = HazeTint(color = color.let { if(it == Color.Transparent) it else it.copy(.35f) }),
+                tint = HazeTint(color = color.let { if(it == Color.Transparent) it else it.copy(.4f) }),
                 backgroundColor = backgroundColor,
                 blurRadius = MyApplication.BLUR_RADIUS.dp*1.2f,
                 noiseFactor = 0f

@@ -1,19 +1,25 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,14 +35,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
@@ -51,20 +60,19 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
-import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTablePreview
 import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTableUI
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.allToTimeTableData
+import com.hfut.schedule.ui.screen.home.calendar.timetable.parseTimeToFloat
+import com.hfut.schedule.ui.screen.home.calendar.timetable.timeToY
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -87,6 +95,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
+import kotlin.math.roundToInt
 
 suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<CourseUnitBean> {
     try {
@@ -518,7 +527,7 @@ fun JxglstuCourseTableUI(
             }
         ) {
             val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-
+            var isExpand by remember { mutableStateOf(false) }
             NewTimeTableUI(
                 items,
                 currentWeek.toInt(),
@@ -554,31 +563,52 @@ fun JxglstuCourseTableUI(
                 }
             }
 
-
-            // 中间
-            DraggableWeekButton(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                expanded = shouldShowAddButton,
+            ShareTwoContainer2D(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(bottom = innerPadding.calculateBottomPadding() - navigationBarHeightPadding)
-                    .padding(APP_HORIZONTAL_DP)
-                ,
-                onClick = {
-                    if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                        currentWeek = 1
-                        onDateChange(getJxglstuStartDate())
-                    } else {
-                        currentWeek = DateTimeManager.weeksBetweenJxglstu
-                        onDateChange(LocalDate.now())
+                    .padding(APP_HORIZONTAL_DP),
+                show = !isExpand,
+                defaultContent = {
+                    val interactionSource = remember { MutableInteractionSource() }
+                    Surface(
+                        color = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                        shape = MaterialTheme.shapes.medium,
+                        shadowElevation = APP_HORIZONTAL_DP,
+                        modifier = Modifier
+                            .padding(top = innerPadding.calculateTopPadding())
+                            .clickable(indication = null,interactionSource = interactionSource) { isExpand = !isExpand }
+                    ) {
+                        NewTimeTablePreview(
+                            items = items, // 一周课程,
+                            currentWeek = currentWeek.toInt(),
+                        )
                     }
                 },
-                shaderState = backGroundHaze,
-                currentWeek = currentWeek,
-                key = today,
-                onNext = { nextWeek() },
-                onPrevious = { previousWeek() }
+                secondContent = {
+                    DraggableWeekButton(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                        expanded = shouldShowAddButton,
+
+                        onClick = {
+//                            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+//                                currentWeek = 1
+//                                onDateChange(getJxglstuStartDate())
+//                            } else {
+//                                currentWeek = DateTimeManager.weeksBetweenJxglstu
+//                                onDateChange(LocalDate.now())
+//                            }
+                            isExpand = !isExpand
+                        },
+                        shaderState = backGroundHaze,
+                        currentWeek = currentWeek,
+                        key = today,
+                        onNext = { nextWeek() },
+                        onPrevious = { previousWeek() }
+                    )
+                }
             )
+            // 中间
         }
     }
 }
@@ -593,119 +623,5 @@ fun getNewWeek() : Long {
     } catch (_ : Exception) {
         DateTimeManager.weeksBetweenJxglstu
     }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<courseDetailDTOList>, vm: NetWorkViewModel, hazeState: HazeState,friendUserName : String?) {
-    var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
-
-    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
-    if (showBottomSheetTotalCourse) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheetTotalCourse = false },
-            showBottomSheet = showBottomSheetTotalCourse,
-            hazeState = hazeState,
-            autoShape = false
-        ) {
-            HazeBottomSheetTopBar(sheet.name, isPaddingStatusBar = false)
-            DetailInfos(sheet,friendUserName != null, vm = vm, hazeState )
-        }
-    }
-    Column {
-        HazeBottomSheetTopBar("第${week}周 周${numToChinese(weekday)}", isPaddingStatusBar = false)
-        LargeCard(
-            title = "${courses.size}节课冲突"
-        ) {
-            for(index in courses.indices) {
-                val course = courses[index]
-                val startTime = course.classTime.substringBefore("-")
-                val name = course.name
-                val place = course.place
-                TransplantListItem(
-                    headlineContent = {
-                        Text(name)
-                    },
-                    supportingContent = {
-                        Text("${place?.replace("学堂","")} $startTime")
-                    },
-                    leadingContent = {
-                        Text((index+1).toString())
-                    },
-                    colors =  if(name.contains("考试")) MaterialTheme.colorScheme.errorContainer else null,
-                    modifier = Modifier.clickable {
-                        // 如果是考试
-                        if(name.contains("考试")) {
-                            return@clickable
-                        }
-                        sheet = course
-                        showBottomSheetTotalCourse = true
-                    }
-                )
-            }
-        }
-        Spacer(Modifier.height(40.dp))
-    }
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: NetWorkViewModel, hazeState: HazeState) {
-    var courseName by remember { mutableStateOf("") }
-    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
-    if (showBottomSheetTotalCourse) {
-        HazeBottomSheet (
-            onDismissRequest = {
-                showBottomSheetTotalCourse = false
-            },
-            hazeState = hazeState,
-            showBottomSheet = showBottomSheetTotalCourse
-        ) {
-            CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
-        }
-    }
-    Column {
-        HazeBottomSheetTopBar("第${week}周 周${numToChinese(weekday)}", isPaddingStatusBar = false)
-        LargeCard(
-            title = "${courses.size}节课冲突"
-        ) {
-            for(index in courses.indices) {
-                val course = courses[index]
-                val list = course.split("\n")
-                val startTime = list[0]
-                val name = list[1]
-                val place =
-                    if(list.size > 2) {
-                        list[2]
-                    } else null
-                TransplantListItem(
-                    headlineContent = {
-                        Text(name)
-                    },
-                    supportingContent = {
-                        Text("${place?.replace("学堂","")} $startTime")
-                    },
-                    leadingContent = {
-                        Text((index+1).toString())
-                    },
-                    colors =  if(name.contains("考试")) MaterialTheme.colorScheme.errorContainer else null,
-                    modifier = Modifier.clickable {
-                        // 如果是考试
-                        if(name.contains("考试")) {
-                            return@clickable
-                        }
-                        if(name.contains("日程")) {
-                            return@clickable
-                        }
-                        courseName = name
-                        showBottomSheetTotalCourse = true
-                    }
-                )
-            }
-        }
-        Spacer(Modifier.height(40.dp))
-    }
-
 }
 

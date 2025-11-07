@@ -1,17 +1,29 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable
 
 import android.content.Context
+import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,10 +41,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
@@ -47,6 +63,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -56,18 +73,24 @@ import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCoursesFromCommunity
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAppNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
+import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import kotlin.math.roundToInt
 
 /**
  * @param startTime 传入HH-MM
@@ -383,6 +406,9 @@ fun NewTimeTableUI(
     val startTime = earliestTime?.let {
         minOf(parseTimeToFloat(it),DEFAULT_START_TIME)
     } ?: DEFAULT_START_TIME
+
+    val navController = LocalAppNavController.current
+
     if(enableMergeSquare) {
         Timetable(
             items = list,
@@ -391,7 +417,13 @@ fun NewTimeTableUI(
             showLine = !hasBackground,
             innerPadding = innerPadding,
             hourHeight = calendarSquareHeight.dp,
-            startTime = startTime
+            startTime = startTime,
+            onDoubleTapBlankRegion = {
+                navController.navigateForTransition(AppNavRoute.AddEvent, AppNavRoute.AddEvent.withArgs())
+            },
+            onTapBlankRegion = {
+                showToast("双击空白区域添加日程")
+            }
         ) { list ->
             val color : Pair<Color,Color> = if(!hasBackground) {
                 when {
@@ -569,10 +601,16 @@ fun NewTimeTableUI(
             innerPadding = innerPadding,
             hourHeight = calendarSquareHeight.dp,
             startTime = startTime,
+            onDoubleTapBlankRegion = {
+                navController.navigateForTransition(AppNavRoute.AddEvent, AppNavRoute.AddEvent.withArgs())
+            },
+            onTapBlankRegion = {
+                showToast("双击空白区域添加日程")
+            }
         ) { item ->
             val color : Pair<Color,Color> = if(!hasBackground) {
                 when(item.type) {
-                    TimeTableType.FOCUS -> Pair(MaterialTheme.colorScheme.primary,MaterialTheme.colorScheme.primaryContainer)
+                    TimeTableType.FOCUS -> Pair(MaterialTheme.colorScheme.primary,MaterialTheme.colorScheme.onPrimary.copy(.6f))
                     TimeTableType.COURSE -> Pair(MaterialTheme.colorScheme.primaryContainer,MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f))
                     TimeTableType.EXAM -> Pair(MaterialTheme.colorScheme.errorContainer,MaterialTheme.colorScheme.onErrorContainer.copy(.6f))
                 }
@@ -694,6 +732,126 @@ fun NewTimeTableUI(
 }
 
 @Composable
+fun NewTimeTablePreview(
+    items: List<List<TimeTableItem>>,
+    currentWeek : Int,
+    modifier: Modifier = Modifier,
+) {
+    // 设置一行显示几周
+    val columnCount = 4
+    val padding = 4.dp
+    val endTime = remember { parseTimeToFloat("21:50") }
+    // 用 LazyVerticalGrid 网格布局
+    LazyVerticalGrid(
+        modifier = modifier.padding(padding),
+        columns = GridCells.Fixed(columnCount),
+        horizontalArrangement = Arrangement.spacedBy(padding),
+        verticalArrangement = Arrangement.spacedBy(padding)
+    ) {
+        items(items.size) { week ->
+            val list = items[week]
+            val isCurrentWeek = currentWeek == week+1
+
+            ColumnVertical {
+                MiniTimetablePreview(
+                    items = list,
+                    endTime = endTime,
+                    modifier = Modifier
+                        .height(160.dp)
+                        .width(90.dp)
+                        .border(
+                            1.dp,
+                            if (isCurrentWeek) MaterialTheme.colorScheme.primary else DividerDefaults.color,
+                            MaterialTheme.shapes.small
+                        )
+                        .padding(padding)
+                )
+                Text("第${week+1}周",modifier = Modifier.padding(top = padding), style = MaterialTheme.typography.labelSmall.copy(
+                    if(isCurrentWeek) MaterialTheme.colorScheme.primary else Color.Gray
+                ))
+            }
+        }
+    }
+}
+
+
+@Composable
+fun MiniTimetablePreview(
+    items: List<TimeTableItem>,
+    modifier: Modifier = Modifier,
+    startTime: Float = 8f,
+    endTime: Float = parseTimeToFloat("21:50"),
+    zipTime: List<Pair<Float, Float>> = listOf(
+        Pair(parseTimeToFloat("12:10"), parseTimeToFloat("14:00")),
+    ),
+    zipTimeFactor: Float = 0.1f
+) {
+    val density = LocalDensity.current
+    val columnCount = if(items.find { it.dayOfWeek in 6..7 } == null) 5 else 7
+    val colors = mapOf(
+        TimeTableType.COURSE to MaterialTheme.colorScheme.primaryContainer,
+        TimeTableType.FOCUS to MaterialTheme.colorScheme.primary,
+        TimeTableType.EXAM to MaterialTheme.colorScheme.errorContainer,
+    )
+
+    BoxWithConstraints(
+        modifier = modifier
+    ) {
+        val totalWidthPx = with(density) { maxWidth.toPx() }
+        val totalHeightPx = with(density) { maxHeight.toPx() }
+        val compressedDuration = (endTime - startTime) - zipTime.sumOf { (s, e) ->
+            ((e - s) * (1 - zipTimeFactor)).toDouble()
+        }.toFloat()
+
+        val hourPx = totalHeightPx / compressedDuration
+        val columnWidthPx = totalWidthPx / columnCount
+        val yEnd = timeToY(endTime, hourPx, startTime, zipTime, zipTimeFactor)
+        val totalHeightDp = with(density) { yEnd.toDp() }
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .height(totalHeightDp)
+        ) {
+            // 绘制课程色块
+            items.groupBy { it.dayOfWeek }.forEach { (day, dayCourses) ->
+                val dayIndex = (day - 1).coerceIn(0, columnCount - 1)
+
+                dayCourses.forEach { course ->
+                    val start = parseTimeToFloat(course.startTime)
+                    val end = parseTimeToFloat(course.endTime)
+
+                    val yStart = timeToY(start, hourPx, startTime, zipTime, zipTimeFactor)
+                    val yEndEach = timeToY(end, hourPx, startTime, zipTime, zipTimeFactor)
+                    val heightPx = (yEndEach - yStart).coerceAtLeast(2f)
+                    val xOffset = dayIndex * columnWidthPx
+
+                    Box(
+                        modifier = Modifier
+                            .offset {
+                                IntOffset(
+                                    xOffset.roundToInt(),
+                                    yStart.roundToInt()
+                                )
+                            }
+                            .width(with(density) { columnWidthPx.toDp() })
+                            .height(with(density) { heightPx.toDp() })
+                            .padding(horizontal = 1.dp)
+                            .clip(RoundedCornerShape(1.5.dp))
+                            .background(
+                                colors[course.type] ?: MaterialTheme.colorScheme.primaryContainer
+                            )
+                    )
+                }
+            }
+        }
+    }
+}
+
+
+
+
+@Composable
 fun TimeTableDetail(
     bean : List<TimeTableItem>
 ) {
@@ -727,7 +885,9 @@ fun TimeTableDetail(
                 }
             }
             item {
-                Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
+                Spacer(Modifier
+                    .height(APP_HORIZONTAL_DP)
+                    .navigationBarsPadding())
             }
         }
     }

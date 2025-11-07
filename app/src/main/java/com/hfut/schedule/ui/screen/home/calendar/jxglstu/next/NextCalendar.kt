@@ -1,14 +1,13 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu.next
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +21,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,26 +53,28 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.hfut.schedule.ui.component.container.LargeCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
-
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.MultiCourseSheetUI
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import dev.chrisbanes.haze.HazeState
 
 
@@ -634,3 +635,64 @@ fun parseSingleChineseDigit(text: Char): Int = when (text) {
     '九' -> 9
     else -> throw IllegalArgumentException("未知数字: $text")
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: NetWorkViewModel, hazeState: HazeState) {
+    var courseName by remember { mutableStateOf("") }
+    var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
+    if (showBottomSheetTotalCourse) {
+        HazeBottomSheet (
+            onDismissRequest = {
+                showBottomSheetTotalCourse = false
+            },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheetTotalCourse
+        ) {
+            CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
+        }
+    }
+    Column {
+        HazeBottomSheetTopBar("第${week}周 周${numToChinese(weekday)}", isPaddingStatusBar = false)
+        LargeCard(
+            title = "${courses.size}节课冲突"
+        ) {
+            for(index in courses.indices) {
+                val course = courses[index]
+                val list = course.split("\n")
+                val startTime = list[0]
+                val name = list[1]
+                val place =
+                    if(list.size > 2) {
+                        list[2]
+                    } else null
+                TransplantListItem(
+                    headlineContent = {
+                        Text(name)
+                    },
+                    supportingContent = {
+                        Text("${place?.replace("学堂","")} $startTime")
+                    },
+                    leadingContent = {
+                        Text((index+1).toString())
+                    },
+                    colors =  if(name.contains("考试")) MaterialTheme.colorScheme.errorContainer else null,
+                    modifier = Modifier.clickable {
+                        // 如果是考试
+                        if(name.contains("考试")) {
+                            return@clickable
+                        }
+                        if(name.contains("日程")) {
+                            return@clickable
+                        }
+                        courseName = name
+                        showBottomSheetTotalCourse = true
+                    }
+                )
+            }
+        }
+        Spacer(Modifier.height(40.dp))
+    }
+
+}
+

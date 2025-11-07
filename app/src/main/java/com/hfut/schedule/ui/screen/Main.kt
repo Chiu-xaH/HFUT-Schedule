@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventScreen
+import com.hfut.schedule.ui.screen.home.search.function.community.appointment.AppointmentScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.BusScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.FailRateScreen
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
@@ -528,8 +529,15 @@ fun MainHost(
                     WeChatScreen(navController)
                 }
                 // 作息
-                transitionComposable(route = AppNavRoute.TimeTable.route) {
-                    TimeTableScreen(navController)
+                transitionComposable(
+                    route = AppNavRoute.WorkAndRest.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.WorkAndRest.Args.entries)
+                ) { backStackEntry ->
+                    val name = backStackEntry.arguments?.getString(AppNavRoute.WorkAndRest.Args.FRIEND_ID.argName) ?: (AppNavRoute.WorkAndRest.Args.FRIEND_ID.default as String?) ?: null
+                    TimeTableScreen(
+                        navController,
+                        name,
+                    )
                 }
                 // 海乐生活
                 transitionComposable(route = AppNavRoute.HaiLeWashing.route) {
@@ -679,6 +687,10 @@ fun MainHost(
                 // 校车
                 transitionComposable(AppNavRoute.Bus.route) {
                     BusScreen(networkVm,navController)
+                }
+                // 社区预约
+                transitionComposable(AppNavRoute.Appointment.route) {
+                    AppointmentScreen(networkVm,navController)
                 }
                 // 办事
                 transitionComposable(AppNavRoute.OfficeHall.route) {

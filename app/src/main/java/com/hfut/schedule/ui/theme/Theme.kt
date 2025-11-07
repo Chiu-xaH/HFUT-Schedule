@@ -27,12 +27,13 @@ import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ColorMode
+import com.hfut.schedule.ui.util.color.ColorMode
+import com.hfut.schedule.ui.util.color.ColorStyle
 import com.xah.uicommon.style.color.TransparentSystemBars
 import com.hfut.schedule.ui.util.color.deepen
 import com.materialkolor.rememberDynamicColorScheme
 
-private val list = DataStoreManager.ColorStyle.entries
+private val list = ColorStyle.entries
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -103,15 +104,15 @@ fun AppTheme(
             }
         }
     } else {
-        val style by DataStoreManager.customColorStyle.collectAsState(initial = DataStoreManager.ColorStyle.DEFAULT.code)
+        val style by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val scheme = rememberDynamicColorScheme(
             seedColor = Color(customColor),
             isDark = isInDark,
             isAmoled = usePureBlack,
-            style = list.find { it.code == style }?.style ?: DataStoreManager.ColorStyle.DEFAULT.style
+            style = list.find { it.code == style }?.style ?: ColorStyle.DEFAULT.style
         )
         scheme.let {
-            if(style == DataStoreManager.ColorStyle.BLACK.code) {
+            if(style == ColorStyle.BLACK.code) {
                 it.copy(
                     primaryContainer = it.secondaryContainer.deepen(if(isInDark) 0.3f else 0.2f,isInDark),
                     primary = it.primary.deepen(-0.2f,isInDark),

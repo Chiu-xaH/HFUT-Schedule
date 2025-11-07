@@ -127,7 +127,16 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object Holiday : AppNavRoute("HOLIDAY","法定假日",R.drawable.beach_access)
     object News : AppNavRoute("News","通知公告",R.drawable.stream)
     object Wechat : AppNavRoute("WECHAT","微信专区",R.drawable.wechat)
-    object TimeTable : AppNavRoute("TIME_TABLE","作息",R.drawable.schedule)
+    object Appointment : AppNavRoute("APPOINTMENT","社区预约",R.drawable.table_restaurant)
+    object WorkAndRest : AppNavRoute("WORK_AND_REST","作息",R.drawable.schedule)  {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any?,override val isNullable: Boolean) : NavArg {
+            FRIEND_ID("friend_id", NavType.StringType,null,true),
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(friendId : String? = null): String = withArgs(
+            Args.FRIEND_ID.argName to friendId,
+        )
+    }
     object HaiLeWashing : AppNavRoute("HAILE_WASHING","海乐生活",R.drawable.local_laundry_service)
     object Fee : AppNavRoute("Fee","学费",R.drawable.paid)
     object StuTodayCampus : AppNavRoute("STU","今日校园",R.drawable.handshake)

@@ -48,7 +48,6 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -59,7 +58,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -99,8 +97,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.FriendEntity
-import com.hfut.schedule.logic.database.entity.WebURLType
-import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
@@ -129,7 +125,6 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -140,8 +135,8 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
@@ -156,11 +151,9 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.search.SearchAppBeanLite
 import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
-import com.hfut.schedule.ui.screen.home.search.function.community.workRest.ApiForTimeTable
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
-import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
@@ -172,7 +165,6 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.mirror.shader.enterAnimation
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.shader.smallStyle
@@ -614,7 +606,40 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    ApiForTimeTable(swapUI.toString(), hazeState,backGroundSource,enableLiquidGlass,customBackgroundAlpha)
+                                    val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
+                                    Surface(
+                                        shape = CircleShape,
+                                        modifier = Modifier
+                                            .clip(CircleShape)
+                                            .glassLayer(
+                                                backGroundSource,
+                                                smallStyle.copy(
+                                                    blur = 2.dp,
+                                                    overlayColor = MaterialTheme.colorScheme.surface.copy(
+                                                        customBackgroundAlpha
+                                                    )
+                                                ),
+                                                enableLiquidGlass
+                                            )
+                                            .clickable {
+                                                navHostTopController.navigateForTransition(
+                                                    AppNavRoute.WorkAndRest,
+                                                    route,
+                                                    transplantBackground = true
+                                                )
+                                            }
+                                        ,
+                                        color = Color.Transparent
+                                    ) {
+                                        Icon(
+                                            tint = iconColor,
+                                            painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
+                                            contentDescription = "",
+                                            modifier = Modifier
+                                                .padding(CARD_NORMAL_DP * 3)
+                                                .iconElementShare(route)
+                                        )
+                                    }
                                 } else {
                                     val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
                                     Surface(
@@ -641,7 +666,6 @@ fun MainScreen(
                                         ,
                                         color = Color.Transparent
                                     ) {
-
                                         Icon(
                                             tint = iconColor,
                                             painter = painterResource(id = R.drawable.category),
@@ -728,14 +752,26 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    ApiForTimeTable(swapUI.toString(), hazeState)
+                                    val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
+                                    IconButton(
+                                        onClick = {
+                                            navHostTopController.navigateForTransition(AppNavRoute.WorkAndRest, route,transplantBackground = true)
+                                        }
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
+                                            contentDescription = "",
+                                            tint = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.iconElementShare(route)
+                                        )
+                                    }
                                 } else {
                                     val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
                                     IconButton(onClick = {
                                         navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
                                     }) {
                                         Icon(
-                                            painter = painterResource(id = R.drawable.category),
+                                            painter = painterResource(id = AppNavRoute.TotalCourse.icon),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.iconElementShare(route)
