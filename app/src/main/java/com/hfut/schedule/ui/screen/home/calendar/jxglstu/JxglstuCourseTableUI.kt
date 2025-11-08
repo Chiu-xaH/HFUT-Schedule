@@ -1,26 +1,14 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -35,25 +23,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
-import com.hfut.schedule.logic.model.jxglstu.LessonTimesResponse
 import com.hfut.schedule.logic.network.interceptor.CasGoToInterceptorState
 import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -63,16 +43,15 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
-import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTablePreview
-import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTableUI
-import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
-import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
-import com.hfut.schedule.ui.screen.home.calendar.timetable.allToTimeTableData
-import com.hfut.schedule.ui.screen.home.calendar.timetable.parseTimeToFloat
-import com.hfut.schedule.ui.screen.home.calendar.timetable.timeToY
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableData
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -95,39 +74,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
-import kotlin.math.roundToInt
-
-suspend fun parseTimeTable(json : String, isNext : Boolean = false) : List<CourseUnitBean> {
-    try {
-        if(json.isEmpty()) {
-            // 使用预置的作息表
-            val campus = getPersonInfo().campus ?: return emptyList()
-            if(campus.contains("宣城")) {
-                return MyApplication.XC_TXL1
-            } else if(campus.contains("翡翠湖")) {
-                val upOrDown = SemseterParser.parseSemseterUpOrDown(SemseterParser.getSemseter() + if(isNext) 20 else 0)
-                return when(upOrDown) {
-                    1 -> MyApplication.FCH1
-                    2 -> MyApplication.FCH2
-                    else -> emptyList()
-                }
-            } else if(campus.contains("屯溪路")) {
-                val upOrDown = SemseterParser.parseSemseterUpOrDown(SemseterParser.getSemseter() + if(isNext) 20 else 0)
-                return when(upOrDown) {
-                    1 -> MyApplication.XC_TXL1
-                    2 -> MyApplication.TXL2
-                    else -> emptyList()
-                }
-            } else {
-                return emptyList()
-            }
-        } else {
-            return Gson().fromJson(json, LessonTimesResponse::class.java).result.courseUnitList
-        }
-    } catch (e : Exception) {
-        return emptyList()
-    }
-}
 
 // 去重
 fun <T>distinctUnit(list : List<SnapshotStateList<T>>) {
@@ -226,18 +172,16 @@ fun JxglstuCourseTableUI(
 
     var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
 
-    var currentWeek by rememberSaveable {
-        mutableLongStateOf(
-            if(DateTimeManager.weeksBetweenJxglstu > 20) {
-                getNewWeek()
-            } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                onDateChange(getJxglstuStartDate())
-                1L
-            } else {
-                DateTimeManager.weeksBetweenJxglstu
-            }
-        )
+    val initialWeek = if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
+        getNewWeek()
+    } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
+        onDateChange(getJxglstuStartDate())
+        1L
+    } else {
+        DateTimeManager.weeksBetweenJxglstu
     }
+
+    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
@@ -469,20 +413,46 @@ fun JxglstuCourseTableUI(
        }
     }
     var totalDragX by remember { mutableFloatStateOf(0f) }
-    val drag = remember { 5f }
+    val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
+    var isExpand by remember { mutableStateOf(false) }
 
-    fun nextWeek() {
-        if (currentWeek < 20) {
-            onDateChange(today.plusDays(7))
-            currentWeek++
+    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+        override fun backToCurrentWeek() {
+            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                currentWeek = 1
+                onDateChange(getJxglstuStartDate())
+            } else {
+                currentWeek = DateTimeManager.weeksBetweenJxglstu
+                onDateChange(LocalDate.now())
+            }
         }
-    }
-    fun previousWeek() {
-        if (currentWeek > 1) {
-            onDateChange(today.minusDays(7))
-            currentWeek--
+
+        override fun goToWeek(i: Long) {
+            if(currentWeek == i) {
+                return
+            }
+            if (i in 1..MyApplication.MAX_WEEK) {
+                val day = 7L*(i - currentWeek)
+                onDateChange(today.plusDays(day))
+                currentWeek = i
+            }
         }
-    }
+
+        override fun nextWeek() {
+            if (currentWeek < MyApplication.MAX_WEEK) {
+                onDateChange(today.plusDays(7))
+                currentWeek++
+            }
+        }
+
+        override fun previousWeek() {
+            if (currentWeek > 1) {
+                onDateChange(today.minusDays(7))
+                currentWeek--
+            }
+        }
+    } }
+
     if(loadingJxglstu) {
         CenterScreen {
             LoadingUI(if(webVpn) "请等待 WebVpn延迟有时比较高" else null)
@@ -512,10 +482,10 @@ fun JxglstuCourseTableUI(
                 detectHorizontalDragGestures(
                     onDragEnd = {
                         // 手指松开后根据累积的水平拖动量决定
-                        if (totalDragX > drag) { // 阈值
-                            previousWeek()
-                        } else if (totalDragX < -drag) {
-                            nextWeek()
+                        if (totalDragX > MyApplication.SWIPE) { // 阈值
+                            weekSwap.previousWeek()
+                        } else if (totalDragX < -MyApplication.SWIPE) {
+                            weekSwap.nextWeek()
                         }
                         totalDragX = 0f // 重置
                     },
@@ -526,9 +496,7 @@ fun JxglstuCourseTableUI(
                 )
             }
         ) {
-            val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-            var isExpand by remember { mutableStateOf(false) }
-            NewTimeTableUI(
+            TimeTable(
                 items,
                 currentWeek.toInt(),
                 showAll,
@@ -538,6 +506,22 @@ fun JxglstuCourseTableUI(
                 ,
                 innerPadding = innerPadding,
                 shaderState = backGroundHaze,
+                onTapBlankRegion = {
+                    if(isExpand) {
+                        isExpand = false
+                    } else {
+                        showToast("空白区域双击添加日程,长按切换周")
+                    }
+                },
+                onLongTapBlankRegion = {
+                    isExpand = !isExpand
+                },
+                onDoubleTapBlankRegion = {
+                    navController.navigateForTransition(
+                        AppNavRoute.AddEvent,
+                        AppNavRoute.AddEvent.withArgs()
+                    )
+                }
             ) { list ->
                 // 只有一节课
                 if (list.size == 1) {
@@ -570,41 +554,30 @@ fun JxglstuCourseTableUI(
                     .padding(APP_HORIZONTAL_DP),
                 show = !isExpand,
                 defaultContent = {
-                    val interactionSource = remember { MutableInteractionSource() }
-                    Surface(
-                        color = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-                        shape = MaterialTheme.shapes.medium,
-                        shadowElevation = APP_HORIZONTAL_DP,
-                        modifier = Modifier
-                            .padding(top = innerPadding.calculateTopPadding())
-                            .clickable(indication = null,interactionSource = interactionSource) { isExpand = !isExpand }
+                    TimeTablePreview(
+                        items = items, // 一周课程,
+                        currentWeek = currentWeek.toInt(),
+                        innerPadding = innerPadding,
                     ) {
-                        NewTimeTablePreview(
-                            items = items, // 一周课程,
-                            currentWeek = currentWeek.toInt(),
-                        )
+                        weekSwap.goToWeek(it.toLong())
+                        isExpand = !isExpand
                     }
                 },
                 secondContent = {
                     DraggableWeekButton(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
                         expanded = shouldShowAddButton,
-
                         onClick = {
-//                            if(DateTimeManager.weeksBetweenJxglstu < 1) {
-//                                currentWeek = 1
-//                                onDateChange(getJxglstuStartDate())
-//                            } else {
-//                                currentWeek = DateTimeManager.weeksBetweenJxglstu
-//                                onDateChange(LocalDate.now())
-//                            }
-                            isExpand = !isExpand
+                            weekSwap.backToCurrentWeek()
                         },
                         shaderState = backGroundHaze,
                         currentWeek = currentWeek,
                         key = today,
-                        onNext = { nextWeek() },
-                        onPrevious = { previousWeek() }
+                        onNext = { weekSwap.nextWeek() },
+                        onPrevious = { weekSwap.previousWeek() },
+                        onLongClick = {
+                            isExpand = !isExpand
+                        }
                     )
                 }
             )

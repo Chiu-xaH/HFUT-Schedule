@@ -420,10 +420,9 @@ fun JxglstuCourseTableUINext(
         }
     }
     var totalDragX by remember { mutableFloatStateOf(0f) }
-    val drag = remember { 5f }
 
     fun nextWeek() {
-        if (currentWeek < 20) {
+        if (currentWeek < MyApplication.MAX_WEEK) {
             currentWeek++
         }
     }
@@ -444,9 +443,9 @@ fun JxglstuCourseTableUINext(
             detectHorizontalDragGestures(
                 onDragEnd = {
                     // 手指松开后根据累积的水平拖动量决定
-                    if (totalDragX > drag) { // 阈值
+                    if (totalDragX > MyApplication.SWIPE) { // 阈值
                         previousWeek()
-                    } else if (totalDragX < -drag) {
+                    } else if (totalDragX < -MyApplication.SWIPE) {
                         nextWeek()
                     }
                     totalDragX = 0f // 重置

@@ -11,14 +11,17 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -69,6 +72,7 @@ fun DraggableWeekButton(
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null,
 ) {
     val offset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     var totalDragX by remember { mutableFloatStateOf(0f) }
@@ -140,15 +144,15 @@ fun DraggableWeekButton(
             }
     ) {
         ShareTwoContainer2D(
+            modifier = Modifier.align(Alignment.Center)
+                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) },
             show = !expanded,
             defaultContent = {
-                ExtendedFloatingActionButton(
-                    onClick = onClick,
-                    containerColor = if(hasBackground) Color.Transparent else containerColor,
-                    elevation = FloatingActionButtonDefaults.elevation(0.dp,0.dp,0.dp,0.dp),
+                Surface(
+                    shape = FloatingActionButtonDefaults.extendedFabShape,
+                    color = if(hasBackground) Color.Transparent else containerColor,
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
+                        .height(56.dp)
                         .let {
                             if(hasBackground) {
                                 it
@@ -164,12 +168,25 @@ fun DraggableWeekButton(
                                 it
                             }
                         }
-                    ,
+                        .combinedClickable(
+                            onClick = onClick,
+                            onLongClick = onLongClick
+                        )
                 ) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                        modifier =
+                            Modifier
+                                .sizeIn(minWidth = 80.dp)
+                                .padding(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.Center,
-                    ) {
+                        verticalAlignment = Alignment.CenterVertically,
+//                        content = content,
+                    )
+//                    Row(
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        horizontalArrangement = Arrangement.Center,
+//                    )
+                    {
                         val iconSize = 19.dp
 
                         // 左箭头（展开时显示）
@@ -199,14 +216,38 @@ fun DraggableWeekButton(
                         )
                     }
                 }
+//                ExtendedFloatingActionButton(
+//                    onClick = {},
+//                    containerColor = if(hasBackground) Color.Transparent else containerColor,
+//                    elevation = FloatingActionButtonDefaults.elevation(0.dp,0.dp,0.dp,0.dp),
+//                    modifier = Modifier
+//                        .let {
+//                            if(hasBackground) {
+//                                it
+//                                    .clip(FloatingActionButtonDefaults. extendedFabShape)
+//                                    .glassLayer(
+//                                        shaderState,
+//                                        style = largeStyle.copy(
+//                                            overlayColor = MaterialTheme.colorScheme.surface.copy(customBackgroundAlpha)
+//                                        ),
+//                                        enabled = enableLiquidGlass
+//                                    )
+//                            } else {
+//                                it
+//                            }
+//                        }
+//                        .combinedClickable(
+//                            onClick = onClick,
+//                            onLongClick = onLongClick
+//                        )
+//                    ,
+//                )
             },
             secondContent = {
                 Surface(
                     color = if(hasBackground) Color.Transparent else containerColor,
                     shape = MaterialTheme.shapes.small,
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
                         .let {
                             if(hasBackground) {
                                 it
@@ -222,9 +263,10 @@ fun DraggableWeekButton(
                                 it
                             }
                         }
-                        .clickable {
-                            onClick()
-                        },
+                        .combinedClickable(
+                            onClick = onClick,
+                            onLongClick = onLongClick
+                        )
                 ) {
                     Box(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP*3, vertical = CARD_NORMAL_DP/2)) {
                         textUI()

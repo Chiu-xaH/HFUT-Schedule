@@ -129,7 +129,7 @@ fun ZhiJianCourseTableUI(
 
     var currentWeek by rememberSaveable {
         mutableLongStateOf(
-            if(DateTimeManager.weeksBetweenJxglstu > 20) {
+            if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
                 getNewWeek()
             } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
                 onDateChange(getJxglstuStartDate())
@@ -643,7 +643,7 @@ fun ZhiJianCourseTableUI(
             ) {
                 FloatingActionButton(
                     onClick = {
-                        if (currentWeek < 20) {
+                        if (currentWeek < MyApplication.MAX_WEEK) {
                             currentWeek++ + 1
                             onDateChange(today.plusDays(7))
                         }

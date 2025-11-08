@@ -29,16 +29,20 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
-import com.hfut.schedule.ui.screen.home.calendar.timetable.NewTimeTableUI
-import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableDetail
-import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableItem
-import com.hfut.schedule.ui.screen.home.calendar.timetable.TimeTableType
-import com.hfut.schedule.ui.screen.home.calendar.timetable.allToTimeTableData
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableData
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
@@ -64,16 +68,14 @@ fun CommunityCourseTableUI(
 ) {
     val context = LocalContext.current
     //切换周数
-    var currentWeek by rememberSaveable {
-        mutableLongStateOf(
-            if(weeksBetween > 20) {
-                getNewWeek()
-            } else if(weeksBetween < 1) {
-                onDateChange(getStartWeekFromCommunity())
-                1
-            } else weeksBetween
-        )
-    }
+    val initialWeek = if(weeksBetween > MyApplication.MAX_WEEK) {
+        getNewWeek()
+    } else if(weeksBetween < 1) {
+        onDateChange(getStartWeekFromCommunity())
+        1
+    } else weeksBetween
+
+    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
     var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
 
@@ -95,20 +97,41 @@ fun CommunityCourseTableUI(
         }
     }
 
-    val drag = remember { 5f }
+    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+        override fun nextWeek() {
+            if (currentWeek < MyApplication.MAX_WEEK) {
+                onDateChange(today.plusDays(7))
+                currentWeek++
+            }
+        }
+        override fun previousWeek() {
+            if (currentWeek > 1) {
+                onDateChange(today.minusDays(7))
+                currentWeek--
+            }
+        }
+        override fun goToWeek(i : Long) {
+            if(currentWeek == i) {
+                return
+            }
+            if (i in 1..MyApplication.MAX_WEEK) {
+                val day = 7L*(i - currentWeek)
+                onDateChange(today.plusDays(day))
+                currentWeek = i
+            }
+        }
+        override fun backToCurrentWeek() {
+            if(weeksBetween < 1) {
+                currentWeek = 1
+                onDateChange(getStartWeekFromCommunity())
+            } else {
+                currentWeek = weeksBetween
+                onDateChange(LocalDate.now())
+            }
+        }
+    } }
 
-    fun nextWeek() {
-        if (currentWeek < 20) {
-            onDateChange(today.plusDays(7))
-            currentWeek++
-        }
-    }
-    fun previousWeek() {
-        if (currentWeek > 1) {
-            onDateChange(today.minusDays(7))
-            currentWeek--
-        }
-    }
+
     var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
     var showBottomSheetDetail by remember { mutableStateOf(false) }
 
@@ -139,6 +162,8 @@ fun CommunityCourseTableUI(
     }
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val scrollState = rememberScrollState()
+    var isExpand by remember { mutableStateOf(false) }
+    val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -146,10 +171,10 @@ fun CommunityCourseTableUI(
             detectHorizontalDragGestures(
                 onDragEnd = {
                     // 手指松开后根据累积的水平拖动量决定
-                    if (totalDragX > drag) { // 阈值
-                        previousWeek()
-                    } else if (totalDragX < -drag) {
-                        nextWeek()
+                    if (totalDragX > MyApplication.SWIPE) { // 阈值
+                        weekSwap.previousWeek()
+                    } else if (totalDragX < -MyApplication.SWIPE) {
+                        weekSwap.nextWeek()
                     }
                     totalDragX = 0f // 重置
                 },
@@ -160,9 +185,7 @@ fun CommunityCourseTableUI(
             )
         }
     ) {
-        val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-
-        NewTimeTableUI(
+        TimeTable(
             items,
             currentWeek.toInt(),
             showAll,
@@ -172,6 +195,22 @@ fun CommunityCourseTableUI(
             ,
             innerPadding = innerPaddings,
             shaderState = backGroundHaze,
+            onTapBlankRegion = {
+                if(isExpand) {
+                    isExpand = false
+                } else {
+                    showToast("空白区域双击添加日程,长按切换周")
+                }
+            },
+            onLongTapBlankRegion = {
+                isExpand = !isExpand
+            },
+            onDoubleTapBlankRegion = {
+                navController.navigateForTransition(
+                    AppNavRoute.AddEvent,
+                    AppNavRoute.AddEvent.withArgs()
+                )
+            }
         ) { list ->
             // 只有一节课
             if (list.size == 1) {
@@ -202,189 +241,40 @@ fun CommunityCourseTableUI(
             }
         }
 
-//        LazyVerticalGrid(
-//            columns = GridCells.Fixed(style.rowCount),
-//            modifier = style.calendarPadding(),
-//            state = scrollState
-//        ) {
-//            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,true) }
-//            items(style.rowCount*style.columnCount) { cell ->
-//                val itemList = if(showAll)tableAll[cell].toMutableList() else table[cell].toMutableList()
-//                val texts = transferSummaryCourseInfos(itemList).toMutableList()
-//                if(texts.isEmpty() && backGroundHaze != null) {
-//                    // 隐藏
-//                    Box(modifier = Modifier
-//                        .height(calendarSquareHeight.dp)
-//                        .padding(style.everyPadding))
-//                } else {
-//                    Card(
-//                        shape = style.containerCorner,
-//                        colors = CardDefaults.cardColors(containerColor = color),
-//                        modifier = Modifier
-//                            .height(calendarSquareHeight.dp)
-//                            .padding(style.everyPadding)
-//                            .let {
-//                                if (backGroundHaze != null) {
-//                                    it
-//                                        .clip(style.containerCorner)
-//                                        .let {
-//                                            if (AppVersion.CAN_SHADER) {
-//                                                it.calendarSquareGlass(
-//                                                    backGroundHaze,
-//                                                    style.containerColor.copy(customBackgroundAlpha),
-//                                                    enableLiquidGlass,
-//                                                )
-//                                            } else {
-//                                                it
-//                                            }
-//                                        }
-//                                } else {
-//                                    it
-//                                }
-//                            }
-//                            .clickableWithScale(ClickScale.SMALL.scale) {
-//                                if (texts.size == 1) {
-//                                    // 如果是考试
-//                                    if (texts[0].contains("考试")) {
-//                                        showToast(texts[0].replace("\n", " "))
-//                                        return@clickableWithScale
-//                                    }
-//                                    if (texts[0].contains("日程")) {
-//                                        showToast(texts[0].replace("\n", " "))
-//                                        return@clickableWithScale
-//                                    }
-//                                    sheet = itemList[0]
-//                                    showBottomSheet = true
-//                                } else if (itemList.size > 1) {
-//                                    multiWeekday =
-//                                        if (showAll) (cell + 1) % 7 else (cell + 1) % 5
-//                                    multiWeek = currentWeek.toInt()
-//                                    courses = itemList
-//                                    showBottomSheetMultiCourse = true
-//                                }
-//                            }
-//                    ) {
-//                        if(texts.size == 1) {
-//                            val l = texts[0].split("\n")
-//                            if(l.size < 2) {
-//                                return@Card
-//                            }
-//                            val time = l[0]
-//                            val name = l[1]
-//                            val place = if(l.size == 3) {
-//                                val p = l[2]
-//                                if(p == "null" || p.isBlank() || p.isEmpty()) {
-//                                    null
-//                                } else {
-//                                    p
-//                                }
-//                            } else null
-//
-//                            Column(
-//                                modifier = Modifier
-//                                    .fillMaxSize()
-//                                    .padding(horizontal = CARD_NORMAL_DP) ,
-//                                verticalArrangement = Arrangement.SpaceBetween,
-//                                horizontalAlignment = Alignment.CenterHorizontally
-//                            ) {
-//                                Text(
-//                                    text = time,
-//                                    fontSize = style.textSize,
-//                                    textAlign = TextAlign.Center,
-//                                    modifier = Modifier.fillMaxWidth()
-//                                )
-//                                Box(
-//                                    modifier = Modifier
-//                                        .weight(1f) // 占据中间剩余的全部空间
-//                                        .fillMaxWidth(),
-//                                    contentAlignment = Alignment.TopCenter
-//                                ) {
-//                                    Text(
-//                                        text = name,
-//                                        fontSize = style.textSize,
-//                                        textAlign = TextAlign.Center,
-//                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
-//                                        modifier = Modifier.fillMaxWidth()
-//                                    )
-//                                }
-//                                place?.let {
-//                                    Text(
-//                                        text = it,
-//                                        fontSize = style.textSize,
-//                                        textAlign = TextAlign.Center,
-//                                        modifier = Modifier.fillMaxWidth()
-//                                    )
-//                                }
-//                            }
-//                        } else if(texts.size > 1) {
-//                            val name = texts.map {
-//                                it.split("\n")[1][0]
-//                            }.joinToString(",")
-//                            val isExam = if(texts.toString().contains("考试")) FontWeight.SemiBold else FontWeight.Normal
-//                            Column(
-//                                modifier = Modifier
-//                                    .fillMaxSize()
-//                                    .padding(horizontal = CARD_NORMAL_DP) ,
-//                                verticalArrangement = Arrangement.SpaceBetween,
-//                                horizontalAlignment = Alignment.CenterHorizontally
-//                            ) {
-//                                Text(
-//                                    text = texts[0].substringBefore("\n"),
-//                                    fontSize = style.textSize,
-//                                    textAlign = TextAlign.Center,
-//                                    modifier = Modifier.fillMaxWidth(),
-//                                    fontWeight = isExam
-//                                )
-//                                Box(
-//                                    modifier = Modifier
-//                                        .weight(1f) // 占据中间剩余的全部空间
-//                                        .fillMaxWidth(),
-//                                    contentAlignment = Alignment.TopCenter
-//                                ) {
-//                                    Text(
-//                                        text = "${texts.size}节课冲突",
-//                                        fontSize = style.textSize,
-//                                        textAlign = TextAlign.Center,
-//                                        overflow = TextOverflow.Ellipsis, // 超出显示省略号
-//                                        modifier = Modifier.fillMaxWidth(),
-//                                        fontWeight = isExam
-//                                    )
-//                                }
-//                                Text(
-//                                    text = name,
-//                                    fontSize = style.textSize,
-//                                    textAlign = TextAlign.Center,
-//                                    modifier = Modifier.fillMaxWidth()
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            item(span = { GridItemSpan(maxLineSpan) }) { InnerPaddingHeight(innerPaddings,false) }
-//        }
-
-        DraggableWeekButton(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
-            shaderState = backGroundHaze,
+        ShareTwoContainer2D(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = innerPaddings.calculateBottomPadding() - navigationBarHeightPadding)
                 .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP),
-            expanded = shouldShowAddButton,
-            onClick = {
-                if(weeksBetween < 1) {
-                    currentWeek = 1
-                    onDateChange(getStartWeekFromCommunity())
-                } else {
-                    currentWeek = weeksBetween
-                    onDateChange(LocalDate.now())
+            show = !isExpand,
+            defaultContent = {
+                TimeTablePreview(
+                    items = items, // 一周课程,
+                    currentWeek = currentWeek.toInt(),
+                    innerPadding = innerPaddings,
+                ) {
+                    weekSwap.goToWeek(it.toLong())
+                    isExpand = !isExpand
                 }
             },
-            currentWeek = currentWeek,
-            key = today,
-            onNext = { nextWeek() },
-            onPrevious = { previousWeek() }
+            secondContent = {
+                DraggableWeekButton(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+                    shaderState = backGroundHaze,
+                    expanded = shouldShowAddButton,
+                    onClick = {
+                        weekSwap.backToCurrentWeek()
+                    },
+                    currentWeek = currentWeek,
+                    key = today,
+                    onNext = { weekSwap.nextWeek() },
+                    onPrevious = { weekSwap.previousWeek() },
+                    onLongClick = {
+                        isExpand = !isExpand
+                    }
+                )
+            }
         )
     }
 }
+

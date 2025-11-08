@@ -41,7 +41,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.core.content.FileProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -62,16 +61,13 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
-import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
@@ -427,7 +423,7 @@ private fun EventUI() {
     val activity = LocalActivity.current
     val context = LocalContext.current
     var time by remember { mutableIntStateOf(20) }
-    val cor = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
     if(loading) {
         LoadingUI("勿动稍等")
@@ -476,7 +472,7 @@ private fun EventUI() {
             leadingContent = { Icon(painterResource(R.drawable.event_upcoming),null) },
             modifier = Modifier.clickable {
                 activity?.let {
-                    cor.launch {
+                    scope.launch {
                         async { loading = true }.await()
                         async { delAllCourseEvent(context,activity = it) }.await()
                         async { addCourseToEvent(context,activity = it,time) }.await()
@@ -496,12 +492,24 @@ private fun EventUI() {
             leadingContent = { Icon(painterResource(R.drawable.event_busy),null) },
             modifier = Modifier.clickable {
                 activity?.let {
-                    cor.launch {
+                    scope.launch {
                         async { loading = true }.await()
                         async { delAllCourseEvent(context,activity = it) }.await()
                         launch { loading = false }
                     }
                 }
+            }
+        )
+        CardListItem(
+            headlineContent = {
+                Text("导出为ics")
+            },
+            overlineContent = {
+                Text("将目前的教务课表写入到日程ics文件")
+            },
+            leadingContent = { Icon(painterResource(R.drawable.attach_file),null) },
+            modifier = Modifier.clickable {
+                showToast("正在开发")
             }
         )
     }

@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.calendar.timetable
+package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -21,8 +21,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
 
@@ -65,7 +69,7 @@ private fun layoutSquaresForDay(items: List<TimeTableItem>): List<PositionedSqua
 }
 
 @Composable
-fun Timetable(
+fun TimetableCommonSquare(
     items: List<TimeTableItem>,
     modifier: Modifier = Modifier,
     innerPadding : PaddingValues,
@@ -75,7 +79,7 @@ fun Timetable(
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(
-        Pair(parseTimeToFloat("12:10"),parseTimeToFloat("14:00")),
+        Pair(parseTimeToFloat("12:10"), parseTimeToFloat("14:00")),
     ),
     zipTimeFactor : Float = 0.1f,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
@@ -99,7 +103,7 @@ fun Timetable(
         val density = LocalDensity.current
         val totalWidthPx = with(density) { maxWidth.toPx() }
         val hourPx = with(density) { hourHeight.toPx() }
-        val yEnd = timeToY(endTime, hourPx, startTime,zipTime,zipTimeFactor)
+        val yEnd = timeToY(endTime, hourPx, startTime, zipTime, zipTimeFactor)
         val columnWidthPx = totalWidthPx / columnCount.toFloat()
         val paddingPx = with(density) { everyPadding.toPx() }
         Column {
@@ -138,8 +142,8 @@ fun Timetable(
                         val xOffset = xBase + paddingPx
                         val innerAvailablePx = columnWidthPx - 2 * paddingPx
 
-                        val yStart = timeToY(group.start, hourPx, startTime, zipTime,zipTimeFactor)
-                        val yEnd = timeToY(group.end, hourPx, startTime,zipTime,zipTimeFactor)
+                        val yStart = timeToY(group.start, hourPx, startTime, zipTime, zipTimeFactor)
+                        val yEnd = timeToY(group.end, hourPx, startTime, zipTime, zipTimeFactor)
                         val heightPx = yEnd - yStart
                         Box(
                             modifier = Modifier

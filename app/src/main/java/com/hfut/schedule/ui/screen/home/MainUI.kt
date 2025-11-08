@@ -37,9 +37,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
@@ -56,7 +53,6 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -122,7 +118,6 @@ import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
@@ -133,7 +128,6 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
@@ -157,7 +151,6 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotif
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
@@ -215,7 +208,7 @@ fun MainScreen(
     }
     val showBadge = update != null
 
-//判定是否以聚焦作为第一页
+    //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(
         if(isLogin) COURSES
         else when (prefs.getBoolean("SWITCHFOCUS",true)) {
@@ -320,100 +313,8 @@ fun MainScreen(
         }
     }
 
-    var sortReversed by rememberSaveable { mutableStateOf(false) }
-    var sortType by rememberSaveable { mutableStateOf(SortType.TIME_LINE) }
-    var showDialog by remember { mutableStateOf(false) }
-    if(showDialog) {
-        HazeBottomSheet(
-            showBottomSheet = showDialog,
-            isFullExpand = false,
-            autoShape = false,
-            hazeState = hazeState,
-            onDismissRequest = { showDialog = false }
-        ) {
-            Column {
-                HazeBottomSheetTopBar("排序", isPaddingStatusBar = false)
-                CardListItem(
-                    overlineContent = { Text("排序方式") },
-                    headlineContent = {
-                        Text(
-                            when (sortType) {
-                                SortType.TIME_LINE -> "时间线"
-                                SortType.CREATE_TIME -> "创建时间"
-                            }
-                        )
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.sort),null) },
-                    modifier = Modifier.clickable {
-                        sortType = when (sortType) {
-                            SortType.TIME_LINE -> SortType.CREATE_TIME
-                            SortType.CREATE_TIME -> SortType.TIME_LINE
-                        }
-                    },
-                    trailingContent = {
-                        FilledTonalIconButton(onClick = {
-                            sortReversed = !sortReversed
-                        }) {
-                            Icon(
-                                if (sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                                contentDescription = ""
-                            )
-                        }
-                    }
-                )
-                Spacer(Modifier.height(APP_HORIZONTAL_DP))
-            }
-        }
-    }
-
     val focusActions = @Composable {
         Row {
-            val show = isNavigationIconVisible && celebrationText == null
-            if(show) {
-
-                IconButton(onClick = {
-                    sortReversed = !sortReversed
-                }) {
-                    Icon(
-                        if (sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                TextButton(
-                    onClick = {
-                        sortType = when (sortType) {
-                            SortType.TIME_LINE -> SortType.CREATE_TIME
-                            SortType.CREATE_TIME -> SortType.TIME_LINE
-                        }
-                    }
-                ) {
-                    Text(
-                        when (sortType) {
-                            SortType.TIME_LINE -> "时间线"
-                            SortType.CREATE_TIME -> "创建时间"
-                        }
-                    )
-                }
-//                Spacer(Modifier.width(5.dp))
-            } else {
-                IconButton(
-                    onClick = {
-                        if(celebrationText != null) {
-                            showDialog = true
-                        } else {
-                            isNavigationIconVisible = true
-                        }
-                    }
-                ) {
-                    Icon(
-                        painterResource(R.drawable.sort),
-                        null,
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-//            ApiFromLife(vm, hazeState)
             ApiToSupabase(vm)
             val iconRoute = remember { AppNavRoute.NotificationBox.route }
             IconButton(onClick = {
@@ -448,9 +349,7 @@ fun MainScreen(
             } else {
                 it
             }
-        }
-//            .enterAnimation(firstStart)
-        ,
+        },
         floatingActionButton = {
             val addRoute = remember { AppNavRoute.AddEvent.withArgs(origin = AddEventOrigin.FOCUS_ADD.name) }
             AnimatedVisibility(
@@ -991,8 +890,8 @@ fun MainScreen(
                         ifSaved,
                         pagerState,
                         hazeState = hazeState,
-                        sortType,
-                        sortReversed,
+                        SortType.TIME_LINE,
+                        false,
                         navHostTopController,
                     )
                 }
@@ -1260,6 +1159,7 @@ fun SearchEditScreen(
 
     }
 }
+
 @Composable
 private fun ZhiJianSearchBar(
     shaderState: ShaderState? = null,

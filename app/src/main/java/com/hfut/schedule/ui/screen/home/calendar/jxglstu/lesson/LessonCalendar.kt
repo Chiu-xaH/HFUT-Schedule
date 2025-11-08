@@ -260,7 +260,7 @@ fun JxglstuCourseTableSearch(
         if(onDateChange == null) {
             1L
         } else {
-            if(DateTimeManager.weeksBetweenJxglstu > 20) {
+            if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
                 getNewWeek()
             } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
                 onDateChange(getJxglstuStartDate())
@@ -539,10 +539,9 @@ fun JxglstuCourseTableSearch(
     val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
-    val drag = remember { 5f }
 
     fun nextWeek() {
-        if (currentWeek < 20) {
+        if (currentWeek < MyApplication.MAX_WEEK) {
             onDateChange?.let { today?.let { it1 -> it(it1.plusDays(7)) } }
             currentWeek++
         }
@@ -560,9 +559,9 @@ fun JxglstuCourseTableSearch(
             detectHorizontalDragGestures(
                 onDragEnd = {
                     // 手指松开后根据累积的水平拖动量决定
-                    if (totalDragX > drag) { // 阈值
+                    if (totalDragX > MyApplication.SWIPE) { // 阈值
                         previousWeek()
-                    } else if (totalDragX < -drag) {
+                    } else if (totalDragX < -MyApplication.SWIPE) {
                         nextWeek()
                     }
                     totalDragX = 0f // 重置

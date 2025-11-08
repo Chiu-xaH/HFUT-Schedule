@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.screen.home.calendar.timetable
+package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 
 
 import androidx.compose.animation.core.animateDpAsState
@@ -24,6 +24,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
 
@@ -120,7 +125,7 @@ fun TimetableSingleSquare(
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(
-        Pair(parseTimeToFloat("12:10"),parseTimeToFloat("14:00"))
+        Pair(parseTimeToFloat("12:10"), parseTimeToFloat("14:00"))
     ),
     zipTimeFactor : Float = 0.1f,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,

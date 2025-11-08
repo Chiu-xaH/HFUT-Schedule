@@ -52,18 +52,19 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 新课程表下双击空白区域添加聚焦日程，长按空白区域或长按右下角翻页器可预览20周的课程分布")//
             UpdateItems("新增 云端共建支持再编辑")
-            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
             UpdateItems("新增 桌面小组件-聚焦")
-            UpdateItems("新增 新课程表下双击空白区域添加聚焦日程")//
             UpdateItems("修复 滑动取色风格进度条时画面闪烁的Bug")
             UpdateItems("修复 修改下载后的聚焦日程后不显示导入的Bug")//
             UpdateItems("优化 考试方格对学堂的处理")//
+            UpdateItems("优化 默认折叠已过期的聚焦日程")
+            UpdateItems("优化 方格高度调节的精度到一位小数")
             UpdateItems("优化 课程表背景下的部分组件的可读性")//
             UpdateItems("优化 调节课程表方格长度和字体以及背景时的便捷性")//
             UpdateItems("移除 新课程表自定义方格文字行距","改为跟随文字大小调整")//
+//            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("修复 冲突预览不显示课表的Bug")
-//            UpdateItems("新增 新的冷启动进入动画")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 地图和校车支持为游客显示了")
@@ -75,7 +76,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 空教室、教室课表","位于 查询中心-教室")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")
-//            UpdateItems("新增 电费记录","位于 查询中心-寝室电费")
 //            UpdateItems("新增 启动台支持固定项目")
 //            UpdateItems("新增 单独登录教务系统")
 //            UpdateItems("新增 备份与恢复数据","位于 选项-应用及配置，可将数据导出到另一台设备以实现多端共存")
