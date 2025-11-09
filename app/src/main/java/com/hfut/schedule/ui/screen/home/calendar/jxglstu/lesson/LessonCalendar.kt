@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
@@ -747,7 +748,7 @@ private fun parseScheduleText(text : String) : List<Schedule> {
             tinyList[4].let {
                 if(it.contains("(")) {
                     place = it.substringBefore("(")
-                    place = if(place.contains("学堂")) place.replace("学堂","") else it
+                    place = if(place.contains("学堂")) place.simplifyPlace() else it
                 }
             }
             result.add(Schedule(weekText,weekday,periodText,place))

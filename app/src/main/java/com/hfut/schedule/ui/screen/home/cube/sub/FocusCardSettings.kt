@@ -3,11 +3,8 @@ package com.hfut.schedule.ui.screen.home.cube.sub
 import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,10 +42,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.R
@@ -67,7 +62,6 @@ import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDay
 import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -83,13 +77,10 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.SchoolCardIt
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.electric.Electric
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.LoginWeb
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getWebInfo
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
@@ -99,7 +90,6 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.util.TransitionBackHandler
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -277,11 +267,8 @@ fun FocusCard(
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",getCampusRegion() == CampusRegion.XUANCHENG)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
-    var loading by remember { mutableStateOf(false) }
-    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
     val route = remember { AppNavRoute.Life.withArgs(true) }
-    val context = LocalContext.current
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = mixedCardNormalColor(),
@@ -302,7 +289,7 @@ fun FocusCard(
                         if(showToday)
                             Box(modifier = Modifier
                                 .weight(.5f)) {
-                                TodayUI(hazeState,vm,vmUI)
+                                TodayUI(hazeState,vm)
                             }
                     }
                 if(showWeb || showEle)
@@ -442,7 +429,7 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
     }
     LaunchedEffect(showBottomSheet) {
         if(showBottomSheet == false) {
-            vmUI.specialWOrkDayChange++
+            vmUI.specialWorkDayChange++
         }
     }
 

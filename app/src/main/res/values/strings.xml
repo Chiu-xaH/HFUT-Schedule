@@ -19,7 +19,9 @@
     <string name="title_activity_base">基类</string>
     <string name="title_activity_news">新闻与通知</string>
     <string name="title_activity_anonymity">游客模式</string>
-    <string name="title_activity_supbase">信息平台</string>
+    <string name="title_activity_supabase">信息平台</string>
     <string name="title_activity_web_view">WebView</string>
-
+    <string name="title_activity_widget_configure">WidgetConfigureActivity</string>
+    <string name="uninstall_title">解除安装“聚在工大”</string>
+    <string name="uninstall_content">缘分让你我相遇，祝前程似锦，欢迎回来看看(github.com/Chiu-xaH/HFUT-Schedule)，再见👋</string>
 </resources>

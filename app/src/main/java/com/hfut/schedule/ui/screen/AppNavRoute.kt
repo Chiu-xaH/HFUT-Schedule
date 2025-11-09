@@ -143,7 +143,15 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object TeacherSearch : AppNavRoute("TEACHER_SEARCH","教师检索",R.drawable.group_search)
     object Work : AppNavRoute("WORK","就业",R.drawable.azm)
     object Person : AppNavRoute("PERSON","个人信息",R.drawable.person)
-    object Exam : AppNavRoute("EXAM","考试",R.drawable.draw)
+    object Exam : AppNavRoute("EXAM","考试",R.drawable.draw) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
+            ORIGIN("origin",NavType.StringType, "EXAM",true)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(origin : String? = null): String = withArgs(
+            Args.ORIGIN.argName to origin
+        )
+    }
     object DormitoryScore : AppNavRoute("DORMITORY_SCORE","寝室评分",R.drawable.psychiatry)
     object Notifications : AppNavRoute("NOTIFICATIONS","消息中心",R.drawable.notifications)
     object Survey : AppNavRoute("SURVEY","评教",R.drawable.verified)

@@ -171,7 +171,7 @@ fun SearchScreen(
                 SearchAppBean(3,"寝室电费 缴费 慧新易校" , { Electric(vm, false, vmUI,hazeState) },isHigh = true),
                 SearchAppBean(4,"校园网 慧新易校 缴费" , { LoginWeb(vmUI, false, vm,hazeState) },isHigh = true),
                 SearchAppBean(5,"教育邮箱 校园邮箱" , { Mail(vm,hazeState) }),
-                SearchAppBean(6,"${AppNavRoute.Exam.label}" , { Exam(ifSaved,navController) },AppNavRoute.Exam.route),
+                SearchAppBean(6,"${AppNavRoute.Exam.label}" , { Exam(ifSaved,navController) },AppNavRoute.Exam.withArgs()),
                 SearchAppBean(7,"${AppNavRoute.Grade.label}", { Grade(ifSaved,navController) }, AppNavRoute.Grade.receiveRoute()),
                 SearchAppBean(8,"${AppNavRoute.FailRate.label}", { FailRate(navController) },AppNavRoute.FailRate.route),
                 SearchAppBean(9,"${AppNavRoute.TotalCourse.label} 教材 课本", { CourseTotal(ifSaved,navController) },AppNavRoute.TotalCourse.receiveRoute()),

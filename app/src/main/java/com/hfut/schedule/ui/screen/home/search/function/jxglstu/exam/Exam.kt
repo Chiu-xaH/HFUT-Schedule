@@ -39,15 +39,19 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyUI
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
+import com.xah.transition.state.LocalAppNavController
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -63,7 +67,7 @@ fun Exam(
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.Exam.route }
+    val route = remember { AppNavRoute.Exam.withArgs() }
     val context = LocalContext.current
 
     TransplantListItem(
@@ -74,10 +78,9 @@ fun Exam(
         },
         modifier = Modifier.clickable {
             if(ifSaved)  {
-                refreshLogin(context)
-            } else {
-                navController.navigateForTransition(AppNavRoute.Exam,route)
+                showToast("当前未登录教务，为缓存数据")
             }
+            navController.navigateForTransition(AppNavRoute.Exam,route)
         }
     )
 }
@@ -86,17 +89,17 @@ fun Exam(
 @Composable
 fun ExamScreen(
     navController : NavHostController,
+    origin : String?
 ) {
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Exam.route }
+    val route = remember { AppNavRoute.Exam.withArgs(origin) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     CustomTransitionScaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
         navHostController = navController,
         topBar = {
             MediumTopAppBar(
@@ -206,30 +209,25 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
 //        val endTime = time?.substringBefore(" ") ?: return
         val isFinished = examDateNum < newToday
 //            DateTimeUtils.compareTimeDate(endTime = endTime) == DateTimeUtils.TimeState.ENDED
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-            Column() {
-                CardListItem(
-                    headlineContent = {  Text(text = course.toString(), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
-                    overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
-                    supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
-                    leadingContent = {
-                        if(!isFinished)
-                            Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
-                        else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
-                    },
-                    trailingContent = {
-                        if(isFinished) Text(text = "已结束")
-                        else {
-                            if(examDateNum == newToday) Text("今日")
-                            else {
-                                Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
-                            }
-                        }
-                    },
-                    modifier = Modifier.clickable {},
-                )
-            }
-        }
+        CardListItem(
+            headlineContent = {  Text(text = course.toString(), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+            overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+            supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
+            leadingContent = {
+                if(!isFinished)
+                    Icon(painterResource(R.drawable.schedule), contentDescription = "Localized description",)
+                else Icon(Icons.Filled.Check, contentDescription = "Localized description",)
+            },
+            trailingContent = {
+                if(isFinished) Text(text = "已结束")
+                else {
+                    if(examDateNum == newToday) Text("今日")
+                    else {
+                        Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
+                    }
+                }
+            },
+        )
     } else {
         if(examDateNum >= newToday) {
             //如果是今天考试，那么判断考试结束后不显示 待做
@@ -249,71 +247,69 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
 
           //  Log.d("打印测试","${year}年 ${month}月 ${day}日 起始 ${startTimeHour}时 ${startTimeMinute}分 结束 ${endTimeHour}时 ${endTimeMinute}分")
             val scope = rememberCoroutineScope()
+            val navController = LocalAppNavController.current
             //今天 && 已经考完
             if(
                 "$month-$day" == DateTimeManager.Date_MM_dd && DateTimeManager.compareTime("$endTimeHour:$endTimeMinute") == DateTimeManager.TimeState.ENDED) {
-
             } else {
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    Column() {
-//                        MyCustomCard {
-                            CardListItem(
-                                headlineContent = {  Text(text = course) },
-                                overlineContent = { Text(text = time.substringAfter("-")) },
-                                supportingContent = { Text(text = "$place") },
-                                leadingContent = {
+                val route = AppNavRoute.Exam.withArgs(CourseDetailOrigin.FOCUS_TODAY.t + "@${item.hashCode()}")
+                CardListItem(
+                    headlineContent = {  Text(text = course) },
+                    overlineContent = { Text(text = time.substringAfter("-")) },
+                    supportingContent = { Text(text = "$place") },
+                    leadingContent = {
 //                                if("$month-$day" == DateTimeManager.Date_MM_dd) {
 //                                    Icon(painterResource(R.drawable.warning), contentDescription = "Localized description",)
 //                                } else {
 //
 //                                }
-                                    Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
-                                },
-                                modifier = Modifier.clickable {},
-                                trailingContent = {
-                                    if("$month-$day" == DateTimeManager.Date_MM_dd) {
-                                        Text("今日")
-                                    } else {
-                                        Column(horizontalAlignment = Alignment.CenterHorizontally
-                                        ) {
-                                            FilledTonalIconButton(
-                                                colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f)),
-                                                onClick = {
-                                                    scope.launch {
-                                                        try {
-                                                            val startDateList =
-                                                                listOf(year.toInt(), month.toInt(), day.toInt(), startTimeHour.toInt(), startTimeMinute.toInt())
-                                                            val endDateList =
-                                                                listOf(
-                                                                    year.toInt(),
-                                                                    month.toInt(),
-                                                                    day.toInt(),
-                                                                    endTimeHour.toInt(),
-                                                                    endTimeMinute.toInt()
-                                                                )
-                                                            activity?.let { it0 ->
-                                                                course.let {
-                                                                    place?.let { it1 ->
-                                                                        addToCalendars(startDateList, endDateList, it1, it,"考试", it0, remind = true)
-                                                                    }
-                                                                }
-                                                            }
-                                                        } catch (e : Exception) {
-                                                            e.printStackTrace()
+                        Icon(painterResource(R.drawable.draw), contentDescription = "Localized description",)
+                    },
+                    cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+                    modifier = Modifier.clickable {
+                        navController.navigateForTransition(AppNavRoute.Exam,route)
+                    },
+                    trailingContent = {
+                        if("$month-$day" == DateTimeManager.Date_MM_dd) {
+                            Text("今日")
+                        } else {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                FilledTonalIconButton(
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f)),
+                                    onClick = {
+                                        scope.launch {
+                                            try {
+                                                val startDateList =
+                                                    listOf(year.toInt(), month.toInt(), day.toInt(), startTimeHour.toInt(), startTimeMinute.toInt())
+                                                val endDateList =
+                                                    listOf(
+                                                        year.toInt(),
+                                                        month.toInt(),
+                                                        day.toInt(),
+                                                        endTimeHour.toInt(),
+                                                        endTimeMinute.toInt()
+                                                    )
+                                                activity?.let { it0 ->
+                                                    course.let {
+                                                        place?.let { it1 ->
+                                                            addToCalendars(startDateList, endDateList, it1, it,"考试", it0, remind = true)
                                                         }
                                                     }
-                                                }) {
-                                                Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = "")
+                                                }
+                                            } catch (e : Exception) {
+                                                e.printStackTrace()
                                             }
-                                            Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
                                         }
-                                    }
-                                },
-                                color = MaterialTheme.colorScheme.errorContainer
-                            )
-//                        }
-                    }
-                }
+                                    }) {
+                                    Icon(painter = painterResource(id = R.drawable.event_upcoming), contentDescription = "")
+                                }
+                                Text("${DateTimeManager.daysBetween(time.substringBefore(" "))}天")
+                            }
+                        }
+                    },
+                    color = MaterialTheme.colorScheme.errorContainer
+                )
             }
         }
     }

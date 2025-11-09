@@ -75,7 +75,6 @@ import kotlinx.coroutines.withContext
 private const val TAB_LEFT = 0
 private const val TAB_RIGHT = 1
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -86,8 +85,6 @@ fun TodayScreen(
     ifSaved : Boolean,
     state: PagerState,
     hazeState: HazeState,
-    sortType: SortType,
-    sortReversed : Boolean,
     navController : NavHostController,
 ) {
     val context = LocalContext.current
@@ -121,7 +118,7 @@ fun TodayScreen(
     var tomorrowJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
     var customScheduleList by remember { mutableStateOf<List<CustomEventDTO>>(emptyList()) }
-    val specialWorkDayChange by remember { derivedStateOf { vmUI.specialWOrkDayChange } }
+    val specialWorkDayChange by remember { derivedStateOf { vmUI.specialWorkDayChange } }
     val specialWorkToday by produceState<String?>(initialValue = null, key1 = specialWorkDayChange) {
         value = withContext(Dispatchers.IO) {
             DataBaseManager.specialWorkDayDao.searchToday()
@@ -137,7 +134,14 @@ fun TodayScreen(
     }
     // 加载数据库
     LaunchedEffect(refreshDB) {
-        launch { customScheduleList = getCustomEvent() }
+        launch {
+            customScheduleList = getCustomEvent().sortedBy {
+                when(it.type) {
+                    CustomEventType.NET_COURSE -> it.dateTime.end.toTimestampWithOutT()
+                    CustomEventType.SCHEDULE -> it.dateTime.start.toTimestampWithOutT()
+                }
+            }
+        }
     }
 
     // 初始化
@@ -193,18 +197,7 @@ fun TodayScreen(
         }
     }
 
-
-    LaunchedEffect(sortType,sortReversed) {
-        customScheduleList =  when(sortType) {
-            SortType.TIME_LINE -> customScheduleList.sortedBy { when(it.type) {
-                CustomEventType.NET_COURSE -> it.dateTime.end.toTimestampWithOutT()
-                CustomEventType.SCHEDULE -> it.dateTime.start.toTimestampWithOutT()
-            } }
-            SortType.CREATE_TIME -> customScheduleList.sortedBy { it.id }
-        }.let { if (sortReversed) it.reversed() else it }
-    }
     val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
-
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -347,9 +340,13 @@ fun TodayScreen(
                 }
             }
         }
-        RefreshIndicator(refreshing, states, Modifier
+        RefreshIndicator(
+            refreshing,
+            states,
+            Modifier
             .padding(innerPadding)
-            .align(Alignment.TopCenter))
+            .align(Alignment.TopCenter)
+        )
     }
 }
 

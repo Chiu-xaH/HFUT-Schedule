@@ -17,6 +17,7 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailResponse
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeNearPositionResponse
+import com.hfut.schedule.logic.model.MsgResponse
 import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.model.OfficeHallSearchResponse
 import com.hfut.schedule.logic.model.SearchEleResponse
@@ -45,6 +46,7 @@ import com.hfut.schedule.logic.network.servicecreator.StuServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.TeacherServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.WorkServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.ZhiJianServiceCreator
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -85,7 +87,16 @@ object Repository {
             request = {
                 zhiJian.getCourses(token, buildZhiJianJson(mondayDate, studentId))
             },
-            transformSuccess = { _, json -> parseZhiJianCourses(json, mondayDate) }
+            transformSuccess = m@ { _, json ->
+                if(json.contains("false")) {
+                    val root = try {
+                        Gson().fromJson(json, MsgResponse::class.java).msg ?: json
+                    } catch (e : Exception) { throw e }
+                    val e = Exception(root)
+                    throw Exception(e)
+                }
+                parseZhiJianCourses(json, mondayDate)
+            }
         )
     @JvmStatic
     private fun buildZhiJianJson(date: String, idNumber: String): String {

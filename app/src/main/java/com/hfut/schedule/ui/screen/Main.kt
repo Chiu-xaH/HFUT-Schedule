@@ -576,8 +576,12 @@ fun MainHost(
                     DormitoryScoreScreen(networkVm,navController )
                 }
                 // 考试
-                transitionComposable(route = AppNavRoute.Exam.route) {
-                    ExamScreen(navController)
+                transitionComposable(
+                    route = AppNavRoute.Exam.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.Exam.Args.entries)
+                ) { backStackEntry ->
+                    val origin = backStackEntry.arguments?.getString(AppNavRoute.Exam.Args.ORIGIN.argName)
+                    ExamScreen(navController,origin)
                 }
                 // 转专业
                 transitionComposable(route = AppNavRoute.Transfer.route) {

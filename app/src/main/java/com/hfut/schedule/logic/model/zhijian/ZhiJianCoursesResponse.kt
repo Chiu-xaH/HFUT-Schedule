@@ -1,6 +1,7 @@
 package com.hfut.schedule.logic.model.zhijian
 
 import com.google.gson.annotations.SerializedName
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
 
 data class ZhiJianCoursesResponse(
@@ -47,7 +48,7 @@ data class ZhiJianCourseItem(
                 courseName = courseName,
                 startPeriod = start,
                 endPeriod = end,
-                place = place?.substringAfter(",")?.replace("学堂","") ?: "",
+                place = place?.substringAfter(",")?.simplifyPlace() ?: "",
                 teacher = teacher,
                 department = department.substringBefore("（"),
                 classes = classes,

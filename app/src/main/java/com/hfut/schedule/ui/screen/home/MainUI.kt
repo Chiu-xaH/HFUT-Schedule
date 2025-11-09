@@ -890,8 +890,6 @@ fun MainScreen(
                         ifSaved,
                         pagerState,
                         hazeState = hazeState,
-                        SortType.TIME_LINE,
-                        false,
                         navHostTopController,
                     )
                 }

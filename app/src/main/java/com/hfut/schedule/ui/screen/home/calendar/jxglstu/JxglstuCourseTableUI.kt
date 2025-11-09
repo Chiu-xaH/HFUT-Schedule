@@ -436,6 +436,7 @@ fun JxglstuCourseTableUI(
                 onDateChange(today.plusDays(day))
                 currentWeek = i
             }
+            showToast("第${currentWeek}周")
         }
 
         override fun nextWeek() {
@@ -537,8 +538,7 @@ fun JxglstuCourseTableUI(
                             }
                         }
                         TimeTableType.EXAM -> {
-                            bean = list
-                            showBottomSheetDetail = true
+                            navController.navigateForTransition(AppNavRoute.Exam, AppNavRoute.Exam.withArgs(CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"))
                         }
                     }
                 } else if (list.size > 1) {

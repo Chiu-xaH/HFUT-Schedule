@@ -207,7 +207,7 @@ dependencies {
     implementation(libs.liquid.glass)
     // 小组件
     implementation(libs.androidx.glance.appwidget)
-//    implementation(libs.androidx.glance.material3)
+    implementation(libs.androidx.glance.material3)
     // 权限
     implementation(libs.accompanist.permissions)
     // 生物识别 指纹

@@ -56,12 +56,14 @@ fun VersionInfo() {
             UpdateItems("新增 云端共建支持再编辑")
             UpdateItems("新增 桌面小组件-聚焦")
             UpdateItems("修复 滑动取色风格进度条时画面闪烁的Bug")
+            UpdateItems("修复 一卡通消费统计一直加载的Bug")
             UpdateItems("修复 修改下载后的聚焦日程后不显示导入的Bug")//
             UpdateItems("优化 考试方格对学堂的处理")//
             UpdateItems("优化 默认折叠已过期的聚焦日程")
             UpdateItems("优化 方格高度调节的精度到一位小数")
             UpdateItems("优化 课程表背景下的部分组件的可读性")//
             UpdateItems("优化 调节课程表方格长度和字体以及背景时的便捷性")//
+            UpdateItems("优化 考试卡片的点击事件")
             UpdateItems("移除 新课程表自定义方格文字行距","改为跟随文字大小调整")//
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("修复 冲突预览不显示课表的Bug")

@@ -86,6 +86,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
@@ -102,9 +103,6 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-
-private const val TOMORROW_CODE = -1
-private const val TODAY_CODE = -2
 
 @Composable
 fun ScheduleItem(listItem : Schedule, isFuture: Boolean, activity : Activity) {
@@ -563,58 +561,6 @@ fun CustomItemUI(
             })
     )
 }
-@Composable
-fun IconWithBadge(
-    modifier: Modifier = Modifier,
-    mainIcon: ImageVector,
-    badgeIcon: ImageVector,
-    mainTint: Color = MaterialTheme.colorScheme.onSurface,
-    badgeTint: Color = MaterialTheme.colorScheme.primary,
-    mainSize: Dp = 48.dp,
-    badgeSize: Dp = 18.dp,
-    shadowElevation: Dp = 3.dp
-) {
-    Box(
-        modifier = modifier
-            .size(mainSize)
-            .wrapContentSize(Alignment.Center),
-        contentAlignment = Alignment.Center
-    ) {
-        // 主图标（带阴影）
-        Box(
-            modifier = Modifier
-                .size(mainSize)
-                .shadow(shadowElevation, CircleShape, clip = false)
-                .background(MaterialTheme.colorScheme.surface, CircleShape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = mainIcon,
-                contentDescription = null,
-                tint = mainTint,
-                modifier = Modifier.size(mainSize * 0.6f)
-            )
-        }
-
-        // 右下角的小徽标（带更高层级阴影）
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .offset(x = (-2).dp, y = (-2).dp)
-                .shadow(shadowElevation + 1.dp, CircleShape, clip = false)
-                .background(MaterialTheme.colorScheme.surface, CircleShape)
-                .padding(3.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = badgeIcon,
-                contentDescription = null,
-                tint = badgeTint,
-                modifier = Modifier.size(badgeSize)
-            )
-        }
-    }
-}
 
 @Composable
 fun TimeStampItem() = BottomTip(getTimeStamp())
@@ -628,7 +574,7 @@ fun TermTip() {
 }
 
 @Composable
-fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
+fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
     val courseDataSource = remember { prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) }
 
     val data by produceState<TodayResult?>(initialValue = null) {
@@ -743,7 +689,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
                     with(todayExam) {
                         courseName?.let {
                             TransplantListItem(
-                                headlineContent = { ScrollText(text = (it.toString()).replace("学堂","")) },
+                                headlineContent = { ScrollText(text = (it.toString()).simplifyPlace()) },
                                 overlineContent = { ScrollText(text = "$place  $startTime") },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
                                 modifier = Modifier
@@ -756,7 +702,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel,vmUI: UIViewModel) {
                         courseName?.let {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text =  it.toString()) },
-                                overlineContent = { ScrollText(text =  place?.replace("学堂","") + " " +  startTime) },
+                                overlineContent = { ScrollText(text =  place?.simplifyPlace() + " " +  startTime) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
                             )
                         }

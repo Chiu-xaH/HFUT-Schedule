@@ -7,7 +7,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.model.huixin.ReturnCard
-import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.WebInfo
 
 class UIViewModel : ViewModel()  {
@@ -16,7 +15,7 @@ class UIViewModel : ViewModel()  {
     var webValue = MutableLiveData<WebInfo>()
 
     var isAddUIExpanded by mutableStateOf(false)
-    var specialWOrkDayChange by mutableIntStateOf(0)
+    var specialWorkDayChange by mutableIntStateOf(0)
 
     var isAddUIExpandedSupabase by mutableStateOf(false)
 }

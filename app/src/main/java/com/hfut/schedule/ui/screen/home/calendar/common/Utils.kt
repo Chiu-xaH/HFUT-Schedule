@@ -53,3 +53,9 @@ fun weekToDate(week : Int,weekday : Int) : String? {
         return null
     }
 }
+
+fun String.simplifyPlace() : String {
+    return this
+        .replace("学堂","")
+//        .replace("电子电气楼","电气楼")
+}

@@ -60,6 +60,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
@@ -174,7 +175,7 @@ fun JxglstuCourseTableUINext(
 
                 var room = item.room?.nameZh
                 var courseId = item.lessonId.toString()
-                room = room?.replace("学堂","") ?: ""
+                room = room?.simplifyPlace() ?: ""
 
 
                 for (j in lessonList.indices) {
@@ -670,7 +671,7 @@ fun MultiCourseSheetUI(week : Int, weekday : Int, courses : List<String>, vm: Ne
                         Text(name)
                     },
                     supportingContent = {
-                        Text("${place?.replace("学堂","")} $startTime")
+                        Text("${place?.simplifyPlace()} $startTime")
                     },
                     leadingContent = {
                         Text((index+1).toString())

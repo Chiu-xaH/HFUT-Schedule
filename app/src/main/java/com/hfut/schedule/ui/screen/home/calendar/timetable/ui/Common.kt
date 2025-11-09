@@ -76,8 +76,6 @@ fun TimeTable(
         minOf(parseTimeToFloat(it), DEFAULT_START_TIME)
     } ?: DEFAULT_START_TIME
 
-    val navController = LocalAppNavController.current
-
     if(enableMergeSquare) {
         TimetableCommonSquare(
             items = list,
@@ -148,29 +146,20 @@ fun TimeTable(
                     .let {
                         if (!hasBackground && list.size == 1) {
                             val item = list[0]
+                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
                                     it.containerShare(
-                                        AppNavRoute.CourseDetail.withArgs(
-                                            item.name,
-                                            CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
-                                        ), MaterialTheme.shapes.extraSmall
+                                        AppNavRoute.CourseDetail.withArgs(item.name, origin), MaterialTheme.shapes.extraSmall
                                     )
                                 }
-
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.containerShare(
-                                            AppNavRoute.AddEvent.withArgs(
-                                                id,
-                                                CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
-                                            ), MaterialTheme.shapes.extraSmall
-                                        )
+                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, origin), MaterialTheme.shapes.extraSmall)
                                     } ?: it
                                 }
-
                                 TimeTableType.EXAM -> {
-                                    it
+                                    it.containerShare(AppNavRoute.Exam.withArgs(origin), MaterialTheme.shapes.extraSmall)
                                 }
                             }
                         } else {
@@ -356,29 +345,20 @@ fun TimeTable(
                     }
                     .let {
                         if (!hasBackground) {
+                            val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
                                     it.containerShare(
-                                        AppNavRoute.CourseDetail.withArgs(
-                                            item.name,
-                                            CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
-                                        ), MaterialTheme.shapes.extraSmall
+                                        AppNavRoute.CourseDetail.withArgs(item.name, origin), MaterialTheme.shapes.extraSmall
                                     )
                                 }
-
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.containerShare(
-                                            AppNavRoute.AddEvent.withArgs(
-                                                id,
-                                                CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
-                                            ), MaterialTheme.shapes.extraSmall
-                                        )
+                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, origin), MaterialTheme.shapes.extraSmall)
                                     } ?: it
                                 }
-
                                 TimeTableType.EXAM -> {
-                                    it
+                                    it.containerShare(AppNavRoute.Exam.withArgs(origin), MaterialTheme.shapes.extraSmall)
                                 }
                             }
                         } else {

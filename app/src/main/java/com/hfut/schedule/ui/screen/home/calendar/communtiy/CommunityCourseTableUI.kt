@@ -77,7 +77,6 @@ fun CommunityCourseTableUI(
 
     var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
-    var sheet by remember { mutableStateOf(courseDetailDTOList(0,0,"","","", listOf(0),0,"","")) }
 
     val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
         value = allToTimeTableData(context,friendUserName)
@@ -119,6 +118,7 @@ fun CommunityCourseTableUI(
                 onDateChange(today.plusDays(day))
                 currentWeek = i
             }
+            showToast("第${currentWeek}周")
         }
         override fun backToCurrentWeek() {
             if(weeksBetween < 1) {
@@ -147,23 +147,12 @@ fun CommunityCourseTableUI(
             bean?.let { TimeTableDetail(it) }
         }
     }
-    //课程详情
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        HazeBottomSheet(
-            onDismissRequest = { showBottomSheet = false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-            autoShape = false
-        ) {
-            HazeBottomSheetTopBar(sheet.name, isPaddingStatusBar = false)
-            DetailInfos(sheet,friendUserName != null, vm = vm, hazeState )
-        }
-    }
+
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val scrollState = rememberScrollState()
     var isExpand by remember { mutableStateOf(false) }
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
+    val isFriend = friendUserName != null
 
     Box(modifier = Modifier
         .fillMaxSize()
@@ -199,17 +188,25 @@ fun CommunityCourseTableUI(
                 if(isExpand) {
                     isExpand = false
                 } else {
-                    showToast("空白区域双击添加日程,长按切换周")
+                    showToast(
+                        if(!isFriend) {
+                            "空白区域双击添加日程,长按切换周"
+                        } else {
+                            "空白区域长按切换周"
+                        }
+                    )
                 }
             },
             onLongTapBlankRegion = {
                 isExpand = !isExpand
             },
             onDoubleTapBlankRegion = {
-                navController.navigateForTransition(
-                    AppNavRoute.AddEvent,
-                    AppNavRoute.AddEvent.withArgs()
-                )
+                if(!isFriend) {
+                    navController.navigateForTransition(
+                        AppNavRoute.AddEvent,
+                        AppNavRoute.AddEvent.withArgs()
+                    )
+                }
             }
         ) { list ->
             // 只有一节课
@@ -218,7 +215,7 @@ fun CommunityCourseTableUI(
                 // 如果是考试
                 when(item.type) {
                     TimeTableType.COURSE -> {
-                        if(friendUserName == null) {
+                        if(!isFriend) {
                             navController.navigateForTransition(AppNavRoute.CourseDetail, AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ))
                         } else {
                             bean = list
@@ -231,8 +228,9 @@ fun CommunityCourseTableUI(
                         }
                     }
                     TimeTableType.EXAM -> {
-                        bean = list
-                        showBottomSheetDetail = true
+                        navController.navigateForTransition(AppNavRoute.Exam, AppNavRoute.Exam.withArgs(CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"))
+//                        bean = list
+//                        showBottomSheetDetail = true
                     }
                 }
             } else if (list.size > 1) {

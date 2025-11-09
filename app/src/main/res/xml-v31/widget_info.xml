@@ -14,5 +14,5 @@
     android:initialLayout="@layout/glance_default_loading_layout"
     >
 </appwidget-provider>
-    <!--    android:configure="com.hfut.schedule.activity.screen.WidgetConfigureActivity"-->
 <!--    android:previewImage="@drawable"-->
+    <!--    android:configure="com.hfut.schedule.activity.screen.WidgetConfigureActivity"-->

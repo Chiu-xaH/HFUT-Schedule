@@ -14,6 +14,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
+import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCoursesFromCommunity
@@ -101,7 +102,7 @@ private suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTabl
                     dayOfWeek = item.weekday,
                     startTime = parseTime(item.startTime),
                     endTime = parseTime(item.endTime),
-                    place = item.room?.nameZh?.replace("学堂", ""),
+                    place = item.room?.nameZh?.simplifyPlace(),
                 )
             )
         }
@@ -139,7 +140,7 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
             // 是同一周
             val list = result[weekInfo.first-1]
             val name = item.title
-            val place = item.description?.replace("学堂","")
+            val place = item.description?.simplifyPlace()
 
             // 跨天日程将其分裂
             if(endDate != startDate) {
@@ -210,7 +211,7 @@ private suspend fun examToTimeTableData(context : Context): List<List<TimeTableI
             val list = result[weekInfo.first-1]
 
             val name = item.course ?: continue
-            val place = item.place?.replace("学堂","")
+            val place = item.place?.simplifyPlace()
             list.add(
                 TimeTableItem(
                     type = TimeTableType.EXAM,
@@ -256,7 +257,7 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
                             dayOfWeek = weekday + 1,
                             startTime = time[0],
                             endTime = time[1],
-                            place = item.place?.replace("学堂", ""),
+                            place = item.place?.simplifyPlace()
                         )
                     )
                 }
