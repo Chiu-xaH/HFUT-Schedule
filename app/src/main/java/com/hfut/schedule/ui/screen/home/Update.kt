@@ -62,7 +62,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
     val communityToken = prefs.getString("TOKEN","")
     val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
-    val showWeb = prefs.getBoolean("SWITCHWEB",isXuanCheng)
+    val showWeb = prefs.getBoolean("SWITCHWEB",true)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
 

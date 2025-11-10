@@ -114,9 +114,9 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     var showEle by remember { mutableStateOf(switch_ele) }
     SharedPrefs.saveBoolean("SWITCHELE", true, showEle)
 
-    val switch_web = prefs.getBoolean("SWITCHWEB", getCampusRegion() == CampusRegion.XUANCHENG)
+    val switch_web = prefs.getBoolean("SWITCHWEB", true)
     var showWeb by remember { mutableStateOf(switch_web) }
-    SharedPrefs.saveBoolean("SWITCHWEB", getCampusRegion() == CampusRegion.XUANCHENG, showWeb)
+    SharedPrefs.saveBoolean("SWITCHWEB", true, showWeb)
 
     val switch_card = prefs.getBoolean("SWITCHCARD", true)
     var showCard by remember { mutableStateOf(switch_card) }
@@ -265,7 +265,7 @@ fun FocusCard(
 ) {
     val showEle = prefs.getBoolean("SWITCHELE",true)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
-    val showWeb = prefs.getBoolean("SWITCHWEB",getCampusRegion() == CampusRegion.XUANCHENG)
+    val showWeb = prefs.getBoolean("SWITCHWEB",true)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
     val route = remember { AppNavRoute.Life.withArgs(true) }

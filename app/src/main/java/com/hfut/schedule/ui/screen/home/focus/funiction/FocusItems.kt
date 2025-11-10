@@ -669,7 +669,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar("聚焦通知")
+                        HazeBottomSheetTopBar("聚焦通知", isPaddingStatusBar = false)
                     },) {innerPadding ->
                     Column(
                         modifier = Modifier
@@ -689,12 +689,12 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                     with(todayExam) {
                         courseName?.let {
                             TransplantListItem(
-                                headlineContent = { ScrollText(text = (it.toString()).simplifyPlace()) },
-                                overlineContent = { ScrollText(text = "$place  $startTime") },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "")},
+                                headlineContent = { ScrollText(text = it.toString(), color = MaterialTheme.colorScheme.error) },
+                                overlineContent = { ScrollText(text = "${place?.simplifyPlace()} $startTime", color = MaterialTheme.colorScheme.error) },
+                                leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "", tint = MaterialTheme.colorScheme.error)},
                                 modifier = Modifier
-                                    .background(MaterialTheme.colorScheme.errorContainer)
-                                    .zIndex(3f)
+                                    .background(mixedCardNormalColor())
+                                    .zIndex(4f)
                             )
                         }
                     }
@@ -703,7 +703,10 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text =  it.toString()) },
                                 overlineContent = { ScrollText(text =  place?.simplifyPlace() + " " +  startTime) },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.calendar), contentDescription = "")},
+                                leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                                modifier = Modifier
+                                    .background(mixedCardNormalColor())
+                                    .zIndex(3f)
                             )
                         }
                     }
@@ -713,6 +716,9 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                                 headlineContent = { ScrollText(text =  it.toString()) },
                                 overlineContent = { ScrollText(text =  returnTime.toString()) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
+                                modifier = Modifier
+                                    .background(mixedCardNormalColor())
+                                    .zIndex(2f)
                             )
                         }
                     }
@@ -721,7 +727,10 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text =  it.toString()) },
                                 overlineContent = { ScrollText(text =  startTime.toString()) },
-                                leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
+                                leadingContent = { Icon(painter = painterResource(R.drawable.person_play), contentDescription = "")},
+                                modifier = Modifier
+                                    .background(mixedCardNormalColor())
+                                    .zIndex(1f)
                             )
                         }
                     }

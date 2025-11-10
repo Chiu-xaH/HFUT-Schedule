@@ -38,8 +38,8 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     when(getCampusRegion()) {
         CampusRegion.HEFEI -> {
             TransplantListItem(
-                headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text = "登录") },
-                overlineContent = { if(!card) ScrollText(text = "-- MB") else ScrollText(text = "校园网")},
+                headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text = "-- GiB") },
+                overlineContent = { if(!card) ScrollText(text = "-- MiB") else ScrollText(text = "校园网")},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",

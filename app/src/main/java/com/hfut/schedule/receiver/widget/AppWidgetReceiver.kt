@@ -42,6 +42,7 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
+import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
@@ -49,12 +50,14 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.getJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
+import com.hfut.schedule.ui.screen.home.texts
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,6 +74,8 @@ fun WidgetTheme(
         content = content
     )
 }
+
+private val padding = 6.dp
 
 class MyAppWidget : GlanceAppWidget() {
 
@@ -148,7 +153,7 @@ class MyAppWidget : GlanceAppWidget() {
             modifier = GlanceModifier
                 .fillMaxSize()
                 .background(GlanceTheme.colors.surface)
-                .cornerRadius(12.dp)
+                .cornerRadius(14.dp)
                 .clickable {
                     Starter.goToMain(context)
                 }
@@ -156,23 +161,22 @@ class MyAppWidget : GlanceAppWidget() {
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(texts(BottomBarItems.FOCUS), modifier = GlanceModifier.padding(padding),style = TextStyle(
+                color = GlanceTheme.colors.primary
+            ))
             LazyVerticalGrid (
                 gridCells = GridCells.Fixed(2),
                 modifier = GlanceModifier
                     .fillMaxSize()
-                    .padding(start = 6.dp,end = 6.dp),
+                    .padding(start = padding,end = padding),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(2) {
-                    Spacer(GlanceModifier.height(6.dp))
-                }
                 when(courseDataSource) {
                     CourseType.COMMUNITY.code -> {
                         if (showTomorrow) {
                             if(!isHolidayTomorrow()) {
                                 items(tomorrowCourseList.size) { index ->
                                     val item = tomorrowCourseList[index]
-//                                    Text(item.name)
                                     ListItemCard(
                                         headlineText = item.name,
                                         supportingText = item.place,
@@ -181,7 +185,7 @@ class MyAppWidget : GlanceAppWidget() {
                                             Image(provider = ImageProvider(R.drawable.exposure_plus_1_widget), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
-                                            end = if(index%2 == 0)6.dp else 0.dp, bottom = 6.dp
+                                            end = if(index%2 == 0) padding else 0.dp, bottom = padding
                                         )
                                     )
                                 }
@@ -190,7 +194,6 @@ class MyAppWidget : GlanceAppWidget() {
                             if(!isHoliday()) {
                                 items(todayCourseList.size) { index ->
                                     val item = todayCourseList[index]
-//                                    Text(item.name)
                                     ListItemCard(
                                         headlineText = item.name,
                                         supportingText = item.place,
@@ -199,7 +202,7 @@ class MyAppWidget : GlanceAppWidget() {
                                             Image(provider = ImageProvider(R.drawable.schedule_widget), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
-                                            end = if(index%2 == 0)6.dp else 0.dp, bottom = 6.dp
+                                            end = if(index%2 == 0) padding else 0.dp, bottom = padding
                                         )
                                     )
                                 }
@@ -222,7 +225,7 @@ class MyAppWidget : GlanceAppWidget() {
                                             Image(provider = ImageProvider(R.drawable.exposure_plus_1_widget), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
-                                            end = if(index%2 == 0)6.dp else 0.dp, bottom = 6.dp
+                                            end = if(index%2 == 0) padding else 0.dp, bottom = padding
                                         )
                                     )
                                 }
@@ -242,7 +245,7 @@ class MyAppWidget : GlanceAppWidget() {
                                             Image(provider = ImageProvider(R.drawable.schedule_widget), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
-                                            end = if(index%2 == 0)6.dp else 0.dp, bottom = 6.dp
+                                            end = if(index%2 == 0) padding else 0.dp, bottom = padding
                                         )
                                     )
                                 }
@@ -286,7 +289,7 @@ fun ListItemCard(
                 .fillMaxWidth()
                 .cornerRadius(12.dp)
                 .background(colors)
-                .padding(horizontal = 10.dp, vertical = 6.dp),
+                .padding(horizontal = 10.dp, vertical = padding),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // 左侧图标或图片
@@ -297,14 +300,14 @@ fun ListItemCard(
                 ) {
                     leadingContent()
                 }
-                Spacer(modifier = GlanceModifier.width(6.dp))
+                Spacer(modifier = GlanceModifier.width(padding))
             }
 
             // 中间文本区域
             Column(
                 modifier = GlanceModifier
                     .defaultWeight()
-                    .padding(end = 6.dp)
+                    .padding(end = padding)
             ) {
                 if (overlineText != null) {
                     Text(

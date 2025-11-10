@@ -27,33 +27,33 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ApiToSupabase(vm : NetWorkViewModel) {
-    val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
-    val scope = rememberCoroutineScope()
-    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
-    val check by vm.supabaseCheckResp.state.collectAsState()
+//    val supabaseAutoCheck by DataStoreManager.enableSupabaseAutoCheck.collectAsState(initial = true)
+//    val scope = rememberCoroutineScope()
+//    val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
+//    val check by vm.supabaseCheckResp.state.collectAsState()
 
 //    val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
-    var showBadge by remember { mutableStateOf(false) }
+//    var showBadge by remember { mutableStateOf(false) }
 
-    val uiState by vm.supabaseGetEventLatestResp.state.collectAsState()
-    val loading = uiState is UiState.Loading
+//    val uiState by vm.supabaseGetEventLatestResp.state.collectAsState()
+//    val loading = uiState is UiState.Loading
     // 预加载 兼顾检查登陆状态
-    LaunchedEffect(jwt,supabaseAutoCheck) {
-        if((jwt.isNotBlank() || jwt.isNotEmpty()) && supabaseAutoCheck) {
-            if(check is UiState.Prepare) {
-                vm.supabaseGetEventLatest(jwt)
-                onListenStateHolder(vm.supabaseGetEventLatestResp,onError = { _,_ -> }) { result ->
-                    vm.supabaseCheckResp.emitData(true)
-                    if(result) {
-                        // 有新的日程
-                        showBadge = true
-                    }
-                }
-            }
-        } else {
-            vm.supabaseGetEventLatestResp.emitPrepare()
-        }
-    }
+//    LaunchedEffect(jwt,supabaseAutoCheck) {
+//        if((jwt.isNotBlank() || jwt.isNotEmpty()) && supabaseAutoCheck) {
+//            if(check is UiState.Prepare) {
+//                vm.supabaseGetEventLatest(jwt)
+//                onListenStateHolder(vm.supabaseGetEventLatestResp,onError = { _,_ -> }) { result ->
+//                    vm.supabaseCheckResp.emitData(true)
+//                    if(result) {
+//                        // 有新的日程
+//                        showBadge = true
+//                    }
+//                }
+//            }
+//        } else {
+//            vm.supabaseGetEventLatestResp.emitPrepare()
+//        }
+//    }
     val context = LocalContext.current
 
 
@@ -66,15 +66,12 @@ fun ApiToSupabase(vm : NetWorkViewModel) {
         },
         colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.primary)
     ) {
-        if(loading) {
-            LoadingIcon()
-        } else {
-            BadgedBox(
-                badge = {
-                    if (showBadge) Badge()
-                }
-            ) { Icon(painterResource(id = R.drawable.cloud), contentDescription = "") }
-        }
+        Icon(painterResource(id = R.drawable.cloud), contentDescription = "")
+//        BadgedBox(
+//            badge = {
+//                if (showBadge) Badge()
+//            }
+//        ) {  }
     }
 }
 

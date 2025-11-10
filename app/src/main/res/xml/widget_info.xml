@@ -9,9 +9,9 @@
     android:targetCellHeight="2"
     android:label="@string/widget_course"
     android:resizeMode="horizontal|vertical"
-    android:previewImage="@drawable/hfut_schedule_icon"
     android:widgetCategory="home_screen|keyguard"
     android:initialLayout="@layout/glance_default_loading_layout"
+    android:previewImage="@drawable/focus_widget_preview"
     >
 </appwidget-provider>
     <!--    android:configure="com.hfut.schedule.activity.screen.WidgetConfigureActivity"-->
