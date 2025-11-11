@@ -52,22 +52,20 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 新课程表下双击空白区域添加聚焦日程，长按空白区域或长按右下角翻页器可预览20周的课程分布")//
-            UpdateItems("新增 新课程表的日视图")
-            UpdateItems("新增 桌面小组件-聚焦")//
-            UpdateItems("新增 云端共建支持对上传的日程更新")
+            UpdateItems("新增 新课程表下的新交互","完整交互：双击空白区域添加聚焦日程，长按空白区域或长按右下角翻页器可预览20周的课程分布，双指捏合可切换5或7天视图，左右滑动或左右拖动右下角翻页器进行翻页")//
+            UpdateItems("新增 桌面小组件(Beta)-聚焦","还有好多瑕疵，比如圆角对齐、尺寸对齐、深浅色跟随延迟、不支持显示聚焦日程等，后面逐步补齐；由于Android的限制，小组件最快只能30分钟更新一次数据")//
+            UpdateItems("新增 支持隐藏已过期的聚焦日程","位于 选项-应用及配置")//
             UpdateItems("调整 共建平台向所有游客开放")//
-            UpdateItems("修复 滑动取色风格进度条时画面闪烁的Bug")
-            UpdateItems("修复 一卡通消费统计一直加载的Bug")
-            UpdateItems("修复 成绩搜索的Bug")
+            UpdateItems("修复 滑动取色风格进度条时画面闪烁的Bug")//
+            UpdateItems("修复 成绩搜索的Bug")//
             UpdateItems("修复 修改下载后的聚焦日程后不显示导入的Bug")//
-            UpdateItems("优化 点击聚焦卡片后延迟的问题")
             UpdateItems("优化 考试方格对学堂的处理")//
-            UpdateItems("优化 默认折叠已过期的聚焦日程")
-            UpdateItems("优化 课程表背景下的部分组件的可读性")//
-            UpdateItems("优化 调节课程表方格长度和字体以及背景时的便捷性")//
+            UpdateItems("优化 课程表背景下的所有组件的文字颜色统一为黑白色")//
             UpdateItems("优化 部分界面的显示")//
-            UpdateItems("移除 新课程表自定义方格文字行距","改为跟随文字大小调整")//
+//            UpdateItems("新增 云端共建支持对上传的日程更新")
+//            UpdateItems("修复 一卡通消费统计一直加载的Bug")
+//            UpdateItems("优化 点击聚焦卡片后延迟的问题")
+//            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("优化 方格高度调节的精度到一位小数")
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("修复 冲突预览不显示课表的Bug")

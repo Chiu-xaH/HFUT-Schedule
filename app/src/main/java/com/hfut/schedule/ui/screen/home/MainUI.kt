@@ -244,7 +244,8 @@ fun MainScreen(
             onDismissRequest = { showUiSettings = false }
         ) {
             CustomCard(
-                color= MaterialTheme.colorScheme.surface
+                color= MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.large
             ) {
                 CalendarUISettings(true)
             }
@@ -313,22 +314,6 @@ fun MainScreen(
         }
     }
 
-    val focusActions = @Composable {
-        Row {
-            ApiToSupabase(vm)
-            val iconRoute = remember { AppNavRoute.NotificationBox.route }
-            IconButton(onClick = {
-                navHostTopController.navigateForTransition(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
-            }) {
-                BadgedBox(badge = {
-                    if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                        Badge()
-                }) {
-                    Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = iconRoute))
-                }
-            }
-        }
-    }
     val backGroundSource = rememberShaderState()
     var firstStart by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -432,6 +417,21 @@ fun MainScreen(
                                             tint = MaterialTheme.colorScheme.primary
                                         )
                                     }
+                                }
+
+                                FOCUS -> {
+                                    ApiToSupabase(vm)
+                                    val iconRoute = remember { AppNavRoute.NotificationBox.route }
+                                    IconButton(onClick = {
+                                        navHostTopController.navigateForTransition(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
+                                    }) {
+                                        BadgedBox(badge = {
+                                            if (getNotifications().size.toString() != prefs.getString("Notifications",""))
+                                                Badge()
+                                        }) {
+                                            Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = iconRoute))
+                                        }
+                                    }
                                     if (ifSaved) {
                                         IconButton(onClick = { refreshLogin(context) }) {
                                             Icon(
@@ -449,8 +449,6 @@ fun MainScreen(
                                         Spacer(modifier = Modifier.width(APP_HORIZONTAL_DP))
                                     }
                                 }
-
-                                FOCUS -> focusActions()
                                 else -> {}
                             }
                         },

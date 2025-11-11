@@ -132,18 +132,6 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("自动检查登录") },
-                    supportingContent = { Text("启动APP时自动检查登陆状态，以减少初次等待时间" ) },
-                    leadingContent = { Icon(painterResource(R.drawable.rotate_right), null) },
-                    trailingContent = {
-                        Switch(checked = supabaseAutoCheck, onCheckedChange = {  scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) } })
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.saveSupabaseAutoCheck(!supabaseAutoCheck) }
-                    }
-                )
-                PaddingHorizontalDivider()
-                TransplantListItem(
                     headlineContent = { Text("过滤不适用日程") },
                     supportingContent = { Text("仅展示${if(!filter) "所有" else "包含 " + getPersonInfo().campus  + getPersonInfo().className + " 的"}日程" ) },
                     leadingContent = { Icon(painterResource(R.drawable.filter_alt), null) },

@@ -403,7 +403,6 @@ fun MainHost(
                 transitionComposable(AppNavRoute.UseAgreement.route) {
                     Box {
                         UseAgreementScreen(navController)
-//                        Party()
                     }
                 }
                 // 更新完成引导

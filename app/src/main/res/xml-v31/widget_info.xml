@@ -9,6 +9,7 @@
     android:targetCellHeight="2"
     android:label="@string/widget_course"
     android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen|keyguard"
     android:initialLayout="@layout/glance_default_loading_layout"
     android:previewImage="@drawable/focus_widget_preview"

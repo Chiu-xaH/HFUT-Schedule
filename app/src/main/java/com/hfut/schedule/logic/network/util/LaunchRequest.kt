@@ -83,6 +83,7 @@ suspend fun <T> launchRequestState(
         holder.emitError(HttpException(response), response.code())
     }
 } catch (e: Exception) {
+    e.printStackTrace()
     holder.emitError(e,null)
 }
 // 空响应

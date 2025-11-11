@@ -368,12 +368,20 @@ object HuiXinRepository {
             getCardBill(auth, page = 1, size = origin.total, huiXinBillResult)
 
             val newState = huiXinBillResult.state.first()
-            if (newState is UiState.Success) {
-                try {
-                    val data = getConsumptionResult(newState.data)
-                    cardPredictedResponse.emitData(data)
-                } catch (e: Exception) {
-                    cardPredictedResponse.emitError(e, PARSE_ERROR_CODE)
+            when(newState) {
+                is UiState.Error -> {
+                    cardPredictedResponse.emitError(newState.exception, newState.code)
+                }
+                is UiState.Success -> {
+                    try {
+                        val data = getConsumptionResult(newState.data)
+                        cardPredictedResponse.emitData(data)
+                    } catch (e: Exception) {
+                        cardPredictedResponse.emitError(e, PARSE_ERROR_CODE)
+                    }
+                }
+                else -> {
+                    cardPredictedResponse.emitError(Exception("未知错误"), null)
                 }
             }
         }

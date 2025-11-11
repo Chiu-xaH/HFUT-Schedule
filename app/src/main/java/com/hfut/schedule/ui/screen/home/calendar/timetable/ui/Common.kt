@@ -59,6 +59,7 @@ fun TimeTable(
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
 
     val list = if(week >= items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -66,7 +67,7 @@ fun TimeTable(
     }  else {
         items[week-1]
     }
-    val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextSize
+    val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextPadding
     val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
     val timeTextSize = (textSize.value-1).sp
     val hasBackground = shaderState != null

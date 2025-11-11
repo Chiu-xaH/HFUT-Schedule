@@ -129,11 +129,7 @@ fun UseAgreementScreen(
                                         launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
                                         launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
                                     }.await()
-                                    if(getPersonInfo().name != null) {
-                                        navController.navigateAndClear(AppNavRoute.Home.route)
-                                    } else {
-                                        Starter.refreshLogin(context)
-                                    }
+                                    navController.navigateAndClear(AppNavRoute.Home.route)
                                 }
                             },
                             shape = MaterialTheme.shapes.extraLarge,

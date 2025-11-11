@@ -1,14 +1,17 @@
 package com.hfut.schedule.receiver.widget
 
 import android.content.Context
-import androidx.compose.foundation.lazy.grid.GridItemSpan
+import android.content.res.Configuration
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
@@ -17,6 +20,7 @@ import androidx.glance.GlanceTheme
 import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
+import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -38,19 +42,24 @@ import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
+import androidx.glance.text.TextDecoration
+import androidx.glance.text.TextDefaults
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.hfut.schedule.R
+import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ENDED
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.NOT_STARTED
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ONGOING
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatterTime_HH_MM
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.getJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayJxglstuCourse
@@ -59,8 +68,11 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.texts
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class AppWidgetReceiver :  GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = MyAppWidget()
@@ -86,6 +98,7 @@ class MyAppWidget : GlanceAppWidget() {
             }
         }
     }
+    private fun getTimeNow() = LocalDateTime.now().format(formatterTime_HH_MM)
 
     @Composable
     private fun MyContent() {
@@ -107,15 +120,26 @@ class MyAppWidget : GlanceAppWidget() {
                 DataBaseManager.specialWorkDayDao.searchTomorrow()
             }
         }
+
+        val timeNow by produceState(initialValue = getTimeNow()) {
+            while (true) {
+                value = getTimeNow()
+                delay(60_000L) // 每分钟更新一次
+            }
+        }
+
         val showTomorrow = when(courseDataSource) {
             CourseType.COMMUNITY.code -> {
-                DateTimeManager.compareTime(lastTime) != DateTimeManager.TimeState.NOT_STARTED
+                DateTimeManager.compareTime(lastTime,timeNow) != NOT_STARTED
             }
             CourseType.JXGLSTU.code -> {
-                DateTimeManager.compareTime(jxglstuLastTime) != DateTimeManager.TimeState.NOT_STARTED
+                DateTimeManager.compareTime(jxglstuLastTime,timeNow) != NOT_STARTED
             }
             else -> true
         }
+
+        val isDarkTheme = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
 
         LaunchedEffect(specialWorkToday,specialWorkTomorrow) {
             // 初始化UI数据
@@ -154,9 +178,7 @@ class MyAppWidget : GlanceAppWidget() {
                 .fillMaxSize()
                 .background(GlanceTheme.colors.surface)
                 .cornerRadius(14.dp)
-                .clickable {
-                    Starter.goToMain(context)
-                }
+                .clickable(onClick = actionStartActivity<MainActivity>())
             ,
             verticalAlignment = Alignment.Top,
             horizontalAlignment = Alignment.CenterHorizontally
@@ -178,11 +200,12 @@ class MyAppWidget : GlanceAppWidget() {
                                 items(tomorrowCourseList.size) { index ->
                                     val item = tomorrowCourseList[index]
                                     ListItemCard(
+                                        isDarkTheme = isDarkTheme,
                                         headlineText = item.name,
                                         supportingText = item.place,
                                         overlineText = item.classTime,
                                         leadingContent = {
-                                            Image(provider = ImageProvider(R.drawable.exposure_plus_1_widget), contentDescription = null)
+                                            Image(provider = ImageProvider(if(isDarkTheme) R.drawable.exposure_plus_1 else R.drawable.exposure_plus_1_widget), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
                                             end = if(index%2 == 0) padding else 0.dp, bottom = padding
@@ -194,12 +217,30 @@ class MyAppWidget : GlanceAppWidget() {
                             if(!isHoliday()) {
                                 items(todayCourseList.size) { index ->
                                     val item = todayCourseList[index]
+                                    val time = item.classTime
+                                    val startTime = time.substringBefore("-")
+                                    val endTime = time.substringAfter("-")
+                                    val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
                                     ListItemCard(
+                                        isDarkTheme = isDarkTheme,
+                                        textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
                                         headlineText = item.name,
                                         supportingText = item.place,
                                         overlineText = item.classTime,
                                         leadingContent = {
-                                            Image(provider = ImageProvider(R.drawable.schedule_widget), contentDescription = null)
+                                            Image(provider = ImageProvider(
+                                                when(state) {
+                                                    NOT_STARTED -> {
+                                                        if(isDarkTheme) R.drawable.schedule else R.drawable.schedule_widget
+                                                    }
+                                                    ONGOING -> {
+                                                        if(isDarkTheme) R.drawable.progress_activity else R.drawable.progress_activity_widget
+                                                    }
+                                                    ENDED -> {
+                                                        if(isDarkTheme) R.drawable.check else R.drawable.check_widget
+                                                    }
+                                                }
+                                            ), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
                                             end = if(index%2 == 0) padding else 0.dp, bottom = padding
@@ -218,11 +259,12 @@ class MyAppWidget : GlanceAppWidget() {
                                     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
                                     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
                                     ListItemCard(
+                                        isDarkTheme = isDarkTheme,
                                         headlineText = item.courseName,
                                         supportingText = item.place,
                                         overlineText = "$startTime-$endTime",
                                         leadingContent = {
-                                            Image(provider = ImageProvider(R.drawable.exposure_plus_1_widget), contentDescription = null)
+                                            Image(provider = ImageProvider(if(isDarkTheme) R.drawable.exposure_plus_1 else R.drawable.exposure_plus_1_widget), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
                                             end = if(index%2 == 0) padding else 0.dp, bottom = padding
@@ -237,12 +279,27 @@ class MyAppWidget : GlanceAppWidget() {
                                     val time = item.time
                                     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
                                     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+                                    val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
                                     ListItemCard(
+                                        textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
+                                        isDarkTheme = isDarkTheme,
                                         headlineText = item.courseName,
                                         supportingText = item.place,
                                         overlineText = "$startTime-$endTime",
                                         leadingContent = {
-                                            Image(provider = ImageProvider(R.drawable.schedule_widget), contentDescription = null)
+                                            Image(provider = ImageProvider(
+                                                when(state) {
+                                                    NOT_STARTED -> {
+                                                        if(isDarkTheme) R.drawable.schedule else R.drawable.schedule_widget
+                                                    }
+                                                    ONGOING -> {
+                                                        if(isDarkTheme) R.drawable.progress_activity else R.drawable.progress_activity_widget
+                                                    }
+                                                    ENDED -> {
+                                                        if(isDarkTheme) R.drawable.check else R.drawable.check_widget
+                                                    }
+                                                }
+                                            ), contentDescription = null)
                                         },
                                         modifier = GlanceModifier.padding(
                                             end = if(index%2 == 0) padding else 0.dp, bottom = padding
@@ -277,10 +334,13 @@ fun ListItemCard(
     leadingContent: (@Composable () -> Unit)? = null,
     overlineText: String? = null,
     headlineText: String,
+    textDecoration: TextDecoration? = null,
     supportingText: String? = null,
     trailingContent: (@Composable () -> Unit)? = null,
+    isDarkTheme : Boolean = false,
     colors: ColorProvider = GlanceTheme.colors.primaryContainer,
 ) {
+    val whiteColor = ColorProvider(color = Color(0xFFFFFFFF))
     Box (
         modifier = modifier
     ){
@@ -314,8 +374,10 @@ fun ListItemCard(
                         text = overlineText,
                         maxLines = 1,
                         style = TextStyle(
+                            color = if(!isDarkTheme) TextDefaults.defaultTextColor else whiteColor,
                             fontSize = 9.sp,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Medium,
+                            textDecoration = textDecoration
                         ),
                     )
                     Spacer(modifier = GlanceModifier.height(1.dp))
@@ -325,8 +387,10 @@ fun ListItemCard(
                     maxLines = 1,
                     text = headlineText,
                     style = TextStyle(
+                        color = if(!isDarkTheme) TextDefaults.defaultTextColor else whiteColor,
                         fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        textDecoration = textDecoration
                     ),
                 )
 
@@ -336,8 +400,10 @@ fun ListItemCard(
                         maxLines = 1,
                         text = supportingText,
                         style = TextStyle(
+                            color = if(!isDarkTheme) TextDefaults.defaultTextColor else whiteColor,
                             fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal
+                            fontWeight = FontWeight.Normal,
+                            textDecoration = textDecoration
                         ),
                     )
                 }

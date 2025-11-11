@@ -406,6 +406,7 @@ fun CustomItem(
     activity: Activity,
     showTomorrow : Boolean,
     navController : NavHostController,
+    showOutOfDateItems : Boolean = true,
     refresh : () -> Unit
 ) {
     val dateTime = item.dateTime
@@ -423,9 +424,13 @@ fun CustomItem(
                 CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh,navController = navController)
         } else {
             // 显示在第二页
-            if(isFuture)
+            if(isFuture) {
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh,navController = navController)
+                val isOutOfDate = nowTimeNum > endNum
+                if(!showOutOfDateItems && isOutOfDate) { } else {
+                    CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh,navController = navController)
+                }
+            }
         }
     } else {
         // 今天截止 并且尚未截止
@@ -435,9 +440,13 @@ fun CustomItem(
                 CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh,navController = navController)
         } else {
             // 显示在第二页
-            if(isFuture)
+            if(isFuture) {
                 // 判断是否过期
-                CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh,navController = navController)
+                val isOutOfDate = nowTimeNum > endNum
+                if(!showOutOfDateItems && isOutOfDate) { } else {
+                    CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh,navController = navController)
+                }
+            }
         }
     }
 }

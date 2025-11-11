@@ -106,6 +106,7 @@ fun APPScreen(
         var showfocus by remember { mutableStateOf(switch_focus) }
 
         val controlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
+        val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 
         val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
         var showSUpdate by remember { mutableStateOf(switch_update) }
@@ -264,7 +265,7 @@ fun APPScreen(
                 TransplantListItem(
                     headlineContent = { Text(text = "聚焦仍显示已上完的课程") },
                     supportingContent = {
-                        Text("显示今天上完的课程")
+                        Text("显示或隐藏今天上完的课程")
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.search_activity),
@@ -272,6 +273,27 @@ fun APPScreen(
                     ) },
                     trailingContent = { Switch(checked = showEnded, onCheckedChange = { ch -> showEnded = ch}) },
                     modifier = Modifier.clickable { showEnded = !showEnded }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "聚焦其他事项中仍显示已结束的日程") },
+                    supportingContent = {
+                        Text("显示或隐藏自行添加的日程中已过期的项目")
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.search_activity),
+                        contentDescription = "Localized description"
+                    ) },
+                    trailingContent = { Switch(checked = enableShowOutOfDateEvent, onCheckedChange = {
+                        scope.launch {
+                            DataStoreManager.saveShowOutOdDateEvent(!enableShowOutOfDateEvent)
+                        }
+                    }) },
+                    modifier = Modifier.clickable {
+                        scope.launch {
+                            DataStoreManager.saveShowOutOdDateEvent(!enableShowOutOfDateEvent)
+                        }
+                    }
                 )
             }
         }

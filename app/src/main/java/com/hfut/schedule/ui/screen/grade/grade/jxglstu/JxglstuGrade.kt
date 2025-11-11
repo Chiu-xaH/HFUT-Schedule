@@ -101,12 +101,11 @@ import kotlinx.coroutines.launch
 fun GradeItemUIJXGLSTU(
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
-    showSearch : Boolean,
+    input : String,
     hazeState: HazeState,
     ifSaved : Boolean
 ) {
     val context = LocalContext.current
-    var input by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("成绩详情") }
     var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -199,72 +198,29 @@ fun GradeItemUIJXGLSTU(
     }
     val scope = rememberCoroutineScope()
 
-    var searchList = mutableListOf<GradeResponseJXGLSTU>()
-
     val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
         Column {
-            if(showSearch) {
-                InnerPaddingHeight(innerPadding,true)
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    TextField(
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = APP_HORIZONTAL_DP),
-                        value = input,
-                        onValueChange = {
-                            input = it
-                        },
-                        label = { Text("搜索 课程名、代码") },
-                        singleLine = true,
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {}) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "description"
-                                )
-                            }
-                        },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
-                    )
-                }
-                gradeList.flatMap { it.list }.forEach { item ->
-                    if (item.title.contains(input) || item.title.contains(input)) {
-                        searchList.add(item)
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-            }
             if(gradeList.isEmpty()) {
                 CenterScreen {
                     EmptyUI()
                 }
             }
             else {
-                if(showSearch) {
-                    LazyColumn{
-                        items(searchList.size) { item ->
-                            Item(searchList[item])
-                        }
-                        item { InnerPaddingHeight(innerPadding,false) }
-                    }
-                } else {
-                    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                LazyColumn {
+                    item {
                         InnerPaddingHeight(innerPadding,true)
-                        Spacer(modifier = Modifier.height(5.dp))
-                        for(i in gradeList) {
-                            DividerTextExpandedWith(i.term) {
-                                for(j in i.list) {
-                                    Item(j)
-                                }
+                    }
+                    items(gradeList.size) { termIndex ->
+                        val item = gradeList[termIndex]
+                        DividerTextExpandedWith(item.term) {
+                            item.list.filter {
+                                it.title.contains(input) || it.code.contains(input)
+                            }.forEach { subItem ->
+                                Item(subItem)
                             }
                         }
+                    }
+                    item {
                         InnerPaddingHeight(innerPadding,false)
                     }
                 }

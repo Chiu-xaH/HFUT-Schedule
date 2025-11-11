@@ -13,10 +13,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,11 +41,13 @@ import com.hfut.schedule.logic.network.util.MyApiParse.getCustomEvent
 import com.hfut.schedule.logic.network.util.MyApiParse.getNetCourse
 import com.hfut.schedule.logic.network.util.MyApiParse.getSchedule
 import com.hfut.schedule.logic.network.util.toTimestampWithOutT
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.isHoliday
 import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCard
@@ -196,6 +201,7 @@ fun TodayScreen(
             }
         }
     }
+    val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 
     val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
 
@@ -287,7 +293,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, navController = navController) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, navController = navController, showOutOfDateItems = enableShowOutOfDateEvent) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
