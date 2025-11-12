@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -21,8 +22,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
@@ -114,31 +117,39 @@ fun ScheduleTopDate(
 
                 var animated by remember { mutableStateOf(false) }
                 val fontSize = if (showAll) 12f else 14f
-                val fontSizeAnimated by animateFloatAsState(
-                    targetValue = if (isToday && animated) fontSize*1.25f else fontSize,
-                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED), label = "fontSizeAnimation",
-                    finishedListener = { if (isToday) animated = false }
-                )
                 LaunchedEffect(isToday) {
                     if (isToday) {
                         animated = true
                     }
                 }
-
-                Text(
-                    text = date.substringAfter("-"),
-                    textAlign = TextAlign.Center,
-                    textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
-                    fontSize = fontSizeAnimated.sp,
-                    style = TextStyle(
-                        shadow = Shadow(
-                            color = MaterialTheme.colorScheme.surface.copy(alpha = 1f),
-                            offset = Offset(0f, 0f),
-                            blurRadius = 10f
-                        )
-                    ),
-                    color = MaterialTheme.colorScheme.primary
+                val scale by animateFloatAsState(
+                    targetValue = if (isToday && animated) 1.25f else 1f,
+                    animationSpec = tween(durationMillis = AppAnimationManager.ANIMATION_SPEED),
+                    label = "scaleAnimation",
+                    finishedListener = { if (isToday) animated = false }
                 )
+
+                Box(
+                    modifier = Modifier
+                        .scale(scale), // 👈 缩放围绕中心
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = date.substringAfter("-"),
+                        textAlign = TextAlign.Center,
+                        textDecoration = if (isToday) TextDecoration.Underline else TextDecoration.None,
+                        fontSize = fontSize.sp,
+                        style = TextStyle(
+                            shadow = Shadow(
+                                color = MaterialTheme.colorScheme.surface.copy(alpha = 1f),
+                                offset = Offset(0f, 0f),
+                                blurRadius = 10f
+                            )
+                        ),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
             }
         }
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))

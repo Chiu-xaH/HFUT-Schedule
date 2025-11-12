@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-11-11") },
+                overlineContent = { Text(text = "2025-11-12") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -52,20 +52,18 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 新课程表下的新交互","完整交互：双击空白区域添加聚焦日程，长按空白区域或长按右下角翻页器可预览20周的课程分布，双指捏合可切换5或7天视图，左右滑动或左右拖动右下角翻页器进行翻页")//
-            UpdateItems("新增 桌面小组件(Beta)-聚焦","还有好多瑕疵，比如圆角对齐、尺寸对齐、深浅色跟随延迟、不支持显示聚焦日程等，后面逐步补齐；由于Android的限制，小组件最快只能30分钟更新一次数据")//
-            UpdateItems("新增 支持隐藏已过期的聚焦日程","位于 选项-应用及配置")//
-            UpdateItems("调整 共建平台向所有游客开放")//
-            UpdateItems("修复 滑动取色风格进度条时画面闪烁的Bug")//
-            UpdateItems("修复 成绩搜索的Bug")//
-            UpdateItems("修复 修改下载后的聚焦日程后不显示导入的Bug")//
-            UpdateItems("优化 考试方格对学堂的处理")//
-            UpdateItems("优化 课程表背景下的所有组件的文字颜色统一为黑白色")//
-            UpdateItems("优化 部分界面的显示")//
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
+//            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("优化 点击聚焦卡片后延迟的问题")
-//            UpdateItems("新增 新课程表的日视图")
+//            UpdateItems("新增 聚焦小组件的自定义调节")
+//            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
+//            UpdateItems("新增 校园网小组件(2*2)")
+            UpdateItems("修复 取色风格进度条在已知部分设备上闪烁的Bug")
+            UpdateItems("修复 课程表顶部日期显示动画导致整体微位移的Bug")
+            UpdateItems("修复 聚焦小组件无法及时30min自动更新的Bug")
+            UpdateItems("优化 聚焦小组件的显示效果和点击事件")
+            UpdateItems("优化 小组件的刷新数据机制","1.可在App选项-外观与显示-桌面组件，点击手动刷新；2.冷启动App的同时也会刷新；3.点击组件顶部的标题文字手动刷新；4.借助WorkManager，30分钟后自动刷新(受系统调度影响会有延迟)")
 //            UpdateItems("优化 方格高度调节的精度到一位小数")
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("修复 冲突预览不显示课表的Bug")

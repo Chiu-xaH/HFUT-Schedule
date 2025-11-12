@@ -73,6 +73,7 @@
             android:theme="@style/Theme.App" />
         <activity
             android:name=".activity.MainActivity"
+            android:launchMode="standard"
             android:configChanges="uiMode"
             android:exported="true"
             android:theme="@style/Theme.App.Starting">
@@ -198,7 +199,7 @@
             android:name=".receiver.UpdateReceiver"
             android:exported="false" /> <!-- 小组件 -->
         <receiver
-            android:name=".receiver.widget.AppWidgetReceiver"
+            android:name=".receiver.widget.focus.FocusWidgetReceiver"
             android:exported="true"
             android:label="@string/widget_course">
             <intent-filter>

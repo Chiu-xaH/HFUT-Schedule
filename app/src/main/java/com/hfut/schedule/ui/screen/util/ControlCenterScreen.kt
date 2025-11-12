@@ -396,6 +396,7 @@ fun ControlCenterScreen(
                                                 Icon(painterResource(R.drawable.delete),null)
                                             }
                                         },
+                                        color = MaterialTheme.colorScheme.surface.copy(0.85f),
                                         modifier = Modifier.clickable {
                                             if(isCurrent) {
                                                 onExit()

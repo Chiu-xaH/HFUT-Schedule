@@ -3,9 +3,7 @@ package com.hfut.schedule.application
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.util.network.WebVpnUtil

@@ -1,10 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
-import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -74,7 +70,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
@@ -88,7 +83,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -102,8 +96,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.receiver.widget.AppWidgetReceiver
-import com.hfut.schedule.receiver.widget.MyAppWidget
+import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
+import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -130,7 +124,6 @@ import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -421,21 +414,29 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
                 DividerTextExpandedWith("自定义取色") {
                     if(!useDynamicColor) {
-                        val t = styleList.find { it.code == customColorStyle }?.description
+                        var styleValue by remember { mutableFloatStateOf(customColorStyle.toFloat()) }
                         TransplantListItem(
-                            headlineContent = { Text(text = "浓度 | $t") },
+                            headlineContent = { Text(text = "浓度 | ${styleList.find { it.code == customColorStyle }?.description}") },
                             leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description",) },
                         )
                         CustomSlider(
-                            value = customColorStyle.toFloat(),
+                            value = styleValue,
                             onValueChange = { value ->
-                                val level = styleList.find { it.code == value.toInt() } ?: return@CustomSlider
-                                scope.launch { DataStoreManager.saveCustomColorStyle(level) }
+                                styleValue = value
+                            },
+                            onValueChangeFinished = {
+                                val level = styleList.find { it.code == styleValue.toInt() }
+                                level?.let {
+                                    scope.launch {
+                                        DataStoreManager.saveCustomColorStyle(it)
+                                    }
+                                }
                             },
                             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                             steps = 2,
                             valueRange = 0f..3f,
-                            showProcessText = true, processText = t
+                            showProcessText = true,
+                            processText =  styleList.find { it.code == styleValue.toInt() }?.description
                         )
                         PaddingHorizontalDivider()
                     }
@@ -678,6 +679,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
             }
         }
+        val focusWidgetCount by produceState(initialValue = 0) {
+            value = hasFocusWidget(context)
+        }
         DividerTextExpandedWith("桌面组件(Beta)") {
 
             CustomCard(color = backgroundColor) {
@@ -690,22 +694,15 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         Text("聚焦")
                     },
                     supportingContent = {
-                        Text("4*2，显示聚焦中的重要事项")
+                        Text("点击手动刷新数据")
+                    },
+                    trailingContent = {
+                        Text("在运行${focusWidgetCount}个")
                     },
                     modifier = Modifier.clickable {
-                        val appWidgetManager = AppWidgetManager.getInstance(context)
-                        val provider = ComponentName(context, MyAppWidget::class.java) // 你的 Glance Widget 类
-
-                        if (appWidgetManager.isRequestPinAppWidgetSupported) {
-                            val pinnedWidgetCallback = PendingIntent.getBroadcast(
-                                context,
-                                0,
-                                Intent(context, AppWidgetReceiver::class.java),
-                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                            )
-                            appWidgetManager.requestPinAppWidget(provider, null, pinnedWidgetCallback)
-                        } else {
-                            showToast("当前系统不支持固定小组件")
+                        scope.launch {
+                            refreshFocusWidget(context)
+                            showToast("刷新成功")
                         }
                     },
                     leadingContent = {

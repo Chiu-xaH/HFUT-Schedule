@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlin.math.abs
 
-val SLIDER_SIZE = 23.dp
+private val SLIDER_SIZE = 23.dp
 private val SLIDER_HEIGHT = 6.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -35,8 +35,8 @@ private val SLIDER_HEIGHT = 6.dp
 fun CustomSlider(
     value: Float,
     onValueChange: (Float) -> Unit,
-    onValueChangeFinished: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
+    onValueChangeFinished: (() -> Unit)? = null,
     steps: Int = 0,
     valueRange: ClosedFloatingPointRange<Float> = 0f..1f,
     showProcessText : Boolean = false,

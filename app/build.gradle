@@ -28,8 +28,8 @@ android {
         applicationId "com.hfut.schedule"
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 231
-        versionName "4.18.5"
+        versionCode 232
+        versionName "4.18.5.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -210,6 +210,8 @@ dependencies {
     implementation(libs.androidx.glance.material3)
     // 权限
     implementation(libs.accompanist.permissions)
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
     // 生物识别 指纹
     // implementation(libs.androidx.biometric)
     // 镜面效果
