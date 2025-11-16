@@ -299,7 +299,7 @@ class FocusWidget : GlanceAppWidget() {
                     }
 
                     LazyVerticalGrid (
-                        gridCells = GridCells.Fixed(2),
+                        gridCells = GridCells.Fixed(if(size <= 2) 1 else 2),
                         modifier = GlanceModifier
                             .fillMaxSize()
                             .padding(start = widgetPadding*2,end = widgetPadding*2)
