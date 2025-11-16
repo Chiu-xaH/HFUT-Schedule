@@ -6,11 +6,14 @@ import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
@@ -34,16 +37,21 @@ import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
+import androidx.glance.layout.Row
 import androidx.glance.layout.fillMaxSize
+import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
 import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
 import androidx.glance.text.TextDecoration
 import androidx.glance.text.TextStyle
+import androidx.glance.unit.ColorProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.enumeration.BottomBarItems
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
@@ -66,6 +74,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
@@ -138,9 +147,10 @@ class FocusWidget : GlanceAppWidget() {
     }
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
+        val textSize = DataStoreManager.focusWidgetTextSize.first()
         provideContent {
             WidgetTheme {
-                MyContent()
+                MyContent(textSize)
             }
         }
     }
@@ -149,7 +159,7 @@ class FocusWidget : GlanceAppWidget() {
     private fun getTimeNow() = LocalDateTime.now().format(formatterTime_HH_MM)
 
     @Composable
-    private fun MyContent() {
+    private fun MyContent(textSize : Float) {
         val context = LocalContext.current
         val isDarkTheme = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
         val courseDataSource =  prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
@@ -177,17 +187,9 @@ class FocusWidget : GlanceAppWidget() {
             }
         }
 
-        val showTomorrow = when(courseDataSource) {
-            CourseType.COMMUNITY.code -> {
-                DateTimeManager.compareTime(lastTime,timeNow) != NOT_STARTED
-            }
-            CourseType.JXGLSTU.code -> {
-                DateTimeManager.compareTime(jxglstuLastTime,timeNow) != NOT_STARTED
-            }
-            else -> true
-        }
 
-
+        var size by remember { mutableIntStateOf(0) }
+        var showTomorrow by remember { mutableStateOf(true) }
 
         LaunchedEffect(specialWorkToday,specialWorkTomorrow) {
             // 初始化UI数据
@@ -207,6 +209,16 @@ class FocusWidget : GlanceAppWidget() {
                         val lastCourse = todayCourseList.lastOrNull()
                         lastTime = lastCourse?.classTime?.substringAfter("-") ?: "00:00"
                         tomorrowCourseList = getCourseInfoFromCommunity(weekDayTomorrow,nextWeek).flatten().distinct()
+                        showTomorrow = DateTimeManager.compareTime(lastTime,timeNow) != NOT_STARTED
+                        if (showTomorrow) {
+                            if(!isHolidayTomorrow()) {
+                                size = tomorrowCourseList.size
+                            }
+                        } else {
+                            if(!isHoliday()) {
+                                size = todayCourseList.size
+                            }
+                        }
                     }
                     CourseType.JXGLSTU.code -> {
                         todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it, context ) } ?: getTodayJxglstuCourse(context)
@@ -215,11 +227,22 @@ class FocusWidget : GlanceAppWidget() {
                         jxglstuLastTime = jxglstuLastCourse?.time?.end?.let {
                             parseTimeItem(it.hour) +  ":" + parseTimeItem(it.minute)
                         } ?: "00:00"
+                        showTomorrow = DateTimeManager.compareTime(jxglstuLastTime,timeNow) != NOT_STARTED
+                        if (showTomorrow) {
+                            if(!isHolidayTomorrow()) {
+                                size = tomorrowJxglstuList.size
+                            }
+                        } else {
+                            if(!isHoliday()) {
+                                size = todayJxglstuList.size
+                            }
+                        }
                     }
-                    CourseType.NEXT.code -> {}
                 }
             }
         }
+
+
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -227,169 +250,211 @@ class FocusWidget : GlanceAppWidget() {
                 .cornerRadius(14.dp)
                 .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
         ) {
-            Column(
-                verticalAlignment = Alignment.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = texts(BottomBarItems.FOCUS) + " (${timeNow})",
-                    maxLines = 1,
-                    modifier = GlanceModifier
-                        .padding(vertical = widgetPadding)
-                        .clickable(onClick = actionRunCallback<RefreshWidgetAction>()),
-                    style = TextStyle(color = GlanceTheme.colors.primary)
-                )
-                LazyVerticalGrid (
-                    gridCells = GridCells.Fixed(2),
-                    modifier = GlanceModifier
-                        .fillMaxSize()
-                        .padding(start = widgetPadding*2,end = widgetPadding*2)
-                    ,
-                    horizontalAlignment = Alignment.CenterHorizontally
+            if(size == 0) {
+                Box(
+                    modifier = GlanceModifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    when(courseDataSource) {
-                        CourseType.COMMUNITY.code -> {
-                            if (showTomorrow) {
-                                if(!isHolidayTomorrow()) {
-                                    items(tomorrowCourseList.size) { index ->
-                                        val item = tomorrowCourseList[index]
-                                        WidgetCardListItem(
-                                            headlineText = item.name,
-                                            supportingText = item.place,
-                                            overlineText = item.classTime,
-                                            leadingContent = {
-                                                Image(
-                                                    provider = ImageProvider(if (isDarkTheme) R.drawable.exposure_plus_1 else R.drawable.exposure_plus_1_widget),
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            modifier = GlanceModifier.padding(
-                                                end = if (index % 2 == 0) widgetPadding else 0.dp,
-                                                bottom = widgetPadding
-                                            )
-                                                .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
+                    Text(
+                        "近期无课程",
+                        modifier = GlanceModifier
+                            .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>()),
+                        style = TextStyle(
+                            color = GlanceTheme.colors.outline,
+                            textAlign = TextAlign.Center
+                        )
+                    )
+                }
+            } else {
+                Column() {
+                    Box(
+                        modifier = GlanceModifier
+                            .padding(top = (widgetPadding.value*1.5).dp, start = widgetPadding*2,end = widgetPadding*2, bottom = widgetPadding)
+                            .clickable(onClick = actionRunCallback<RefreshWidgetAction>()),
 
-                                        )
+                        ) {
+                        // 左侧文本
+                        Text(
+                            text = texts(BottomBarItems.FOCUS),
+                            maxLines = 1,
+                            modifier = GlanceModifier
+                                .fillMaxWidth(),
+                            style = TextStyle(
+                                color = GlanceTheme.colors.primary,
+                                textAlign = TextAlign.Start
+                            )
+                        )
+
+                        // 右侧文本
+                        Text(
+                            text = "${size}节课",
+                            maxLines = 1,
+                            modifier = GlanceModifier
+                                .fillMaxWidth(),
+                            style = TextStyle(
+                                color = GlanceTheme.colors.outline,
+                                textAlign = TextAlign.End
+                            )
+                        )
+                    }
+
+                    LazyVerticalGrid (
+                        gridCells = GridCells.Fixed(2),
+                        modifier = GlanceModifier
+                            .fillMaxSize()
+                            .padding(start = widgetPadding*2,end = widgetPadding*2)
+                        ,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        when(courseDataSource) {
+                            CourseType.COMMUNITY.code -> {
+                                if (showTomorrow) {
+                                    if(!isHolidayTomorrow()) {
+                                        items(tomorrowCourseList.size) { index ->
+                                            val item = tomorrowCourseList[index]
+                                            WidgetCardListItem(
+                                                textSize = textSize,
+                                                headlineText = item.name,
+                                                supportingText = item.place,
+                                                overlineText = item.classTime,
+                                                leadingContent = {
+                                                    Image(
+                                                        provider = ImageProvider(if (isDarkTheme) R.drawable.exposure_plus_1 else R.drawable.exposure_plus_1_widget),
+                                                        contentDescription = null
+                                                    )
+                                                },
+                                                modifier = GlanceModifier.padding(
+                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    bottom = widgetPadding
+                                                )
+                                                    .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
+
+                                            )
+                                        }
                                     }
-                                }
-                            } else {
-                                if(!isHoliday()) {
-                                    items(todayCourseList.size) { index ->
-                                        val item = todayCourseList[index]
-                                        val time = item.classTime
-                                        val startTime = time.substringBefore("-")
-                                        val endTime = time.substringAfter("-")
-                                        val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
-                                        WidgetCardListItem(
-                                            textDecoration = if (state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
-                                            headlineText = item.name,
-                                            supportingText = item.place,
-                                            overlineText = item.classTime,
-                                            leadingContent = {
-                                                Image(
-                                                    provider = ImageProvider(
-                                                        when (state) {
-                                                            NOT_STARTED -> {
-                                                                if (isDarkTheme) R.drawable.schedule else R.drawable.schedule_widget
-                                                            }
+                                } else {
+                                    if(!isHoliday()) {
+                                        items(todayCourseList.size) { index ->
+                                            val item = todayCourseList[index]
+                                            val time = item.classTime
+                                            val startTime = time.substringBefore("-")
+                                            val endTime = time.substringAfter("-")
+                                            val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+                                            WidgetCardListItem(
+                                                textSize = textSize,
+                                                textDecoration = if (state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
+                                                headlineText = item.name,
+                                                supportingText = item.place,
+                                                overlineText = item.classTime,
+                                                leadingContent = {
+                                                    Image(
+                                                        provider = ImageProvider(
+                                                            when (state) {
+                                                                NOT_STARTED -> {
+                                                                    if (isDarkTheme) R.drawable.schedule else R.drawable.schedule_widget
+                                                                }
 
-                                                            ONGOING -> {
-                                                                if (isDarkTheme) R.drawable.progress_activity else R.drawable.progress_activity_widget
-                                                            }
+                                                                ONGOING -> {
+                                                                    if (isDarkTheme) R.drawable.progress_activity else R.drawable.progress_activity_widget
+                                                                }
 
-                                                            ENDED -> {
-                                                                if (isDarkTheme) R.drawable.check else R.drawable.check_widget
+                                                                ENDED -> {
+                                                                    if (isDarkTheme) R.drawable.check else R.drawable.check_widget
+                                                                }
                                                             }
-                                                        }
-                                                    ), contentDescription = null
+                                                        ), contentDescription = null
+                                                    )
+                                                },
+                                                modifier = GlanceModifier.padding(
+                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    bottom = widgetPadding
                                                 )
-                                            },
-                                            modifier = GlanceModifier.padding(
-                                                end = if (index % 2 == 0) widgetPadding else 0.dp,
-                                                bottom = widgetPadding
+                                                    .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
+
                                             )
-                                                .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
-
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        CourseType.JXGLSTU.code -> {
-                            if (showTomorrow) {
-                                if(!isHolidayTomorrow()) {
-                                    items(tomorrowJxglstuList.size) { index ->
-                                        val item = tomorrowJxglstuList[index]
-                                        val time = item.time
-                                        val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-                                        val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-                                        WidgetCardListItem(
-                                            headlineText = item.courseName,
-                                            supportingText = item.place,
-                                            overlineText = "$startTime-$endTime",
-                                            leadingContent = {
-                                                Image(
-                                                    provider = ImageProvider(if (isDarkTheme) R.drawable.exposure_plus_1 else R.drawable.exposure_plus_1_widget),
-                                                    contentDescription = null
-                                                )
-                                            },
-                                            modifier = GlanceModifier.padding(
-                                                end = if (index % 2 == 0) widgetPadding else 0.dp,
-                                                bottom = widgetPadding
-                                            )
-                                                .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
-
-                                        )
-                                    }
-                                }
-                            } else {
-                                if(!isHoliday()) {
-                                    items(todayJxglstuList.size) { index ->
-                                        val item = todayJxglstuList[index]
-                                        val time = item.time
-                                        val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-                                        val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
-                                        val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
-                                        WidgetCardListItem(
-                                            textDecoration = if (state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
-                                            headlineText = item.courseName,
-                                            supportingText = item.place,
-                                            overlineText = "$startTime-$endTime",
-                                            leadingContent = {
-                                                Image(
-                                                    provider = ImageProvider(
-                                                        when (state) {
-                                                            NOT_STARTED -> {
-                                                                if (isDarkTheme) R.drawable.schedule else R.drawable.schedule_widget
-                                                            }
-
-                                                            ONGOING -> {
-                                                                if (isDarkTheme) R.drawable.progress_activity else R.drawable.progress_activity_widget
-                                                            }
-
-                                                            ENDED -> {
-                                                                if (isDarkTheme) R.drawable.check else R.drawable.check_widget
-                                                            }
-                                                        }
-                                                    ), contentDescription = null
-                                                )
-                                            },
-                                            modifier = GlanceModifier.padding(
-                                                end = if (index % 2 == 0) widgetPadding else 0.dp,
-                                                bottom = widgetPadding
-                                            )
-                                                .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
-
-                                        )
+                                        }
                                     }
                                 }
                             }
+                            CourseType.JXGLSTU.code -> {
+                                if (showTomorrow) {
+                                    if(!isHolidayTomorrow()) {
+                                        items(tomorrowJxglstuList.size) { index ->
+                                            val item = tomorrowJxglstuList[index]
+                                            val time = item.time
+                                            val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+                                            val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+                                            WidgetCardListItem(
+                                                textSize = textSize,
+                                                headlineText = item.courseName,
+                                                supportingText = item.place,
+                                                overlineText = "$startTime-$endTime",
+                                                leadingContent = {
+                                                    Image(
+                                                        provider = ImageProvider(if (isDarkTheme) R.drawable.exposure_plus_1 else R.drawable.exposure_plus_1_widget),
+                                                        contentDescription = null
+                                                    )
+                                                },
+                                                modifier = GlanceModifier.padding(
+                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    bottom = widgetPadding
+                                                )
+                                                    .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
+
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    if(!isHoliday()) {
+                                        items(todayJxglstuList.size) { index ->
+                                            val item = todayJxglstuList[index]
+                                            val time = item.time
+                                            val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+                                            val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
+                                            val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
+                                            WidgetCardListItem(
+                                                textSize = textSize,
+                                                textDecoration = if (state == ENDED) TextDecoration.LineThrough else TextDecoration.None,
+                                                headlineText = item.courseName,
+                                                supportingText = item.place,
+                                                overlineText = "$startTime-$endTime",
+                                                leadingContent = {
+                                                    Image(
+                                                        provider = ImageProvider(
+                                                            when (state) {
+                                                                NOT_STARTED -> {
+                                                                    if (isDarkTheme) R.drawable.schedule else R.drawable.schedule_widget
+                                                                }
+
+                                                                ONGOING -> {
+                                                                    if (isDarkTheme) R.drawable.progress_activity else R.drawable.progress_activity_widget
+                                                                }
+
+                                                                ENDED -> {
+                                                                    if (isDarkTheme) R.drawable.check else R.drawable.check_widget
+                                                                }
+                                                            }
+                                                        ), contentDescription = null
+                                                    )
+                                                },
+                                                modifier = GlanceModifier.padding(
+                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    bottom = widgetPadding
+                                                )
+                                                    .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
+
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            CourseType.NEXT.code -> {}
                         }
-                        CourseType.NEXT.code -> {}
                     }
                 }
             }
         }
     }
 }
+
 

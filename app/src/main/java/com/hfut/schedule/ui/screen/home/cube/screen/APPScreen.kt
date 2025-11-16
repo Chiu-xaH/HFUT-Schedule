@@ -1,10 +1,5 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,38 +41,40 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseterWithoutSuspend
+import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.reverseGetSemester
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.file.cleanCache
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
-import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.screen.home.cube.Screen
-import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
+import com.hfut.schedule.ui.component.SimpleVideo
+import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.transition.util.TransitionBackHandler
-import kotlinx.coroutines.launch
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.SimpleVideo
-import com.hfut.schedule.ui.component.checkOrDownloadVideo
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
+import com.hfut.schedule.ui.screen.home.cube.Screen
+import com.hfut.schedule.ui.screen.home.cube.Screen.FocusWidgetSettingsScreen
 import com.hfut.schedule.ui.util.layout.SaveComposeAsImage
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -118,6 +115,7 @@ fun APPScreen(
 
         saveBoolean("SWITCHFOCUS",true,showfocus)
 //        var showBottomSheet_card by remember { mutableStateOf(false) }
+
 
         val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
         var currentDefaultCalendar by remember { mutableIntStateOf(switch_default) }
@@ -199,7 +197,7 @@ fun APPScreen(
                 )
             }
         }
-        DividerTextExpandedWith("偏好") {
+        DividerTextExpandedWith("偏好与配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = { Text(text = "主页面") },
@@ -295,10 +293,6 @@ fun APPScreen(
                         }
                     }
                 )
-            }
-        }
-        DividerTextExpandedWith("配置") {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(freeFeevalue.toDouble(),0)}GiB")},
@@ -322,8 +316,6 @@ fun APPScreen(
                     steps = 37,
                     valueRange = 10f..200f,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-//                    showProcessText = true,
-//                    processText = formatDecimal(value.toDouble(),0).toString() + "GiB"
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
@@ -409,6 +401,54 @@ fun APPScreen(
                         contentDescription = "Localized description"
                     ) },
                     modifier = Modifier.clickable { showToast("正在开发") }
+                )
+            }
+        }
+        DividerTextExpandedWith("桌面组件") {
+            CustomCard(color = MaterialTheme.colorScheme.surface) {
+                TransplantListItem(
+                    headlineContent = {
+                        Text("聚焦课程")
+                    },
+                    supportingContent = {
+                        Text("展示聚焦重要事项中的课程")
+                    },
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.FocusWidgetSettingsScreen.route)
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.widgets),null)
+                    },
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("数据小组件")
+                    },
+                    supportingContent = {
+                        Text("一卡通余额、电费、洗浴、网费、下节课等信息")
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.widgets),null)
+                    },
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = {
+                        Text("校园网")
+                    },
+                    supportingContent = {
+                        Text("校园网一键登录与使用量数据")
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.widgets),null)
+                    },
                 )
             }
         }

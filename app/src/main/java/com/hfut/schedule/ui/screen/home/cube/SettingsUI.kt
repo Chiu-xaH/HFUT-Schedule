@@ -33,6 +33,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
+import com.hfut.schedule.ui.screen.home.cube.sub.FocusWidgetSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
@@ -111,6 +112,11 @@ fun SettingsScreen(vm : NetWorkViewModel,
             composable(Screen.DebugScreen.route) {
                 Scaffold {
                     TEST(vm,innerPaddings,navController)
+                }
+            }
+            composable(Screen.FocusWidgetSettingsScreen.route) {
+                Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    FocusWidgetSettingsScreen(innerPaddings,navController)
                 }
             }
             composable(Screen.DownloadScreen.route) {

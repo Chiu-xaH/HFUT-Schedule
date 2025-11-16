@@ -10,7 +10,7 @@ class UpdateReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         // 下载更新完成后触发
         if(intent?.action == BroadcastAction.INSTALL_APK.name) {
-            installApk()
+//            installApk()
         }
     }
 }

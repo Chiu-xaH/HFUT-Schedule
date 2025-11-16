@@ -268,6 +268,20 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
+                    headlineContent = { Text(text = "使用提示") },
+                    supportingContent = { Text(text = "学习聚在工大的隐藏技巧")},
+                    leadingContent = {
+                        Icon(
+                            painterResource(R.drawable.lightbulb),
+                            contentDescription = "Localized description",
+                        )
+                    },
+                    modifier = Modifier.clickable {
+                        showToast("正在开发")
+                    }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
                     headlineContent = { Text(text = "推广") },
                     supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
                     leadingContent = {

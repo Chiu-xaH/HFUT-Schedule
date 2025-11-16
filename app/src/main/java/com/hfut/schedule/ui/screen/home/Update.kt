@@ -22,9 +22,11 @@ import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.cancellation.CancellationException
 
 suspend fun getJxglstuCookie() : String? {
     var cookie : String?
@@ -56,103 +58,104 @@ suspend fun getStorageJxglstuCookie(isWebVpn : Boolean) : String? {
     return cookie
 }
 // 应用冷启动主界面时的网络请求
-suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean,context: Context) = withContext(
-    Dispatchers.IO) {
-    val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
-    val communityToken = prefs.getString("TOKEN","")
-    val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
-    val showToday = prefs.getBoolean("SWITCHTODAY",true)
-    val showWeb = prefs.getBoolean("SWITCHWEB",true)
-    val showCard = prefs.getBoolean("SWITCHCARD",true)
-    val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
+suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved : Boolean,context: Context) = withContext(Dispatchers.IO) {
+    try {
+        val isXuanCheng = getCampusRegion() == CampusRegion.XUANCHENG
+        val communityToken = prefs.getString("TOKEN","")
+        val showEle = prefs.getBoolean("SWITCHELE", isXuanCheng)
+        val showToday = prefs.getBoolean("SWITCHTODAY",true)
+        val showWeb = prefs.getBoolean("SWITCHWEB",true)
+        val showCard = prefs.getBoolean("SWITCHCARD",true)
+        val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
 
-    val cookie =  getJxglstuCookie()
-    // 刷新个人接口
-    launch { vm.getMyApi() }
-    // 用于更新ifSaved
-    launch {
-        vm.getStudentId(cookie!!)
-        val studentId = (vm.studentId.state.value as? UiState.Success)?.data
-        if(studentId == null) {
-            // 切换到WEBVPN模式尝试
-            GlobalUIStateHolder.webVpn = true
-//            vm.webVpn = true
-            JxglstuRepository.updateServices()
-            val c = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
-            vm.getStudentId(c)
-            val studentId = (vm.studentId.state.value as? UiState.Success)?.data
+        var cookie = getJxglstuCookie()  ?: ""
+        // 刷新个人接口
+        launch { vm.getMyApi() }
+        // 用于更新ifSaved
+        launch {
+            // 教务是否能够登录
+            vm.getStudentId(cookie)
+            var studentId = (vm.studentId.state.value as? UiState.Success)?.data
             if(studentId == null) {
-                // 复原
-                GlobalUIStateHolder.webVpn = false
-//                vm.webVpn = false
+                // 切换到WEBVPN模式尝试
+                GlobalUIStateHolder.webVpn = true
                 JxglstuRepository.updateServices()
+                cookie = MyApplication.WEBVPN_COOKIE_HEADER + webVpnCookie
+                vm.getStudentId(cookie)
+                studentId = (vm.studentId.state.value as? UiState.Success)?.data
+                if(studentId == null) {
+                    // WebVpn也不行，复原
+                    GlobalUIStateHolder.webVpn = false
+                    JxglstuRepository.updateServices()
+                    return@launch
+                }
+            }
+            launch {
+                launch { vm.getBizTypeId(cookie,studentId) }
+                launch { vm.getExamJXGLSTU(cookie) }
+            }
+        }
+        // 更新课程表
+        if(!ifSaved)
+            launch { updateCourses(vm, context) }
+        // 更新社区
+        communityToken?.let {
+            launch { vm.getCoursesFromCommunity(it) }
+            launch { vm.getFriends(it) }
+            if(showToday)
+                launch {
+                    vm.todayFormCommunityResponse.clear()
+                    vm.getToday(communityToken)
+                }
+        }
+        //检查更新
+        launch {
+            vm.giteeUpdatesResp.clear()
+            vm.getUpdate()
+        }
+        // 更新聚焦卡片
+        if(showWeb && getCampusRegion() == CampusRegion.XUANCHENG)
+            launch { getWebInfoFromHuiXin(vm,vmUI) }
+        if(showEle)
+            launch { getElectricFromHuiXin(vm, vmUI) }
+        if(showCard)
+            launch { initCardNetwork(vm,vmUI) }
+        launch {
+            val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
+            val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
+            if(showWeather && state  !is UiState.Success) {
+                vm.getWeatherWarn(getCampusRegion())
+            }
+        }
+        // 更新节假日信息
+        if(DateTimeManager.Date_yyyy != getHolidayYear()) {
+            launch { vm.downloadHoliday() }
+        }
+        launch {
+            if(vm.wxPersonInfoResponse.state.first() is UiState.Success) {
                 return@launch
             }
-            launch { vm.getBizTypeId(c,studentId) }
-            launch { vm.getExamJXGLSTU(c) }
-        } else {
-            launch { vm.getBizTypeId(cookie,studentId) }
-            launch { vm.getExamJXGLSTU(cookie) }
-        }
-    }
-    // 更新课程表
-    if(!ifSaved)
-        launch { updateCourses(vm, context) }
-    // 更新社区
-    communityToken?.let {
-        launch { vm.getCoursesFromCommunity(it) }
-        launch { vm.getFriends(it) }
-        if(showToday)
-            launch {
-                vm.todayFormCommunityResponse.clear()
-                vm.getToday(communityToken)
-            }
-    }
-    //检查更新
-    launch {
-        vm.giteeUpdatesResp.clear()
-        vm.getUpdate()
-    }
-    // 更新聚焦卡片
-    if(showWeb && getCampusRegion() == CampusRegion.XUANCHENG)
-        launch { getWebInfoFromHuiXin(vm,vmUI) }
-    if(showEle)
-        launch { getElectricFromHuiXin(vm, vmUI) }
-    if(showCard)
-        launch { initCardNetwork(vm,vmUI) }
-    launch {
-        val showWeather = DataStoreManager.enableShowFocusWeatherWarn.first()
-        val state = vm.weatherWarningData.state.first() // 只发送一次请求 API有次数限制
-        if(showWeather && state  !is UiState.Success) {
-            vm.getWeatherWarn(getCampusRegion())
-        }
-    }
-    // 更新节假日信息
-    if(DateTimeManager.Date_yyyy != getHolidayYear()) {
-        launch { vm.downloadHoliday() }
-    }
-    launch {
-        if(vm.wxPersonInfoResponse.state.first() is UiState.Success) {
-            return@launch
-        }
-        // 检查指尖工大是否失效
-        val auth = DataStoreManager.wxAuth.first()
-        if(auth.contains("Bearer")) {
-            vm.wxGetPersonInfo(auth)
-            val bean = (vm.wxPersonInfoResponse.state.value as? UiState.Success)?.data
-            if(bean == null) {
-                // 重新登陆
+            // 检查指尖工大是否失效
+            val auth = DataStoreManager.wxAuth.first()
+            if(auth.contains("Bearer")) {
+                vm.wxGetPersonInfo(auth)
+                val bean = (vm.wxPersonInfoResponse.state.value as? UiState.Success)?.data
+                if(bean == null) {
+                    // 重新登陆
+                    val newAuth = refreshWxAuth(vm) ?: return@launch
+                    showToast("已登录指尖工大平台")
+                    vm.wxGetPersonInfo(newAuth)
+                }
+                // 仍有效
+            } else {
+                // 第一次登陆
                 val newAuth = refreshWxAuth(vm) ?: return@launch
-                showToast("已登录指尖工大平台")
+                showToast("首次登录指尖工大平台成功")
                 vm.wxGetPersonInfo(newAuth)
             }
-            // 仍有效
-        } else {
-            // 第一次登陆
-            val newAuth = refreshWxAuth(vm) ?: return@launch
-            showToast("首次登录指尖工大平台成功")
-            vm.wxGetPersonInfo(newAuth)
         }
+    }  catch (e : Exception) {
+        e.printStackTrace()
     }
 }
 

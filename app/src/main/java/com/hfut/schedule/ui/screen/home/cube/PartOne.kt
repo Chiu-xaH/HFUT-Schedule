@@ -146,7 +146,7 @@ sealed class Screen(val route: String) {
     data object DebugScreen : Screen("DEBUG")
     data object DeveloperScreen : Screen("Developer")
     data object GestureStudyScreen : Screen("GestureStudyScreen")
-
+    data object FocusWidgetSettingsScreen : Screen("FocusWidgetSettingsScreen")
     data object DownloadScreen : Screen("Download")
     data object CalendarScreen : Screen("Calendar")
     data object LockScreen : Screen("Lock")
@@ -190,7 +190,7 @@ fun HomeSettingScreen(navController: NavController,
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        DividerTextExpandedWith(text = "登录信息") {
+        DividerTextExpandedWith(text = "个人信息") {
             PersonPart()
         }
 

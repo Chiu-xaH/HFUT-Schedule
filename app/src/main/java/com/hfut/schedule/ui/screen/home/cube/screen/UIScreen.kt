@@ -414,29 +414,26 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
                 DividerTextExpandedWith("自定义取色") {
                     if(!useDynamicColor) {
-                        var styleValue by remember { mutableFloatStateOf(customColorStyle.toFloat()) }
+                        val d = styleList.find { it.code == customColorStyle }?.description
                         TransplantListItem(
-                            headlineContent = { Text(text = "浓度 | ${styleList.find { it.code == customColorStyle }?.description}") },
+                            headlineContent = { Text(text = "浓度 | ${d}") },
                             leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description",) },
                         )
+
                         CustomSlider(
-                            value = styleValue,
+                            value = customColorStyle.toFloat(),
                             onValueChange = { value ->
-                                styleValue = value
-                            },
-                            onValueChangeFinished = {
-                                val level = styleList.find { it.code == styleValue.toInt() }
-                                level?.let {
-                                    scope.launch {
-                                        DataStoreManager.saveCustomColorStyle(it)
-                                    }
+                                scope.launch {
+                                    val target = styleList.find { it.code == formatDecimal(value.toDouble(),0).toInt() }
+                                        ?: return@launch
+                                    DataStoreManager.saveCustomColorStyle(target)
                                 }
                             },
                             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                             steps = 2,
                             valueRange = 0f..3f,
                             showProcessText = true,
-                            processText =  styleList.find { it.code == styleValue.toInt() }?.description
+                            processText = d
                         )
                         PaddingHorizontalDivider()
                     }
@@ -642,7 +639,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             CustomCard(color = backgroundColor) {
                 CalendarUISettings()
             }
-            BottomTip("建议截图保存修改后的配置")
         }
         DividerTextExpandedWith("底栏") {
             CustomCard(color = backgroundColor) {
@@ -661,95 +657,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     },
                     trailingContent = {  Switch(checked = showBottomBarLabel, onCheckedChange = { scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) } }) },
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = {
-                        Text("浮动底栏")
-                    },
-                    supportingContent = {
-                        Text("底栏呈现浮动样式并随滑动收起")
-                    },
-                    modifier = Modifier.clickable {
-                        showToast("正在开发")
-                    },
-                    leadingContent = {
-                        Icon(painterResource(if(false) R.drawable.shelf_auto_hide else R.drawable.dock_to_bottom),null)
-                    },
-                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showToast("正在开发") }) },
-                )
             }
         }
-        val focusWidgetCount by produceState(initialValue = 0) {
-            value = hasFocusWidget(context)
-        }
-        DividerTextExpandedWith("桌面组件(Beta)") {
 
-            CustomCard(color = backgroundColor) {
-                Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                RowHorizontal {
-                    WidgetPreview(R.drawable.focus_widget_preview)
-                }
-                TransplantListItem(
-                    headlineContent = {
-                        Text("聚焦")
-                    },
-                    supportingContent = {
-                        Text("点击手动刷新数据")
-                    },
-                    trailingContent = {
-                        Text("在运行${focusWidgetCount}个")
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            refreshFocusWidget(context)
-                            showToast("刷新成功")
-                        }
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.widgets),null)
-                    },
-                )
-//                PaddingHorizontalDivider()
-//                Image(painterResource(R.drawable.focus_widget_preview),null)
-//                TransplantListItem(
-//                    headlineContent = {
-//                        Text("聚焦卡片")
-//                    },
-//                    supportingContent = {
-//                        Text("4*2，显示聚焦中的第一个大卡片内容")
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.widgets),null)
-//                    },
-//                )
-//                PaddingHorizontalDivider()
-//                Image(painterResource(R.drawable.focus_widget_preview),null)
-//                TransplantListItem(
-//                    headlineContent = {
-//                        Text("校园网")
-//                    },
-//                    supportingContent = {
-//                        Text("2*2，校园网一键登录与使用量数据")
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.widgets),null)
-//                    },
-//                )
-//                PaddingHorizontalDivider()
-//                Image(painterResource(R.drawable.focus_widget_preview),null)
-//                TransplantListItem(
-//                    headlineContent = {
-//                        Text("数据小组件")
-//                    },
-//                    supportingContent = {
-//                        Text("2*1，一卡通余额、电费、洗浴、网费、下节课等信息")
-//                    },
-//                    leadingContent = {
-//                        Icon(painterResource(R.drawable.widgets),null)
-//                    },
-//                )
-            }
-        }
         if(!isControlCenter) {
             InnerPaddingHeight(innerPaddings,false)
         } else {
@@ -768,7 +678,7 @@ fun WidgetPreview(res : Int) {
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 8000, easing = LinearEasing),
+            animation = tween(durationMillis = 15000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "rotationZ"
@@ -780,7 +690,7 @@ fun WidgetPreview(res : Int) {
         initialValue = 5f,      // 最小倾斜角度（度）
         targetValue = 10f,      // 最大倾斜角度（度）
         animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 2000, easing = LinearEasing),
+            animation = tween(durationMillis = 10000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "tilt"
@@ -1098,91 +1008,6 @@ fun CalendarUISettings(
             showProcessText = true,
             processText = formatDecimal(calendarSquareTextPadding.toDouble()*100,0)
         )
-        if(!tiny) {
-            val color : Pair<Color,Color> = Pair(MaterialTheme.colorScheme.primaryContainer,MaterialTheme.colorScheme.onPrimaryContainer.copy(.6f))
-            val showAll = false
-            val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextSize
-            val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
-            val timeTextSize = (textSize.value-1).sp
-            val item = TimeTableItem(
-                type = TimeTableType.COURSE,
-                name = "高等数学B(上)",
-                dayOfWeek = 1,
-                startTime = "08:00",
-                endTime = "09:50",
-                place = "敬亭999"
-            )
-
-
-            ColumnVertical {
-                Box (
-                    modifier = Modifier
-                        .height((calendarSquareHeightNew*1.5).dp),
-                ) {
-                    Surface(
-                        color = color.first,
-                        shape = MaterialTheme.shapes.extraSmall,
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.SpaceBetween,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Text(
-                                text = "08:00",
-                                fontSize = timeTextSize,
-                                lineHeight = lineHeight,
-                                textAlign = TextAlign.Center,
-                                overflow = TextOverflow.Clip,
-                                maxLines = 1,
-                                color = color.second,
-                                modifier = Modifier.fillMaxWidth()
-                            )
-
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f) // 占据中间剩余的全部空间
-                                    .fillMaxWidth(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = item.name,
-                                    lineHeight = lineHeight,
-                                    fontSize = textSize,
-                                    textAlign = TextAlign.Center,
-                                    overflow = TextOverflow.Ellipsis,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                            Column(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                item.place?.let {
-                                    Text(
-                                        text = it,
-                                        fontSize = timeTextSize,
-                                        lineHeight = lineHeight,
-                                        textAlign = TextAlign.Center,
-                                        modifier = Modifier.fillMaxWidth(),
-                                    )
-                                }
-                                Text(
-                                    text = item.endTime,
-                                    fontSize = timeTextSize,
-                                    textAlign = TextAlign.Center,
-                                    lineHeight = lineHeight,
-                                    overflow = TextOverflow.Clip,
-                                    maxLines = 1,
-                                    color = color.second,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 

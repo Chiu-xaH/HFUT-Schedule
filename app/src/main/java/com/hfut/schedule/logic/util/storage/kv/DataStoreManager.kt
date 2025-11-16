@@ -124,6 +124,7 @@ object DataStoreManager : IDataStore {
     private val MERGE_SQUARE = booleanPreferencesKey("merge_square")
     private val CALENDAR_SQUARE_TEXT_SIZE = floatPreferencesKey("calendar_square_test_size")
     private val CALENDAR_SQUARE_TEXT_PADDING = floatPreferencesKey("calendar_square_test_padding")
+    private val FOCUS_WIDGET_TEXT_SIZE = floatPreferencesKey("focus_widget_test_size")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -168,6 +169,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCalendarSquareHeightNew(value: Float) = saveValue(CALENDAR_SQUARE_HEIGHT_NEW, value)
     suspend fun saveCalendarSquareTextSize(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_SIZE, value)
     suspend fun saveCalendarSquareTextPadding(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_PADDING, value)
+    suspend fun saveFocusWidgetTextSize(value: Float) = saveValue(FOCUS_WIDGET_TEXT_SIZE, value)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -217,6 +219,7 @@ object DataStoreManager : IDataStore {
     val calendarSquareHeight = getFlow(CALENDAR_SQUARE_HEIGHT, MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
+    val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
     val calendarSquareTextPadding = getFlow(CALENDAR_SQUARE_TEXT_PADDING, 1f)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)

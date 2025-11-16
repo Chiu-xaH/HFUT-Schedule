@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
+import androidx.core.content.FileProvider
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
@@ -21,6 +22,7 @@ import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.logic.enumeration.BroadcastAction
 import com.hfut.schedule.receiver.UpdateReceiver
 import java.io.File
+import androidx.core.net.toUri
 
 object AppDownloadManager {
     enum class DownloadIds(val id : Long) {
@@ -33,7 +35,7 @@ object AppDownloadManager {
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun downloadManage(fileName: String, url: String, destinationDir: String, dlId: DownloadIds, onDownloadComplete: (Uri?) -> Unit) {
-        val request = DownloadManager.Request(Uri.parse(url))
+        val request = DownloadManager.Request(url.toUri())
         request.setTitle("下载 $fileName 中")
         request.setDescription("请等待...")
 
@@ -66,30 +68,30 @@ object AppDownloadManager {
             }
         }, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_NOT_EXPORTED)
     }
+//
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//    fun downloadPatch(filename: String,activity: Activity) {
+//        PermissionSet.checkAndRequestNotificationPermission(activity)
+//        downloadManage(
+//            fileName = filename,
+//            url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/$filename",
+//            dlId= DownloadIds.PATCH,
+//            destinationDir = Environment.DIRECTORY_DOWNLOADS
+//        ) { _ -> }
+//    }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun downloadPatch(filename: String,activity: Activity) {
-        PermissionSet.checkAndRequestNotificationPermission(activity)
-        downloadManage(
-            fileName = filename,
-            url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/$filename",
-            dlId= DownloadIds.PATCH,
-            destinationDir = Environment.DIRECTORY_DOWNLOADS
-        ) { _ -> }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    fun update(version: String,activity: Activity) {
-        PermissionSet.checkAndRequestNotificationPermission(activity)
-        downloadManage(
-            fileName = "聚在工大_${version}.apk",
-            url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",
-            dlId= DownloadIds.UPDATE,
-            destinationDir = Environment.DIRECTORY_DOWNLOADS
-        ) { uri ->
-            if (uri != null) installApk()
-        }
-    }
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//    fun update(version: String,activity: Activity) {
+//        PermissionSet.checkAndRequestNotificationPermission(activity)
+//        downloadManage(
+//            fileName = "聚在工大_${version}.apk",
+//            url = "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",
+//            dlId= DownloadIds.UPDATE,
+//            destinationDir = Environment.DIRECTORY_DOWNLOADS
+//        ) { uri ->
+//            if (uri != null) installApk()
+//        }
+//    }
 
     fun removeDownload(downloadId: Long)  = dlManager.remove(downloadId)
 
@@ -101,7 +103,7 @@ object AppDownloadManager {
         if (cursor != null && cursor.moveToFirst()) {
             // 获取文件本地路径
             val fileUri = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-            val filePath = fileUri?.let { Uri.parse(it).path }  // 解析文件路径
+            val filePath = fileUri?.let { it.toUri().path }  // 解析文件路径
             val file = filePath?.let { File(it) }
 
             // 如果文件不存在，直接返回 0
@@ -159,15 +161,46 @@ object AppDownloadManager {
     @JvmStatic
     fun getDownloadId(dlId : DownloadIds) : Long = SharedPrefs.prefs.getLong("download_${dlId.id}",-1)
 
-    fun installApk() {
-        val id = getDownloadId(DownloadIds.UPDATE)
-        val uri = dlManager.getUriForDownloadedFile(id)
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        intent.setDataAndType(uri, "application/vnd.android.package-archive")
-        MyApplication.context.startActivity(intent)
+//    fun installApk() {
+//        val id = getDownloadId(DownloadIds.UPDATE)
+//        val uri = dlManager.getUriForDownloadedFile(id)
+//        val intent = Intent(Intent.ACTION_VIEW)
+//        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+//        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+//        intent.setDataAndType(uri, "application/vnd.android.package-archive")
+//        MyApplication.context.startActivity(intent)
+//    }
+
+    fun installApk(
+        file: File,
+        context: Context
+    ) {
+        val uri: Uri = FileProvider.getUriForFile(
+            context,
+            context.packageName + ".provider",
+            file
+        )
+
+        installApk(uri,context)
     }
+
+
+    private fun installApk(
+        uri : Uri,
+        context : Context
+    ) {
+        try {
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.setDataAndType(uri, "application/vnd.android.package-archive")
+            context.startActivity(intent)
+        } catch (e : Exception) {
+            e.printStackTrace()
+            showToast("安装跳转失败")
+        }
+    }
+
 
     fun openDownload() {
         val intent = Intent()
@@ -183,7 +216,7 @@ object AppDownloadManager {
             } catch (ex: Exception) {
                 // 最后尝试打开文件管理器
                 val fileManagerIntent = Intent(Intent.ACTION_VIEW)
-                fileManagerIntent.data = Uri.parse("content://downloads/public_downloads")
+                fileManagerIntent.data = "content://downloads/public_downloads".toUri()
                 MyApplication.context.startActivity(fileManagerIntent)
             }
         }

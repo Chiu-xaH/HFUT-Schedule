@@ -37,6 +37,7 @@ import com.hfut.schedule.receiver.widget.focus.widgetPadding
  */
 @Composable
 fun WidgetCardListItem(
+    textSize : Float = 1f,
     modifier: GlanceModifier = GlanceModifier,
     leadingContent: (@Composable () -> Unit)? = null,
     overlineText: String? = null,
@@ -57,17 +58,17 @@ fun WidgetCardListItem(
                 .padding(horizontal = 10.dp, vertical = widgetPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             // 左侧图标或图片
             if (leadingContent != null) {
                 Box(
-                    modifier = GlanceModifier.size(20.dp),
+                    modifier = GlanceModifier.size(19.dp*textSize),
                     contentAlignment = Alignment.Center
                 ) {
                     leadingContent()
                 }
-                Spacer(modifier = GlanceModifier.Companion.width(widgetPadding))
+                Spacer(modifier = GlanceModifier.width(widgetPadding))
             }
-
             // 中间文本区域
             Column(
                 modifier = GlanceModifier
@@ -80,12 +81,11 @@ fun WidgetCardListItem(
                         maxLines = 1,
                         style = TextStyle(
                             color = GlanceTheme.colors.onSurface,
-                            fontSize = 9.sp,
+                            fontSize = 9.sp*textSize,
                             fontWeight = FontWeight.Medium,
                             textDecoration = textDecoration
                         ),
                     )
-                    Spacer(modifier = GlanceModifier.height(1.dp))
                 }
 
                 Text(
@@ -93,26 +93,26 @@ fun WidgetCardListItem(
                     text = headlineText,
                     style = TextStyle(
                         color = GlanceTheme.colors.onSurface,
-                        fontSize = 15.sp,
+                        fontSize = 14.5.sp*textSize,
                         fontWeight = FontWeight.Bold,
                         textDecoration = textDecoration
                     ),
                 )
 
                 if (supportingText != null) {
-                    Spacer(modifier = GlanceModifier.height(1.dp))
                     Text(
                         maxLines = 1,
                         text = supportingText,
                         style = TextStyle(
                             color = GlanceTheme.colors.onSurface,
-                            fontSize = 12.sp,
+                            fontSize = 12.sp*textSize,
                             fontWeight = FontWeight.Normal,
                             textDecoration = textDecoration
                         ),
                     )
                 }
             }
+
 
             // 右侧内容
             if (trailingContent != null) {

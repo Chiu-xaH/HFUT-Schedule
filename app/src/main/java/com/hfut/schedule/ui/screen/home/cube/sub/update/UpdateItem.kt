@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-11-12") },
+                overlineContent = { Text(text = "2025-11-16") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,15 +56,13 @@ fun VersionInfo() {
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("优化 点击聚焦卡片后延迟的问题")
-//            UpdateItems("新增 聚焦小组件的自定义调节")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
 //            UpdateItems("新增 校园网小组件(2*2)")
-            UpdateItems("修复 取色风格进度条在已知部分设备上闪烁的Bug")
-            UpdateItems("修复 课程表顶部日期显示动画导致整体微位移的Bug")
-            UpdateItems("修复 聚焦小组件无法及时30min自动更新的Bug")
-            UpdateItems("优化 聚焦小组件的显示效果和点击事件")
-            UpdateItems("优化 小组件的刷新数据机制","1.可在App选项-外观与显示-桌面组件，点击手动刷新；2.冷启动App的同时也会刷新；3.点击组件顶部的标题文字手动刷新；4.借助WorkManager，30分钟后自动刷新(受系统调度影响会有延迟)")
-//            UpdateItems("优化 方格高度调节的精度到一位小数")
+            UpdateItems("新增 聚焦小组件支持自定义调整文字大小","位于 选项-应用与配置-桌面组件-聚焦课程")//
+            UpdateItems("调整 桌面组件设置迁移至 选项-应用与配置")//
+            UpdateItems("重构 下载更新的逻辑","支持对错误的显示，以及对已有文件时的跳过下载机制")//
+            UpdateItems("优化 聚焦小组件的显示效果")//
+//            UpdateItems("新增 使用技巧","位于 选项-维护与关于")
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("修复 冲突预览不显示课表的Bug")
 //            UpdateItems("新增 自动CAS登录")

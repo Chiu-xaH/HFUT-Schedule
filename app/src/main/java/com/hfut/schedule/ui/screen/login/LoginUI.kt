@@ -131,7 +131,6 @@ private fun loginClick(
     username : String,
     inputAES : String,
     code : String,
-//    webVpn : Boolean,
     onLoad : (Boolean) -> Unit,
     onResult : (String) -> Unit,
     scope: CoroutineScope
@@ -248,8 +247,8 @@ private fun ImageCodeUI( vm: LoginViewModel, onResult : (String) -> Unit) {
 
 fun isAnonymity() : Boolean = getPersonInfo().name == null
 
-private val TAB_LOGIN = 0
-private val TAB_SETTRINGS = 1
+private const val TAB_LOGIN = 0
+private const val TAB_SETTRINGS = 1
 
 private data class CheckResult(val can : Boolean?,val text : String,val code : Int?)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -284,7 +283,7 @@ fun LoginScreen(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = {
-                    ScrollText(text = "CAS统一认证登录")
+                    ScrollText(text = "CAS登录" + if(GlobalUIStateHolder.webVpn) " (WebVpn)" else "")
                         },
                 actions = {
                     Row {
@@ -532,7 +531,6 @@ fun LoginScreen(
                                 PaddingHorizontalDivider()
                             }
 
-                            //
                             TransplantListItem(
                                 headlineContent = { Text("外地访问(WebVpn)") },
                                 supportingContent = { Text("外地访问支持刷新教务系统和访问内网链接,不受教务封网限制;\n登陆成功后，在 查询中心-WebVpn 可打开全局WebVpn，即可直接登录使用大创系统、图书馆、一些封网的通知公告等内容")},
@@ -573,7 +571,7 @@ fun LoginScreen(
                                 CasPlatform("指间工大", canWebVpn = false,canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = false),// 可支持webVpn
                                 CasPlatform("体测平台",canWebVpn = false, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
                                 CasPlatform("WebVpn",canWebVpn = true, canWithoutJxglstu = false,canWithJxglstu = false, maybeUnlinked = false),
-                                CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
+                                CasPlatform("图书馆",canWebVpn = true, canWithoutJxglstu = true, canWithJxglstu = true, maybeUnlinked = true),
                                 CasPlatform("大创系统",canWebVpn = true, canWithoutJxglstu = false, canWithJxglstu = false, maybeUnlinked = true),
                             )
                             LazyRow(modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP/2)) {
@@ -634,7 +632,6 @@ private suspend fun refresh(vm: LoginViewModel) = withContext(Dispatchers.IO) {
 @Composable
 private fun TwoTextField(
     vm : LoginViewModel,
-//    webVpn: Boolean,
     innerPadding : PaddingValues,
     username : String,
     onUsername : (String) -> Unit
