@@ -266,6 +266,7 @@ class FocusWidget : GlanceAppWidget() {
                     )
                 }
             } else {
+                val showSingle = size <= 2
                 Column() {
                     Box(
                         modifier = GlanceModifier
@@ -299,7 +300,7 @@ class FocusWidget : GlanceAppWidget() {
                     }
 
                     LazyVerticalGrid (
-                        gridCells = GridCells.Fixed(if(size <= 2) 1 else 2),
+                        gridCells = GridCells.Fixed(if(showSingle) 1 else 2),
                         modifier = GlanceModifier
                             .fillMaxSize()
                             .padding(start = widgetPadding*2,end = widgetPadding*2)
@@ -324,7 +325,7 @@ class FocusWidget : GlanceAppWidget() {
                                                     )
                                                 },
                                                 modifier = GlanceModifier.padding(
-                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    end = if (index % 2 == 0 && !showSingle) widgetPadding else 0.dp,
                                                     bottom = widgetPadding
                                                 )
                                                     .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
@@ -366,7 +367,7 @@ class FocusWidget : GlanceAppWidget() {
                                                     )
                                                 },
                                                 modifier = GlanceModifier.padding(
-                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    end = if (index % 2 == 0 && !showSingle) widgetPadding else 0.dp,
                                                     bottom = widgetPadding
                                                 )
                                                     .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
@@ -396,7 +397,7 @@ class FocusWidget : GlanceAppWidget() {
                                                     )
                                                 },
                                                 modifier = GlanceModifier.padding(
-                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    end = if (index % 2 == 0 && !showSingle) widgetPadding else 0.dp,
                                                     bottom = widgetPadding
                                                 )
                                                     .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
@@ -438,7 +439,7 @@ class FocusWidget : GlanceAppWidget() {
                                                     )
                                                 },
                                                 modifier = GlanceModifier.padding(
-                                                    end = if (index % 2 == 0) widgetPadding else 0.dp,
+                                                    end = if (index % 2 == 0 && !showSingle) widgetPadding else 0.dp,
                                                     bottom = widgetPadding
                                                 )
                                                     .clickable(onClick = actionRunCallback<OpenMainWithFlagsAction>())
