@@ -54,6 +54,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
+import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.BottomButton
@@ -521,7 +522,11 @@ fun PatchUpdateUI(
                         onClick = {
                             coroutineScope.launch {
                                 async { loadingPatch = true }.await()
-                                async { BsdiffUpdate.mergePatchApk(context,patch) }.await()
+                                async {
+                                    BsdiffUpdate.mergePatchApk(context,patch){
+                                        installPatchedApk(context)
+                                    }
+                                }.await()
                                 launch { loadingPatch = false }
                             }
                         },
@@ -592,7 +597,11 @@ fun PatchUpdateUI(
                         onClick = {
                             coroutineScope.launch {
                                 async { loadingPatch = true }.await()
-                                async { BsdiffUpdate.mergePatchApk(context,patch) }.await()
+                                async {
+                                    BsdiffUpdate.mergePatchApk(context,patch){
+                                        installPatchedApk(context)
+                                    }
+                                }.await()
                                 launch { loadingPatch = false }
                             }
                         },

@@ -61,6 +61,7 @@ fun VersionInfo() {
             UpdateItems("新增 聚焦小组件支持自定义调整文字大小","位于 选项-应用与配置-桌面组件-聚焦课程")//
             UpdateItems("调整 桌面组件设置迁移至 选项-应用与配置")//
             UpdateItems("重构 下载更新的逻辑","支持对错误的显示，以及对已有文件时的跳过下载机制")//
+//            UpdateItems("修复 已知Pixel模拟器无法安装Apk的Bug")//
             UpdateItems("优化 聚焦小组件的显示效果")//
 //            UpdateItems("新增 使用技巧","位于 选项-维护与关于")
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")

@@ -18,7 +18,7 @@ object ShareTo {
         try {
             getAPK(path)
             val file = File(path)
-            val apkUri = FileProvider.getUriForFile(MyApplication.context,"com.hfut.schedule.provider",file)
+            val apkUri = FileProvider.getUriForFile(MyApplication.context,"${AppVersion.appPackageName}.provider",file)
             val shareIntent = Intent().apply {
                 setAction(Intent.ACTION_SEND)
                 setType("application/vnd.android.package-archive")

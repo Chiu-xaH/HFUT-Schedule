@@ -45,6 +45,7 @@ import androidx.core.content.FileProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
+import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
@@ -407,7 +408,7 @@ fun saveTextToFile( fileName: String, content: String) {
 
 fun shareTextFile(fileName: String) {
     val file = File(MyApplication.context.getExternalFilesDir(null), fileName)
-    val uri = FileProvider.getUriForFile(MyApplication.context, "${MyApplication.context.packageName}.provider", file)
+    val uri = FileProvider.getUriForFile(MyApplication.context, "${AppVersion.appPackageName}.provider", file)
 
     val shareIntent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"

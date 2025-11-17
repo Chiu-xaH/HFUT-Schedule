@@ -1,7 +1,6 @@
 package com.hfut.schedule.logic.util.sys
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DownloadManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -15,14 +14,14 @@ import android.os.Environment
 import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.hfut.schedule.logic.enumeration.BroadcastAction
 import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
-import com.hfut.schedule.logic.enumeration.BroadcastAction
+import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.receiver.UpdateReceiver
 import java.io.File
-import androidx.core.net.toUri
 
 object AppDownloadManager {
     enum class DownloadIds(val id : Long) {
@@ -175,9 +174,14 @@ object AppDownloadManager {
         file: File,
         context: Context
     ) {
-        val uri: Uri = FileProvider.getUriForFile(
+        if (!file.exists()) {
+            showToast("Apk不存在")
+            return
+        }
+
+        val uri = FileProvider.getUriForFile(
             context,
-            context.packageName + ".provider",
+            "${context.packageName}.provider",
             file
         )
 
@@ -201,6 +205,11 @@ object AppDownloadManager {
         }
     }
 
+    fun installPatchedApk(context: Context) {
+        val packageName = context.packageName
+        val apkFile = File(context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), "${packageName}_new.apk")
+        installApk(apkFile,context)
+    }
 
     fun openDownload() {
         val intent = Intent()
