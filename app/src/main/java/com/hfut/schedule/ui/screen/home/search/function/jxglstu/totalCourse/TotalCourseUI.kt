@@ -403,7 +403,7 @@ fun DetailItems(
                         Row(modifier = Modifier.clickable {
                             if (teacherList != null) {
                                 permit = 1
-                                teacherTitle = teacherList.teacher.person?.nameZh.toString()
+                                teacherTitle = teacherList.person.nameZh
                                 showBottomSheet_Teacher = true
                             }
                         }) {
@@ -411,7 +411,7 @@ fun DetailItems(
                                 overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
                                 headlineContent = {
                                     if (teacherList != null) {
-                                        Text( teacherList.teacher.person?.nameZh.toString() )
+                                        Text( teacherList.person.nameZh )
                                     }
                                 },
                                 leadingContent = {
@@ -426,8 +426,8 @@ fun DetailItems(
                             TransplantListItem(
                                 headlineContent = {
                                     if (teacherList != null) {
-                                        val t = teacherList.teacher.title?.nameZh ?: "未知"
-                                        ScrollText( t  +" " + (teacherList.teacher.type?.nameZh ?: ""))
+                                        val t = teacherList.teacher?.title?.nameZh ?: "未知"
+                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
                                     }
                                 },
                                 overlineContent = {

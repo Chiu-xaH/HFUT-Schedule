@@ -28,7 +28,12 @@ data class dateTimePlacePersonText(val textZh : String?)
 data class course(val id : Long,val nameZh : String,val credits : Double?,val code : String,val periodInfo : PeriodInfo,val courseType : courseType)
 data class courseType(val nameZh: String)
 
-data class teacherAssignmentList2(val teacher : teacher,val age : Int?)
+data class teacherAssignmentList2(
+    val teacher : teacher?,
+    val age : Int?,
+    val person : courseType
+)
+
 data class teacher(val person : courseType?,
                    val title : courseType?,
                    val type : courseType?)

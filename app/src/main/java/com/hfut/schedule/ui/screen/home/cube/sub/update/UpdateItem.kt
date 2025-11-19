@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -12,11 +13,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import java.io.File
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -26,7 +29,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-11-16") },
+                overlineContent = { Text(text = "2025-11-19") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -43,6 +46,9 @@ private fun VersionInfoCard() {
     }
 }
 
+
+
+
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
@@ -52,17 +58,16 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("修复 由于教务系统数据源发生一些变动而使课程详情崩溃的Bug")
+            UpdateItems("修复 对话框按钮点击水波纹未覆盖全的Bug")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("优化 点击聚焦卡片后延迟的问题")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
 //            UpdateItems("新增 校园网小组件(2*2)")
-            UpdateItems("新增 聚焦小组件支持自定义调整文字大小","位于 选项-应用与配置-桌面组件-聚焦课程")//
-            UpdateItems("调整 桌面组件设置迁移至 选项-应用与配置")//
-            UpdateItems("重构 下载更新的逻辑","支持对错误的显示，以及对已有文件时的跳过下载机制")//
+//            UpdateItems("新增 备份与恢复","位于 选项-应用与配置-存储，同时在Github的README提供了一份数据包，供游客导入后解锁完整功能，以用于体验功能、助力开发")//
 //            UpdateItems("修复 已知Pixel模拟器无法安装Apk的Bug")//
-            UpdateItems("优化 聚焦小组件的显示效果")//
 //            UpdateItems("新增 使用技巧","位于 选项-维护与关于")
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("修复 冲突预览不显示课表的Bug")

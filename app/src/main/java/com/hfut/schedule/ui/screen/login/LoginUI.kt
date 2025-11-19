@@ -608,8 +608,6 @@ fun LoginScreen(
                             }
                         }
                     }
-                    Spacer(Modifier.height(CARD_NORMAL_DP))
-                    BottomTip("如果登不进去就左上角叉掉重进，再试一两次，学校经常把各种平台搞得有问题")
                     Spacer(Modifier.height(APP_HORIZONTAL_DP*2).navigationBarsPadding())
                     InnerPaddingHeight(innerPadding,false)
                 }
