@@ -95,6 +95,7 @@ linsui帮助上架F-Droid
 若干用户的帮助
 - James-Zhang2提供GPA评定数据源
 - tinyvan提交RR修复Bug
+- Today1337提交PR优化界面
 - 其他用户帮助推广、通过邮件、issue等提供反馈和建议等，在此不一一列举了
 
 ## 📑 [更新日志](docs/update)

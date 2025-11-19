@@ -57,7 +57,7 @@ fun LittleDialog(
         Surface(
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.Companion.padding(APP_HORIZONTAL_DP)
+            modifier = Modifier.padding(APP_HORIZONTAL_DP)
         ) {
             Column(modifier = modifier) {
                 Column(
@@ -104,7 +104,7 @@ fun FakeButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surface,
+    containerColor: Color = Color.Transparent,
     contentColor: Color,
     height: Dp = 48.dp
 ) {
