@@ -1,25 +1,32 @@
 package com.hfut.schedule.ui.component.dialog
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.style.special.dialogBlur
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -49,7 +56,7 @@ fun LittleDialog(
     ) {
         Surface(
             shape = MaterialTheme.shapes.large,
-            color = MaterialTheme.colorScheme.surface.copy(if(blur) 1f else 0.95f),
+            color = MaterialTheme.colorScheme.surface,
             modifier = Modifier.Companion.padding(APP_HORIZONTAL_DP)
         ) {
             Column(modifier = modifier) {
@@ -68,32 +75,60 @@ fun LittleDialog(
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-
-
                 }
                 HorizontalDivider(thickness = 0.7.dp)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    TextButton (
+                    FakeButton(
+                        text = dismissText,
                         onClick = onDismissRequest,
-                        shape = RoundedCornerShape(0.dp),
-                        modifier = Modifier.fillMaxWidth().weight(.5f)
-                    ) {
-                        Text(text = dismissText)
-                    }
+                        modifier = Modifier.weight(1f),
+                        contentColor = MaterialTheme.colorScheme.primary
+                    )
                     VerticalDivider(thickness = 0.7.dp, modifier = Modifier.height(48.dp))
-                    TextButton (
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error),
+                    FakeButton(
+                        text = conformText,
                         onClick = onConfirmation,
-                        shape = RoundedCornerShape(0.dp),
-                        modifier = Modifier.fillMaxWidth().weight(.5f)
-                    ) {
-                        Text(text = conformText)
-                    }
+                        modifier = Modifier.weight(1f),
+                        contentColor = MaterialTheme.colorScheme.error
+                    )
                 }
             }
         }
     }
+}
 
+@Composable
+fun FakeButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color,
+    height: Dp = 48.dp
+) {
+    Card(
+        shape = RoundedCornerShape(0.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = containerColor,
+            contentColor = contentColor
+        ),
+        modifier = modifier.height(height),
+        onClick = onClick
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = text,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+        }
+    }
 }
