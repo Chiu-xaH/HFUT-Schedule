@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.zIndex
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
-
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun CustomTabRow(pagerState: PagerState, titles: List<String>) {
@@ -66,7 +66,6 @@ private fun CustomSlidingTabRow(
                     tabPositions.getOrNull(progress.toInt() + 1)?.right ?: 0.dp,
                     progress - progress.toInt()
                 )
-
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(start = left + APP_HORIZONTAL_DP - padding, end = totalWidth - right + APP_HORIZONTAL_DP - padding)
                         .fillMaxHeight()
@@ -91,7 +90,11 @@ private fun CustomSlidingTabRow(
                             style = TextStyle(fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                         )
                     },
-                    modifier = Modifier.padding(5.dp).zIndex(1f),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .zIndex(1f)
+                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP)),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(index)
@@ -165,7 +168,12 @@ private fun CustomScrollTabRow(
                             style = TextStyle(fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal)
                         )
                     },
-                    modifier = Modifier.padding(5.dp).zIndex(1f).padding(start = if(pagerState.currentPage == 0) APP_HORIZONTAL_DP-padding else 0.dp),
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .zIndex(1f)
+                        .padding(start = if(pagerState.currentPage == 0) APP_HORIZONTAL_DP-padding else 0.dp)
+                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP)),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(index)
