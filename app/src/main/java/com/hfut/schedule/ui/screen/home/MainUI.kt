@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home
 
+import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -685,13 +686,11 @@ fun MainScreen(
                                         tint = MaterialTheme.colorScheme.primary,
                                     )
                                 }
-                                IconButton(onClick = { showAll = !showAll }) {
-                                    Icon(
-                                        painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
-                                        contentDescription = "",
-                                        tint = MaterialTheme.colorScheme.primary
-                                    )
-                                }
+                                // 动画写在内部
+                                AnimatedIconButton(
+                                    valueState = showAll,
+                                    onClick = { showAll = !showAll }
+                                )
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
