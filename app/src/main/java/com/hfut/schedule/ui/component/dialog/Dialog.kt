@@ -105,6 +105,7 @@ fun FakeButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = Color.Transparent,
+    textColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color,
     height: Dp = 48.dp
 ) {
@@ -123,6 +124,7 @@ fun FakeButton(
         ) {
             Text(
                 text = text,
+                color = textColor,
                 style = TextStyle(
                     fontSize = 14.sp,
                     lineHeight = 20.sp,
