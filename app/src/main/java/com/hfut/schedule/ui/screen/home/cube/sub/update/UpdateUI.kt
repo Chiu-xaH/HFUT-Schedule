@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.util.sys.AppDownloadManager.installApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.installPatchedApk
 import com.hfut.schedule.logic.util.sys.AppDownloadManager.openDownload
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -243,10 +244,12 @@ fun UpdateUI(
             },
             trailingContent = {
                 if(canDownload) {
-                    FilledTonalIconButton(
+                    AnimatedIconButton(
                         onClick = { expandItems = !expandItems },
-                    ) { Icon(painterResource(id = if(!expandItems) R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "")
-                    }
+                        valueState = expandItems,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
                 }
             },
             modifier = Modifier.clickable{ Starter.startWebUrl(context,MyApplication.GITEE_UPDATE_URL+ "/releases/tag/Android") },

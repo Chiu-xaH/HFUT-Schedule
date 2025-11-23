@@ -6,6 +6,7 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ import com.hfut.schedule.R
 fun AnimatedIconButton(
     modifier: Modifier = Modifier,
     tint: Color = MaterialTheme.colorScheme.primary,
+    containerColor: Color = Color.Transparent,
     valueState: Boolean,
     contentDescription: String = "",
     onClick: (() -> Unit)? = null
@@ -29,7 +31,10 @@ fun AnimatedIconButton(
     IconButton(
         onClick = onClick ?: {},
         enabled = onClick != null, // 没传就是禁用
-        modifier = modifier
+        modifier = modifier,
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = containerColor
+        ) // 可传入背景颜色
     ) {
         Icon(
             painter = painter,
