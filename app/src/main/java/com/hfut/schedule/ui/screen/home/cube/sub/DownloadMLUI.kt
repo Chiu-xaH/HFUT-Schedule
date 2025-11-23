@@ -64,8 +64,9 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
         }
     }
     val activity = LocalActivity.current
-    activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
-
+    LaunchedEffect(activity) {
+        activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+    }
     val switch_open = prefs.getBoolean("SWITCH_ML",false)
     var open by remember { mutableStateOf(switch_open) }
     saveBoolean("SWITCH_ML",false,open)

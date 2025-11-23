@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home.cube
 
 import android.annotation.SuppressLint
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -46,6 +47,7 @@ import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -201,6 +203,10 @@ fun HomeSettingScreen(navController: NavController,
             DividerTextExpandedWith(text = "更新版本") {
                 UpdateUI(vm,update)
                 if(canUseUpdate) {
+                    val activity = LocalActivity.current
+                    LaunchedEffect(activity) {
+                        activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
+                    }
                     val patchItem by produceState<Patch?>(initialValue = null) {
                         value = getPatchVersions(vm).find { item ->
                             currentVersion == item.oldVersion

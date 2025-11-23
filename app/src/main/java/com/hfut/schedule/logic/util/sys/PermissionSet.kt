@@ -16,19 +16,33 @@ import androidx.core.net.toUri
 object PermissionSet {
     @JvmStatic
     fun checkAndRequestStoragePermission(activity: Activity) {
-        Handler(Looper.getMainLooper()).post {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                if (!Environment.isExternalStorageManager()) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
                     val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                    intent.data = ("package:" + activity.packageName).toUri()
+                    intent.data = "package:${activity.packageName}".toUri()
+                    activity.startActivityForResult(intent, 1)
+                } catch (e: Exception) {
+                    // 某些手机拉不出来 , 使用全局设置页面
+                    val intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
                     activity.startActivityForResult(intent, 1)
                 }
-            } else {
-                ActivityCompat.requestPermissions(
-                    activity,
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                    1
-                )
+            }
+
+        } else {
+            // Android 10 及以下
+            val needReq = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ).any {
+                ContextCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED
+            }
+
+            if (needReq) {
+                ActivityCompat.requestPermissions(activity, arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ), 1)
             }
         }
     }

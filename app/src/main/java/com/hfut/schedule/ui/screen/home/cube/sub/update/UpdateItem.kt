@@ -29,7 +29,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-11-19") },
+                overlineContent = { Text(text = "2025-11-23") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,8 +58,9 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 由于教务系统数据源发生一些变动而使课程详情崩溃的Bug")
-            UpdateItems("修复 对话框按钮点击水波纹未覆盖全的Bug")
+            UpdateItems("优化 若干按钮点击水波纹未覆盖全的细节","By Today")
+            UpdateItems("优化 部分图标的切换动画","By Today")
+            UpdateItems("修复 由于权限问题导致可能无法安装Apk的Bug")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")

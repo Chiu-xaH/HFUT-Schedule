@@ -49,7 +49,7 @@ fun TimeTablePreview(
         onItemClick(currentWeek)
     }
     Surface(
-        color = MaterialTheme.colorScheme.secondaryContainer.copy(.5f).compositeOver(MaterialTheme.colorScheme.surface),
+        color = MaterialTheme.colorScheme.surfaceContainer,
         shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .padding(top = innerPadding.calculateTopPadding())
