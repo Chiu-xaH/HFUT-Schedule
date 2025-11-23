@@ -1,16 +1,22 @@
 package com.hfut.schedule.ui.screen.fix.about
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,10 +34,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
@@ -57,6 +67,8 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.screen.welcome.arguments
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.align.RowHorizontal
 import kotlinx.coroutines.launch
 
 
@@ -103,7 +115,6 @@ fun About(vm : NetWorkViewModel) {
     val context = LocalContext.current
     var starsNum by remember { mutableStateOf("") }
     val uiState by vm.githubStarsData.state.collectAsState()
-    var loading = uiState !is UiState.Success
     LaunchedEffect(uiState) {
         if(uiState is UiState.Success) {
             starsNum = (uiState as UiState.Success).data.toString()
@@ -173,30 +184,50 @@ fun About(vm : NetWorkViewModel) {
                 .padding(innerPadding)
                 .verticalScroll(scrollState)) {
                 DividerTextExpandedWith("开发者") {
-                    CardListItem(
+                    CustomCard(
                         color = cardNormalColor(),
-                        modifier = Modifier.clickable {
-                            scope.launch {
-                                Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
-                            }
-                        },
-                        headlineContent = { ScrollText(MyApplication.GITHUB_DEVELOPER_NAME) },
-                        leadingContent = {
-                            UrlImage(url = MyApplication.GITHUB_USER_IMAGE_URL + MyApplication.GITHUB_USER_ID, width = 50.dp, height = 50.dp)
-                        },
-                        supportingContent = {
-                            Text("一名热爱Android的开发者,宣城校区23级本科生")
-                        },
-                        trailingContent = {
-                            FilledTonalIconButton(
-                                onClick = {
-                                    Starter.emailMe(context)
+                    ) {
+                        TransplantListItem(
+                            modifier = Modifier.clickable {
+                                scope.launch {
+                                    Starter.startWebView(context,"${MyApplication.GITHUB_URL}${MyApplication.GITHUB_DEVELOPER_NAME}")
                                 }
-                            ) {
-                                Icon(painterResource(R.drawable.mail),null)
-                            }
-                        },
-                    )
+                            },
+                            headlineContent = {
+                                //一名热爱Android的开发者,宣城校区23级本科生
+                                Text(MyApplication.GITHUB_DEVELOPER_NAME)
+                            },
+                            overlineContent = { Text("开发者") },
+                            trailingContent = {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        Starter.emailMe(context)
+                                    }
+                                ) {
+                                    Icon(painterResource(R.drawable.mail),null)
+                                }
+                            },
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            modifier = Modifier.clickable {
+                            },
+                            overlineContent = { Text("贡献者(无先后顺序)") },
+                            headlineContent = {
+                                Text(MyApplication.contributors.map { it.key }.drop(1).joinToString(" "))
+                            },
+                        )
+                        PaddingHorizontalDivider()
+                        RowHorizontal  (
+                            modifier = Modifier.padding(APP_HORIZONTAL_DP)
+                        ) {
+                            OverlappingAvatars(
+                                MyApplication.contributors.map {
+                                    MyApplication.GITHUB_USER_IMAGE_URL + it.value
+                                },
+                            )
+                        }
+                    }
                 }
 
                 DividerTextExpandedWith("构建") {
@@ -270,5 +301,46 @@ fun About(vm : NetWorkViewModel) {
             }
         }
 //        Party(show = !loading)
+    }
+}
+
+@Composable
+fun OverlappingAvatars(
+    imageUrls: List<String>,
+    modifier: Modifier = Modifier,
+    avatarSize: Dp = 45.dp,
+    overlapFraction: Float = 0.35f,
+) {
+    if (imageUrls.isEmpty()) return
+
+    BoxWithConstraints(modifier = modifier) {
+        val maxWidth = constraints.maxWidth.toFloat().dp
+        val totalAvatars = imageUrls.size
+        val defaultSpacing = avatarSize * (1f - overlapFraction)
+
+        // 动态计算每个头像间距，保证全部头像在屏幕内显示
+        val spacing = if (totalAvatars > 1) {
+            val neededWidth = defaultSpacing * (totalAvatars - 1) + avatarSize
+            if (neededWidth > maxWidth) {
+                ((maxWidth - avatarSize) / (totalAvatars - 1)).coerceAtLeast(0.dp)
+            } else defaultSpacing
+        } else 0.dp
+
+        imageUrls.forEachIndexed { index, url ->
+            Box(
+                modifier = Modifier
+                    .offset(x = spacing * index)
+                    .size(avatarSize)
+                    .shadow(elevation = APP_HORIZONTAL_DP, shape = CircleShape, clip = false)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                UrlImage(
+                    url = url,
+                    width = avatarSize,
+                    height = avatarSize,
+                )
+            }
+        }
     }
 }

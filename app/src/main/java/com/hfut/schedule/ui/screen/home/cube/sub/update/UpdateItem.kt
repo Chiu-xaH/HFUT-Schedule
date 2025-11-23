@@ -58,6 +58,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 关于界面新增对贡献者的显示","PR代码，或提供非代码形式的数据源")
             UpdateItems("优化 若干按钮点击水波纹未覆盖全的细节","By Today")
             UpdateItems("优化 部分图标的切换动画","By Today")
             UpdateItems("修复 由于权限问题导致可能无法安装Apk的Bug")

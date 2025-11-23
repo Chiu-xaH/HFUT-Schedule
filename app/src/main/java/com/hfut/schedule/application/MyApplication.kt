@@ -145,6 +145,16 @@ class MyApplication : Application() {
         const val GITHUB_USER_ID = 116127902
         const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"
         const val GITHUB_REPO_NAME = "HFUT-Schedule"
+        // 贡献者
+        val contributors by lazy {
+            mapOf(
+                GITHUB_DEVELOPER_NAME to GITHUB_USER_ID,
+                "Today1337" to 110648923,
+                "linsui" to 36977733,
+                "tinyvan" to 27542299,
+                "James-Zhang2" to 175417444
+            )
+        }
         // 仓库地址
         const val GITHUB_REPO_URL = "$GITHUB_URL$GITHUB_DEVELOPER_NAME/$GITHUB_REPO_NAME"
         // 邮箱后缀
