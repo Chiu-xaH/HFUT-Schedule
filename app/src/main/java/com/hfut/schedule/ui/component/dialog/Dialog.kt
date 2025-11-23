@@ -91,6 +91,7 @@ fun LittleDialog(
                         text = conformText,
                         onClick = onConfirmation,
                         modifier = Modifier.weight(1f),
+                        textColor = MaterialTheme.colorScheme.error, // 因为下面 FakeButton() 里面新增了可传入文本颜色，如果直接用 contentColor 控制可能会混乱而且会丢失单独控制水波纹颜色的方法，所以分开
                         contentColor = MaterialTheme.colorScheme.error
                     )
                 }
