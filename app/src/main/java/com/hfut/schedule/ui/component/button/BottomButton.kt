@@ -3,17 +3,12 @@ package com.hfut.schedule.ui.component.button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import com.hfut.schedule.ui.component.dialog.FakeButton
 
 @Composable
 fun BottomButton(
@@ -25,14 +20,16 @@ fun BottomButton(
 ) {
     Column {
         Box(Modifier.background(if(enable) containerColor else MaterialTheme.colorScheme.surfaceContainer)) {
-            FilledTonalButton(
-                onClick = if(enable) onClick else {{}},
-                shape = RoundedCornerShape(0.dp),
-                colors = ButtonDefaults.filledTonalButtonColors(containerColor = Color.Transparent),
+            FakeButton(
+                text = text,
+                textColor = if (enable) textColor else Color.Gray,
+                onClick = if (enable) onClick else {
+                    {}
+                },
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(text,color = if(enable) textColor else Color.Gray)
-            }
+                contentColor = MaterialTheme.colorScheme.primary,
+                containerColor = Color.Transparent
+            )
         }
     }
 }
