@@ -58,10 +58,15 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 关于界面新增对贡献者的显示","PR代码，或提供非代码形式的数据源")
-            UpdateItems("优化 若干按钮点击水波纹未覆盖全的细节","By Today")
-            UpdateItems("优化 部分图标的切换动画","By Today")
-            UpdateItems("修复 由于权限问题导致可能无法安装Apk的Bug")
+            UpdateItems("重构 寝室评分（宣城与合肥）","学校终于将宣区寝室查询和肥区一样接入到智慧社区了，旧接口将不再返回新数据了")
+            UpdateItems("新增 校务行","位于 查询中心-成绩")
+            UpdateItems("新增 备用与恢复","位于 选项-应用与配置，开发者为游客提供了预设数据源，以便其他开发者更便利地使用本项目")
+            UpdateItems("新增 关于界面新增对贡献者的显示")//
+            UpdateItems("修复 由于权限问题导致可能无法安装Apk的Bug")//
+            UpdateItems("优化 若干按钮点击水波纹未覆盖全的细节")//
+            UpdateItems("优化 部分图标的切换动画")//
+            UpdateItems("优化 新课程表方格文字间距、大小的显示")//
+            UpdateItems("移除 微信专区")//
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")

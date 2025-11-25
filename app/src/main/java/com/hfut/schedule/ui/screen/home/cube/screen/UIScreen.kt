@@ -736,11 +736,11 @@ fun CalendarUISettings(
     val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
     val calendarSquareHeightNew by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
-    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val enableCalendarShowTeacher by DataStoreManager.enableCalendarShowTeacher.collectAsState(initial = ShowTeacherConfig.ONLY_MULTI.code)
     val customBackground by DataStoreManager.customBackground.collectAsState(initial = "")
-    val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 0.75f)
+    val customSquareAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val useCustomBackground = customBackground != ""
@@ -930,7 +930,7 @@ fun CalendarUISettings(
 
         TransplantListItem(
             headlineContent = {
-                Text("方格高度 ${formatDecimal(calendarSquareHeightNew.toDouble(),0)}")
+                Text("方格高度 ${formatDecimal(calendarSquareHeightNew.toDouble(),1)}")
             },
             supportingContent = {
                 if(!tiny)
@@ -953,7 +953,7 @@ fun CalendarUISettings(
             valueRange = 25f..125f,
             showProcessText = true,
             steps = 99,
-            processText = formatDecimal(calendarSquareHeightNew.toDouble(),0)
+            processText = formatDecimal(calendarSquareHeightNew.toDouble(),1)
         )
         if(!tiny)
             PaddingHorizontalDivider()
@@ -987,11 +987,11 @@ fun CalendarUISettings(
             PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
-                Text("方格文字行距 ${formatDecimal(calendarSquareTextPadding.toDouble()*100,0)}%")
+                Text("方格文字行距 ${formatDecimal(calendarSquareTextPadding.toDouble(),2)}倍")
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格内文字的大小(默认值为100%)，越小则每行之间越紧密")
+                    Text("自定义方格内文字的行距(默认值为1.35倍)，越小则每行之间越紧密")
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.translate),null)
@@ -1004,9 +1004,9 @@ fun CalendarUISettings(
                 scope.launch { DataStoreManager.saveCalendarSquareTextPadding(it) }
             },
             modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
-            valueRange = 0.25f..2f,
+            valueRange = 1f..2f,
             showProcessText = true,
-            processText = formatDecimal(calendarSquareTextPadding.toDouble()*100,0)
+            processText = formatDecimal(calendarSquareTextPadding.toDouble(),2)
         )
     }
 }

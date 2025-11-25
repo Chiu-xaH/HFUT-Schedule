@@ -1,6 +1,8 @@
 package com.hfut.schedule.activity.screen
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -9,11 +11,14 @@ import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.ui.screen.shower.ShowerGuaGua
 import com.hfut.schedule.ui.screen.shower.login.ShowerLogin
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
+import kotlin.getValue
 
 
 class ShowerActivity : BaseActivity() {
     @Composable
     override fun UI() {
+        val showerVm = viewModel { GuaGuaViewModel() }
         val navController = rememberNavController()
         val first = if(intent.getStringExtra("FIRST") == ShowerScreen.HOME.name) ShowerScreen.HOME.name else ShowerScreen.LOGIN.name
         NavHost(
@@ -28,11 +33,11 @@ class ShowerActivity : BaseActivity() {
         ) {
             // 主UI
             composable(ShowerScreen.HOME.name) {
-                ShowerGuaGua(super.showerVm,super.networkVm,navController)
+                ShowerGuaGua(showerVm,super.networkVm,navController)
             }
             // 游客模式
             composable(ShowerScreen.LOGIN.name) {
-                ShowerLogin(super.showerVm,super.networkVm,navController)
+                ShowerLogin(showerVm,super.networkVm,navController)
             }
         }
     }

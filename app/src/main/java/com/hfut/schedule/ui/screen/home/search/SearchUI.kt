@@ -1,9 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -78,7 +76,7 @@ import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.Classroom
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.Mail
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
-import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatGo
+import com.hfut.schedule.ui.screen.home.search.function.other.wechat.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
 import com.hfut.schedule.ui.screen.home.search.function.school.SecondClass
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
@@ -98,8 +96,6 @@ import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
@@ -199,7 +195,7 @@ fun SearchScreen(
                 SearchAppBean(31,"${AppNavRoute.TeacherSearch.label} 老师检索", { TeacherSearch(navController ) }, AppNavRoute.TeacherSearch.route),
                 SearchAppBean(32,"${AppNavRoute.Fee.label} 费用 欠缴学费", { Pay(navController ) }, AppNavRoute.Fee.route),
                 SearchAppBean(33,"实习", { Practice(ifSaved) }),
-                SearchAppBean(34,"${AppNavRoute.Wechat.label} 校友 毕业 第二课堂 空教室 教室课表 同班同学 团员 团建", { WeChatGo(navController ) },AppNavRoute.Wechat.route),
+                SearchAppBean(34,"${AppNavRoute.Alumni.label} 校友 毕业", { Alumni(navController ) },AppNavRoute.Alumni.route),
                 SearchAppBean(35,"${AppNavRoute.StuTodayCampus.label} 学工系统 学工平台 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus(navController ) }, AppNavRoute.StuTodayCampus.route),
                 SearchAppBean(36,"大创系统 大学生创新创业", { IETP(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
                 SearchAppBean(37,"${AppNavRoute.Work.label} 实习 春招 双选 秋招", { Work(navController ) }, AppNavRoute.Work.route),

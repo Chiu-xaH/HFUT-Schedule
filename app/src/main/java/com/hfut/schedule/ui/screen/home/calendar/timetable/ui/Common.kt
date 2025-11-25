@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,6 +41,9 @@ import com.xah.transition.state.LocalAppNavController
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 
+private const val timeTextFactor = 0.85
+private const val placeTextFactor = 0.9
+
 @Composable
 fun TimeTable(
     items: List<List<TimeTableItem>>,
@@ -55,11 +59,11 @@ fun TimeTable(
     onSquareClick : (List<TimeTableItem>) -> Unit,
 ) {
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+    val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val calendarSquareHeight by DataStoreManager.calendarSquareHeightNew.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val enableMergeSquare by DataStoreManager.enableMergeSquare.collectAsState(initial = false)
     val calendarSquareTextSize by DataStoreManager.calendarSquareTextSize.collectAsState(initial = 1f)
-    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = 1f)
+    val calendarSquareTextPadding by DataStoreManager.calendarSquareTextPadding.collectAsState(initial = MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
 
     val list = if(week >= items.size || week > MyApplication.MAX_WEEK) {
         Exception("NewTimeTableUI received week out of bounds for length ${items.size} of items[${week-1}]").printStackTrace()
@@ -67,15 +71,20 @@ fun TimeTable(
     }  else {
         items[week-1]
     }
-    val lineHeight = (if(!showAll) 19.sp else 16.sp) * calendarSquareTextPadding
-    val textSize = (if(!showAll) 13.sp else 11.sp) * calendarSquareTextSize
-    val timeTextSize = (textSize.value-1).sp
+    val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
+    val lineHeight = textSize * calendarSquareTextPadding
+    val timeTextLineHeight = lineHeight*timeTextFactor
+    val timeTextSize = textSize*timeTextFactor
+    val placeTextLineHeight = lineHeight*placeTextFactor
+    val placeTextSize = textSize*placeTextFactor
     val hasBackground = shaderState != null
 
     val earliestTime = list.minOfOrNull { it.startTime }
     val startTime = earliestTime?.let {
         minOf(parseTimeToFloat(it), DEFAULT_START_TIME)
     } ?: DEFAULT_START_TIME
+
+    val round = MaterialTheme.shapes.extraSmall
 
     if(enableMergeSquare) {
         TimetableCommonSquare(
@@ -110,12 +119,12 @@ fun TimeTable(
             }
             Surface(
                 color = if (!hasBackground) color.first else Color.Transparent,
-                shape = MaterialTheme.shapes.extraSmall,
+                shape = round,
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
                             it
-                                .clip(MaterialTheme.shapes.extraSmall)
+                                .clip(round)
                                 .let {
                                     if (AppVersion.CAN_SHADER) {
                                         it.calendarSquareGlass(
@@ -180,7 +189,7 @@ fun TimeTable(
                             text = item.startTime,
                             fontSize = timeTextSize,
                             textAlign = TextAlign.Center,
-                            lineHeight = lineHeight,
+                            lineHeight = timeTextLineHeight,
                             overflow = TextOverflow.Clip,
                             maxLines = 1,
                             color = color.second,
@@ -205,9 +214,9 @@ fun TimeTable(
                         item.place?.let {
                             Text(
                                 text = it,
-                                fontSize = timeTextSize,
+                                fontSize = placeTextSize,
                                 textAlign = TextAlign.Center,
-                                lineHeight = lineHeight,
+                                lineHeight = placeTextLineHeight,
                                 modifier = Modifier.fillMaxWidth(),
                             )
                         }
@@ -217,7 +226,7 @@ fun TimeTable(
                             textAlign = TextAlign.Center,
                             overflow = TextOverflow.Clip,
                             maxLines = 1,
-                            lineHeight = lineHeight,
+                            lineHeight = timeTextLineHeight,
                             color = color.second,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -232,7 +241,7 @@ fun TimeTable(
                             textAlign = TextAlign.Center,
                             overflow = TextOverflow.Clip,
                             maxLines = 1,
-                            lineHeight = lineHeight,
+                            lineHeight = timeTextLineHeight,
                             color = color.second,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -253,9 +262,9 @@ fun TimeTable(
                         }
                         Text(
                             text = courses,
-                            fontSize = timeTextSize,
+                            fontSize = placeTextSize,
                             textAlign = TextAlign.Center,
-                            lineHeight = lineHeight,
+                            lineHeight = placeTextLineHeight,
                             modifier = Modifier.fillMaxWidth()
                         )
                         Text(
@@ -264,7 +273,7 @@ fun TimeTable(
                             textAlign = TextAlign.Center,
                             overflow = TextOverflow.Clip,
                             maxLines = 1,
-                            lineHeight = lineHeight,
+                            lineHeight = timeTextLineHeight,
                             color = color.second,
                             modifier = Modifier.fillMaxWidth()
                         )
@@ -310,12 +319,12 @@ fun TimeTable(
             }
             Surface(
                 color = if (!hasBackground) color.first else Color.Transparent,
-                shape = MaterialTheme.shapes.extraSmall,
+                shape = round,
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
                             it
-                                .clip(MaterialTheme.shapes.extraSmall)
+                                .clip(round)
                                 .let {
                                     if (AppVersion.CAN_SHADER) {
                                         it.calendarSquareGlass(
@@ -375,7 +384,7 @@ fun TimeTable(
                     Text(
                         text = item.startTime,
                         fontSize = timeTextSize,
-                        lineHeight = lineHeight,
+                        lineHeight = timeTextLineHeight,
                         textAlign = TextAlign.Center,
                         overflow = TextOverflow.Clip,
                         maxLines = 1,
@@ -404,8 +413,8 @@ fun TimeTable(
                         item.place?.let {
                             Text(
                                 text = it,
-                                fontSize = timeTextSize,
-                                lineHeight = lineHeight,
+                                fontSize = placeTextSize,
+                                lineHeight = placeTextLineHeight,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.fillMaxWidth(),
                             )
@@ -414,7 +423,7 @@ fun TimeTable(
                             text = item.endTime,
                             fontSize = timeTextSize,
                             textAlign = TextAlign.Center,
-                            lineHeight = lineHeight,
+                            lineHeight = timeTextLineHeight,
                             overflow = TextOverflow.Clip,
                             maxLines = 1,
                             color = color.second,

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -89,7 +88,7 @@ import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomD
 import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
-import com.hfut.schedule.ui.screen.home.search.function.other.wechat.WeChatScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.wechat.AlumniScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
@@ -114,7 +113,6 @@ import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.mirror.shader.enterAnimation
 import com.xah.mirror.shader.scaleMirror
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
@@ -523,9 +521,9 @@ fun MainHost(
                 transitionComposable(route = AppNavRoute.Holiday.route,) {
                     HolidayScreen(navController ,)
                 }
-                // 微信专区
-                transitionComposable(route = AppNavRoute.Wechat.route) {
-                    WeChatScreen(navController)
+                // 校友平台
+                transitionComposable(route = AppNavRoute.Alumni.route) {
+                    AlumniScreen(navController)
                 }
                 // 作息
                 transitionComposable(

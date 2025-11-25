@@ -92,6 +92,7 @@ import androidx.navigation.compose.rememberNavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.FriendEntity
 import com.hfut.schedule.logic.enumeration.BottomBarItems
@@ -472,7 +473,7 @@ fun MainScreen(
                     }
                 } else {
                     if(useCustomBackground) {
-                        val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = 1f)
+                        val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
                         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
                         val iconColor = IconButtonDefaults.iconButtonColors().contentColor
                         TopAppBar(

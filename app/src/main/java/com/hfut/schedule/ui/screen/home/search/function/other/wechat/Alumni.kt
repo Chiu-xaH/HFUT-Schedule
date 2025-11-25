@@ -1,13 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.other.wechat
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,18 +21,18 @@ import com.xah.uicommon.component.text.ScrollText
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun WeChatGo(
+fun Alumni(
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.Wechat.route }
+    val route = remember { AppNavRoute.Alumni.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Wechat.label) },
+        headlineContent = { ScrollText(text = AppNavRoute.Alumni.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Wechat.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.Alumni.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Wechat,route)
+            navController.navigateForTransition(AppNavRoute.Alumni,route)
         }
     )
 }

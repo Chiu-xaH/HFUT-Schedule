@@ -2,10 +2,16 @@ package com.hfut.schedule.ui.screen.grade
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.glance.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,10 +40,16 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.GradeBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -57,6 +70,7 @@ import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -124,7 +138,7 @@ fun GradeScreen(
         }
     }
     var input by remember { mutableStateOf("") }
-
+    val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
     CustomTransitionScaffold (
@@ -151,25 +165,40 @@ fun GradeScreen(
                             ) {
                                 Icon(painter = painterResource(id = R.drawable.info),null)
                             }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                onClick = {
+                                    if(true) {
+                                        Starter.loginXwx(context)
+                                    } else {
+                                        Starter.startXwx(context)
+                                    }
+                                } ,
+                                backdrop = backDrop
+                            ) {
+                               Text("校务行")
+                            }
                         }
                     }
                 )
-                CustomTextField(
-                    modifier = Modifier
-                        .padding(horizontal = APP_HORIZONTAL_DP)
-                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
-                    input = input,
-                    label = { Text("搜索 课程名、代码") },
-                    trailingIcon = {
-                        IconButton(
-                            onClick = {}) {
-                            Icon(
-                                painter = painterResource(R.drawable.search),
-                                contentDescription = "description"
-                            )
-                        }
-                    },
-                ) { input = it }
+                if(targetPage == GradeBarItems.GRADE) {
+                    CustomTextField(
+                        modifier = Modifier
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
+                        input = input,
+                        label = { Text("搜索 课程名、代码") },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {}) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        },
+                    ) { input = it }
+                }
             }
         },
         bottomBar = {
@@ -219,8 +248,5 @@ fun Infos() {
         headlineContent = { Text(text = "平均绩点的计算") },
         supportingContent = { Text(text = "每门课的(学分*绩点)累加后，除以所有课的总学分")}
     )
-    CardListItem(
-        headlineContent = { Text(text = "校务行") },
-        supportingContent = { Text(text = "微信小程序搜校务行，注意宣区选择 合肥工业大学（宣城校区），学号为账号，身份证后六位为密码（包括最后的X）")}
-    )
 }
+

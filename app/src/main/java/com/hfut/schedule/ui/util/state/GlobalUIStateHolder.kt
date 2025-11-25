@@ -60,7 +60,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(31, AppNavRoute.TeacherSearch.label, AppNavRoute.TeacherSearch.icon),
         SearchAppBeanLite(32, AppNavRoute.Fee.label,AppNavRoute.Fee.icon),
         SearchAppBeanLite(33,"实习",R.drawable.work),
-        SearchAppBeanLite(34, AppNavRoute.Wechat.label,AppNavRoute.Wechat.icon),
+        SearchAppBeanLite(34, AppNavRoute.Alumni.label,AppNavRoute.Alumni.icon),
         SearchAppBeanLite(35, AppNavRoute.StuTodayCampus.label,AppNavRoute.StuTodayCampus.icon),
         SearchAppBeanLite(36,"大创系统",R.drawable.groups),
         SearchAppBeanLite(37, AppNavRoute.Work.label,AppNavRoute.Work.icon),

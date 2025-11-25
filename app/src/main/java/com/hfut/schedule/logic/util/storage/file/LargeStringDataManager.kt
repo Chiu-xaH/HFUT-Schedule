@@ -30,6 +30,7 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME) {
     const val HUI_XIN_INFO = "hui_xin_info"//card_yue
     // 新增
     const val GRADE = "grade"
+    const val XWX_USER_INFO = "xwx_user_info"
 
     // 迁移函数 从SharePrefs迁移到这里并删除
     private suspend fun move(context: Context, oldKey : String, newKey : String) {

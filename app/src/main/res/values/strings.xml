@@ -24,4 +24,5 @@
     <string name="title_activity_widget_configure">聚焦课程组件-配置</string>
     <string name="uninstall_title">解除安装“聚在工大”</string>
     <string name="uninstall_content">缘分让你我相遇，祝前程似锦，欢迎回来看看(github.com/Chiu-xaH/HFUT-Schedule)，再见👋</string>
+    <string name="title_activity_xwx">校务行</string>
 </resources>

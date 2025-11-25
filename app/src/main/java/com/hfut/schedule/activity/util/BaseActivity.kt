@@ -19,7 +19,6 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 abstract class BaseActivity : ComponentActivity() {
     val networkVm by lazy { ViewModelProvider(this)[NetWorkViewModel::class.java] }
     val loginVm by lazy { ViewModelProvider(this)[LoginViewModel::class.java] }
-    val showerVm by lazy { ViewModelProvider(this)[GuaGuaViewModel::class.java] }
     val uiVm by lazy { ViewModelProvider(this)[UIViewModel::class.java] }
 
     @Composable

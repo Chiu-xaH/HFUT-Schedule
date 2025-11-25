@@ -158,6 +158,8 @@ fun MultiScheduleSettings(
 
         val friendList = getFriendsList()
 
+        val shape = MaterialTheme.shapes.medium
+
         LazyRow {
             item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP*2)) }
             // 教务课表
@@ -166,8 +168,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .clickable {
                             onSelectedChange(CourseType.JXGLSTU.code)
                         },
@@ -185,8 +187,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .clickable {
                             onSelectedChange(CourseType.COMMUNITY.code)
                         },
@@ -205,8 +207,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .clickable {
                             onSelectedChange(CourseType.JXGLSTU2.code)
                         },
@@ -228,8 +230,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .clickable {
                             onSelectedChange(CourseType.ZHI_JIAN.code)
                         },
@@ -248,8 +250,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = 4.dp)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .clickable {
                             if (isNextOpen()) {
                                 if (ifSaved) {
@@ -288,8 +290,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .combinedClickable(
                             onClick = {
                                 //点击加载好友课表
@@ -322,8 +324,8 @@ fun MultiScheduleSettings(
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
                         .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP))
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
                         .clickable {
                             showBottomSheet_add = true
                             //showDialog_Add = true

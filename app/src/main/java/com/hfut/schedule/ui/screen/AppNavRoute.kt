@@ -126,7 +126,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object WebVpn : AppNavRoute("WEBVPN","WebVpn",R.drawable.vpn_key)
     object Holiday : AppNavRoute("HOLIDAY","法定假日",R.drawable.beach_access)
     object News : AppNavRoute("News","通知公告",R.drawable.stream)
-    object Wechat : AppNavRoute("WECHAT","微信专区",R.drawable.wechat)
+    object Alumni : AppNavRoute("ALUMNI","校友平台",R.drawable.person_book)
     object Appointment : AppNavRoute("APPOINTMENT","社区预约",R.drawable.table_restaurant)
     object WorkAndRest : AppNavRoute("WORK_AND_REST","作息",R.drawable.schedule)  {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any?,override val isNullable: Boolean) : NavArg {

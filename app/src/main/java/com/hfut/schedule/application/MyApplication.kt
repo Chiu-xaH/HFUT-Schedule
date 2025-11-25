@@ -17,6 +17,8 @@ class MyApplication : Application() {
         // 方格默认高度
         const val CALENDAR_SQUARE_HEIGHT = 125f
         const val CALENDAR_SQUARE_HEIGHT_NEW = 70f
+        const val CALENDAR_SQUARE_TEXT_PADDING = 1.35f
+        const val CALENDAR_SQUARE_ALPHA = 0.6f
         const val SWIPE = 5f
         // HAZE模糊半径
         const val BLUR_RADIUS = 20
@@ -38,6 +40,8 @@ class MyApplication : Application() {
         const val NEWS_URL = "https://news.hfut.edu.cn/"
         // 办事大厅
         const val OFFICE_HALL_URL = "https://ehall.hfut.edu.cn/"
+        // 校务行
+        const val XWX_URL = "https://xwx.gzzmedu.com:9080/"
         // 合工大教务 有时需校园网
         const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
         // 更新
