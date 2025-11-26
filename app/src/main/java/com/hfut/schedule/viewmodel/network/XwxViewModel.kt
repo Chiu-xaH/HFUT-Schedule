@@ -21,7 +21,8 @@ class XwxViewModel : ViewModel() {
     suspend fun getFunctions(
         schoolCode : Long,
         username : String,
-    ) = XwxRepository.getFunctions(schoolCode,username,functionsResp)
+        token : String,
+    ) = XwxRepository.getFunctions(schoolCode,username,token,functionsResp)
 
     val docPreviewResp = StateHolder<String>()
     suspend fun getDocPreview(
@@ -29,11 +30,13 @@ class XwxViewModel : ViewModel() {
         username : String,
         filePropertyType : Int,
         fileProperty : String,
+        token : String,
     ) = XwxRepository.getDocPreview(
         schoolCode,
         username,
         filePropertyType,
         fileProperty,
+        token,
         docPreviewResp
     )
 }

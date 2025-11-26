@@ -75,10 +75,11 @@ object XwxRepository {
     suspend fun getFunctions(
         schoolCode : Long,
         username : String,
+        token : String,
         holder : StateHolder<List<XwxFunction>>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.getFunctions(XwxFunctionsRequestBody(schoolCode = schoolCode,userId = username)) },
+        request = { xwx.getFunctions(token,XwxFunctionsRequestBody(schoolCode = schoolCode,userId = username),) },
         transformSuccess = { _,json -> parseFunctions(json) }
     )
     @JvmStatic
@@ -95,10 +96,11 @@ object XwxRepository {
         username : String,
         filePropertyType : Int,
         fileProperty : String,
+        token : String,
         holder : StateHolder<String>
     ) = launchRequestState(
         holder = holder,
-        request = { xwx.getDocPreview(XwxDocPreviewRequestBody(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
+        request = { xwx.getDocPreview(token,XwxDocPreviewRequestBody(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
         transformSuccess = { _,json -> parseDocPreview(json) }
     )
     @JvmStatic

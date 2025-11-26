@@ -16,7 +16,7 @@ data class XwxLoginBean(
 data class XwxUserInfo(
     val grade : String,
     val name : String,
-    val schoolCode : Int,
+    val schoolCode : Long,
     val userId : String
 )
 

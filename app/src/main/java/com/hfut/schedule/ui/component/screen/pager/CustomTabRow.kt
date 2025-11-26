@@ -72,7 +72,7 @@ private fun CustomSlidingTabRow(
                         .padding(vertical = 4.5.dp)
                         .background(
                             color = MaterialTheme.colorScheme.secondaryContainer,
-                            shape = RoundedCornerShape(APP_HORIZONTAL_DP)
+                            shape = MaterialTheme.shapes.medium
                         )
                         .zIndex(0f)
                 )
@@ -93,8 +93,8 @@ private fun CustomSlidingTabRow(
                     modifier = Modifier
                         .padding(5.dp)
                         .zIndex(1f)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP)),
+                        .clip(shape = MaterialTheme.shapes.medium)
+                        .background(Color.Transparent, shape = MaterialTheme.shapes.medium),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(index)
@@ -146,7 +146,7 @@ private fun CustomScrollTabRow(
                             .padding(vertical = 5.dp)
                             .background(
                                 color = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = RoundedCornerShape(APP_HORIZONTAL_DP)
+                                shape =  MaterialTheme.shapes.medium
                             )
                             .zIndex(0f)
                     )
@@ -172,8 +172,8 @@ private fun CustomScrollTabRow(
                         .padding(5.dp)
                         .zIndex(1f)
                         .padding(start = if(pagerState.currentPage == 0) APP_HORIZONTAL_DP-padding else 0.dp)
-                        .clip(shape = RoundedCornerShape(APP_HORIZONTAL_DP))
-                        .background(Color.Transparent, shape = RoundedCornerShape(APP_HORIZONTAL_DP)),
+                        .clip(shape = MaterialTheme.shapes.medium)
+                        .background(Color.Transparent, shape =  MaterialTheme.shapes.medium),
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(index)
