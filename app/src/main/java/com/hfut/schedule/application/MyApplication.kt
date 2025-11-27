@@ -41,7 +41,9 @@ class MyApplication : Application() {
         // 办事大厅
         const val OFFICE_HALL_URL = "https://ehall.hfut.edu.cn/"
         // 校务行
-        const val XWX_URL = "https://xwx.gzzmedu.com:9080/"
+        private const val XWX_HOST = "https://xwx.gzzmedu.com"
+        const val XWX_URL = "$XWX_HOST:9080/"
+        const val XWX_PICTURE_URL = "$XWX_HOST:6899/"
         // 合工大教务 有时需校园网
         const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
         // 更新

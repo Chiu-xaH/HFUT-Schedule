@@ -18,6 +18,7 @@ data class XwxSchoolKeyBean(
 
 data class XwxSchoolBean(
     val schoolCode : Long,
+    val schoolName : String,
     val iconUrl : String,
 )
 

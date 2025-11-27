@@ -97,7 +97,6 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-//        modifier = Modifier.fillMaxSize(),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column {

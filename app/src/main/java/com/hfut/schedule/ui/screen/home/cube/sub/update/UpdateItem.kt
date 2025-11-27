@@ -29,7 +29,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-11-23") },
+                overlineContent = { Text(text = "2025-11-27") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,9 +58,9 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("重构 寝室评分（宣城与合肥）","学校终于将宣区寝室查询和肥区一样接入到智慧社区了，旧接口将不再返回新数据了")
-            UpdateItems("新增 校务行","位于 查询中心-成绩")
-            UpdateItems("新增 备用与恢复","位于 选项-应用与配置，开发者为游客提供了预设数据源，以便其他开发者更便利地使用本项目")
+//            UpdateItems("重构 寝室评分（宣城与合肥）","学校终于将宣区寝室查询和肥区一样接入到智慧社区了，旧接口将不再返回新数据了")
+//            UpdateItems("新增 备用与恢复","位于 选项-应用与配置，开发者为游客提供了预设数据源，以便其他开发者更便利地使用本项目")
+            UpdateItems("新增 校务行","位于 查询中心-成绩")//
             UpdateItems("新增 关于界面新增对贡献者的显示")//
             UpdateItems("修复 由于权限问题导致可能无法安装Apk的Bug")//
             UpdateItems("优化 部分界面的显示")//

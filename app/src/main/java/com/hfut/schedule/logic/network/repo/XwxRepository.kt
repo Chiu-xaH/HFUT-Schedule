@@ -1,5 +1,8 @@
 package com.hfut.schedule.logic.network.repo
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.xwx.XwxDocPreviewRequestBody
@@ -97,19 +100,20 @@ object XwxRepository {
         filePropertyType : Int,
         fileProperty : String,
         token : String,
-        holder : StateHolder<String>
+        holder : StateHolder<Bitmap>
     ) = launchRequestState(
         holder = holder,
         request = { xwx.getDocPreview(token,XwxDocPreviewRequestBody(schoolCode = schoolCode, userId = username, fileProperty = fileProperty, filePropertyType = filePropertyType)) },
         transformSuccess = { _,json -> parseDocPreview(json) }
     )
     @JvmStatic
-    private fun parseDocPreview(json : String) : String = try {
+    private fun parseDocPreview(json : String) : Bitmap = try {
         val result = Gson().fromJson(json, XwxDocPreviewResponseBody::class.java)
         if(isXwxRequestSuccessful(result.code) == false) {
             throw Exception("登录状态失效")
         }
-        result.result.imageBase64String
+        val decodedByteArray = Base64.decode(result.result.imageBase64String.substringAfter("base64,").trimIndent(),Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(decodedByteArray, 0, decodedByteArray.size)
         // 转为图片
     } catch (e: Exception) { throw e }
 }

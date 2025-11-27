@@ -13,6 +13,22 @@ import org.json.JSONObject
 
 data class WebInfo(val fee : String, val flow : String,val postJson : String = "")
 
+
+suspend fun getXwxPsk() : String? = withContext(Dispatchers.IO) {
+    return@withContext try {
+        val psk = DataStoreManager.xwxPassword.first()
+        if(psk.isEmpty() || psk.isBlank()) {
+            val defaultPsk = getPersonInfo().chineseID?.takeLast(6)
+            defaultPsk?.let { DataStoreManager.saveXwxPassword(it) }
+            defaultPsk
+        } else {
+            psk
+        }
+    } catch (e : Exception) {
+        null
+    }
+}
+
 suspend fun getCardPsk() : String? = withContext(Dispatchers.IO) {
     return@withContext try {
         val isDefault = DataStoreManager.enableUseDefaultCardPassword.first()

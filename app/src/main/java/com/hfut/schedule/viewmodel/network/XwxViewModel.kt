@@ -1,5 +1,6 @@
 package com.hfut.schedule.viewmodel.network
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.logic.model.xwx.XwxFunction
 import com.hfut.schedule.logic.model.xwx.XwxSchoolBean
@@ -24,7 +25,7 @@ class XwxViewModel : ViewModel() {
         token : String,
     ) = XwxRepository.getFunctions(schoolCode,username,token,functionsResp)
 
-    val docPreviewResp = StateHolder<String>()
+    val docPreviewResp = StateHolder<Bitmap>()
     suspend fun getDocPreview(
         schoolCode : Long,
         username : String,

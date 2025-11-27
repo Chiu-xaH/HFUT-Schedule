@@ -125,6 +125,7 @@ object DataStoreManager : IDataStore {
     private val CALENDAR_SQUARE_TEXT_SIZE = floatPreferencesKey("calendar_square_test_size")
     private val CALENDAR_SQUARE_TEXT_PADDING = floatPreferencesKey("calendar_square_test_padding_2")
     private val FOCUS_WIDGET_TEXT_SIZE = floatPreferencesKey("focus_widget_test_size")
+    private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -178,6 +179,7 @@ object DataStoreManager : IDataStore {
         }
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
+    suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
 
 
     val animationType = getFlow(ANIMATION_TYPE, AppAnimationManager.AnimationTypes.CenterAnimation.code)
@@ -221,6 +223,7 @@ object DataStoreManager : IDataStore {
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
     val calendarSquareTextPadding = getFlow(CALENDAR_SQUARE_TEXT_PADDING, MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
+    val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
