@@ -1,12 +1,15 @@
 package com.hfut.schedule.logic.util.network
 
 import android.util.Base64
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.util.GenerateQWeather
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.random.Random
+import java.security.KeyFactory
+import java.security.spec.X509EncodedKeySpec
 
 object Crypto {
     @JvmStatic
@@ -32,6 +35,24 @@ object Crypto {
     fun getHuiXinAuth() = "Basic " + encodeToBase64("mobile_service_platform:mobile_service_platform_secret")
     @JvmStatic
     fun encodeToBase64(input: String): String =java.util.Base64.getEncoder().encodeToString(input.toByteArray(Charsets.UTF_8))
+
+    fun rsaEncrypt(plainText: String, publicKeyBase64: String = MyApplication.UNI_APP_LOGIN_RSA_PUBLIC_KEY): String {
+        // 解析公钥
+        val keyBytes = Base64.decode(publicKeyBase64, Base64.DEFAULT)
+        val keySpec = X509EncodedKeySpec(keyBytes)
+        val keyFactory = KeyFactory.getInstance("RSA")
+        val publicKey = keyFactory.generatePublic(keySpec)
+
+        // 创建 Cipher
+        val cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding")
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
+
+        // 加密
+        val encryptedBytes = cipher.doFinal(plainText.toByteArray())
+
+        // 返回 Base64
+        return Base64.encodeToString(encryptedBytes, Base64.NO_WRAP)
+    }
 
     @JvmStatic
     fun md5Hash(input: String): String {

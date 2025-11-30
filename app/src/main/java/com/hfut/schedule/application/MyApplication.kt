@@ -46,6 +46,7 @@ class MyApplication : Application() {
         const val XWX_PICTURE_URL = "$XWX_HOST:6899/"
         // 合工大教务 有时需校园网
         const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
+        const val UNI_APP_LOGIN_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCFY5N+9UX+0BF+xz1svFguI4CIDvmQTfINkOZ1HOO3ltBNHGQTUirUPQTyEph/+q/l8b16YYw3I2fyTH6y15s3tHf5jMei+R/20jFRGo5udwVJUwq/RozKQIRzCtPYkXG4YWBnHKhXalZ5K2fhd5i/QtB016nVugH/7eiBDWbKVwIDAQAB"
         // 更新
         const val GITEE_URL = "https://gitee.com/"
         const val GITEE_UPDATE_URL = GITEE_URL + "chiu-xah/HFUT-Schedule/"
@@ -129,8 +130,6 @@ class MyApplication : Application() {
         const val PAY_FEE_URL = "http://pay.hfut.edu.cn/payment/mobileOnlinePay"
         // 学信网
         const val XUE_XIN_URL = "https://my.chsi.com.cn/archive/wap/gdjy/index.action"
-        // 必应壁纸
-        const val BING_WALLPAPER_URL = "https://bing.img.run/"
         // 研讨间预约 校园网
         const val MEETING_ROOM_URL = "http://210.45.243.31:81"
         // U校园
@@ -148,13 +147,12 @@ class MyApplication : Application() {
         }
         const val GITHUB_URL = "https://github.com/"
         // Github常量池
-        const val GITHUB_USER_ID = 116127902
         const val GITHUB_DEVELOPER_NAME = "Chiu-xaH"
         const val GITHUB_REPO_NAME = "HFUT-Schedule"
         // 贡献者
         val contributors by lazy {
             mapOf(
-                GITHUB_DEVELOPER_NAME to GITHUB_USER_ID,
+                GITHUB_DEVELOPER_NAME to 116127902,
                 "Today1337" to 110648923,
                 "linsui" to 36977733,
                 "tinyvan" to 27542299,
@@ -169,67 +167,6 @@ class MyApplication : Application() {
         const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
         // PC UA
         const val PC_UA = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17"
-        // 预置作息 当无法从教务系统获取到时使用
-        val XC_TXL1 by lazy {
-            listOf(
-                CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
-                CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
-                CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
-                CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
-                CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
-                CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
-                CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
-                CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
-                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-            )
-        }
-        val FCH1 by lazy {
-            listOf(
-                CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
-                CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
-                CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
-                CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
-                CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
-                CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
-                CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
-                CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
-                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-            )
-        }
-        val TXL2 by lazy {
-            listOf(
-                CourseUnitBean("第一节", 800, 850, "08:00", "08:50"),
-                CourseUnitBean("第二节", 900, 950, "09:00", "09:50"),
-                CourseUnitBean("第三节", 1010, 1100, "10:10", "11:00"),
-                CourseUnitBean("第四节", 1110, 1200, "11:10", "12:00"),
-                CourseUnitBean("第五节", 1430, 1520, "14:30", "15:20"),
-                CourseUnitBean("第六节", 1530, 1620, "15:30", "16:20"),
-                CourseUnitBean("第七节", 1630, 1720, "16:30", "17:20"),
-                CourseUnitBean("第八节", 1730, 1820, "17:30", "18:20"),
-                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-            )
-        }
-        val FCH2 by lazy {
-            listOf(
-                CourseUnitBean("第一节", 810, 900, "08:10", "09:00"),
-                CourseUnitBean("第二节", 910, 1000, "09:10", "10:00"),
-                CourseUnitBean("第三节", 1020, 1110, "10:20", "11:10"),
-                CourseUnitBean("第四节", 1120, 1210, "11:20", "12:10"),
-                CourseUnitBean("第五节", 1400, 1450, "14:00", "14:50"),
-                CourseUnitBean("第六节", 1500, 1550, "15:00", "15:50"),
-                CourseUnitBean("第七节", 1600, 1650, "16:00", "16:50"),
-                CourseUnitBean("第八节", 1700, 1750, "17:00", "17:50"),
-                CourseUnitBean("第九节", 1900, 1950, "19:00", "19:50"),
-                CourseUnitBean("第十节", 2000, 2050, "20:00", "20:50"),
-                CourseUnitBean("第十一节", 2100, 2150, "21:00", "21:50")
-            )
-        }
     }
 
     override fun onCreate() {
