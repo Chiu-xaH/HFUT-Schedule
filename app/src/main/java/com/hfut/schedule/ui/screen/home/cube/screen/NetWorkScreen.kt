@@ -1,10 +1,5 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,7 +37,6 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -50,12 +44,10 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.transition.util.TransitionBackHandler
-import com.xah.uicommon.component.text.BottomTip
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -123,16 +115,23 @@ fun NetWorkScreen(navController: NavHostController,
                     headlineContent = { Text(text = "一卡通密码") },
                     supportingContent = { Text(text = "若您已经修改过一卡通初始密码,请在此录入新的密码以使用快速充值和校园网登录功能") },
                     leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
-                    modifier = Modifier.clickable { navController.navigate(Screen.PasswordScreen.route) }
+                    modifier = Modifier.clickable { navController.navigate(Screen.HuiXinPasswordScreen.route) }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "自动刷新登录状态") },
-                    supportingContent = { Text(text = "冷启动App后，自动在后台进行CAS统一认证登录，请按需开启，这是一个耗时的操作，并非每次使用都需要刷新登录状态") },
-                    leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
-                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showToast("正在开发") })},
-                    modifier = Modifier.clickable { showToast("正在开发") }
+                    headlineContent = { Text(text = "教务系统密码") },
+                    supportingContent = { Text(text = "若您已经修改过教务系统初始密码,请在此录入新的密码以使用同班同学、教室、全校培养方案功能") },
+                    leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
+                    modifier = Modifier.clickable { navController.navigate(Screen.JxglstuPasswordScreen.route) }
                 )
+//                PaddingHorizontalDivider()
+//                TransplantListItem(
+//                    headlineContent = { Text(text = "自动刷新登录状态") },
+//                    supportingContent = { Text(text = "冷启动App后，自动在后台进行CAS统一认证登录，请按需开启，这是一个耗时的操作，并非每次使用都需要刷新登录状态") },
+//                    leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
+//                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showToast("正在开发") })},
+//                    modifier = Modifier.clickable { showToast("正在开发") }
+//                )
             }
         }
 

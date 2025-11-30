@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Context
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
-import com.hfut.schedule.logic.model.jxglstu.CourseUnitBean
 import com.hfut.schedule.logic.util.network.WebVpnUtil
 
 class MyApplication : Application() {
@@ -46,6 +45,7 @@ class MyApplication : Application() {
         const val XWX_PICTURE_URL = "$XWX_HOST:6899/"
         // 合工大教务 有时需校园网
         const val UNI_APP_URL = "https://jwglapp.hfut.edu.cn/"
+        const val UNI_APP_HOME_PAGE_URL = UNI_APP_URL + "uniapp/"
         const val UNI_APP_LOGIN_RSA_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCFY5N+9UX+0BF+xz1svFguI4CIDvmQTfINkOZ1HOO3ltBNHGQTUirUPQTyEph/+q/l8b16YYw3I2fyTH6y15s3tHf5jMei+R/20jFRGo5udwVJUwq/RozKQIRzCtPYkXG4YWBnHKhXalZ5K2fhd5i/QtB016nVugH/7eiBDWbKVwIDAQAB"
         // 更新
         const val GITEE_URL = "https://gitee.com/"

@@ -4,9 +4,7 @@ package com.hfut.schedule.ui.screen.home.cube
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +29,7 @@ import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
+import com.hfut.schedule.ui.screen.home.cube.sub.EditJxglstuPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusWidgetSettingsScreen
@@ -39,8 +38,6 @@ import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
@@ -144,9 +141,14 @@ fun SettingsScreen(vm : NetWorkViewModel,
                     FocusCardSettings(innerPaddings,navController)
                 }
             }
-            composable(Screen.PasswordScreen.route) {
+            composable(Screen.HuiXinPasswordScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     EditPasswordScreen(hazeState,innerPaddings,navController)
+                }
+            }
+            composable(Screen.JxglstuPasswordScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    EditJxglstuPasswordScreen(innerPaddings,navController)
                 }
             }
             composable(Screen.GestureStudyScreen.route) {

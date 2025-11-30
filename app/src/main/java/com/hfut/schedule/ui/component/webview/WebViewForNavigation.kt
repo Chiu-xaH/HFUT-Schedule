@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
@@ -52,6 +53,9 @@ import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
+import java.io.FileNotFoundException
+import java.net.HttpURLConnection
+import java.net.URL
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
     ExperimentalMaterial3ExpressiveApi::class
@@ -184,6 +188,26 @@ fun WebViewScreenForNavigation(
                         view: WebView?,
                         request: WebResourceRequest?
                     ): WebResourceResponse? {
+                        if(currentUrl.startsWith(MyApplication.UNI_APP_URL)) {
+                            // 自己构建一个带 header 的请求，然后把 response 返回给 WebView
+                            val url = request?.url?.toString() ?: return null
+
+                            return try {
+                                val conn = URL(url).openConnection() as HttpURLConnection
+                                conn.setRequestProperty("Authorization", cookies)
+                                conn.connect()
+
+                                val input = conn.inputStream
+                                val mime = conn.contentType ?: "text/html"
+                                val encoding = conn.contentEncoding ?: "utf-8"
+
+                                WebResourceResponse(mime, encoding, input)
+                            } catch (e: Exception) {
+                                Log.e("合工大教务",url)
+                                e.printStackTrace()
+                                null
+                            }
+                        }
                         sharedInterceptRequest(request,currentUrl,cookies,cookieManager)
                         return super.shouldInterceptRequest(view, request)
                     }

@@ -504,8 +504,7 @@ fun DetailItems(
                                 .weight(.5f),
                         )
                         TransplantListItem(
-                            overlineContent = classes?.let{ { Text("当前为" + it + "班") } },
-                            headlineContent = { Text("教学班") },
+                            headlineContent = { Text("教学班对比") },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.group_search),
@@ -515,7 +514,6 @@ fun DetailItems(
                             modifier = Modifier
                                 .clickable {
                                     showBottomSheet_Search = true
-//                                    ClipBoardUtils.copy(lessons.code.substringBefore("--"),"已将代码复制到剪切板，可前往开课查询粘贴检索")
                                 }
                                 .weight(.5f),
                         )
@@ -548,7 +546,9 @@ fun DetailItems(
                                 )
                             },
                             modifier = Modifier
-                                .clickable { showToast("请前往 合工大教务 微信公众号") }
+                                .clickable {
+                                    // TODO
+                                }
                                 .weight(.5f),
                         )
                     }

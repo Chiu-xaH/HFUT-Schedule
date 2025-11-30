@@ -3,7 +3,6 @@ package com.hfut.schedule.logic.util.network.state
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-
 const val PARSE_ERROR_CODE = 1000
 const val LISTEN_ERROR_CODE = 1001
 const val TIMEOUT_ERROR_CODE = 1002

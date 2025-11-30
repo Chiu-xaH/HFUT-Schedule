@@ -19,6 +19,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.kv.IDataStore
+import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -93,6 +94,7 @@ object DataStoreManager : IDataStore {
     private val FOCUS_SHOW_WEATHER_WARN = booleanPreferencesKey("focus_show_weather_warn")
     private val CARD_PASSWORD = stringPreferencesKey("card_password")
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
+    private val USE_DEFAULT_JXGLSTU_PASSWORD = booleanPreferencesKey("use_default_jxglstu_password")
     private val DEFAULT_CALENDAR_ACCOUNT = longPreferencesKey("default_calendar_account")
     private val COURSE_TABLE_TIME = stringPreferencesKey("course_table_time")
     private val WEBVPN_COOKIE = stringPreferencesKey("webvpn_cookie")
@@ -126,6 +128,8 @@ object DataStoreManager : IDataStore {
     private val CALENDAR_SQUARE_TEXT_PADDING = floatPreferencesKey("calendar_square_test_padding_2")
     private val FOCUS_WIDGET_TEXT_SIZE = floatPreferencesKey("focus_widget_test_size")
     private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
+    private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
+    private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -140,6 +144,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveFocusShowWeatherWarn(value: Boolean) = saveValue(FOCUS_SHOW_WEATHER_WARN,value)
     suspend fun saveCardPassword(value: String) = saveValue(CARD_PASSWORD,value)
     suspend fun saveUseDefaultCardPassword(value: Boolean) = saveValue(USE_DEFAULT_CARD_PASSWORD,value)
+    suspend fun saveUseDefaultJxglstuPassword(value: Boolean) = saveValue(USE_DEFAULT_JXGLSTU_PASSWORD,value)
     suspend fun saveDefaultCalendarAccount(value: Long) = saveValue(DEFAULT_CALENDAR_ACCOUNT,value)
     suspend fun saveCourseTable(value: String) = saveValue(COURSE_TABLE_TIME,value)
     suspend fun saveWebVpnCookie(value: String) = saveValue(WEBVPN_COOKIE,value)
@@ -180,6 +185,8 @@ object DataStoreManager : IDataStore {
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
+    suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
+    suspend fun saveUniAppJwt(value: String) = saveValue(UNI_APP_JWT,value)
 
 
     val animationType = getFlow(ANIMATION_TYPE, AppAnimationManager.AnimationTypes.CenterAnimation.code)
@@ -196,6 +203,7 @@ object DataStoreManager : IDataStore {
     val enableShowFocusWeatherWarn = getFlow(FOCUS_SHOW_WEATHER_WARN,false)
     val customCardPassword = getFlow(CARD_PASSWORD,EMPTY_STRING)
     val enableUseDefaultCardPassword = getFlow(USE_DEFAULT_CARD_PASSWORD,true)
+    val enableUseDefaultJxglstuPassword = getFlow(USE_DEFAULT_JXGLSTU_PASSWORD,true)
     val defaultCalendarAccountId = getFlow(DEFAULT_CALENDAR_ACCOUNT,1)
     val webVpnCookies = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val enableAutoTerm = getFlow(AUTO_TERM,true)
@@ -224,6 +232,8 @@ object DataStoreManager : IDataStore {
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
     val calendarSquareTextPadding = getFlow(CALENDAR_SQUARE_TEXT_PADDING, MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
+    val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)
+    val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)

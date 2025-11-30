@@ -376,15 +376,33 @@ private fun PersonItems(
                             overlineContent = { Text(text = "CAS统一认证密码")},
                             modifier = Modifier.clickable {
                                 ClipBoardUtils.copy(it)
-                            }
+                            },
+                            trailingContent = {
+                                FilledTonalButton(
+                                    onClick = {
+                                        showToast("前往 登陆界面中的选项 修改")
+                                    }
+                                ) {
+                                    Text("修改")
+                                }
+                            },
                         )
                     }
                     chineseid.let {
                         val p = it?.takeLast(6) ?: "------"
-                        val d = "Hfut@#\$%${p}"
+                        val d = "Hfut@#$%${p}"
                         TransplantListItem(
                             headlineContent = {
                                 Text(text = d)
+                            },
+                            trailingContent = {
+                                FilledTonalButton(
+                                    onClick = {
+                                        showToast("前往 选项-网络-教务系统密码 修改")
+                                    }
+                                ) {
+                                    Text("修改")
+                                }
                             },
                             overlineContent = { Text(text = "教务系统初始密码")},
                             modifier = Modifier.clickable {

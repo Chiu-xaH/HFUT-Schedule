@@ -54,6 +54,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
+import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -622,3 +623,29 @@ fun RefreshHuiXin(vm: NetWorkViewModel,showOnCas : Boolean = false) {
         }
     )
 }
+
+@Composable
+fun RefreshUniApp(showOnCas : Boolean = false) {
+    val scope = rememberCoroutineScope()
+    var loading by remember { mutableStateOf(false) }
+    TransplantListItem(
+        headlineContent = { Text(text = if(!showOnCas)"刷新登录状态" else "一键刷新登陆状态(合工大教务)") },
+        supportingContent = { Text(text = "若同班同学、教室、全校培养方案登录失效,可点击刷新")},
+        leadingContent = {
+            if(loading) {
+                LoadingIcon()
+            } else {
+                Icon(painter = painterResource(id = R.drawable.rotate_right), contentDescription = "")
+            }
+        },
+        modifier = Modifier.clickable {
+            scope.launch {
+                loading = true
+                UniAppRepository.login()
+//                loginHuiXin(vm)
+                loading = false
+            }
+        }
+    )
+}
+

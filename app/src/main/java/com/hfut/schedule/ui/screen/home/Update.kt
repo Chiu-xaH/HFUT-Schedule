@@ -71,6 +71,8 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         var cookie = getJxglstuCookie()  ?: ""
         // 刷新个人接口
         launch { vm.getMyApi() }
+        // 检查合工大教务
+        // TODO
         // 用于更新ifSaved
         launch {
             // 教务是否能够登录

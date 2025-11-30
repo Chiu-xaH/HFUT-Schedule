@@ -2,9 +2,11 @@ package com.hfut.schedule.ui.util.webview
 
 import android.content.Context
 import android.graphics.Canvas
+import android.util.Log
 import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
@@ -602,6 +604,12 @@ fun WebView.setInitial(
     cookies : String?,
     url: String
 ) {
+    if(url.startsWith(MyApplication.UNI_APP_URL) && cookies != null) {
+        val additionalHttpHeaders = HashMap<String, String>()
+        additionalHttpHeaders["Authorization"] = cookies
+        loadUrl(url,additionalHttpHeaders)
+        return
+    }
     // 启用 Cookie
     cookieManager.setAcceptCookie(true)//true
     cookieManager.setAcceptThirdPartyCookies(this, true)//true

@@ -82,7 +82,8 @@ enum class CourseType(val code : Int) {
     COMMUNITY(1),
     JXGLSTU2(2),
     ZHI_JIAN(3),
-    NEXT(4)
+    NEXT(4),
+    UNI_APP(5)
 }
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -197,6 +198,27 @@ fun MultiScheduleSettings(
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text("智慧社区", modifier = Modifier.align(Alignment.Center)
                             , fontWeight = if(select == CourseType.COMMUNITY.code) FontWeight.Bold else FontWeight.Light
+                        )
+                    }
+                }
+            }
+            // 合工大教务课表
+            item {
+                Card (
+                    modifier = Modifier
+                        .size(width = 100.dp, height = 70.dp)
+                        .padding(horizontal = CARD_NORMAL_DP)
+                        .clip(shape = shape)
+                        .background(Color.Transparent, shape = shape)
+                        .clickable {
+                            showToast("正在开发")
+//                            onSelectedChange(CourseType.UNI_APP.code)
+                        },
+                    colors = if(select == CourseType.UNI_APP.code) selectedColor else normalColor
+                ) {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Text("合工大教务", modifier = Modifier.align(Alignment.Center)
+                            , fontWeight = if(select == CourseType.UNI_APP.code) FontWeight.Bold else FontWeight.Light
                         )
                     }
                 }

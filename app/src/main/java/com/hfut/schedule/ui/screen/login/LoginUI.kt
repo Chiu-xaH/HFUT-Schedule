@@ -98,6 +98,7 @@ import com.hfut.schedule.ui.component.network.UrlImageWithAutoOcr
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.card.function.main.RefreshHuiXin
+import com.hfut.schedule.ui.screen.card.function.main.RefreshUniApp
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -483,6 +484,8 @@ fun LoginScreen(
                             color = MaterialTheme.colorScheme.surface,
                         ) {
                             RefreshHuiXin(networkVm,true)
+                            PaddingHorizontalDivider()
+                            RefreshUniApp(true)
                             PaddingHorizontalDivider()
 //                            TransplantListItem(
 //                                supportingContent = { Text("自授权登录") },
