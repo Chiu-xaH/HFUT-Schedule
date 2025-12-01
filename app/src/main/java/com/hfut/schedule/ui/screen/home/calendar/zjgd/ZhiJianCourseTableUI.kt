@@ -33,6 +33,7 @@ import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -430,9 +431,10 @@ fun ZhiJianCourseTableUI(
         val scrollState = rememberLazyGridState()
         val shouldShowAddButton by remember { derivedStateOf { scrollState.firstVisibleItemScrollOffset == 0 } }
         val style = CalendarStyle(showAll)
+        val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         val color =  if(enableTransition) style.containerColor.copy(customBackgroundAlpha) else Color.Transparent
         val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
-        val squareColor =  style.containerColor.copy(customBackgroundAlpha)
+        val squareColor =  containerColor.copy(customBackgroundAlpha)
         Box {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(style.rowCount),

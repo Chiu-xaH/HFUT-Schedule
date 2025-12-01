@@ -5,8 +5,8 @@ data class SurveyTeacherResponse(val forStdLessonSurveySearchVms : List<forStdLe
 data class forStdLessonSurveySearchVms(
     val code : String,
     val openEndTimeContent : String?,
-    val course : courseType,
-    val openDepartment : courseType,
+    val course : NameZh,
+    val openDepartment : NameZh,
     val lessonSurveyTasks : List<lessonSurveyTasks>
 )
 data class lessonSurveyTasks(val id : Int,val submitted : Boolean,val teacher : teacher)

@@ -19,6 +19,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.kv.IDataStore
+import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
@@ -130,6 +131,7 @@ object DataStoreManager : IDataStore {
     private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
     private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
+    private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -176,6 +178,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCalendarSquareTextSize(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_SIZE, value)
     suspend fun saveCalendarSquareTextPadding(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_PADDING, value)
     suspend fun saveFocusWidgetTextSize(value: Float) = saveValue(FOCUS_WIDGET_TEXT_SIZE, value)
+    suspend fun saveDefaultCalendar(value: CourseType) = saveValue(DEFAULT_CALENDAR, value.code)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -234,6 +237,7 @@ object DataStoreManager : IDataStore {
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)
     val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
+    val defaultCalendar = getFlow(DEFAULT_CALENDAR, CourseType.JXGLSTU.code)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)

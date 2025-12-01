@@ -8,6 +8,8 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
+import com.hfut.schedule.logic.model.jxglstu.semester
+import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.network.util.toStr
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -26,6 +28,22 @@ import java.time.LocalDate
 import kotlin.collections.plus
 
 // 分配20周
+suspend fun allToTimeTableDataUniApp(context: Context): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
+    // 并发调用三个数据源
+    val jxglstuDeferred = async { uniAppToTimeTableData(context) }
+    val focusDeferred = async { focusToTimeTableData() }
+    val examDeferred = async { examToTimeTableData(context) }
+
+    val jxglstuList = jxglstuDeferred.await()
+    val focusList = focusDeferred.await()
+    val examList = examDeferred.await()
+
+    // 合并：按周（index）叠加三个来源
+    List(MyApplication.MAX_WEEK) { i ->
+        jxglstuList[i] + focusList[i]+ examList[i]
+    }
+}
+
 suspend fun allToTimeTableData(context: Context,friendStudentId: String?): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
     // 并发调用三个数据源
     val jxglstuDeferred = async { communityToTimeTableData(friendStudentId) }
@@ -58,6 +76,51 @@ suspend fun allToTimeTableData(context: Context): List<List<TimeTableItem>> = wi
     // 合并：按周（index）叠加三个来源
     List(MyApplication.MAX_WEEK) { i ->
         jxglstuList[i] + focusList[i]+ examList[i]
+    }
+}
+
+private suspend fun uniAppToTimeTableData(context: Context): List<List<TimeTableItem>> {
+    val json = LargeStringDataManager.read(context, LargeStringDataManager.UNI_APP_COURSES)
+        ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+    try {
+        val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
+        val list = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
+        val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
+        for(item in list) {
+            val courseName = item.course.nameZh
+            val multiTeacher = item.teacherAssignmentList.size > 1
+            for(schedule in item.schedules) {
+                val list = result[schedule.weekIndex-1]
+                val teacher = when(enableCalendarShowTeacher) {
+                    ShowTeacherConfig.ALL.code -> schedule.teacherName
+                    ShowTeacherConfig.ONLY_MULTI.code -> {
+                        if(multiTeacher) {
+                            schedule.teacherName
+                        } else {
+                            null
+                        }
+                    }
+                    else -> null
+                }
+                list.add(
+                    TimeTableItem(
+                        teacher = teacher,
+                        type = TimeTableType.COURSE,
+                        name = courseName,
+                        dayOfWeek = schedule.weekday,
+                        startTime = parseTime(schedule.startTime),
+                        endTime = parseTime(schedule.endTime),
+                        place = schedule.room?.nameZh?.simplifyPlace(),
+                    )
+                )
+            }
+        }
+        // 去重
+        distinctUnit(result)
+        return result
+    } catch (e : Exception) {
+        e.printStackTrace()
+        return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }
 

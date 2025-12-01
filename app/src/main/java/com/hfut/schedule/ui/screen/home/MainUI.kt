@@ -138,6 +138,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTab
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
+import com.hfut.schedule.ui.screen.home.calendar.uniapp.UniAppCoursesScreen
 import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarUISettings
@@ -819,6 +820,17 @@ fun MainScreen(
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     onSwapShowAll = { showAll = it },
                                     navController = navHostTopController
+                                )
+                                // 合工大教务
+                                CourseType.UNI_APP.code -> UniAppCoursesScreen(
+                                    showAll,
+                                    innerPadding,
+                                    { newDate -> today = newDate },
+                                    today,
+                                    hazeState,
+                                    navHostTopController,
+                                    if (useCustomBackground) backGroundSource else null,
+                                    { showAll = it }
                                 )
                                 // 教务
                                 CourseType.JXGLSTU.code -> JxglstuCourseTableUI(

@@ -16,6 +16,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.initCardNetwork
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.LoginViewModel
@@ -67,8 +68,8 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         val showWeb = prefs.getBoolean("SWITCHWEB",true)
         val showCard = prefs.getBoolean("SWITCHCARD",true)
         val webVpnCookie = DataStoreManager.webVpnCookies.first{ it.isNotEmpty() }
-
         var cookie = getJxglstuCookie()  ?: ""
+        val uniAppJwt = DataStoreManager.uniAppJwt.first()
         // 刷新个人接口
         launch { vm.getMyApi() }
         // 检查合工大教务
@@ -109,6 +110,12 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
                     vm.todayFormCommunityResponse.clear()
                     vm.getToday(communityToken)
                 }
+        }
+        // 更新合工大教务课表
+        if(uniAppJwt.isNotEmpty() && uniAppJwt.isNotBlank()) {
+            launch {
+                UniAppRepository.getCourses(uniAppJwt)
+            }
         }
         //检查更新
         launch {

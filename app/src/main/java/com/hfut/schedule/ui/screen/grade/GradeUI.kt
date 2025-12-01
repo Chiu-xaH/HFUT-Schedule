@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.status.DevelopingUI
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -53,6 +54,7 @@ import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIUniApp
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.goToXwx
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -65,6 +67,7 @@ import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -76,6 +79,9 @@ private val items = listOf(
     ),
     NavigationBarItemData(
         GradeBarItems.COMMUNITY.name,"社区源", R.drawable.article, R.drawable.article_filled
+    ),
+    NavigationBarItemData(
+        GradeBarItems.UNI_APP.name,"合工大教务源", R.drawable.article, R.drawable.article_filled
     ),
     NavigationBarItemData(
         GradeBarItems.COUNT.name,"计算", R.drawable.leaderboard,R.drawable.leaderboard_filled
@@ -101,6 +107,7 @@ fun GradeScreen(
         GradeBarItems.GRADE.name ->GradeBarItems.GRADE
         GradeBarItems.COUNT.name -> GradeBarItems.COUNT
         GradeBarItems.COMMUNITY.name -> GradeBarItems.COMMUNITY
+        GradeBarItems.UNI_APP.name -> GradeBarItems.UNI_APP
         else -> GradeBarItems.GRADE
     }
     // 保存上一页页码 用于决定左右动画
@@ -180,7 +187,7 @@ fun GradeScreen(
                         }
                     }
                 )
-                if(targetPage == GradeBarItems.GRADE) {
+                if(targetPage == GradeBarItems.GRADE || targetPage == GradeBarItems.UNI_APP) {
                     CustomTextField(
                         modifier = Modifier
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -230,6 +237,12 @@ fun GradeScreen(
                 Scaffold(
                 ) {
                     GradeItemUI(vm,innerPadding)
+                }
+            }
+            composable(GradeBarItems.UNI_APP.name) {
+                Scaffold(
+                ) {
+                    GradeItemUIUniApp(innerPadding,vm,input,hazeState)
                 }
             }
         }

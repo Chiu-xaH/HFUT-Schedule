@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.network.api
 
 import retrofit2.Call
 import okhttp3.ResponseBody
+import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -17,16 +18,32 @@ interface UniAppService {
         @Query("appId") appId : String = "APP_ID",
         @Query("deviceId") deviceId : String = "DEVICE_ID"
     ) : Call<ResponseBody>
-    // 教室课表
-    // 空教室
     // 同班同学
-    @POST("eams-micro-server/api/v1/lesson/student/class-mates/{id}")
+    @GET("eams-micro-server/api/v1/lesson/student/class-mates/{id}")
     fun getClassmates(
         @Path("id") lessonId : String,
         @Header("Authorization") auth : String
     ) : Call<ResponseBody>
-    // 全校培养方案
     // 成绩
+    @GET("eams-micro-server/api/v1/grade/student/grades")
+    fun getGrades(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
     // 考试
+    @GET("eams-micro-server/api/v1/exam/student/exam")
+    fun getExams(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
     // 课表
+    @GET("eams-micro-server/api/v1/lesson/student/course-table/{semseter}")
+    fun getCourses(
+        @Path("semseter") semseter : Int,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 教室课表
+    // TODO
+    // 空教室
+    // TODO
+    // 全校培养方案
+    // TODO
 }

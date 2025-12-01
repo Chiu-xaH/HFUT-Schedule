@@ -70,6 +70,8 @@ import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.ClassroomBean
+import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
+import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
@@ -86,6 +88,7 @@ import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.hfut.Repository
 import com.hfut.schedule.logic.network.repo.SupabaseRepository
 import com.hfut.schedule.logic.network.repo.hfut.LibraryRepository
+import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.network.repo.hfut.WxRepository
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
@@ -513,5 +516,11 @@ class NetWorkViewModel() : ViewModel() {
 
     val giteeUpdatesResp = StateHolder<GiteeReleaseResponse>()
     suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)
+
+    val classmatesResp = StateHolder<List<ClassmatesBean>>()
+    suspend fun getClassmates(lessonId : String,token : String) = UniAppRepository.getClassmates(lessonId,token,classmatesResp)
+
+    val uniAppGradesResp = StateHolder<Map<String, List<UniAppGradeBean>>>()
+    suspend fun getUniAppGrades(token : String) = UniAppRepository.getGrades(token,uniAppGradesResp)
 }
 

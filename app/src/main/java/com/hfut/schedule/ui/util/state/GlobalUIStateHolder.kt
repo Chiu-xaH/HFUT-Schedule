@@ -73,7 +73,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(44,"慧新易校" ,R.drawable.corporate_fare),
         SearchAppBeanLite(45, AppNavRoute.SecondClass.label,AppNavRoute.SecondClass.icon),
         SearchAppBeanLite(46, AppNavRoute.Appointment.label,AppNavRoute.Appointment.icon),
-        SearchAppBeanLite(47, "合工大教务",R.drawable.wechat),
+//        SearchAppBeanLite(47, "合工大教务",R.drawable.wechat),
     )
 
     val funcMaps = funcDefault.toMutableStateList()

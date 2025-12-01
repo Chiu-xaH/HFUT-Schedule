@@ -93,6 +93,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -274,6 +275,127 @@ fun GradeItemUIJXGLSTU(
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@SuppressLint("SuspiciousIndentation")
+@Composable
+fun GradeItemUIUniApp(
+    innerPadding: PaddingValues,
+    vm: NetWorkViewModel,
+    input : String,
+    hazeState: HazeState,
+) {
+    var title by remember { mutableStateOf("成绩详情") }
+    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet) {
+        var party by remember { mutableStateOf(false) }
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet= false },
+            showBottomSheet = showBottomSheet,
+            hazeState = hazeState
+        ) {
+            Box {
+                Party(show = party)
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    containerColor = Color.Transparent,
+                    topBar = {
+                        HazeBottomSheetTopBar(title)
+                    },) { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState())
+                            .fillMaxSize()
+                    ){
+                        GradeInfo(num) { party = it }
+                        Spacer(modifier = Modifier.height(30.dp))
+                    }
+                }
+            }
+        }
+    }
+
+    val scope = rememberCoroutineScope()
+
+
+
+    val uiState by vm.uniAppGradesResp.state.collectAsState()
+
+    val refreshNetwork: suspend () -> Unit = m@ {
+        val cookie = DataStoreManager.uniAppJwt.first()
+        if(cookie.isEmpty() || cookie.isEmpty()) {
+            vm.uniAppGradesResp.emitError(Exception("未登录"))
+            return@m
+        }
+        vm.uniAppGradesResp.clear()
+        vm.getUniAppGrades(cookie,)
+    }
+
+    val refreshing = uiState is UiState.Loading
+
+    LaunchedEffect(Unit) {
+        if(refreshing) {
+            refreshNetwork()
+        }
+    }
+
+    val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+        scope.launch { refreshNetwork() }
+    })
+
+    Box(modifier = Modifier
+        .fillMaxHeight()
+        .pullRefresh(pullRefreshState)){
+        RefreshIndicator(refreshing, pullRefreshState, Modifier
+            .padding(innerPadding)
+            .align(Alignment.TopCenter))
+        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+            val gradeList = (uiState as UiState.Success).data.toList().sortedByDescending { it.first }
+            Column {
+                if(gradeList.isEmpty()) {
+                    CenterScreen {
+                        EmptyUI()
+                    }
+                }
+                else {
+                    LazyColumn {
+                        item {
+                            InnerPaddingHeight(innerPadding,true)
+                        }
+                        items(gradeList.size) { termIndex ->
+                            val item = gradeList[termIndex]
+                            DividerTextExpandedWith(item.first) {
+                                item.second.filter {
+                                    it.courseNameZh.contains(input) || it.lessonCode.contains(input)
+                                }.forEach { subItem ->
+                                    val isFailed = !subItem.passed
+                                    CardListItem(
+                                        headlineContent = {  Text(subItem.courseNameZh) },
+                                        overlineContent = { Text("分数 "+ subItem.finalGrade + " | 绩点 " + subItem.gp +  " | 学分 " + subItem.credits) },
+                                        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
+                                        supportingContent = { subItem.gradeDetail?.let { Text(it) } },
+                                        color = if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
+                                        modifier = Modifier.clickable {
+//                                            title = grade.title
+//                                            num = grade
+//                                            showBottomSheet = true
+                                        },
+                                    )
+                                }
+                            }
+                        }
+                        item {
+                            InnerPaddingHeight(innerPadding,false)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 
 @Composable

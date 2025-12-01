@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,10 +28,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -47,11 +46,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delAllCourseEvent
@@ -64,10 +61,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -77,14 +71,15 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 
-enum class CourseType(val code : Int) {
-    JXGLSTU(0),
-    COMMUNITY(1),
-    JXGLSTU2(2),
-    ZHI_JIAN(3),
-    NEXT(4),
-    UNI_APP(5)
+enum class CourseType(val code : Int,val description: String) {
+    JXGLSTU(0,"教务系统"),
+    COMMUNITY(1,"智慧社区"),
+    UNI_APP(2,"合工大教务"),
+    ZHI_JIAN(3,"指间工大"),
+    JXGLSTU2(4,"教务备用"),
+    NEXT(5,"下学期"),
 }
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MultiScheduleSettings(
@@ -137,10 +132,7 @@ fun MultiScheduleSettings(
         }
     }
 
-    val cookie by produceState(initialValue = "") {
-        value = getJxglstuCookie() ?: ""
-    }
-
+    val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     val selectedColor = CardDefaults.outlinedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
     val normalColor = CardDefaults.outlinedCardColors(containerColor = cardNormalColor())
 
@@ -160,11 +152,12 @@ fun MultiScheduleSettings(
         val friendList = getFriendsList()
 
         val shape = MaterialTheme.shapes.medium
-
+        val courses = remember { CourseType.entries }
         LazyRow {
             item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP*2)) }
-            // 教务课表
-            item {
+            items(courses.size) { index ->
+                val item = courses[index]
+                val selected = select == item.code
                 Card (
                     modifier = Modifier
                         .size(width = 100.dp, height = 70.dp)
@@ -172,137 +165,26 @@ fun MultiScheduleSettings(
                         .clip(shape = shape)
                         .background(Color.Transparent, shape = shape)
                         .clickable {
-                            onSelectedChange(CourseType.JXGLSTU.code)
+                            onSelectedChange(item.code)
                         },
-                    colors = if(select == CourseType.JXGLSTU.code) selectedColor else normalColor
+                    colors = if(selected) selectedColor else normalColor
                 ) {
                     Box(modifier = Modifier.fillMaxSize()) {
-                        Text("教务系统", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(select == CourseType.JXGLSTU.code) FontWeight.Bold else FontWeight.Light)
-                    }
-                }
-            }
-            // 社区课表
-            item {
-                Card (
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = shape)
-                        .background(Color.Transparent, shape = shape)
-                        .clickable {
-                            onSelectedChange(CourseType.COMMUNITY.code)
-                        },
-                    colors = if(select == CourseType.COMMUNITY.code) selectedColor else normalColor
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text("智慧社区", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(select == CourseType.COMMUNITY.code) FontWeight.Bold else FontWeight.Light
-                        )
-                    }
-                }
-            }
-            // 合工大教务课表
-            item {
-                Card (
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = shape)
-                        .background(Color.Transparent, shape = shape)
-                        .clickable {
-                            showToast("正在开发")
-//                            onSelectedChange(CourseType.UNI_APP.code)
-                        },
-                    colors = if(select == CourseType.UNI_APP.code) selectedColor else normalColor
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text("合工大教务", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(select == CourseType.UNI_APP.code) FontWeight.Bold else FontWeight.Light
-                        )
-                    }
-                }
-            }
-            // 教务课表2
-            item {
-                Card (
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = shape)
-                        .background(Color.Transparent, shape = shape)
-                        .clickable {
-                            onSelectedChange(CourseType.JXGLSTU2.code)
-                        },
-                    colors = if(select == CourseType.JXGLSTU2.code) selectedColor else normalColor
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()){
-                        ColumnVertical(modifier = Modifier.align(Alignment.Center)) {
+                        ColumnVertical (
+                            modifier = Modifier.align(Alignment.Center),
+                        ){
                             Text(
-                                "教务备用",
-                                fontWeight = if (select == CourseType.JXGLSTU2.code) FontWeight.Bold else FontWeight.Light
+                                item.description ,
+                                fontWeight = if(selected) FontWeight.Bold else FontWeight.Light
                             )
-                        }
-                    }
-                }
-            }
-            // 指尖工大
-            item {
-                Card (
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = CARD_NORMAL_DP)
-                        .clip(shape = shape)
-                        .background(Color.Transparent, shape = shape)
-                        .clickable {
-                            onSelectedChange(CourseType.ZHI_JIAN.code)
-                        },
-                    colors = if(select == CourseType.ZHI_JIAN.code) selectedColor else normalColor
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text("指间工大", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(select == CourseType.ZHI_JIAN.code) FontWeight.Bold else FontWeight.Light
-                        )
-                    }
-                }
-            }
-            // 下学期课表
-            item {
-                Card (
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 70.dp)
-                        .padding(horizontal = 4.dp)
-                        .clip(shape = shape)
-                        .background(Color.Transparent, shape = shape)
-                        .clickable {
-                            if (isNextOpen()) {
-                                if (ifSaved) {
-                                    if (prefs.getInt("FIRST", 0) != 0)
-                                        onSelectedChange(CourseType.NEXT.code)
-                                    else refreshLogin(context)
-                                } else onSelectedChange(CourseType.NEXT.code)
-                            } else {
-                                if (!ifSaved) {
-                                    scope.launch {
-                                        Starter.startWebView(
-                                            context,
-                                            url = if (GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table",
-                                            title = "教务系统",
-                                            cookie = cookie,
-                                            icon = AppNavRoute.NextCourse.icon
-                                        )
-                                    }
-                                } else {
-                                    showToast("入口暂未开放")
-                                }
+                            if(defaultCalendar == item.code) {
+                                Text(
+                                    "默认" ,
+                                    fontWeight = if(selected) FontWeight.Bold else FontWeight.Light,
+                                    style = MaterialTheme.typography.labelMedium
+                                )
                             }
-                        },
-                    colors = if(select == CourseType.NEXT.code) selectedColor else normalColor
-                ) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text("下学期", modifier = Modifier.align(Alignment.Center)
-                            , fontWeight = if(select == CourseType.NEXT.code) FontWeight.Bold else FontWeight.Light
-                        )
+                        }
                     }
                 }
             }
@@ -363,23 +245,8 @@ fun MultiScheduleSettings(
             item { Spacer(Modifier.width(APP_HORIZONTAL_DP-CARD_NORMAL_DP)) }
         }
         Spacer(Modifier.height(CARD_NORMAL_DP))
-        // 第${formatDecimal(week.toDouble(),0)}周
         DividerTextExpandedWith(text = "操作") {
             CustomCard (color = cardNormalColor()){
-//                CustomSlider(
-//                    value = week,
-//                    onValueChange = {
-//                        week = it
-//                    },
-//                    onValueChangeFinished = {
-//                        showToast("正在开发")
-//                    },
-//                    steps = 18,
-//                    valueRange = 1f..20f,
-//                    showProcessText = true,
-//                    processText = "${formatDecimal(week.toDouble(),0)}周"
-//                )
-//                DashedDivider(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP))
                 if(select == CourseType.JXGLSTU.code) {
                     TransplantListItem(
                         headlineContent = { Text(text = "导出教务课表") },
@@ -438,7 +305,6 @@ fun MultiScheduleSettings(
 //                }
             }
         }
-//        Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
     }
 }
 

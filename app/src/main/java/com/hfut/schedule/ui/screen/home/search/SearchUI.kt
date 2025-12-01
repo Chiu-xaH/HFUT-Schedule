@@ -209,7 +209,7 @@ fun SearchScreen(
                 SearchAppBean(44,"慧新易校 一卡通 校园卡 账单 充值 缴费 合肥" , { HuiXin(navController ) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
                 SearchAppBean(45,"${AppNavRoute.SecondClass.label}", { SecondClass(navController ) }, AppNavRoute.SecondClass.route),
                 SearchAppBean(46,"${AppNavRoute.Appointment.label} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment(navController ) }, AppNavRoute.Appointment.route),
-                SearchAppBean(47,"合工大教务 空教室 教室课表 全校培养方案 课程表", { UniApp(navController ) }),
+//                SearchAppBean(47,"合工大教务 空教室 教室课表 全校培养方案 课程表", { UniApp(navController ) }),
             )
         )
     }

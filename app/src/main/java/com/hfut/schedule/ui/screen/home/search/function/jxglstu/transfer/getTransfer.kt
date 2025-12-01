@@ -4,9 +4,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
 import com.hfut.schedule.logic.model.jxglstu.TransferData
-import com.hfut.schedule.logic.model.jxglstu.courseType
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-
+import com.hfut.schedule.logic.model.jxglstu.NameZh
 
 
 fun getEventCampus() : EventCampus = when(getCampusRegion()) {
@@ -20,7 +18,7 @@ enum class EventCampus  {
 }
 
 fun getMyTransfer(list : List<MyApplyModels>?,index : Int) : TransferData {
-    val n = TransferData(null,0,null, courseType(""), courseType(""),0,0)
+    val n = TransferData(null,0,null, NameZh(""), NameZh(""),0,0)
     return try {
         list?.get(index)?.changeMajorSubmit ?: n
     } catch (e : Exception) {

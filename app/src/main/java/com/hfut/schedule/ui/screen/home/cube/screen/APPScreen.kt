@@ -117,12 +117,13 @@ fun APPScreen(
 //        var showBottomSheet_card by remember { mutableStateOf(false) }
 
 
-        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
-        var currentDefaultCalendar by remember { mutableIntStateOf(switch_default) }
-        saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
+//        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
+//        var currentDefaultCalendar by remember { mutableIntStateOf(switch_default) }
+//        saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
 
         val scope = rememberCoroutineScope()
         val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
+        val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)
         val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemseterWithoutSuspend())
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
         var freeFeevalue by remember { mutableFloatStateOf(maxFlow.toFloat()) }
@@ -239,19 +240,37 @@ fun APPScreen(
                             Row {
                                 FilterChip(
                                     onClick = {
-                                        currentDefaultCalendar = CourseType.COMMUNITY.code
-                                        saveInt("SWITCH_DEFAULT_CALENDAR", CourseType.COMMUNITY.code)
+                                        scope.launch {
+                                            DataStoreManager.saveDefaultCalendar(CourseType.COMMUNITY)
+                                        }
                                     },
-                                    label = { Text(text = "智慧社区") }, selected = currentDefaultCalendar == CourseType.COMMUNITY.code)
+                                    label = { Text(text = "智慧社区") }, selected = defaultCalendar == CourseType.COMMUNITY.code)
                                 Spacer(modifier = Modifier.width(10.dp))
                                 FilterChip(
                                     onClick = {
-                                        currentDefaultCalendar = CourseType.JXGLSTU.code
-                                        saveInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
+                                        scope.launch {
+                                            DataStoreManager.saveDefaultCalendar(CourseType.JXGLSTU)
+                                        }
                                     },
-                                    label = { Text(text = "教务(缓存)") }, selected = currentDefaultCalendar == CourseType.JXGLSTU.code)
+                                    label = { Text(text = "教务(缓存)") }, selected = defaultCalendar == CourseType.JXGLSTU.code)
                             }
-                            Text(text = if(currentDefaultCalendar == CourseType.COMMUNITY.code)"智慧社区课表有调课不需要像教务数据源自己手动刷新，基本次日会自动刷新，但是有时会抽风，对面给的数据不新鲜，转专业用户更推荐使用教务数据源" else "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,支持调休设置" )
+                            Row {
+                                FilterChip(
+                                    onClick = {
+                                        scope.launch {
+                                            DataStoreManager.saveDefaultCalendar(CourseType.UNI_APP)
+                                        }
+                                    },
+                                    label = { Text(text = "合工大教务") }, selected = defaultCalendar == CourseType.UNI_APP.code)
+                            }
+                            Text(text =
+                                if(defaultCalendar == CourseType.COMMUNITY.code)
+                                    "智慧社区课表有调课不需要像教务数据源自己手动刷新，基本次日会自动刷新，但是有时会抽风，对面给的数据不新鲜，转专业用户更推荐使用教务数据源"
+                                else if(defaultCalendar == CourseType.UNI_APP.code)
+                                    "合工大教务数据源的课程表会自动刷新，最优推荐"
+                                else
+                                    "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,支持调休设置"
+                            )
                         }
                     },
                     leadingContent = { Icon(

@@ -8,35 +8,35 @@ data class lessonResponse(
     val currentWeek : Int
 )
 data class lessons(
-                    val id : Int,
-                    val nameZh : String?,
-                   val remark : String?,
-                   val scheduleText : scheduleText,
-                   val stdCount : Int?,
-                   val course : course,
-                   val courseType : courseType,
-                   val openDepartment : courseType,
-                   val examMode : courseType,
-                   val scheduleWeeksInfo : String?,
-                   val planExamWeek : Int?,
-                   val teacherAssignmentList : List<teacherAssignmentList2>?,
-                   val semester : semester,
-                   val code : String)
+    val id : Int,
+    val nameZh : String?,
+    val remark : String?,
+    val scheduleText : scheduleText,
+    val stdCount : Int?,
+    val course : course,
+    val courseType : NameZh,
+    val openDepartment : NameZh,
+    val examMode : NameZh,
+    val scheduleWeeksInfo : String?,
+    val planExamWeek : Int?,
+    val teacherAssignmentList : List<teacherAssignmentList2>?,
+    val semester : semester,
+    val code : String)
 data class scheduleText(val dateTimePlacePersonText : dateTimePlacePersonText )
 data class dateTimePlacePersonText(val textZh : String?)
 
-data class course(val id : Long,val nameZh : String,val credits : Double?,val code : String,val periodInfo : PeriodInfo,val courseType : courseType)
-data class courseType(val nameZh: String)
+data class course(val id : Long,val nameZh : String,val credits : Double?,val code : String,val periodInfo : PeriodInfo,val courseType : NameZh)
+data class NameZh(val nameZh: String)
 
 data class teacherAssignmentList2(
     val teacher : teacher?,
     val age : Int?,
-    val person : courseType
+    val person : NameZh
 )
 
-data class teacher(val person : courseType?,
-                   val title : courseType?,
-                   val type : courseType?)
+data class teacher(val person : NameZh?,
+                   val title : NameZh?,
+                   val type : NameZh?)
 
 
 data class semester(val id : Int,

@@ -8,6 +8,7 @@ import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UNKNOWN_ERROR_CODE
+import com.hfut.schedule.logic.util.network.state.UiState
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call

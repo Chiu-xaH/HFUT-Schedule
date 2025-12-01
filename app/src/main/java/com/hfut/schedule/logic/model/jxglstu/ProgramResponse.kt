@@ -1,6 +1,5 @@
 package com.hfut.schedule.logic.model.jxglstu
 
-import android.accessibilityservice.GestureDescription
 import com.hfut.schedule.R
 
 
@@ -14,7 +13,7 @@ data class ProgramListBean(
 
 abstract class BaseProgramResponse {
     abstract val children : List<BaseProgramResponse>
-    abstract val type : Type?
+    abstract val type : NameZh?
     abstract val requireInfo : Any?
     abstract val remark : String?
     abstract val reference : Boolean
@@ -26,7 +25,7 @@ data class ProgramSearchResponse(val data : ProgramSearchBean)
 
 data class ProgramSearchBean(
     override val children : List<ProgramSearchBean>,
-    override val type : Type?,
+    override val type : NameZh?,
     override val requireInfo : SearchRequireInfo?,
     override val remark : String?,
     override val reference : Boolean,
@@ -40,7 +39,7 @@ data class SearchRequireInfo(
 )
 
 data class ProgramResponse(override val children : List<ProgramResponse>,
-                           override val type : Type?,
+                           override val type : NameZh?,
                            override val requireInfo : RequireInfo?,
                            override val remark : String?,
                            override val reference : Boolean,
@@ -57,8 +56,6 @@ data class ProgramResponse(override val children : List<ProgramResponse>,
                            val sumPlanCourseNum : Int
 ) : BaseProgramResponse()
 
-data class Type(val nameZh : String)
-
 data class RequireInfo(val requiredSubModuleNum : Int?,
                        val requiredCourseNum : Int?,
                        val totalTheoryPeriods : Int?,
@@ -73,10 +70,10 @@ data class PlanCourses(val readableTerms : List<Int>,
                        val readableSuggestTerms : List<String>,
                        override val remark : String?,
                        override val course : course,
-                       override val openDepartment : courseType
+                       override val openDepartment : NameZh
 ) : BasePlanCourse()
 
-data class courseForSearch(val nameZh : String,val credits : Double?,val code : String,val courseType : courseType)
+data class courseForSearch(val nameZh : String,val credits : Double?,val code : String,val courseType : NameZh)
 
 data class PlanCoursesSearch(
                        val terms : List<String>,
@@ -84,14 +81,14 @@ data class PlanCoursesSearch(
                        override val remark : String?,
                        override val course : courseForSearch,
                        val periodInfo : PeriodInfo,
-                       override val openDepartment : courseType
+                       override val openDepartment : NameZh
 ) : BasePlanCourse()
 
 abstract class BasePlanCourse {
     abstract val compulsory: Boolean
     abstract val remark: String?
     abstract val course: Any
-    abstract val openDepartment: courseType
+    abstract val openDepartment: NameZh
 }
 //readableTerms开课学期，readableSuggestTerms建议修读学期
 

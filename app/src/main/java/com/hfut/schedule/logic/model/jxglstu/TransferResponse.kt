@@ -4,8 +4,8 @@ data class TransferResponse(val data : List<TransferData>)
 data class TransferData(val registrationConditions : String?,
                         val id : Int,
                         val changeMajorBatch : changeMajorBatch?,
-                        val department : courseType,
-                        val major : courseType,
+                        val department : NameZh,
+                        val major : NameZh,
                         val preparedStdCount : Int,
                         val applyStdCount : Int)
 data class changeMajorBatch(val nameZh : String,

@@ -1,11 +1,23 @@
 package com.hfut.schedule.logic.network.repo.hfut
 
+import android.content.Context
 import com.google.gson.Gson
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
+import com.hfut.schedule.logic.model.uniapp.ClassmatesResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppCourseBean
+import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
+import com.hfut.schedule.logic.model.uniapp.UniAppGradesResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse.UniAppLoginError
+import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse.UniAppLoginSuccessfulResponse
 import com.hfut.schedule.logic.network.api.UniAppService
-import com.hfut.schedule.logic.network.repo.hfut.UniAppLoginResponse.UniAppLoginError
-import com.hfut.schedule.logic.network.repo.hfut.UniAppLoginResponse.UniAppLoginSuccessfulResponse
 import com.hfut.schedule.logic.network.servicecreator.UniAppServiceCreator
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.logic.util.network.state.StateHolder
+import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
@@ -54,17 +66,65 @@ object UniAppRepository {
         e.printStackTrace()
         null
     }
+
+    suspend fun getClassmates(
+        lessonId : String,
+        token : String ,
+        holder : StateHolder<List<ClassmatesBean>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.getClassmates(lessonId,token) },
+        transformSuccess = { _,json -> parseClassmates(json) }
+    )
+
+    @JvmStatic
+    private fun parseClassmates(json : String) = try {
+        Gson().fromJson(json, ClassmatesResponse::class.java).data
+    } catch (e : Exception) { throw e }
+
+    suspend fun getCourses(token : String) {
+        try {
+            val request = uniApp.getCourses(SemseterParser.getSemseter(),token).awaitResponse()
+            if(!request.isSuccessful) {
+                return
+            }
+            val json = request.body()?.string() ?: return
+            LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.UNI_APP_COURSES,json)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    @JvmStatic
+    suspend fun parseUniAppCourses(context : Context,jStr : String? = null) :  List<UniAppCourseBean> {
+        val json = LargeStringDataManager.read(context, LargeStringDataManager.UNI_APP_COURSES) ?: jStr
+        return try {
+            Gson().fromJson(json, UniAppCoursesResponse::class.java).data
+        } catch (e : Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    suspend fun getGrades(
+        token : String ,
+        holder : StateHolder<Map<String, List<UniAppGradeBean>>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.getGrades(token) },
+        transformSuccess = { _,json -> parseGrades(json) }
+    )
+
+    @JvmStatic
+    private fun parseGrades(json : String) : Map<String, List<UniAppGradeBean>> = try {
+        val originalList = Gson().fromJson(json, UniAppGradesResponse::class.java).data
+        // 按列表项目的term进行分类
+        val finalList = mutableMapOf<String, MutableList<UniAppGradeBean>>()
+        originalList.forEach { item ->
+            finalList.getOrPut(item.semester.nameZh) { mutableListOf() }.add(item)
+        }
+        finalList
+    } catch (e : Exception) { throw e }
+
 }
 
-sealed class UniAppLoginResponse {
-    data class UniAppLoginSuccessfulResponse(
-        val data : UniAppLoginBean
-    ) : UniAppLoginResponse()
-    data class UniAppLoginError(
-        val message : String
-    ) : UniAppLoginResponse()
-}
-
-data class UniAppLoginBean(
-    val idToken : String
-)

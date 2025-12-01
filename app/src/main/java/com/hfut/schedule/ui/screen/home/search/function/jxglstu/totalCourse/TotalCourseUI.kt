@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,10 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,17 +44,21 @@ import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.status.EmptyUI
@@ -69,6 +77,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
 
@@ -326,6 +335,28 @@ fun DetailItems(
         }
     }
 
+    var showBottomSheetClassmates by remember { mutableStateOf(false) }
+    if(showBottomSheetClassmates) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheetClassmates = false },
+            showBottomSheet = showBottomSheetClassmates,
+            hazeState = hazeState
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = Color.Transparent,
+                topBar = {
+                    HazeBottomSheetTopBar("同班同学 ${lessons.course.nameZh}")
+                },
+            ) { innerPadding ->
+                Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                    ClassmatesScreen(vm,lessons.id.toString())
+                }
+            }
+        }
+    }
+
+
     LazyColumn {
         item{
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -486,7 +517,6 @@ fun DetailItems(
                     }
                     Row {
                         val code = lessons.code
-                        val classes = if(code.contains("--")) code.substringAfter("--") else null
                         TransplantListItem(
                             overlineContent = { Text("课程代码--教学班") },
                             headlineContent = { Text(code) },
@@ -547,7 +577,7 @@ fun DetailItems(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    // TODO
+                                    showBottomSheetClassmates = true
                                 }
                                 .weight(.5f),
                         )
@@ -658,5 +688,52 @@ fun getTotalCourse(json : String?): MutableList<lessons>  {
         } else return list
     } catch (e : Exception) {
         return list
+    }
+}
+
+@Composable
+fun ClassmatesScreen(
+    vm: NetWorkViewModel,
+    lessonId : String
+) {
+    val uiState by vm.classmatesResp.state.collectAsState()
+    val refreshNetwork = suspend m@ {
+        val jwt = DataStoreManager.uniAppJwt.first()
+        if(jwt.isBlank() || jwt.isEmpty()) {
+            vm.classmatesResp.emitError(Exception("未登录过"))
+            return@m
+        }
+        vm.classmatesResp.clear()
+        vm.getClassmates(lessonId, jwt)
+    }
+    LaunchedEffect(Unit) {
+        refreshNetwork()
+    }
+    CommonNetworkScreen(
+        uiState = uiState,
+        onReload = refreshNetwork,
+    ) {
+        val list = (uiState as UiState.Success).data
+        LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP)){
+            items(list.size,key = { list[it].code }) { index ->
+                val item = list[index]
+                SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
+                    TransplantListItem(
+                        headlineContent = {
+                            Text(item.nameZh)
+                        },
+                        overlineContent = {
+                            Text(item.code)
+                        },
+                        supportingContent = {
+                            Text(item.className)
+                        },
+                        trailingContent = {
+                            Text(item.gender)
+                        }
+                    )
+                }
+            }
+        }
     }
 }
