@@ -87,7 +87,7 @@ fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeSta
             }
         } else {
             value = try {
-                val content = LargeStringDataManager.read(context,LargeStringDataManager.PROGRAM)
+                val content = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
                 if(content == null) {
                     null
                 }

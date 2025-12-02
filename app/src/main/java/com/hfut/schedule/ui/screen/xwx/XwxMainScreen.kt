@@ -82,9 +82,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-suspend fun getXwxLogin(context : Context) : XwxLoginInfo? = withContext(Dispatchers.IO) {
+suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
     return@withContext try {
-        val jStr = LargeStringDataManager.read(context, LargeStringDataManager.XWX_USER_INFO)
+        val jStr = LargeStringDataManager.read(LargeStringDataManager.XWX_USER_INFO)
         withContext(Dispatchers.Default) {
             with(Gson().fromJson(jStr, XwxLoginResponseBody::class.java).result) {
                 XwxLoginInfo(
@@ -110,7 +110,7 @@ suspend fun checkXwxLogin(vm: XwxViewModel,context : Context) : Boolean = withCo
         }
         else -> {
             // 检查
-            val userInfo = getXwxLogin(context)
+            val userInfo = getXwxLogin()
             if(userInfo == null) {
                 return@withContext false
             }
@@ -195,7 +195,7 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
     var password by remember { mutableStateOf("") }
     var username by remember { mutableStateOf(prefs.getString("Username", "") ?: "") }
     val savedInfo by produceState<XwxLoginInfo?>(initialValue = null) {
-        value = getXwxLogin(context)
+        value = getXwxLogin()
     }
 
     var schoolCode by remember { mutableLongStateOf(-1L) }

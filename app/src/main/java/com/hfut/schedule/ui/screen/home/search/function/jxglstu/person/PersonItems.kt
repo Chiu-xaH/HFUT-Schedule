@@ -175,9 +175,8 @@ private fun PersonItems(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {
-    val context = LocalContext.current
     val photo by produceState<String?>(initialValue = null) {
-        value = LargeStringDataManager.read(context, LargeStringDataManager.PHOTO)
+        value = LargeStringDataManager.read( LargeStringDataManager.PHOTO)
     }
 
     val info = getPersonInfo()

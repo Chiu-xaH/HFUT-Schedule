@@ -1,7 +1,9 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramRequest
 import retrofit2.Call
 import okhttp3.ResponseBody
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -40,10 +42,28 @@ interface UniAppService {
         @Path("semseter") semseter : Int,
         @Header("Authorization") auth : String
     ) : Call<ResponseBody>
+    // 全校培养方案
+    @POST("eams-micro-server/api/v1/plan/search/major")
+    fun searchPrograms(
+        @Body body : UniAppSearchProgramRequest,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 全校培养方案详情
+    @GET("eams-micro-server/api/v1/plan/search/major/plan-courses/{id}")
+    fun getProgramById(
+        @Path("id") id : Int,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
     // 教室课表
     // TODO
     // 空教室
     // TODO
-    // 全校培养方案
+    // 评教 非必需，教务系统就有
+    // TODO
+    // 个人信息 非必需，教务系统就有
+    // TODO
+    // 培养方案 非必需，教务系统就有
+    // TODO
+    // 转专业 非必需，教务系统就有
     // TODO
 }

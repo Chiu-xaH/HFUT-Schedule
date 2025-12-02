@@ -515,6 +515,7 @@ fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
             DateTimeManager.simpleFormatter_YYYY_MM_DD.format(state.selectedDateMillis)
         } catch (e : Exception) { null }
     }
+    val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -556,9 +557,9 @@ fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if(prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) != CourseType.JXGLSTU.code)
+            if(defaultCalendar != CourseType.JXGLSTU.code)
                 CardListItem(
-                    headlineContent = { Text("检测到聚焦使用的是社区课表数据源，若需使聚焦首页显示调休课程功能生效，请在设置日期后，前往 选项-应用行为-默认课程表 切换为教务")},
+                    headlineContent = { Text("检测到聚焦使用的是非教务数据源，若需使聚焦首页显示调休课程功能生效，请在设置日期后，前往 选项-应用行为-默认课程表 切换为教务")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
             else

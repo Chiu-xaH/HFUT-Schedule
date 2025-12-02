@@ -114,13 +114,6 @@ fun APPScreen(
         saveBoolean("SWITCHSHOWENDED",true,showEnded)
 
         saveBoolean("SWITCHFOCUS",true,showfocus)
-//        var showBottomSheet_card by remember { mutableStateOf(false) }
-
-
-//        val switch_default = prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
-//        var currentDefaultCalendar by remember { mutableIntStateOf(switch_default) }
-//        saveInt("SWITCH_DEFAULT_CALENDAR",currentDefaultCalendar)
-
         val scope = rememberCoroutineScope()
         val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
         val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)

@@ -79,7 +79,7 @@ fun CommunityCourseTableUI(
 
 
     val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
-        value = allToTimeTableData(context,friendUserName)
+        value = allToTimeTableData(friendUserName)
     }
 
     LaunchedEffect(currentWeek,items) {

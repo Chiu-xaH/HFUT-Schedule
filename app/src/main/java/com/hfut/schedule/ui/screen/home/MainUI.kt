@@ -89,6 +89,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Data
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
@@ -230,12 +231,14 @@ fun MainScreen(
     var showAll by rememberSaveable { mutableStateOf(false) }
 
     var ifSaved by rememberSaveable { mutableStateOf(!isLogin) }
+
     var swapUI by rememberSaveable { mutableIntStateOf(
         if(ifSaved)
-            prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
+            DataStoreManager.getSyncDefaultCalendar() ?: CourseType.JXGLSTU.code
         else
             CourseType.JXGLSTU.code
     ) }
+    
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 

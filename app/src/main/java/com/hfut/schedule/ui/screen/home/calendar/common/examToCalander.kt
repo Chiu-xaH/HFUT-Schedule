@@ -12,10 +12,11 @@ data class ExamToCalenderBean(
     val endTime : String?,
     val place: String?,
     val course: String?,
+    val type : String? = null
 )
 
-suspend fun examToCalendar(context: Context) : List<ExamToCalenderBean> = withContext(Dispatchers.IO) {
-    val examMaps= getExamFromCache(context)
+suspend fun examToCalendar() : List<ExamToCalenderBean> = withContext(Dispatchers.IO) {
+    val examMaps= getExamFromCache()
     val newList = mutableListOf<ExamToCalenderBean>()
 
     return@withContext try {
@@ -29,7 +30,7 @@ suspend fun examToCalendar(context: Context) : List<ExamToCalenderBean> = withCo
             val endTime = time[1]
             val place = examMap.place
             val course = examMap.name
-            val examToCalendarBean = ExamToCalenderBean(day, startTime,endTime, place, course)
+            val examToCalendarBean = ExamToCalenderBean(day, startTime,endTime, place, course,examMap.type)
             newList.add(examToCalendarBean)
         }
         newList

@@ -447,7 +447,7 @@ object JxglstuRepository {
 
     @JvmStatic
     suspend fun parseJxglstuGradeInner(html: String): List<GradeJxglstuDTO> = try {
-        LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.GRADE,html)
+        LargeStringDataManager.save(LargeStringDataManager.GRADE,html)
         parseJxglstuGrade(html)
     } catch (e: Exception) {
         throw e
@@ -574,7 +574,7 @@ object JxglstuRepository {
     @JvmStatic
     private suspend fun parseDatum(json : String) : String {
         if (json.contains("result")) {
-            LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.DATUM,json)
+            LargeStringDataManager.save(LargeStringDataManager.DATUM,json)
             try {
                 return json
             } catch (e : Exception) {
@@ -653,7 +653,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private suspend fun parseProgram(result: String) : ProgramResponse {
-        LargeStringDataManager.save(MyApplication.context,LargeStringDataManager.PROGRAM,result)
+        LargeStringDataManager.save(LargeStringDataManager.PROGRAM,result)
         return try {
             Gson().fromJson(result, ProgramResponse::class.java)
         } catch (e : Exception) {
@@ -688,7 +688,7 @@ object JxglstuRepository {
     }
     @JvmStatic
     private suspend fun parseProgramPerformance(json : String) : ProgramBean = try {
-        LargeStringDataManager.save(MyApplication.context,LargeStringDataManager.PROGRAM_PERFORMANCE,json)
+        LargeStringDataManager.save(LargeStringDataManager.PROGRAM_PERFORMANCE,json)
         Gson().fromJson(json, ProgramBean::class.java)
     } catch (e : Exception) { throw e }
 
@@ -811,7 +811,7 @@ object JxglstuRepository {
         // 将字节数组转换为Base64编码的字符串
         val base64String = Base64.encodeToString(bytes, Base64.DEFAULT)
         // 保存编码后的字符串
-        LargeStringDataManager.save(MyApplication.context,LargeStringDataManager.PHOTO,base64String)
+        LargeStringDataManager.save(LargeStringDataManager.PHOTO,base64String)
     } catch (e: Exception) {
         e.printStackTrace()
     }
@@ -881,7 +881,7 @@ object JxglstuRepository {
 
     @JvmStatic
     suspend fun parseJxglstuExam(html : String) : List<JxglstuExam> = try {
-        LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.EXAM,html)
+        LargeStringDataManager.save(LargeStringDataManager.EXAM,html)
         val doc = Jsoup.parse(html).select("tbody tr")
         val data = doc.map { row ->
             val elements = row.select("td")
@@ -900,7 +900,7 @@ object JxglstuRepository {
 
     @JvmStatic
     private suspend fun parseJxglstuExamInner(html : String) : List<JxglstuExam> = try {
-        LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.EXAM,html)
+        LargeStringDataManager.save(LargeStringDataManager.EXAM,html)
         parseJxglstuExam(html)
     } catch (e:Exception) { throw e }
 

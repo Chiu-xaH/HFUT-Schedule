@@ -29,7 +29,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-12-01") },
+                overlineContent = { Text(text = "2025-12-02") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,13 +58,17 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            // 教室课表、空教室、同班同学、全校培养方案
-            UpdateItems("新增 合工大教务的登录")//
+            // 欢迎体验新版本 本版本新集成了新的数据源，可能会导致应用不稳定
+            UpdateItems("重构 全校培养方案","更换为合工大教务的数据源")//
+            UpdateItems("新增 合工大教务的登录","位于 刷新登陆状态界面的选项中")//
+            UpdateItems("新增 考试数据源：合工大教务","位于 查询中心-考试，App自动将教务和合工大教务两种数据源合二为一，在课程表、聚焦中也会同步显示此数据")//
             UpdateItems("新增 同班同学","位于 课程详情界面")//
-            UpdateItems("新增 课程表数据源：合工大教务")//
-            UpdateItems("新增 成绩数据源：合工大教务")
-//            UpdateItems("重构 寝室评分（宣城与合肥）","学校终于将宣区寝室查询和肥区一样接入到智慧社区了，旧接口将不再返回新数据了")
+            UpdateItems("新增 课程表数据源：合工大教务","重做了数据源选择，前往 选项-应用及配置-默认课程表，切换数据源，聚焦和桌面小组件也同步支持合工大教务了")//
+            UpdateItems("新增 成绩数据源：合工大教务","位于 查询中心-成绩，本数据源可以在评教之前查看成绩")//
+//            UpdateItems("新增 空教室与教室课表","位于 查询中心-教室，数据源为合工大教务")
+//            UpdateItems("新增 开课查询数据源：合工大教务")
             UpdateItems("新增 备用与恢复","位于 选项-应用与配置，开发者为游客提供了预设数据源，以便其他开发者更便利地使用本项目")
+//            UpdateItems("重构 寝室评分（宣城与合肥）","学校终于将宣区寝室查询和肥区一样接入到智慧社区了，旧接口将不再返回新数据了")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 新课程表的日视图")

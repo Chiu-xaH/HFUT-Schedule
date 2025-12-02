@@ -12,7 +12,7 @@ import com.xah.shared.JxglstuCourseGroup
 
 class RemoteService : Service() {
     private suspend fun getJxglstuCourseGroup(): List<JxglstuCourseGroup> {
-        val list = getJxglstuCourseSchedule(context = this).map {
+        val list = getJxglstuCourseSchedule().map {
             Course(
                 dateTime = Pair(it.time.start.toTimestamp(),it.time.end.toTimestamp()),
                 place = it.place,

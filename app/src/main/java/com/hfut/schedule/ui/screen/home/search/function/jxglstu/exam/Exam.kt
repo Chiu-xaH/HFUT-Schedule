@@ -68,18 +68,13 @@ fun Exam(
     navController : NavHostController,
 ) {
     val route = remember { AppNavRoute.Exam.withArgs() }
-    val context = LocalContext.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Exam.label) },
-//        overlineContent = { Text(text = "${if(ifSaved) getNewExam().size else getExamJXGLSTU().size} 门")},
         leadingContent = {
             Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            if(ifSaved)  {
-                showToast("当前未登录教务，为缓存数据")
-            }
             navController.navigateForTransition(AppNavRoute.Exam,route)
         }
     )
@@ -91,7 +86,6 @@ fun ExamScreen(
     navController : NavHostController,
     origin : String?
 ) {
-    val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Exam.withArgs(origin) }
@@ -117,7 +111,7 @@ fun ExamScreen(
             modifier = Modifier.hazeSource(hazeState).fillMaxSize()
         ) {
             val list by produceState(initialValue = emptyList()) {
-                value = getExamFromCache(context)
+                value = getExamFromCache()
             }
             if(list.isEmpty()) {
                 CenterScreen {
@@ -210,7 +204,7 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
         val isFinished = examDateNum < newToday
 //            DateTimeUtils.compareTimeDate(endTime = endTime) == DateTimeUtils.TimeState.ENDED
         CardListItem(
-            headlineContent = {  Text(text = course.toString(), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
+            headlineContent = {  Text(text = course.toString() + (item.type?.let { "-$it" } ?: ""), textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = examDate,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) },
             supportingContent = { place?.let { Text(text = it,textDecoration = if(isFinished) TextDecoration.LineThrough else TextDecoration.None) } },
             leadingContent = {
@@ -231,21 +225,6 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
     } else {
         if(examDateNum >= newToday) {
             //如果是今天考试，那么判断考试结束后不显示 待做
-//            val course = item["课程名称"]
-//            val time = item["日期时间"]
-//            val place  = item["考场"]
-//
-//            val year = time?.substringBefore("-")
-//            val month = time?.substring(5,7)
-//            val day = time?.substring(8,10)
-//            val startTimeHour = time?.substringAfter(" ")?.substringBefore(":")
-//            val startTimeMinute = time?.substringAfter(":")?.substringBefore("~")
-//            val endTimeHour = time?.substringAfter("~")?.substringBefore(":")
-//            val endTimeMinute = time?.substringAfter("~")?.substringAfter(":")
-
-            //如果是今天
-
-          //  Log.d("打印测试","${year}年 ${month}月 ${day}日 起始 ${startTimeHour}时 ${startTimeMinute}分 结束 ${endTimeHour}时 ${endTimeMinute}分")
             val scope = rememberCoroutineScope()
             val navController = LocalAppNavController.current
             //今天 && 已经考完

@@ -49,7 +49,7 @@ class MainActivity : BaseActivity() {
             }
             launch {
                 // 大文本迁移
-                LargeStringDataManager.moveLargeJson(this@MainActivity)
+                LargeStringDataManager.moveLargeJson()
             }
             launch(Dispatchers.IO) {
                 //上传用户统计数据

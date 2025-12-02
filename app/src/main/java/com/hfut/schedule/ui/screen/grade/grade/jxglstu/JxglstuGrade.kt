@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.grade.grade.jxglstu
 
-
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -26,11 +25,9 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,42 +49,38 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPALevel
+import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.scoreWithGPA
+import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.container.LargeCard
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuGrade
-import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
-import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
+import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -95,6 +88,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.String
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
@@ -107,7 +101,6 @@ fun GradeItemUIJXGLSTU(
     ifSaved : Boolean
 ) {
     val context = LocalContext.current
-    var title by remember { mutableStateOf("成绩详情") }
     var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -123,7 +116,7 @@ fun GradeItemUIJXGLSTU(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar(title)
+                        HazeBottomSheetTopBar(num.courseName)
                     },) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -167,17 +160,17 @@ fun GradeItemUIJXGLSTU(
 
 
     val Item = @Composable { grade : GradeResponseJXGLSTU ->
-        val isFailed = grade.GPA.toFloatOrNull() == 0f
-        val needSurvey = grade.grade.contains("评教")
+        val isFailed = grade.gpa.toFloatOrNull() == 0f
+        val needSurvey = grade.score.contains("评教")
         CardListItem(
-            headlineContent = {  Text(grade.title) },
+            headlineContent = {  Text(grade.courseName) },
             overlineContent = { Text(
                 if(!needSurvey)
-                    "分数 "+ grade.totalGrade + " | 绩点 " + grade.GPA +  " | 学分 " + grade.score
-                else grade.code
+                    "分数 "+ grade.detail + " | 绩点 " + grade.gpa +  " | 学分 " + grade.credits
+                else grade.lessonCode
             ) },
             leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-            supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.grade) },
+            supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.score) },
             color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
             modifier = Modifier.clickable {
                 if(needSurvey) {
@@ -185,12 +178,11 @@ fun GradeItemUIJXGLSTU(
                         showToast("未评教，请登录后评教")
                         Starter.refreshLogin(context)
                     } else {
-                        surveyCode = grade.code
+                        surveyCode = grade.lessonCode
                         showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
                         showBottomSheet_Survey = true
                     }
                 } else {
-                    title = grade.title
                     num = grade
                     showBottomSheet = true
                 }
@@ -215,7 +207,7 @@ fun GradeItemUIJXGLSTU(
                         val item = gradeList[termIndex]
                         DividerTextExpandedWith(item.term) {
                             item.list.filter {
-                                it.title.contains(input) || it.code.contains(input)
+                                it.courseName.contains(input) || it.lessonCode.contains(input)
                             }.forEach { subItem ->
                                 Item(subItem)
                             }
@@ -232,7 +224,7 @@ fun GradeItemUIJXGLSTU(
     if(ifSaved) {
         val gradeList by produceState<List<GradeJxglstuDTO>?>(initialValue = null) {
             scope.launch(Dispatchers.IO) {
-                LargeStringDataManager.read(context, LargeStringDataManager.GRADE)?.let {
+                LargeStringDataManager.read(LargeStringDataManager.GRADE)?.let {
                     value = parseJxglstuGrade(it)
                 }
             }
@@ -285,7 +277,6 @@ fun GradeItemUIUniApp(
     input : String,
     hazeState: HazeState,
 ) {
-    var title by remember { mutableStateOf("成绩详情") }
     var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
@@ -301,7 +292,7 @@ fun GradeItemUIUniApp(
                     modifier = Modifier.fillMaxSize(),
                     containerColor = Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar(title)
+                        HazeBottomSheetTopBar(num.courseName)
                     },) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -318,8 +309,6 @@ fun GradeItemUIUniApp(
     }
 
     val scope = rememberCoroutineScope()
-
-
 
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
@@ -375,12 +364,18 @@ fun GradeItemUIUniApp(
                                         headlineContent = {  Text(subItem.courseNameZh) },
                                         overlineContent = { Text("分数 "+ subItem.finalGrade + " | 绩点 " + subItem.gp +  " | 学分 " + subItem.credits) },
                                         leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                                        supportingContent = { subItem.gradeDetail?.let { Text(it) } },
+                                        supportingContent = { Text(subItem.gradeDetail) },
                                         color = if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
                                         modifier = Modifier.clickable {
-//                                            title = grade.title
-//                                            num = grade
-//                                            showBottomSheet = true
+                                            num = GradeResponseJXGLSTU(
+                                                courseName = subItem.courseNameZh,
+                                                credits = subItem.credits.toString(),
+                                                gpa = subItem.gp.toString(),
+                                                score = subItem.gradeDetail,
+                                                detail = subItem.finalGrade.toString(),
+                                                lessonCode = subItem.lessonCode
+                                            )
+                                            showBottomSheet = true
                                         },
                                     )
                                 }
@@ -402,7 +397,7 @@ fun GradeItemUIUniApp(
 fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val list = num.grade.split(" ")
+    val list = num.score.split(" ")
     val radarList = mutableListOf<RadarData>()
     list.forEach { item ->
         val label = item.substringBefore(":")
@@ -446,7 +441,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
     }
     var party by remember { mutableStateOf(false) }
 
-    val isFailed = num.GPA.toFloatOrNull() == 0f
+    val isFailed = num.gpa.toFloatOrNull() == 0f
     Column(modifier = Modifier.hazeSource(hazeState)) {
         if(radarList.size > 1) {
             DividerTextExpandedWith(text = "雷达图") {
@@ -473,7 +468,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
         }
 
         DividerTextExpandedWith(text = "详情",false) {
-            LargeCard("分数 ${num.totalGrade} 绩点 ${num.GPA}") {
+            LargeCard("分数 ${num.detail} 绩点 ${num.gpa}") {
                 for (i in list.indices step 2) {
                     Row {
                         val l1 = list[i]
@@ -523,7 +518,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
                         },
                         headlineContent = {
                             ScrollText(
-                                text =  num.score
+                                text =  num.credits
                             )
                         },
                         overlineContent = {
@@ -562,7 +557,7 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
                     },
                     headlineContent = {
                         ScrollText(
-                            text =  num.code
+                            text =  num.lessonCode
                         )
                     },
                     overlineContent = {
@@ -570,10 +565,10 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
                     }
                 )
                 with(num) {
-                    if(GPA.toFloatOrNull() != null) {
+                    if(gpa.toFloatOrNull() != null) {
                         TransplantListItem(
                             headlineContent = {
-                                GPAStarGroup(totalGrade,GPA) {
+                                GPAStarGroup(detail,gpa) {
                                     onParty(it)
                                     party = it
                                 }
@@ -582,8 +577,8 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
                                 Icon(painterResource(if(party) R.drawable.thumb_up else R.drawable.stairs),null)
                             },
                             overlineContent = {
-                                getGradeNextLevel(totalGrade,GPA)?.let { target ->
-                                    totalGrade.toDoubleOrNull().let { current ->
+                                getGradeNextLevel(detail,gpa)?.let { target ->
+                                    detail.toDoubleOrNull().let { current ->
                                         if(target.score == null) {
                                             Text(" 下一绩点为${target.gpa}")
                                         } else if(isFailed) {

@@ -68,7 +68,7 @@ object XwxRepository {
                 throw Exception("登录状态失效")
             }
             launch {
-                LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.XWX_USER_INFO,json)
+                LargeStringDataManager.save(LargeStringDataManager.XWX_USER_INFO,json)
             }
             showToast("登陆成功")
             true

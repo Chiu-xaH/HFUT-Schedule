@@ -74,7 +74,7 @@ private suspend fun checkExistEvent(dateTime: DateTime, title: String, activity:
 }
 private const val CALENDAR_COURSE_TAG = "聚在工大-"
 
-suspend fun delAllCourseEvent(context: Context,activity: Activity) = withContext(Dispatchers.IO) {
+suspend fun delAllCourseEvent(activity: Activity) = withContext(Dispatchers.IO) {
     checkAndRequestCalendarPermission(activity)
     try {
         // 删除所有remark为常量CALENDAR_COURSE_TAG的日程
@@ -98,7 +98,7 @@ suspend fun delAllCourseEvent(context: Context,activity: Activity) = withContext
 
         // 然后删除title等于下面列表里it.courseName的日程
         var rowsTitle = 0
-        val jxglstuCourseScheduleList = getJxglstuCourseSchedule(context=context)
+        val jxglstuCourseScheduleList = getJxglstuCourseSchedule()
         jxglstuCourseScheduleList.map { it.courseName }
             .distinct() // 避免重复课程名多次删除
             .forEach { courseName ->
@@ -324,9 +324,8 @@ data class JxglstuCourseSchedule(val time : DateTime, val place : String?, val c
 
 suspend fun getJxglstuCourseSchedule(
     jsonStr : String? = null,
-    context: Context,
 ) : List<JxglstuCourseSchedule>  {
-    val json = jsonStr ?: LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
+    val json = jsonStr ?: LargeStringDataManager.read(LargeStringDataManager.DATUM)
     if(json == null) {
         return emptyList()
     }
@@ -377,12 +376,12 @@ suspend fun getJxglstuCourseSchedule(
     return list
 }
 
-suspend fun addCourseToEvent(context: Context,activity: Activity,time : Int) : Int = withContext(Dispatchers.IO) {
+suspend fun addCourseToEvent(activity: Activity,time : Int) : Int = withContext(Dispatchers.IO) {
     var failedCount = 0
     async { checkAndRequestCalendarPermission(activity) }.await()
     launch {
         try {
-            val list = getJxglstuCourseSchedule(context = context)
+            val list = getJxglstuCourseSchedule()
             for(item in list) {
                 val itemTime = item.time
                 val itemName = item.courseName

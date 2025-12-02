@@ -66,7 +66,10 @@ import com.hfut.schedule.receiver.widget.util.WidgetTheme
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.focus.funiction.getJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayJxglstuCourse
+import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayUniAppCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowJxglstuCourse
+import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowUniAppCourse
+import com.hfut.schedule.ui.screen.home.focus.funiction.getUniAppCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.screen.home.texts
@@ -162,7 +165,7 @@ class FocusWidget : GlanceAppWidget() {
     private fun MyContent(textSize : Float) {
         val context = LocalContext.current
         val isDarkTheme = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        val courseDataSource =  prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code)
+        val courseDataSource = DataStoreManager.getSyncDefaultCalendar()
         var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
         var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
         var lastTime by remember { mutableStateOf("00:00") }
@@ -220,9 +223,17 @@ class FocusWidget : GlanceAppWidget() {
                             }
                         }
                     }
-                    CourseType.JXGLSTU.code -> {
-                        todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it, context ) } ?: getTodayJxglstuCourse(context)
-                        tomorrowJxglstuList = specialWorkTomorrow?.let { getJxglstuCourse(it,context) } ?: getTomorrowJxglstuCourse(context)
+                    else -> {
+                        when(courseDataSource) {
+                            CourseType.JXGLSTU.code -> {
+                                todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it) } ?: getTodayJxglstuCourse()
+                                tomorrowJxglstuList = specialWorkTomorrow?.let { getJxglstuCourse(it) } ?: getTomorrowJxglstuCourse()
+                            }
+                            CourseType.UNI_APP.code -> {
+                                todayJxglstuList = specialWorkToday?.let { getUniAppCourse(it ) } ?: getTodayUniAppCourse()
+                                tomorrowJxglstuList = specialWorkTomorrow?.let { getUniAppCourse(it) } ?: getTomorrowUniAppCourse()
+                            }
+                        }
                         val jxglstuLastCourse = todayJxglstuList.lastOrNull()
                         jxglstuLastTime = jxglstuLastCourse?.time?.end?.let {
                             parseTimeItem(it.hour) +  ":" + parseTimeItem(it.minute)
@@ -377,7 +388,7 @@ class FocusWidget : GlanceAppWidget() {
                                     }
                                 }
                             }
-                            CourseType.JXGLSTU.code -> {
+                            else -> {
                                 if (showTomorrow) {
                                     if(!isHolidayTomorrow()) {
                                         items(tomorrowJxglstuList.size) { index ->
@@ -449,7 +460,6 @@ class FocusWidget : GlanceAppWidget() {
                                     }
                                 }
                             }
-                            CourseType.NEXT.code -> {}
                         }
                     }
                 }

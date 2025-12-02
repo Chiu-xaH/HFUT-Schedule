@@ -11,10 +11,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -35,6 +42,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -52,8 +62,10 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
@@ -709,27 +721,145 @@ fun ClassmatesScreen(
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
+    var input by remember { mutableStateOf("") }
+    CustomTextField(
+        input = input,
+        label = { Text("搜索 学号、班级、姓名") }
+    ) { input = it }
+    Spacer(Modifier.height(CARD_NORMAL_DP))
+
     CommonNetworkScreen(
         uiState = uiState,
         onReload = refreshNetwork,
     ) {
         val list = (uiState as UiState.Success).data
+
+        // 初始化统计Map
+        val classCount = mutableMapOf<String, Int>()
+        val genderCount = mutableMapOf<String, Int>()
+        val yearCount = mutableMapOf<String, Int>()
+
+        // 一次遍历处理所有统计
+        for (item in list) {
+            // 统计 className
+            classCount[item.className] = classCount.getOrDefault(item.className, 0) + 1
+
+            // 统计 gender
+            genderCount[item.gender] = genderCount.getOrDefault(item.gender, 0) + 1
+
+            // 统计年份（取code的前四位）
+            val year = item.code.substring(0, 4)
+            yearCount[year] = yearCount.getOrDefault(year, 0) + 1
+        }
+
+        // 将统计结果转换为 Pair 并排序
+        val classes = classCount.entries
+            .map { it.value to it.key }
+            .sortedByDescending { it.first }
+
+        val genders = genderCount.entries
+            .map { it.value to it.key }
+            .sortedByDescending { it.first }
+
+        val years = yearCount.entries
+            .map { it.value to it.key }
+            .sortedByDescending { it.first }
+
+        val filteredList = list.filter {
+            it.code.contains(input) || it.nameZh.contains(input) || it.className.contains(input) || it.gender.contains(input)
+        }
+
         LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP)){
-            items(list.size,key = { list[it].code }) { index ->
-                val item = list[index]
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Card(
+                    modifier = Modifier.padding(vertical = CARD_NORMAL_DP, horizontal = CARD_NORMAL_DP),
+                    shape = MaterialTheme.shapes.medium,
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                ) {
+                    Column {
+                        TransplantListItem(
+                            headlineContent = {
+                                Text(
+                                    text = "${list.size}人",
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = 28.sp,
+                                    modifier = Modifier.padding(top = APP_HORIZONTAL_DP/6, bottom = 0.dp)
+                                )
+                            }
+                        )
+                        // 班级
+                        LazyRow() {
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            items(classes.size) { index ->
+                                val item = classes[index]
+                                AssistChip(
+                                    onClick = { input = item.second },
+                                    border = null,
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    label = { Text(item.second) },
+                                    trailingIcon = {
+                                        Text("x" + item.first.toString() )
+                                    },
+                                    modifier = Modifier.padding(end = if(index == classes.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                )
+                            }
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                        }
+                        // 男女
+                        LazyRow() {
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            items(genders.size) { index ->
+                                val item = genders[index]
+                                AssistChip(
+                                    onClick = { input = item.second },
+                                    border = null,
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    label = { Text(item.second) },
+                                    trailingIcon = {
+                                        Text("x" + item.first.toString() )
+                                    },
+                                    modifier = Modifier.padding(end = if(index == genders.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                )
+                            }
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                        }
+                        // 学号前4位
+                        LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            items(years.size) { index ->
+                                val item = years[index]
+                                AssistChip(
+                                    onClick = { input = item.second },
+                                    border = null,
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    label = { Text(item.second) },
+                                    trailingIcon = {
+                                        Text("x" + item.first.toString() )
+                                    },
+                                    modifier = Modifier.padding(end = if(index == years.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                )
+                            }
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                        }
+                    }
+                }
+            }
+            items(filteredList.size,key = { filteredList[it].code }) { index ->
+                val item = filteredList[index]
                 SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
                     TransplantListItem(
                         headlineContent = {
-                            Text(item.nameZh)
+                            ScrollText(item.nameZh)
                         },
                         overlineContent = {
-                            Text(item.code)
+                            ScrollText(item.code)
                         },
                         supportingContent = {
-                            Text(item.className)
+                            ScrollText(item.className)
                         },
                         trailingContent = {
-                            Text(item.gender)
+                            ScrollText(item.gender)
                         }
                     )
                 }

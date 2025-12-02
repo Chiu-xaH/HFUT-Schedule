@@ -64,7 +64,6 @@ fun UniAppCoursesScreen(
     backGroundHaze : ShaderState?,
     onSwapShowAll : (Boolean) -> Unit
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
     var showBottomSheetDetail by remember { mutableStateOf(false) }
     var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
@@ -136,7 +135,7 @@ fun UniAppCoursesScreen(
         }
     } }
     val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
-        value = allToTimeTableDataUniApp(context)
+        value = allToTimeTableDataUniApp()
     }
 
     LaunchedEffect(currentWeek,items) {

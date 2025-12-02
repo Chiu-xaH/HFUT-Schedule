@@ -139,7 +139,7 @@ private fun ProgramPerformance(
             }
         } else {
             val bean = try {
-                val json = LargeStringDataManager.read(context, LargeStringDataManager.PROGRAM_PERFORMANCE)
+                val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
                 if(json == null) {
                     null
                 }

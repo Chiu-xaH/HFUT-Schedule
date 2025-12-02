@@ -61,7 +61,10 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.ScheduleItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.TimeStampItem
 import com.hfut.schedule.ui.screen.home.focus.funiction.getJxglstuCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayJxglstuCourse
+import com.hfut.schedule.ui.screen.home.focus.funiction.getTodayUniAppCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowJxglstuCourse
+import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowUniAppCourse
+import com.hfut.schedule.ui.screen.home.focus.funiction.getUniAppCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.initNetworkRefresh
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExamUI
@@ -115,7 +118,7 @@ fun TodayScreen(
     var refreshDB by remember { mutableStateOf(false) }
 
     val scrollState = rememberLazyListState()
-    val courseDataSource = remember { prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) }
+    val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     var lastTime by remember { mutableStateOf("00:00") }
     var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
     var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
@@ -135,7 +138,7 @@ fun TodayScreen(
         }
     }
     val exams by produceState(initialValue = emptyList()) {
-        value = getExamFromCache(context)
+        value = getExamFromCache()
     }
     // 加载数据库
     LaunchedEffect(refreshDB) {
@@ -169,15 +172,22 @@ fun TodayScreen(
                     lastTime = lastCourse?.classTime?.substringAfter("-") ?: "00:00"
                     tomorrowCourseList = getCourseInfoFromCommunity(weekDayTomorrow,nextWeek).flatten().distinct()
                 }
-                CourseType.JXGLSTU.code -> {
-                    todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it, context ) } ?: getTodayJxglstuCourse(context)
-                    tomorrowJxglstuList = specialWorkTomorrow?.let { getJxglstuCourse(it,context) } ?: getTomorrowJxglstuCourse(context)
+                else -> {
+                    when(courseDataSource) {
+                        CourseType.UNI_APP.code -> {
+                            todayJxglstuList = specialWorkToday?.let { getUniAppCourse(it ) } ?: getTodayUniAppCourse()
+                            tomorrowJxglstuList = specialWorkTomorrow?.let { getUniAppCourse(it) } ?: getTomorrowUniAppCourse()
+                        }
+                        CourseType.JXGLSTU.code -> {
+                            todayJxglstuList = specialWorkToday?.let { getJxglstuCourse(it) } ?: getTodayJxglstuCourse()
+                            tomorrowJxglstuList = specialWorkTomorrow?.let { getJxglstuCourse(it) } ?: getTomorrowJxglstuCourse()
+                        }
+                    }
                     val jxglstuLastCourse = todayJxglstuList.lastOrNull()
                     jxglstuLastTime = jxglstuLastCourse?.time?.end?.let {
                         parseTimeItem(it.hour) +  ":" + parseTimeItem(it.minute)
                     } ?: "00:00"
                 }
-                CourseType.NEXT.code -> {}
             }
         }
     }
@@ -214,10 +224,9 @@ fun TodayScreen(
                 CourseType.COMMUNITY.code -> {
                     DateTimeManager.compareTime(lastTime) != DateTimeManager.TimeState.NOT_STARTED
                 }
-                CourseType.JXGLSTU.code -> {
+                else -> {
                     DateTimeManager.compareTime(jxglstuLastTime) != DateTimeManager.TimeState.NOT_STARTED
                 }
-                else -> true
             }
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = scrollState) {
@@ -238,7 +247,7 @@ fun TodayScreen(
                                         }
                                     }
                                 }
-                                CourseType.JXGLSTU.code -> {
+                                else -> {
                                     if (showTomorrow) {
                                         if(!isHolidayTomorrow()) {
                                             tomorrowJxglstuList.let { list ->
@@ -257,7 +266,6 @@ fun TodayScreen(
                                         }
                                     }
                                 }
-                                CourseType.NEXT.code -> {}
                             }
                             //日程
                             customScheduleList.let { list ->
@@ -326,7 +334,7 @@ fun TodayScreen(
                                             }
                                         }
                                     }
-                                    CourseType.JXGLSTU.code -> {
+                                    else -> {
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
@@ -335,7 +343,6 @@ fun TodayScreen(
                                             }
                                         }
                                     }
-                                    CourseType.NEXT.code -> {}
                                 }
                             }
                             // API提示文字

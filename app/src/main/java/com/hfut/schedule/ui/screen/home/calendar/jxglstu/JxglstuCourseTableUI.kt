@@ -378,7 +378,7 @@ fun JxglstuCourseTableUI(
                }
                launch { vm.getInfo(cookie) }
                launch {
-                   if (LargeStringDataManager.read(context, LargeStringDataManager.PHOTO) == null) {
+                   if (LargeStringDataManager.read( LargeStringDataManager.PHOTO) == null) {
                        vm.getPhoto(cookie)
                    }
                }
@@ -460,7 +460,7 @@ fun JxglstuCourseTableUI(
         }
     } else {
         val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
-            value = allToTimeTableData(context)
+            value = allToTimeTableData()
         }
 
         LaunchedEffect(currentWeek,items) {

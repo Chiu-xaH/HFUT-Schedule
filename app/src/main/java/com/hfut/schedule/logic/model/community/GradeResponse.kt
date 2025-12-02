@@ -15,12 +15,12 @@ data class scoreInfoDTOList(val courseName : String,
 
 data class GradeJxglstuDTO(val term : String,val list : List<GradeResponseJXGLSTU>)
 
-data class GradeResponseJXGLSTU(val title : String,
+data class GradeResponseJXGLSTU(val courseName : String,
+                                val credits : String,
+                                val gpa : String,
                                 val score : String,
-                                val GPA : String,
-                                val grade : String,
-                                val totalGrade : String,
-                                val code: String
+                                val detail : String,
+                                val lessonCode: String
 )
 
 data class GradeAvgResponse(val result : AvgResult)

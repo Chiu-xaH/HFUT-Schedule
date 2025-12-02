@@ -1,8 +1,8 @@
 package com.hfut.schedule.logic.network.repo.hfut
 
-import android.content.Context
 import com.google.gson.Gson
-import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
+import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
 import com.hfut.schedule.logic.model.uniapp.ClassmatesResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppCourseBean
@@ -11,10 +11,14 @@ import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
 import com.hfut.schedule.logic.model.uniapp.UniAppGradesResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse.UniAppLoginError
 import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse.UniAppLoginSuccessfulResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramRequest
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramResponse
 import com.hfut.schedule.logic.network.api.UniAppService
 import com.hfut.schedule.logic.network.servicecreator.UniAppServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.Crypto
+import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -79,25 +83,25 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseClassmates(json : String) = try {
-        Gson().fromJson(json, ClassmatesResponse::class.java).data
+        Gson().fromJson(json, ClassmatesResponse::class.java).data ?: emptyList()
     } catch (e : Exception) { throw e }
 
-    suspend fun getCourses(token : String) {
+    suspend fun updateCourses(token : String) {
         try {
             val request = uniApp.getCourses(SemseterParser.getSemseter(),token).awaitResponse()
             if(!request.isSuccessful) {
                 return
             }
             val json = request.body()?.string() ?: return
-            LargeStringDataManager.save(MyApplication.context, LargeStringDataManager.UNI_APP_COURSES,json)
+            LargeStringDataManager.save(LargeStringDataManager.UNI_APP_COURSES,json)
         } catch (e : Exception) {
             e.printStackTrace()
         }
     }
 
     @JvmStatic
-    suspend fun parseUniAppCourses(context : Context,jStr : String? = null) :  List<UniAppCourseBean> {
-        val json = LargeStringDataManager.read(context, LargeStringDataManager.UNI_APP_COURSES) ?: jStr
+    suspend fun parseUniAppCourses(jStr : String? = null) :  List<UniAppCourseBean> {
+        val json = LargeStringDataManager.read( LargeStringDataManager.UNI_APP_COURSES) ?: jStr
         return try {
             Gson().fromJson(json, UniAppCoursesResponse::class.java).data
         } catch (e : Exception) {
@@ -121,10 +125,59 @@ object UniAppRepository {
         // 按列表项目的term进行分类
         val finalList = mutableMapOf<String, MutableList<UniAppGradeBean>>()
         originalList.forEach { item ->
-            finalList.getOrPut(item.semester.nameZh) { mutableListOf() }.add(item)
+            finalList.getOrPut(item.semester.nameZh) { mutableListOf() }.add(item.copy(
+                gradeDetail = item.gradeDetail.replace(';',' ')
+            ))
         }
         finalList
     } catch (e : Exception) { throw e }
 
+    suspend fun updateExams(token : String) {
+        try {
+            val request = uniApp.getExams(token).awaitResponse()
+            if(!request.isSuccessful) {
+                return
+            }
+            val json = request.body()?.string() ?: return
+            LargeStringDataManager.save(LargeStringDataManager.UNI_APP_EXAMS,json)
+        } catch (e : Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun searchPrograms(
+        token : String,
+        page : Int ,
+        keyword : String = "",
+        holder : StateHolder<List<UniAppSearchProgramBean>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.searchPrograms(UniAppSearchProgramRequest(
+            nameZhLike = keyword,
+            pageSize = getPageSize(),
+            currentPage = page,
+        ),token)},
+        transformSuccess = { _,json -> parseProgramSearch(json) }
+    )
+
+    @JvmStatic
+    private fun parseProgramSearch(json : String) : List<UniAppSearchProgramBean> = try {
+        Gson().fromJson(json, UniAppSearchProgramResponse::class.java).data.data
+    } catch (e : Exception) { throw e }
+
+    suspend fun getProgramById(
+        id : Int,
+        token: String,
+        holder : StateHolder<ProgramSearchBean>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.getProgramById(id,token) },
+        transformSuccess = { _, json -> parseProgramSearchInfo(json) }
+    )
+
+    @JvmStatic
+    private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
+        Gson().fromJson(json,ProgramSearchResponse::class.java).data
+    } catch (e : Exception) { throw e }
 }
 

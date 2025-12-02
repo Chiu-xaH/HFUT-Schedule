@@ -1,16 +1,7 @@
 package com.hfut.schedule.ui.screen.home.focus.funiction
 
 import android.app.Activity
-import android.content.Context
-import android.os.Parcelable
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,11 +9,7 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Badge
@@ -34,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,15 +29,11 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
@@ -60,46 +44,47 @@ import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
+import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.network.util.MyApiParse.getTimeStamp
 import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
 import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
-import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
+import com.hfut.schedule.logic.util.sys.DateTime
+import com.hfut.schedule.logic.util.sys.DateTimeBean
+import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
+import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ENDED
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.NOT_STARTED
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.TimeState.ONGOING
-import com.hfut.schedule.logic.util.sys.JxglstuCourseSchedule
-import com.hfut.schedule.logic.util.sys.addToCalendars
+import com.hfut.schedule.logic.util.sys.datetime.isHolidayTomorrow
+import com.hfut.schedule.logic.util.sys.datetime.isSpecificWorkDayTomorrow
 import com.hfut.schedule.logic.util.sys.getJxglstuCourseSchedule
-import com.xah.uicommon.component.text.BottomTip
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.icon.ScheduleIcons
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.icon.ScheduleIcons
+import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
-import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApi
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.align.ColumnVertical
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -584,7 +569,7 @@ fun TermTip() {
 
 @Composable
 fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
-    val courseDataSource = remember { prefs.getInt("SWITCH_DEFAULT_CALENDAR", CourseType.JXGLSTU.code) }
+    val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
 
     val data by produceState<TodayResult?>(initialValue = null) {
         onListenStateHolder(vm.todayFormCommunityResponse, onError = { _,_ -> }) { data ->
@@ -619,11 +604,18 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                 }
                 val time : Int? by produceState(initialValue = null) {
                     value = try {
-                        if(courseDataSource == CourseType.JXGLSTU.code) {
-                            getTomorrowJxglstuCourse(context).firstOrNull()?.time?.start?.hour
-                        } else {
-                            val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
-                            if(list.isEmpty()) null else list[0][0].classTime.substringBefore(":").toIntOrNull()
+                        when(courseDataSource) {
+                            CourseType.JXGLSTU.code -> {
+                                getTomorrowJxglstuCourse().firstOrNull()?.time?.start?.hour
+                            }
+                            CourseType.COMMUNITY.code -> {
+                                val list = getCourseInfoFromCommunity(weekdayTomorrow,week)
+                                if(list.isEmpty()) null else list[0][0].classTime.substringBefore(":").toIntOrNull()
+                            }
+                            CourseType.UNI_APP.code -> {
+                                getTomorrowUniAppCourse().firstOrNull()?.time?.start?.hour
+                            }
+                            else -> null
                         }
                     } catch (e : Exception) {
                         null
@@ -852,8 +844,8 @@ fun JxglstuTomorrowCourseItem(
 }
 
 // 传入今天日期 YYYY-MM-DD 返回当天课程
-suspend fun getJxglstuCourse(date : String,context: Context) : List<JxglstuCourseSchedule> {
-    val list = getJxglstuCourseSchedule(context = context)
+suspend fun getJxglstuCourse(date : String) : List<JxglstuCourseSchedule> {
+    val list = getJxglstuCourseSchedule()
     try {
         val bean = date.split("-")
         if(bean.size != 3) return emptyList()
@@ -873,8 +865,58 @@ suspend fun getJxglstuCourse(date : String,context: Context) : List<JxglstuCours
     }
 }
 
-suspend fun getTodayJxglstuCourse(context: Context) : List<JxglstuCourseSchedule> = getJxglstuCourse(
-    DateTimeManager.Date_yyyy_MM_dd,context)
+suspend fun getTodayJxglstuCourse() : List<JxglstuCourseSchedule> = getJxglstuCourse(DateTimeManager.Date_yyyy_MM_dd)
 
-suspend fun getTomorrowJxglstuCourse(context: Context) : List<JxglstuCourseSchedule> = getJxglstuCourse(
-    DateTimeManager.tomorrow_YYYY_MM_DD,context)
+suspend fun getTomorrowJxglstuCourse() : List<JxglstuCourseSchedule> = getJxglstuCourse(DateTimeManager.tomorrow_YYYY_MM_DD)
+
+// 传入今天日期 YYYY-MM-DD 返回当天课程
+suspend fun getUniAppCourse(date : String) : List<JxglstuCourseSchedule> {
+    val list = UniAppRepository.parseUniAppCourses()
+    val result = mutableListOf<JxglstuCourseSchedule>()
+    try {
+        val bean = date.split("-")
+        if(bean.size != 3) return emptyList()
+
+        val currentYear = bean[0].toInt()
+        val currentMonth = bean[1].toInt()
+        val currentDay = bean[2].toInt()
+
+        list.forEach { course ->
+            val schedule = course.schedules
+            val courseName = course.course.nameZh
+            schedule.forEach { item ->
+                if(item.date == date) {
+                    result.add(JxglstuCourseSchedule(
+                        time = DateTime(
+                            start = DateTimeBean(
+                                year = currentYear,
+                                month = currentMonth,
+                                day = currentDay,
+                                hour = item.startTime / 100,
+                                minute = item.startTime % 100
+                            ),
+                            end = DateTimeBean(
+                                year = currentYear,
+                                month = currentMonth,
+                                day = currentDay,
+                                hour = item.endTime / 100,
+                                minute = item.endTime % 100
+                            )
+                        ),
+                        place = item.room?.nameZh,
+                        courseName = courseName
+                    ))
+                }
+            }
+        }
+
+        return result.sortedBy { it.time.start.hour }
+
+    } catch (e : Exception) {
+        return emptyList()
+    }
+}
+
+suspend fun getTodayUniAppCourse() : List<JxglstuCourseSchedule> = getUniAppCourse(DateTimeManager.Date_yyyy_MM_dd)
+
+suspend fun getTomorrowUniAppCourse() : List<JxglstuCourseSchedule> = getUniAppCourse(DateTimeManager.tomorrow_YYYY_MM_DD)

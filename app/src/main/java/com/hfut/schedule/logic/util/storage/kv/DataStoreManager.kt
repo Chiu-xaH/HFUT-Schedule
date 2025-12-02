@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 object DataStoreManager : IDataStore {
@@ -251,4 +252,11 @@ object DataStoreManager : IDataStore {
         return@withContext HefeiElectricStorage(hefeiBuildingNumber, hefeiRoomNumber, hefeiElectric)
     }
     val enableMergeSquare = getFlow(MERGE_SQUARE,false)
+
+    fun getSyncDefaultCalendar(): Int? {
+        return runBlocking {
+            val preferences = dataStore.data.first() // 获取第一次的值
+            preferences[DEFAULT_CALENDAR] // 返回你需要的值
+        }
+    }
 }

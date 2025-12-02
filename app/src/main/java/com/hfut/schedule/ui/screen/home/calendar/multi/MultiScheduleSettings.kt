@@ -256,7 +256,7 @@ fun MultiScheduleSettings(
                         },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                LargeStringDataManager.read(context, LargeStringDataManager.DATUM)?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
+                                LargeStringDataManager.read(LargeStringDataManager.DATUM)?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
                                 shareTextFile("HFUT-Schedule-Share.txt")
                             }
                         }
@@ -382,8 +382,8 @@ private fun EventUI() {
                 activity?.let {
                     scope.launch {
                         async { loading = true }.await()
-                        async { delAllCourseEvent(context,activity = it) }.await()
-                        async { addCourseToEvent(context,activity = it,time) }.await()
+                        async { delAllCourseEvent(activity = it) }.await()
+                        async { addCourseToEvent(activity = it,time) }.await()
                         launch { loading = false }
                     }
                 }
@@ -402,7 +402,7 @@ private fun EventUI() {
                 activity?.let {
                     scope.launch {
                         async { loading = true }.await()
-                        async { delAllCourseEvent(context,activity = it) }.await()
+                        async { delAllCourseEvent(activity = it) }.await()
                         launch { loading = false }
                     }
                 }

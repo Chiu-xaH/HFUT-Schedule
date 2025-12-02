@@ -87,7 +87,7 @@ fun XwxMainScreen(vm: XwxViewModel, navHostController: NavHostController) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val uiState by vm.functionsResp.state.collectAsState()
     val savedInfo by produceState<XwxLoginInfo?>(initialValue = null) {
-        value = getXwxLogin(context)
+        value = getXwxLogin()
     }
 
     val previewUiState by vm.docPreviewResp.state.collectAsState()

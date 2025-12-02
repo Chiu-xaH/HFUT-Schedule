@@ -8,7 +8,6 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventType
 import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
-import com.hfut.schedule.logic.model.jxglstu.semester
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.network.util.toStr
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -28,11 +27,11 @@ import java.time.LocalDate
 import kotlin.collections.plus
 
 // 分配20周
-suspend fun allToTimeTableDataUniApp(context: Context): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
+suspend fun allToTimeTableDataUniApp(): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
     // 并发调用三个数据源
-    val jxglstuDeferred = async { uniAppToTimeTableData(context) }
+    val jxglstuDeferred = async { uniAppToTimeTableData() }
     val focusDeferred = async { focusToTimeTableData() }
-    val examDeferred = async { examToTimeTableData(context) }
+    val examDeferred = async { examToTimeTableData() }
 
     val jxglstuList = jxglstuDeferred.await()
     val focusList = focusDeferred.await()
@@ -44,14 +43,14 @@ suspend fun allToTimeTableDataUniApp(context: Context): List<List<TimeTableItem>
     }
 }
 
-suspend fun allToTimeTableData(context: Context,friendStudentId: String?): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
+suspend fun allToTimeTableData(friendStudentId: String?): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
     // 并发调用三个数据源
     val jxglstuDeferred = async { communityToTimeTableData(friendStudentId) }
     if(friendStudentId != null) {
         return@withContext jxglstuDeferred.await()
     }
     val focusDeferred = async { focusToTimeTableData() }
-    val examDeferred = async { examToTimeTableData(context) }
+    val examDeferred = async { examToTimeTableData() }
 
     val jxglstuList = jxglstuDeferred.await()
     val focusList = focusDeferred.await()
@@ -63,11 +62,11 @@ suspend fun allToTimeTableData(context: Context,friendStudentId: String?): List<
     }
 }
 
-suspend fun allToTimeTableData(context: Context): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
+suspend fun allToTimeTableData(): List<List<TimeTableItem>> = withContext(Dispatchers.Default) {
     // 并发调用三个数据源
-    val jxglstuDeferred = async { jxglstuToTimeTableData(context) }
+    val jxglstuDeferred = async { jxglstuToTimeTableData() }
     val focusDeferred = async { focusToTimeTableData() }
-    val examDeferred = async { examToTimeTableData(context) }
+    val examDeferred = async { examToTimeTableData() }
 
     val jxglstuList = jxglstuDeferred.await()
     val focusList = focusDeferred.await()
@@ -79,8 +78,8 @@ suspend fun allToTimeTableData(context: Context): List<List<TimeTableItem>> = wi
     }
 }
 
-private suspend fun uniAppToTimeTableData(context: Context): List<List<TimeTableItem>> {
-    val json = LargeStringDataManager.read(context, LargeStringDataManager.UNI_APP_COURSES)
+private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
+    val json = LargeStringDataManager.read( LargeStringDataManager.UNI_APP_COURSES)
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
@@ -108,8 +107,8 @@ private suspend fun uniAppToTimeTableData(context: Context): List<List<TimeTable
                         type = TimeTableType.COURSE,
                         name = courseName,
                         dayOfWeek = schedule.weekday,
-                        startTime = parseTime(schedule.startTime),
-                        endTime = parseTime(schedule.endTime),
+                        startTime = parseJxglstuIntTime(schedule.startTime),
+                        endTime = parseJxglstuIntTime(schedule.endTime),
                         place = schedule.room?.nameZh?.simplifyPlace(),
                     )
                 )
@@ -124,8 +123,8 @@ private suspend fun uniAppToTimeTableData(context: Context): List<List<TimeTable
     }
 }
 
-private suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTableItem>> {
-    val json = LargeStringDataManager.read(context, LargeStringDataManager.DATUM)
+private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
+    val json = LargeStringDataManager.read(LargeStringDataManager.DATUM)
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
@@ -163,8 +162,8 @@ private suspend fun jxglstuToTimeTableData(context: Context): List<List<TimeTabl
                     type = TimeTableType.COURSE,
                     name = item.lessonId.toString().let { courseNameMap[it] ?: it },
                     dayOfWeek = item.weekday,
-                    startTime = parseTime(item.startTime),
-                    endTime = parseTime(item.endTime),
+                    startTime = parseJxglstuIntTime(item.startTime),
+                    endTime = parseJxglstuIntTime(item.endTime),
                     place = item.room?.nameZh?.simplifyPlace(),
                 )
             )
@@ -261,10 +260,10 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
     }
 }
 
-private suspend fun examToTimeTableData(context : Context): List<List<TimeTableItem>> {
+private suspend fun examToTimeTableData(): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
-        val examList = examToCalendar(context)
+        val examList = examToCalendar()
         for (item in examList) {
             val startTime = item.startTime ?: continue
             val endTime = item.endTime ?: continue
@@ -278,7 +277,7 @@ private suspend fun examToTimeTableData(context : Context): List<List<TimeTableI
             list.add(
                 TimeTableItem(
                     type = TimeTableType.EXAM,
-                    name = name,
+                    name = name + (item.type?.let { "-$it" } ?: ""),
                     dayOfWeek = weekInfo.second,
                     startTime = startTime,
                     endTime = endTime,
@@ -339,7 +338,7 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
     return result
 }
 
-private fun parseTime(time : Int) : String {
+fun parseJxglstuIntTime(time : Int) : String {
     val hour = time / 100
     val minute = time % 100
     return "${parseTimeItem(hour)}:${parseTimeItem(minute)}"

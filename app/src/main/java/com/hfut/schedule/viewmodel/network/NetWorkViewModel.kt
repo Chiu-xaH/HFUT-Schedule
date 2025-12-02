@@ -22,7 +22,6 @@ import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionBean
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HuiXinHefeiBuildingBean
-import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.NewsResponse
 import com.hfut.schedule.logic.model.OfficeHallSearchBean
 import com.hfut.schedule.logic.model.PayData
@@ -68,26 +67,28 @@ import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
+import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.ClassroomBean
 import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
 import com.hfut.schedule.logic.model.zhijian.ZhiJianCourseItemDto
+import com.hfut.schedule.logic.network.repo.GithubRepository
+import com.hfut.schedule.logic.network.repo.QWeatherRepository
+import com.hfut.schedule.logic.network.repo.SupabaseRepository
 import com.hfut.schedule.logic.network.repo.hfut.CasLoginRepository
 import com.hfut.schedule.logic.network.repo.hfut.CommunityRepository
-import com.hfut.schedule.logic.network.repo.GithubRepository
 import com.hfut.schedule.logic.network.repo.hfut.GuaGuaRepository
 import com.hfut.schedule.logic.network.repo.hfut.HuiXinRepository
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.hfut.LibraryRepository
 import com.hfut.schedule.logic.network.repo.hfut.LoginSchoolNetRepository
 import com.hfut.schedule.logic.network.repo.hfut.NewsRepository
 import com.hfut.schedule.logic.network.repo.hfut.OneRepository
-import com.hfut.schedule.logic.network.repo.QWeatherRepository
 import com.hfut.schedule.logic.network.repo.hfut.Repository
-import com.hfut.schedule.logic.network.repo.SupabaseRepository
-import com.hfut.schedule.logic.network.repo.hfut.LibraryRepository
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.network.repo.hfut.WxRepository
 import com.hfut.schedule.logic.util.network.getPageSize
@@ -522,5 +523,11 @@ class NetWorkViewModel() : ViewModel() {
 
     val uniAppGradesResp = StateHolder<Map<String, List<UniAppGradeBean>>>()
     suspend fun getUniAppGrades(token : String) = UniAppRepository.getGrades(token,uniAppGradesResp)
+
+    val searchProgramsResp = StateHolder<List<UniAppSearchProgramBean>>()
+    suspend fun searchPrograms(token : String, page : Int , keyword : String) = UniAppRepository.searchPrograms(token,page,keyword,searchProgramsResp)
+
+    val getProgramByIdResp = StateHolder<ProgramSearchBean>()
+    suspend fun getProgramById(id : Int, token: String, ) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
 }
 

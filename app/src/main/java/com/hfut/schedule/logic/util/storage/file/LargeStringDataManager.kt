@@ -2,6 +2,7 @@ package com.hfut.schedule.logic.util.storage.file
 
 import android.content.Context
 import androidx.core.content.edit
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -9,7 +10,7 @@ import kotlinx.coroutines.withContext
 
 private const val CACHE_DIR_NAME = "data_cache"
 
-object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME) {
+object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME, MyApplication.context) {
     const val DATUM = "datum"
     const val PROGRAM = "program"
     const val PROGRAM_PERFORMANCE = "program_performance"
@@ -32,40 +33,39 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME) {
     const val GRADE = "grade"
     const val XWX_USER_INFO = "xwx_user_info"
     const val UNI_APP_COURSES = "uni_app_courses"
+    const val UNI_APP_EXAMS = "uni_app_exams"
 
     // 迁移函数 从SharePrefs迁移到这里并删除
-    private suspend fun move(context: Context, oldKey : String, newKey : String) {
+    private suspend fun move(oldKey : String, newKey : String) {
         withContext(Dispatchers.IO) {
             val content = SharedPrefs.prefs.getString(oldKey, null) ?: return@withContext
-            save(context, newKey, content)
+            save(newKey, content)
             // 删除原有
             SharedPrefs.prefs.edit { remove(oldKey) }
         }
     }
 
-    suspend fun moveLargeJson(
-        context: Context
-    ) {
+    suspend fun moveLargeJson() {
         withContext(Dispatchers.IO) {
             launch {
                 // 培养方案
-                move(context, "program", PROGRAM)
+                move("program", PROGRAM)
             }
             launch {
                 // 培养方案完成情况
-                move(context, "PROGRAM_PERFORMANCE", PROGRAM_PERFORMANCE)
+                move("PROGRAM_PERFORMANCE", PROGRAM_PERFORMANCE)
             }
             launch {
                 // 学籍照
-                move(context, "photo", PHOTO)
+                move("photo", PHOTO)
             }
             launch {
                 // 课程表
-                move(context, "json", DATUM)
+                move("json", DATUM)
             }
             launch {
                 // 考试
-                move(context,"examJXGLSTU",EXAM)
+                move("examJXGLSTU",EXAM)
             }
 //            launch {
             // 课程汇总

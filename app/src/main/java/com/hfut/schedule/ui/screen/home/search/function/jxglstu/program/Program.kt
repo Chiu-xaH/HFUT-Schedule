@@ -90,7 +90,7 @@ fun Program(
         },
         modifier = Modifier.clickable {
             scope.launch {
-                val json = LargeStringDataManager.read(context,LargeStringDataManager.PROGRAM)
+                val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
 
                 if (json?.contains("children") == true || !ifSaved) {
                     navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
@@ -141,7 +141,7 @@ fun ProgramScreen(
                         iconModifier = Modifier.iconElementShare( route = competitionRoute),
                         onClick = {
                             scope.launch {
-                                val json = LargeStringDataManager.read(context, LargeStringDataManager.PROGRAM_PERFORMANCE)
+                                val json = LargeStringDataManager.read( LargeStringDataManager.PROGRAM_PERFORMANCE)
                                 if(json?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
                                 else refreshLogin(context)
                             }

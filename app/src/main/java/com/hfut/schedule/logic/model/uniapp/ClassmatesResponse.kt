@@ -3,7 +3,7 @@ package com.hfut.schedule.logic.model.uniapp
 import com.google.gson.annotations.SerializedName
 
 data class ClassmatesResponse(
-    val data : List<ClassmatesBean>
+    val data : List<ClassmatesBean>?
 )
 
 data class ClassmatesBean(

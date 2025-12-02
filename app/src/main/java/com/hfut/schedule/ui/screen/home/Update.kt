@@ -19,15 +19,12 @@ import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.coroutines.cancellation.CancellationException
 
 suspend fun getJxglstuCookie() : String? {
     var cookie : String?
@@ -114,7 +111,10 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
         // 更新合工大教务课表
         if(uniAppJwt.isNotEmpty() && uniAppJwt.isNotBlank()) {
             launch {
-                UniAppRepository.getCourses(uniAppJwt)
+                UniAppRepository.updateCourses(uniAppJwt)
+            }
+            launch {
+                UniAppRepository.updateExams(uniAppJwt)
             }
         }
         //检查更新
@@ -205,7 +205,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, context: Context) = withContext(
     vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
     vm.getDatum(cookie,lessonResponse.lessonIds)
     val datum = (vm.datumData.state.value as? UiState.Success)?.data ?: return@withContext
-    LargeStringDataManager.save(context, LargeStringDataManager.DATUM,datum)
+    LargeStringDataManager.save(LargeStringDataManager.DATUM,datum)
 }
 
 private fun getHoliday() : HolidayResponse? {
