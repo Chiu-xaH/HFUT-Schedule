@@ -284,7 +284,7 @@ fun UpdateUI(
                             update?.name?.let { version ->
                                 viewModel.startDownload(
                                     "${MyApplication.GITEE_UPDATE_URL}releases/download/Android/${version}.apk",
-                                    "聚在工大_${version}.apk",
+                                    "${MyApplication.APP_NAME}_${version}.apk",
                                     context
                                 )
                             }

@@ -1,7 +1,7 @@
 # 统计报表
 
 ## 项目代码量
-不包括增量更新、镜面效果两个模块(已发布至JitPack)，以Static插件统计aidl,java,kt,py,sql的总行数减去空行数，截止1015-10-31T18:18为**66744行**，其中Kotlin占比**99.12%**
+不包括增量更新、镜面效果两个模块(已发布至JitPack)，以Static插件统计aidl,java,kt,py,sql的总行数减去空行数，截止1015-12-02T23:15为**70630行**，其中Kotlin占比约**98.77%**
 
 ## Star
 [![Star history chart](https://api.star-history.com/svg?repos=Chiu-xaH/HFUT-SChedule&type=Date)](https://www.star-history.com/#Chiu-xaH/HFUT-Schedule&Date)

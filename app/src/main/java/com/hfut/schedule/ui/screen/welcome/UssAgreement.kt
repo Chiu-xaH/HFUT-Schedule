@@ -38,6 +38,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.file.killApp
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
@@ -144,7 +145,7 @@ fun UseAgreementScreen(
                         FilledTonalButton(
                             onClick = {
                                 showToast("已关闭APP")
-                                activity?.finish()
+                                killApp()
                             },
                             modifier = Modifier
                                 .fillMaxWidth()

@@ -159,6 +159,8 @@ class MyApplication : Application() {
                 "James-Zhang2" to 175417444
             )
         }
+        // App名称
+        const val APP_NAME = "聚在工大"
         // 仓库地址
         const val GITHUB_REPO_URL = "$GITHUB_URL$GITHUB_DEVELOPER_NAME/$GITHUB_REPO_NAME"
         // 邮箱后缀

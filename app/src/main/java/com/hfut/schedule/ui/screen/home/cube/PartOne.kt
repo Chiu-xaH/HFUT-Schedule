@@ -142,10 +142,9 @@ sealed class Screen(val route: String) {
     data object CalendarScreen : Screen("Calendar")
     data object LockScreen : Screen("Lock")
     data object FocusCardScreen : Screen("FocusCard")
-//    data object RequestRangeScreen : Screen("RequestRange")
     data object HuiXinPasswordScreen : Screen("Password")
     data object JxglstuPasswordScreen : Screen("JxglstuPassword")
-
+    data object BackupScreen : Screen("Backup")
 }
 
 

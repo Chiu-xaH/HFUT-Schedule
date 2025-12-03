@@ -89,6 +89,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
@@ -437,69 +438,121 @@ fun DetailItems(
                         }
 
                     }
-                    val teacherNum = lessons.teacherAssignmentList?.size ?: 0
-                    if(teacherNum > 1) {
-                        PaddingHorizontalDivider(isDashed = true)
-                    }
-                    for (i in 0 until teacherNum) {
-                        val teacherList = lessons.teacherAssignmentList?.get(i)
-                        Row(modifier = Modifier.clickable {
-                            if (teacherList != null) {
-                                permit = 1
-                                teacherTitle = teacherList.person.nameZh
-                                showBottomSheet_Teacher = true
-                            }
-                        }) {
-                            TransplantListItem(
-                                overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
-                                headlineContent = {
-                                    if (teacherList != null) {
-                                        Text( teacherList.person.nameZh )
-                                    }
-                                },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.person),
-                                        contentDescription = "Localized description",
+                    if(lessons.teacherAssignmentList != null) {
+                        val teacherNum = lessons.teacherAssignmentList.size
+                        if(teacherNum > 0) {
+                            PaddingHorizontalDivider(isDashed = true)
+                        }
+
+                        val onlyShowName = lessons.teacherAssignmentList.find {
+                            !(it.teacher == null && it.age == null)
+                        } == null
+
+                        if(onlyShowName) {
+                            for (i in 0 until teacherNum step 2) {
+                                val teacherList = lessons.teacherAssignmentList[i]
+                                RowHorizontal  {
+                                    TransplantListItem(
+                                        overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
+                                        headlineContent = {
+                                            Text( teacherList.person.nameZh )
+                                        },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.person),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .weight(.5f)
+                                            .clickable {
+                                            permit = 1
+                                            teacherTitle = teacherList.person.nameZh
+                                            showBottomSheet_Teacher = true
+                                        }
                                     )
-                                },
-                                modifier = Modifier
-                                    .weight(.5f),
-                            )
-                            TransplantListItem(
-                                headlineContent = {
-                                    if (teacherList != null) {
-                                        val t = teacherList.teacher?.title?.nameZh ?: "未知"
-                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
-                                    }
-                                },
-                                overlineContent = {
-                                    if (teacherList != null) {
-                                        Text(text =
-                                            teacherList.age?.let { age ->
-                                                if(age < 100) {
-                                                    "年龄 $age"
-                                                } else {
-                                                    "年龄未知"
+                                    if(i+1 < teacherNum) {
+                                        val teacherList2 = lessons.teacherAssignmentList[i+1]
+                                        TransplantListItem(
+                                            overlineContent = { Text("教师 " + (i+1+1).toString()) },
+                                            headlineContent = {
+                                                Text( teacherList2.person.nameZh )
+                                            },
+                                            leadingContent = {
+                                                Icon(
+                                                    painterResource(R.drawable.person),
+                                                    contentDescription = "Localized description",
+                                                )
+                                            },
+                                            modifier = Modifier
+                                                .weight(.5f)
+                                                .clickable {
+                                                    permit = 1
+                                                    teacherTitle = teacherList2.person.nameZh
+                                                    showBottomSheet_Teacher = true
                                                 }
-                                            } ?: "年龄未知"
                                         )
                                     }
-                                },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.info),
-                                        contentDescription = "Localized description",
+                                }
+                            }
+                        } else {
+                            for (i in 0 until teacherNum) {
+                                val teacherList = lessons.teacherAssignmentList[i]
+
+                                Row(modifier = Modifier.clickable {
+                                    permit = 1
+                                    teacherTitle = teacherList.person.nameZh
+                                    showBottomSheet_Teacher = true
+                                }) {
+
+                                    TransplantListItem(
+                                        overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
+                                        headlineContent = {
+                                            Text( teacherList.person.nameZh )
+                                        },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.person),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .weight(.5f),
                                     )
-                                },
-                                modifier = Modifier
-                                    .weight(.5f),
-                            )
+                                    TransplantListItem(
+                                        headlineContent = {
+                                            val t = teacherList.teacher?.title?.nameZh ?: "未知"
+                                            ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
+                                        },
+                                        overlineContent = {
+                                            Text(text =
+                                                teacherList.age?.let { age ->
+                                                    if(age < 100) {
+                                                        "年龄 $age"
+                                                    } else {
+                                                        "年龄未知"
+                                                    }
+                                                } ?: "年龄未知"
+                                            )
+                                        },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(R.drawable.info),
+                                                contentDescription = "Localized description",
+                                            )
+                                        },
+                                        modifier = Modifier
+                                            .weight(.5f),
+                                    )
+                                }
+                            }
+                        }
+
+                        if(teacherNum > 0) {
+                            PaddingHorizontalDivider(isDashed = true)
                         }
                     }
-                    if(teacherNum > 1) {
-                        PaddingHorizontalDivider(isDashed = true)
-                    }
+
                     Row {
                         var department = lessons.openDepartment.nameZh
                         if(department.contains("（")) department = department.substringBefore("（")
@@ -724,6 +777,9 @@ fun ClassmatesScreen(
     var input by remember { mutableStateOf("") }
     CustomTextField(
         input = input,
+        leadingIcon = {
+            Icon(painterResource(R.drawable.search),null)
+        },
         label = { Text("搜索 学号、班级、姓名") }
     ) { input = it }
     Spacer(Modifier.height(CARD_NORMAL_DP))
@@ -766,7 +822,7 @@ fun ClassmatesScreen(
             .sortedByDescending { it.first }
 
         val filteredList = list.filter {
-            it.code.contains(input) || it.nameZh.contains(input) || it.className.contains(input) || it.gender.contains(input)
+            it.code.startsWith(input) || it.nameZh.contains(input) || it.className.contains(input) || it.gender.contains(input)
         }
 
         LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP)){

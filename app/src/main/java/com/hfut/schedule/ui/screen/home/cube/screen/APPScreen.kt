@@ -473,7 +473,7 @@ fun APPScreen(
                         Text("将本地数据库和偏好设置导出或导入")
                     },
                     modifier = Modifier.clickable {
-                        showToast("正在开发")
+                        navController.navigate(Screen.BackupScreen.route)
                     }
                 )
                 PaddingHorizontalDivider()

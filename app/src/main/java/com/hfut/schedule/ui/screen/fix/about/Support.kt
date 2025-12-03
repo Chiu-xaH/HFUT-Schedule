@@ -80,7 +80,7 @@ fun Support(innerPadding : PaddingValues) {
     LazyColumn(modifier = Modifier.padding(innerPadding)) {
         item {
             CardListItem(
-                headlineContent = { Text("聚在工大致力于为每个用户提供平等的服务，但由于不同手机厂商对Android系统的定制，以及Android版本的不同，导致最终效果往往不同，但以下的特性均不影响APP的功能") },
+                headlineContent = { Text("${MyApplication.APP_NAME}致力于为每个用户提供平等的服务，但由于不同手机厂商对Android系统的定制，以及Android版本的不同，导致最终效果往往不同，但以下的特性均不影响APP的功能") },
                 leadingContent = {
                     Icon(painterResource(R.drawable.info),null)
                 }

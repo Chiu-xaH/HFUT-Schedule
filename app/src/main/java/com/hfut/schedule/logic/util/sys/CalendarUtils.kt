@@ -72,7 +72,7 @@ private suspend fun checkExistEvent(dateTime: DateTime, title: String, activity:
         null
     }
 }
-private const val CALENDAR_COURSE_TAG = "聚在工大-"
+private const val CALENDAR_COURSE_TAG = MyApplication.APP_NAME
 
 suspend fun delAllCourseEvent(activity: Activity) = withContext(Dispatchers.IO) {
     checkAndRequestCalendarPermission(activity)

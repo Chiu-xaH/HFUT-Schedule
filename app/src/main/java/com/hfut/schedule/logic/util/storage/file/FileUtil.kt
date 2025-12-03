@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.util.storage.file
 import android.content.Context
 import android.os.Environment
 import android.webkit.WebStorage
+import com.hfut.schedule.application.MyApplication
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -51,7 +52,7 @@ suspend fun cleanCache(context : Context): Double = withContext(Dispatchers.IO) 
                 // 删除 内部存储 Download 中 "聚在工大_" 开头的 .apk 文件
                 val publicDownloadDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                 publicDownloadDir?.listFiles()?.forEach {
-                    if (it.name.startsWith("聚在工大_") && it.name.endsWith(".apk")) {
+                    if (it.name.startsWith("${MyApplication.APP_NAME}_") && it.name.endsWith(".apk")) {
                         totalDeletedBytes += it.length()
                         it.delete()
                     }

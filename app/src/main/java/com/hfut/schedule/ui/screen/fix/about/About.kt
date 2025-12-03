@@ -269,7 +269,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "使用提示") },
-                    supportingContent = { Text(text = "学习聚在工大的隐藏技巧")},
+                    supportingContent = { Text(text = "学习${MyApplication.APP_NAME}的隐藏技巧")},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.lightbulb),

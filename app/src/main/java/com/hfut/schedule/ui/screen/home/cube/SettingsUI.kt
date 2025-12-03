@@ -26,6 +26,7 @@ import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
+import com.hfut.schedule.ui.screen.home.cube.sub.BackupScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DownloadMLUI
@@ -154,6 +155,11 @@ fun SettingsScreen(vm : NetWorkViewModel,
             composable(Screen.GestureStudyScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     GestureStudyScreen(hazeState,innerPaddings,navController)
+                }
+            }
+            composable(Screen.BackupScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    BackupScreen(innerPaddings,navController)
                 }
             }
         }

@@ -46,7 +46,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
         try {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val timestamp = System.currentTimeMillis() / 1000 // 秒级时间戳
-            val filename = "聚在工大_崩溃日志_${timestamp}.log"
+            val filename = "${MyApplication.APP_NAME}_崩溃日志_${timestamp}.log"
             val file = File(downloadsDir, filename)
             val log = """
                 软件版本 ${AppVersion.getVersionName()}(${AppVersion.getVersionCode()})

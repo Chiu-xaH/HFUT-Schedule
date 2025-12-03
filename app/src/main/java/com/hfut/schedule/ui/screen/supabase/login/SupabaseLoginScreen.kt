@@ -102,7 +102,7 @@ fun SupabaseLoginScreen(vm : NetWorkViewModel,navHostController: NavHostControll
                 colors = topAppBarColors(containerColor = Color.Transparent, titleContentColor = MaterialTheme.colorScheme.primary),
                 title = {
                     Text(
-                        text = "聚在工大信息平台" , modifier = Modifier.padding(start = 10.dp)
+                        text = "${MyApplication.APP_NAME}信息平台" , modifier = Modifier.padding(start = 10.dp)
                     )
                 },
                 actions = {
