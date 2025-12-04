@@ -642,7 +642,6 @@ fun RefreshUniApp(showOnCas : Boolean = false) {
             scope.launch {
                 loading = true
                 UniAppRepository.login()
-//                loginHuiXin(vm)
                 loading = false
             }
         }

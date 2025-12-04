@@ -6,6 +6,8 @@ import android.os.Environment
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.showToast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -16,13 +18,13 @@ import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
 
 // 打包整个 dataDir到下载目录以"聚在工大备份_时间戳.zip"命名
-fun backupData(
+suspend fun backupData(
     activity: Activity,
     context: Context
-): Boolean {
+): Boolean = withContext(Dispatchers.IO)  {
     val fileName = "${MyApplication.APP_NAME}_备份_${System.currentTimeMillis()}.zip"
 
-    return try {
+    return@withContext try {
         // ---- Android 6–9（旧版）使用外部存储目录，需要权限 ----
         PermissionSet.checkAndRequestStoragePermission(activity)
 
@@ -93,23 +95,23 @@ fun killApp() {
     kotlin.system.exitProcess(0)
 }
 // 恢复 传入文件，然后killApp
-fun restoreData(
+suspend fun restoreData(
     activity: Activity,
     context: Context,
     backupFile: File,
-) {
+) = withContext(Dispatchers.IO) {
     PermissionSet.checkAndRequestStoragePermission(activity)
     try {
         if (!backupFile.exists() || !backupFile.canRead()) {
             showToast("空文件")
-            return
+            return@withContext
         }
 
         // 检查是否是合法 ZIP
         ZipFile(backupFile).use { zip ->
             if (!zip.entries().hasMoreElements()) {
                 showToast("空文件")
-                return
+                return@withContext
             }
         }
 

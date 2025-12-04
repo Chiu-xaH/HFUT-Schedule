@@ -53,6 +53,7 @@ import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuGrade
+import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
@@ -313,13 +314,16 @@ fun GradeItemUIUniApp(
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = m@ {
-        val cookie = DataStoreManager.uniAppJwt.first()
+        var cookie = DataStoreManager.uniAppJwt.first()
         if(cookie.isEmpty() || cookie.isEmpty()) {
-            vm.uniAppGradesResp.emitError(Exception("未登录"))
-            return@m
+            val loginResult = UniAppRepository.login()
+            if(loginResult == false) {
+                return@m
+            }
+            cookie = DataStoreManager.uniAppJwt.first()
         }
         vm.uniAppGradesResp.clear()
-        vm.getUniAppGrades(cookie,)
+        vm.getUniAppGrades(cookie)
     }
 
     val refreshing = uiState is UiState.Loading

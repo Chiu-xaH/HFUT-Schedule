@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
+import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemseterParser
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -763,13 +764,16 @@ fun ClassmatesScreen(
 ) {
     val uiState by vm.classmatesResp.state.collectAsState()
     val refreshNetwork = suspend m@ {
-        val jwt = DataStoreManager.uniAppJwt.first()
-        if(jwt.isBlank() || jwt.isEmpty()) {
-            vm.classmatesResp.emitError(Exception("未登录过"))
-            return@m
+        var cookie = DataStoreManager.uniAppJwt.first()
+        if(cookie.isEmpty() || cookie.isEmpty()) {
+            val loginResult = UniAppRepository.login()
+            if(loginResult == false) {
+                return@m
+            }
+            cookie = DataStoreManager.uniAppJwt.first()
         }
         vm.classmatesResp.clear()
-        vm.getClassmates(lessonId, jwt)
+        vm.getClassmates(lessonId, cookie)
     }
     LaunchedEffect(Unit) {
         refreshNetwork()

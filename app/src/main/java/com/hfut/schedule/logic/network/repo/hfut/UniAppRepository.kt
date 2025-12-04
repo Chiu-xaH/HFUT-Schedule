@@ -30,31 +30,37 @@ import retrofit2.awaitResponse
 
 object UniAppRepository {
     private val uniApp = UniAppServiceCreator.create(UniAppService::class.java)
+    private val failedText = "登陆合工大教务失败"
 
-    suspend fun login()  {
-        val sId = getPersonInfo().studentId ?: return
-        val pwd = getJxglstuPassword() ?: return
+    suspend fun login() : Boolean {
+        val sId = getPersonInfo().studentId
+        val pwd = getJxglstuPassword()
+        if(pwd == null || sId == null) {
+            showToast("$failedText(游客)")
+            return false
+        }
         val request = uniApp.login(
             studentId = sId,
             password = Crypto.rsaEncrypt(pwd)
         ).awaitResponse()
         val json = request.body()?.string()
         if(json == null) {
-            showToast("登陆合工大教务失败")
-            return
+            showToast(failedText)
+            return false
         }
         if(!request.isSuccessful) {
             val msg = parseLogin(json,false)
-            showToast("登陆合工大教务失败${msg}")
-            return
+            showToast("$failedText$msg")
+            return false
         }
         val token = parseLogin(json,true)
         if(token == null) {
-            showToast("登陆合工大教务失败2")
-            return
+            showToast("${failedText}2")
+            return false
         }
         DataStoreManager.saveUniAppJwt(token)
         showToast("登陆合工大教务成功")
+        return true
     }
     @JvmStatic
     private fun parseLogin(
