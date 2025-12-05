@@ -24,19 +24,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_END_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
 import com.xah.uicommon.style.align.ColumnVertical
 import kotlin.math.roundToInt
 
 private val padding = 4.dp
 private const val columnCount = 4
-private const val endTime = "21:50"
+private const val endCourseTime = "21:50"
 
 @Composable
 fun TimeTablePreview(
@@ -67,7 +69,7 @@ fun TimeTablePreview(
                 ColumnVertical {
                     MiniTimetablePreview(
                         items = list,
-                        endTime = parseTimeToFloat(endTime),
+                        endTime = parseTimeToFloat(endCourseTime),
                         modifier = Modifier
                             .height(160.dp)
                             .width(90.dp)
@@ -94,9 +96,9 @@ private fun MiniTimetablePreview(
     items: List<TimeTableItem>,
     modifier: Modifier = Modifier,
     startTime: Float = 8f,
-    endTime: Float = parseTimeToFloat("21:50"),
+    endTime: Float = parseTimeToFloat(endCourseTime),
     zipTime: List<Pair<Float, Float>> = listOf(
-        Pair(parseTimeToFloat("12:10"), parseTimeToFloat("14:00")),
+        Pair(parseTimeToFloat(MOON_REST_START_TIME), parseTimeToFloat(MOON_REST_END_TIME)),
     ),
     zipTimeFactor: Float = 0.1f
 ) {

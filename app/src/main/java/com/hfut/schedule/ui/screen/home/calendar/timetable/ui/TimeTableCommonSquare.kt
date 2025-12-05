@@ -24,9 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_END_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
 
@@ -73,13 +76,13 @@ fun TimetableCommonSquare(
     items: List<TimeTableItem>,
     modifier: Modifier = Modifier,
     innerPadding : PaddingValues,
-    startTime: Float = DEFAULT_START_TIME,
-    endTime : Float = DEFAULT_END_TIME,
+    startTime: Float = parseTimeToFloat(DEFAULT_START_TIME),
+    endTime : Float = parseTimeToFloat(DEFAULT_END_TIME),
     hourHeight: Dp = 65.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(
-        Pair(parseTimeToFloat("12:10"), parseTimeToFloat("14:00")),
+        Pair(parseTimeToFloat(MOON_REST_START_TIME), parseTimeToFloat(MOON_REST_END_TIME)),
     ),
     zipTimeFactor : Float = 0.1f,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,
@@ -160,3 +163,5 @@ fun TimetableCommonSquare(
         }
     }
 }
+
+

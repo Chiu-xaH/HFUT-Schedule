@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.logic
 
-import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
@@ -204,7 +203,7 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
             val name = item.title
             val place = item.description?.simplifyPlace()
 
-            // 跨天日程将其分裂
+            // 跨天日程将其分裂 但是顶部强制8:00，底部强制22:00 例如一个12-05 12:00 ~ 12-07 14:00 日程，分裂为12-05 12:00~22:00,12-06 08:00~22:00,12-07 08:00~14:00
             if(endDate != startDate) {
                 var currentDate = LocalDate.parse(startDate)
                 val endLocalDate = LocalDate.parse(endDate)
@@ -218,11 +217,11 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
 
                     val currentStartTime = when {
                         isFirstDay -> startTime
-                        else -> "00:00"
+                        else -> DEFAULT_START_TIME
                     }
                     val currentEndTime = when {
                         isLastDay -> endTime
-                        else -> "24:00"
+                        else -> DEFAULT_END_TIME
                     }
 
                     list.add(
@@ -238,6 +237,7 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
                     )
                     currentDate = currentDate.plusDays(1)
                 }
+
             } else {
                 // 同一天
                 list.add(

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -26,18 +25,16 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAppNavController
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 
@@ -71,20 +68,30 @@ fun TimeTable(
     }  else {
         items[week-1]
     }
+
     val textSize = (if(!showAll) 12.5.sp else 11.sp) * calendarSquareTextSize
     val lineHeight = textSize * calendarSquareTextPadding
     val timeTextLineHeight = lineHeight*timeTextFactor
     val timeTextSize = textSize*timeTextFactor
     val placeTextLineHeight = lineHeight*placeTextFactor
     val placeTextSize = textSize*placeTextFactor
+
     val hasBackground = shaderState != null
 
-    val earliestTime = list.minOfOrNull { it.startTime }
-    val startTime = earliestTime?.let {
-        minOf(parseTimeToFloat(it), DEFAULT_START_TIME)
-    } ?: DEFAULT_START_TIME
-
     val round = MaterialTheme.shapes.extraSmall
+
+    val earliestTime = list.minOfOrNull { it.startTime }
+    val latestTime = list.maxOfOrNull { it.endTime }
+    val startTime =  parseTimeToFloat(DEFAULT_START_TIME).let { defaultTime ->
+        earliestTime?.let {
+            minOf(parseTimeToFloat(it), defaultTime)
+        } ?: defaultTime
+    }
+    val endTime =  parseTimeToFloat(DEFAULT_END_TIME).let { defaultTime ->
+        latestTime?.let {
+            maxOf(parseTimeToFloat(it), defaultTime)
+        } ?: defaultTime
+    }
 
     if(enableMergeSquare) {
         TimetableCommonSquare(
@@ -95,6 +102,7 @@ fun TimeTable(
             innerPadding = innerPadding,
             hourHeight = calendarSquareHeight.dp,
             startTime = startTime,
+            endTime = endTime,
             onDoubleTapBlankRegion = onDoubleTapBlankRegion,
             onLongTapBlankRegion = onLongTapBlankRegion,
             onTapBlankRegion = onTapBlankRegion
@@ -290,6 +298,7 @@ fun TimeTable(
             innerPadding = innerPadding,
             hourHeight = calendarSquareHeight.dp,
             startTime = startTime,
+            endTime = endTime,
             onDoubleTapBlankRegion = onDoubleTapBlankRegion,
             onLongTapBlankRegion = onLongTapBlankRegion,
             onTapBlankRegion = onTapBlankRegion

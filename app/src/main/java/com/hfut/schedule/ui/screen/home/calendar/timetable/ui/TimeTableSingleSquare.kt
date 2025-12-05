@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 
-
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -26,12 +25,14 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_END_TIME
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.MOON_REST_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.drawLineTimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.timeToY
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlin.math.roundToInt
-
 
 private data class PositionedSquare(
     val course: TimeTableItem,
@@ -73,59 +74,18 @@ private fun layoutSquaresForDay(items: List<TimeTableItem>): List<PositionedSqua
     }
 }
 
-
-fun timeToY(
-    hour: Float,
-    hourPx: Float,
-    startTime: Float,
-    compressList: List<Pair<Float, Float>>,
-    compressFactor: Float
-): Float {
-    // 累积时间段位移
-    var offset = 0f
-    var lastEnd = startTime
-
-    for ((compressStart, compressEnd) in compressList.sortedBy { it.first }) {
-        when {
-            hour <= compressStart -> {
-                // 当前时间在压缩段前
-                return offset + (hour - lastEnd) * hourPx
-            }
-            hour in compressStart..compressEnd -> {
-                // 当前时间在压缩段内部
-                val before = offset + (compressStart - lastEnd) * hourPx
-                val inner = (hour - compressStart) * hourPx * compressFactor
-                return before + inner
-            }
-            else -> {
-                // 当前时间在压缩段之后
-                offset += (compressStart - lastEnd) * hourPx
-                offset += (compressEnd - compressStart) * hourPx * compressFactor
-                lastEnd = compressEnd
-            }
-        }
-    }
-
-    // 超过所有压缩段的情况
-    return offset + (hour - lastEnd) * hourPx
-}
-
-
-/**
-@param startTime开始时间 建议最早的日程 调用parseTimeToFloat函数
- */
 @Composable
 fun TimetableSingleSquare(
     items: List<TimeTableItem>,
     modifier: Modifier = Modifier,
     innerPadding : PaddingValues,
-    startTime: Float = DEFAULT_START_TIME,
-    endTime : Float = DEFAULT_END_TIME,
+    startTime: Float = parseTimeToFloat(DEFAULT_START_TIME),
+    endTime : Float = parseTimeToFloat(DEFAULT_END_TIME),
     hourHeight: Dp = MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.dp,
     showAll: Boolean = true,
     showLine : Boolean = false,
     zipTime : List<Pair<Float, Float>> = listOf(
-        Pair(parseTimeToFloat("12:10"), parseTimeToFloat("14:00"))
+        Pair(parseTimeToFloat(MOON_REST_START_TIME), parseTimeToFloat(MOON_REST_END_TIME))
     ),
     zipTimeFactor : Float = 0.1f,
     onDoubleTapBlankRegion : ((Offset) -> Unit)? = null,

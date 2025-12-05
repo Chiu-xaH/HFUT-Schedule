@@ -42,5 +42,43 @@ fun parseTimeToFloat(time: String): Float {
 }
 
 // 早八
-const val DEFAULT_START_TIME = 8f
-const val DEFAULT_END_TIME = 24f
+const val DEFAULT_START_TIME = "08:00"
+const val DEFAULT_END_TIME = "22:00"
+const val MOON_REST_START_TIME = "12:10"
+const val MOON_REST_END_TIME = "14:00"
+
+fun timeToY(
+    hour: Float,
+    hourPx: Float,
+    startTime: Float,
+    compressList: List<Pair<Float, Float>>,
+    compressFactor: Float
+): Float {
+    // 累积时间段位移
+    var offset = 0f
+    var lastEnd = startTime
+
+    for ((compressStart, compressEnd) in compressList.sortedBy { it.first }) {
+        when {
+            hour <= compressStart -> {
+                // 当前时间在压缩段前
+                return offset + (hour - lastEnd) * hourPx
+            }
+            hour in compressStart..compressEnd -> {
+                // 当前时间在压缩段内部
+                val before = offset + (compressStart - lastEnd) * hourPx
+                val inner = (hour - compressStart) * hourPx * compressFactor
+                return before + inner
+            }
+            else -> {
+                // 当前时间在压缩段之后
+                offset += (compressStart - lastEnd) * hourPx
+                offset += (compressEnd - compressStart) * hourPx * compressFactor
+                lastEnd = compressEnd
+            }
+        }
+    }
+
+    // 超过所有压缩段的情况
+    return offset + (hour - lastEnd) * hourPx
+}

@@ -56,8 +56,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("修复 未登录合工大教务时使用相关功能崩溃的Bug")
-            UpdateItems("修复 备份与恢复数据时的IO操作对主线程的阻塞问题")
+            UpdateItems("优化 跨天日程自动折为每天8:00~22:00")
 //            UpdateItems("新增 空教室与教室课表","位于 查询中心-教室，数据源为合工大教务")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("重构 寝室评分（宣城与合肥）","学校终于将宣区寝室查询和肥区一样接入到智慧社区了，旧接口将不再返回新数据了")
