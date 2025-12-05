@@ -46,8 +46,8 @@ import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.network.util.MyApiParse.getTimeStamp
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
+import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.DateTime
@@ -562,7 +562,7 @@ fun TimeStampItem() = BottomTip(getTimeStamp())
 @Composable
 fun TermTip() {
     val v by produceState(initialValue = "") {
-        value = parseSemseter(getSemseter())
+        value = parseSemester(getSemester())
     }
     BottomTip(v)
 }

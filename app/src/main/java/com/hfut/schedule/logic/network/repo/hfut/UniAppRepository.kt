@@ -20,7 +20,7 @@ import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.Crypto
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
@@ -94,7 +94,7 @@ object UniAppRepository {
 
     suspend fun updateCourses(token : String) {
         try {
-            val request = uniApp.getCourses(SemseterParser.getSemseter(),token).awaitResponse()
+            val request = uniApp.getCourses(SemesterParser.getSemester(),token).awaitResponse()
             if(!request.isSuccessful) {
                 return
             }

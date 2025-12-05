@@ -17,7 +17,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.IDataStore
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
@@ -221,7 +221,7 @@ object DataStoreManager : IDataStore {
     val customBackground = getFlow(CUSTOM_BACKGROUND,EMPTY_STRING)
     val customCalendarSquareAlpha = getFlow(CUSTOM_CALENDAR_SQUARE_ALPHA,MyApplication.CALENDAR_SQUARE_ALPHA)
     val customColorStyle = getFlow(CUSTOM_COLOR_STYLE, ColorStyle.DEFAULT.code)
-    val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemseterParser.getSemseter() }
+    val customTermValue: Flow<Int> =  dataStore.data.map { it[AUTO_TERM_VALUE] ?: SemesterParser.getSemester() }
     val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)

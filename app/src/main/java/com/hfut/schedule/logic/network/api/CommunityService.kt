@@ -89,7 +89,7 @@ interface CommunityService {
     @POST("api/business/coursefriendapply/edit")
     fun checkApplying(@Header("X-Access-Token") token : String, @Body requestJson: RequestApplyingJson) : Call<ResponseBody>
     // 获取寝室
-    @GET("api//mobile/profileDormitory/studentLocate")
+    @GET("api//mobile/community/dormitoryHygiene/getLoginUserDormitory")
     fun getDormitory(@Header("X-Access-Token") token : String) : Call<ResponseBody>
     // 获取寝室信息
     @GET("api//mobile/profileDormitory/list")
@@ -107,9 +107,16 @@ interface CommunityService {
     fun getStuApps(@Header("X-Access-Token") token : String) : Call<ResponseBody>
     // 校车
     @GET("api/business/bus/list")
-    fun getBus(
+    fun getBus(@Header("X-Access-Token") token : String) : Call<ResponseBody>
+    // 寝室分数
+//    @GET("api//mobile/community/dormitoryHygiene/public/getXnXqWeekList")
+//    fun getDormitoryScoreList(@Header("X-Access-Token") token : String) : Call<ResponseBody>
+    // 分数详情
+    @GET("api//mobile/community/dormitoryHygiene/public/gridManagementDormitoryCheck")
+    fun getDormitoryScoreDetail(
         @Header("X-Access-Token") token : String,
-//        @Query("xn") year : String,
-//        @Query("xq") term : String
+        // 不传代表最新值
+        @Query("week") week : Int? = null,
+        @Query("semester") semester : String? = null,
     ) : Call<ResponseBody>
 }

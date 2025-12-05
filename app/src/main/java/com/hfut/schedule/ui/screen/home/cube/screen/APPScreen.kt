@@ -44,18 +44,16 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseterWithoutSuspend
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.reverseGetSemester
+import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
+import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
+import com.hfut.schedule.logic.util.parse.SemesterParser.reverseGetSemester
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
 import com.hfut.schedule.ui.component.SimpleVideo
 import com.hfut.schedule.ui.component.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -64,7 +62,6 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.Screen
-import com.hfut.schedule.ui.screen.home.cube.Screen.FocusWidgetSettingsScreen
 import com.hfut.schedule.ui.util.layout.SaveComposeAsImage
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.util.TransitionBackHandler
@@ -117,7 +114,7 @@ fun APPScreen(
         val scope = rememberCoroutineScope()
         val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
         val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)
-        val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemseterWithoutSuspend())
+        val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemesterWithoutSuspend())
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
         var freeFeevalue by remember { mutableFloatStateOf(maxFlow.toFloat()) }
         LaunchedEffect(maxFlow) {
@@ -337,7 +334,7 @@ fun APPScreen(
                     },
                     supportingContent = {
                         Column {
-                            Text(text = parseSemseter(if(autoTerm) getSemseterWithoutSuspend() else autoTermValue), fontWeight = FontWeight.Bold)
+                            Text(text = parseSemester(if(autoTerm) getSemesterWithoutSuspend() else autoTermValue), fontWeight = FontWeight.Bold)
                             Text(text = "全局学期主控教务课程表等信息，其他部分功能如教评等可在相应功能区自由切换学期\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
                         }
                     },

@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.model.community.BookPositionBean
 import com.hfut.schedule.logic.model.community.BorrowRecords
 import com.hfut.schedule.logic.model.community.BusBean
 import com.hfut.schedule.logic.model.community.DormitoryBean
+import com.hfut.schedule.logic.model.community.DormitoryScoreBean
 import com.hfut.schedule.logic.model.community.DormitoryUser
 import com.hfut.schedule.logic.model.community.FailRateRecord
 import com.hfut.schedule.logic.model.community.GradeAllResult
@@ -529,5 +530,8 @@ class NetWorkViewModel() : ViewModel() {
 
     val getProgramByIdResp = StateHolder<ProgramSearchBean>()
     suspend fun getProgramById(id : Int, token: String, ) = UniAppRepository.getProgramById(id,token,getProgramByIdResp)
+
+    val dormitoryScoreResp = StateHolder<List<DormitoryScoreBean>>()
+    suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
 }
 

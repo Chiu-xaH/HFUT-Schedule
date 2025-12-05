@@ -36,7 +36,7 @@ import com.hfut.schedule.logic.network.servicecreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
-import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
@@ -538,7 +538,7 @@ object JxglstuRepository {
                 jxglstu.getLessonIds(
                     cookie,
                     bizTypeId.toString(),
-                    SemseterParser.getSemseter().toString(),
+                    SemesterParser.getSemester().toString(),
                     studentId.toString()
                 )
             },
@@ -908,7 +908,7 @@ object JxglstuRepository {
         launchRequestState(
             holder = holder,
             request = {
-                (SemseterParser.getSemseter().plus(20)).toString().let {
+                (SemesterParser.getSemester().plus(20)).toString().let {
                     jxglstu.getLessonIds(cookie, bizTypeId.toString(), it, studentId.toString())
                         
                 }

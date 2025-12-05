@@ -152,7 +152,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.ORIGIN.argName to origin
         )
     }
-    object DormitoryScore : AppNavRoute("DORMITORY_SCORE","寝室评分",R.drawable.psychiatry)
+    object DormitoryScore : AppNavRoute("DORMITORY_SCORE","寝室",R.drawable.bed)
     object Notifications : AppNavRoute("NOTIFICATIONS","消息中心",R.drawable.notifications)
     object Survey : AppNavRoute("SURVEY","评教",R.drawable.verified)
     object WebView : AppNavRoute("WEB_VIEW","网页",R.drawable.net) {

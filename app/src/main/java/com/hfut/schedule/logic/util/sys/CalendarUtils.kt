@@ -8,7 +8,7 @@ import android.provider.CalendarContract
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
-import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
@@ -87,7 +87,7 @@ suspend fun delAllCourseEvent(activity: Activity) = withContext(Dispatchers.IO) 
             AND ${CalendarContract.Events.CALENDAR_ID} = ?
         """.trimIndent()
 
-        val args = arrayOf(CALENDAR_COURSE_TAG + SemseterParser.parseSemseter(SemseterParser.getSemseter()), calendarId.toString())
+        val args = arrayOf(CALENDAR_COURSE_TAG + SemesterParser.parseSemester(SemesterParser.getSemester()), calendarId.toString())
 
         // 执行删除
         val rows = resolver.delete(
@@ -385,7 +385,7 @@ suspend fun addCourseToEvent(activity: Activity,time : Int) : Int = withContext(
             for(item in list) {
                 val itemTime = item.time
                 val itemName = item.courseName
-                val result = addEvent(dateTime = itemTime, title = itemName,place = item.place, reminderMinutes = time, showToast = false, remark = CALENDAR_COURSE_TAG + SemseterParser.parseSemseter(SemseterParser.getSemseter()))
+                val result = addEvent(dateTime = itemTime, title = itemName,place = item.place, reminderMinutes = time, showToast = false, remark = CALENDAR_COURSE_TAG + SemesterParser.parseSemester(SemesterParser.getSemester()))
                 if(!result) {
                     failedCount++
                 }

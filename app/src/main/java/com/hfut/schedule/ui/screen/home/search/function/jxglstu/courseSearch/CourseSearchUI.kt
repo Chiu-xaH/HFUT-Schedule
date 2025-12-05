@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
+import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -99,7 +99,7 @@ fun CourseSearchScreen(
 
     var semester by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(Unit) {
-        semester = getSemseter()
+        semester = getSemester()
     }
     var firstSearch by remember { mutableStateOf(true) }
 
@@ -328,10 +328,10 @@ fun CourseSearchScreen(
                         ExtendedFloatingActionButton(
                             onClick = {
                                 scope.launch {
-                                    semester = getSemseter()
+                                    semester = getSemester()
                                 }
                             },
-                        ) { semester?.let { Text(text = parseSemseter(it)) } }
+                        ) { semester?.let { Text(text = parseSemester(it)) } }
                     }
 
                     AnimatedVisibility(
@@ -361,7 +361,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
 
         var semester by remember { mutableStateOf<Int?>(null) }
         LaunchedEffect(Unit) {
-            semester = getSemseter()
+            semester = getSemester()
         }
         val refreshNetwork : suspend () -> Unit = {
             if(semester != null) {
@@ -485,9 +485,9 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                         ) {
                             ExtendedFloatingActionButton(
                                 onClick = {
-                                    scope.launch{ semester = getSemseter() }
+                                    scope.launch{ semester = getSemester() }
                                 },
-                            ) { Text(text = parseSemseter(semester!!),) }
+                            ) { Text(text = parseSemester(semester!!),) }
                         }
 
                         AnimatedVisibility(

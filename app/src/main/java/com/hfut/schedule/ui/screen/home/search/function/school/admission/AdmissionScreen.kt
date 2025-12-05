@@ -87,28 +87,26 @@ fun AdmissionScreen(
     val route = remember { AppNavRoute.Admission.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                Column {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        modifier = Modifier.topBarBlur(hazeState),
-                        colors = topBarTransplantColor(),
-                        title = { Text("本科招生") },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route,R.drawable.publics)
-                        },
-                    )
-                }
-            },
-
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
+            Column {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    modifier = Modifier.topBarBlur(hazeState),
+                    colors = topBarTransplantColor(),
+                    title = { Text("本科招生") },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route,R.drawable.publics)
+                    },
+                )
+            }
+        },
         ) { innerPadding ->
-            AdmissionListUI(vm,innerPadding,navController)
-        }
+        AdmissionListUI(vm,innerPadding,navController)
+    }
 //    }
 }
 

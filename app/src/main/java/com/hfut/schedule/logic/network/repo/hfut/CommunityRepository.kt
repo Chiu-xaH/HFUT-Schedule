@@ -16,6 +16,8 @@ import com.hfut.schedule.logic.model.community.BusResponse
 import com.hfut.schedule.logic.model.community.DormitoryBean
 import com.hfut.schedule.logic.model.community.DormitoryInfoResponse
 import com.hfut.schedule.logic.model.community.DormitoryResponse
+import com.hfut.schedule.logic.model.community.DormitoryScoreBean
+import com.hfut.schedule.logic.model.community.DormitoryScoreResponse
 import com.hfut.schedule.logic.model.community.DormitoryUser
 import com.hfut.schedule.logic.model.community.FailRateRecord
 import com.hfut.schedule.logic.model.community.FailRateResponse
@@ -205,8 +207,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseDormitory(result : String) : DormitoryBean = try {
         if (result.contains("操作成功")) {
-            val list = Gson().fromJson(result, DormitoryResponse::class.java).result
-            if(list.isEmpty()) throw Exception("无住宿信息") else list[0]
+            Gson().fromJson(result, DormitoryResponse::class.java).result ?: throw Exception("无住宿信息")
         }
         else
             throw Exception(result)
@@ -228,7 +229,7 @@ object CommunityRepository {
     @JvmStatic
     private fun parseDormitoryInfo(result : String) : List<DormitoryUser> = try {
         if (result.contains("操作成功")) {
-            val list1 = Gson().fromJson(result, DormitoryInfoResponse::class.java).result.profileList
+            val list1 = Gson().fromJson(result, DormitoryInfoResponse::class.java).result?.profileList ?: throw Exception("未查询到宿舍")
             list1.flatMap { it.userList }.distinct()
         }
         else
@@ -377,4 +378,23 @@ object CommunityRepository {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
         })
     }
+
+    suspend fun getDormitoryScore(
+        token : String,
+        week : Int? = null,
+        semester : String? = null,
+        holder : StateHolder<List<DormitoryScoreBean>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { community.getDormitoryScoreDetail(token,week,semester) },
+        transformSuccess = { _, json -> parseDormitoryScore(json) }
+    )
+    @JvmStatic
+    private fun parseDormitoryScore(result : String) : List<DormitoryScoreBean> = try {
+        if (result.contains("操作成功")) {
+            Gson().fromJson(result, DormitoryScoreResponse::class.java).result
+        }
+        else
+            throw Exception(result)
+    } catch (e : Exception) { throw e }
 }

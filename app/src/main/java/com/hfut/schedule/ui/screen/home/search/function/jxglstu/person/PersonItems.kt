@@ -208,20 +208,7 @@ private fun PersonItems(
     val cardPsk by produceState(initialValue = "") {
         value = getCardPsk() ?: ""
     }
-    val uiState by vm.dormitoryFromCommunityResp.state.collectAsState()
-    val uiState2 by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
-    val refreshNetwork : suspend () -> Unit = {
-        prefs.getString("TOKEN","")?.let {
-            vm.dormitoryFromCommunityResp.clear()
-            vm.getDormitory(it)
-            if(vm.dormitoryFromCommunityResp.state.first() is UiState.Success) {
-                vm.getDormitoryInfo(it)
-            }
-        }
-    }
-    LaunchedEffect(Unit) {
-        refreshNetwork()
-    }
+
     Column() {
         DividerTextExpandedWith(text = "账号信息") {
             CustomCard(color = cardNormalColor()) {
@@ -664,43 +651,6 @@ private fun PersonItems(
             }
 
 
-        }
-
-        DividerTextExpandedWith("寝室信息") {
-            CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
-                val data = (uiState as UiState.Success).data
-                CustomCard(color = cardNormalColor()) {
-                    Column {
-                        TransplantListItem(
-                            headlineContent = { Text(data.campus_dictText + " " + data.dormitory.substringBefore("（") + " " + data.room)},
-                            overlineContent = { Text("所在寝室") },
-                            leadingContent = {
-                                Icon(painterResource(R.drawable.bed),null)
-                            }
-                        )
-                        PaddingHorizontalDivider()
-                        CommonNetworkScreen(uiState2,isFullScreen = false, onReload = refreshNetwork) {
-                            val data2 = (uiState2 as UiState.Success).data
-                            Column {
-                                for(i in data2) {
-                                    TransplantListItem(
-                                        headlineContent = {
-                                            Text(i.realname + " | " + i.username)
-                                        },
-                                        modifier = Modifier.clickable {
-                                            ClipBoardUtils.copy(i.username)
-                                        },
-                                        overlineContent = { Text("寝室成员") },
-                                        leadingContent = {
-                                            Icon(painterResource(R.drawable.person),null)
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

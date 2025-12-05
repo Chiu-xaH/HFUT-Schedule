@@ -26,7 +26,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.SemseterParser
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -98,7 +98,7 @@ fun CourseSearchCalendarScreen(
                                     )
                                 }
                                 Text(
-                                    "检索学期: ${SemseterParser.parseSemseter(term)}",
+                                    "检索学期: ${SemesterParser.parseSemester(term)}",
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
                                 )

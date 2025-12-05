@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -54,20 +53,15 @@ import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.SemseterParser
-import com.hfut.schedule.logic.util.parse.formatDecimal
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardUtils
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
-import com.hfut.schedule.ui.component.divider.DashedDivider
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -91,7 +85,6 @@ import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
 
@@ -109,11 +102,11 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
     if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
         LaunchedEffect(Unit) {
             if(vm.courseBookResponse.state.first() is UiState.Success) return@LaunchedEffect
-            val term = SemseterParser.getSemseter()
+            val term = SemesterParser.getSemester()
             val cookie = getJxglstuCookie() ?: return@LaunchedEffect
             when(dataSource) {
                 TotalCourseDataSource.MINE -> vm.getCourseBook(cookie,term)
-                TotalCourseDataSource.MINE_NEXT -> vm.getCourseBook(cookie, SemseterParser.plusSemseter(term))
+                TotalCourseDataSource.MINE_NEXT -> vm.getCourseBook(cookie, SemesterParser.plusSemester(term))
                 else -> return@LaunchedEffect
             }
         }

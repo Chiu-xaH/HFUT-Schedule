@@ -3,35 +3,52 @@ package com.hfut.schedule.logic.util.parse
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import kotlinx.coroutines.flow.first
 
-object SemseterParser {
+object SemesterParser {
     @JvmStatic
-    fun parseSemseterUpOrDown(semster : Int) : Int {
-        val codes = (semster - 4) / 10
-        var upordown = 0
+    fun parseSemesterUpOrDown(semester : Int) : Int {
+        val codes = (semester - 4) / 10
+        var upoOrDown = 0
         if(codes % 4 == 1) {
-            upordown = 2
+            upoOrDown = 2
         } else if(codes % 4 == 3) {
-            upordown = 1
+            upoOrDown = 1
         }
-        return  upordown
+        return  upoOrDown
     }
     @JvmStatic
-    fun parseSemseter(semster : Int) : String {
-        val codes = (semster - 4) / 10
+    fun parseSemester(semester : Int) : String {
+        val codes = (semester - 4) / 10
         val year = 2017
         val code = 3
 
-        var upordown = 0
+        var upOrDown = 0
         if(codes % 4 == 1) {
-            upordown = 2
+            upOrDown = 2
         } else if(codes % 4 == 3) {
-            upordown = 1
+            upOrDown = 1
         }
 
         val years= (year + (codes - code) / 4) + 1
-        return years.toString() +  "~" + (years + 1).toString() + "年第" +  upordown + "学期"
+        return years.toString() +  "~" + (years + 1).toString() + "年第" +  upOrDown + "学期"
+    }
+    @JvmStatic
+    fun parseSemesterForDormitory(semester : Int) : String {
+        val codes = (semester - 4) / 10
+        val year = 2017
+        val code = 3
+
+        var upOrDown = 0
+        if(codes % 4 == 1) {
+            upOrDown = 2
+        } else if(codes % 4 == 3) {
+            upOrDown = 1
+        }
+
+        val years= (year + (codes - code) / 4) + 1
+        return years.toString() +  "-" + (years + 1).toString() + "学年第" + numToChinese(upOrDown) + "学期"
     }
     // ((semster-4)/10)-3)/4 + 2018 = firstYear
     // ((firstYear - 2018)*4 + 3)*10 + 4 = semster
@@ -72,7 +89,7 @@ object SemseterParser {
     }
 
     @JvmStatic
-    suspend fun getSemseter() : Int {
+    suspend fun getSemester() : Int {
         try {
             val autoTerm = DataStoreManager.enableAutoTerm.first()
             if(autoTerm) {
@@ -86,7 +103,7 @@ object SemseterParser {
         }
     }
     @JvmStatic
-    fun getSemseterWithoutSuspend() : Int {
+    fun getSemesterWithoutSuspend() : Int {
         return try {
             reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
         } catch (e : Exception) {
@@ -94,7 +111,7 @@ object SemseterParser {
         }
     }
 
-    fun plusSemseter(semster: Int) : Int = semster+20
-    fun subSemseter(semster: Int) : Int = semster-20
+    fun plusSemester(semester: Int) : Int = semester+20
+    fun subSemester(semester: Int) : Int = semester-20
 
 }

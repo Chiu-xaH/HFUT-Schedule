@@ -37,8 +37,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.parse.SemseterParser.getSemseter
-import com.hfut.schedule.logic.util.parse.SemseterParser.parseSemseter
+import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
+import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
@@ -68,7 +68,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
 
     var semester by remember { mutableStateOf<Int?>(null) }
     LaunchedEffect(Unit) {
-        semester = getSemseter()
+        semester = getSemester()
     }
     val uiState by vm.surveyListData.state.collectAsState()
     val refreshNetwork: suspend () -> Unit = {
@@ -107,7 +107,7 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
                         .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) { Text(text = parseSemseter(semester!!),) }
+                ) { Text(text = parseSemester(semester!!),) }
 
                 FloatingActionButton(
                     onClick = { semester = semester!! + 20 },
