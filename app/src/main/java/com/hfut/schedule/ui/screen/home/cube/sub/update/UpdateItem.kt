@@ -29,7 +29,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-12-03") },
+                overlineContent = { Text(text = "2025-12-07") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,7 +58,7 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
             UpdateItems("重构 寝室评分为寝室","位于 查询中心-寝室，学校终于将宣区和肥区接口统一了")
             UpdateItems("优化 跨天日程自动折为每天8:00~22:00")
-            UpdateItems("回归 导入文件形式的课程表")
+//            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 空教室与教室课表","位于 查询中心-教室，数据源为合工大教务")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")

@@ -148,32 +148,6 @@ fun DormitoryScoreScreen(
                     .navigationBarsPadding()
                     .padding(APP_HORIZONTAL_DP)
             ) {
-                Box(modifier = Modifier.fillMaxWidth())  {
-                    if(week != null) {
-                        FloatingActionButton(
-                            onClick = { semester = semester!! - 20 },
-                            modifier = Modifier
-                                .align(Alignment.BottomStart)
-                            ,
-                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-
-
-                        ExtendedFloatingActionButton(
-                            onClick = { scope.launch {
-                                semester = SemesterParser.getSemester()
-                            } },
-                            modifier = Modifier
-                                .align(Alignment.BottomCenter)
-                        ) { Text(text = termText) }
-
-                        FloatingActionButton(
-                            onClick = { semester = semester!! + 20 },
-                            modifier = Modifier
-                                .align(Alignment.BottomEnd)
-                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
-                    }
-                }
-                Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 Box(modifier = Modifier.fillMaxWidth()) {
                     if(semester != null) {
                         FloatingActionButton(
@@ -194,6 +168,32 @@ fun DormitoryScoreScreen(
 
                         FloatingActionButton(
                             onClick = { week = week!! + 1 },
+                            modifier = Modifier
+                                .align(Alignment.BottomEnd)
+                        ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                    }
+                }
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                Box(modifier = Modifier.fillMaxWidth())  {
+                    if(week != null) {
+                        FloatingActionButton(
+                            onClick = { semester = semester!! - 20 },
+                            modifier = Modifier
+                                .align(Alignment.BottomStart)
+                            ,
+                        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+
+
+                        ExtendedFloatingActionButton(
+                            onClick = { scope.launch {
+                                semester = SemesterParser.getSemester()
+                            } },
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                        ) { Text(text = termText) }
+
+                        FloatingActionButton(
+                            onClick = { semester = semester!! + 20 },
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                         ) { Icon(Icons.Filled.ArrowForward, "Add Button") }

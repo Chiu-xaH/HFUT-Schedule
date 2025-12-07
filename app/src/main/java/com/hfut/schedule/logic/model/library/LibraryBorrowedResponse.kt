@@ -1,7 +1,5 @@
 package com.hfut.schedule.logic.model.library
 
-import android.accessibilityservice.GestureDescription
-import androidx.navigation.NavDestination
 import com.google.gson.annotations.SerializedName
 
 data class LibraryBorrowedResponse(

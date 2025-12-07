@@ -145,7 +145,6 @@ fun LibraryScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Library.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val scope = rememberCoroutineScope()
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(libraryNavController.currentRouteWithoutArgs()) {
@@ -397,7 +396,6 @@ fun LibraryMineUI(
 ) {
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     var libraryStatusCode by rememberSaveable { mutableStateOf<Int?>(null) }
     LaunchedEffect(Unit) {
         if(libraryStatusCode == null) {
@@ -420,13 +418,12 @@ fun LibraryMineUI(
         }
     }
     val uiStateBorrowed by vm.libraryBorrowedResp.state.collectAsState()
-    val list = (uiStateBorrowed as? UiState.Success)?.data
-        ?.sortedByDescending { it.createdTime }
+    val list = (uiStateBorrowed as? UiState.Success)?.data?.sortedByDescending { it.createdTime }
     val analysis = list?.map { l ->
-            BorrowedStatus.entries.find { e ->
-                e.status == l.status
-            }
+        BorrowedStatus.entries.find { e ->
+            e.status == l.status
         }
+    }
 
     val overdueCount = analysis?.filter { it == BorrowedStatus.OVERDUE }?.size
     val borrowingCount = analysis?.filter { it == BorrowedStatus.BORROWING }?.size
@@ -440,6 +437,7 @@ fun LibraryMineUI(
         }
         refreshNetwork(false)
     }
+
     val loading = uiState !is UiState.Success
     val response = (uiState as? UiState.Success)?.data ?: LibraryStatus()
     val refreshing = uiState is UiState.Loading
