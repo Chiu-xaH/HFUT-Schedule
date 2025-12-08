@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.api
 
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomRequest
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramRequest
 import retrofit2.Call
 import okhttp3.ResponseBody
@@ -54,10 +55,22 @@ interface UniAppService {
         @Path("id") id : Int,
         @Header("Authorization") auth : String
     ) : Call<ResponseBody>
-    // 教室课表
-    // TODO
-    // 空教室
-    // TODO
+    // 校区
+    @GET("eams-micro-server/api/v1/room/place/campus")
+    fun getCampus(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 建筑楼
+    @GET("eams-micro-server/api/v1/room/place/building")
+    fun getBuildings(
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 教室课表 空教室
+    @POST("eams-micro-server/api/v1/room/place/rooms")
+    fun getClassrooms(
+        @Body body : UniAppClassroomRequest,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
     // 评教 非必需，教务系统就有
     // TODO
     // 个人信息 非必需，教务系统就有

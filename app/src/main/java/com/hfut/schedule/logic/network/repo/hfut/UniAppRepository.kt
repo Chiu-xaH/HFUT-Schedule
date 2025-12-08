@@ -1,10 +1,18 @@
 package com.hfut.schedule.logic.network.repo.hfut
 
 import com.google.gson.Gson
+import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.enumeration.Campus.*
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
 import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
 import com.hfut.schedule.logic.model.uniapp.ClassmatesResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
+import com.hfut.schedule.logic.model.uniapp.UniAppBuildingsResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppCampus
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomBean
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomRequest
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppCourseBean
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
@@ -30,13 +38,13 @@ import retrofit2.awaitResponse
 
 object UniAppRepository {
     private val uniApp = UniAppServiceCreator.create(UniAppService::class.java)
-    private val failedText = "登陆合工大教务失败"
+    private const val FAILED_TEXT = "登陆合工大教务失败"
 
     suspend fun login() : Boolean {
         val sId = getPersonInfo().studentId
         val pwd = getJxglstuPassword()
         if(pwd == null || sId == null) {
-            showToast("$failedText(游客)")
+            showToast("$FAILED_TEXT(游客)")
             return false
         }
         val request = uniApp.login(
@@ -45,17 +53,17 @@ object UniAppRepository {
         ).awaitResponse()
         val json = request.body()?.string()
         if(json == null) {
-            showToast(failedText)
+            showToast(FAILED_TEXT)
             return false
         }
         if(!request.isSuccessful) {
             val msg = parseLogin(json,false)
-            showToast("$failedText$msg")
+            showToast("$FAILED_TEXT$msg")
             return false
         }
         val token = parseLogin(json,true)
         if(token == null) {
-            showToast("${failedText}2")
+            showToast("${FAILED_TEXT}2")
             return false
         }
         DataStoreManager.saveUniAppJwt(token)
@@ -184,6 +192,52 @@ object UniAppRepository {
     @JvmStatic
     private fun parseProgramSearchInfo(json : String) : ProgramSearchBean = try {
         Gson().fromJson(json,ProgramSearchResponse::class.java).data
+    } catch (e : Exception) { throw e }
+
+    suspend fun getBuildings(
+        token : String,
+        holder : StateHolder<List<UniAppBuildingBean>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.getBuildings(token) },
+        transformSuccess = { _,json -> parseBuildings(json) }
+    )
+    @JvmStatic
+    private fun parseBuildings(json : String) : List<UniAppBuildingBean> = try {
+        val originalList = Gson().fromJson(json, UniAppBuildingsResponse::class.java).data
+        val codeList = UniAppCampus.entries.map { it.code }
+        originalList.filter { it.campusAssoc in codeList }
+    } catch (e : Exception) { throw e }
+
+    suspend fun getClassrooms(
+        page : Int,
+        date : String,
+        campus: Campus?,
+        buildings : List<Int>?,
+        floors : List<Int>?,
+        token : String,
+        holder : StateHolder<List<UniAppClassroomBean>>
+    ) = launchRequestState(
+        holder = holder,
+        request = { uniApp.getClassrooms(
+            UniAppClassroomRequest(
+                currentPage = page,
+                date = date,
+                campusAssoc = when(campus) {
+                    XC -> UniAppCampus.XC.code
+                    FCH -> UniAppCampus.FCH.code
+                    TXL -> UniAppCampus.TXL.code
+                    null -> null
+                },
+                buildingIds = buildings,
+                floors = floors
+            ),token
+        ) },
+        transformSuccess = { _,json -> parseClassrooms(json) }
+    )
+    @JvmStatic
+    private fun parseClassrooms(json : String) : List<UniAppClassroomBean>  = try {
+        Gson().fromJson(json, UniAppClassroomResponse::class.java).data.data
     } catch (e : Exception) { throw e }
 }
 

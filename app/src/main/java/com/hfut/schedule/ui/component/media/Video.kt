@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component
+package com.hfut.schedule.ui.component.media
 
 import android.content.Context
 import android.graphics.SurfaceTexture

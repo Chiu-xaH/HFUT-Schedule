@@ -37,8 +37,8 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
-import com.hfut.schedule.ui.component.SimpleVideo
-import com.hfut.schedule.ui.component.checkOrDownloadVideo
+import com.hfut.schedule.ui.component.media.SimpleVideo
+import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.screen.home.cube.Screen

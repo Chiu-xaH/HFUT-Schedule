@@ -72,6 +72,8 @@ import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.ClassroomBean
 import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
+import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomBean
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
@@ -533,5 +535,11 @@ class NetWorkViewModel() : ViewModel() {
 
     val dormitoryScoreResp = StateHolder<List<DormitoryScoreBean>>()
     suspend fun getDormitoryScore(token : String, week : Int? = null, semester : String? = null) = CommunityRepository.getDormitoryScore(token,week,semester,dormitoryScoreResp)
+
+    val uniAppBuildingsResp = StateHolder<List<UniAppBuildingBean>>()
+    suspend fun getBuildings(token : String) = UniAppRepository.getBuildings(token,uniAppBuildingsResp)
+
+    val uniAppClassroomsResp = StateHolder<List<UniAppClassroomBean>>()
+    suspend fun getClassrooms(page : Int, date : String, campus: Campus?, buildings : List<Int>?, floors : List<Int>?, token : String, ) = UniAppRepository.getClassrooms(page,date,campus,buildings,floors,token,uniAppClassroomsResp)
 }
 

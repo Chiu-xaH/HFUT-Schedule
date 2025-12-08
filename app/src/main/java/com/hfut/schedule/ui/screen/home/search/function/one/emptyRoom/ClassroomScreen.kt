@@ -66,7 +66,7 @@ private val campusList = Campus.entries
     ExperimentalMaterialApi::class
 )
 @Composable
-fun ClassroomScreen(
+fun ClassroomScreen2(
     vm : NetWorkViewModel,
     navController : NavHostController,
 ) {

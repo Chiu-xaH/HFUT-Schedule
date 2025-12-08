@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component
+package com.hfut.schedule.ui.component.input
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi

@@ -85,12 +85,12 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.Notifica
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.NotificationBoxScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebNavigationScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomDetailScreen
-import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.AlumniScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.classroom.ClassroomScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.hall.OfficeHallScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.scan.ScanScreen
