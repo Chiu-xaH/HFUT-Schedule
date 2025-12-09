@@ -515,11 +515,11 @@ fun MainHost(
                 }
                 // 教室状态
                 transitionComposable(route = AppNavRoute.Classroom.route) {
-                    ClassroomScreen(networkVm,navController ,)
+                    ClassroomScreen(networkVm,navController)
                 }
                 // 法定假日
                 transitionComposable(route = AppNavRoute.Holiday.route,) {
-                    HolidayScreen(navController ,)
+                    HolidayScreen(navController)
                 }
                 // 校友平台
                 transitionComposable(route = AppNavRoute.Alumni.route) {

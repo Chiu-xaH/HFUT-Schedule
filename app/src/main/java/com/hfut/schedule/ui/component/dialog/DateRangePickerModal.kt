@@ -42,7 +42,8 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DateRangePickerModal(
-    isSchedule : Boolean,
+    isSchedule : Boolean = false,
+    text : String = "截止",
     onSelected: (Pair<String, String>) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -132,7 +133,7 @@ fun DateRangePickerModal(
             DatePicker(
                 state = datePickerState,
                 title = {   },
-                headline = { Text("截止 ${endDateString ?: ""}", modifier = Modifier.padding(
+                headline = { Text("$text ${endDateString ?: ""}", modifier = Modifier.padding(
                     APP_HORIZONTAL_DP
                 )) },
                 showModeToggle = true,

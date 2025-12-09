@@ -63,7 +63,8 @@ interface UniAppService {
     // 建筑楼
     @GET("eams-micro-server/api/v1/room/place/building")
     fun getBuildings(
-        @Header("Authorization") auth : String
+        @Header("Authorization") auth : String,
+        @Query("campusAssoc") campusAssoc : String = "",
     ) : Call<ResponseBody>
     // 教室课表 空教室
     @POST("eams-micro-server/api/v1/room/place/rooms")
