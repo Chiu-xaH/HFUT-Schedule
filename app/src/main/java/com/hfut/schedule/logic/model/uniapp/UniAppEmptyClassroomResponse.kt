@@ -3,21 +3,21 @@ package com.hfut.schedule.logic.model.uniapp
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.util.network.getPageSize
 
-data class UniAppClassroomResponse(
-    val data : UniAppClassroomData
+data class UniAppEmptyClassroomResponse(
+    val data : UniAppEmptyClassroomData
 )
 
-data class UniAppClassroomData(
-    val data : List<UniAppClassroomBean>
+data class UniAppEmptyClassroomData(
+    val data : List<UniAppEmptyClassroomBean>
 )
 
-data class UniAppClassroomBean(
+data class UniAppEmptyClassroomBean(
     val nameZh : String,
     val campusNameZh : String,
-    val roomOccupationInfoVms : List<UniAppClassroomLesson>?
+    val roomOccupationInfoVms : List<UniAppEmptyClassroomLesson>?
 )
 
-data class UniAppClassroomLesson(
+data class UniAppEmptyClassroomLesson(
     val date : String,
     // HH-MM
     val startTimeString : String,
@@ -27,7 +27,7 @@ data class UniAppClassroomLesson(
     val teacherName : String
 )
 
-data class UniAppClassroomRequest(
+data class UniAppEmptyClassroomRequest(
     val currentPage : Int,
     // 从date向后7天，YYYY-MM-DD
     val date : String,

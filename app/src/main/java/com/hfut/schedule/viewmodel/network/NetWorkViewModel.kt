@@ -71,10 +71,12 @@ import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.ClassroomBean
-import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
 import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomBean
+import com.hfut.schedule.logic.model.uniapp.UniAppClassmatesBean
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
+import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomBean
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.wx.WXClassmatesBean
 import com.hfut.schedule.logic.model.wx.WXPersonInfoBean
@@ -521,7 +523,7 @@ class NetWorkViewModel() : ViewModel() {
     val giteeUpdatesResp = StateHolder<GiteeReleaseResponse>()
     suspend fun getUpdate() = GithubRepository.getUpdate(giteeUpdatesResp)
 
-    val classmatesResp = StateHolder<List<ClassmatesBean>>()
+    val classmatesResp = StateHolder<List<UniAppClassmatesBean>>()
     suspend fun getClassmates(lessonId : String,token : String) = UniAppRepository.getClassmates(lessonId,token,classmatesResp)
 
     val uniAppGradesResp = StateHolder<Map<String, List<UniAppGradeBean>>>()
@@ -539,7 +541,13 @@ class NetWorkViewModel() : ViewModel() {
     val uniAppBuildingsResp = StateHolder<List<UniAppBuildingBean>>()
     suspend fun getBuildings(token : String) = UniAppRepository.getBuildings(token,uniAppBuildingsResp)
 
-    val uniAppClassroomsResp = StateHolder<List<UniAppClassroomBean>>()
-    suspend fun getClassrooms(page : Int, date : String, campus: Campus?, buildings : List<Int>?, floors : List<Int>?, token : String, ) = UniAppRepository.getClassrooms(page,date,campus,buildings,floors,token,uniAppClassroomsResp)
+    val uniAppEmptyClassroomsResp = StateHolder<List<UniAppEmptyClassroomBean>>()
+    suspend fun getEmptyClassrooms(page : Int, date : String, campus: Campus?, buildings : List<Int>?, floors : List<Int>?, token : String, ) = UniAppRepository.getEmptyClassrooms(page,date,campus,buildings,floors,token,uniAppEmptyClassroomsResp)
+
+    val uniAppSearchClassroomsResp = StateHolder<List<UniAppSearchClassroomBean>>()
+    suspend fun searchClassrooms(input : String, token : String, page : Int) = UniAppRepository.searchClassrooms(input,token,page,uniAppSearchClassroomsResp)
+
+    val uniAppClassroomLessonsResp = StateHolder<List<UniAppClassroomLessonBean>>()
+    suspend fun getClassroomLessons(semester: Int, roomId : Int, token : String) = UniAppRepository.getClassroomLessons(semester,roomId,token,uniAppClassroomLessonsResp)
 }
 

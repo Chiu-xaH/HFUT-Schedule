@@ -90,6 +90,7 @@ import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.AlumniScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.classroom.ClassroomLessonsScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.classroom.ClassroomScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.hall.OfficeHallScreen
@@ -516,6 +517,23 @@ fun MainHost(
                 // 教室状态
                 transitionComposable(route = AppNavRoute.Classroom.route) {
                     ClassroomScreen(networkVm,navController)
+                }
+                // 教室课程表
+                transitionComposable(
+                    route = AppNavRoute.ClassroomLessons.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.ClassroomLessons.Args.entries)
+                ) { backStackEntry ->
+                    val roomId = backStackEntry.arguments?.getInt(AppNavRoute.ClassroomLessons.Args.ROOM_ID.argName) ?: (AppNavRoute.ClassroomLessons.Args.ROOM_ID.default as Int)
+                    val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomLessons.Args.NAME.argName) ?: (AppNavRoute.ClassroomLessons.Args.NAME.default as String)
+                    if(roomId < 0) {
+                        return@transitionComposable
+                    }
+                    ClassroomLessonsScreen(
+                        networkVm,
+                        navController,
+                        roomId,
+                        name,
+                    )
                 }
                 // 法定假日
                 transitionComposable(route = AppNavRoute.Holiday.route,) {

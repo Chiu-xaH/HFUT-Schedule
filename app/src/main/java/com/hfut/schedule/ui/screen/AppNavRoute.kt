@@ -294,6 +294,17 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.NAME.argName to bean.nameZh
         )
     }
+    object ClassroomLessons : AppNavRoute("CLASSROOM_LESSONS","教室课程表",R.drawable.meeting_room) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
+            ROOM_ID("roomId", NavType.IntType,-1,false),
+            NAME("name", NavType.StringType,"教室",false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(roomId : Int,name : String): String = withArgs(
+            Args.ROOM_ID.argName to roomId,
+            Args.NAME.argName to name
+        )
+    }
     object OfficeHall : AppNavRoute("OFFICE_HALL", "办事大厅",R.drawable.person_play)
     object Classmates : AppNavRoute("CLASSMATES", "同班同学",R.drawable.sensor_door)
     object Scan : AppNavRoute("SCAN", "扫描二维码",R.drawable.qr_code_scanner_shortcut)

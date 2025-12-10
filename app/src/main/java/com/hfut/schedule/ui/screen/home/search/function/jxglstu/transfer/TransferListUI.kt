@@ -146,147 +146,147 @@ fun TransferScreen(
             refreshNetwork(false)
         }
     })
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Transfer.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Transfer.icon)
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
-            ) {
-                var input by remember { mutableStateOf("") }
-                LaunchedEffect(Unit) {
-                    refreshNetwork(true)
-                }
+    CustomTransitionScaffold (
+        route = route,
 
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .pullRefresh(pullRefreshState)) {
-                    RefreshIndicator(
-                        refreshing,
-                        pullRefreshState,
-                        Modifier
-                            .align(Alignment.TopCenter)
-                            .zIndex(1f)
-                            .padding(innerPadding)
-                    )
-                    CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                        val transferList = (uiState as UiState.Success).data
-                        LazyColumn {
-                            item { InnerPaddingHeight(innerPadding,true) }
-                            items(transferList.size, key = { it }) { index ->
-                                val data = transferList[index]
-                                val batchId = data.batchId
-                                val name = data.title
-                                val route = AppNavRoute.TransferDetail.withArgs(false,batchId,name)
-                                var expand by remember { mutableStateOf(false) }
-                                CustomCard (
-                                    modifier = Modifier
-                                        .clickable {
-                                            navController.navigateForTransition(
-                                                AppNavRoute.TransferDetail,
-                                                route
-                                            )
-                                        }
-                                        .containerShare(route),
-                                    color = mixedCardNormalColor()
-                                ) {
-                                    TransplantListItem(
-                                        headlineContent = { Text(text = name) },
-                                        trailingContent = {
-                                            ColumnVertical {
-                                                FilledTonalIconButton(onClick = { expand = !expand }) {
-                                                    Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                                                }
-                                                Text("代号 $batchId")
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Transfer.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.Transfer.icon)
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            var input by remember { mutableStateOf("") }
+            LaunchedEffect(Unit) {
+                refreshNetwork(true)
+            }
+
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)) {
+                RefreshIndicator(
+                    refreshing,
+                    pullRefreshState,
+                    Modifier
+                        .align(Alignment.TopCenter)
+                        .zIndex(1f)
+                        .padding(innerPadding)
+                )
+                CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
+                    val transferList = (uiState as UiState.Success).data
+                    LazyColumn {
+                        item { InnerPaddingHeight(innerPadding,true) }
+                        items(transferList.size, key = { it }) { index ->
+                            val data = transferList[index]
+                            val batchId = data.batchId
+                            val name = data.title
+                            val route = AppNavRoute.TransferDetail.withArgs(false,batchId,name)
+                            var expand by remember { mutableStateOf(false) }
+                            CustomCard (
+                                modifier = Modifier
+                                    .clickable {
+                                        navController.navigateForTransition(
+                                            AppNavRoute.TransferDetail,
+                                            route
+                                        )
+                                    }
+                                    .containerShare(route),
+                                color = mixedCardNormalColor()
+                            ) {
+                                TransplantListItem(
+                                    headlineContent = { Text(text = name) },
+                                    trailingContent = {
+                                        ColumnVertical {
+                                            FilledTonalIconButton(onClick = { expand = !expand }) {
+                                                Icon(painter = painterResource(id = if(expand) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                                             }
-                                        },
-                                    )
-                                    androidx.compose.animation.AnimatedVisibility(
-                                        visible = expand,
-                                        enter = slideInVertically(
-                                            initialOffsetY = { -40 }
-                                        ) + expandVertically(
-                                            expandFrom = Alignment.Top
-                                        ) + scaleIn(
-                                            transformOrigin = TransformOrigin(0.5f, 0f)
-                                        ) + fadeIn(initialAlpha = 0.3f),
-                                        exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
-                                    ) {
-                                        Column {
-                                            PaddingHorizontalDivider()
-                                            TransplantListItem(
-                                                headlineContent = { Text(text = "申请日期") },
-                                                supportingContent = {
-                                                    Text(text = data.applicationDate )
-                                                }
-                                            )
-                                            TransplantListItem(
-                                                headlineContent = { Text(text = "转专业时期") },
-                                                supportingContent = {
-                                                    Text(data.admissionDate)
-                                                }
+                                            Text("代号 $batchId")
+                                        }
+                                    },
+                                )
+                                androidx.compose.animation.AnimatedVisibility(
+                                    visible = expand,
+                                    enter = slideInVertically(
+                                        initialOffsetY = { -40 }
+                                    ) + expandVertically(
+                                        expandFrom = Alignment.Top
+                                    ) + scaleIn(
+                                        transformOrigin = TransformOrigin(0.5f, 0f)
+                                    ) + fadeIn(initialAlpha = 0.3f),
+                                    exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)
+                                ) {
+                                    Column {
+                                        PaddingHorizontalDivider()
+                                        TransplantListItem(
+                                            headlineContent = { Text(text = "申请日期") },
+                                            supportingContent = {
+                                                Text(text = data.applicationDate )
+                                            }
+                                        )
+                                        TransplantListItem(
+                                            headlineContent = { Text(text = "转专业时期") },
+                                            supportingContent = {
+                                                Text(data.admissionDate)
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        item {
+                            AnimationCardListItem(
+                                index = transferList.size,
+                                headlineContent = {
+                                    Text("手动输入代号查看被隐藏掉的转专业入口")
+                                },
+                                supportingContent = {
+                                    Column {
+                                        Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,101,81等...")
+                                        Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+                                        Row {
+                                            TextField(
+                                                modifier = Modifier
+                                                    .weight(1f),
+                                                value = input,
+                                                onValueChange = { input = it },
+                                                label = { Text("输入数字代号") },
+                                                trailingIcon = {
+                                                    IconButton(onClick = {
+                                                        if(input.toIntOrNull() != null) {
+                                                            navController.navigateForTransition(AppNavRoute.TransferDetail,AppNavRoute.TransferDetail.withArgs(true,input,"入口$input"))
+                                                        } else {
+                                                            showToast("必须为数字")
+                                                        }
+                                                    }) {
+                                                        Icon(Icons.Default.ArrowForward,null)
+                                                    }
+                                                },
+                                                shape = MaterialTheme.shapes.medium,
+                                                colors = textFiledTransplant(),
                                             )
                                         }
                                     }
                                 }
-                            }
-                            item {
-                                AnimationCardListItem(
-                                    index = transferList.size,
-                                    headlineContent = {
-                                        Text("手动输入代号查看被隐藏掉的转专业入口")
-                                    },
-                                    supportingContent = {
-                                        Column {
-                                            Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,101,81等...")
-                                            Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
-                                            Row {
-                                                TextField(
-                                                    modifier = Modifier
-                                                        .weight(1f),
-                                                    value = input,
-                                                    onValueChange = { input = it },
-                                                    label = { Text("输入数字代号") },
-                                                    trailingIcon = {
-                                                        IconButton(onClick = {
-                                                            if(input.toIntOrNull() != null) {
-                                                                navController.navigateForTransition(AppNavRoute.TransferDetail,AppNavRoute.TransferDetail.withArgs(true,input,"入口$input"))
-                                                            } else {
-                                                                showToast("必须为数字")
-                                                            }
-                                                        }) {
-                                                            Icon(Icons.Default.ArrowForward,null)
-                                                        }
-                                                    },
-                                                    shape = MaterialTheme.shapes.medium,
-                                                    colors = textFiledTransplant(),
-                                                )
-                                            }
-                                        }
-                                    }
-                                )
-                            }
-                            item { InnerPaddingHeight(innerPadding,false) }
+                            )
                         }
+                        item { InnerPaddingHeight(innerPadding,false) }
                     }
                 }
             }
         }
+    }
 //    }
 }
 

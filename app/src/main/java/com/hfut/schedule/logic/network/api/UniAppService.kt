@@ -1,7 +1,8 @@
 package com.hfut.schedule.logic.network.api
 
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomRequest
+import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomRequest
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramRequest
+import com.hfut.schedule.logic.util.network.getPageSize
 import retrofit2.Call
 import okhttp3.ResponseBody
 import retrofit2.http.Body
@@ -66,10 +67,23 @@ interface UniAppService {
         @Header("Authorization") auth : String,
         @Query("campusAssoc") campusAssoc : String = "",
     ) : Call<ResponseBody>
-    // 教室课表 空教室
+    // 空教室
     @POST("eams-micro-server/api/v1/room/place/rooms")
-    fun getClassrooms(
-        @Body body : UniAppClassroomRequest,
+    fun getEmptyClassrooms(
+        @Body body : UniAppEmptyClassroomRequest,
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    // 教室课表
+    @GET("eams-micro-server/api/v1/lesson/room/searchRooms")
+    fun searchClassrooms(
+        @Query("name") name : String,
+        @Query("queryPage__") queryPage : String = "1,${getPageSize()}",
+        @Header("Authorization") auth : String
+    ) : Call<ResponseBody>
+    @GET("eams-micro-server/api/v1/lesson/room/getLessons")
+    fun getClassroomLessons(
+        @Query("semesterAssoc") semester : Int,
+        @Query("roomAssoc") roomId : Int,
         @Header("Authorization") auth : String
     ) : Call<ResponseBody>
     // 评教 非必需，教务系统就有

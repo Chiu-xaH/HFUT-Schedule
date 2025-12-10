@@ -11,16 +11,28 @@ data class UniAppCourse(
     val credits : Double
 )
 
-data class UniAppCourseBean(
-    val id : Long,
-    val code : String,
-    val course : UniAppCourse,
-    val stdCount : Int,
-    val openDepartment : NameZh,
-    val courseType : NameZh,
-    val teacherAssignmentList : List<String>,
-    val schedules : List<UniAppSchedule>
-)
+data class UniAppCourseBean (
+    override val id : Long,
+    override val code : String,
+    override val course : UniAppCourse,
+    override val stdCount : Int,
+    override val openDepartment : NameZh,
+    override val courseType : NameZh,
+    override val teacherAssignmentList : List<String>,
+    override val schedules : List<UniAppSchedule>
+) : UniAppBaseCourseBean()
+
+
+abstract class UniAppBaseCourseBean {
+    abstract val id : Long
+    abstract val code : String
+    abstract val course : UniAppCourse
+    abstract val stdCount : Int
+    abstract val openDepartment : NameZh
+    abstract val courseType : NameZh
+    abstract val teacherAssignmentList : List<String>
+    abstract val schedules : List<UniAppSchedule>
+}
 
 data class UniAppSchedule(
     val date : String,

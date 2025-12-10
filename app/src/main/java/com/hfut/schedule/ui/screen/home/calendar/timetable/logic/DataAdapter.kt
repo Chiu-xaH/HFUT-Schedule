@@ -78,7 +78,7 @@ suspend fun allToTimeTableData(): List<List<TimeTableItem>> = withContext(Dispat
 }
 
 private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
-    val json = LargeStringDataManager.read( LargeStringDataManager.UNI_APP_COURSES)
+    val json = LargeStringDataManager.read(LargeStringDataManager.UNI_APP_COURSES)
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }

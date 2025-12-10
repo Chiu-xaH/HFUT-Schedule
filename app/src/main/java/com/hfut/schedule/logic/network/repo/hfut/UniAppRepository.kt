@@ -5,20 +5,24 @@ import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.Campus.*
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchResponse
-import com.hfut.schedule.logic.model.uniapp.ClassmatesBean
-import com.hfut.schedule.logic.model.uniapp.ClassmatesResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppClassmatesBean
+import com.hfut.schedule.logic.model.uniapp.UniAppClassmatesResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
 import com.hfut.schedule.logic.model.uniapp.UniAppBuildingsResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppCampus
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomBean
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomRequest
-import com.hfut.schedule.logic.model.uniapp.UniAppClassroomResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
+import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonsResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomBean
+import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomRequest
+import com.hfut.schedule.logic.model.uniapp.UniAppEmptyClassroomResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppCourseBean
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppGradeBean
 import com.hfut.schedule.logic.model.uniapp.UniAppGradesResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse.UniAppLoginError
 import com.hfut.schedule.logic.model.uniapp.UniAppLoginResponse.UniAppLoginSuccessfulResponse
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomBean
+import com.hfut.schedule.logic.model.uniapp.UniAppSearchClassroomsResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramBean
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramRequest
 import com.hfut.schedule.logic.model.uniapp.UniAppSearchProgramResponse
@@ -88,7 +92,7 @@ object UniAppRepository {
     suspend fun getClassmates(
         lessonId : String,
         token : String ,
-        holder : StateHolder<List<ClassmatesBean>>
+        holder : StateHolder<List<UniAppClassmatesBean>>
     ) = launchRequestState(
         holder = holder,
         request = { uniApp.getClassmates(lessonId,token) },
@@ -97,7 +101,7 @@ object UniAppRepository {
 
     @JvmStatic
     private fun parseClassmates(json : String) = try {
-        Gson().fromJson(json, ClassmatesResponse::class.java).data ?: emptyList()
+        Gson().fromJson(json, UniAppClassmatesResponse::class.java).data ?: emptyList()
     } catch (e : Exception) { throw e }
 
     suspend fun updateCourses(token : String) {
@@ -209,18 +213,18 @@ object UniAppRepository {
         originalList.filter { it.campusAssoc in codeList }
     } catch (e : Exception) { throw e }
 
-    suspend fun getClassrooms(
+    suspend fun getEmptyClassrooms(
         page : Int,
         date : String,
         campus: Campus?,
         buildings : List<Int>?,
         floors : List<Int>?,
         token : String,
-        holder : StateHolder<List<UniAppClassroomBean>>
+        holder : StateHolder<List<UniAppEmptyClassroomBean>>
     ) = launchRequestState(
         holder = holder,
-        request = { uniApp.getClassrooms(
-            UniAppClassroomRequest(
+        request = { uniApp.getEmptyClassrooms(
+            UniAppEmptyClassroomRequest(
                 currentPage = page,
                 date = date,
                 campusAssoc = when(campus) {
@@ -233,11 +237,41 @@ object UniAppRepository {
                 floors = floors
             ),token
         ) },
-        transformSuccess = { _,json -> parseClassrooms(json) }
+        transformSuccess = { _,json -> parseEmptyClassrooms(json) }
     )
     @JvmStatic
-    private fun parseClassrooms(json : String) : List<UniAppClassroomBean>  = try {
-        Gson().fromJson(json, UniAppClassroomResponse::class.java).data.data
+    private fun parseEmptyClassrooms(json : String) : List<UniAppEmptyClassroomBean>  = try {
+        Gson().fromJson(json, UniAppEmptyClassroomResponse::class.java).data.data
+    } catch (e : Exception) { throw e }
+
+    suspend fun searchClassrooms(
+        input : String,
+        token : String,
+        page : Int,
+        holder : StateHolder<List<UniAppSearchClassroomBean>>
+    ) = launchRequestState(
+        request = { uniApp.searchClassrooms(input,"${page},${getPageSize()}",token) },
+        holder = holder,
+        transformSuccess = { _,json -> parseSearchClassrooms(json) }
+    )
+    @JvmStatic
+    private fun parseSearchClassrooms(json : String) = try {
+        Gson().fromJson(json, UniAppSearchClassroomsResponse::class.java).data.data
+    } catch (e : Exception) { throw e }
+
+    suspend fun getClassroomLessons(
+        semester: Int,
+        roomId : Int,
+        token : String,
+        holder : StateHolder<List<UniAppClassroomLessonBean>>
+    ) = launchRequestState(
+        request = { uniApp.getClassroomLessons(semester,roomId,token) },
+        holder = holder,
+        transformSuccess = { _,json -> parseClassroomLessons(json) }
+    )
+    @JvmStatic
+    private fun parseClassroomLessons(json : String) = try {
+        Gson().fromJson(json, UniAppClassroomLessonsResponse::class.java).data
     } catch (e : Exception) { throw e }
 }
 
