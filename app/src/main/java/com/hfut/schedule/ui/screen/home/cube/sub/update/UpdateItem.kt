@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.screen.home.cube.sub.update
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -13,13 +12,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import java.io.File
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -29,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-12-10") },
+                overlineContent = { Text(text = "2025-12-12") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,9 +53,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("重构 寝室评分为寝室","位于 查询中心-寝室，学校终于将宣区和肥区接口统一了")
-            UpdateItems("新增 空教室与教室课表","位于 查询中心-教室，数据源为合工大教务")
-            UpdateItems("优化 跨天日程自动折为每天8:00~22:00")
+            UpdateItems("修复 空教室横轴UI异常的Bug")
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
