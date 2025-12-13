@@ -293,7 +293,7 @@ private fun WorkSearchUI(
                     item { PaddingForPageControllerButton() }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
-                PageController(listState,currentPage,nextPage = { currentPage = it }, previousPage = { currentPage = it })
+                PageController(listState,currentPage,onNextPage = { currentPage = it }, onPreviousPage = { currentPage = it })
             }
         }
     }

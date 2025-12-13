@@ -157,7 +157,7 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
                                 }
                                 item { PaddingForPageControllerButton() }
                             }
-                            PageController(listState,currentPage, nextPage = { currentPage = it }, previousPage = { currentPage = it })
+                            PageController(listState,currentPage, onNextPage = { currentPage = it }, onPreviousPage = { currentPage = it })
                         }
                     }
                 }

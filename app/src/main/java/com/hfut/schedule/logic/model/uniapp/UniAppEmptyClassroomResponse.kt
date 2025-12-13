@@ -12,6 +12,7 @@ data class UniAppEmptyClassroomData(
 )
 
 data class UniAppEmptyClassroomBean(
+    val id : Int,
     val nameZh : String,
     val campusNameZh : String,
     val roomOccupationInfoVms : List<UniAppEmptyClassroomLesson>?

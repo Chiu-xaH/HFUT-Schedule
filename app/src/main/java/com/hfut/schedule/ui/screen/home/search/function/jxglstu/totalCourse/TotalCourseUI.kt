@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -95,9 +96,14 @@ enum class TotalCourseDataSource {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : NetWorkViewModel, hazeState: HazeState,ifSaved : Boolean) {
-
-
+fun CourseTotalUI(
+    dataSource : TotalCourseDataSource,
+    sortType: Boolean,
+    vm : NetWorkViewModel,
+    hazeState: HazeState,
+    ifSaved : Boolean,
+    state: LazyListState = rememberLazyListState()
+) {
     val courseBookJson by DataStoreManager.courseBookJson.collectAsState(initial = "")
     if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
         LaunchedEffect(Unit) {
@@ -180,7 +186,6 @@ fun CourseTotalUI(dataSource : TotalCourseDataSource, sortType: Boolean, vm : Ne
         }
     }
     if(list.isNotEmpty()) {
-        val state = rememberLazyListState()
         if(!isSearch) {
             CustomTextField(
                 input = input,

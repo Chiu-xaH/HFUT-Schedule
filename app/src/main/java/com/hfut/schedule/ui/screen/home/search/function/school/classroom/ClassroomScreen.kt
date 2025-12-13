@@ -25,6 +25,7 @@ import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -136,7 +137,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 private enum class ClassroomBarItems(val page : Int) {
-    EMPTY_CLASSROOM(1),CLASSROOM_LESSONS(0)
+    EMPTY_CLASSROOM(0),CLASSROOM_LESSONS(1)
 }
 
 private val items = listOf(
@@ -163,7 +164,7 @@ fun ClassroomScreen(
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         ClassroomBarItems.EMPTY_CLASSROOM.name -> ClassroomBarItems.EMPTY_CLASSROOM
         ClassroomBarItems.CLASSROOM_LESSONS.name -> ClassroomBarItems.CLASSROOM_LESSONS
-        else -> ClassroomBarItems.CLASSROOM_LESSONS
+        else -> ClassroomBarItems.EMPTY_CLASSROOM
     }
     // 保存上一页页码 用于决定左右动画
     if(currentAnimationIndex == 2) {
@@ -231,79 +232,90 @@ fun ClassroomScreen(
                 )
 
                 if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
-                    // 校区选择 多个Chip
-                    val campusList = Campus.entries
-                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
-                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                        items(campusList.size) { index ->
-                            val item = campusList[index]
-                            val selected = item == campus
-                            FilterChip (
-                                selected = selected,
-                                onClick = {
-                                    campus = if(selected) {
-                                        null
-                                    } else {
-                                        item
-                                    }
-                                },
-                                label = { Text(item.description) },
-                                modifier = Modifier.padding(end = if(index == campusList.size-1) 0.dp else CARD_NORMAL_DP*2)
-                            )
-                        }
-                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                    }
-                    // 建筑选择（可多选） 多个Chip
-                    if(chipsUiState is UiState.Success) {
-                        val buildingList = (chipsUiState as UiState.Success).data.filter {
-                            when(campus) {
-                                Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
-                                Campus.TXL -> UniAppCampus.TXL.code == it.campusAssoc
-                                Campus.FCH -> UniAppCampus.FCH.code == it.campusAssoc
-                                else -> true
-                            }
-                        }
-                        LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                    CustomCard(
+                        color = MaterialTheme.colorScheme.primaryContainer.copy(.35f),
+                        modifier = Modifier.containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                    ) {
+                        // 校区选择 多个Chip
+                        val campusList = Campus.entries
+                        LazyRow(modifier = Modifier.padding(top = CARD_NORMAL_DP*3)) {
                             item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                            items(buildingList.size) { index ->
-                                val item = buildingList[index]
-                                val selected = item in selectedBuildings
+                            items(campusList.size) { index ->
+                                val item = campusList[index]
+                                val selected = item == campus
                                 FilterChip (
+                                    border = null,
+                                    colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
                                     selected = selected,
                                     onClick = {
-                                        if(selected) {
-                                            selectedBuildings.remove(item)
+                                        campus = if(selected) {
+                                            null
                                         } else {
-                                            selectedBuildings.add(item)
+                                            item
                                         }
                                     },
-                                    label = { Text(item.nameZh) },
-                                    modifier = Modifier.padding(end = if(index == buildingList.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                    label = { Text(item.description) },
+                                    modifier = Modifier.padding(end = if(index == campusList.size-1) 0.dp else CARD_NORMAL_DP*2)
                                 )
                             }
                             item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                         }
-                    }
-                    // 楼层选择（可多选） 多个Chip
-                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
-                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                        items(20) { index ->
-                            val item = index + 1
-                            val selected = item in selectedFloors
-                            FilterChip (
-                                selected = selected,
-                                onClick = {
-                                    if(selected) {
-                                        selectedFloors.remove(item)
-                                    } else {
-                                        selectedFloors.add(item)
-                                    }
-                                },
-                                label = { Text("${item}F") },
-                                modifier = Modifier.padding(end = if(index == 20-1) 0.dp else CARD_NORMAL_DP*2)
-                            )
+                        // 建筑选择（可多选） 多个Chip
+                        if(chipsUiState is UiState.Success) {
+                            val buildingList = (chipsUiState as UiState.Success).data.filter {
+                                when(campus) {
+                                    Campus.XC -> UniAppCampus.XC.code == it.campusAssoc
+                                    Campus.TXL -> UniAppCampus.TXL.code == it.campusAssoc
+                                    Campus.FCH -> UniAppCampus.FCH.code == it.campusAssoc
+                                    else -> true
+                                }
+                            }
+                            LazyRow() {
+                                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                items(buildingList.size) { index ->
+                                    val item = buildingList[index]
+                                    val selected = item in selectedBuildings
+                                    FilterChip (
+                                        border = null,
+                                        colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
+                                        selected = selected,
+                                        onClick = {
+                                            if(selected) {
+                                                selectedBuildings.remove(item)
+                                            } else {
+                                                selectedBuildings.add(item)
+                                            }
+                                        },
+                                        label = { Text(item.nameZh) },
+                                        modifier = Modifier.padding(end = if(index == buildingList.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                    )
+                                }
+                                item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            }
                         }
-                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                        // 楼层选择（可多选） 多个Chip
+                        LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                            items(20) { index ->
+                                val item = index + 1
+                                val selected = item in selectedFloors
+                                FilterChip (
+                                    border = null,
+                                    colors = FilterChipDefaults.filterChipColors(containerColor = MaterialTheme.colorScheme.surface, selectedContainerColor = MaterialTheme.colorScheme.primary, selectedLabelColor = MaterialTheme.colorScheme.onPrimary),
+                                    selected = selected,
+                                    onClick = {
+                                        if(selected) {
+                                            selectedFloors.remove(item)
+                                        } else {
+                                            selectedFloors.add(item)
+                                        }
+                                    },
+                                    label = { Text("${item}F") },
+                                    modifier = Modifier.padding(end = if(index == 20-1) 0.dp else CARD_NORMAL_DP*2)
+                                )
+                            }
+                            item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                        }
                     }
                 } else {
                     CustomTextField(
@@ -336,7 +348,7 @@ fun ClassroomScreen(
 
         NavHost(
             navController = navController,
-            startDestination = ClassroomBarItems.CLASSROOM_LESSONS.name,
+            startDestination = ClassroomBarItems.EMPTY_CLASSROOM.name,
             enterTransition = { animation.enter },
             exitTransition = { animation.exit },
             modifier = Modifier
@@ -344,7 +356,7 @@ fun ClassroomScreen(
                 .hazeSource(state = hazeState)
         ) {
             composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
-                EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors)
+                EmptyClassroomScreen(vm,innerPadding,navTopController,date,campus,selectedBuildings,selectedFloors)
             }
             composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
                 SearchClassroomScreen(vm,navTopController,innerPadding) {
@@ -363,6 +375,7 @@ fun ClassroomScreen(
 private fun EmptyClassroomScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
+    navTopController : NavHostController,
     date : String,
     campus : Campus?,
     selectedBuildings: SnapshotStateList<UniAppBuildingBean>,
@@ -430,7 +443,13 @@ private fun EmptyClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size,key = { it }) { index ->
                         val item = list[index]
-                        CustomCard(color = cardNormalColor()) {
+                        val route = AppNavRoute.ClassroomLessons.withArgs(item.id,item.nameZh)
+                        CustomCard(
+                            color = cardNormalColor(),
+                            modifier = Modifier.containerShare(route).clickable {
+                                navTopController.navigateForTransition(AppNavRoute.ClassroomLessons,route)
+                            }
+                        ) {
                             TransplantListItem(
                                 headlineContent = { Text(item.nameZh) },
                                 overlineContent = { Text(item.campusNameZh) },
@@ -448,9 +467,10 @@ private fun EmptyClassroomScreen(
                 PageController(
                     listState,
                     page,
-                    nextPage = { page = it },
-                    previousPage = { page = it },
+                    onNextPage = { page = it },
+                    onPreviousPage = { page = it },
                     paddingBottom = false,
+                    paddingSafely = false,
                     modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
                 )
             }

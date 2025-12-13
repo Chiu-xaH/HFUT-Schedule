@@ -3,8 +3,10 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -29,14 +31,18 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -60,80 +66,91 @@ fun CourseSearchCalendarScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.CourseSearchCalendar.route }
     var showAll by remember { mutableStateOf(false) }
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            roundShape = MaterialTheme.shapes.medium,
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                ) {
-                    MediumTopAppBar(
-                        colors = topBarTransplantColor(),
-                        scrollBehavior = scrollBehavior,
-                        title = {
-                            Column {
-                                Text(AppNavRoute.CourseSearchCalendar.label)
-                                classes?.let {
-                                    Text(
-                                        "检索班级: $it",
-                                        modifier = Modifier.padding(start = 2.dp),
-                                        style = MaterialTheme.typography.labelMedium,
-                                    )
-                                }
-                                courseName?.let {
-                                    Text(
-                                        "检索课程名: $it",
-                                        modifier = Modifier.padding(start = 2.dp),
-                                        style = MaterialTheme.typography.labelMedium,
-                                    )
-                                }
-                                courseCode?.let {
-                                    Text(
-                                        "检索课程代码: $it",
-                                        modifier = Modifier.padding(start = 2.dp),
-                                        style = MaterialTheme.typography.labelMedium,
-                                    )
-                                }
+    val backdrop = rememberLayerBackdrop()
+
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        roundShape = MaterialTheme.shapes.medium,
+        route = route,
+        navHostController = navController,
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
+            ) {
+                MediumTopAppBar(
+                    colors = topBarTransplantColor(),
+                    scrollBehavior = scrollBehavior,
+                    title = {
+                        Column {
+                            Text(AppNavRoute.CourseSearchCalendar.label)
+                            classes?.let {
                                 Text(
-                                    "检索学期: ${SemesterParser.parseSemester(term)}",
+                                    "检索班级: $it",
                                     modifier = Modifier.padding(start = 2.dp),
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
-                        },
-                        navigationIcon = {
-                            TopBarNavigationIcon(navController,route,AppNavRoute.CourseSearchCalendar.icon)
-                        },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                FilledTonalIconButton (onClick = { showToast("正在开发") }) {
-                                    Icon(painter = painterResource(id = R.drawable.save), contentDescription = "")
-                                }
-                                FilledTonalIconButton (onClick = { showAll = !showAll }) {
-                                    Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
-                                }
+                            courseName?.let {
+                                Text(
+                                    "检索课程名: $it",
+                                    modifier = Modifier.padding(start = 2.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                            courseCode?.let {
+                                Text(
+                                    "检索课程代码: $it",
+                                    modifier = Modifier.padding(start = 2.dp),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                            Text(
+                                "检索学期: ${SemesterParser.parseSemester(term)}",
+                                modifier = Modifier.padding(start = 2.dp),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route,AppNavRoute.CourseSearchCalendar.icon)
+                    },
+                    actions = {
+                        Row() {
+                            LiquidButton(
+                                onClick = { showToast("正在开发") },
+                                isCircle = true,
+                                backdrop = backdrop
+                            ) {
+                                Icon(painter = painterResource(id = R.drawable.save), contentDescription = "")
+                            }
+                            Spacer(Modifier.width(BUTTON_PADDING))
+                            LiquidButton(
+                                onClick = { showAll = !showAll },
+                                isCircle = true,
+                                backdrop = backdrop,
+                                modifier = Modifier.padding(end = APP_HORIZONTAL_DP)
+                            ) {
+                                Icon(painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content), contentDescription = "")
                             }
                         }
-                    )
-                }
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
-            ) {
-                val uiState by vm.courseSearchResponse.state.collectAsState()
-                CommonNetworkScreen(uiState, onReload = {}) {
-                    val list = (uiState as UiState.Success).data
-                    JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,list) {
-                        showAll = it
                     }
+                )
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            val uiState by vm.courseSearchResponse.state.collectAsState()
+            CommonNetworkScreen(uiState, onReload = {}) {
+                val list = (uiState as UiState.Success).data
+                JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,list) {
+                    showAll = it
                 }
             }
         }
-//    }
+    }
 }

@@ -151,8 +151,8 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
             PageController(
                 listState,
                 page,
-                nextPage = { page = it },
-                previousPage = { page = it },
+                onNextPage = { page = it },
+                onPreviousPage = { page = it },
                 modifier = Modifier.padding(bottom = innerPaddings.calculateBottomPadding()-navigationBarHeightPadding),
                 paddingBottom = false
             )

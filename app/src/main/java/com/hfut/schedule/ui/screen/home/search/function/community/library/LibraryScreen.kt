@@ -341,7 +341,7 @@ fun BookSearchUI(
                     item { InnerPaddingHeight(innerPadding,false) }
                     item { PaddingForPageControllerButton() }
                 }
-                PageController(listState,page,nextPage = { page = it }, previousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
+                PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
             }
         }
 //    }

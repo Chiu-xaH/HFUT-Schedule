@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
@@ -26,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -54,6 +57,7 @@ import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -85,46 +89,69 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
         if(semester != null)
             refreshNetwork()
     }
+    val listState = rememberLazyListState()
 
     val scope = rememberCoroutineScope()
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         Box(modifier = Modifier.fillMaxSize()) {
-            CourseSurveyListUI(vm,hazeState = hazeState, scope,code,refresh = refreshNetwork,innerPadding)
-            if(semester != null) {
-                FloatingActionButton(
-                    onClick = { semester = semester!! - 20 },
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .navigationBarsPadding()
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                    ,
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-
-
-                ExtendedFloatingActionButton(
-                    onClick = { scope.launch { refreshNetwork() } },
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .navigationBarsPadding()
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) { Text(text = parseSemester(semester!!),) }
-
-                FloatingActionButton(
-                    onClick = { semester = semester!! + 20 },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .navigationBarsPadding()
-                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+            CourseSurveyListUI(listState,vm,hazeState = hazeState, scope,code,refresh = refreshNetwork,innerPadding)
+//            if(semester != null) {
+//                FloatingActionButton(
+//                    onClick = { semester = semester!! - 20 },
+//                    modifier = Modifier
+//                        .align(Alignment.BottomStart)
+//                        .navigationBarsPadding()
+//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+//                    ,
+//                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+//
+//
+//                ExtendedFloatingActionButton(
+//                    onClick = { scope.launch { refreshNetwork() } },
+//                    modifier = Modifier
+//                        .align(Alignment.BottomCenter)
+//                        .navigationBarsPadding()
+//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+//                ) { Text(text = parseSemester(semester!!),) }
+//
+//                FloatingActionButton(
+//                    onClick = { semester = semester!! + 20 },
+//                    modifier = Modifier
+//                        .align(Alignment.BottomEnd)
+//                        .navigationBarsPadding()
+//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
+//                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+//            }
+            semester?.let { page ->
+                val currentSemester by produceState<Int?>(initialValue = null) {
+                    value = getSemester()
+                }
+                PageController(
+                    listState = listState,
+                    currentPage = page,
+                    onNextPage = { semester = it },
+                    onPreviousPage = { semester = it },
+                    gap = 20,
+                    text = parseSemester(page),
+                    range = Pair(null,null),
+                    resetPage = currentSemester ?: -1
+                )
             }
-
         }
     }
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun CourseSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, scope: CoroutineScope, code : String?, refresh : suspend () -> Unit,innerPadding : PaddingValues) {
+private fun CourseSurveyListUI(
+    state : LazyListState,
+    vm : NetWorkViewModel,
+    hazeState: HazeState,
+    scope: CoroutineScope,
+    code : String?,
+    refresh : suspend () -> Unit,
+    innerPadding : PaddingValues
+) {
     val uiState by vm.surveyListData.state.collectAsState()
     val list = (uiState as UiState.Success).data
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -177,7 +204,7 @@ private fun CourseSurveyListUI(vm : NetWorkViewModel, hazeState: HazeState, scop
 
 
     if(filteredList.isNotEmpty())
-        LazyColumn {
+        LazyColumn(state = state ) {
             item { InnerPaddingHeight(innerPadding,true) }
             items(filteredList.size) { item ->
                 val listItem = filteredList[item]

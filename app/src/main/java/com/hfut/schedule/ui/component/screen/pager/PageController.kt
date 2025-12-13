@@ -2,8 +2,7 @@ package com.hfut.schedule.ui.component.screen.pager
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -15,6 +14,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,14 +31,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.TransformOrigin
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.R
+import androidx.compose.ui.zIndex
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.toBottomExit
 import kotlinx.coroutines.launch
 
 @Composable
@@ -72,29 +69,118 @@ fun rememberScrollDirection(state: LazyListState): MutableState<Boolean> {
 fun BoxScope.PageController(
     listState : LazyListState,
     currentPage : Int,
+    onNextPage : (Int) -> Unit,
+    onPreviousPage : (Int) -> Unit,
+    modifier: Modifier = Modifier,
     paddingBottom : Boolean = true,
-    nextPage : (Int) -> Unit,
-    previousPage : (Int) -> Unit,
-    modifier: Modifier = Modifier
+    paddingSafely : Boolean = true,
+    gap : Int = 1,
+    range : Pair<Int?,Int?> = Pair(1,null),
+    resetPage : Int = range.first ?: 1,
+    text : String = "第${currentPage}页",
 ) {
     // 如果列表无项目，不显示按钮
     val shouldShowButton by rememberScrollDirection(listState)
+    BasePageController(
+        shouldShowButton = shouldShowButton,
+        onClick = {
+            listState.animateScrollToItem(0)
+        },
+        currentPage  = currentPage,
+        nextPage = onNextPage,
+        previousPage = onPreviousPage,
+        modifier = modifier,
+        paddingBottom = paddingBottom,
+        paddingSafely = paddingSafely,
+        gap = gap,
+        range = range,
+        resetPage = resetPage,
+        text = text
+    )
+}
+
+// 翻页器
+@Composable
+fun BoxScope.PageController(
+    scrollState : ScrollState,
+    currentPage : Int,
+    onNextPage : (Int) -> Unit,
+    onPreviousPage : (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    paddingBottom : Boolean = true,
+    paddingSafely : Boolean = true,
+    gap : Int = 1,
+    range : Pair<Int?,Int?> = Pair(1,null),
+    resetPage : Int = range.first ?: 1,
+    text : String = "第${currentPage}页",
+) {
+    val shouldShowButton by remember {
+        derivedStateOf {
+            !(scrollState.value == 0 || scrollState.value == scrollState.maxValue)
+        }
+    }
+    BasePageController(
+        shouldShowButton = shouldShowButton,
+        onClick = {
+            scrollState.animateScrollTo(0)
+        },
+        currentPage  = currentPage,
+        nextPage = onNextPage,
+        previousPage = onPreviousPage,
+        modifier = modifier,
+        paddingBottom = paddingBottom,
+        paddingSafely = paddingSafely,
+        gap = gap,
+        range = range,
+        resetPage = resetPage,
+        text = text
+    )
+}
+
+@Composable
+private fun BoxScope.BasePageController(
+    shouldShowButton : Boolean,
+    onClick : suspend () -> Unit,
+    currentPage : Int,
+    nextPage : (Int) -> Unit,
+    previousPage : (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    paddingBottom : Boolean = true,
+    paddingSafely : Boolean = true,
+    gap : Int = 1,
+    range : Pair<Int?,Int?> = Pair(1,null),
+    resetPage : Int = range.first ?: 1,
+    text : String = "第${currentPage}页",
+) {
+    require(
+        !((range.first != null && resetPage < range.first!!) || (range.second != null && resetPage > range.second!!))
+    ) {
+        "不合法的resetPage($resetPage),期望在range(${range.first}..${range.second})内"
+    }
+
     val scope = rememberCoroutineScope()
     val angle by animateFloatAsState(
         if(shouldShowButton) -90f else 0f
     )
+
+    val paddingModifier = modifier
+        .zIndex(1f)
+        .padding(horizontal = APP_HORIZONTAL_DP, vertical = if(paddingSafely) APP_HORIZONTAL_DP else 0.dp)
+        .let { if(paddingBottom) it.navigationBarsPadding() else it }
+
+
     AnimatedVisibility(
         visible = shouldShowButton == false,
-        modifier = modifier.align(Alignment.BottomStart).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
+        modifier = paddingModifier.align(Alignment.BottomStart),
         enter = AppAnimationManager.hiddenRightAnimation.enter + AppAnimationManager.centerFadeAnimation.enter,
         exit = AppAnimationManager.hiddenRightAnimation.exit + AppAnimationManager.centerFadeAnimation.exit
-        ){
+    ){
         FloatingActionButton(
+            elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
             onClick = {
-                if (currentPage > 1) {
-                    previousPage(currentPage-1)
-                } else {
-                    showToast("第一页")
+                val terminalPage = currentPage - gap
+                if (range.first == null || terminalPage >= range.first!!) {
+                    previousPage(terminalPage)
                 }
             },
         ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
@@ -102,27 +188,34 @@ fun BoxScope.PageController(
     }
     AnimatedVisibility(
         visible = shouldShowButton == false,
-        modifier = modifier.align(Alignment.BottomCenter).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
+        modifier = paddingModifier.align(Alignment.BottomCenter),
         enter =  AppAnimationManager.hiddenRightAnimation.enter + AppAnimationManager.centerFadeAnimation.enter,
         exit =  AppAnimationManager.hiddenRightAnimation.exit + AppAnimationManager.centerFadeAnimation.exit
     ){
         ExtendedFloatingActionButton(
+            elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
             onClick = {
-                nextPage(1)
+                nextPage(resetPage)
             },
-        ) { Text(text = "第${currentPage}页") }
+        ) { Text(text = text) }
 
     }
     FloatingActionButton(
+        elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
         onClick = {
             if(!shouldShowButton) {
-                nextPage(currentPage+1)
+                val terminalPage = currentPage + gap
+                if (range.second == null || terminalPage <= range.second!!) {
+                    nextPage(currentPage+gap)
+                }
             } else {
-                scope.launch { listState.animateScrollToItem(0) }
+                scope.launch {
+                    onClick()
+                }
             }
         },
-        modifier = modifier.align(Alignment.BottomEnd).padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP).let { if(paddingBottom) it.navigationBarsPadding() else it },
-        ) {
+        modifier = paddingModifier.align(Alignment.BottomEnd),
+    ) {
         Icon(Icons.Filled.ArrowForward, "Add Button", modifier = Modifier.rotate(angle))
     }
 }

@@ -382,8 +382,8 @@ fun NewsUI(innerPadding : PaddingValues,vm : NetWorkViewModel) {
             PageController(
                 listState,
                 page,
-                nextPage = { page = it },
-                previousPage = { page = it },
+                onNextPage = { page = it },
+                onPreviousPage = { page = it },
 //                modifier = Modifier.padding(innerPadding),
                 modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
                 paddingBottom = false

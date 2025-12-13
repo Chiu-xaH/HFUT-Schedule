@@ -214,7 +214,7 @@ fun ProgramSearchScreen(
                             item { InnerPaddingHeight(innerPadding,false) }
                             item { PaddingForPageControllerButton() }
                         }
-                        PageController(listState,page,nextPage = { page = it }, previousPage = { page = it })
+                        PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it })
                     }
                 }
             }

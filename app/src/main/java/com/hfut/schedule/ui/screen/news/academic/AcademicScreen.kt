@@ -133,8 +133,8 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                     PageController(
                         listState,
                         page,
-                        nextPage = { page = it },
-                        previousPage = { page = it },
+                        onNextPage = { page = it },
+                        onPreviousPage = { page = it },
                         modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
 //                        modifier = Modifier.padding(innerPadding)
                     )

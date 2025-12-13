@@ -220,7 +220,7 @@ fun OfficeHallScreen(
                         item { PaddingForPageControllerButton() }
                         item { InnerPaddingHeight(innerPadding,false) }
                     }
-                    PageController(listState,page, nextPage = { page = it }, previousPage = { page = it })
+                    PageController(listState,page, onNextPage = { page = it }, onPreviousPage = { page = it })
                 }
             }
         }

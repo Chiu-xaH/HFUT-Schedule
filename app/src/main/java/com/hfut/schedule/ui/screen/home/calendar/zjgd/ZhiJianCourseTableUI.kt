@@ -32,6 +32,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -611,6 +612,7 @@ fun ZhiJianCourseTableUI(
                     .padding(APP_HORIZONTAL_DP)
             ) {
                 ExtendedFloatingActionButton(
+                    elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                     onClick = {
                         if (DateTimeManager.weeksBetweenJxglstu < 1) {
                             currentWeek = 1
