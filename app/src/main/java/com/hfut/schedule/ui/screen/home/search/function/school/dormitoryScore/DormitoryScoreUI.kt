@@ -43,7 +43,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -142,7 +142,6 @@ fun DormitoryScoreScreen(
                     range = Pair(1, MyApplication.MAX_WEEK),
                     resetPage = DateTimeManager.weeksBetweenJxglstu.toInt(),
                     text = "第${page}周",
-                    paddingSafely = false,
                 )
             }
             Column(
@@ -193,7 +192,7 @@ fun DormitoryScoreScreen(
                         val data = (dormitoryScoreUiState as UiState.Success).data
                         Column {
                             if(data.isEmpty()) {
-                                EmptyUI("本周结果未出")
+                                EmptyIcon("未查询到评分")
                             } else {
                                 CustomCard(color = cardNormalColor())  {
                                     for(index in data.indices step 2) {

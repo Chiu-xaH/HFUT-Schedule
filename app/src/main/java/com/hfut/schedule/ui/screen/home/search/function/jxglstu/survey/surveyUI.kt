@@ -47,7 +47,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
  
@@ -280,7 +280,7 @@ private fun CourseSurveyListUI(
         }
     else {
         CenterScreen {
-            EmptyUI()
+            EmptyIcon()
         }
     }
 }
@@ -340,7 +340,7 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
         }
     else {
         Column {
-            EmptyUI()
+            EmptyIcon()
         }
     }
 }

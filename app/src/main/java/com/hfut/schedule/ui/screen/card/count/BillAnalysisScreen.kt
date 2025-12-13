@@ -48,7 +48,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -107,7 +107,7 @@ private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,haz
         val list = (uiState as UiState.Success).data.records
         if(list.isEmpty()) {
             CenterScreen {
-                EmptyUI()
+                EmptyIcon()
             }
         } else {
             LazyColumn() {

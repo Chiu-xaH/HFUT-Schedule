@@ -1,11 +1,14 @@
 package com.hfut.schedule.application
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.os.Bundle
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.network.WebVpnUtil
+import java.util.Collections
 
 class MyApplication : Application() {
     companion object {
@@ -153,10 +156,10 @@ class MyApplication : Application() {
         val contributors by lazy {
             mapOf(
                 GITHUB_DEVELOPER_NAME to 116127902,
-                "Today1337" to 110648923,
-                "linsui" to 36977733,
                 "tinyvan" to 27542299,
-                "James-Zhang2" to 175417444
+                "linsui" to 36977733,
+                "James-Zhang2" to 175417444,
+                "Today1337" to 110648923,
             )
         }
         // App名称
@@ -169,11 +172,41 @@ class MyApplication : Application() {
         const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
         // PC UA
         const val PC_UA = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17"
+        // Activity栈
+        private val activities = Collections.synchronizedList(mutableListOf<Activity>())
+        // 安全地退出App
+        fun exitAppSafely() {
+            activities.toList().forEach { activity ->
+                activity.finish()
+            }
+        }
     }
 
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityCreated(a: Activity, b: Bundle?) {
+                activities.add(a)
+            }
+
+            override fun onActivityDestroyed(a: Activity) {
+                activities.remove(a)
+            }
+
+            override fun onActivityPaused(activity: Activity) {}
+
+            override fun onActivityResumed(activity: Activity) {}
+
+            override fun onActivitySaveInstanceState(
+                activity: Activity,
+                outState: Bundle
+            ) {}
+
+            override fun onActivityStarted(activity: Activity) {}
+
+            override fun onActivityStopped(activity: Activity) {}
+        })
     }
 }
 

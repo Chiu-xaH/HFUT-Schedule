@@ -43,7 +43,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.status.StatusUI
+import com.hfut.schedule.ui.component.status.StatusIcon
  
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
@@ -220,7 +220,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = { showToast("禁止刷新") }) {
         val msg = (uiState as UiState.Success).data
-        StatusUI(iconId = R.drawable.send_money, text = msg)
+        StatusIcon(iconId = R.drawable.send_money, text = msg)
     }
 }
 

@@ -13,7 +13,7 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.activity.util.BaseActivity
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
-import com.hfut.schedule.ui.component.status.StatusUI
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.supabase.SupabaseHome
 import com.hfut.schedule.ui.screen.supabase.login.SupabaseLoginScreen

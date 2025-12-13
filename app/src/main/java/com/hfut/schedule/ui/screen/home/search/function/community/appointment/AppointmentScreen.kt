@@ -17,7 +17,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.DevelopingUI
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -65,7 +65,7 @@ fun AppointmentScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            CenterScreen { DevelopingUI() }
+            CenterScreen { DevelopingIcon() }
         }
     }
 }

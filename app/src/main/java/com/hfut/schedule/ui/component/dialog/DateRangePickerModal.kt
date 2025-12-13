@@ -133,7 +133,7 @@ fun DateRangePickerModal(
             DatePicker(
                 state = datePickerState,
                 title = {   },
-                headline = { Text("$text ${endDateString ?: ""}", modifier = Modifier.padding(
+                headline = { Text("$text ${endDateString ?: ""}"  + (weekInfoEnd?.let { " (第${it.first}周)" } ?: ""), modifier = Modifier.padding(
                     APP_HORIZONTAL_DP
                 )) },
                 showModeToggle = true,

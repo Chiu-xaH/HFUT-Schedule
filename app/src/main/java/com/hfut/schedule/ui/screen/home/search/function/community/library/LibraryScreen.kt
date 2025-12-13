@@ -84,8 +84,8 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.DevelopingUI
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -291,7 +291,7 @@ fun BookSearchUI(
                 Box(
                     modifier = Modifier.align(Alignment.Center)
                 ) {
-                    PrepareSearchUI()
+                    PrepareSearchIcon()
                 }
             }
         }) {
@@ -692,6 +692,6 @@ fun LibrarySearchUI(
     innerPadding: PaddingValues
 ) {
     CenterScreen {
-        DevelopingUI()
+        DevelopingIcon()
     }
 }

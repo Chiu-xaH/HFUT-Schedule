@@ -115,7 +115,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.StatusUI
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -328,7 +328,7 @@ fun AddEventScreen(
                 false -> {
                     CenterScreen {
                         ColumnVertical {
-                            StatusUI(R.drawable.login,"未登录或状态失效")
+                            StatusIcon(R.drawable.login,"未登录或状态失效")
                             Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             Button(onClick = { Starter.loginSupabase(context)}) {
                                 Text("刷新登录状态")
@@ -493,7 +493,7 @@ private fun SharedTransitionScope.SurfaceUI(
                     false -> {
                         CenterScreen {
                             ColumnVertical {
-                                StatusUI(R.drawable.login,"未登录或状态失效")
+                                StatusIcon(R.drawable.login,"未登录或状态失效")
                                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                 Button(onClick = { Starter.loginSupabase(context)}) {
                                     Text("刷新登录状态")

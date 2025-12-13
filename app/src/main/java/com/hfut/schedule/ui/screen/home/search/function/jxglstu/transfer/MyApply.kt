@@ -42,11 +42,11 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.component.status.StatusUI2
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
@@ -163,7 +163,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                 }
             }
         } else {
-            EmptyUI()
+            EmptyIcon()
         }
     }
 }
@@ -364,6 +364,6 @@ private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: I
         val result = (uiState as UiState.Success).data
         var msg  by remember { mutableStateOf("结果") }
         msg = if(result) "成功"  else "未知错误"
-        StatusUI2(painter = if(msg == "成功") Icons.Filled.Check else Icons.Filled.Close, text = msg)
+        StatusIcon(painter = if(msg == "成功") Icons.Filled.Check else Icons.Filled.Close, text = msg)
     }
 }

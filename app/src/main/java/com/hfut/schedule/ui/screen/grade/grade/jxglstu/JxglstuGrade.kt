@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -196,7 +196,7 @@ fun GradeItemUIJXGLSTU(
         Column {
             if(gradeList.isEmpty()) {
                 CenterScreen {
-                    EmptyUI()
+                    EmptyIcon()
                 }
             }
             else {
@@ -349,7 +349,7 @@ fun GradeItemUIUniApp(
             Column {
                 if(gradeList.isEmpty()) {
                     CenterScreen {
-                        EmptyUI()
+                        EmptyIcon()
                     }
                 }
                 else {

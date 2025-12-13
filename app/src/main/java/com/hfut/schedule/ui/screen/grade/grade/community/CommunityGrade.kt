@@ -40,8 +40,8 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -140,11 +140,11 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
             )
         }
 
-        CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+        CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
             val context = LocalContext.current
             val bean = (uiState as UiState.Success).data
             val list = bean.scoreInfoDTOList
-            if(list.isEmpty()) EmptyUI()
+            if(list.isEmpty()) EmptyIcon()
             else {
                 LazyColumn {
                     item { TotalGrade(vm) }

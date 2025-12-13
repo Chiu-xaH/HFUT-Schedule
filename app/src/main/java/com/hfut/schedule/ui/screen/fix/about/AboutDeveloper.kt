@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -34,7 +33,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
@@ -51,13 +49,10 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.screen.Party
-import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -67,8 +62,8 @@ import com.hfut.schedule.ui.component.network.UrlImage
 import com.hfut.schedule.ui.screen.welcome.arguments
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 
@@ -212,7 +207,7 @@ fun About(vm : NetWorkViewModel) {
                         TransplantListItem(
                             modifier = Modifier.clickable {
                             },
-                            overlineContent = { Text("贡献者(无先后顺序)") },
+                            overlineContent = { Text("贡献者(按时间顺序)") },
                             headlineContent = {
                                 Text(MyApplication.contributors.map { it.key }.drop(1).joinToString(" "))
                             },
@@ -287,9 +282,14 @@ fun About(vm : NetWorkViewModel) {
                     }
                     LargeButton(
                         onClick = {
-                            SharedPrefs.saveBoolean("canUse", default = false, save = false)
-                            showToast("已退出APP")
-                            activity?.finish()
+                            scope.launch {
+                                async { SharedPrefs.saveBoolean("canUse", default = false, save = false) }.await()
+                                launch {
+                                    showToast("已退出APP")
+                                    MyApplication.exitAppSafely()
+//                                    activity?.finish()
+                                }
+                            }
                         },
                         modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP, vertical = CARD_NORMAL_DP*2),
                         containerColor = MaterialTheme.colorScheme.errorContainer,

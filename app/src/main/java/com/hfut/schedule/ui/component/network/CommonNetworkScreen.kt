@@ -31,9 +31,9 @@ import com.hfut.schedule.logic.util.sys.ClipBoardUtils
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.status.EmptyUI
-import com.hfut.schedule.ui.component.status.ErrorUI
-import com.hfut.schedule.ui.component.status.StatusUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.status.ErrorIcon
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.align.CenterScreen
 import kotlinx.coroutines.Dispatchers
@@ -90,7 +90,7 @@ fun CommonNetworkScreen(
                             }
 
                             // 解析出错
-                            ErrorUI(text)
+                            ErrorIcon(text)
                             Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
                             if(!showDetail)
                                 Button(onClick = {
@@ -108,7 +108,7 @@ fun CommonNetworkScreen(
                                 }
                         }
                         LISTEN_ERROR_CODE -> {
-                            StatusUI(
+                            StatusIcon(
                                 R.drawable.arrow_split,
                                 e?.message ?: "网络请求顺序出错 请联系开发者"
                             )
@@ -121,7 +121,7 @@ fun CommonNetworkScreen(
                             }
                         }
                         StatusCode.UNAUTHORIZED.code -> {
-                            StatusUI(R.drawable.login, "登录状态失效")
+                            StatusIcon(R.drawable.login, "登录状态失效")
                             Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
                             Button(onClick = {
                                 Starter.refreshLogin(context)
@@ -130,16 +130,16 @@ fun CommonNetworkScreen(
                             }
                         }
                         StatusCode.FORBIDDEN.code -> {
-                            StatusUI(
+                            StatusIcon(
                                 R.drawable.lock,
                                 "禁止操作 可能原因: 密码不正确或无权利进行操作"
                             )
                         }
                         StatusCode.NOT_FOUND.code -> {
-                            EmptyUI("404 未找到")
+                            EmptyIcon("404 未找到")
                         }
                         in StatusCode.INTERNAL_SERVER_ERROR.code..599 -> {
-                            StatusUI(
+                            StatusIcon(
                                 R.drawable.net,
                                 "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)"
                             )
@@ -149,16 +149,16 @@ fun CommonNetworkScreen(
                             val code = codeInt?.toString() ?: ""
                             val eMsg = e?.message
                             if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
-                                StatusUI(R.drawable.link_off, "网络连接失败")
+                                StatusIcon(R.drawable.link_off, "网络连接失败")
                             } else if(eMsg?.contains("10000ms") == true) {
-                                StatusUI(R.drawable.link_off, "网络连接超时")
+                                StatusIcon(R.drawable.link_off, "网络连接超时")
                             } else if(eMsg?.contains("The coroutine scope") == true) {
-                                StatusUI(
+                                StatusIcon(
                                     R.drawable.rotate_right,
                                     "操作过快,前面的请求尚未完成\n(若为教务相关功能,请回到聚焦页面下拉刷新)"
                                 )
                             } else {
-                                ErrorUI("错误 $code $e")
+                                ErrorIcon("错误 $code $e")
                             }
                             refreshUI()
                         }

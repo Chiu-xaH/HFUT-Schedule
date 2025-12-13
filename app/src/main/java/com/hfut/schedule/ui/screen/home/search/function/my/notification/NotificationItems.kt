@@ -30,7 +30,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
@@ -51,7 +51,7 @@ fun NotificationItems() {
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val list = getNotifications()
-    if(list.isEmpty()) EmptyUI() else {
+    if(list.isEmpty()) EmptyIcon() else {
         for(item in list.indices) {
             CardListItem(
                 headlineContent = { Text(text = list[item].title) },

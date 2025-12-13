@@ -34,11 +34,11 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
 import com.hfut.schedule.ui.screen.card.bill.main.processTranamt
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -127,14 +127,14 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
                 }
             }
 
-            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
                 if(!startUse) startUse = true
 
                 val response = (uiState as UiState.Success).data
                 val list = response.records
                 list.let {
                     if(it.isEmpty()) {
-                        CenterScreen { EmptyUI() }
+                        CenterScreen { EmptyIcon() }
                     } else {
                         val listState = rememberLazyListState()
                         Box {

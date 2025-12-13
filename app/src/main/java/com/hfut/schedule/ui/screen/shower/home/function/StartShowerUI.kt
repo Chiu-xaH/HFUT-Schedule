@@ -66,7 +66,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.dialog.LittleDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.status.StatusUI2
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -98,7 +98,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as UiState.Success).data
-        StatusUI2(painter = if(response.contains("成功")) Icons.Filled.Check else Icons.Filled.Close, text = response)
+        StatusIcon(painter = if(response.contains("成功")) Icons.Filled.Check else Icons.Filled.Close, text = response)
     }
 }
 

@@ -31,7 +31,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.TodayResult
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -128,7 +128,7 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
 fun TodayInfo(bean : TodayResult) {
     with(bean) {
         if(todayExam.courseName == null && todayCourse.courseName == null && bookLending.bookName == null && todayActivity.activityName == null) {
-            EmptyUI()
+            EmptyIcon()
         }
         with(todayExam) {
             courseName?.let {

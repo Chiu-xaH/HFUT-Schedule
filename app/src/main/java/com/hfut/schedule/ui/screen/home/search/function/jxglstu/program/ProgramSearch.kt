@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -186,7 +186,7 @@ fun ProgramSearchScreen(
                 .fillMaxSize()
         ) {
             Column {
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
                     val programList = (uiState as UiState.Success).data
                     val listState = rememberLazyListState()
 

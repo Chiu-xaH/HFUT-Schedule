@@ -69,7 +69,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -240,7 +240,7 @@ fun CourseTotalUI(
             if(isSearch)
                 item { PaddingForPageControllerButton() }
         }
-    } else { EmptyUI() }
+    } else { EmptyIcon() }
 }
 
 

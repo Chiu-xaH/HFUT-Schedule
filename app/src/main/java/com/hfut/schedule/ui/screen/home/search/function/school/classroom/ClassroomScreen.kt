@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -93,15 +94,17 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
+import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
@@ -112,6 +115,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuInt
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
@@ -126,6 +130,7 @@ import com.xah.transition.component.containerShare
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -135,6 +140,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 
 private enum class ClassroomBarItems(val page : Int) {
     EMPTY_CLASSROOM(0),CLASSROOM_LESSONS(1)
@@ -427,6 +433,7 @@ private fun EmptyClassroomScreen(
     LaunchedEffect(date,page,campus,selectedFloors.size,selectedBuildings.size) {
         refreshNetworkItems()
     }
+    val isToday = DateTimeManager.Date_yyyy_MM_dd == date
 
 
     val listState = rememberLazyListState()
@@ -444,6 +451,9 @@ private fun EmptyClassroomScreen(
                     items(list.size,key = { it }) { index ->
                         val item = list[index]
                         val route = AppNavRoute.ClassroomLessons.withArgs(item.id,item.nameZh)
+                        val activities = item.roomOccupationInfoVms ?: emptyList()
+                        val isAllDayFree = activities.isEmpty()
+                        val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
                             color = cardNormalColor(),
                             modifier = Modifier.containerShare(route).clickable {
@@ -453,11 +463,44 @@ private fun EmptyClassroomScreen(
                             TransplantListItem(
                                 headlineContent = { Text(item.nameZh) },
                                 overlineContent = { Text(item.campusNameZh) },
+                                leadingContent = {
+                                    if(isToday) {
+                                        // 是否正在占用
+                                        if(isOccupied) {
+                                            LoadingIcon()
+                                        } else {
+                                            Icon(painterResource(R.drawable.lasso_select),null)
+                                        }
+                                    } else {
+                                        Icon(painterResource(R.drawable.meeting_room),null)
+                                    }
+                                },
+                                trailingContent = {
+                                    if(isToday) {
+                                        Text(
+                                            if(isAllDayFree) {
+                                                "全天空闲"
+                                            } else {
+                                                // 是否正在占用
+                                                if(isOccupied) {
+                                                    "占用中"
+                                                } else {
+                                                    "空闲中"
+                                                }
+                                            }
+                                        )
+                                    } else {
+                                        if(isAllDayFree) {
+                                            Text("全天空闲")
+                                        }
+                                    }
+                                }
                             )
-                            val activities = item.roomOccupationInfoVms ?: emptyList()
                             // 横向时间轴
-                            ClassroomSchedule(activities, modifier = scheduleModifier) {
-                                showToast(it.activityName)
+                            if(!isAllDayFree) {
+                                ClassroomSchedule(activities, modifier = scheduleModifier) {
+                                    showToast(it.activityName)
+                                }
                             }
                         }
                     }
@@ -482,35 +525,36 @@ private fun EmptyClassroomScreen(
 private fun ClassroomSchedule(
     lessons: List<UniAppEmptyClassroomLesson>,
     modifier: Modifier = Modifier,
+    rangeMinutes :  Pair<Int,Int> = Pair(8 * 60,22 * 60),
     onClick : (UniAppEmptyClassroomLesson) -> Unit
 ) {
     // 时间范围从 8:00 (480 分钟) 到 22:00 (1320 分钟)
-    val startTimeInMinutes = 8 * 60 // 8:00 = 480分钟
-    val endTimeInMinutes = 22 * 60 // 22:00 = 1320分钟
+    val startTimeInMinutes = rangeMinutes.first
+    val endTimeInMinutes = rangeMinutes.second
 
-    // 每小时的宽度
-    val totalTimeRange = endTimeInMinutes - startTimeInMinutes
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp // 屏幕宽度
-    val timeUnitWidth = screenWidth / totalTimeRange // 每分钟的宽度
+    BoxWithConstraints(modifier = modifier) {
+        val timelineWidth = maxWidth
+        val dpPerMinute = timelineWidth / (endTimeInMinutes - startTimeInMinutes)
 
-    Box(modifier = modifier) {
         // 绘制课程时间块
         lessons.forEach { lesson ->
             val startMinutes = convertTimeToMinutes(lesson.startTimeString)
             val endMinutes = convertTimeToMinutes(lesson.endTimeString)
 
-            // 计算占用的宽度
-            val startX = (startMinutes - startTimeInMinutes) * timeUnitWidth.value
-            val endX = (endMinutes - startTimeInMinutes) * timeUnitWidth.value
-            // 获取父布局大小
+            val safeStart = startMinutes.coerceIn(startTimeInMinutes, endTimeInMinutes)
+            val safeEnd = endMinutes.coerceIn(startTimeInMinutes, endTimeInMinutes)
+
+            val offsetX = (safeStart - startTimeInMinutes) * dpPerMinute.value
+            val width = (safeEnd - safeStart) * dpPerMinute.value
+
             var parentHeight by remember { mutableStateOf(0.dp) }
 
             Box(
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.extraSmall)
-                    .offset(x = startX.dp)
-                    .width((endX - startX).dp)
+                    .offset(x = offsetX.dp)
+                    .width(width.dp)
                     .fillMaxHeight()
+                    .clip(MaterialTheme.shapes.extraSmall)
                     .background(MaterialTheme.colorScheme.primary)
                     .align(Alignment.TopStart)
                     .onGloballyPositioned { coordinates ->
@@ -523,7 +567,6 @@ private fun ClassroomSchedule(
             ) {
                 // 计算动态字体大小，根据父布局高度来调整
                 val fontSize = with(LocalDensity.current) { (parentHeight.value * 0.125f).sp }
-
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
@@ -579,7 +622,7 @@ private fun SearchClassroomScreen(
                 .zIndex(1f)
                 .padding(innerPadding)
         )
-        CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+        CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
             val list = (uiState as UiState.Success).data
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = listState) {
@@ -654,6 +697,7 @@ fun ClassroomLessonsScreen(
         refreshNetwork()
     }
 
+    var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     CustomTransitionScaffold (
         route = route,
@@ -675,6 +719,7 @@ fun ClassroomLessonsScreen(
                         )
                     }
                 )
+                ScheduleTopDate(showAll, today)
             }
         },
     ) { innerPadding ->
@@ -716,10 +761,12 @@ fun ClassroomLessonsScreen(
 
                 val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
                     override fun backToCurrentWeek() {
-                        currentWeek = if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                            1
+                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                            currentWeek = 1
+                            today = getJxglstuStartDate()
                         } else {
-                            DateTimeManager.weeksBetweenJxglstu
+                            currentWeek = DateTimeManager.weeksBetweenJxglstu
+                            today = LocalDate.now()
                         }
                     }
 
@@ -728,6 +775,8 @@ fun ClassroomLessonsScreen(
                             return
                         }
                         if (i in 1..MyApplication.MAX_WEEK) {
+                            val day = 7L*(i - currentWeek)
+                            today = today.plusDays(day)
                             currentWeek = i
                         }
                         showToast("第${currentWeek}周")
@@ -735,19 +784,22 @@ fun ClassroomLessonsScreen(
 
                     override fun nextWeek() {
                         if (currentWeek < MyApplication.MAX_WEEK) {
+                            today = today.plusDays(7)
                             currentWeek++
                         }
                     }
 
                     override fun previousWeek() {
                         if (currentWeek > 1) {
+                            today = today.minusDays(7)
                             currentWeek--
                         }
                     }
                 } }
+
                 val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
                     value = withContext(Dispatchers.Default) {
-                        uniAppToTimeTableData(list)
+                        uniAppToTimeTableData(name,list)
                     }
                 }
 
@@ -850,7 +902,7 @@ fun ClassroomLessonsScreen(
     }
 }
 
-private suspend fun uniAppToTimeTableData(list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
+private suspend fun uniAppToTimeTableData(targetPlace : String,list: List<UniAppClassroomLessonBean>): List<List<TimeTableItem>> {
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         val enableCalendarShowTeacher = DataStoreManager.enableCalendarShowTeacher.first()
@@ -858,6 +910,10 @@ private suspend fun uniAppToTimeTableData(list: List<UniAppClassroomLessonBean>)
             val courseName = item.course.nameZh
             val multiTeacher = item.teacherAssignmentList.size > 1
             for(schedule in item.schedules) {
+                val place = schedule.room?.nameZh ?: continue
+                if(targetPlace != place) {
+                    continue
+                }
                 val list = result[schedule.weekIndex-1]
                 val teacher = when(enableCalendarShowTeacher) {
                     ShowTeacherConfig.ALL.code -> schedule.teacherName

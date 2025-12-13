@@ -89,11 +89,12 @@ private fun zipDirectorySafe(
     }
 }
 
-
-fun killApp() {
+// 直接调用后，内存内容直接丢失，例如KV存储不会写回到磁盘
+fun killAppUnSafely() {
     android.os.Process.killProcess(android.os.Process.myPid())
     kotlin.system.exitProcess(0)
 }
+
 // 恢复 传入文件，然后killApp
 suspend fun restoreData(
     activity: Activity,
@@ -153,7 +154,7 @@ suspend fun restoreData(
         }
 
         showToast("恢复完成，杀停App")
-        killApp()
+        killAppUnSafely()
     } catch (e: Exception) {
         e.printStackTrace()
         showToast("恢复失败")

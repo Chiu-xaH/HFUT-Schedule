@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.storage.file.killApp
+import com.hfut.schedule.logic.util.storage.file.killAppUnSafely
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
@@ -60,7 +60,7 @@ val arguments = listOf(
     "本应用存在托管的服务端，用于及时发布信息和收集一些不敏感的数据帮助改善本应用，开发者承诺不会泄露数据",
     "本应用几乎完全端侧运行，无论是逻辑还是界面均写在应用内，无需租赁服务器等经济成本",
     "欢迎用户向开发者反馈、建议或寻求帮助，也欢迎其他开发者借鉴、指正或参与，个人的测试范围有限，需要大家发现问题",
-    "最后编辑于 2025-09-03 13:42 第7版"
+    "最后编辑于 2025-12-13 15:47 第8版"
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -132,7 +132,7 @@ fun UseAgreementScreen(
                         FilledTonalButton(
                             onClick = {
                                 showToast("已关闭APP")
-                                killApp()
+                                killAppUnSafely()
                             },
                             modifier = Modifier
                                 .fillMaxWidth()

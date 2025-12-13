@@ -40,7 +40,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -178,7 +178,7 @@ fun TeacherSearchScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+            CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
                 TeacherListUI(vm,innerPadding)
             }
         }

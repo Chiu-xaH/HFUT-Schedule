@@ -62,7 +62,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.status.DevelopingUI
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.xah.uicommon.component.status.LoadingScreen
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
@@ -127,7 +127,7 @@ fun SupabaseHomeScreen(vm: NetWorkViewModel, sortType: SortType, sortReversed : 
                         SupabaseScheduleUI(vm,sortType,sortReversed, innerPadding,refreshing) { refreshing = it }
                     }
                     TAB_RIGHT -> {
-                        CenterScreen { DevelopingUI() }
+                        CenterScreen { DevelopingIcon() }
                     }
                 }
             }

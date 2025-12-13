@@ -49,10 +49,9 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.status.ErrorUI
+import com.hfut.schedule.ui.component.status.ErrorIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.status.StatusUI
-import com.hfut.schedule.ui.component.status.StatusUI2
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.screen.home.cube.sub.CirclePoint
@@ -229,9 +228,9 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
             CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
                 val msg = (uiState as UiState.Success).data
                 if(msg.contains("成功") == true) {
-                    StatusUI2(Icons.Filled.Check,"成功修改为 $password")
+                    StatusIcon(Icons.Filled.Check,"成功修改为 $password")
                 } else if(msg == "密码错误")  {
-                    StatusUI(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
+                    StatusIcon(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
                     Spacer(Modifier.height(10.dp))
                     RowHorizontal {
                         Button(
@@ -243,7 +242,7 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
                         }
                     }
                 } else {
-                    ErrorUI(msg)
+                    ErrorIcon(msg)
                 }
             }
         }

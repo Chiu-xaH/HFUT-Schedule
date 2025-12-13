@@ -101,7 +101,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -531,7 +531,7 @@ private fun SelectCourseList(
     } else {
         CenterScreen {
             Column {
-                EmptyUI("当前无选课")
+                EmptyIcon("当前无选课")
                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 ui()
             }

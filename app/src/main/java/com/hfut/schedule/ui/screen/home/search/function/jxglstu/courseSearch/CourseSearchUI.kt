@@ -54,7 +54,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.PrepareSearchUI
+import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableSearch
@@ -298,7 +298,7 @@ fun CourseSearchScreen(
                     }
                 }
 
-                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchUI() }) {
+                CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
                     CourseTotalUI(
                         dataSource = TotalCourseDataSource.SEARCH,
                         sortType = true,

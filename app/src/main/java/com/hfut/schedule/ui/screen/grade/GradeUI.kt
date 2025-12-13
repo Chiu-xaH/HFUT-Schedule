@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.DevelopingUI
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute

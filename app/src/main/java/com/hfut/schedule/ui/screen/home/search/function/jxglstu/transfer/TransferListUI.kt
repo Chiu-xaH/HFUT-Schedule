@@ -86,7 +86,7 @@ import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
-import com.hfut.schedule.ui.component.status.StatusUI2
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -650,6 +650,6 @@ private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, ph
 
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
         val msg = (uiState as UiState.Success).data
-        StatusUI2(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
+        StatusIcon(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
     }
 }

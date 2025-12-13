@@ -48,7 +48,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.component.status.EmptyUI
+import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
    
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -225,7 +225,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         )
                     }
                     XUANCHENG_TAB -> {
-                        EmptyUI("请使用${AppNavRoute.HaiLeWashing.label}")
+                        EmptyIcon("请使用${AppNavRoute.HaiLeWashing.label}")
                     }
                 }
                 Spacer(Modifier.height(APP_HORIZONTAL_DP*3))
