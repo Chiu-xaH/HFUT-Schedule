@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2025-12-13") },
+                overlineContent = { Text(text = "2025-12-15") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,10 +53,6 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 空教室支持点击项目查看教室课表")//
-            UpdateItems("修复 空教室横轴UI异常的Bug")//
-            UpdateItems("修复 教室课表显示内容不正确的Bug")//
-            UpdateItems("优化 部分界面的显示效果")//
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
