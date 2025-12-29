@@ -36,7 +36,6 @@ object LogUtil {
         }
     }
 
-
     private fun baseLog(type: Level,msg : String, throwable: Throwable? = null) {
         if(!enable) {
             return
