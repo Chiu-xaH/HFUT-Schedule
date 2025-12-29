@@ -5,7 +5,6 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import com.hfut.schedule.application.MyApplication
+import com.xah.uicommon.util.ToastUtil
 
-fun showToast(text: String,context: Context = MyApplication.context) = Handler(Looper.getMainLooper()).post {
-    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
-}
+fun showToast(text: String,context: Context = MyApplication.context) = ToastUtil.showToast(context,text)

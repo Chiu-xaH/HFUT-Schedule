@@ -8,6 +8,7 @@ import android.os.Bundle
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.xah.uicommon.util.LogUtil
 import java.util.Collections
 
 class MyApplication : Application() {
@@ -185,6 +186,7 @@ class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         context = applicationContext
+        LogUtil.tag = APP_NAME
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(a: Activity, b: Bundle?) {
                 activities.add(a)
