@@ -53,7 +53,7 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 考试页面种快捷查看教务处考试安排的入口")//
+            UpdateItems("新增 考试页面快捷查看教务处考试安排的入口")//
             UpdateItems("修复 新课程表第20周空白的Bug")//
             UpdateItems("优化 Toast在背压状态下的显示机制")//
             UpdateItems("优化 启动台的遮罩显示")//
