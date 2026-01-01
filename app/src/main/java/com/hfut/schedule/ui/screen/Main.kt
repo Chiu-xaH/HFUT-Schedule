@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -65,6 +66,7 @@ import com.hfut.schedule.ui.screen.home.search.function.community.workRest.TimeT
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchCalendarScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamNotificationsScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.ClassmatesScreen
@@ -111,6 +113,7 @@ import com.hfut.schedule.ui.screen.welcome.UseAgreementScreen
 import com.hfut.schedule.ui.screen.welcome.VersionInfoScreen
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
 import com.hfut.schedule.ui.util.webview.getPureUrl
+import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -121,6 +124,7 @@ import com.xah.transition.util.currentRouteWithoutArgs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
 
 private const val OFFSET_KEY = "OFFSET_DRAWERS"
 suspend fun getDrawOpenOffset(drawerState : DrawerState) : Float = withContext(Dispatchers.IO) {
@@ -299,7 +303,12 @@ fun MainHost(
         }
     }
     val backgroundColor = if(motionBlur && !disabledBlur) {
-        MaterialTheme.colorScheme.surface.copy(.4f)//.4f
+        if(isThemeDark()) {
+            Color.White.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+        } else {
+            Color.Black.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+        }
+//        MaterialTheme.colorScheme.surface.copy(.4f)//.4f
     } else {
         MaterialTheme.colorScheme.surface.copy(if(enableLiquidGlass) .88f else 1f)
     }
@@ -309,9 +318,7 @@ fun MainHost(
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {
-            ControlCenterScreen(
-                containerColor?.copy(if(motionBlur) 0.425f else 0.1f)?.compositeOver(MaterialTheme.colorScheme.surface)
-                ,navController) {
+            ControlCenterScreen(navController) {
                 scope.launch {
                     drawerState.animationClose()
                 }
@@ -625,6 +632,10 @@ fun MainHost(
                 // 收纳
                 transitionComposable(AppNavRoute.NotificationBox.route) {
                     NotificationBoxScreen(navController)
+                }
+                // 考试安排
+                transitionComposable(AppNavRoute.ExamNotifications.route) {
+                    ExamNotificationsScreen(navController,networkVm)
                 }
                 // 生活服务
                 transitionComposable(

@@ -189,7 +189,7 @@ private suspend fun deleteCustomBackground(context: Context) = withContext(Dispa
 @Composable
 fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValues, isControlCenter : Boolean ) {
     val backgroundColor =  if(isControlCenter) {
-        MaterialTheme.colorScheme.surface.copy(0.85f)
+        MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     } else {
         MaterialTheme.colorScheme.surface
     }

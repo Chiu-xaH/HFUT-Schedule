@@ -1,0 +1,249 @@
+package com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.CampusRegion.*
+import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.model.AcademicXCType
+import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
+import com.hfut.schedule.ui.component.screen.pager.PageController
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
+import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
+import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.launch
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExamNotificationsScreen(
+    navController : NavHostController,
+    vm : NetWorkViewModel,
+) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val route = remember { AppNavRoute.ExamNotifications.route }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val backdrop = rememberLayerBackdrop()
+    val campusList = remember { CampusRegion.entries }
+    val titles = remember { campusList.map { it.description } }
+    val pagerState = rememberPagerState(
+        initialPage = when(getCampusRegion()) {
+            HEFEI -> 0
+            XUANCHENG -> 1
+        }
+    ) { campusList.size }
+    val cookies by produceState<String?>(initialValue = null) {
+        value = getWebVpnCookie(vm)
+    }
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    CustomTransitionScaffold (
+        route = route,
+        roundShape = MaterialTheme.shapes.extraLarge,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.ExamNotifications.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Exam.icon)
+                    }
+                )
+                CustomTabRow(pagerState,titles)
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
+        ) {
+            // 待精简
+            HorizontalPager(pagerState) { page ->
+                val campus = campusList[page]
+                when(campus) {
+                    HEFEI -> {
+                        var page by rememberSaveable { mutableIntStateOf(1) }
+                        val uiState by vm.newsResult.state.collectAsState()
+                        val refreshNetwork: suspend () -> Unit = {
+                            vm.newsResult.clear()
+                            vm.searchNews("周考试安排", page)
+                        }
+
+                        LaunchedEffect(page) {
+                            refreshNetwork()
+                        }
+
+                        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                            val list = (uiState as UiState.Success).data
+                            val listState = rememberLazyListState()
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                LazyColumn(state = listState) {
+                                    item { InnerPaddingHeight(innerPadding,true) }
+                                    items(list.size, key = { it }){ item ->
+                                        val listItem = list[item]
+                                        AnimationCardListItem(
+                                            overlineContent = { Text(text = listItem.date) },
+                                            headlineContent = { Text(listItem.title) },
+                                            leadingContent = { Text(text = (item + 1).toString()) },
+                                            modifier = Modifier.clickable {
+                                                scope.launch {
+                                                    val links = if(isValidWebUrl(listItem.link)) {
+                                                        listItem.link
+                                                    } else {
+                                                        MyApplication.NEWS_URL + listItem.link
+                                                    }
+
+                                                    autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
+                                                }
+                                            },
+                                            index = item
+                                        )
+                                    }
+                                    item { InnerPaddingHeight(innerPadding,false) }
+                                    item { PaddingForPageControllerButton() }
+                                }
+                                PageController(
+                                    listState,
+                                    page,
+                                    onNextPage = { page = it },
+                                    onPreviousPage = { page = it },
+                                    paddingSafely = false,
+                                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
+                                    paddingBottom = false
+                                )
+                            }
+                        }
+                    }
+                    XUANCHENG -> {
+                        var page by remember { mutableIntStateOf(1) }
+                        val uiState by vm.academicXCResp.state.collectAsState()
+                        val refreshNetwork: suspend () -> Unit = {
+                            vm.academicXCResp.clear()
+                            vm.getAcademicXCNews(AcademicXCType.EXAM,page)
+                        }
+
+                        LaunchedEffect(page) {
+                            refreshNetwork()
+                        }
+
+                        CommonNetworkScreen(uiState, onReload = refreshNetwork) {
+                            val list = (uiState as UiState.Success).data
+                            val listState = rememberLazyListState()
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                LazyColumn(state = listState) {
+                                    item { InnerPaddingHeight(innerPadding,true) }
+                                    items(list.size, key = { it }) { index ->
+                                        val item = list[index]
+                                        CardListItem(
+                                            headlineContent = { Text(item.title) },
+                                            overlineContent = { Text(item.date) },
+                                            leadingContent = { Text((index+1).toString()) },
+                                            modifier = Modifier.clickable {
+                                                scope.launch {
+                                                    val link = if (isValidWebUrl(item.link)) {
+                                                        item.link
+                                                    } else {
+                                                        MyApplication.XC_ACADEMIC_URL + item.link
+                                                    }
+                                                    autoWebVpnForNews(
+                                                        context,
+                                                        link,
+                                                        item.title,
+                                                        cookie = cookies
+                                                    )
+                                                }
+                                            },
+                                        )
+                                    }
+                                    item { InnerPaddingHeight(innerPadding,false) }
+                                    item { PaddingForPageControllerButton() }
+                                }
+                                PageController(
+                                    listState,
+                                    page,
+                                    onNextPage = { page = it },
+                                    onPreviousPage = { page = it },
+                                    paddingSafely = false,
+                                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

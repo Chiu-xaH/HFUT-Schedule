@@ -27,6 +27,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.AcademicXCType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -79,11 +80,9 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                 val listState = rememberLazyListState()
                 Box(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(state = listState) {
-//                    item { Spacer(modifier = Modifier.height(innerPadding.calculateTopPadding())) }
                         items(list.size, key = { it }) { index ->
                             val item = list[index]
-//                    MyCustomCard {
-                            AnimationCardListItem(
+                            CardListItem(
                                 headlineContent = { Text(item.title) },
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
@@ -102,9 +101,7 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                         )
                                     }
                                 },
-                                index = index
                             )
-//                    }
                         }
                         item { InnerPaddingHeight(innerPadding,false) }
                         item { PaddingForPageControllerButton() }
@@ -114,7 +111,6 @@ fun AcademicXCScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         page,
                         onNextPage = { page = it },
                         onPreviousPage = { page = it },
-//                        modifier = Modifier.padding(innerPadding)
                         modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()-navigationBarHeightPadding),
 
                     )

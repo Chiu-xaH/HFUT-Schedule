@@ -139,7 +139,7 @@ fun UniAppCoursesScreen(
     }
 
     LaunchedEffect(currentWeek,items) {
-        if(currentWeek >= items.size) {
+        if(currentWeek > items.size) {
             Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
             return@LaunchedEffect
         } else {

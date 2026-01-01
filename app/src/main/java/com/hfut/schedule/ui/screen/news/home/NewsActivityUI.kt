@@ -194,72 +194,72 @@ fun NewsScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navTopController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                Column(
-                    Modifier.topBarBlur(hazeState)
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(AppNavRoute.News.label) },
-                        navigationIcon = {
-                            TopBarNavigationIcon(
-                                navTopController,
-                                route,
-                                AppNavRoute.News.icon
-                            )
-                        },
-                        actions = {
-                            Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                                if (targetPage == NewsBarItems.Academic) {
-                                    FilledTonalIconButton(
-                                        onClick = {
-                                            showBottomSheet = true
-                                        }
-                                    ) {
-                                        Icon(painterResource(R.drawable.net), null)
+
+    CustomTransitionScaffold (
+        route = route,
+
+        navHostController = navTopController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            Column(
+                Modifier.topBarBlur(hazeState)
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.News.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(
+                            navTopController,
+                            route,
+                            AppNavRoute.News.icon
+                        )
+                    },
+                    actions = {
+                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                            if (targetPage == NewsBarItems.Academic) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        showBottomSheet = true
                                     }
+                                ) {
+                                    Icon(painterResource(R.drawable.net), null)
                                 }
                             }
                         }
-                    )
-                    if (targetPage != NewsBarItems.School) {
-                        CustomTabRow(
-                            pagerState = newsPagerState,
-                            titles = newsTitles
-                        )
                     }
+                )
+                if (targetPage != NewsBarItems.School) {
+                    CustomTabRow(
+                        pagerState = newsPagerState,
+                        titles = newsTitles
+                    )
                 }
-            },
-            bottomBar = {
-                HazeBottomBar(hazeState,items,navController)
             }
-        ) { innerPadding ->
-            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
+        },
+        bottomBar = {
+            HazeBottomBar(hazeState,items,navController)
+        }
+    ) { innerPadding ->
+        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
 
-            NavHost(navController = navController,
-                startDestination = NewsBarItems.News.name,
-                enterTransition = { animation.enter },
-                exitTransition = { animation.exit },
-                modifier = Modifier.hazeSource(state = hazeState)
-            ) {
-                composable(NewsBarItems.News.name) {
-                    NewsScreenMini(innerPadding,vm,newsPagerState)
-                }
-                composable(NewsBarItems.Academic.name) {
-                    AcademicScreen(innerPadding,vm,newsPagerState)
-                }
-                composable(NewsBarItems.School.name) {
-                    SchoolsUI(innerPadding)
-                }
+        NavHost(navController = navController,
+            startDestination = NewsBarItems.News.name,
+            enterTransition = { animation.enter },
+            exitTransition = { animation.exit },
+            modifier = Modifier.hazeSource(state = hazeState)
+        ) {
+            composable(NewsBarItems.News.name) {
+                NewsScreenMini(innerPadding,vm,newsPagerState)
+            }
+            composable(NewsBarItems.Academic.name) {
+                AcademicScreen(innerPadding,vm,newsPagerState)
+            }
+            composable(NewsBarItems.School.name) {
+                SchoolsUI(innerPadding)
             }
         }
-//    }
+    }
 }
 
 private const val TAB_TOTAL = 0

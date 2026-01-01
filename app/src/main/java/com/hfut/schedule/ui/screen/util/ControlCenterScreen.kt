@@ -127,7 +127,6 @@ private const val TAB_SEARCH = 2
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun ControlCenterScreen(
-    color : Color? = null,
     navController: NavHostController,
     onExit : () -> Unit
 ) {

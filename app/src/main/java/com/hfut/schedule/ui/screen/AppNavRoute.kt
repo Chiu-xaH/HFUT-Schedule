@@ -143,6 +143,7 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object TeacherSearch : AppNavRoute("TEACHER_SEARCH","教师检索",R.drawable.group_search)
     object Work : AppNavRoute("WORK","就业",R.drawable.azm)
     object Person : AppNavRoute("PERSON","个人信息",R.drawable.person)
+    object ExamNotifications : AppNavRoute("EXAM_NOTIFICATIONS","考试安排-教务处",R.drawable.draw)
     object Exam : AppNavRoute("EXAM","考试",R.drawable.draw) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             ORIGIN("origin",NavType.StringType, "EXAM",true)

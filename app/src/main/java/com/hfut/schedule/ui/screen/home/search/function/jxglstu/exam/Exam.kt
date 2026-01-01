@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +42,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addToCalendars
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -47,12 +50,15 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAppNavController
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -64,7 +70,6 @@ import kotlinx.coroutines.launch
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun Exam(
-    ifSaved : Boolean,
     navController : NavHostController,
 ) {
     val route = remember { AppNavRoute.Exam.withArgs() }
@@ -90,7 +95,7 @@ fun ExamScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Exam.withArgs(origin) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
+    val backdrop = rememberLayerBackdrop()
     CustomTransitionScaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -101,6 +106,20 @@ fun ExamScreen(
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.Exam.label) },
+                actions = {
+                    LiquidButton(
+                        modifier = Modifier
+                            .containerShare(AppNavRoute.ExamNotifications.route, MaterialTheme.shapes.extraLarge)
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                        ,
+                        backdrop = backdrop,
+                        onClick = {
+                            navController.navigateForTransition(AppNavRoute.ExamNotifications, AppNavRoute.ExamNotifications.route)
+                        },
+                    ) {
+                        Text("全校考试安排")
+                    }
+                },
                 navigationIcon = {
                     TopBarNavigationIcon(navController,route, AppNavRoute.Exam.icon)
                 }
@@ -108,7 +127,10 @@ fun ExamScreen(
         },
     ) { innerPadding ->
         Column(
-            modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+            modifier = Modifier
+                .backDropSource(backdrop)
+                .hazeSource(hazeState)
+                .fillMaxSize()
         ) {
             val list by produceState(initialValue = emptyList()) {
                 value = getExamFromCache()
@@ -128,6 +150,7 @@ fun ExamScreen(
     }
 //    }
 }
+
 @Composable
 private fun ExamItems(item : Int,status : Boolean) {
 

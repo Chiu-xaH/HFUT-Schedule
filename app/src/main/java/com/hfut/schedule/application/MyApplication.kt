@@ -173,6 +173,8 @@ class MyApplication : Application() {
         const val WEBVPN_COOKIE_HEADER = "wengine_vpn_ticketwebvpn_hfut_edu_cn="
         // PC UA
         const val PC_UA = "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36 Edg/118.0.2088.17"
+        // 启动台遮罩
+        const val CONTROL_CENTER_BACKGROUND_MASK_ALPHA = 0.125f
         // Activity栈
         private val activities = Collections.synchronizedList(mutableListOf<Activity>())
         // 安全地退出App

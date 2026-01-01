@@ -1,6 +1,5 @@
 package com.hfut.schedule.ui.screen.home.calendar.common
 
-import android.content.Context
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFromCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -39,6 +38,7 @@ suspend fun examToCalendar() : List<ExamToCalenderBean> = withContext(Dispatcher
         emptyList()
     }
 }
+
 fun getScheduleDate(showAll: Boolean, today : LocalDate) : List<String> {
     val mondayOfCurrentWeek = today.minusDays(today.dayOfWeek.value - 1L)
     val dateList = mutableListOf<String>()
