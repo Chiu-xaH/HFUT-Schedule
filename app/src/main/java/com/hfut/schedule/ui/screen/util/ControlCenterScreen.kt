@@ -20,6 +20,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -53,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -64,6 +66,7 @@ import com.hfut.schedule.ui.screen.home.cube.screen.UISettingsScreen
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithArgWithoutValues
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -130,6 +133,7 @@ fun ControlCenterScreen(
     navController: NavHostController,
     onExit : () -> Unit
 ) {
+    val globalColor = MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     val state = rememberScrollState()
     // 项目到达底部
     val isAtStart by remember { derivedStateOf { state.value == 0 } }
@@ -143,6 +147,16 @@ fun ControlCenterScreen(
     var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
+    val contentColor = MaterialTheme.colorScheme.onSurface
+//        Color.White
+
+
+//        if(isThemeDark()) {
+//        Color.White
+//    } else {
+//        Color.Black
+//    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         containerColor = Color.Transparent,
@@ -151,7 +165,9 @@ fun ControlCenterScreen(
             ) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
-                    colors = topBarTransplantColor(),
+                    colors = topBarTransplantColor().copy(
+                        titleContentColor =  contentColor
+                    ),
                     title = { Text(
                         when(tab) {
                             TAB_STACK -> "启动台"
@@ -178,7 +194,7 @@ fun ControlCenterScreen(
                                         }
                                     },
                                     modifier = Modifier.measureDpSize { _,h -> height = h },
-                                    colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.errorContainer.copy(.75f))
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor =  MaterialTheme.colorScheme.errorContainer.copy(.75f))
                                 ) {
                                     Icon(
                                         painterResource(R.drawable.home),
@@ -193,37 +209,37 @@ fun ControlCenterScreen(
                                 onClick = { tab = TAB_STACK },
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = if(tab == TAB_STACK) {
-                                        MaterialTheme.colorScheme.secondaryContainer.copy(.85f)
+                                        globalColor.copy(.85f)
                                     } else {
-                                        Color. Unspecified
+                                        Color.Unspecified
                                     }
                                 ),
                             ) {
-                                Icon(painterResource(R.drawable.flash_on),null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(25.5.dp))
+                                Icon(painterResource(R.drawable.flash_on),null, tint = contentColor, modifier = Modifier.size(25.5.dp))
                             }
                             IconButton(
                                 onClick = { tab = TAB_SETTINGS },
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = if(tab == TAB_SETTINGS) {
-                                        MaterialTheme.colorScheme.secondaryContainer.copy(.85f)
+                                        globalColor.copy(.85f)
                                     } else {
-                                        Color. Unspecified
+                                        Color.Unspecified
                                     }
                                 ),
                             ) {
-                                Icon(painterResource(R.drawable.format_paint),null, tint = MaterialTheme.colorScheme.primary)
+                                Icon(painterResource(R.drawable.format_paint),null, tint = contentColor)
                             }
                             IconButton(
                                 onClick = { tab = TAB_SEARCH },
                                 colors = IconButtonDefaults.iconButtonColors(
                                     containerColor = if(tab == TAB_SEARCH) {
-                                        MaterialTheme.colorScheme.secondaryContainer.copy(.85f)
+                                        globalColor.copy(.85f)
                                     } else {
-                                        Color. Unspecified
+                                        Color.Unspecified
                                     }
                                 ),
                             ) {
-                                Icon(painterResource(R.drawable.category_search),null, tint = MaterialTheme.colorScheme.primary)
+                                Icon(painterResource(R.drawable.category_search),null, tint = contentColor)
                             }
                             Spacer(Modifier.width(APP_HORIZONTAL_DP-8.dp))
                         }
@@ -232,7 +248,7 @@ fun ControlCenterScreen(
                         IconButton(
                             onClick = onExit
                         ) {
-                            Icon(Icons.Filled.ArrowBack,null, tint = MaterialTheme.colorScheme.primary)
+                            Icon(Icons.Filled.ArrowBack,null, tint = contentColor)
                         }
                     },
                 )
@@ -339,13 +355,14 @@ fun ControlCenterScreen(
 
 //                        }
                         if(queue.isNotEmpty()) {
-                            DividerTextExpandedWith("最近使用") {
+                            DividerTextExpandedWith("最近使用",contentColor=contentColor) {
                                 LazyRow {
                                     item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
                                     items(queue.size) { index ->
                                         val item = queue[index]
                                         if(currentRoute == item.app.route && index == 0) {
                                             FilledTonalButton(
+                                                colors = ButtonDefaults.filledTonalButtonColors(containerColor = globalColor),
                                                 onClick = {
                                                     onExit()
                                                 },
@@ -355,6 +372,7 @@ fun ControlCenterScreen(
                                             Spacer(Modifier.width(4.dp))
                                         } else {
                                             FilledTonalIconButton(
+                                                colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = globalColor),
                                                 onClick = {
                                                     scope.launch {
                                                         navController.navigateForTransition(item.app,item.route)
@@ -395,7 +413,7 @@ fun ControlCenterScreen(
                                                 Icon(painterResource(R.drawable.delete),null)
                                             }
                                         },
-                                        color = MaterialTheme.colorScheme.surface.copy(0.85f),
+                                        color = globalColor,
                                         modifier = Modifier.clickable {
                                             if(isCurrent) {
                                                 onExit()

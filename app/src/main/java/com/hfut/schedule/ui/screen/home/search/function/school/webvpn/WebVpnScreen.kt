@@ -44,7 +44,7 @@ import com.hfut.schedule.application.MyApplication.Companion.WEBVPN_URL
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.network.WebVpnUtil
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BottomButton
@@ -275,7 +275,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                     CardBottomButtons(
                         listOf(
                             CardBottomButton("复制") {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             },
                             CardBottomButton("打开") {
                                 scope.launch {
@@ -379,7 +379,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                     CardBottomButtons(
                         listOf(
                             CardBottomButton("复制") {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             },
                             CardBottomButton("打开") {
                                 scope.launch {

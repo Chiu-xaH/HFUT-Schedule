@@ -75,11 +75,11 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebUI
 import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.Classroom
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.Mail
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
+import com.hfut.schedule.ui.screen.home.search.function.other.AI
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
 import com.hfut.schedule.ui.screen.home.search.function.school.SecondClass
-import com.hfut.schedule.ui.screen.home.search.function.school.UniApp
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.Admission
 import com.hfut.schedule.ui.screen.home.search.function.school.dormitoryScore.DormitoryScoreXuanCheng
 import com.hfut.schedule.ui.screen.home.search.function.school.hall.OfficeHall
@@ -195,12 +195,12 @@ fun SearchScreen(
                 SearchAppBean(30,"${AppNavRoute.CourseSearch.label} 全校开课 课程", { CoursesSearch(ifSaved,navController ) }, AppNavRoute.CourseSearch.route),
                 SearchAppBean(31,"${AppNavRoute.TeacherSearch.label} 老师检索", { TeacherSearch(navController ) }, AppNavRoute.TeacherSearch.route),
                 SearchAppBean(32,"${AppNavRoute.Fee.label} 费用 欠缴学费", { Pay(navController ) }, AppNavRoute.Fee.route),
-                SearchAppBean(33,"实习", { Practice(ifSaved) }),
+//                SearchAppBean(33,"实习", { Practice(ifSaved) }),
                 SearchAppBean(34,"${AppNavRoute.Alumni.label} 校友 毕业", { Alumni(navController ) },AppNavRoute.Alumni.route),
                 SearchAppBean(35,"${AppNavRoute.StuTodayCampus.label} 学工系统 学工平台 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus(navController ) }, AppNavRoute.StuTodayCampus.route),
-                SearchAppBean(36,"大创系统 大学生创新创业", { IETP(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
+                SearchAppBean(36,"大创系统 大学生创新创业系统", { IETP(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
                 SearchAppBean(37,"${AppNavRoute.Work.label} 实习 春招 双选 秋招", { Work(navController ) }, AppNavRoute.Work.route),
-                SearchAppBean(38,"${AppNavRoute.Holiday.label} 国家法定节假日 假期 节日", { Holiday(navController ) },AppNavRoute.Holiday.route),
+                SearchAppBean(38,"${AppNavRoute.Holiday.label} 国家法定节假日 假期 节日 调休", { Holiday(navController ) },AppNavRoute.Holiday.route),
                 SearchAppBean(39,"共建平台 信息共建 日程 网课 网址导航", { Supabase() }),
                 SearchAppBean(40,"洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState,navController ) }),
                 SearchAppBean(41,"${AppNavRoute.Admission.label} 历年分数线 招生计划", { Admission(navController ) }, AppNavRoute.Admission.route),
@@ -209,7 +209,7 @@ fun SearchScreen(
                 SearchAppBean(44,"慧新易校 一卡通 校园卡 账单 充值 缴费 合肥" , { HuiXin(navController ) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
                 SearchAppBean(45,"${AppNavRoute.SecondClass.label}", { SecondClass(navController ) }, AppNavRoute.SecondClass.route),
                 SearchAppBean(46,"${AppNavRoute.Appointment.label} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment(navController ) }, AppNavRoute.Appointment.route),
-//                SearchAppBean(47,"合工大教务 空教室 教室课表 全校培养方案 课程表", { UniApp(navController ) }),
+                SearchAppBean(47,"AI 人工智能 大模型", { AI(navController ) }, AppNavRoute.AI.route),
             )
         )
     }

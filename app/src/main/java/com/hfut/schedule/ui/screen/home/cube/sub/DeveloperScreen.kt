@@ -34,7 +34,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -127,7 +127,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                         }
                     },
                     modifier = Modifier.clickable {
-                        ClipBoardUtils.copy(cookie)
+                        ClipBoardHelper.copy(cookie)
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.cookie),null)
@@ -152,7 +152,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                             }
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            ClipBoardHelper.copy(it)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.cookie),null)
@@ -166,7 +166,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                         Text(cookieWebVpn)
                     },
                     modifier = Modifier.clickable {
-                        ClipBoardUtils.copy(cookieWebVpn)
+                        ClipBoardHelper.copy(cookieWebVpn)
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.cookie),null)
@@ -180,7 +180,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                             Text(it)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            ClipBoardHelper.copy(it)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.cookie),null)
@@ -195,7 +195,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                             Text(it)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            ClipBoardHelper.copy(it)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.cookie),null)
@@ -209,7 +209,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                         Text(wxAuth)
                     },
                     modifier = Modifier.clickable {
-                        ClipBoardUtils.copy(wxAuth)
+                        ClipBoardHelper.copy(wxAuth)
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.cookie),null)
@@ -223,7 +223,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                             Text(it)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(it)
+                            ClipBoardHelper.copy(it)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.cookie),null)
@@ -243,7 +243,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                             Text(data)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(data)
+                            ClipBoardHelper.copy(data)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.tag),null)
@@ -259,7 +259,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
                             Text(data)
                         },
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(data)
+                            ClipBoardHelper.copy(data)
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.tag),null)

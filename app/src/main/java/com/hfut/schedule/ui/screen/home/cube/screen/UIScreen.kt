@@ -90,7 +90,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
@@ -108,6 +108,7 @@ import com.hfut.schedule.ui.util.color.longToHexColor
 import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.transition.state.TransitionConfig
@@ -192,6 +193,11 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     } else {
         MaterialTheme.colorScheme.surface
+    }
+    val contentColor = if(isControlCenter) {
+        MaterialTheme.colorScheme.onSurface
+    } else {
+        MaterialTheme.colorScheme.primary
     }
     Column(modifier = modifier) {
         if(!isControlCenter) {
@@ -322,7 +328,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
 
-        DividerTextExpandedWith("深浅色") {
+        DividerTextExpandedWith("深浅色",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "纯黑深色背景") },
@@ -384,7 +390,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
             }
         }
-        DividerTextExpandedWith("主题色") {
+        DividerTextExpandedWith("主题色",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 Colors(isControlCenter)
                 DividerTextExpandedWith("默认取色") {
@@ -451,7 +457,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                                 val text = longToHexColor(color)
                                 ColumnVertical {
                                     FilledTonalIconButton(
-                                        onClick = { ClipBoardUtils.copy(text) },
+                                        onClick = { ClipBoardHelper.copy(text) },
                                         colors = IconButtonDefaults. filledTonalIconButtonColors(containerColor = Color(color) )
                                     ) { }
                                     Text(text)
@@ -503,7 +509,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
             }
         }
-        DividerTextExpandedWith("特效") {
+        DividerTextExpandedWith("特效",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = { Text(text = "运动模糊") },
@@ -591,7 +597,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
             }
         }
-        DividerTextExpandedWith("动效") {
+        DividerTextExpandedWith("动效",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
@@ -626,12 +632,12 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
-        DividerTextExpandedWith("课程表") {
+        DividerTextExpandedWith("课程表",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 CalendarUISettings()
             }
         }
-        DividerTextExpandedWith("底栏") {
+        DividerTextExpandedWith("底栏",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {

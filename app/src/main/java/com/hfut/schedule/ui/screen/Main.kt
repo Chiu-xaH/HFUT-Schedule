@@ -50,6 +50,7 @@ import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.screen.grade.GradeScreen
@@ -82,14 +83,17 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyScr
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferDetailScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferScreen
+import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScheduleScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationsScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.NotificationBoxScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebNavigationScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomDetailScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.AIScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.AlumniScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.SecondClassScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionRegionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.admission.AdmissionScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.classroom.ClassroomLessonsScreen
@@ -302,15 +306,16 @@ fun MainHost(
             }
         }
     }
-    val backgroundColor = if(motionBlur && !disabledBlur) {
-        if(isThemeDark()) {
-            Color.White.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
-        } else {
-            Color.Black.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
-        }
-//        MaterialTheme.colorScheme.surface.copy(.4f)//.4f
+    val backgroundColor = if(isThemeDark()) {
+        Color.White.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     } else {
-        MaterialTheme.colorScheme.surface.copy(if(enableLiquidGlass) .88f else 1f)
+        Color.Black.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+    }.let {
+        if(motionBlur && !disabledBlur) {
+            it
+        } else {
+            it.compositeOver(MaterialTheme.colorScheme.surface)
+        }
     }
 
     ModalNavigationDrawer  (
@@ -550,6 +555,14 @@ fun MainHost(
                 transitionComposable(route = AppNavRoute.Alumni.route) {
                     AlumniScreen(navController)
                 }
+                // 大模型
+                transitionComposable(route = AppNavRoute.AI.route) {
+                    AIScreen(navController)
+                }
+                // 第二课堂
+                transitionComposable(route = AppNavRoute.SecondClass.route) {
+                    SecondClassScreen(navController)
+                }
                 // 作息
                 transitionComposable(
                     route = AppNavRoute.WorkAndRest.receiveRoute(),
@@ -633,9 +646,13 @@ fun MainHost(
                 transitionComposable(AppNavRoute.NotificationBox.route) {
                     NotificationBoxScreen(navController)
                 }
-                // 考试安排
+                // 全校考试安排
                 transitionComposable(AppNavRoute.ExamNotifications.route) {
                     ExamNotificationsScreen(navController,networkVm)
+                }
+                // 调休安排
+                transitionComposable(AppNavRoute.HolidaySchedule.route) {
+                    HolidayScheduleScreen(navController,networkVm)
                 }
                 // 生活服务
                 transitionComposable(

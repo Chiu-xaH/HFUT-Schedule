@@ -6,7 +6,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +18,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -31,7 +29,6 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
@@ -53,7 +50,6 @@ import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
-import java.io.FileNotFoundException
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -102,14 +98,9 @@ fun WebViewScreenForNavigation(
         WebViewTools(
             webView,
             {  navController.popBackStack() },
-            fullScreen,
             currentUrl,
             currentTitle,
             url,
-            {
-                fullScreen = it
-                visible = it
-            }
         ) {
             if(enableControlCenter) {
                 IconButton(onClick = {

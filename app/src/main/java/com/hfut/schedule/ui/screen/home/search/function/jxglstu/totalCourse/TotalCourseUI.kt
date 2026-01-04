@@ -57,7 +57,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -593,7 +593,7 @@ fun DetailItems(
                             },
                             modifier = Modifier
                                 .clickable {
-                                    ClipBoardUtils.copy(code)
+                                    ClipBoardHelper.copy(code)
                                 }
                                 .weight(.5f),
                         )
@@ -692,7 +692,7 @@ fun DetailItems(
                                     )
                                 },
                                 modifier = Modifier.clickable {
-                                    ClipBoardUtils.copy(text)
+                                    ClipBoardHelper.copy(text)
                                 },
                             )
                         }

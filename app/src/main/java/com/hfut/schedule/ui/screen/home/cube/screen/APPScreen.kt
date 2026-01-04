@@ -255,11 +255,11 @@ fun APPScreen(
                             }
                             Text(text =
                                 if(defaultCalendar == CourseType.COMMUNITY.code)
-                                    "智慧社区课表有调课不需要像教务数据源自己手动刷新，基本次日会自动刷新，但是有时会抽风，对面给的数据不新鲜，转专业用户更推荐使用教务数据源"
+                                    "智慧社区课表有时会抽风不更新数据，已不再推荐使用，并且不支持调休"
                                 else if(defaultCalendar == CourseType.UNI_APP.code)
                                     "合工大教务数据源的课程表会自动刷新，最优推荐"
                                 else
-                                    "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地,支持调休设置"
+                                    "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地"
                             )
                         }
                     },
@@ -403,7 +403,7 @@ fun APPScreen(
                 TransplantListItem(
                     headlineContent = { Text(text = "大模型") },
                     supportingContent = {
-                        Text(text = "用户提供ApiKey，通过与大模型对话，为App提供更多可能")
+                        Text(text = "用户提供ApiKey，将数据发送给大模型，为应用提供更多可能")
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.wand_stars),

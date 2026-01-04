@@ -45,7 +45,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.parseQRCode
 import com.hfut.schedule.logic.util.parse.isWifiContent
 import com.hfut.schedule.logic.util.parse.parseWifiQrCode
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
@@ -134,7 +134,7 @@ fun ScanScreen(
                         modifier = Modifier
                             .clickable {
                                 if (!isCas) {
-                                    ClipBoardUtils.copy(resultText)
+                                    ClipBoardHelper.copy(resultText)
                                 } else {
                                     // 跳转登录
                                     if (auth == null) {
@@ -226,7 +226,7 @@ fun ScanScreen(
                                 CardBottomButtons(
                                     listOf(
                                         CardBottomButton("复制") {
-                                            ClipBoardUtils.copy(resultText)
+                                            ClipBoardHelper.copy(resultText)
                                         },
                                         CardBottomButton("打开链接",isValidWebUrl(resultText)) {
                                             scope.launch {
@@ -242,7 +242,7 @@ fun ScanScreen(
                                 CardBottomButtons(
                                     listOf(
                                         CardBottomButton("连接") {
-                                            parseWifiQrCode(resultText)?.password?.let { ClipBoardUtils.copy(it) }
+                                            parseWifiQrCode(resultText)?.password?.let { ClipBoardHelper.copy(it) }
                                             Starter.startWlanSettings(context)
                                         },
                                         CardBottomButton("隐藏") {
@@ -254,7 +254,7 @@ fun ScanScreen(
                                 CardBottomButtons(
                                     listOf(
                                         CardBottomButton("复制") {
-                                            ClipBoardUtils.copy(resultText)
+                                            ClipBoardHelper.copy(resultText)
                                         },
                                         CardBottomButton("隐藏") {
                                             resultText = ""

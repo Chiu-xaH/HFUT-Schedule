@@ -66,7 +66,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getMondayOfWeek
 import com.hfut.schedule.logic.util.sys.showToast
@@ -822,7 +822,7 @@ private fun CourseDetail(
                     }
                 },
                 modifier = Modifier.clickable {
-                    ClipBoardUtils.copy(course.code)
+                    ClipBoardHelper.copy(course.code)
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.tag),null)

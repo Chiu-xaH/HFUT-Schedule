@@ -28,7 +28,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
@@ -155,7 +155,7 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
                         overlineContent = { Text("学分 ${item.credit}" + " | $id"+ str)},
                         leadingContent = { Text((index+1).toString())},
                         modifier = Modifier.clickable {
-                            ClipBoardUtils.copy(id)
+                            ClipBoardHelper.copy(id)
                         }
                     )
                 }

@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -38,7 +39,11 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 val DIVIDER_TEXT_VERTICAL_PADDING = 9.dp
 // 小标题
 @Composable
-fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
+fun DividerText(
+    text: String,
+    contentColor : Color = MaterialTheme.colorScheme.primary,
+    onClick: (() -> Unit?)? = null
+) {
     var isPressed by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(
         targetValue = if (isPressed) 0.9f else 1f, // 按下时为0.9，松开时为1
@@ -46,7 +51,7 @@ fun DividerText(text: String, onClick: (() -> Unit?)? = null) {
         label = "" // 使用弹簧动画
     )
     val color by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.primary.copy(alpha = 0.7f) else MaterialTheme.colorScheme.primary,
+        targetValue = if (isPressed) contentColor.copy(alpha = 0.7f) else contentColor,
         label = ""
     )
 
@@ -78,6 +83,7 @@ fun DividerTextExpandedWith(
     text : String,
     openBlurAnimation : Boolean = true,
     defaultIsExpanded : Boolean = true,
+    contentColor : Color = MaterialTheme.colorScheme.primary,
     content: @Composable () -> Unit
 ) {
 
@@ -96,7 +102,7 @@ fun DividerTextExpandedWith(
     )
 
 
-    DividerText(text, onClick = {
+    DividerText(text,contentColor, onClick = {
         set()
     })
 

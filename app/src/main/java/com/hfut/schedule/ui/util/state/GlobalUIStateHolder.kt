@@ -59,7 +59,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(30, AppNavRoute.CourseSearch.label, AppNavRoute.CourseSearch.icon),
         SearchAppBeanLite(31, AppNavRoute.TeacherSearch.label, AppNavRoute.TeacherSearch.icon),
         SearchAppBeanLite(32, AppNavRoute.Fee.label,AppNavRoute.Fee.icon),
-        SearchAppBeanLite(33,"实习",R.drawable.work),
+//        SearchAppBeanLite(33,"实习",R.drawable.work),
         SearchAppBeanLite(34, AppNavRoute.Alumni.label,AppNavRoute.Alumni.icon),
         SearchAppBeanLite(35, AppNavRoute.StuTodayCampus.label,AppNavRoute.StuTodayCampus.icon),
         SearchAppBeanLite(36,"大创系统",R.drawable.groups),
@@ -73,7 +73,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(44,"慧新易校" ,R.drawable.corporate_fare),
         SearchAppBeanLite(45, AppNavRoute.SecondClass.label,AppNavRoute.SecondClass.icon),
         SearchAppBeanLite(46, AppNavRoute.Appointment.label,AppNavRoute.Appointment.icon),
-//        SearchAppBeanLite(47, "合工大教务",R.drawable.wechat),
+        SearchAppBeanLite(47, AppNavRoute.AI.label,AppNavRoute.AI.icon),
     )
 
     val funcMaps = funcDefault.toMutableStateList()

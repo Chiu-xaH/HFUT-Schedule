@@ -48,7 +48,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -233,7 +233,7 @@ private fun PersonItems(
                         )
                     },
                     modifier = Modifier.clickable {
-                        studentnumber?.let { ClipBoardUtils.copy(it) }
+                        studentnumber?.let { ClipBoardHelper.copy(it) }
                     }
                 )
 
@@ -255,7 +255,7 @@ private fun PersonItems(
                                 )
                             },
                             modifier = Modifier.clickable {
-                                chineseid?.let { ClipBoardUtils.copy(it) }
+                                chineseid?.let { ClipBoardHelper.copy(it) }
                             }
                         )
                     }
@@ -290,7 +290,7 @@ private fun PersonItems(
                         DepartmentIcons(name = yuanxi ?: "")
                     },
                     modifier = Modifier.clickable {
-                        yuanxi?.let { ClipBoardUtils.copy(it) }
+                        yuanxi?.let { ClipBoardHelper.copy(it) }
                     }
                 )
 
@@ -308,13 +308,13 @@ private fun PersonItems(
                         )
                     },
                     modifier = Modifier.clickable {
-                        major?.let { ClipBoardUtils.copy(it) }
+                        major?.let { ClipBoardHelper.copy(it) }
                     }
                 )
 
                 TransplantListItem(
                     modifier = Modifier.clickable {
-                        classes?.let { ClipBoardUtils.copy(it) }
+                        classes?.let { ClipBoardHelper.copy(it) }
                     },
                     headlineContent = {  Text(text = classes ?: "-------") },
                     overlineContent = { Text(text = "班级")},
@@ -361,7 +361,7 @@ private fun PersonItems(
                             headlineContent = { Text(text = it) },
                             overlineContent = { Text(text = "CAS统一认证密码")},
                             modifier = Modifier.clickable {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             },
                             trailingContent = {
                                 FilledTonalButton(
@@ -392,7 +392,7 @@ private fun PersonItems(
                             },
                             overlineContent = { Text(text = "教务系统初始密码")},
                             modifier = Modifier.clickable {
-                                ClipBoardUtils.copy(d)
+                                ClipBoardHelper.copy(d)
                             }
                         )
                     }
@@ -410,7 +410,7 @@ private fun PersonItems(
                                 }
                             },
                             modifier = Modifier.clickable {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             }
                         )
                     }
@@ -471,7 +471,7 @@ private fun PersonItems(
                         } else { null }
                     },
                     modifier = Modifier.clickable {
-                        xueJiStatus?.let { ClipBoardUtils.copy(it) }
+                        xueJiStatus?.let { ClipBoardHelper.copy(it) }
                     }
                 )
                 TransplantListItem(
@@ -581,7 +581,7 @@ private fun PersonItems(
                             Icon(painterResource(R.drawable.call),null)
                         },
                         modifier = Modifier.clickable {
-                            mobile?.let { ClipBoardUtils.copy(it) }
+                            mobile?.let { ClipBoardHelper.copy(it) }
                         }
                     )
                 } else {
@@ -593,7 +593,7 @@ private fun PersonItems(
                                 Icon(painterResource(R.drawable.smartphone),null)
                             },
                             modifier = Modifier.clickable {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             }
                         )
                     }
@@ -605,7 +605,7 @@ private fun PersonItems(
                                 Icon(painterResource(R.drawable.call),null)
                             },
                             modifier = Modifier.clickable {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             }
                         )
                     }
@@ -619,7 +619,7 @@ private fun PersonItems(
                             Icon(painterResource(R.drawable.alternate_email),null)
                         },
                         modifier = Modifier.clickable {
-                            it?.let { str -> ClipBoardUtils.copy(str) }
+                            it?.let { str -> ClipBoardHelper.copy(str) }
                         }
                     )
                 }
@@ -631,7 +631,7 @@ private fun PersonItems(
                             Icon(painterResource(R.drawable.home),null)
                         },
                         modifier = Modifier.clickable {
-                            it?.let { str -> ClipBoardUtils.copy(str) }
+                            it?.let { str -> ClipBoardHelper.copy(str) }
                         }
                     )
                 }
@@ -644,7 +644,7 @@ private fun PersonItems(
                             Icon(painterResource(R.drawable.mail),null)
                         },
                         modifier = Modifier.clickable {
-                            it?.let { str -> ClipBoardUtils.copy(str) }
+                            it?.let { str -> ClipBoardHelper.copy(str) }
                         }
                     )
                 }

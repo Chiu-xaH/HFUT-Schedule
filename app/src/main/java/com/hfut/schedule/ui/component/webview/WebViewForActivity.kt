@@ -88,14 +88,9 @@ fun WebViewScreenForActivity(
         WebViewTools(
             webView,
             {  activity?.finish() },
-            fullScreen,
             currentUrl,
             currentTitle,
             url,
-            {
-                fullScreen = it
-                visible = it
-            }
         )
     }
 

@@ -22,7 +22,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLEntity
 import com.hfut.schedule.logic.database.entity.WebURLType
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
@@ -133,7 +133,7 @@ fun StorageWeb(hazeState : HazeState) {
                                         }
                                     ),
                                     CardBottomButton("复制") {
-                                        ClipBoardUtils.copy(url)
+                                        ClipBoardHelper.copy(url)
                                     },
                                     CardBottomButton("分享") {
                                         ShareTo.shareString(url)

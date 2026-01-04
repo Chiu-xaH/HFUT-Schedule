@@ -83,7 +83,7 @@ import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
@@ -799,7 +799,7 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
         overlineContent = { Text("班级")},
         leadingContent = { Icon(painter = painterResource(id = R.drawable.sensor_door), contentDescription = "")},
         modifier = Modifier.clickable {
-            ClipBoardUtils.copy(data.nameZh)
+            ClipBoardHelper.copy(data.nameZh)
         }
     )
     val teachers = data.teachers
@@ -840,7 +840,7 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             headlineContent = { Text(text = data.code) },
             leadingContent = { Icon(painter = painterResource(id = R.drawable.tag), contentDescription = "")},
             modifier = Modifier.weight(.5f).clickable {
-                ClipBoardUtils.copy(data.code)
+                ClipBoardHelper.copy(data.code)
             }
         )
     }

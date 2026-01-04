@@ -27,7 +27,7 @@ import com.hfut.schedule.logic.util.network.state.LISTEN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.PARSE_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -100,7 +100,7 @@ fun CommonNetworkScreen(
                                 }
                             else
                                 Button(onClick = {
-                                    e?.let { ClipBoardUtils.copy(getExceptionDetail(it)) }
+                                    e?.let { ClipBoardHelper.copy(getExceptionDetail(it)) }
                                     showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
                                     Starter.emailMe(context)
                                 }) {

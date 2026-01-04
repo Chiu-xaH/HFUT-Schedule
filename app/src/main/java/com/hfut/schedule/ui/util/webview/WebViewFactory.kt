@@ -67,7 +67,7 @@ import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
@@ -118,11 +118,9 @@ fun rememberWebView(
 fun WebViewTools(
     webView: WebView?,
     onExit : () -> Unit,
-    fullScreen : Boolean,
     currentUrl : String,
     currentTitle : String,
     url : String,
-    onVisibleAndFullScreen: (Boolean) -> Unit,
     onExtend :  @Composable (() -> Unit) = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -248,14 +246,8 @@ fun WebViewTools(
     }) { Icon(
         painterResource(id = R.drawable.net), contentDescription = "") }
 
-    IconButton(onClick = {
-        if(!fullScreen) {
-            onVisibleAndFullScreen(true)
-        } else {
-            onVisibleAndFullScreen(false)
-        }
-    }) { Icon(
-        painterResource(id = if(!fullScreen)R.drawable.expand_content else R.drawable.collapse_content), contentDescription = "") }
+    IconButton(onClick = { showToast("正在开发")}) { Icon(painterResource(id = R.drawable.wand_stars), contentDescription = "") }
+
     IconButton(onClick = {
         on = {}
         operationFavorite = true
@@ -263,7 +255,7 @@ fun WebViewTools(
     }) { Icon(
         painterResource(id = if(isExist) R.drawable.star_filled else  R.drawable.star ), contentDescription = "") }
     IconButton(onClick = {
-        on = { ClipBoardUtils.copy(it) }
+        on = { ClipBoardHelper.copy(it) }
         showBottomSheet = true
     }) { Icon(
         painterResource(id = R.drawable.copy_all), contentDescription = "") }

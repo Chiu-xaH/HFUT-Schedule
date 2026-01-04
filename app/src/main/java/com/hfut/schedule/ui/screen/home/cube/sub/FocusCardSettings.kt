@@ -89,6 +89,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
+import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.util.TransitionBackHandler
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -331,7 +332,7 @@ fun FocusCard(
                         }
                     }
                 }
-                Special(vmUI,hazeState)
+                Special(navController,vmUI,hazeState)
             }
         }
 }
@@ -406,7 +407,11 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
 }
 
 @Composable
-fun Special(vmUI: UIViewModel,hazeState : HazeState) {
+fun Special(
+    navController : NavHostController,
+    vmUI: UIViewModel,
+    hazeState : HazeState
+) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val isSpecificWorkDay = remember { isSpecificWorkDay() }
     val isSpecificWorkDayTomorrow = remember { isSpecificWorkDayTomorrow() }
@@ -422,7 +427,7 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
             hazeState = hazeState,
             isFullExpand = true
         ) {
-            ChangeCourseUI(isTomorrow) {
+            ChangeCourseUI(navController,isTomorrow) {
                 showBottomSheet = it
             }
         }
@@ -503,7 +508,11 @@ fun Special(vmUI: UIViewModel,hazeState : HazeState) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
+fun ChangeCourseUI(
+    navController: NavHostController,
+    isTomorrow : Boolean,
+    onDismiss : (Boolean) -> Unit
+) {
     val date = remember { if(isTomorrow) DateTimeManager.tomorrow_YYYY_MM_DD else DateTimeManager.Date_yyyy_MM_dd }
     var targetDate by remember { mutableStateOf<String?>(null) }
 
@@ -557,9 +566,9 @@ fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
-            if(defaultCalendar != CourseType.JXGLSTU.code)
+            if(defaultCalendar == CourseType.COMMUNITY.code)
                 CardListItem(
-                    headlineContent = { Text("检测到聚焦使用的是非教务数据源，若需使聚焦首页显示调休课程功能生效，请在设置日期后，前往 选项-应用行为-默认课程表 切换为教务")},
+                    headlineContent = { Text("目前默认数据源被设置为智慧社区，若需使调休功能生效，请在设置日期后，前往 选项-应用行为-默认课程表 切换为非智慧社区")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
             else
@@ -567,6 +576,13 @@ fun ChangeCourseUI(isTomorrow : Boolean,onDismiss : (Boolean) -> Unit) {
                     headlineContent = { Text("设置完成后聚焦首页将会显示为设置日期的课程安排")},
                     leadingContent = { Icon(painterResource(R.drawable.info),null)}
                 )
+            CardListItem(
+                headlineContent = { Text("查询学校调休安排")},
+                modifier = Modifier.clickable {
+                    navController.navigateForTransition(AppNavRoute.HolidaySchedule, AppNavRoute.HolidaySchedule.route)
+                },
+                leadingContent = { Icon(painterResource(AppNavRoute.HolidaySchedule.icon),null)}
+            )
             DatePicker(state = state,
                 modifier = Modifier.weight(1f), title = { Text(text = "")},
                 colors = DatePickerDefaults.colors(containerColor = Color.Transparent),

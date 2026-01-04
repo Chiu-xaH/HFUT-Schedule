@@ -41,7 +41,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.PayData
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -246,7 +246,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
                     },
                     onDoubleClick = {},
                     onLongClick = {
-                        ClipBoardUtils.copy(MyApplication.PAY_FEE_URL)
+                        ClipBoardHelper.copy(MyApplication.PAY_FEE_URL)
                     }
                 )
             )

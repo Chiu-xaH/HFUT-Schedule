@@ -35,7 +35,7 @@ import com.hfut.schedule.R
 import com.xah.shared.model.BillRecordBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
@@ -213,7 +213,7 @@ fun BillsInfo( bills :  BillRecordBean) {
                     )
                 },
                 modifier = Modifier.clickable {
-                    ClipBoardUtils.copy(bills.orderId)
+                    ClipBoardHelper.copy(bills.orderId)
                 },
                 overlineContent = { Text(text = "订单号")}
             )

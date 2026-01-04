@@ -317,6 +317,7 @@ fun AlwaysItem(
     val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,
+        modifier = Modifier.let{ if(show) it.containerShare(route) else it }
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "刷新登录状态") },
@@ -337,8 +338,9 @@ fun AlwaysItem(
                     )
                 },
                 colors = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.let{ if(show) it.containerShare(route) else it }
-//                modifier = Modifier
+//                modifier =
+//                    Modifier.let{ if(show) it.containerShare(route) else it }
+                modifier = Modifier
                     .clickable{
                     navHostTopController.navigateForTransition(AppNavRoute.VersionInfo,route)
                 }

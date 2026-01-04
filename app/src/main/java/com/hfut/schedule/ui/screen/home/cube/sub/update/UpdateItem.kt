@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-01") },
+                overlineContent = { Text(text = "2026-01-10") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,10 +53,11 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            UpdateItems("新增 考试页面快捷查看教务处考试安排的入口")//
-            UpdateItems("修复 新课程表第20周空白的Bug")//
-            UpdateItems("优化 Toast在背压状态下的显示机制")//
-            UpdateItems("优化 启动台的遮罩显示")//
+        // TODO 下方翻页器统一边距 、新增培养方案已修学分计算功能
+
+            UpdateItems("优化 部分界面的显示")
+            UpdateItems("新增 查询中心-法定假日 中可以快速检索学校调休安排")
+//            UpdateItems("新增 提案板","用户可查看并关注开发进度，提出需求、Bug")
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("优化 新课程表的捏合缩放交互更换为放大缩小时间线，而不是展开周末")
 //            UpdateItems("新增 课程表的方格支持使用背景透明度")

@@ -49,7 +49,7 @@ import com.hfut.schedule.logic.model.jxglstu.item
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -469,7 +469,7 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
                         modifier = Modifier
                             .weight(.5f)
                             .clickable {
-                                ClipBoardUtils.copy(it)
+                                ClipBoardHelper.copy(it)
                             }
                     )
                 }

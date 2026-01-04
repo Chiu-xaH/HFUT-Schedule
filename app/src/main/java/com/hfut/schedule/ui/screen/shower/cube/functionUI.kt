@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.ShowerScreen
-import com.hfut.schedule.logic.util.sys.ClipBoardUtils
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
@@ -124,7 +124,7 @@ fun EditLoginCode(isOnLogin: Boolean = false, onClickLogin: (() -> Unit)? = null
                 } else {
                     IconButton(
                         onClick = {
-                            ClipBoardUtils.copy(input)
+                            ClipBoardHelper.copy(input)
                         }) {
                         Icon(painter = painterResource(R.drawable.copy_all), contentDescription = "description")
                     }

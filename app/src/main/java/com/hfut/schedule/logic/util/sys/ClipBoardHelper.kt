@@ -4,32 +4,33 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.util.sys.showToast
 
-object ClipBoardUtils {
-    @JvmStatic
-    fun copy(str : String,tip : String = "已复制到剪切板") {
+object ClipBoardHelper {
+    private const val DEFAULT_TIPS = "已复制到剪切板"
+    fun copy(str : String, tips : String? = DEFAULT_TIPS) {
         try {
             val clipboard = MyApplication.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clipData = ClipData.newPlainText(null, str)
             clipboard.setPrimaryClip(clipData)
-            showToast(tip)
-        } catch (e:Exception) {
+            tips?.let { showToast(it) }
+        } catch (e : Exception) {
+            e.printStackTrace()
             showToast("复制到剪切板失败")
         }
     }
-    @JvmStatic
-    fun paste(): String {
+
+    fun paste(): String? {
         return try {
             val clipboard = MyApplication.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             if (clipboard.hasPrimaryClip() && clipboard.primaryClip!!.itemCount > 0) {
-                clipboard.primaryClip!!.getItemAt(0).text?.toString() ?: ""
+                clipboard.primaryClip!!.getItemAt(0).text?.toString()
             } else {
-                ""
+                null
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             showToast("获取剪切板内容失败")
-            ""
+            null
         }
     }
 }
