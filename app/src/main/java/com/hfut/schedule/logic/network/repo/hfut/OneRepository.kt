@@ -19,6 +19,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.MailResponse
 import com.hfut.schedule.ui.screen.supabase.login.getSchoolEmail
+import com.xah.uicommon.util.LogUtil
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -120,13 +121,13 @@ object OneRepository {
                         showToast("信息门户登陆成功")
                     }
                 } catch (e : Exception) {
-                    e.printStackTrace()
+                    LogUtil.error(e)
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 showToast("信息门户登陆失败")
-                t.printStackTrace()
+                LogUtil.error(t)
             }
         })
     }

@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import com.hfut.schedule.application.MyApplication
+import com.xah.uicommon.util.LogUtil
 
 object ClipBoardHelper {
     private const val DEFAULT_TIPS = "已复制到剪切板"
@@ -14,7 +15,7 @@ object ClipBoardHelper {
             clipboard.setPrimaryClip(clipData)
             tips?.let { showToast(it) }
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             showToast("复制到剪切板失败")
         }
     }
@@ -28,7 +29,7 @@ object ClipBoardHelper {
                 null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             showToast("获取剪切板内容失败")
             null
         }

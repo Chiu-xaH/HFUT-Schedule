@@ -78,6 +78,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -290,7 +291,7 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
                                                 json = dataObject.toString()
                                                 show = true
                                             } catch (e:Exception) {
-                                                e.printStackTrace()
+                                                LogUtil.error(e)
                                             }
                                         }
                                     }
@@ -468,7 +469,8 @@ fun tranamt(bills : Int) : Float {
         val big = BigDecimal(num)
         val num_float = big.toFloat()
         num_float
-    }catch (_:Exception) {
+    }catch (e:Exception) {
+        LogUtil.error(e)
         0.0f
     }
 }

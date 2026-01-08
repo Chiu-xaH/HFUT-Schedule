@@ -101,6 +101,7 @@ import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -418,7 +419,7 @@ fun ZhiJianCourseTableUI(
                     distinctUnit(table)
                 }
             } catch (e : Exception) {
-                e.printStackTrace()
+                LogUtil.error(e)
             }
         }
         LaunchedEffect(showAll) {

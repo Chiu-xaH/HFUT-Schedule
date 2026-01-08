@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.core.net.toUri
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.showToast
+import com.xah.uicommon.util.LogUtil
 
 class RechargeTileService : TileService() {
     override fun onClick() {
@@ -15,7 +16,7 @@ class RechargeTileService : TileService() {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             showToast("打开支付宝失败 " + e.message)
         }
     }

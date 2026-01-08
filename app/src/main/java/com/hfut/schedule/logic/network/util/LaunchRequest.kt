@@ -9,6 +9,7 @@ import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UNKNOWN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.xah.uicommon.util.LogUtil
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -64,6 +65,7 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformSuccess(headers, bodyString)
         } catch (e: Exception) {
+            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -74,6 +76,7 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformRedirect!!(headers)
         } catch (e: Exception) {
+            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -84,7 +87,7 @@ suspend fun <T> launchRequestState(
         holder.emitError(HttpException(response), response.code())
     }
 } catch (e: Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
     holder.emitError(e,null)
 }
 // 空响应
@@ -103,6 +106,7 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformSuccess(headers)
         } catch (e: Exception) {
+            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -113,6 +117,7 @@ suspend fun <T> launchRequestState(
         val result = try {
             transformRedirect!!(headers)
         } catch (e: Exception) {
+            LogUtil.error(e)
             holder.emitError(e, PARSE_ERROR_CODE)
             return
         }
@@ -123,6 +128,7 @@ suspend fun <T> launchRequestState(
         holder.emitError(HttpException(response), response.code())
     }
 } catch (e: Exception) {
+    LogUtil.error(e)
     holder.emitError(e,null)
 }
 // 无需关心内容 只关心请求结果
@@ -132,7 +138,7 @@ suspend fun launchRequestNone(
     val response = request().awaitResponse()
     response.code()
 } catch (e : Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
     val eMsg = e.message
     if(eMsg?.contains("10000ms") == true) {
         TIMEOUT_ERROR_CODE

@@ -125,7 +125,6 @@ fun SurveyScreen(
             SurveyUI(vm,hazeState,refresh,innerPadding)
         }
     }
-//    }
 }
 
 @Composable

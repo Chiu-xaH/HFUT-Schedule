@@ -1,8 +1,11 @@
 package com.hfut.schedule.ui.screen.home.search.function.other
 
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
@@ -13,8 +16,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -42,13 +49,66 @@ fun AI(
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.AI.label) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Box() {
+//                RotatingRainbowGlow(
+//                    modifier = Modifier.size(24.dp)
+//                )
+                Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+
+            }
         },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.AI,route)
         }
     )
 }
+
+@Composable
+fun RotatingRainbowGlow(
+    modifier: Modifier = Modifier
+) {
+    Canvas(modifier = modifier) {
+        val radius = size.minDimension / 2f
+
+        // 角度方向彩虹渐变
+        val sweepBrush = Brush.sweepGradient(
+            colors = listOf(
+                Color.Red.copy(.2f),
+                Color.Yellow.copy(.2f),
+                Color.Green.copy(.2f),
+                Color.Cyan.copy(.2f),
+                Color.Blue.copy(.2f),
+                Color.Magenta.copy(.2f),
+                Color.Red.copy(.2f) // 闭环
+            ),
+            center = center
+        )
+
+        // 画彩色光晕
+        drawCircle(
+            brush = sweepBrush,
+            radius = radius,
+            center = center
+        )
+
+        // 叠加一层“向外透明”的遮罩
+        drawCircle(
+            brush = Brush.radialGradient(
+                colors = listOf(
+                    Color.Transparent,
+                    Color.Black
+                ),
+                center = center,
+                radius = radius
+            ),
+            radius = radius,
+            center = center,
+            blendMode = BlendMode.DstIn
+        )
+    }
+}
+
+
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable

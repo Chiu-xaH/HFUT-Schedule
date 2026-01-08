@@ -6,6 +6,7 @@ import android.os.Environment
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.sys.PermissionSet
 import com.hfut.schedule.logic.util.sys.showToast
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.BufferedOutputStream
@@ -41,7 +42,7 @@ suspend fun backupData(
 
         true
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         false
     }
 }
@@ -156,7 +157,7 @@ suspend fun restoreData(
         showToast("恢复完成，杀停App")
         killAppUnSafely()
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         showToast("恢复失败")
     }
 }

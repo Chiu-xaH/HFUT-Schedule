@@ -18,6 +18,7 @@ import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCoursesFromCommunity
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -117,7 +118,7 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
         distinctUnit(result)
         return result
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }
@@ -171,7 +172,7 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
         distinctUnit(result)
         return result
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }
@@ -255,7 +256,7 @@ private suspend fun focusToTimeTableData(): List<List<TimeTableItem>> {
         }
         return result
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }
@@ -287,7 +288,7 @@ private suspend fun examToTimeTableData(): List<List<TimeTableItem>> {
         }
         return result
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }
@@ -326,7 +327,7 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
             }
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
     }
     for(t in result) {
         val uniqueItems = t.distinctBy {

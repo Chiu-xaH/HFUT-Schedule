@@ -95,33 +95,6 @@ fun SurveyUI(vm : NetWorkViewModel, hazeState: HazeState,refresh : Boolean,inner
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         Box(modifier = Modifier.fillMaxSize()) {
             CourseSurveyListUI(listState,vm,hazeState = hazeState, scope,code,refresh = refreshNetwork,innerPadding)
-//            if(semester != null) {
-//                FloatingActionButton(
-//                    onClick = { semester = semester!! - 20 },
-//                    modifier = Modifier
-//                        .align(Alignment.BottomStart)
-//                        .navigationBarsPadding()
-//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-//                    ,
-//                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
-//
-//
-//                ExtendedFloatingActionButton(
-//                    onClick = { scope.launch { refreshNetwork() } },
-//                    modifier = Modifier
-//                        .align(Alignment.BottomCenter)
-//                        .navigationBarsPadding()
-//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-//                ) { Text(text = parseSemester(semester!!),) }
-//
-//                FloatingActionButton(
-//                    onClick = { semester = semester!! + 20 },
-//                    modifier = Modifier
-//                        .align(Alignment.BottomEnd)
-//                        .navigationBarsPadding()
-//                        .padding(horizontal = APP_HORIZONTAL_DP, vertical = APP_HORIZONTAL_DP)
-//                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
-//            }
             semester?.let { page ->
                 val currentSemester by produceState<Int?>(initialValue = null) {
                     value = getSemester()

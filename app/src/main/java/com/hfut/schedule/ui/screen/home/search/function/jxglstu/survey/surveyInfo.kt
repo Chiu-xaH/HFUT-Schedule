@@ -36,6 +36,7 @@ import com.hfut.schedule.logic.model.jxglstu.PostSurvey
 import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
+import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -49,9 +50,11 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -91,8 +94,8 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
             onDismissRequest = { showDialog = false },
             onConfirmation = {
                 scope.launch {
-                    async { postSurvey(vm,postMode,bean,input) }.await()
                     launch {
+                        postSurvey(vm,postMode,bean,input)
                         showDialog = false
                         onResult()
                     }
@@ -176,19 +179,27 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
 @SuppressLint("SuspiciousIndentation")
 suspend fun postSurvey(vm : NetWorkViewModel, mode : PostMode, bean: SurveyResponse, comment: String = "好") = withContext(Dispatchers.IO) {
     // 主线程监听 StateFlow
-    onListenStateHolder(vm.surveyToken) { token ->
-        val cookie = getJxglstuCookie()
-        when(mode) {
-            PostMode.NORMAL -> {
-                showToast("正在开发")
+    val token = vm.surveyToken.state.first() as? UiState.Success
+    token ?: return@withContext
+    val cookie = getJxglstuCookie()
+    when(mode) {
+        PostMode.NORMAL -> {
+            showToast("正在开发")
+        }
+        PostMode.GOOD ->  {
+            val result = vm.postSurvey("$cookie;${token.data}", postResult(true, bean, comment))
+            if(result == StatusCode.OK.code) {
+                showToast("提交成功")
+            } else {
+                showToast("提交失败 $result")
             }
-            PostMode.GOOD ->  {
-                vm.postSurvey("$cookie;$token", postResult(true, bean, comment))
-                showToast("提交完成")
-            }
-            PostMode.BAD -> {
-                vm.postSurvey("$cookie;$token", postResult(false,bean, comment))
-                showToast("提交完成")
+        }
+        PostMode.BAD -> {
+            val result = vm.postSurvey("$cookie;${token.data}", postResult(false, bean, comment))
+            if(result == StatusCode.OK.code) {
+                showToast("提交成功")
+            } else {
+                showToast("提交失败 $result")
             }
         }
     }

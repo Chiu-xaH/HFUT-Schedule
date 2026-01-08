@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -42,7 +43,9 @@ suspend fun initCardNetwork(vm : NetWorkViewModel, vmUI : UIViewModel) = withCon
                         SharedPrefs.saveString("card", str)
                         SharedPrefs.saveString("card_account", account)
                         vmUI.cardValue = ReturnCard(balance, settle.toString(), now.toString(),amt.toString(),limite.toString(),name)
-                    } catch (_: Exception) { }
+                    } catch (e: Exception) {
+                        LogUtil.error(e)
+                    }
                 }
             }
         }

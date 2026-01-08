@@ -14,6 +14,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCalendarPermission
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -52,6 +53,7 @@ private suspend fun isExistEvent(dateTime: DateTime, title: String): Long? = wit
             }
         }
     } catch (e: Exception) {
+        LogUtil.error(e)
         return@withContext null
     }
     return@withContext null
@@ -68,6 +70,7 @@ private suspend fun checkExistEvent(dateTime: DateTime, title: String, activity:
             return null
         }
     } catch (e : Exception) {
+        LogUtil.error(e)
         if(showToast) showToast("未授予读取权限，未添加")
         null
     }
@@ -124,6 +127,7 @@ suspend fun delAllCourseEvent(activity: Activity) = withContext(Dispatchers.IO) 
         }
 
     } catch (e : Exception) {
+        LogUtil.error(e)
         showToast("未授予读取权限")
         null
     }
@@ -180,7 +184,7 @@ private suspend fun addEvent(
             true
         }
     } catch (e:Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         if(showToast) showToast("添加失败(可能是权限问题)")
         false
     }
@@ -272,7 +276,10 @@ private fun parseDateTimeBean(start : List<Int>, end : List<Int>) : DateTime? =
                 DateTimeBean(start[0],start[1],start[2],start[3],start[4]),
                 DateTimeBean(end[0],end[1],end[2],end[3],end[4])
             )
-        } catch (e : Exception) { null }
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            null
+        }
     } else {
         null
     }
@@ -371,7 +378,7 @@ suspend fun getJxglstuCourseSchedule(
             list.add(JxglstuCourseSchedule(bean,room,courseId))
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
     }
     return list
 }
@@ -392,6 +399,7 @@ suspend fun addCourseToEvent(activity: Activity,time : Int) : Int = withContext(
             }
             showToast(if(failedCount == 0) "执行完成 请检查日历" else "有${failedCount}项添加失败，尝试重新点击更新日程")
         } catch (e : Exception) {
+            LogUtil.error(e)
             showToast("失败 可能是代码错了或者权限问题")
         }
     }
@@ -411,6 +419,7 @@ private fun delEvent(id : Long,showToast: Boolean = true) : Boolean {
             false
         }
     } catch (e: Exception) {
+        LogUtil.error(e)
         if(showToast) showToast("删除异常")
         false
     }
@@ -450,6 +459,7 @@ fun queryCalendars(): List<Pair<Long, String>> {
 
         return calendarList
     } catch (e : Exception) {
+        LogUtil.error(e)
         return calendarList
     }
 }

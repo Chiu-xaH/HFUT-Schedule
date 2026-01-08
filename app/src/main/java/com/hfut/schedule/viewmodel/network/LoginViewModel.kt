@@ -18,6 +18,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.xah.uicommon.util.LogUtil
 import okhttp3.Headers
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -64,7 +65,7 @@ class LoginViewModel : ViewModel() {
                                 location.value = response.headers()["Location"].toString()
                                 code.value = response.code().toString()
                                 val tickets = response.headers()["Location"].toString().substringAfter("=")
-                                Log.d("CAS登录ticket",tickets)
+                                LogUtil.debug("CAS登录ticket $tickets")
                                 saveString("ticket", tickets)
                                 ticketStValue.value = tickets
                             }
@@ -92,8 +93,8 @@ class LoginViewModel : ViewModel() {
                             val tgc = response.headers()["Set-Cookie"].toString().substringBefore(";")
                             code.value = response.code().toString()
                             val tickets = response.headers()["Location"].toString().substringAfter("=")
-                            Log.d("CAS登录ticket",tickets)
-                            Log.d("CAS登录tgc",tgc)
+                            LogUtil.debug("CAS登录ticket $tickets")
+                            LogUtil.debug("CAS登录tgc $tgc")
                             saveString("ticket", tickets)
                             saveString("TGC", tgc)
                             ticketStValue.value = tickets
@@ -151,7 +152,7 @@ class LoginViewModel : ViewModel() {
     }
 
     suspend fun loginJxglstu() = onListenStateHolderForNetwork<String, Unit>(webVpnTicket,null) { ticket ->
-        Log.d("t",ticket)
+        LogUtil.debug(ticket)
         val call = loginWebVpn.loginJxglstu("wengine_vpn_ticketwebvpn_hfut_edu_cn=${ticket}")
 
         call.enqueue(object : Callback<ResponseBody> {

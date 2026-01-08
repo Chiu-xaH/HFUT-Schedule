@@ -115,6 +115,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.CoroutineScope
@@ -872,8 +873,8 @@ private data class CasPlatform(
         val address = InetAddress.getByName(host)
         address.hostAddress
     } catch (e: Exception) {
-        Log.e("DNS解析",getKeyStackTrace(e))
-        e.printStackTrace()
+//        Log.e("DNS解析",getKeyStackTrace(e))
+        LogUtil.error(e)
         null
     }
 }
@@ -887,7 +888,7 @@ fun preloadDnsFromUrl2(url: String): String? {
             println("$host -> $it")
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         null
     }
 }

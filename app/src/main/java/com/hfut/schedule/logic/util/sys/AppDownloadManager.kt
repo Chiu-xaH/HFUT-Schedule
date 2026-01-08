@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.util.ocr.TesseractUtils
 import com.hfut.schedule.logic.util.ocr.TesseractUtils.moveDownloadedModel
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.receiver.UpdateReceiver
+import com.xah.uicommon.util.LogUtil
 import java.io.File
 
 object AppDownloadManager {
@@ -200,7 +201,7 @@ object AppDownloadManager {
             intent.setDataAndType(uri, "application/vnd.android.package-archive")
             context.startActivity(intent)
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             showToast("安装跳转失败")
         }
     }

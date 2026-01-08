@@ -29,18 +29,18 @@ interface JxglstuService {
     //带着Cookie登录教务系统主页
     @GET("neusoft-sso/login")
     @Headers(MyApplication.PC_UA)
-    fun jxglstulogin(@Header("Cookie") Cookie : String) : Call<ResponseBody>
+    fun jxglstulogin(@Header("Cookie") cookie : String) : Call<ResponseBody>
 
     //获取学生Id
     @GET("for-std/course-table")
     @Headers(MyApplication.PC_UA)
-    fun getStudentId(@Header("Cookie") Cookie : String) : Call<ResponseBody>
+    fun getStudentId(@Header("Cookie") cookie : String) : Call<ResponseBody>
 
     //获取需要POST的lessonsId数组
     //eams5-student/for-std/course-table/get-data?bizTypeId=23&semesterId=234&dataId=170317
     @GET("for-std/course-table/get-data")
     @Headers(MyApplication.PC_UA)
-    fun getLessonIds(@Header("Cookie") Cookie : String,
+    fun getLessonIds(@Header("Cookie") cookie : String,
                      @Query("bizTypeId") bizTypeId : String,
                      @Query("semesterId") semesterId : String,
                      @Query("dataId") dataId : String
@@ -51,37 +51,37 @@ interface JxglstuService {
     @POST("ws/schedule-table/datum")
     @Headers(MyApplication.PC_UA,
         "Content-Type: application/json")
-    fun getDatum(@Header("Cookie") Cookie : String,
+    fun getDatum(@Header("Cookie") cookie : String,
                  @Body json: JsonObject
     ) : Call<ResponseBody>
 
     //学生信息  XML
     @GET("for-std/student-info/info/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getInfo(@Header("Cookie") Cookie : String,
+    fun getInfo(@Header("Cookie") cookie : String,
                 @Path("studentId") studentId : String) : Call<ResponseBody>
     //培养方案 JSON
     @GET("for-std/program/root-module-json/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getProgram(@Header("Cookie") Cookie : String,
-                @Path("studentId") studentId : String) : Call<ResponseBody>
+    fun getProgram(@Header("Cookie") cookie : String,
+                   @Path("studentId") studentId : String) : Call<ResponseBody>
 
     //成绩单  XML
     @GET("for-std/grade/sheet/info/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getGrade(@Header("Cookie") Cookie : String,
+    fun getGrade(@Header("Cookie") cookie : String,
                  @Path("studentId") studentId : String,
                  @Query("semester") semester : Int?,) : Call<ResponseBody>
     //考试查询   XML
     @GET("for-std/exam-arrange/info/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getExam(@Header("Cookie") Cookie : String,
+    fun getExam(@Header("Cookie") cookie : String,
                 @Path("studentId") studentId : String) : Call<ResponseBody>
 
     //开课查询   JSON
     @GET("for-std/lesson-search/semester/{semester}/search/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun searchCourse(@Header("Cookie") Cookie : String,
+    fun searchCourse(@Header("Cookie") cookie : String,
                      @Path("studentId") studentId : String,
                      @Path("semester") semester : Int,
                      @Query("nameZhLike") className : String?,
@@ -93,43 +93,45 @@ interface JxglstuService {
     //获取教评列表
     @GET("for-std/lesson-survey/{semester}/search/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getSurveyList(@Header("Cookie") Cookie : String,
+    fun getSurveyList(@Header("Cookie") cookie : String,
                       @Path("studentId") studentId : String,
                       @Path("semester") semester : Int,) : Call<ResponseBody>
 
     //获取具体教评内容
     @GET("for-std/lesson-survey/start-survey/{teacherId}/get-data")
     @Headers(MyApplication.PC_UA)
-    fun getSurveyInfo(@Header("Cookie") Cookie : String,
+    fun getSurveyInfo(@Header("Cookie") cookie : String,
                       @Path("teacherId") teacherId : String) : Call<ResponseBody>
 
-    //获取具体教评内容
     @GET("for-std/lesson-survey/start-survey/{teacherId}")
     @Headers(MyApplication.PC_UA)
-    fun getSurveyToken(@Header("Cookie") Cookie : String,
-                      @Path("teacherId") teacherId : String,
-                       @Query("REDIRECT_URL") REDIRECT_URL : String) : Call<ResponseBody>
+    fun getSurveyToken(@Header("Cookie") cookie : String,
+                       @Path("teacherId") teacherId : String,
+                       @Query("REDIRECT_URL") redirectUrl : String) : Call<ResponseBody>
 
     //提交教评
     @POST("for-std/lesson-survey/submit-survey")
     @Headers(MyApplication.PC_UA)
-    fun postSurvey(@Header("Cookie") Cookie : String,
+    fun postSurvey(@Header("Cookie") cookie : String,
                    @Body json: JsonObject) : Call<ResponseBody>
 
     //获取学籍照片
     @GET("students/avatar/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getPhoto(@Header("Cookie") Cookie : String,  @Path("studentId") studentId : String,) : Call<ResponseBody>
+    fun getPhoto(
+        @Header("Cookie") cookie : String,
+        @Path("studentId") studentId : String
+    ) : Call<ResponseBody>
 
 
     //先验证,否则无法爬选课信息
     @GET("for-std/course-select")
     @Headers(MyApplication.PC_UA)
-    fun verify(@Header("Cookie") Cookie : String,) : Call<ResponseBody>
+    fun verify(@Header("Cookie") cookie : String) : Call<ResponseBody>
 
     //获取选课
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers(MyApplication.PC_UA,"Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/open-turns")
     fun getSelectCourse(
         @Field("bizTypeId") bizTypeId: Int,
@@ -139,7 +141,7 @@ interface JxglstuService {
 
     //获取具体的选课
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers(MyApplication.PC_UA,"Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/addable-lessons")
     fun getSelectCourseInfo (
         @Field("turnId") turnId: Int,
@@ -148,7 +150,7 @@ interface JxglstuService {
 
     //选课人数
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers(MyApplication.PC_UA,"Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/std-count")
     fun getCount (
         @Field("lessonIds[]") id: Int,
@@ -157,7 +159,7 @@ interface JxglstuService {
 
     //准备选/退课请求，add选课drop退课
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers(MyApplication.PC_UA,"Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/{type}-request")
     fun getRequestID (
         @Field("studentAssoc") studentId: String,
@@ -169,7 +171,7 @@ interface JxglstuService {
 
     //选/退课
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers(MyApplication.PC_UA,"Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/add-drop-response")
     fun postSelect (
         @Field("studentId") studentId: String,
@@ -179,7 +181,7 @@ interface JxglstuService {
 
     //获取已经选的课
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0","Content-Type: application/x-www-form-urlencoded")
+    @Headers(MyApplication.PC_UA,"Content-Type: application/x-www-form-urlencoded")
     @POST("ws/for-std/course-select/selected-lessons")
     fun getSelectedCourse (
         @Field("studentId") studentId: String,
@@ -189,12 +191,12 @@ interface JxglstuService {
 
     //我的档案（个人信息的补充）
     @GET("my/profile")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getMyProfile( @Header("Cookie") cookie: String) : Call<ResponseBody>
 
     //转专业申请列表
     @GET("for-std/change-major-apply/index/{studentId}")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getTransferList(
         @Header("Cookie") cookie: String,
         @Path("studentId") studentId : Int
@@ -203,7 +205,7 @@ interface JxglstuService {
     //具体转专业申请列表
     //batchId
     @GET("for-std/change-major-apply/get-applies")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getTransfer(
         @Header("Cookie") cookie: String,
         @Query("batchId") batchId : String,
@@ -213,7 +215,7 @@ interface JxglstuService {
 
     //我的转专业申请
     @GET("for-std/change-major-apply/get-my-applies")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getMyTransfer(
         @Header("Cookie") cookie: String,
         @Query("batchId") batchId : String,
@@ -222,7 +224,7 @@ interface JxglstuService {
 
     //撤销转专业申请
     @FormUrlEncoded
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     @POST("for-std/change-major-apply/cancel")
     fun cancelTransfer(
         @Header("Cookie") cookie: String,
@@ -236,7 +238,7 @@ interface JxglstuService {
     //提交转专业申请需要一个_T_std_change_major_apply_new_form的Cookie
     //获_T_std_change_major_apply_new_form
     @GET("for-std/change-major-apply/new")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getFormCookie(
         @Header("Cookie") cookie: String,
         @Query("REDIRECT_URL") redirectUrl: String ,
@@ -280,7 +282,7 @@ interface JxglstuService {
     * */
     @Multipart
     @POST("for-std/change-major-apply/save")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun postTransfer(
         @Header("Cookie") cookie: String,
         // 固定字符串,参考上面
@@ -299,7 +301,7 @@ interface JxglstuService {
 
     //我的转专业详情
     @GET("for-std/change-major-apply/info/{listId}")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getMyTransferInfo(
         @Header("Cookie") cookie: String,
         @Path("listId") listId : Int,
@@ -309,7 +311,7 @@ interface JxglstuService {
 
     //获取培养方案完成情况
     @GET("ws/student/home-page/programCompletionPreview")
-    @Headers("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0")
+    @Headers(MyApplication.PC_UA)
     fun getProgramCompletion(
         @Header("Cookie") cookie: String
     ): Call<ResponseBody>
@@ -317,13 +319,13 @@ interface JxglstuService {
     //获取培养方案完成情况 2.0
     @GET("for-std/program-completion-preview/json/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getProgramPerformance(@Header("Cookie") Cookie : String,
-                   @Path("studentId") studentId : Int) : Call<ResponseBody>
+    fun getProgramPerformance(@Header("Cookie") cookie : String,
+                              @Path("studentId") studentId : Int) : Call<ResponseBody>
 
     // 获取BizTypeID
     @GET("for-std/course-table/info/{studentId}")
     @Headers(MyApplication.PC_UA)
-    fun getBizTypeId(@Header("Cookie") Cookie : String,
+    fun getBizTypeId(@Header("Cookie") cookie : String,
                      @Path("studentId") studentId : Int) : Call<ResponseBody>
 
     // 获取作息 不同校区上课时间不同

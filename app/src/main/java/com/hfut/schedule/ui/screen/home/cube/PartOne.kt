@@ -68,6 +68,7 @@ import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
 
 
@@ -76,6 +77,7 @@ fun apiCheck() : Boolean {
         val classes = getPersonInfo().className
         return classes!!.contains("计算机") && classes.contains("23")
     } catch (e : Exception) {
+        LogUtil.error(e)
         false
     }
 }

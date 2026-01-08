@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,9 +45,11 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -75,18 +79,25 @@ import kotlinx.coroutines.launch
 
 private val items = listOf(
     NavigationBarItemData(
-        GradeBarItems.GRADE.name,"教务源", R.drawable.article, R.drawable.article_filled
+        GradeBarItems.GRADE.name,"成绩", R.drawable.article, R.drawable.article_filled
     ),
-    NavigationBarItemData(
-        GradeBarItems.COMMUNITY.name,"社区源", R.drawable.article, R.drawable.article_filled
-    ),
-    NavigationBarItemData(
-        GradeBarItems.UNI_APP.name,"合工大教务源", R.drawable.article, R.drawable.article_filled
-    ),
+//    NavigationBarItemData(
+//        GradeBarItems.COMMUNITY.name,"社区源", R.drawable.article, R.drawable.article_filled
+//    ),
+//    NavigationBarItemData(
+//        GradeBarItems.UNI_APP.name,"合工大教务源", R.drawable.article, R.drawable.article_filled
+//    ),
     NavigationBarItemData(
         GradeBarItems.COUNT.name,"计算", R.drawable.leaderboard,R.drawable.leaderboard_filled
     )
 )
+
+enum class GradeDataOrigin(val title : String) {
+    UNI_APP("合工大教务"),
+    JXGLSTU("教务系统"),
+    COMMUNITY("智慧社区"),
+}
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -106,8 +117,8 @@ fun GradeScreen(
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         GradeBarItems.GRADE.name ->GradeBarItems.GRADE
         GradeBarItems.COUNT.name -> GradeBarItems.COUNT
-        GradeBarItems.COMMUNITY.name -> GradeBarItems.COMMUNITY
-        GradeBarItems.UNI_APP.name -> GradeBarItems.UNI_APP
+//        GradeBarItems.COMMUNITY.name -> GradeBarItems.COMMUNITY
+//        GradeBarItems.UNI_APP.name -> GradeBarItems.UNI_APP
         else -> GradeBarItems.GRADE
     }
     // 保存上一页页码 用于决定左右动画
@@ -116,6 +127,9 @@ fun GradeScreen(
             currentPage = targetPage.page
         }
     }
+    val gradeOriginList = remember { GradeDataOrigin.entries }
+    val pageState = rememberPagerState { gradeOriginList.size }
+
 
 
     if (showBottomSheet) {
@@ -187,9 +201,16 @@ fun GradeScreen(
                         }
                     }
                 )
-                if(targetPage == GradeBarItems.GRADE || targetPage == GradeBarItems.UNI_APP) {
+                if(targetPage != GradeBarItems.COUNT) {
+                    CustomTabRow(
+                        pageState,
+                        gradeOriginList.map { it.title }
+                    )
+                }
+                if(gradeOriginList[pageState.currentPage] != GradeDataOrigin.COMMUNITY) {
                     CustomTextField(
                         modifier = Modifier
+                            .padding(top = CARD_NORMAL_DP)
                             .padding(horizontal = APP_HORIZONTAL_DP)
                             .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
                         input = input,
@@ -222,9 +243,17 @@ fun GradeScreen(
                 .hazeSource(state = hazeState)
         ) {
             composable(GradeBarItems.GRADE.name) {
-                Scaffold(
-                ) {
-                    GradeItemUIJXGLSTU(innerPadding,vm,input,hazeState,ifSaved)
+                Scaffold() {
+                    HorizontalPager(
+                        pageState
+                    ) { page ->
+                        val currentPage = gradeOriginList[page]
+                        when(currentPage) {
+                            GradeDataOrigin.JXGLSTU -> GradeItemUIJXGLSTU(innerPadding,vm,input,hazeState,ifSaved)
+                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(innerPadding,vm,input,hazeState)
+                            GradeDataOrigin.COMMUNITY -> GradeItemUI(vm,innerPadding)
+                        }
+                    }
                 }
             }
             composable(GradeBarItems.COUNT.name) {
@@ -233,18 +262,16 @@ fun GradeScreen(
                     AnalysisScreen(vm,innerPadding)
                 }
             }
-            composable(GradeBarItems.COMMUNITY.name) {
-                Scaffold(
-                ) {
-                    GradeItemUI(vm,innerPadding)
-                }
-            }
-            composable(GradeBarItems.UNI_APP.name) {
-                Scaffold(
-                ) {
-                    GradeItemUIUniApp(innerPadding,vm,input,hazeState)
-                }
-            }
+//            composable(GradeBarItems.COMMUNITY.name) {
+//                Scaffold(
+//                ) {
+//                }
+//            }
+//            composable(GradeBarItems.UNI_APP.name) {
+//                Scaffold(
+//                ) {
+//                }
+//            }
         }
     }
 }

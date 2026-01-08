@@ -96,6 +96,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -347,7 +348,10 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                         show = true
                                     }
                                 }
-                            } catch (e : Exception) { showToast("错误") }
+                            } catch (e : Exception) {
+                                LogUtil.error(e)
+                                showToast("错误")
+                            }
 //                                                    val jsonObject = JSONObject(result)
 //                                                    val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
 //                                                    dataObject.put("myCustomInfo", "房间：$input")
@@ -392,7 +396,10 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                                                         for ((_, value) in data) {
                                                             Result = value
                                                         }
-                                                    } catch (e : Exception) { showToast("错误") }
+                                                    } catch (e : Exception) {
+                                                        LogUtil.error(e)
+                                                        showToast("错误")
+                                                    }
                                                     val jsonObject = JSONObject(result)
                                                     val dataObject = jsonObject.getJSONObject("map").getJSONObject("data")
                                                     dataObject.put("myCustomInfo", "房间：$input")

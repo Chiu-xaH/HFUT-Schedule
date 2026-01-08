@@ -4,6 +4,7 @@ import com.hfut.schedule.logic.model.jxglstu.SurveyResponse
 import com.hfut.schedule.logic.model.jxglstu.blankQuestions
 import com.hfut.schedule.logic.model.jxglstu.options
 import com.hfut.schedule.logic.model.jxglstu.radioQuestions
+import com.xah.uicommon.util.LogUtil
 
 fun getSurveyChoice(bean : SurveyResponse) : List<radioQuestions> {
     return try {
@@ -11,6 +12,7 @@ fun getSurveyChoice(bean : SurveyResponse) : List<radioQuestions> {
         val radioQuestions = survey.radioQuestions
         radioQuestions
     } catch (e : Exception) {
+        LogUtil.error(e)
         emptyList()
     }
 }
@@ -20,6 +22,7 @@ fun getSurveyInput(bean : SurveyResponse) : List<blankQuestions> {
         val blankQuestions = survey.blankQuestions
         blankQuestions
     } catch (e : Exception) {
+        LogUtil.error(e)
         emptyList()
     }
 }

@@ -75,6 +75,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -317,7 +318,7 @@ fun ScanScreen(
                     try {
                         resultText = text
                     } catch (e:Exception) {
-                        e.printStackTrace()
+                        LogUtil.error(e)
                         showToast("解析出错")
                     }
                 }

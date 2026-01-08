@@ -16,6 +16,7 @@ import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.HybridBinarizer
 import com.hfut.schedule.application.MyApplication
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -52,6 +53,7 @@ class QRCodeAnalyzer(private val listener: (com.google.zxing.Result?) -> Unit) :
                 val result = reader.decode(binaryBitmap)
                 listener(result)
             } catch (e: Exception) {
+                LogUtil.error(e)
                 listener(null)
             } finally {
                 imageProxy.close()
@@ -91,7 +93,7 @@ suspend fun parseQRCode(uri: Uri): String? = withContext(Dispatchers.IO) {
 
         return@withContext result.text
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return@withContext null
     }
 }

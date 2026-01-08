@@ -253,7 +253,7 @@ fun TransferScreen(
                                 },
                                 supportingContent = {
                                     Column {
-                                        Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,101,81等...")
+                                        Text("合肥校区和宣城校区之间转专业入口互相不可见，但可以通过输入代号进入，代号位于右上角\n示例：1,3,21,42,43,61,81,101,121等...")
                                         Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
                                         Row {
                                             TextField(

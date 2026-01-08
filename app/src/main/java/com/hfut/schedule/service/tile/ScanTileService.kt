@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import com.hfut.schedule.activity.MainActivity
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.xah.uicommon.util.LogUtil
 
 class ScanTileService : TileService() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -33,7 +34,7 @@ class ScanTileService : TileService() {
                 startActivityAndCollapse(pendingIntent)
 
             } catch (e: Exception) {
-                e.printStackTrace()
+                LogUtil.error(e)
                 showToast("打开失败 " + e.message)
             }
         }

@@ -5,6 +5,7 @@ import android.os.Environment
 import android.util.Log
 
 import com.hfut.schedule.application.MyApplication
+import com.xah.uicommon.util.LogUtil
 import java.io.File
 
 object TesseractUtils {
@@ -51,10 +52,11 @@ object TesseractUtils {
                 downloadedFile.delete() // 删除下载目录中的文件
 //                Log.d("Tesseract", "模型移动成功: ${destFile.absolutePath}")
             } catch (e: Exception) {
-                Log.e("Tesseract", "模型移动失败", e)
+                LogUtil.error(e)
+//                Log.e("Tesseract", "模型移动失败", e)
             }
         } else {
-            Log.e("Tesseract", "下载的模型文件不存在: ${downloadedFile.absolutePath}")
+            LogUtil.debug("Tesseract 下载的模型文件不存在: ${downloadedFile.absolutePath}")
         }
     }
 

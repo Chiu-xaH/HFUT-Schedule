@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -16,7 +17,7 @@ class GotoInterceptor : Interceptor {
         val response = chain.proceed(request)
         val location = response.headers("Location")
         val locationStr = location.toString()
-        Log.d("CAS拦截器",locationStr)
+        LogUtil.debug("CAS拦截器 $locationStr")
         when {
             locationStr.contains("code=") -> {
                 // 登录信息门户

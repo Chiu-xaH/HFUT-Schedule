@@ -125,6 +125,7 @@ import com.xah.mirror.shader.scaleMirror
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -173,7 +174,7 @@ private fun haveImportantUpdate() : Boolean {
 
         return !(nowVersion[1] == lastVersion[1] && nowVersion[0] == lastVersion[0])
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return false
     }
 }

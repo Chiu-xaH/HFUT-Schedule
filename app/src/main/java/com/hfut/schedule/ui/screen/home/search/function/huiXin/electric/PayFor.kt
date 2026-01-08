@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.KeyBoard
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlin.collections.iterator
 
@@ -239,6 +240,7 @@ suspend fun getPsk(key : String) : String? {
         }
         result
     } catch (e : Exception) {
+        LogUtil.error(e)
         null
     }
 }

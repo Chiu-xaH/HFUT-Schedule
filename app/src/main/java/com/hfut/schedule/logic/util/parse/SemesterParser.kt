@@ -4,6 +4,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.flow.first
 
 object SemesterParser {
@@ -84,6 +85,7 @@ object SemesterParser {
                 else -> null
             }
         } catch (e : Exception) {
+            LogUtil.error(e)
             return null
         }
     }
@@ -99,6 +101,7 @@ object SemesterParser {
                 return autoTermValue
             }
         } catch (e : Exception) {
+            LogUtil.error(e)
             return getMy()!!.semesterId.toInt()
         }
     }
@@ -107,6 +110,7 @@ object SemesterParser {
         return try {
             reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
         } catch (e : Exception) {
+            LogUtil.error(e)
             getMy()!!.semesterId.toInt()
         }
     }

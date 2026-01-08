@@ -21,6 +21,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -164,7 +165,7 @@ suspend fun initNetworkRefresh(vm : NetWorkViewModel,vmUI : UIViewModel, ifSaved
             }
         }
     }  catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
     }
 }
 
@@ -213,6 +214,7 @@ private fun getHoliday() : HolidayResponse? {
     return try {
         Gson().fromJson(json, HolidayResponse::class.java)
     } catch (e : Exception) {
+        LogUtil.error(e)
         null
     }
 }

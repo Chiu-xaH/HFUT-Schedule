@@ -11,11 +11,13 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
+import com.xah.uicommon.util.LogUtil
 import java.time.LocalDate
 
 private fun parseDatumCourse(result: String) : List<lessons> = try {
     Gson().fromJson(result,lessonResponse::class.java).lessons
 } catch (e : Exception) {
+    LogUtil.error(e)
     emptyList<lessons>()
 }
 
@@ -25,6 +27,7 @@ fun getJxglstuStartDate(): LocalDate {
         val list = parseDatumCourse(prefs.getString("courses","")!!)
         return LocalDate.parse(list[0].semester.startDate, formatter_YYYY_MM_DD)
     } catch (e : Exception) {
+        LogUtil.error(e)
         return getStartWeekFromCommunity()
     }
 }
@@ -35,6 +38,7 @@ private fun getCourse(friendUserName : String? = null): List<courseBasicInfoDTOL
     return try {
         getFormCommunity(friendUserName)!!.courseBasicInfoDTOList
     } catch (e:Exception) {
+        LogUtil.error(e)
         emptyList()
     }
 }
@@ -73,7 +77,7 @@ fun getCourseInfoFromCommunity(weekday : Int, week : Int, friendUserName : Strin
             result
         } else result
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         result
     }
 }
@@ -85,6 +89,7 @@ fun getFormCommunity(friendUserName : String? = null): CourseResult? {
     return try {
         Gson().fromJson(json, CourseTotalResponse::class.java).result
     } catch (e:Exception) {
+        LogUtil.error(e)
         null
     }
 }
@@ -105,6 +110,7 @@ fun getStartWeekFromCommunity() : LocalDate {
                 else -> DateTimeManager.Date_yyyy + "-09-08"
             }
         }
+        LogUtil.error(e)
         return LocalDate.parse(start)
     }
 }

@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.xah.uicommon.util.LogUtil
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -70,7 +71,7 @@ class RedirectTicketInterceptor() : Interceptor {
                             )
                             .build()
                         val checkResponse = chain.proceed(checkRequest)
-                        Log.d("CAS","指尖工大登录 ${checkResponse.code}")
+                        LogUtil.debug("CAS 指尖工大登录 ${checkResponse.code}")
                         if(isNotBadRequest(checkResponse.code)) {
                             showToast("指间工大登陆成功")
                         } else {
@@ -143,10 +144,10 @@ private fun parseLoginStu(headers: Headers,json: String?) =  try {
     val prefix = "_WEU="
     val weu = prefix + cookie.substringAfter(prefix).substringBefore(";")
     saveString("stu",weu)
-    Log.d("学工系统登录",weu)
+    LogUtil.debug("学工系统登录 $weu")
     showToast("学工系统登陆成功")
 } catch (e : Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
 }
 
 
@@ -155,7 +156,7 @@ private fun parseLoginJxglstu(headers: Headers) = try {
     saveString("redirect", "SESSION=$cookie")
     showToast("教务系统登陆成功")
 } catch (e : Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
 }
 
 private fun parseLoginZhiJian(headers: Headers) : String? = try {
@@ -169,7 +170,7 @@ private fun parseLoginZhiJian(headers: Headers) : String? = try {
         null
     }
 } catch (e : Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
     null
 }
 
@@ -182,6 +183,6 @@ private fun parseLoginLibrary(headers: Headers)  = try {
         showToast("图书馆登陆失败")
     }
 } catch (e : Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
 }
 

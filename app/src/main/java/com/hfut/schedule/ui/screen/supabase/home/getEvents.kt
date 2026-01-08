@@ -6,6 +6,7 @@ import com.hfut.schedule.logic.model.SupabaseEventEntity
 import com.hfut.schedule.logic.model.SupabaseEventsInput
 import com.hfut.schedule.logic.network.util.supabaseEventEntityToDto
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.LogUtil
 
 fun getEvents(vm: NetWorkViewModel) : List<SupabaseEventsInput> {
     val json = vm.supabaseGetEventsResp.value
@@ -14,7 +15,7 @@ fun getEvents(vm: NetWorkViewModel) : List<SupabaseEventsInput> {
         val newList = list.mapNotNull { item -> supabaseEventEntityToDto(item) }
         return newList
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         emptyList()
     }
 }
@@ -29,7 +30,7 @@ fun getInsertedEventId(vm: NetWorkViewModel) : Int? {
             null
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         null
     }
 }

@@ -76,6 +76,7 @@ import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -94,7 +95,7 @@ suspend fun getXwxLogin() : XwxLoginInfo? = withContext(Dispatchers.IO) {
             }
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         null
     }
 }

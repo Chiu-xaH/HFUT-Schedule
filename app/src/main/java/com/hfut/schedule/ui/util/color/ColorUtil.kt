@@ -20,6 +20,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.materialkolor.ktx.themeColors
+import com.xah.uicommon.util.LogUtil
 import kotlin.math.abs
 
 fun parseColor(input: String): Long? {
@@ -28,6 +29,7 @@ fun parseColor(input: String): Long? {
         val colorLong = cleaned.toLong(16)
         colorLong
     } catch (e: Exception) {
+        LogUtil.error(e)
         null
     }
 }
@@ -50,7 +52,7 @@ fun uriToImageBitmap(uri: Uri): ImageBitmap? {
         }
         bitmap.asImageBitmap()
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         null
     }
 }
@@ -80,7 +82,7 @@ suspend fun extractColor(context: Context,@DrawableRes resId: Int): Long? {
 fun resToBitmap(context: Context,@DrawableRes resId: Int) : Bitmap? = try {
     BitmapFactory.decodeResource(context.resources, resId)
 } catch (e : Exception) {
-    e.printStackTrace()
+    LogUtil.error(e)
     null
 }
 

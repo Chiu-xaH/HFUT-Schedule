@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.graphics.createBitmap
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,17 +51,17 @@ fun SaveComposeAsImage(value: MutableState<Int>, fileName:String, tabThumbFilePa
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
                                 outputStream.close()
 
-                                Log.i("保存TAB封面", file.absolutePath)
+                                LogUtil.debug("保存TAB封面 ${file.absolutePath}")
                                 tabThumbFilePath.value = file.absolutePath
                             } catch (e: Exception) {
-                                e.printStackTrace()
+                                LogUtil.error(e)
                             }
                             value.value = 0
                         }
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
+                LogUtil.error(e)
             }
         }
     }

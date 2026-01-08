@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -24,6 +25,7 @@ fun getExam() : List<examArrangementList> {
         val list = result.result.examArrangementList
         return list
     } catch (e:Exception) {
+        LogUtil.error(e)
         return emptyList()
     }
 }
@@ -70,7 +72,7 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
         try {
             parseJxglstuExam(html)
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             emptyList()
         }
     }
@@ -101,7 +103,7 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
                 }
             }
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             emptyList()
         }
     }
@@ -123,7 +125,7 @@ suspend fun getExamFromCache() : List<JxglstuExam> = withContext(Dispatchers.IO)
                 } ?: entry.value.first() // 如果没有更多信息的项，默认保留第一个
             }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         jxglstuExams
     }
 }

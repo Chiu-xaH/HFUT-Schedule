@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.hfut.schedule.application.MyApplication
+import com.xah.uicommon.util.LogUtil
 import java.security.MessageDigest
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
@@ -21,7 +22,7 @@ object AppVersion {
         try {
             versionCode = packageName.versionCode
         } catch ( e : PackageManager.NameNotFoundException) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
         return versionCode
     }
@@ -45,7 +46,7 @@ object AppVersion {
         try {
             versionName = packageName.versionName.toString()
         } catch ( e : PackageManager.NameNotFoundException) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
         return versionName
     }

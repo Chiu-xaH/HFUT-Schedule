@@ -7,6 +7,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import androidx.annotation.RequiresPermission
+import com.xah.uicommon.util.LogUtil
 
 
 @RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -25,6 +26,6 @@ fun getLocation(context : Context, onLocation : (com.hfut.schedule.logic.model.L
             override fun onProviderDisabled(provider: String) {}
         })
     } catch (e: SecurityException) {
-        e.printStackTrace()
+        LogUtil.error(e)
     }
 }

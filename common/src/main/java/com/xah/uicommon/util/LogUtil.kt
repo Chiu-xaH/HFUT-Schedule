@@ -31,7 +31,7 @@ object LogUtil {
             }
             return finalStack
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             return null
         }
     }

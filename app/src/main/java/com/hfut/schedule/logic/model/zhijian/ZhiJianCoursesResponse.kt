@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.model.zhijian
 import com.google.gson.annotations.SerializedName
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
+import com.xah.uicommon.util.LogUtil
 
 data class ZhiJianCoursesResponse(
     val data : ZhiJianCoursesBean
@@ -58,7 +59,7 @@ data class ZhiJianCourseItem(
                 weekday = parseSingleChineseDigit(weekday[1]),
             )
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             null
         }
 }

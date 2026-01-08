@@ -7,6 +7,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.xah.uicommon.util.LogUtil
 import java.util.concurrent.TimeUnit
 
 class RefreshFocusWidgetWorker(
@@ -20,7 +21,7 @@ class RefreshFocusWidgetWorker(
             refreshFocusWidget(applicationContext)
             Result.success()
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             Result.retry()
         }
     }
@@ -35,11 +36,11 @@ class RefreshFocusWidgetWorker(
 
             if (workInfos.isNullOrEmpty()) {
                 // 没有注册
-                Log.d("WorkManager：刷新小组件","任务状态: 未注册")
+                LogUtil.debug("WorkManager：刷新小组件,任务状态: 未注册")
             } else {
                 // 已经注册
                 val state = workInfos[0].state
-                Log.d("WorkManager：刷新小组件","任务状态: $state")
+                LogUtil.debug("WorkManager：刷新小组件,任务状态: $state")
             }
         }
 

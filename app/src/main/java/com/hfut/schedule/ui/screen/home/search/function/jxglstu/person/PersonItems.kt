@@ -82,6 +82,7 @@ import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.status.LoadingScreen
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -741,7 +742,8 @@ fun getPersonInfo() : PersonInfo {
         val postalCode = dataMap["邮编"]
 
         return PersonInfo(name,studentnumber,chineseid,classes,zhuanye,department, school,benorsshuo,home,xueJiStatus,program, startDate, endDate, majorDirection, studyTime,gender, politicalStatus, email, phone, mobile, address, postalCode)
-    } catch (_:Exception) {
+    } catch (e:Exception) {
+        LogUtil.error(e)
         return PersonInfo(null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
     }
 }

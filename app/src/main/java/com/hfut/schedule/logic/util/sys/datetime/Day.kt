@@ -5,6 +5,7 @@ import com.hfut.schedule.logic.network.util.MyApiParse.getAPICelebration
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.hfut.schedule.ui.screen.home.getHolidays
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.xah.uicommon.util.LogUtil
 import java.time.LocalDate
 import java.time.Period
 
@@ -21,6 +22,7 @@ fun getBirthday() : String? {
         val day = birth.substring(6,8)
         "$year-$month-$day"
     } catch (e : Exception) {
+        LogUtil.error(e)
         null
     }
 }
@@ -31,6 +33,7 @@ private fun getAge(birthString : String) : Int? = try {
     val age = Period.between(birthDate, today).years
     age
 } catch (e: Exception) {
+    LogUtil.error(e)
     null
 }
 
@@ -41,6 +44,7 @@ fun getAppAge() : Int? = getAge(DateTimeManager.APP_BIRTHDAY)
 private fun getGraduationYear() : String? = try {
     getPersonInfo().endDate?.split("-")?.get(0)
 } catch (e : Exception) {
+    LogUtil.error(e)
     null
 }
 

@@ -176,6 +176,7 @@ import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -986,7 +987,7 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
             .mapNotNull { it.trim().toIntOrNull() }
         reorderByIds(order)
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         reorderByIds(GlobalUIStateHolder.funcDefault.map { it.id })
     }
 }

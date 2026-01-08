@@ -1,5 +1,6 @@
 package com.hfut.schedule.logic.network.util
 
+import com.xah.uicommon.util.LogUtil
 import org.jsoup.Jsoup
 
 // HFUT Central Authentication Service 统一认证登录
@@ -33,6 +34,7 @@ object CasInHFUT {
                 }
             }
         } catch (e: Exception) {
+            LogUtil.error(e)
             return null
         }
         return null

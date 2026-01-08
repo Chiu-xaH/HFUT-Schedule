@@ -85,6 +85,7 @@ import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -149,7 +150,7 @@ private fun ScheduleItemUI(listItem: Schedule, isFuture : Boolean, activity : Ac
                                         showToast("添加到系统日历成功")
                                     } catch (e : SecurityException) {
                                         showToast("未授予权限")
-                                        e.printStackTrace()
+                                        LogUtil.error(e)
                                     }
                                 }
                             }
@@ -618,6 +619,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                             else -> null
                         }
                     } catch (e : Exception) {
+                        LogUtil.error(e)
                         null
                     }
                 }
@@ -861,6 +863,7 @@ suspend fun getJxglstuCourse(date : String) : List<JxglstuCourseSchedule> {
         }.sortedBy { it.time.start.hour }
 
     } catch (e : Exception) {
+        LogUtil.error(e)
         return emptyList()
     }
 }
@@ -913,6 +916,7 @@ suspend fun getUniAppCourse(date : String) : List<JxglstuCourseSchedule> {
         return result.sortedBy { it.time.start.hour }
 
     } catch (e : Exception) {
+        LogUtil.error(e)
         return emptyList()
     }
 }

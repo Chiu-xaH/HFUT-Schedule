@@ -91,6 +91,7 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.util.TransitionBackHandler
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -376,7 +377,9 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                                 vmUI.electricValue.value = value
                                 saveString("memoryEle",vmUI.electricValue.value)
                             }
-                        } catch (_:Exception) { }
+                        } catch (e:Exception) {
+                            LogUtil.error(e)
+                        }
                     }
                 }
             }
@@ -398,7 +401,9 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
                                 vmUI.electricValue.value = formatDecimal(value.substringAfter("剩余金额:").toDouble(),2)
                                 saveString("memoryEle",vmUI.electricValue.value)
                             }
-                        } catch (_:Exception) { }
+                        } catch (e:Exception) {
+                            LogUtil.error(e)
+                        }
                     }
                 }
             }
@@ -522,7 +527,10 @@ fun ChangeCourseUI(
     LaunchedEffect(state.selectedDateMillis) {
         targetDate = try {
             DateTimeManager.simpleFormatter_YYYY_MM_DD.format(state.selectedDateMillis)
-        } catch (e : Exception) { null }
+        } catch (e : Exception) {
+            LogUtil.error(e)
+            null
+        }
     }
     val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
 

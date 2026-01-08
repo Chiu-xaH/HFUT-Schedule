@@ -9,6 +9,7 @@ import com.hfut.schedule.logic.model.MyAPIResponse
 import com.hfut.schedule.logic.model.Schedule
 import com.hfut.schedule.logic.model.SettingsInfo
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -19,6 +20,7 @@ object MyApiParse {
         return try {
             Gson().fromJson(json, MyAPIResponse::class.java)
         } catch (e : Exception) {
+            LogUtil.error(e)
             null
         }
     }
@@ -27,6 +29,7 @@ object MyApiParse {
         return try {
             getSettingInfo().celebration
         } catch (e: Exception) {
+            LogUtil.error(e)
             false
         }
     }
@@ -35,6 +38,7 @@ object MyApiParse {
         return try {
             getMy()!!.SettingsInfo
         } catch (e: Exception) {
+            LogUtil.error(e)
             SettingsInfo(
                 title = "开发者接口",
                 info = "本接口在不更新APP前提下可实时更新信息",
@@ -49,6 +53,7 @@ object MyApiParse {
         return try {
             getMy()!!.Lessons
         } catch (e : Exception) {
+            LogUtil.error(e)
             null
         }
     }
@@ -57,7 +62,8 @@ object MyApiParse {
         try {
             val list = getAPISchedule()?.Schedule ?: return emptyList()
             return list
-        } catch (_ : Exception) {
+        } catch (e : Exception) {
+            LogUtil.error(e)
             return emptyList()
         }
     }
@@ -78,7 +84,8 @@ object MyApiParse {
         try {
             val list = getAPISchedule()?.MyList ?: return emptyList()
             return list
-        } catch (_ : Exception) {
+        } catch (e : Exception) {
+            LogUtil.error(e)
             return emptyList()
         }
     }
@@ -86,7 +93,8 @@ object MyApiParse {
     fun getTimeStamp() : String? {
         return try {
             getMy()?.TimeStamp
-        } catch (_ : Exception) {
+        } catch (e : Exception) {
+            LogUtil.error(e)
             null
         }
     }
@@ -94,7 +102,8 @@ object MyApiParse {
     fun isNextOpen() : Boolean {
         return try {
             getMy()!!.Next
-        } catch (_:Exception) {
+        } catch (e : Exception) {
+            LogUtil.error(e)
             false
         }
     }

@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.calendar.common
 
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.xah.uicommon.util.LogUtil
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -35,7 +36,7 @@ fun dateToWeek(date : String) : Pair<Int,Int>? {
             Pair(week, dayOfWeek)
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return null
     }
 }
@@ -49,7 +50,7 @@ fun weekToDate(week : Int,weekday : Int) : String? {
         val target = start.plusDays(daysToAdd)
         return target.toString() // 返回 "YYYY-MM-DD"
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return null
     }
 }

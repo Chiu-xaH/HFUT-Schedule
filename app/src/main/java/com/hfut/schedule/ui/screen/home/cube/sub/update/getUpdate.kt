@@ -10,6 +10,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.parsePatchFile
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
@@ -47,7 +48,7 @@ suspend fun getPatchVersions(vm : NetWorkViewModel) : List<Patch> = withContext(
             emptyList()
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         emptyList()
     }
 }

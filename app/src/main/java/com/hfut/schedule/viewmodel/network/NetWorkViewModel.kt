@@ -351,8 +351,7 @@ class NetWorkViewModel() : ViewModel() {
     val surveyToken = StateHolder<String>()
     suspend fun getSurveyToken(cookie: String, id : String) = JxglstuRepository.getSurveyToken(cookie,id, studentId,surveyToken)
 
-    val surveyPostData = MutableLiveData<String?>()
-    fun postSurvey(cookie : String,json: JsonObject) = JxglstuRepository.postSurvey(cookie,json, surveyPostData)
+    suspend fun postSurvey(cookie : String,json: JsonObject) : Int = JxglstuRepository.postSurvey(cookie,json)
 
     suspend fun getPhoto(cookie : String) = JxglstuRepository.getPhoto(cookie,studentId)
 

@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
 import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.LogUtil
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -164,8 +165,7 @@ fun WebViewScreenForActivity(
 
                                 WebResourceResponse(mime, encoding, input)
                             } catch (e: Exception) {
-                                Log.e("合工大教务",url)
-                                e.printStackTrace()
+                                LogUtil.error(e)
                                 null
                             }
                         }

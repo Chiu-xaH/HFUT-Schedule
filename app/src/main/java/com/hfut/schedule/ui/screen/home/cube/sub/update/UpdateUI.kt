@@ -71,6 +71,7 @@ import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.bsdiffs.util.parsePatch
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -165,7 +166,8 @@ fun downloadFile(
                             DownloadManager.ERROR_UNKNOWN -> "未知错误"
                             else -> "原因: $reason"
                         }
-                        Log.e("Download", "下载失败: $msg")
+                        LogUtil.debug("下载失败: $msg")
+//                        Log.e("Download", "下载失败: $msg")
                         emit(DownloadResult.Failed(downloadId, msg))
                     }
                 }

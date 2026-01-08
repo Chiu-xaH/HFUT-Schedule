@@ -134,6 +134,7 @@ import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -943,7 +944,7 @@ private suspend fun uniAppToTimeTableData(targetPlace : String,list: List<UniApp
         distinctUnit(result)
         return result
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     }
 }

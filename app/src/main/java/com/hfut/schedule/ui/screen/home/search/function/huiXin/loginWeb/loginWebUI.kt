@@ -79,6 +79,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -123,13 +124,15 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
     // 百分比
     val percent = try {
         formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * maxFlow)) * 100,2)
-    } catch (_:Exception) {
+    } catch (e:Exception) {
+        LogUtil.error(e)
         "未知"
     }
 
     val str = try {
         formatDecimal((flow?.toDouble() ?: 0.0) / 1024,2)
-    } catch (_:Exception) {
+    } catch (e:Exception) {
+        LogUtil.error(e)
         0.0
     }
 

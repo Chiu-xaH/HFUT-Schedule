@@ -92,6 +92,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -120,7 +121,10 @@ fun loadTodayPay(vm: NetWorkViewModel) : State<String> = produceState(initialVal
             }
             value = formatDecimal(total,2)
         }
-    } catch (_ : Exception) { value = formatDecimal(total,2) }
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        value = formatDecimal(total,2)
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)

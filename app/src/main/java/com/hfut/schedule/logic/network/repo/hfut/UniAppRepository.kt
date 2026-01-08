@@ -38,6 +38,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.xah.uicommon.util.LogUtil
 import retrofit2.awaitResponse
 
 object UniAppRepository {
@@ -85,7 +86,7 @@ object UniAppRepository {
             Gson().fromJson(json,UniAppLoginError::class.java).message
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         null
     }
 
@@ -113,7 +114,7 @@ object UniAppRepository {
             val json = request.body()?.string() ?: return
             LargeStringDataManager.save(LargeStringDataManager.UNI_APP_COURSES,json)
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
     }
 
@@ -123,7 +124,7 @@ object UniAppRepository {
         return try {
             Gson().fromJson(json, UniAppCoursesResponse::class.java).data
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             emptyList()
         }
     }
@@ -159,7 +160,7 @@ object UniAppRepository {
             val json = request.body()?.string() ?: return
             LargeStringDataManager.save(LargeStringDataManager.UNI_APP_EXAMS,json)
         } catch (e : Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
     }
 

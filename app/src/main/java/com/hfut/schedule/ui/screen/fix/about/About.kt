@@ -379,7 +379,7 @@ fun createQRCodeBitmap(
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
         return bitmap
    // } catch (e: WriterException) {
-  //      e.printStackTrace()
+  //      LogUtil.error(e)
   //  }
    // return null
 }

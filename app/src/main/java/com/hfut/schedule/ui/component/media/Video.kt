@@ -39,6 +39,7 @@ import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -73,7 +74,7 @@ fun SimpleVideo(
             try {
                 mediaPlayer.stop()
             } catch (e: Exception) {
-                e.printStackTrace()
+                LogUtil.error(e)
             }
             mediaPlayer.release()
         }
@@ -216,7 +217,7 @@ suspend fun checkOrDownloadVideo(
             return@withContext videoFile.absolutePath
         }
     } catch (e: IOException) {
-        e.printStackTrace()
+        LogUtil.error(e)
         videoFile.delete() // 删除半下载文件
         return@withContext null
     }

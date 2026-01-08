@@ -5,6 +5,7 @@ import android.os.Environment
 import androidx.core.content.FileProvider
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.xah.uicommon.util.LogUtil
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -42,7 +43,7 @@ object ShareTo {
             sourceChannel.close()
             destinationChannel.close()
         } catch (e : IOException) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
     }
     // 分享字符串
@@ -56,7 +57,7 @@ object ShareTo {
             }
             MyApplication.context.startActivity(Intent.createChooser(intent, "分享文本").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
     }
 }

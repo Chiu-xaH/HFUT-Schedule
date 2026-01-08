@@ -67,6 +67,7 @@ import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -269,7 +270,7 @@ suspend fun saveImageToFile(
             outputStream.close()
             showToast("保存完成至${file.absoluteFile}")
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             showToast("保存失败")
         }
     }

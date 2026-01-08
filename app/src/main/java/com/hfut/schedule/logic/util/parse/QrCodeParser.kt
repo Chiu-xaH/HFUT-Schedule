@@ -1,5 +1,7 @@
 package com.hfut.schedule.logic.util.parse
 
+import com.xah.uicommon.util.LogUtil
+
 data class WifiInfo(
     val ssid: String,
     val password: String?,
@@ -41,7 +43,7 @@ fun parseWifiQrCode(content: String): WifiInfo? {
             hidden = hidden
         )
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         null
     }
 }

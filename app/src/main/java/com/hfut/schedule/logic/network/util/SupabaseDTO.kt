@@ -12,6 +12,7 @@ import com.hfut.schedule.logic.util.sys.fromUTC
 import com.hfut.schedule.logic.util.sys.toUTC
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.EventCampus
+import com.xah.uicommon.util.LogUtil
 
 // 转换层
 fun supabaseEventDtoToEntity(dto : SupabaseEventOutput) : SupabaseEventEntity = with(dto) {
@@ -96,6 +97,7 @@ private fun toDateTimeBean(str : String): DateTimeBean? {
         val min = timeList[1].toInt()
         return DateTimeBean(year,month,day,hour,min)
     } catch (e : Exception) {
+        LogUtil.error(e)
         return null
     }
 }
@@ -118,6 +120,7 @@ private fun toDateTimeStr(str: String) : String? {
         }
         return date + " " + timeList[0] + ":" + timeList[1]
     } catch (e : Exception) {
+        LogUtil.error(e)
         return null
     }
 }

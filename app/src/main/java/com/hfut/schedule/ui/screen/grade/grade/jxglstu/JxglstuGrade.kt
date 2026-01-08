@@ -82,6 +82,7 @@ import com.xah.uicommon.component.chart.RadarData
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -741,7 +742,7 @@ fun getGradeLevel(score : String,gpa : String) : Pair<Int, Int>? {
             }
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return null
     }
 }
@@ -768,7 +769,7 @@ fun getGradeNextLevel(score : String,gpa : String) : ScoreWithGPALevel? {
             }
         }
     } catch (e : Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
         return null
     }
 }

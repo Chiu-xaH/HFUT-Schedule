@@ -49,6 +49,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAn
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.MyApplyInfoBean
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.PlaceAndTime
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -772,19 +773,11 @@ object JxglstuRepository {
     }
     @JvmStatic
     private fun parseSurveyToken(headers : Headers) : String = try {
-        headers.toString().substringAfter("Set-Cookie:").substringBefore(";")
+        headers.toString().substringAfter("Set-Cookie:").substringAfter("set-cookie:").substringBefore(";")
     } catch(e : Exception) { throw e }
 
-    fun postSurvey(cookie : String, json: JsonObject, surveyPostData : MutableLiveData<String?>){
-        val call = jxglstu.postSurvey(cookie,json)
-
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                surveyPostData.value = response.body()?.string()
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) { t.printStackTrace() }
-        })
+    suspend fun postSurvey(cookie : String, json: JsonObject) = launchRequestNone {
+        jxglstu.postSurvey(cookie,json)
     }
 
     suspend fun getPhoto(cookie : String,studentId : StateHolder<Int>) = withContext(Dispatchers.IO) {
@@ -813,7 +806,7 @@ object JxglstuRepository {
         // 保存编码后的字符串
         LargeStringDataManager.save(LargeStringDataManager.PHOTO,base64String)
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
     }
 
     suspend fun getCourseBook(

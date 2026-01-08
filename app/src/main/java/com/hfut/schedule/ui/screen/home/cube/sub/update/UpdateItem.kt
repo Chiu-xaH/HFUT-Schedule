@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-10") },
+                overlineContent = { Text(text = "2026-01-08") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -54,34 +54,39 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 下方翻页器统一边距 、新增培养方案已修学分计算功能
-
-            UpdateItems("优化 部分界面的显示")
+            // 大模型应用场景：通知公告的提炼、新增聚焦日程
+//            UpdateItems("新增 教评评分细分评级",)
+            UpdateItems("重构 日志体系")
             UpdateItems("新增 查询中心-法定假日 中可以快速检索学校调休安排")
-//            UpdateItems("新增 提案板","用户可查看并关注开发进度，提出需求、Bug")
+            UpdateItems("修复 由于教务系统变更逻辑导致教评功能被影响，无法提交的Bug")
+            UpdateItems("优化 部分界面的显示")
+//            UpdateItems("新增 启动台支持固定项目")
+//            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("优化 新课程表的捏合缩放交互更换为放大缩小时间线，而不是展开周末")
-//            UpdateItems("新增 课程表的方格支持使用背景透明度")
-//            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
+//            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
+//            UpdateItems("修复 冲突预览不显示课表的Bug")
+//            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
+//            UpdateItems("新增 合肥校区电费的快速充值")
+
+            // TODO 远期规划
+//            UpdateItems("新增 提案板","用户可查看并关注开发进度，提出需求、Bug")
+//            UpdateItems("新增 课程表的方格支持自动适应背景透明度")
+//            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
 //            UpdateItems("新增 新课程表的日视图")
-//            UpdateItems("优化 点击聚焦卡片后延迟的问题")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
 //            UpdateItems("新增 校园网小组件(2*2)")
 //            UpdateItems("新增 使用技巧","位于 选项-维护与关于")
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
-//            UpdateItems("修复 冲突预览不显示课表的Bug")
 //            UpdateItems("新增 自动CAS登录")
-//            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 地图和校车支持为游客显示了")
 //            UpdateItems("修复 窗口变化与深浅色切换而导致启动台自动收起的Bug")
 //            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 为低版本Android用户的开屏显示")
-//            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
-//            UpdateItems("新增 合肥校区电费的快速充值")
-//            UpdateItems("新增 启动台支持固定项目")
 //            UpdateItems("新增 单独登录教务系统")
 //            UpdateItems("新增 为选项适配了新的转场动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")

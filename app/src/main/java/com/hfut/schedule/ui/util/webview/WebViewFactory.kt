@@ -82,6 +82,7 @@ import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -455,7 +456,7 @@ fun selectColor(view : WebView?,step : Int = 3,onColor : (Color?) -> Unit) {
             val mostFrequentColor = colorMap.maxByOrNull { it.value }?.key
             onColor(mostFrequentColor?.let { Color(it) })
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             onColor(null)
         }
     }, 100)

@@ -13,6 +13,7 @@ import com.hfut.schedule.logic.util.sys.Starter.openDownloadFolder
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.xah.uicommon.util.LogUtil
 import java.io.File
 
 object CrashHandler : Thread.UncaughtExceptionHandler {
@@ -59,7 +60,7 @@ object CrashHandler : Thread.UncaughtExceptionHandler {
             file.appendText(log) // 同步写文件
             showToast("已保存到Download/${filename}")
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
         }
     }
 }

@@ -119,6 +119,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -163,7 +164,7 @@ private suspend fun persistImage(context: Context, uri: Uri): String? {
             }
             file.absolutePath
         } catch (e: Exception) {
-            e.printStackTrace()
+            LogUtil.error(e)
             null
         }
     }
@@ -180,7 +181,7 @@ private suspend fun deleteCustomBackground(context: Context) = withContext(Dispa
             }
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        LogUtil.error(e)
     }
 }
 
