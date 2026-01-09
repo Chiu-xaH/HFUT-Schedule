@@ -124,6 +124,7 @@ private suspend fun loginOne(cookies: String, vm: NetWorkViewModel) {
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun JxglstuCourseTableUI(
+    scaleFactor : Float,
     showAll: Boolean,
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
@@ -136,7 +137,8 @@ fun JxglstuCourseTableUI(
     backGroundHaze : ShaderState?,
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit,
-    onSwapShowAll : (Boolean) -> Unit
+    onSwapShowAll : (Boolean) -> Unit,
+    onRestoreHeight : () -> Unit
 ) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
@@ -501,6 +503,7 @@ fun JxglstuCourseTableUI(
                 items,
                 currentWeek.toInt(),
                 showAll,
+                scaleFactor = scaleFactor,
                 modifier = Modifier
                     .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)-1.dp)
                     .verticalScroll(scrollState)
@@ -511,7 +514,8 @@ fun JxglstuCourseTableUI(
                     if(isExpand) {
                         isExpand = false
                     } else {
-                        showToast("空白区域双击添加日程,长按切换周")
+                        onRestoreHeight()
+//                        showToast("空白区域双击添加日程,长按切换周")
                     }
                 },
                 onLongTapBlankRegion = {

@@ -1,21 +1,14 @@
 package com.hfut.schedule.ui.screen.home.search.function.my.holiday
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,27 +16,15 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.R
-import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.CampusRegion.HEFEI
-import com.hfut.schedule.logic.enumeration.CampusRegion.XUANCHENG
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.uicommon.component.text.BottomTip
@@ -53,10 +34,6 @@ import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.logic.model.AcademicXCType
-import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.button.LiquidButton
 
 import com.hfut.schedule.ui.screen.home.getHolidays
@@ -65,27 +42,15 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
-import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
-import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
-import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.hfut.schedule.ui.screen.news.home.NewsApiScreen
+import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -128,19 +93,21 @@ fun HolidayScreen(
                     TopBarNavigationIcon(navController,route,AppNavRoute.Holiday.icon)
                 },
                 actions = {
+                    val toRoute = remember { AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
+
                     LiquidButton(
                         backdrop = backdrop,
                         modifier = Modifier
                             .containerShare(
-                                AppNavRoute.HolidaySchedule.route,
+                                toRoute,
                                 MaterialTheme.shapes.large
                             )
                             .padding(horizontal = APP_HORIZONTAL_DP)
                         ,
                         onClick = {
-                            navController.navigateForTransition(AppNavRoute.HolidaySchedule,AppNavRoute.HolidaySchedule.route)
+                            navController.navigateForTransition(AppNavRoute.NewsApi,toRoute)
                         },) {
-                        Text(AppNavRoute.HolidaySchedule.label)
+                        Text("调休通知")
                     }
                 },
                 modifier = Modifier.topBarBlur(hazeState)
@@ -187,13 +154,14 @@ fun HolidayUI(innerPadding : PaddingValues) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HolidayScheduleScreen(
+fun NewsApiScreen(
     navController : NavHostController,
     vm : NetWorkViewModel,
+    keyword : String
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.HolidaySchedule.route }
+    val route = remember { AppNavRoute.NewsApi.withArgs(keyword) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     CustomTransitionScaffold (
@@ -208,9 +176,9 @@ fun HolidayScheduleScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.HolidaySchedule.label) },
+                    title = { Text(keyword) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.HolidaySchedule.icon)
+                        TopBarNavigationIcon(navController,route, AppNavRoute.NewsApi.icon)
                     }
                 )
             }
@@ -221,7 +189,7 @@ fun HolidayScheduleScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            NewsApiScreen(vm,"放假安排",innerPadding)
+            TotalNewsScreen(vm,keyword,innerPadding)
         }
     }
 }

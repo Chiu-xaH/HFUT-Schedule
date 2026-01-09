@@ -1,15 +1,18 @@
 package com.hfut.schedule.ui.screen.home
 
+import android.animation.ValueAnimator
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -59,8 +62,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -187,6 +192,20 @@ import sh.calvin.reorderable.rememberReorderableLazyGridState
 import java.io.File
 
 private val titles = listOf("重要安排","其他事项")
+
+private fun smoothToOne(scaleFactor: MutableState<Float>) {
+    // 创建一个 ValueAnimator，从当前值平滑过渡到 1f
+    val animator = ValueAnimator.ofFloat(scaleFactor.value, 1f)
+    animator.duration = AppAnimationManager.ANIMATION_SPEED*1L
+
+    // 更新 scaleFactor 的值
+    animator.addUpdateListener { animation ->
+        scaleFactor.value = animation.animatedValue as Float
+    }
+
+    // 开始动画
+    animator.start()
+}
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition",
@@ -330,6 +349,10 @@ fun MainScreen(
     val useCustomBackground = customBackground != ""
     val context = LocalContext.current
     var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
+
+    // 捏合手势
+    val scaleFactor = remember { mutableFloatStateOf(1f) } // 捏合手势缩放因子
+
 
     CustomTransitionScaffold (
         navHostController = navHostTopController,
@@ -789,15 +812,21 @@ fun MainScreen(
                         } else {
                             Color.Transparent
                         },
-                        // 捏合手势
-                        modifier = Modifier.pointerInput(Unit) {
-                            detectTransformGestures { _, _, zoom, _ ->
-                                when {
-                                    zoom > 1f -> showAll = false
-                                    zoom < 1f -> showAll = true
+
+                        modifier = Modifier .pointerInput(Unit) {
+                                detectTransformGestures { _, pan, zoom, _ ->
+                                    scaleFactor.floatValue *= zoom
                                 }
-                            }
                         }
+
+//                    modifier = Modifier.pointerInput(Unit) {
+//                            detectTransformGestures { _, _, zoom, _ ->
+//                                when {
+//                                    zoom > 1f -> showAll = false
+//                                    zoom < 1f -> showAll = true
+//                                }
+//                            }
+//                        }
                     ) {
                         val isFriend = CourseType.entries.all { swapUI > it.code }
                         if (!isFriend) {
@@ -811,22 +840,24 @@ fun MainScreen(
                                     navHostTopController,
                                     innerPadding,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
-                                    { showAll = it }
+                                    { showAll = it },
                                 )
                                 // 社区
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(
+                                    scaleFactor.floatValue,
                                     showAll,
                                     innerPadding,
                                     onDateChange = { new -> today = new },
                                     today = today,
-                                    vm = vm,
                                     hazeState = hazeState,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     onSwapShowAll = { showAll = it },
-                                    navController = navHostTopController
+                                    navController = navHostTopController,
+                                    onRestoreHeight = { smoothToOne(scaleFactor) }
                                 )
                                 // 合工大教务
                                 CourseType.UNI_APP.code -> UniAppCoursesScreen(
+                                    scaleFactor.floatValue,
                                     showAll,
                                     innerPadding,
                                     { newDate -> today = newDate },
@@ -834,10 +865,12 @@ fun MainScreen(
                                     hazeState,
                                     navHostTopController,
                                     if (useCustomBackground) backGroundSource else null,
-                                    { showAll = it }
+                                    { showAll = it },
+                                    { smoothToOne(scaleFactor) }
                                 )
                                 // 教务
                                 CourseType.JXGLSTU.code -> JxglstuCourseTableUI(
+                                    scaleFactor.floatValue,
                                     showAll,
                                     vm,
                                     innerPadding,
@@ -850,7 +883,8 @@ fun MainScreen(
                                     if (useCustomBackground) backGroundSource else null,
                                     isEnabled,
                                     { isEnabled = it },
-                                    { showAll = it }
+                                    { showAll = it },
+                                    { smoothToOne(scaleFactor) }
                                 )
 //                                // 教务2
                                 CourseType.JXGLSTU2.code -> JxglstuCourseTableTwo(
@@ -862,7 +896,7 @@ fun MainScreen(
                                     onDateChange = { new -> today = new },
                                     today = today,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
-                                    { showAll = it }
+                                    { showAll = it },
                                 )
                                 // 指尖工大
                                 CourseType.ZHI_JIAN.code -> ZhiJianCourseTableUI(
@@ -881,16 +915,17 @@ fun MainScreen(
                             }
                         } else // 好友课表 swapUI为学号
                             CommunityCourseTableUI(
+                                scaleFactor.floatValue,
                                 showAll,
                                 innerPadding,
                                 friendUserName = swapUI.toString(),
                                 onDateChange = { new -> today = new },
                                 today = today,
-                                vm,
                                 hazeState,
                                 backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                 onSwapShowAll = { showAll = it },
-                                navController = navHostTopController
+                                navController = navHostTopController,
+                                onRestoreHeight = { smoothToOne(scaleFactor) }
                             )
                     }
                 }

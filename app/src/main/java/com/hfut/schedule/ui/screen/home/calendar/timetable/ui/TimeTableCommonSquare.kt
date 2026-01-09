@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.calendar.timetable.ui
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,10 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -100,9 +105,8 @@ fun TimetableCommonSquare(
     val everyPadding by animateDpAsState(
         targetValue = if (showAll) 1.75.dp else 2.5.dp,
     )
-    BoxWithConstraints(
-        modifier = modifier
-    ) {
+
+    BoxWithConstraints(modifier = modifier) {
         val density = LocalDensity.current
         val totalWidthPx = with(density) { maxWidth.toPx() }
         val hourPx = with(density) { hourHeight.toPx() }

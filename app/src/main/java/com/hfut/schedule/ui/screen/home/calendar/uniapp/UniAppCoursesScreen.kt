@@ -55,6 +55,7 @@ import java.time.LocalDate
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun UniAppCoursesScreen(
+    scaleFactor : Float,
     showAll: Boolean,
     innerPadding: PaddingValues,
     onDateChange: (LocalDate) ->Unit,
@@ -62,7 +63,8 @@ fun UniAppCoursesScreen(
     hazeState: HazeState,
     navController: NavHostController,
     backGroundHaze : ShaderState?,
-    onSwapShowAll : (Boolean) -> Unit
+    onSwapShowAll : (Boolean) -> Unit,
+    onRestoreHeight : () -> Unit
 ) {
     val scrollState = rememberScrollState()
     var showBottomSheetDetail by remember { mutableStateOf(false) }
@@ -181,12 +183,14 @@ fun UniAppCoursesScreen(
                 .verticalScroll(scrollState)
             ,
             innerPadding = innerPadding,
+            scaleFactor = scaleFactor,
             shaderState = backGroundHaze,
             onTapBlankRegion = {
                 if(isExpand) {
                     isExpand = false
                 } else {
-                    showToast("空白区域双击添加日程,长按切换周")
+                    onRestoreHeight()
+//                    showToast("空白区域双击添加日程,长按切换周")
                 }
             },
             onLongTapBlankRegion = {

@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-08") },
+                overlineContent = { Text(text = "2026-01-10") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -55,19 +55,20 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
         // TODO 下方翻页器统一边距 、新增培养方案已修学分计算功能
             // 大模型应用场景：通知公告的提炼、新增聚焦日程
-//            UpdateItems("新增 教评评分细分评级",)
-            UpdateItems("重构 日志体系")
-            UpdateItems("新增 查询中心-法定假日 中可以快速检索学校调休安排")
-            UpdateItems("修复 由于教务系统变更逻辑导致教评功能被影响，无法提交的Bug")
+//            UpdateItems("新增 新课程表的日视图")
+            UpdateItems("重构 新课程表的捏合缩放交互更换为放大缩小方格,以便用户查看时间较短的方格")//
+            UpdateItems("新增 教评评分细分评级")//
+            UpdateItems("新增 转专业页面中的通知公告快速检索入口")//
+            UpdateItems("修复 冲突预览不显示课表的Bug")//
             UpdateItems("优化 部分界面的显示")
+//            UpdateItems("新增 选课页面中的通知公告快速检索入口")
+//            UpdateItems("修复 成绩界面横向滑动时卡顿的Bug")
 //            UpdateItems("新增 启动台支持固定项目")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 新课程表的日视图")
-//            UpdateItems("优化 新课程表的捏合缩放交互更换为放大缩小时间线，而不是展开周末")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
-//            UpdateItems("修复 冲突预览不显示课表的Bug")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
 //            UpdateItems("新增 合肥校区电费的快速充值")
 

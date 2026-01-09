@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.autoWebVpnForNews
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
-import com.hfut.schedule.ui.screen.news.home.NewsApiScreen
+import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -115,7 +115,7 @@ fun ExamNotificationsScreen(
                 val campus = campusList[page]
                 when(campus) {
                     HEFEI -> {
-                        NewsApiScreen(vm,"周考试安排",innerPadding)
+                        TotalNewsScreen(vm, AppNavRoute.NewsApi.Keyword.EXAM_SCHEDULE_HEFEI.keyword,innerPadding)
                     }
                     XUANCHENG -> {
                         var page by remember { mutableIntStateOf(1) }

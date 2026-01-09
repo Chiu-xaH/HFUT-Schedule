@@ -587,9 +587,9 @@ fun ChangeCourseUI(
             CardListItem(
                 headlineContent = { Text("查询学校调休安排")},
                 modifier = Modifier.clickable {
-                    navController.navigateForTransition(AppNavRoute.HolidaySchedule, AppNavRoute.HolidaySchedule.route)
+                    navController.navigateForTransition(AppNavRoute.NewsApi, AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword))
                 },
-                leadingContent = { Icon(painterResource(AppNavRoute.HolidaySchedule.icon),null)}
+                leadingContent = { Icon(painterResource(AppNavRoute.NewsApi.icon),null)}
             )
             DatePicker(state = state,
                 modifier = Modifier.weight(1f), title = { Text(text = "")},

@@ -126,6 +126,7 @@ fun TransferScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Transfer.route }
     val scope = rememberCoroutineScope()
+    val backDrop = rememberLayerBackdrop()
     val uiState by vm.transferListData.state.collectAsState()
     val refreshing = uiState is UiState.Loading
 
@@ -146,9 +147,11 @@ fun TransferScreen(
             refreshNetwork(false)
         }
     })
+    val toRoute = remember {
+        AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword)
+    }
     CustomTransitionScaffold (
         route = route,
-
         navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -157,6 +160,19 @@ fun TransferScreen(
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.Transfer.label) },
+                actions = {
+                    LiquidButton(
+                        onClick = {
+                            navController.navigateForTransition(AppNavRoute.NewsApi, toRoute)
+                        },
+                        backdrop = backDrop,
+                        modifier = Modifier
+                            .containerShare(toRoute, MaterialTheme.shapes.large)
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                    ) {
+                        Text("通知公告")
+                    }
+                },
                 navigationIcon = {
                     TopBarNavigationIcon(navController,route, AppNavRoute.Transfer.icon)
                 }

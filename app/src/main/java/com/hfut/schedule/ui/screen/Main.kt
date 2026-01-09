@@ -83,7 +83,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyScr
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferDetailScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferScreen
-import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScheduleScreen
+import com.hfut.schedule.ui.screen.home.search.function.my.holiday.NewsApiScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.HolidayScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationsScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.NotificationBoxScreen
@@ -647,13 +647,17 @@ fun MainHost(
                 transitionComposable(AppNavRoute.NotificationBox.route) {
                     NotificationBoxScreen(navController)
                 }
-                // 全校考试安排
+                // 通知公告专注
+                transitionComposable(
+                    route = AppNavRoute.NewsApi.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.NewsApi.Args.entries)
+                ) { backStackEntry ->
+                    val keyword = backStackEntry.arguments?.getString(AppNavRoute.NewsApi.Args.KEYWORD.argName) ?: (AppNavRoute.NewsApi.Args.KEYWORD.default as String)
+                    NewsApiScreen(navController,networkVm,keyword)
+                }
+                // 本周考试安排
                 transitionComposable(AppNavRoute.ExamNotifications.route) {
                     ExamNotificationsScreen(navController,networkVm)
-                }
-                // 调休安排
-                transitionComposable(AppNavRoute.HolidaySchedule.route) {
-                    HolidayScheduleScreen(navController,networkVm)
                 }
                 // 生活服务
                 transitionComposable(

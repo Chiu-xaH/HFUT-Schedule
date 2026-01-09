@@ -173,7 +173,7 @@ fun NewsScreen(
     }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    var input by remember { mutableStateOf("放假安排") }
+    var input by remember { mutableStateOf(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
 
     CustomTransitionScaffold (
         route = route,
@@ -229,7 +229,7 @@ fun NewsScreen(
                             onValueChange = {
                                 input = it
                             },
-                            label = { Text("搜索通知公告：放假安排,转专业,周考试安排,选课") },
+                            label = { Text("搜索通知公告：${AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword},${AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword},${AppNavRoute.NewsApi.Keyword.EXAM_SCHEDULE_HEFEI.keyword},${AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword}") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(
@@ -281,7 +281,7 @@ private const val TAB_XC = 1
 fun NewsScreenMini(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState,input : String) {
     HorizontalPager(state = pagerState) { page ->
         when(page) {
-            TAB_TOTAL -> NewsApiScreen(vm,input,innerPadding)
+            TAB_TOTAL -> TotalNewsScreen(vm,input,innerPadding)
             TAB_XC -> XuanquNewsUI(innerPadding, vm)
         }
     }
@@ -297,7 +297,7 @@ fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState
 }
 
 @Composable
-fun NewsApiScreen(
+fun TotalNewsScreen(
     vm: NetWorkViewModel,
     keyword : String,
     innerPadding : PaddingValues?

@@ -46,45 +46,47 @@ import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.dialog.LittleDialog
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun SurveyInfoUI(id : Int, vm: NetWorkViewModel,scope : CoroutineScope,onDismiss : () -> Unit) {
+fun SurveyInfoUI(teacherId : Int, vm: NetWorkViewModel, scope : CoroutineScope, onDismiss : () -> Unit) {
     val uiState by vm.surveyData.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie()
         cookie?.let {
             vm.surveyData.clear()
-            vm.getSurveyToken(it,id.toString())
-            vm.getSurvey(it,id.toString())
+            vm.getSurveyToken(it,teacherId.toString())
+            vm.getSurvey(it,teacherId.toString())
         }
     }
     LaunchedEffect(Unit) {
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
-        SurveyList(vm, scope) {
+        SurveyList(vm, scope,teacherId) {
             onDismiss()
         }
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : () -> Unit) {
+private fun SurveyList(
+    vm: NetWorkViewModel,
+    scope: CoroutineScope,
+    teacherId : Int,
+    onResult : () -> Unit
+) {
     val uiState by vm.surveyData.state.collectAsState()
     val bean = (uiState as UiState.Success).data
-    var postMode by remember { mutableStateOf(PostMode.NORMAL) }
+    var postMode by remember { mutableStateOf(PostMode.HIGH) }
     var showDialog by remember { mutableStateOf(false) }
     var showTextField by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf("好") }
@@ -95,14 +97,14 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
             onConfirmation = {
                 scope.launch {
                     launch {
-                        postSurvey(vm,postMode,bean,input)
+                        postSurvey(vm,postMode,bean,input,teacherId)
                         showDialog = false
                         onResult()
                     }
                 }
             },
-            dialogTitle = "确定提交",
-            dialogText = "实名制上网,理性填表,不可修改",
+            dialogTitle = "二次确认",
+            dialogText = "提交后结果将不可查看与修改",
             conformText = "提交",
             dismissText = "返回"
         )
@@ -154,7 +156,33 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
             LargeButton(
                 modifier = Modifier.fillMaxWidth().weight(.5f),
                 onClick = {
-                    postMode = PostMode.GOOD
+                    postMode = PostMode.MEDIUM
+                    showDialog = true
+                },
+                text = "中等偏好",
+                icon = R.drawable.thumb_up,
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            Spacer(Modifier.width(APP_HORIZONTAL_DP/2))
+            LargeButton (
+                modifier = Modifier.fillMaxWidth().weight(.5f),
+                onClick = {
+                    postMode = PostMode.LOW
+                    showDialog = true
+                },
+                icon = R.drawable.thumb_down,
+                text = "中等偏差",
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+        Spacer(Modifier.height(APP_HORIZONTAL_DP/2))
+        RowHorizontal {
+            LargeButton(
+                modifier = Modifier.fillMaxWidth().weight(.5f),
+                onClick = {
+                    postMode = PostMode.HIGH
                     showDialog = true
                 },
                 text = "好评 100分",
@@ -164,7 +192,7 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
             LargeButton (
                 modifier = Modifier.fillMaxWidth().weight(.5f),
                 onClick = {
-                    postMode = PostMode.BAD
+                    postMode = PostMode.NONE
                     showDialog = true
                 },
                 icon = R.drawable.thumb_down,
@@ -177,49 +205,29 @@ private fun SurveyList(vm: NetWorkViewModel, scope: CoroutineScope,onResult : ()
 }
 
 @SuppressLint("SuspiciousIndentation")
-suspend fun postSurvey(vm : NetWorkViewModel, mode : PostMode, bean: SurveyResponse, comment: String = "好") = withContext(Dispatchers.IO) {
+suspend fun postSurvey(vm : NetWorkViewModel, mode : PostMode, bean: SurveyResponse, comment: String = "好",teacherId : Int) = withContext(Dispatchers.IO) {
     // 主线程监听 StateFlow
     val token = vm.surveyToken.state.first() as? UiState.Success
     token ?: return@withContext
     val cookie = getJxglstuCookie()
-    when(mode) {
-        PostMode.NORMAL -> {
-            showToast("正在开发")
-        }
-        PostMode.GOOD ->  {
-            val result = vm.postSurvey("$cookie;${token.data}", postResult(true, bean, comment))
-            if(result == StatusCode.OK.code) {
-                showToast("提交成功")
-            } else {
-                showToast("提交失败 $result")
-            }
-        }
-        PostMode.BAD -> {
-            val result = vm.postSurvey("$cookie;${token.data}", postResult(false, bean, comment))
-            if(result == StatusCode.OK.code) {
-                showToast("提交成功")
-            } else {
-                showToast("提交失败 $result")
-            }
-        }
+    val result = vm.postSurvey("$cookie;${token.data}", postResult(mode, bean, comment,teacherId))
+    if(result == StatusCode.OK.code) {
+        showToast("提交成功")
+    } else {
+        showToast("提交失败 $result")
     }
 }
 
 //true为好评，false为差评
-fun postResult(goodMode: Boolean,bean : SurveyResponse,comment : String = "好"): JsonObject {
-    val surveyAssoc = getSurveyAssoc(bean)
-    val lessonSurveyTaskAssoc = prefs.getInt("teacherID", 0)
-    val choiceList = getSurveyChoice(bean)
-    val inputList = getSurveyInput(bean)
-    val choiceNewList = mutableListOf<radioQuestionAnswer>()
+fun postResult(
+    mode: PostMode,
+    bean : SurveyResponse,
+    comment : String = "好",
+    teacherId : Int,
+): JsonObject {
+    val surveyAssoc = bean.lessonSurveyLesson.surveyAssoc
+    val inputList = bean.survey.blankQuestions
     val inputNewList = mutableListOf<blankQuestionAnswer>()
-
-    for (i in choiceList.indices) {
-        val id = choiceList[i].id
-        // 默认拿第一个选项为好评，拿最后一个为差评
-        val option = if(goodMode) choiceList[i].options[0].name else choiceList[i].options.last().name
-        choiceNewList.add(radioQuestionAnswer(id, option))
-    }
 
     for (j in inputList.indices) {
         val id = inputList[j].id
@@ -227,7 +235,45 @@ fun postResult(goodMode: Boolean,bean : SurveyResponse,comment : String = "好")
     }
 
     // 组装数据
-    val postSurvey = PostSurvey(surveyAssoc, lessonSurveyTaskAssoc, choiceNewList, inputNewList)
+    val postSurvey = PostSurvey(surveyAssoc, teacherId, getLevel(mode,bean), inputNewList)
 
     return Gson().toJsonTree(postSurvey).asJsonObject
+}
+
+
+// 0~4
+private fun getLevel(
+    mode : PostMode,
+    bean : SurveyResponse,
+)  : List<radioQuestionAnswer> {
+    val choiceList = bean.survey.radioQuestions
+    val choiceNewList = mutableListOf<radioQuestionAnswer>()
+    // 默认拿第一个选项为好评，拿最后一个为差评
+
+    for (i in choiceList.indices) {
+        val id = choiceList[i].id
+        val optionList = choiceList[i].options
+        val level = when(mode) {
+            PostMode.LOW -> {
+                PostMode.LOW.level
+            }
+            PostMode.HIGH -> {
+                0
+            }
+            PostMode.NONE -> {
+                optionList.size-1
+            }
+            PostMode.MEDIUM -> {
+                PostMode.MEDIUM.level
+            }
+        }
+        val finalIndex = if(level > optionList.size || level < 0) {
+            0
+        } else {
+            level
+        }
+        val option = optionList[finalIndex].name
+        choiceNewList.add(radioQuestionAnswer(id, option))
+    }
+    return choiceNewList
 }

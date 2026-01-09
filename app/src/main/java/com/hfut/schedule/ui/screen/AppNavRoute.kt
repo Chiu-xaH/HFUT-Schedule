@@ -125,7 +125,20 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     }
     object WebVpn : AppNavRoute("WEBVPN","WebVpn",R.drawable.vpn_key)
     object Holiday : AppNavRoute("HOLIDAY","法定假日",R.drawable.beach_access)
-    object HolidaySchedule : AppNavRoute("HOLIDAY_SCHEDULE","调休安排", News.icon)
+    object ExamNotifications : AppNavRoute("ExamNotifications","全校考试安排", News.icon)
+    object NewsApi : AppNavRoute("NEWS_API","通知公告",R.drawable.stream)  {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any?,override val isNullable: Boolean) : NavArg {
+            KEYWORD("keyword", NavType.StringType,"",false),
+        }
+        enum class Keyword(val keyword : String) {
+            EXAM_SCHEDULE_HEFEI("周考试安排"),HOLIDAY_SCHEDULE("放假安排"),SELECT_COURSE("选课"),TRANSFER_MAJOR("转专业")
+        }
+        // "调休安排" 全校考试安排
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(keyword : String): String = withArgs(
+            Args.KEYWORD.argName to keyword,
+        )
+    }
     object News : AppNavRoute("News","通知公告",R.drawable.stream)
     object Alumni : AppNavRoute("ALUMNI","校友平台",R.drawable.person_book)
     object AI : AppNavRoute("LARGE_MODEL","大模型",R.drawable.wand_stars)
@@ -145,7 +158,6 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     object TeacherSearch : AppNavRoute("TEACHER_SEARCH","教师检索",R.drawable.group_search)
     object Work : AppNavRoute("WORK","就业",R.drawable.azm)
     object Person : AppNavRoute("PERSON","个人信息",R.drawable.person)
-    object ExamNotifications : AppNavRoute("EXAM_NOTIFICATIONS","全校考试安排", News.icon)
     object Exam : AppNavRoute("EXAM","考试",R.drawable.draw) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default: Any,override val isNullable: Boolean) : NavArg {
             ORIGIN("origin",NavType.StringType, "EXAM",true)

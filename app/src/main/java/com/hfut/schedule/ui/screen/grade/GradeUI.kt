@@ -206,25 +206,25 @@ fun GradeScreen(
                         pageState,
                         gradeOriginList.map { it.title }
                     )
-                }
-                if(gradeOriginList[pageState.currentPage] != GradeDataOrigin.COMMUNITY) {
-                    CustomTextField(
-                        modifier = Modifier
-                            .padding(top = CARD_NORMAL_DP)
-                            .padding(horizontal = APP_HORIZONTAL_DP)
-                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
-                        input = input,
-                        label = { Text("搜索 课程名、代码") },
-                        trailingIcon = {
-                            IconButton(
-                                onClick = {}) {
-                                Icon(
-                                    painter = painterResource(R.drawable.search),
-                                    contentDescription = "description"
-                                )
-                            }
-                        },
-                    ) { input = it }
+                    if(gradeOriginList[pageState.currentPage] != GradeDataOrigin.COMMUNITY) {
+                        CustomTextField(
+                            modifier = Modifier
+                                .padding(top = CARD_NORMAL_DP)
+                                .padding(horizontal = APP_HORIZONTAL_DP)
+                                .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
+                            input = input,
+                            label = { Text("搜索 课程名、代码") },
+                            trailingIcon = {
+                                IconButton(
+                                    onClick = {}) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.search),
+                                        contentDescription = "description"
+                                    )
+                                }
+                            },
+                        ) { input = it }
+                    }
                 }
             }
         },

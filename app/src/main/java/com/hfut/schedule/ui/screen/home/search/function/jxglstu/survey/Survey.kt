@@ -166,7 +166,7 @@ private fun SurveyAllButton(
                         break
                     }
                     // 发送教评
-                    postSurvey(vm, PostMode.GOOD,bean)
+                    postSurvey(vm, PostMode.HIGH,bean,"好",task.id)
                 }
                 loading = false
                 refresh()

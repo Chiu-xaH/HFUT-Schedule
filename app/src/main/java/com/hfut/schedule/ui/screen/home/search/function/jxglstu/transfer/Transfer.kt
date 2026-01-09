@@ -1,8 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,8 +16,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)

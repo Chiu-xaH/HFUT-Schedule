@@ -110,7 +110,7 @@ fun JxglstuCourseTableUINext(
     navController: NavHostController,
     innerPadding : PaddingValues,
     backGroundHaze : ShaderState?,
-    onSwapShowAll : (Boolean) -> Unit
+    onSwapShowAll : (Boolean) -> Unit,
 ) {
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
     var showBottomSheetMultiCourse by remember { mutableStateOf(false) }

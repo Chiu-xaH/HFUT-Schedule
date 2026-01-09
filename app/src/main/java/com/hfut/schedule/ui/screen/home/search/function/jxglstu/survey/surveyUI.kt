@@ -216,7 +216,7 @@ private fun CourseSurveyListUI(
                                             if(!isSubmitted) {
                                                 name = tName ?: ""
                                                 tId = id
-                                                SharedPrefs.saveInt("teacherID",id)
+//                                                SharedPrefs.saveInt("teacherID",id)
                                                 showBottomSheet_start = true
                                             } else showToast("已评教")
                                         },
@@ -234,7 +234,7 @@ private fun CourseSurveyListUI(
                                                 if(!isSubmitted) {
                                                     name = tName ?: ""
                                                     tId = id
-                                                    SharedPrefs.saveInt("teacherID",id)
+//                                                    SharedPrefs.saveInt("teacherID",id)
                                                     showBottomSheet_start = true
                                                 } else showToast("已评教")
                                             },

@@ -127,6 +127,7 @@ import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -171,6 +172,9 @@ fun SelectCourseScreen(
             refreshNetwork(false)
         }
     })
+    val toRoute = remember {
+        AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword)
+    }
     val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
@@ -218,6 +222,16 @@ fun SelectCourseScreen(
                         ) {
                             Text(text = "冲突预览")
                         }
+//                        Spacer(Modifier.width(BUTTON_PADDING))
+//                        LiquidButton (
+//                            onClick = {
+//                                navController.navigateForTransition(AppNavRoute.NewsApi,toRoute)
+//                            },
+//                            modifier = Modifier.containerShare(route = toRoute, MaterialTheme.shapes.large),
+//                            backdrop = backDrop
+//                        ) {
+//                            Text(text = "选课公告")
+//                        }
                     }
                 }
             )
@@ -672,9 +686,14 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
 }
 
 private fun parseDynamicJson(jsonString: String): Map<String, Int> {
-    val gson = Gson()
-    val mapType = object : TypeToken<Map<String, Int>>() {}.type
-    return gson.fromJson(jsonString, mapType)
+    try {
+        val gson = Gson()
+        val mapType = object : TypeToken<Map<String, Int>>() {}.type
+        return gson.fromJson(jsonString, mapType)
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        return emptyMap()
+    }
 }
 @Composable
 fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int, type : String) {

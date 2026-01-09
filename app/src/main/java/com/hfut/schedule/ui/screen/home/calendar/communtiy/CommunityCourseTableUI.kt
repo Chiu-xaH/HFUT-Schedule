@@ -55,16 +55,17 @@ import java.time.LocalDate
 
 @Composable
 fun CommunityCourseTableUI(
+    scaleFactor : Float,
     showAll: Boolean,
     innerPaddings: PaddingValues,
     friendUserName : String? = null,
     onDateChange : (LocalDate) ->Unit,
     today: LocalDate,
-    vm : NetWorkViewModel,
     hazeState: HazeState,
     backGroundHaze : ShaderState?,
     navController : NavHostController,
-    onSwapShowAll : (Boolean) -> Unit
+    onSwapShowAll : (Boolean) -> Unit,
+    onRestoreHeight : () -> Unit
 ) {
     val context = LocalContext.current
     //切换周数
@@ -182,19 +183,21 @@ fun CommunityCourseTableUI(
                 .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)-1.dp)
                 .verticalScroll(scrollState)
             ,
+            scaleFactor = scaleFactor,
             innerPadding = innerPaddings,
             shaderState = backGroundHaze,
             onTapBlankRegion = {
                 if(isExpand) {
                     isExpand = false
                 } else {
-                    showToast(
-                        if(!isFriend) {
-                            "空白区域双击添加日程,长按切换周"
-                        } else {
-                            "空白区域长按切换周"
-                        }
-                    )
+                    onRestoreHeight()
+//                    showToast(
+//                        if(!isFriend) {
+//                            "空白区域双击添加日程,长按切换周"
+//                        } else {
+//                            "空白区域长按切换周"
+//                        }
+//                    )
                 }
             },
             onLongTapBlankRegion = {

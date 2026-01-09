@@ -650,7 +650,12 @@ fun sharedInterceptRequest(
     val req = request
     if(req != null) {
         val c = req.requestHeaders["Cookie"]
-        if(currentUrl.startsWith(MyApplication.PE_URL)) {
+        if(
+            // 适配区
+            currentUrl.startsWith(MyApplication.JXGLSTU_URL) ||
+            currentUrl.startsWith(MyApplication.JXGLSTU_WEBVPN_URL) ||
+            currentUrl.startsWith(MyApplication.PE_URL)
+        ) {
             cookieManager.setCookie(req.url.toString(), cookies)
             cookieManager.flush()
         } else {
