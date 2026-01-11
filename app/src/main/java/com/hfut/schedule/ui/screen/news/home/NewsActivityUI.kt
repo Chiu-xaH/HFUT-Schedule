@@ -281,7 +281,7 @@ private const val TAB_XC = 1
 fun NewsScreenMini(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState : PagerState,input : String) {
     HorizontalPager(state = pagerState) { page ->
         when(page) {
-            TAB_TOTAL -> TotalNewsScreen(vm,input,innerPadding)
+            TAB_TOTAL -> TotalNewsScreen(vm,input,innerPadding,false)
             TAB_XC -> XuanquNewsUI(innerPadding, vm)
         }
     }
@@ -300,7 +300,8 @@ fun AcademicScreen(innerPadding : PaddingValues,vm : NetWorkViewModel,pagerState
 fun TotalNewsScreen(
     vm: NetWorkViewModel,
     keyword : String,
-    innerPadding : PaddingValues?
+    innerPadding : PaddingValues?,
+    paddingBottom : Boolean = true
 ) {
     val cookies by produceState<String?>(initialValue = null) {
         value = getWebVpnCookie(vm)
@@ -360,7 +361,7 @@ fun TotalNewsScreen(
                         } ?: it
                     }
                 ,
-                paddingBottom = false
+                paddingBottom = paddingBottom
             )
         }
     }

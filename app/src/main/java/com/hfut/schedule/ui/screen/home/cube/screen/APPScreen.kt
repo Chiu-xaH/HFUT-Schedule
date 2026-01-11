@@ -99,7 +99,7 @@ fun APPScreen(
         val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
         var showfocus by remember { mutableStateOf(switch_focus) }
 
-        val controlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
+        val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
         val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
 
         val switch_update = prefs.getBoolean("SWITCHUPDATE",true)
@@ -159,9 +159,9 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("启动台") },
+                    headlineContent = { Text("启动台(Beta)") },
                     supportingContent = {
-                        Text("从顶栏位置的向右轻扫唤出(部分界面暂未支持)，可快速切换到最近打开的窗口和调整一些设置;打开后上下滑动的灵敏度可能会降低")
+                        Text("从顶栏位置的向右轻扫或长按左上返回图标唤出(部分界面暂未支持)，可快速切换到最近打开的窗口和调整一些设置;打开后上下滑动的灵敏度可能会降低")
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.flash_on),null)

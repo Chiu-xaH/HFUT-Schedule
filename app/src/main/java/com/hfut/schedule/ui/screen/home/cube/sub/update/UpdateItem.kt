@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-10") },
+                overlineContent = { Text(text = "2026-01-11") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -53,19 +53,20 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-        // TODO 下方翻页器统一边距 、新增培养方案已修学分计算功能
-            // 大模型应用场景：通知公告的提炼、新增聚焦日程
-//            UpdateItems("新增 新课程表的日视图")
+        // TODO 新增培养方案已修学分计算功能
+            // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程
             UpdateItems("重构 新课程表的捏合缩放交互更换为放大缩小方格,以便用户查看时间较短的方格")//
-            UpdateItems("新增 教评评分细分评级")//
+            UpdateItems("新增 发送教评扩展到四个分数挡位")//
             UpdateItems("新增 转专业页面中的通知公告快速检索入口")//
             UpdateItems("修复 冲突预览不显示课表的Bug")//
-            UpdateItems("优化 部分界面的显示")
-//            UpdateItems("新增 选课页面中的通知公告快速检索入口")
+            UpdateItems("修复 启动台横滑图标在深色模式下颜色错误的Bug")//
+            UpdateItems("优化 部分界面的显示")//
+//            UpdateItems("新增 长按左上角返回图标打开启动台，快速切换到其他界面")
 //            UpdateItems("修复 成绩界面横向滑动时卡顿的Bug")
+//            UpdateItems("新增 新课程表的日视图")
+//            UpdateItems("新增 选课页面中的通知公告快速检索入口")
 //            UpdateItems("新增 启动台支持固定项目")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
-//            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
@@ -77,7 +78,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 课程表的方格支持自动适应背景透明度")
 //            UpdateItems("回归 导入文件形式的课程表")
 //            UpdateItems("新增 云端共建支持对上传的日程更新")
-//            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("新增 聚焦卡片小组件(4*2和2*1)")
 //            UpdateItems("新增 校园网小组件(2*2)")
 //            UpdateItems("新增 使用技巧","位于 选项-维护与关于")

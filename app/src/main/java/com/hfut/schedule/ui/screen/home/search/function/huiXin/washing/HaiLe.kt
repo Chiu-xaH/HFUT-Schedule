@@ -56,7 +56,11 @@ private val d = mapOf<String, String>(
 )
 
 @Composable
-fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
+fun HaiLeScreen(
+    vm : NetWorkViewModel,
+    hazeState : HazeState,
+    paddingBottom : Boolean
+) {
     val t = remember { Campus.entries }
     val titles = remember { t.map { it.description } }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage = when(getCampusRegion()) {
@@ -148,7 +152,9 @@ fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
                                 index = index,
                                 headlineContent = { Text(name) },
                                 supportingContent = {
-                                    Text(categoryCodeList.map { d[it] }.toString().replace("[","").replace("]","")) },
+                                    Text(
+                                        categoryCodeList.map { d[it] }.filter { it != null }.joinToString(" ")
+                                    ) },
                                 overlineContent = { Text(address) },
                                 leadingContent = {
                                     Icon(painterResource(R.drawable.near_me),null)
@@ -166,7 +172,7 @@ fun HaiLeScreen(vm : NetWorkViewModel,hazeState : HazeState) {
                     }
                     item { PaddingForPageControllerButton() }
                 }
-                PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it })
+                PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, paddingSafely = paddingBottom)
             }
         }
     }

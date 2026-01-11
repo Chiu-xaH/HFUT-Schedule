@@ -136,14 +136,14 @@ fun ControlCenterScreen(
     val globalColor = MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     val state = rememberScrollState()
     // 项目到达底部
-    val isAtStart by remember { derivedStateOf { state.value == 0 } }
-    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    val hazeState = rememberHazeState(blurEnabled = blur && !isAtStart)
-    val queue = GlobalUIStateHolder.routeQueue
+//    val isAtStart by remember { derivedStateOf { state.value == 0 } }
+//    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+//    val hazeState = rememberHazeState(blurEnabled = blur && !isAtStart)
+//    val queue = GlobalUIStateHolder.routeQueue
 //    val currentStack by navController.currentBackStack.collectAsState()
 //    val stack = currentStack.reversed()
     val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
-    var input by remember { mutableStateOf("") }
+//    var input by remember { mutableStateOf("") }
     var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
@@ -350,89 +350,103 @@ fun ControlCenterScreen(
                     enter = fadeIn(),
                     exit = fadeOut()
                 ){
-                    Column {
-//                        DividerTextExpandedWith("固定项目") {
-
-//                        }
-                        if(queue.isNotEmpty()) {
-                            DividerTextExpandedWith("最近使用",contentColor=contentColor) {
-                                LazyRow {
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
-                                    items(queue.size) { index ->
-                                        val item = queue[index]
-                                        if(currentRoute == item.app.route && index == 0) {
-                                            FilledTonalButton(
-                                                colors = ButtonDefaults.filledTonalButtonColors(containerColor = globalColor),
-                                                onClick = {
-                                                    onExit()
-                                                },
-                                            ) {
-                                                Text(item.app.label)
-                                            }
-                                            Spacer(Modifier.width(4.dp))
-                                        } else {
-                                            FilledTonalIconButton(
-                                                colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = globalColor),
-                                                onClick = {
-                                                    scope.launch {
-                                                        navController.navigateForTransition(item.app,item.route)
-                                                        delay(TransitionConfig.curveStyle.speedMs*1L + 100)
-                                                        onExit()
-                                                    }
-                                                },
-                                            ) {
-                                                Icon(painterResource(item.app.icon),null)
-                                            }
-                                        }
-                                    }
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                }
-                                Spacer(Modifier.height(CARD_NORMAL_DP))
-                                for(index in queue.indices) {
-                                    val item = queue[index]
-                                    val label = getLabel(item.route)
-                                    val isCurrent = currentRoute == item.app.route && index == 0
-                                    CardListItem(
-                                        headlineContent = {
-                                            Text(item.app.label ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
-                                        },
-                                        supportingContent = {
-                                            label?.let {
-                                                Text(it)
-                                            }
-                                        },
-                                        leadingContent = {
-                                            Icon(painterResource(item.app.icon),null, tint = if(isCurrent) MaterialTheme.colorScheme.primary else  LocalContentColor. current)
-                                        },
-                                        trailingContent = {
-                                            FilledTonalIconButton (
-                                                onClick = {
-                                                    queue.remove(item)
-                                                },
-                                            ) {
-                                                Icon(painterResource(R.drawable.delete),null)
-                                            }
-                                        },
-                                        color = globalColor,
-                                        modifier = Modifier.clickable {
-                                            if(isCurrent) {
-                                                onExit()
-                                            } else {
-                                                scope.launch {
-                                                    navController.navigateForTransition(item.app,item.route)
-                                                    delay(TransitionConfig.curveStyle.speedMs*1L+ 100)
-                                                    onExit()
-                                                }
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    RecentlyStackUI(navController,contentColor,globalColor,onExit)
                 }
             }
 //            InnerPaddingHeight(innerPadding,false)
+        }
+    }
+}
+
+@Composable
+fun RecentlyStackUI(
+    navController : NavHostController,
+    contentColor : Color,
+    globalColor : Color,
+    onExit : () -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val queue = GlobalUIStateHolder.routeQueue
+    val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
+
+    Column {
+//                        DividerTextExpandedWith("固定项目") {
+
+//                        }
+        if(queue.isNotEmpty()) {
+            DividerTextExpandedWith("最近使用",contentColor=contentColor) {
+                LazyRow {
+                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP-3.dp)) }
+                    items(queue.size) { index ->
+                        val item = queue[index]
+                        if(currentRoute == item.app.route && index == 0) {
+                            FilledTonalButton(
+                                colors = ButtonDefaults.filledTonalButtonColors(containerColor = globalColor),
+                                onClick = {
+                                    onExit()
+                                },
+                            ) {
+                                Text(item.app.label)
+                            }
+                            Spacer(Modifier.width(4.dp))
+                        } else {
+                            FilledTonalIconButton(
+                                colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = globalColor),
+                                onClick = {
+                                    scope.launch {
+                                        navController.navigateForTransition(item.app,item.route)
+                                        delay(TransitionConfig.curveStyle.speedMs*1L + 100)
+                                        onExit()
+                                    }
+                                },
+                            ) {
+                                Icon(painterResource(item.app.icon),null, tint = contentColor)
+                            }
+                        }
+                    }
+                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                }
+                Spacer(Modifier.height(CARD_NORMAL_DP))
+                for(index in queue.indices) {
+                    val item = queue[index]
+                    val label = getLabel(item.route)
+                    val isCurrent = currentRoute == item.app.route && index == 0
+                    CardListItem(
+                        headlineContent = {
+                            Text(item.app.label ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
+                        },
+                        supportingContent = {
+                            label?.let {
+                                Text(it)
+                            }
+                        },
+                        leadingContent = {
+                            Icon(painterResource(item.app.icon),null, tint = if(isCurrent) MaterialTheme.colorScheme.primary else  LocalContentColor. current)
+                        },
+                        trailingContent = {
+                            FilledTonalIconButton (
+                                onClick = {
+                                    queue.remove(item)
+                                },
+                            ) {
+                                Icon(painterResource(R.drawable.delete),null)
+                            }
+                        },
+                        color = globalColor,
+                        modifier = Modifier.clickable {
+                            if(isCurrent) {
+                                onExit()
+                            } else {
+                                scope.launch {
+                                    navController.navigateForTransition(item.app,item.route)
+                                    delay(TransitionConfig.curveStyle.speedMs*1L+ 100)
+                                    onExit()
+                                }
+                            }
+                        }
+                    )
+                }
+            }
         }
     }
 }

@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,7 +51,7 @@ import com.hfut.schedule.logic.util.sys.datetime.getCelebration
 import com.hfut.schedule.logic.util.sys.datetime.getUserAge
 import com.hfut.schedule.logic.util.sys.datetime.isUserBirthday
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.button.LocalAppControlCenter
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.screen.grade.GradeScreen
@@ -124,6 +125,8 @@ import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.shader.scaleMirror
 import com.xah.transition.component.TransitionNavHost
 import com.xah.transition.component.transitionComposable
+import com.xah.transition.state.LocalAppNavController
+import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
@@ -240,7 +243,7 @@ fun MainHost(
     var screenWidth by remember { mutableIntStateOf(0) }
     val drawerState =  rememberDrawerState(DrawerValue.Closed)
     var maxOffset by rememberSaveable { mutableFloatStateOf(prefs.getFloat(OFFSET_KEY,0f)) }
-    val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
+    val enableControlCenterGesture by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentRouteWithoutArgs()
     val disabledGesture = currentRoute == AppNavRoute.WebView.route || currentRoute == AppNavRoute.UseAgreement.route
@@ -252,12 +255,12 @@ fun MainHost(
         currentRoute == AppNavRoute.Scan.route
     }
 
-    val enableGesture = enableControlCenter && !disabledGesture
+    val enableGesture = enableControlCenterGesture && !disabledGesture
     var containerColor by remember { mutableStateOf<Color?>(null) }
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
-    LaunchedEffect(configuration,enableControlCenter) {
-        if(enableControlCenter) {
+    LaunchedEffect(configuration,enableControlCenterGesture) {
+        if(enableControlCenterGesture) {
             snapshotFlow { configuration.screenWidthDp }
                 .collect {
                     screenWidth = it
@@ -289,7 +292,7 @@ fun MainHost(
     }
 
     // 返回拦截
-    if (enableControlCenter) {
+    if (enableControlCenterGesture) {
         val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
         val callback = remember {
             object : OnBackPressedCallback(true) {
@@ -358,7 +361,7 @@ fun MainHost(
                     )
                     // 启动台模糊
                     .let {
-                        if(motionBlur && enableControlCenter && !disabledBlur)
+                        if(motionBlur && enableControlCenterGesture && !disabledBlur)
                             it.blur(blurDp)
                         else it
                     }
@@ -369,7 +372,7 @@ fun MainHost(
                             it.scaleMirror(scale)
                         } else {
                             it.let {
-                                if(enableControlCenter) {
+                                if(enableControlCenterGesture) {
                                     it.scale(scale)
                                 } else
                                     it
@@ -894,4 +897,9 @@ fun MainHost(
             }
         }
     }
+//    CompositionLocalProvider(
+//        LocalAppControlCenter provides drawerState
+//    ) {
+//
+//    }
 }

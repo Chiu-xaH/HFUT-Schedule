@@ -932,7 +932,7 @@ fun CalendarUISettings(
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格的高度(默认值为${formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.toDouble(),0)})")
+                    Text("自定义方格的高度(默认值为${formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.toDouble(),0)});在课程表界面双指捏合可临时缩放方格的高度")
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.height),null)

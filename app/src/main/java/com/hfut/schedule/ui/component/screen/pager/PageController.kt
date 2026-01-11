@@ -39,7 +39,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import kotlinx.coroutines.launch
 
 @Composable
-fun rememberScrollDirection(state: LazyListState): MutableState<Boolean> {
+private fun rememberScrollDirection(state: LazyListState): MutableState<Boolean> {
     // true = 向上滚动，false = 向下滚动，null = 初始无方向
     val direction = remember { mutableStateOf<Boolean>(false) }
 

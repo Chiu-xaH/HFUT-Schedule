@@ -351,7 +351,7 @@ fun MainScreen(
     var zhiJianStudentId by rememberSaveable { mutableStateOf(getPersonInfo().studentId ?: "") }
 
     // 捏合手势
-    val scaleFactor = remember { mutableFloatStateOf(1f) } // 捏合手势缩放因子
+    val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 
 
     CustomTransitionScaffold (

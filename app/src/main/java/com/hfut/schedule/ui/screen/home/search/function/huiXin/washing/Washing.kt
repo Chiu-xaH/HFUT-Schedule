@@ -144,7 +144,7 @@ fun HaiLeWashingScreen(
             Column(
                 modifier = Modifier.hazeSource(hazeState).fillMaxSize().padding(innerPadding)
             ) {
-                HaiLeScreen(vm,hazeState)
+                HaiLeScreen(vm,hazeState,false)
             }
         }
 //    }
@@ -175,7 +175,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         .padding(innerPadding)
                         .fillMaxSize()
                 ){
-                    HaiLeScreen(vm,hazeState)
+                    HaiLeScreen(vm,hazeState,true)
                 }
             }
         }

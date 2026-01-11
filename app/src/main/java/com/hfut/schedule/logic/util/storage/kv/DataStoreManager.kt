@@ -213,7 +213,7 @@ object DataStoreManager : IDataStore {
     val enableAutoTerm = getFlow(AUTO_TERM,true)
     val enablePredictive = getFlow(PREDICTIVE, AppVersion.CAN_PREDICTIVE)
     val enableForceWebViewDark = getFlow(WEB_VIEW_DARK,true)
-    val enableControlCenter = getFlow(CONTROL_CENTER,false)
+    val enableControlCenterGesture = getFlow(CONTROL_CENTER,false)
     val courseBookJson = getFlow(COURSE_BOOK,EMPTY_STRING)
     val wxAuth = getFlow(WX_AUTH,EMPTY_STRING)
     val searchSort = getFlow(SEARCH_SORT, SEARCH_DEFAULT_STR)

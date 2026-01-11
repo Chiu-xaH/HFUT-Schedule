@@ -80,7 +80,7 @@ fun WebViewScreenForNavigation(
         if (it.luminance() < 0.5f) Color.White else Color.Black
     } ?: MaterialTheme.colorScheme.primary
 
-    val enableControlCenter by DataStoreManager.enableControlCenter.collectAsState(initial = false)
+    val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val route = remember { AppNavRoute.WebView.shareRoute(url) }
     LaunchedEffect(topColor) {
