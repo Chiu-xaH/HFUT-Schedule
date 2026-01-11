@@ -1,2 +1,4 @@
 build/
-release/
+/release/
+!src/release/
+!src/release/**
