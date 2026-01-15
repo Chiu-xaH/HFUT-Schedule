@@ -97,7 +97,7 @@ private fun SurveyList(
             onConfirmation = {
                 scope.launch {
                     launch {
-                        postSurvey(vm,postMode,bean,input,teacherId)
+                        postSurvey(vm,postMode,bean,input,teacherId,null)
                         showDialog = false
                         onResult()
                     }
@@ -205,16 +205,25 @@ private fun SurveyList(
 }
 
 @SuppressLint("SuspiciousIndentation")
-suspend fun postSurvey(vm : NetWorkViewModel, mode : PostMode, bean: SurveyResponse, comment: String = "好",teacherId : Int) = withContext(Dispatchers.IO) {
+suspend fun postSurvey(
+    vm : NetWorkViewModel,
+    mode : PostMode,
+    bean: SurveyResponse,
+    comment: String = "好",
+    teacherId : Int,
+    teacherName : String? = null
+) : Boolean = withContext(Dispatchers.IO) {
     // 主线程监听 StateFlow
     val token = vm.surveyToken.state.first() as? UiState.Success
-    token ?: return@withContext
+    token ?: return@withContext false
     val cookie = getJxglstuCookie()
     val result = vm.postSurvey("$cookie;${token.data}", postResult(mode, bean, comment,teacherId))
     if(result == StatusCode.OK.code) {
-        showToast("提交成功")
+        showToast("提交成功" + teacherName?.let { ": $it" } )
+        return@withContext true
     } else {
-        showToast("提交失败 $result")
+        showToast("提交失败($result)" + teacherName?.let { ": $it" } )
+        return@withContext false
     }
 }
 

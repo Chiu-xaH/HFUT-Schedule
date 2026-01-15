@@ -54,13 +54,10 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
+            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
+            UpdateItems("修复 一键评教所有教师失败的Bug","可以用，但是教务系统的接口本身有反爬机制，一键评教速度太快了。尝试通过合工大教务的评教接口吧")
             // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程
-            UpdateItems("重构 新课程表的捏合缩放交互更换为放大缩小方格,以便用户查看时间较短的方格")//
-            UpdateItems("新增 发送教评扩展到四个分数挡位")//
-            UpdateItems("新增 转专业页面中的通知公告快速检索入口")//
-            UpdateItems("修复 冲突预览不显示课表的Bug")//
-            UpdateItems("修复 启动台横滑图标在深色模式下颜色错误的Bug")//
-            UpdateItems("优化 部分界面的显示")//
+
 //            UpdateItems("新增 长按左上角返回图标打开启动台，快速切换到其他界面")
 //            UpdateItems("修复 成绩界面横向滑动时卡顿的Bug")
 //            UpdateItems("新增 新课程表的日视图")

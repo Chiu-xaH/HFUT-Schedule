@@ -6,8 +6,11 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -17,6 +20,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,6 +42,7 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -55,6 +60,8 @@ import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -134,7 +141,6 @@ private fun SurveyAllButton(
     refresh : suspend () -> Unit
 ) {
     val surveyListData by vm.surveyListData.state.collectAsState()
-    val surveyData by vm.surveyData.state.collectAsState()
     val scope = rememberCoroutineScope()
     val refreshOne: suspend (Int) -> Unit = { id : Int ->
         val cookie = getJxglstuCookie()
@@ -144,42 +150,79 @@ private fun SurveyAllButton(
             vm.getSurvey(it,id.toString())
         }
     }
+    var successfulNum by remember { mutableIntStateOf(0) }
+    var failedNum by remember { mutableIntStateOf(0) }
+    var currentTeacherTask by remember { mutableStateOf("") }
+    var currentNumTask by remember { mutableIntStateOf(0) }
+    var totalNum by remember { mutableIntStateOf(0) }
     var loading by remember { mutableStateOf(false) }
-    LiquidButton (
-        onClick = {
-            // 未评教的教师们
-            scope.launch(Dispatchers.IO) {
-                val list = (surveyListData as UiState.Success).data.flatMap { it.lessonSurveyTasks }.filter { it.submitted == false }
-                if(list.isEmpty()) {
-                    showToast("无未完成的评教")
-                    refresh()
-                    return@launch
-                }
-                loading = true
-                for(task in list) {
-                    // 获取下一个教师
-                    refreshOne(task.id)
-                    val bean = (surveyData as? UiState.Success)?.data
-                    if(bean == null) {
-                        showToast("失败")
-                        loading = false
-                        break
-                    }
-                    // 发送教评
-                    postSurvey(vm, PostMode.HIGH,bean,"好",task.id)
-                }
-                loading = false
-                refresh()
-            }
-        },
-        isCircle = loading,
-        backdrop = backDrop,
-        enabled = surveyListData is UiState.Success && !loading
-    ) {
+    Row {
         if(loading) {
-            LoadingIcon()
-        } else {
-            Text("全部评教(100分)")
+            LiquidButton (
+                onClick = {},
+                backdrop = backDrop,
+                enabled = false
+            ) {
+                Text("$currentTeacherTask $currentNumTask/$totalNum")
+            }
+            Spacer(Modifier.width(BUTTON_PADDING))
+        }
+        LiquidButton (
+            onClick = {
+                // 未评教的教师们
+                scope.launch(Dispatchers.IO) {
+                    val list = (surveyListData as UiState.Success).data.flatMap { it.lessonSurveyTasks }.filter { it.submitted == false }
+                    if(list.isEmpty()) {
+                        showToast("无未完成的评教")
+                        refresh()
+                        return@launch
+                    }
+                    totalNum = list.size
+                    loading = true
+                    for(task in list) {
+                        val teacherName = task.teacher.person?.nameZh
+                        currentTeacherTask = teacherName ?: ""
+                        // 跳过评教过的
+                        if(task.submitted) {
+                            currentNumTask++
+                            continue
+                        }
+                        // 获取下一个教师
+                        refreshOne(task.id)
+                        val bean = vm.surveyData.state.first()
+                        if(bean !is UiState.Success) {
+                            showToast("逻辑出错(可能是教务系统反爬机制)")
+                            failedNum++
+                            continue
+                        }
+                        // 发送教评
+                        val result = postSurvey(vm, PostMode.HIGH,bean.data,"好",task.id,teacherName)
+                        if(result) {
+                            successfulNum++
+                        } else {
+                            failedNum++
+                        }
+                        currentNumTask++
+                    }
+                    loading = false
+                    showToast("评教完成: 成功${successfulNum} 失败${failedNum}")
+                    successfulNum = 0
+                    failedNum = 0
+                    currentTeacherTask = ""
+                    currentNumTask = 0
+                    totalNum = 0
+                    refresh()
+                }
+            },
+            isCircle = loading,
+            backdrop = backDrop,
+            enabled = surveyListData is UiState.Success && !loading
+        ) {
+            if(loading) {
+                LoadingIcon()
+            } else {
+                Text("全部评教(100分)")
+            }
         }
     }
 }
