@@ -34,10 +34,18 @@ import com.hfut.schedule.ui.component.status.EmptyIcon
 
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.logic.util.parse.parseWifiQrCode
+import com.hfut.schedule.logic.util.sys.ClipBoardHelper
+import com.hfut.schedule.ui.component.button.BottomButton
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
@@ -53,21 +61,38 @@ fun NotificationItems() {
     val list = getNotifications()
     if(list.isEmpty()) EmptyIcon() else {
         for(item in list.indices) {
-            CardListItem(
-                headlineContent = { Text(text = list[item].title) },
-                supportingContent = { Text(text = list[item].info) },
-                overlineContent = { Text(text = list[item].remark) },
-                leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
-                modifier = Modifier.clickable {
-                    if(list[item].url != null) {
-                        scope.launch {
-                            list[item].url?.let { Starter.startWebView(context,it,list[item].title, icon = AppNavRoute.Notifications.icon) }
-                        }
-                    } else {
-                        showToast("暂无点击操作")
+            val clickAction = {
+                if(list[item].url != null) {
+                    scope.launch {
+                        list[item].url?.let { Starter.startWebView(context,it,list[item].title, icon = AppNavRoute.Notifications.icon) }
                     }
+                } else {
+                    showToast("暂无点击操作")
                 }
-            )
+            }
+            CustomCard(color = cardNormalColor()) {
+                Column {
+                    TransplantListItem(
+                        headlineContent = { Text(text = list[item].title) },
+                        supportingContent = { Text(text = list[item].info) },
+                        leadingContent = { Icon(painter = painterResource(id = R.drawable.notifications), contentDescription = "") },
+                        modifier = Modifier.clickable {
+                            clickAction()
+                        }
+                    )
+                    CardBottomButtons(
+                        listOf(
+                            CardBottomButton(list[item].remark, clickable = null),
+                            CardBottomButton("已读") {
+                                // TODO 折叠
+                            },
+                            CardBottomButton("含网页", show = list[item].url != null) {
+                                clickAction()
+                            },
+                        )
+                    )
+                }
+            }
         }
     }
 }
@@ -81,32 +106,31 @@ fun NotificationsScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Notifications.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        CustomTransitionScaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Notifications.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Notifications.icon)
-                    },
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                NotificationItems()
-                InnerPaddingHeight(innerPadding,false)
-            }
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.Notifications.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.Notifications.icon)
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            NotificationItems()
+            InnerPaddingHeight(innerPadding,false)
         }
-//    }
+    }
 }

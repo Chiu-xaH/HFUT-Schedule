@@ -60,20 +60,7 @@ fun AppTheme(
             isSystemInDarkTheme()
         }
     }
-    // View体系跟随App深浅色
-    LaunchedEffect(currentColorModeIndex) {
-        when(currentColorModeIndex) {
-            ColorMode.DARK.code -> {
-                setNightMode(context,ColorMode.DARK)
-            }
-            ColorMode.LIGHT.code -> {
-                setNightMode(context,ColorMode.LIGHT)
-            }
-            ColorMode.AUTO.code  -> {
-                setNightMode(context, ColorMode.AUTO)
-            }
-        }
-    }
+
     // OLED 纯黑
     val usePureBlack by DataStoreManager.enablePureDark.collectAsState(initial = false)
 

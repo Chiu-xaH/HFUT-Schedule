@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -105,6 +106,7 @@ import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
@@ -138,6 +140,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.xah.uicommon.util.LogUtil
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -367,7 +370,7 @@ fun ClassroomScreen(
                 .hazeSource(state = hazeState)
         ) {
             composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
-                EmptyClassroomScreen(vm,innerPadding,navTopController,date,campus,selectedBuildings,selectedFloors)
+                EmptyClassroomScreen(vm,innerPadding,navTopController,date,campus,selectedBuildings,selectedFloors,hazeState)
             }
             composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
                 SearchClassroomScreen(vm,navTopController,innerPadding) {
@@ -390,7 +393,8 @@ private fun EmptyClassroomScreen(
     date : String,
     campus : Campus?,
     selectedBuildings: SnapshotStateList<UniAppBuildingBean>,
-    selectedFloors: SnapshotStateList<Int>
+    selectedFloors: SnapshotStateList<Int>,
+    hazeState: HazeState
 ) {
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
     val refreshNetworkChips = suspend m@ {
@@ -443,30 +447,73 @@ private fun EmptyClassroomScreen(
     val occupyList = remember { ClassroomOccupiedCause.entries }
     var showDialog by remember { mutableStateOf(false) }
     var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
+    var title by remember { mutableStateOf("占用详情") }
     if(showDialog && info != null) {
-        Dialog(
+        HazeBottomSheet (
+            hazeState = hazeState,
+            showBottomSheet = showDialog,
+            isFullExpand = true,
+            autoShape = false,
             onDismissRequest = { showDialog = false },
         ) {
-            Surface(
-                shape = MaterialTheme.shapes.large,
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier
-                    .fillMaxWidth()
-//                    .padding(APP_HORIZONTAL_DP)
-            ) {
-                Column(
-                    modifier = Modifier.padding(APP_HORIZONTAL_DP)
-                ) {
-                    Text(info!!.teacherName)
-                    Text(info!!.date)
-                    Text(info!!.activityName)
-                    val cause = occupyList.find { it.activityType == info!!.activityType }?.description
+            val cause = occupyList.find { it.activityType == info!!.activityType }
 
-                    Text(
-                        cause ?: info!!.activityType
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+            ) {
+                HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
+                CustomCard(color = cardNormalColor()) {
+                    TransplantListItem(
+                        headlineContent = {
+                            Text(info!!.teacherName)
+                        },
+                        overlineContent = {
+                            Text("教师")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.person),null)
+                        }
                     )
-                    Text(info!!.startTimeString + "~" + info!!.endTimeString)
+                    TransplantListItem(
+                        headlineContent = {
+                            Text("${info!!.date} ${info!!.startTimeString}~${info!!.endTimeString}"  )
+                        },
+                        overlineContent = {
+                            Text("时间")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.schedule),null)
+                        }
+                    )
+                    TransplantListItem(
+                        headlineContent = {
+                            Text(info!!.activityName)
+                        },
+                        overlineContent = {
+                            Text("类型: ${cause?.description ?: info!!.activityType}")
+                        },
+                        leadingContent = {
+                            Icon(painterResource(
+                                when(cause) {
+                                    ClassroomOccupiedCause.BORROWED -> {
+                                        R.drawable.groups
+                                    }
+                                    ClassroomOccupiedCause.EXAM -> {
+                                        R.drawable.draw
+                                    }
+                                    ClassroomOccupiedCause.IN_LESSON -> {
+                                        R.drawable.calendar
+                                    }
+                                    null -> {
+                                        R.drawable.category
+                                    }
+                                }
+                            ),null)
+                        }
+                    )
                 }
+                Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
             }
         }
     }
@@ -535,6 +582,7 @@ private fun EmptyClassroomScreen(
                             if(!isAllDayFree) {
                                 ClassroomSchedule(activities, modifier = scheduleModifier) {
                                     info = it
+                                    title = item.nameZh
                                     showDialog = true
                                 }
                             }

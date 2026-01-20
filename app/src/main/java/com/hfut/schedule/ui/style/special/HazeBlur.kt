@@ -238,7 +238,9 @@ fun HazeBottomSheet(
         containerColor = MaterialTheme.colorScheme.surface,
         shape = bottomSheetRound(sheetState, autoShape)
     ) {
-        Column(modifier = Modifier.bottomSheetBlur(hazeState)){
+        Column(modifier = Modifier
+//            .bottomSheetBlur(hazeState)
+        ){
             Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
             content()
         }

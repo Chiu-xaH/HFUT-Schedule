@@ -131,6 +131,7 @@ import kotlin.math.sin
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import com.hfut.schedule.ui.theme.setNightMode
 
 private val styleList = ColorStyle.entries
 
@@ -331,6 +332,24 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
             }
         }
 
+        // View体系跟随App深浅色
+        LaunchedEffect(currentColorModeIndex) {
+            if(isControlCenter) {
+                return@LaunchedEffect
+            }
+            when(currentColorModeIndex) {
+                ColorMode.DARK.code -> {
+                    setNightMode(context,ColorMode.DARK)
+                }
+                ColorMode.LIGHT.code -> {
+                    setNightMode(context,ColorMode.LIGHT)
+                }
+                ColorMode.AUTO.code  -> {
+                    setNightMode(context, ColorMode.AUTO)
+                }
+            }
+        }
+
         DividerTextExpandedWith("深浅色",contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
@@ -359,9 +378,6 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "深浅色") },
-//                    supportingContent = {
-//
-//                    },
                     leadingContent = { Icon(painterResource(
                         when(currentColorModeIndex) {
                             ColorMode.DARK.code -> R.drawable.dark_mode
