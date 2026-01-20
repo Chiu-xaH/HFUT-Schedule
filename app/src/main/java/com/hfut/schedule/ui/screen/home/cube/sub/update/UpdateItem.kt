@@ -26,7 +26,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-11") },
+                overlineContent = { Text(text = "2026-01-20") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -54,10 +54,18 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
+            UpdateItems("新增 切换颜色时的渐变过渡")//
+            UpdateItems("优化 深浅色切换的组件样式")//
+            UpdateItems("重构 消息中心","新增 已读机制")
+            UpdateItems("重构 下学期课程表适配新课程表")
+            UpdateItems("新增 空教室点击方块支持查看详细信息")//
+            UpdateItems("优化 成绩项目的显示效果","弱化挂科课程的显示、增加补考成绩的图标适配、对子成绩分条显示")//
+            UpdateItems("修复 部分组件镜面效果的瑕疵Bug")//
+            UpdateItems("优化 成绩详情界面适配新转场动画")
+            UpdateItems("新增 英文语言适配")
             UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
-            UpdateItems("修复 一键评教所有教师失败的Bug","可以用，但是教务系统的接口本身有反爬机制，一键评教速度太快了。尝试通过合工大教务的评教接口吧")
+            UpdateItems("修复 一键评教所有教师失败的Bug","可以用，但是教务系统的接口本身有反爬机制，一键评教速度太快了。尝试通过合工大教务的评教接口吧")//
             // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程
-
 //            UpdateItems("新增 长按左上角返回图标打开启动台，快速切换到其他界面")
 //            UpdateItems("修复 成绩界面横向滑动时卡顿的Bug")
 //            UpdateItems("新增 新课程表的日视图")

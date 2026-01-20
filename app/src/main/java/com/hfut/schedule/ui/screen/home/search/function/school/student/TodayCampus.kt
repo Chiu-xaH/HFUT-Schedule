@@ -62,7 +62,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
@@ -225,7 +225,7 @@ fun StuAppsScreen(
                     with(item) {
                         val route = AppNavRoute.WebView.shareRoute(openUrl)
                         SmallCard(
-                            color = mixedCardNormalColor(),
+                            color = cardNormalColor(),
                             modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).containerShare(route)
                         ) {
                             TransplantListItem(
@@ -251,7 +251,7 @@ fun StuAppsScreen(
                             }
                             val route = AppNavRoute.WebView.shareRoute(url)
                             SmallCard(
-                                color = mixedCardNormalColor(),
+                                color = cardNormalColor(),
                                 modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).containerShare(route)
                             ) {
                                 TransplantListItem(
@@ -284,7 +284,7 @@ fun StuAppsScreen(
                                     with(item1) {
                                         val route = AppNavRoute.WebView.shareRoute(openUrl)
                                         SmallCard(
-                                            color = mixedCardNormalColor(),
+                                            color = cardNormalColor(),
                                             modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
                                         ) {
                                             TransplantListItem(
@@ -305,7 +305,7 @@ fun StuAppsScreen(
                                         with(item2) {
                                             val route = AppNavRoute.WebView.shareRoute(openUrl)
                                             SmallCard(
-                                                color = mixedCardNormalColor(),
+                                                color = cardNormalColor(),
                                                 modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
                                             ) {
                                                 TransplantListItem(
@@ -341,7 +341,7 @@ fun StuAppsScreen(
                                     }
                                     val route = AppNavRoute.WebView.shareRoute(url)
                                     SmallCard(
-                                        color = mixedCardNormalColor(),
+                                        color = cardNormalColor(),
                                         modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
                                     ) {
                                         TransplantListItem(
@@ -365,7 +365,7 @@ fun StuAppsScreen(
                                         }
                                         val route = AppNavRoute.WebView.shareRoute(url)
                                         SmallCard(
-                                            color = mixedCardNormalColor(),
+                                            color = cardNormalColor(),
                                             modifier = Modifier.padding(horizontal = 3.dp, vertical = 3.dp).weight(.5f).containerShare(route)
                                         ) {
                                             TransplantListItem(

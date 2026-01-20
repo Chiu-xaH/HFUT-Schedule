@@ -65,7 +65,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.icon.ScheduleIcons
@@ -476,7 +476,7 @@ fun CustomItemUI(
     val route = remember { AppNavRoute.AddEvent.withArgs(item.id) }
 
     CardListItem(
-        color = mixedCardNormalColor(),
+        color = cardNormalColor(),
         cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
@@ -696,7 +696,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                                 overlineContent = { ScrollText(text = "${place?.simplifyPlace()} $startTime", color = MaterialTheme.colorScheme.error) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.draw), contentDescription = "", tint = MaterialTheme.colorScheme.error)},
                                 modifier = Modifier
-                                    .background(mixedCardNormalColor())
+                                    .background(cardNormalColor())
                                     .zIndex(4f)
                             )
                         }
@@ -708,7 +708,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                                 overlineContent = { ScrollText(text =  place?.simplifyPlace() + " " +  startTime) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.schedule), contentDescription = "")},
                                 modifier = Modifier
-                                    .background(mixedCardNormalColor())
+                                    .background(cardNormalColor())
                                     .zIndex(3f)
                             )
                         }
@@ -720,7 +720,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                                 overlineContent = { ScrollText(text =  returnTime.toString()) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.book), contentDescription = "")},
                                 modifier = Modifier
-                                    .background(mixedCardNormalColor())
+                                    .background(cardNormalColor())
                                     .zIndex(2f)
                             )
                         }
@@ -732,7 +732,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
                                 overlineContent = { ScrollText(text =  startTime.toString()) },
                                 leadingContent = { Icon(painter = painterResource(R.drawable.person_play), contentDescription = "")},
                                 modifier = Modifier
-                                    .background(mixedCardNormalColor())
+                                    .background(cardNormalColor())
                                     .zIndex(1f)
                             )
                         }
@@ -796,7 +796,7 @@ fun JxglstuTodayCourseItem(
             modifier = Modifier.clickable {
                 navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
             },
-            color = mixedCardNormalColor(),
+            color = cardNormalColor(),
             trailingContent = {
                 Text(
                     when(state) {
@@ -840,7 +840,7 @@ fun JxglstuTomorrowCourseItem(
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
         },
-        color = mixedCardNormalColor(),
+        color = cardNormalColor(),
         trailingContent = { Text(text = "明日")}
     )
 }

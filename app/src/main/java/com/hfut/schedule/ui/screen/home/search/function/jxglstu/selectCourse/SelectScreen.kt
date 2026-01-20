@@ -95,7 +95,7 @@ import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -491,7 +491,7 @@ private fun SelectCourseList(
                                 )
                             },
                         index = item,
-                        containerColor = mixedCardNormalColor()
+                        containerColor = cardNormalColor()
                     ) {
                         TransplantListItem(
                             headlineContent = { Text(text = name) },

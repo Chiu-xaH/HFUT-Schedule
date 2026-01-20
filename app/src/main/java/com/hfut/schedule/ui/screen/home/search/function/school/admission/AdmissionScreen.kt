@@ -52,7 +52,6 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -152,7 +151,7 @@ fun AdmissionListUI(
                             val item = list[index]
                             val route = AppNavRoute.AdmissionRegionDetail.withArgs(index, pageList[page].description)
                             SmallCard (
-                                color = mixedCardNormalColor(),
+                                color = cardNormalColor(),
                                 modifier = Modifier.padding(2.5.dp)
                                     .clickableWithScale(ClickScale.SMALL.scale) {
                                         navController.navigateForTransition(AppNavRoute.AdmissionRegionDetail,route)

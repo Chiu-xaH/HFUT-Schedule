@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -61,6 +62,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -71,6 +73,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.getCampus
 import com.hfut.schedule.logic.model.NavigationBarItemData
+import com.hfut.schedule.logic.model.uniapp.ClassroomOccupiedCause
 import com.hfut.schedule.logic.model.uniapp.UniAppBuildingBean
 import com.hfut.schedule.logic.model.uniapp.UniAppCampus
 import com.hfut.schedule.logic.model.uniapp.UniAppClassroomLessonBean
@@ -92,7 +95,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -141,6 +144,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.nio.file.WatchEvent
 import java.time.LocalDate
 
 private enum class ClassroomBarItems(val page : Int) {
@@ -436,6 +440,36 @@ private fun EmptyClassroomScreen(
     }
     val isToday = DateTimeManager.Date_yyyy_MM_dd == date
 
+    val occupyList = remember { ClassroomOccupiedCause.entries }
+    var showDialog by remember { mutableStateOf(false) }
+    var info by remember { mutableStateOf<UniAppEmptyClassroomLesson?>(null) }
+    if(showDialog && info != null) {
+        Dialog(
+            onDismissRequest = { showDialog = false },
+        ) {
+            Surface(
+                shape = MaterialTheme.shapes.large,
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .padding(APP_HORIZONTAL_DP)
+            ) {
+                Column(
+                    modifier = Modifier.padding(APP_HORIZONTAL_DP)
+                ) {
+                    Text(info!!.teacherName)
+                    Text(info!!.date)
+                    Text(info!!.activityName)
+                    val cause = occupyList.find { it.activityType == info!!.activityType }?.description
+
+                    Text(
+                        cause ?: info!!.activityType
+                    )
+                    Text(info!!.startTimeString + "~" + info!!.endTimeString)
+                }
+            }
+        }
+    }
 
     val listState = rememberLazyListState()
     val scheduleModifier =  Modifier
@@ -500,7 +534,8 @@ private fun EmptyClassroomScreen(
                             // 横向时间轴
                             if(!isAllDayFree) {
                                 ClassroomSchedule(activities, modifier = scheduleModifier) {
-                                    showToast(it.activityName)
+                                    info = it
+                                    showDialog = true
                                 }
                             }
                         }
@@ -638,7 +673,7 @@ private fun SearchClassroomScreen(
                             headlineContent = { Text(item.nameZh) },
                             overlineContent = { Text("${item.building.campus.nameZh} ${item.building.nameZh}")},
                             supportingContent = { Text("${item.floor}F | ${item.roomType.nameZh} | ${item.seatsForLesson}人") },
-                            color = mixedCardNormalColor(),
+                            color = cardNormalColor(),
                             cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
                             modifier = Modifier.clickable {
                                 navTopController.navigateForTransition(AppNavRoute.ClassroomLessons,route)

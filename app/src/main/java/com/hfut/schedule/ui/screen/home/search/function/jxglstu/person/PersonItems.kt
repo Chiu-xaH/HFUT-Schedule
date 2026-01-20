@@ -55,7 +55,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -268,7 +268,7 @@ private fun PersonItems(
         val route = remember { AppNavRoute.Classmates.route }
         DividerTextExpandedWith(text = "就读信息") {
             CustomCard(
-                color = mixedCardNormalColor(),
+                color = cardNormalColor(),
                 modifier = Modifier.containerShare(
                     route = route,
                     roundShape = MaterialTheme.shapes.medium

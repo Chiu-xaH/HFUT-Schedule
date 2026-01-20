@@ -55,7 +55,7 @@ import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
@@ -188,7 +188,7 @@ private fun ProgramPerformance(
                     DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
                         AnimationCustomCard(
                             index = index,
-                            containerColor = mixedCardNormalColor(),
+                            containerColor = cardNormalColor(),
                             modifier = Modifier
                                 .clickableWithScale() {
                                     navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
@@ -244,7 +244,7 @@ private fun ProgramPerformance(
                 item {
                     val route = AppNavRoute.ProgramCompetitionDetail.withArgs("培养方案外课程",999)
                     AnimationCustomCard(
-                        containerColor = mixedCardNormalColor(),
+                        containerColor = cardNormalColor(),
                         modifier = Modifier
                             .clickableWithScale() {
                                 navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)

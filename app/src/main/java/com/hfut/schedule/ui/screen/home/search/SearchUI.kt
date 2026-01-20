@@ -42,7 +42,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
 import com.hfut.schedule.ui.component.container.SmallCard
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.community.appointment.Appointment
 import com.hfut.schedule.ui.screen.home.search.function.community.bus.SchoolBus
@@ -247,7 +247,7 @@ fun SearchScreen(
             }
             SmallCard(
                 modifier = (item.route?.let { paddingModifier.containerShare(it) } ?: paddingModifier),
-                color = mixedCardNormalColor()
+                color = cardNormalColor()
             ) {
                 if(index % 2 == 0) {
                     // 位于左侧 观察右侧高度

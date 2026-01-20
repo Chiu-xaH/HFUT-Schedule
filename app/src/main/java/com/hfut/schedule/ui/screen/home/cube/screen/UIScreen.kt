@@ -359,50 +359,9 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "深浅色") },
-                    supportingContent = {
-                        // 三个状态，三个选项
-                        val options = listOf(
-                            ColorMode.LIGHT to "浅色",
-                            ColorMode.DARK to "深色",
-                            ColorMode.AUTO to "跟随系统"
-                        )
-
-                        SingleChoiceSegmentedButtonRow(
-                            modifier = Modifier.fillMaxWidth(), // 不撑满就会出现神秘文本测量问题 😎
-                        ) {
-                            options.forEachIndexed { index, (mode, label) ->
-                                val isSelected = currentColorModeIndex == mode.code
-
-                                // 有个缺点是不能为某一个选项单独设置宽度，如果在上面的 Row 里面指定 space 那么在下面的自定义颜色中又会导致边框堆叠
-                                SegmentedButton(
-                                    selected = isSelected,
-                                    onClick = {
-                                        scope.launch {
-                                            DataStoreManager.saveColorMode(mode)
-                                        }
-                                    },
-                                    shape = SegmentedButtonDefaults.itemShape(
-                                        index = index,
-                                        count = options.size,
-                                        baseShape = RoundedCornerShape(8.dp) // 圆角
-                                    ),
-                                    colors = SegmentedButtonDefaults.colors(
-                                        activeContainerColor = MaterialTheme.colorScheme.primary,
-                                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                        activeBorderColor = MaterialTheme.colorScheme.primary,
-                                        // pC 描边与选中颜色背景一致，但是相邻选项之间感觉少一条线
-                                        inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                                    ),
-                                    label = {
-                                        Text(
-                                            text = label,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-                                )
-                            }
-                        }
-                    },
+//                    supportingContent = {
+//
+//                    },
                     leadingContent = { Icon(painterResource(
                         when(currentColorModeIndex) {
                             ColorMode.DARK.code -> R.drawable.dark_mode
@@ -411,6 +370,52 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     ), contentDescription = "Localized description",) },
                 )
+                // 三个状态，三个选项
+                val options = listOf(
+                    ColorMode.LIGHT to "浅色",
+                    ColorMode.DARK to "深色",
+                    ColorMode.AUTO to "跟随系统"
+                )
+
+                SingleChoiceSegmentedButtonRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                        .padding(bottom = APP_HORIZONTAL_DP),
+                    // 不撑满就会出现神秘文本测量问题 😎
+                ) {
+                    options.forEachIndexed { index, (mode, label) ->
+                        val isSelected = currentColorModeIndex == mode.code
+
+                        // 有个缺点是不能为某一个选项单独设置宽度，如果在上面的 Row 里面指定 space 那么在下面的自定义颜色中又会导致边框堆叠
+                        SegmentedButton(
+                            selected = isSelected,
+                            onClick = {
+                                scope.launch {
+                                    DataStoreManager.saveColorMode(mode)
+                                }
+                            },
+                            shape = SegmentedButtonDefaults.itemShape(
+                                index = index,
+                                count = options.size,
+                                baseShape = MaterialTheme.shapes.small // 圆角
+                            ),
+                            colors = SegmentedButtonDefaults.colors(
+                                activeContainerColor = MaterialTheme.colorScheme.primary,
+                                activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                                activeBorderColor = MaterialTheme.colorScheme.primary,
+                                // pC 描边与选中颜色背景一致，但是相邻选项之间感觉少一条线
+                                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
+                            ),
+                            label = {
+                                Text(
+                                    text = label,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        )
+                    }
+                }
             }
         }
         DividerTextExpandedWith("主题色",contentColor=contentColor) {

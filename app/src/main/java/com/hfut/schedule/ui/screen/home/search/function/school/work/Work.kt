@@ -56,7 +56,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -275,7 +275,7 @@ private fun WorkSearchUI(
                                     CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
                                 } + "detail/" + enumType.url +  id
                                 AnimationCardListItem(
-                                    color = mixedCardNormalColor(),
+                                    color = cardNormalColor(),
 //                                    cardModifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url)),
                                     headlineContent = { Text(title) },
                                     overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },

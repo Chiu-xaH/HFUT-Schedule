@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,18 +18,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FilterChip
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -60,6 +69,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -80,6 +90,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.util.LogUtil
@@ -164,16 +175,9 @@ fun GradeItemUIJXGLSTU(
     val Item = @Composable { grade : GradeResponseJXGLSTU ->
         val isFailed = grade.gpa.toFloatOrNull() == 0f
         val needSurvey = grade.score.contains("评教")
-        CardListItem(
-            headlineContent = {  Text(grade.courseName) },
-            overlineContent = { Text(
-                if(!needSurvey)
-                    "分数 "+ grade.detail + " | 绩点 " + grade.gpa +  " | 学分 " + grade.credits
-                else grade.lessonCode
-            ) },
-            leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-            supportingContent = { Text(if(needSurvey) "点击跳转评教" else grade.score) },
-            color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer else if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
+
+        CustomCard(
+            color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
             modifier = Modifier.clickable {
                 if(needSurvey) {
                     if(ifSaved) {
@@ -188,8 +192,71 @@ fun GradeItemUIJXGLSTU(
                     num = grade
                     showBottomSheet = true
                 }
-            },
-        )
+            }
+        ) {
+            TransplantListItem(
+                headlineContent = {  Text(grade.courseName) },
+                overlineContent = { Text(
+                    if(!needSurvey)
+                        "分数 "+ grade.detail + " | 绩点 " + grade.gpa +  " | 学分 " + grade.credits
+                    else grade.lessonCode
+                ) },
+                leadingContent = {
+                    Icon(
+                        painterResource(
+                            if(isFailed) {
+                                R.drawable.error
+                            } else {
+                                R.drawable.check_circle
+                            }
+                        ),
+                        contentDescription = "Localized description",
+                        tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
+                    ) },
+                supportingContent = {
+                    if(needSurvey) {
+                        Text("点击跳转评教")
+                    }
+                },
+            )
+
+            if(!needSurvey) {
+                val list = remember { grade.score.split(" ") }
+                CompositionLocalProvider(
+                    LocalMinimumInteractiveComponentSize provides 0.dp
+                ) {
+                    FlowRow(
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP*3),
+                    ) {
+                        list.forEach {
+                            val item = it.split(":")
+                            val value = try {
+                                item[1]
+                            } catch (e : Exception) {
+                                LogUtil.error(e)
+                                null
+                            }
+                            val key = try {
+                                item[0]
+                            } catch (e : Exception) {
+                                LogUtil.error(e)
+                                it
+                            }
+                            AssistChip(
+                                onClick = {  },
+                                border = null,
+                                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                                label = { Text(key) },
+                                trailingIcon = {
+                                    value?.let { text -> Text(text) }
+                                },
+                                modifier = Modifier.padding(end = CARD_NORMAL_DP*3).padding(bottom = CARD_NORMAL_DP*3)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
     val scope = rememberCoroutineScope()
 
@@ -365,24 +432,77 @@ fun GradeItemUIUniApp(
                                     it.courseNameZh.contains(input) || it.lessonCode.contains(input)
                                 }.forEach { subItem ->
                                     val isFailed = !subItem.passed
-                                    CardListItem(
-                                        headlineContent = {  Text(subItem.courseNameZh) },
-                                        overlineContent = { Text("分数 "+ subItem.finalGrade + " | 绩点 " + subItem.gp +  " | 学分 " + subItem.credits) },
-                                        leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
-                                        supportingContent = { Text(subItem.gradeDetail) },
-                                        color = if(isFailed) MaterialTheme.colorScheme.errorContainer else null,
+
+                                    val finalGpaStr = (if(!isFailed && subItem.gp == 0.0) "--" else subItem.gp).toString()
+                                    CustomCard(
+                                        color = cardNormalColor(),
                                         modifier = Modifier.clickable {
                                             num = GradeResponseJXGLSTU(
                                                 courseName = subItem.courseNameZh,
                                                 credits = subItem.credits.toString(),
-                                                gpa = subItem.gp.toString(),
+                                                gpa = finalGpaStr,
                                                 score = subItem.gradeDetail,
                                                 detail = subItem.finalGrade.toString(),
                                                 lessonCode = subItem.lessonCode
                                             )
                                             showBottomSheet = true
-                                        },
-                                    )
+                                        }
+                                    ) {
+                                        TransplantListItem(
+                                            headlineContent = {  Text(subItem.courseNameZh) },
+                                            overlineContent = { Text("分数 "+ subItem.finalGrade + " | 绩点 " + finalGpaStr +  " | 学分 " + subItem.credits) },
+                                            leadingContent = {
+                                                Icon(
+                                                    painterResource(
+                                                        if(isFailed) {
+                                                            R.drawable.error
+                                                        } else {
+                                                            R.drawable.check_circle
+                                                        }
+                                                    ),
+                                                    contentDescription = "Localized description",
+                                                    tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
+                                                )
+                                            },
+                                        )
+
+                                        val list = remember { subItem.gradeDetail.split(" ") }
+                                        CompositionLocalProvider(
+                                            LocalMinimumInteractiveComponentSize provides 0.dp
+                                        ) {
+                                            FlowRow(
+                                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP*3),
+                                            ) {
+                                                list.forEach {
+                                                    val item = it.split(":")
+                                                    val value = try {
+                                                        item[1]
+                                                    } catch (e : Exception) {
+                                                        LogUtil.error(e)
+                                                        null
+                                                    }
+                                                    val key = try {
+                                                        item[0]
+                                                    } catch (e : Exception) {
+                                                        LogUtil.error(e)
+                                                        it
+                                                    }
+                                                    AssistChip(
+                                                        onClick = {  },
+                                                        border = null,
+                                                        colors = AssistChipDefaults.assistChipColors(
+                                                            containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                                        ),
+                                                        label = { Text(key) },
+                                                        trailingIcon = {
+                                                            value?.let { text -> Text(text) }
+                                                        },
+                                                        modifier = Modifier.padding(end = CARD_NORMAL_DP*3).padding(bottom = CARD_NORMAL_DP*3)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -846,7 +966,9 @@ fun GPAStarGroup(score : String,gpa : String,onParty: (Boolean) -> Unit) = getGr
 
 @Composable
 fun GradeIcons(text : String) {
-    if(text.contains("考试")) {
+    if(text.contains("补考")) {
+        Icon(painterResource(R.drawable.draw),null)
+    } else if(text.contains("考试")) {
         Icon(painterResource(R.drawable.draw),null)
     } else if(text.contains("报告")) {
         Icon(painterResource(R.drawable.description),null)

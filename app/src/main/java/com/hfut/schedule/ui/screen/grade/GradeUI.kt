@@ -262,16 +262,6 @@ fun GradeScreen(
                     AnalysisScreen(vm,innerPadding)
                 }
             }
-//            composable(GradeBarItems.COMMUNITY.name) {
-//                Scaffold(
-//                ) {
-//                }
-//            }
-//            composable(GradeBarItems.UNI_APP.name) {
-//                Scaffold(
-//                ) {
-//                }
-//            }
         }
     }
 }

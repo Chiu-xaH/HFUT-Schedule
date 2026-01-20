@@ -110,8 +110,11 @@ fun CustomCard(
 
 
 @Composable
-fun mixedCardNormalColor(): Color {
-    val overlay = cardNormalColor()
+fun cardNormalColor(enableAlpha : Boolean = false): Color {
+    val overlay = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
+    if(enableAlpha) {
+        return overlay
+    }
     val base = MaterialTheme.colorScheme.surface
     return overlay.compositeOver(base)
 }
@@ -278,8 +281,8 @@ fun AnimationCustomCard(
 }
 
 
-@Composable
-fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
+//@Composable
+//fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
 @Composable
 fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
 

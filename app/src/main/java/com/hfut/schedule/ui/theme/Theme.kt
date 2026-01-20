@@ -1,15 +1,16 @@
 package com.hfut.schedule.ui.theme
 
-import android.app.Activity
 import android.app.UiModeManager
 import android.content.Context
-import android.content.res.Configuration
 import android.os.Build
-import android.util.Log
-import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MaterialTheme
@@ -22,18 +23,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
-import com.xah.uicommon.style.color.TransparentSystemBars
 import com.hfut.schedule.ui.util.color.deepen
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.materialkolor.rememberDynamicColorScheme
+import com.xah.uicommon.style.color.TransparentSystemBars
 
 private val list = ColorStyle.entries
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -124,12 +125,68 @@ fun AppTheme(
         }
     }
 
+    val animatedColorScheme = animateColorScheme(colorScheme)
+
     MaterialExpressiveTheme (
-        colorScheme = colorScheme,
+        colorScheme = animatedColorScheme,
         typography = Typography,
         content = content
     )
     TransparentSystemBars(isInDark)
+}
+
+@Composable
+fun animateColorScheme(
+    target: ColorScheme,
+): ColorScheme {
+    @Composable
+    fun anim(color: Color) = animateColorAsState(
+        targetValue = color,
+        animationSpec = tween(
+            durationMillis = AppAnimationManager.ANIMATION_SPEED,
+            easing = FastOutSlowInEasing
+        ),
+        label = ""
+    ).value
+
+    return ColorScheme(
+        primary = anim(target.primary),
+        onPrimary = anim(target.onPrimary),
+        primaryContainer = anim(target.primaryContainer),
+        onPrimaryContainer = anim(target.onPrimaryContainer),
+        inversePrimary = anim(target.inversePrimary),
+        secondary = anim(target.secondary),
+        onSecondary = anim(target.onSecondary),
+        secondaryContainer = anim(target.secondaryContainer),
+        onSecondaryContainer = anim(target.onSecondaryContainer),
+        tertiary = anim(target.tertiary),
+        onTertiary = anim(target.onTertiary),
+        tertiaryContainer = anim(target.tertiaryContainer),
+        onTertiaryContainer = anim(target.onTertiaryContainer),
+        background = anim(target.background),
+        onBackground = anim(target.onBackground),
+        surface = anim(target.surface),
+        onSurface = anim(target.onSurface),
+        surfaceVariant = anim(target.surfaceVariant),
+        onSurfaceVariant = anim(target.onSurfaceVariant),
+        surfaceTint = anim(target.surfaceTint),
+        inverseSurface = anim(target.inverseSurface),
+        inverseOnSurface = anim(target.inverseOnSurface),
+        error = anim(target.error),
+        onError = anim(target.onError),
+        errorContainer = anim(target.errorContainer),
+        onErrorContainer = anim(target.onErrorContainer),
+        outline = anim(target.outline),
+        outlineVariant = anim(target.outlineVariant),
+        scrim = anim(target.scrim),
+        surfaceBright = anim(target.surfaceBright),
+        surfaceDim = anim(target.surfaceDim),
+        surfaceContainer = anim(target.surfaceContainer),
+        surfaceContainerHigh = anim(target.surfaceContainerHigh),
+        surfaceContainerHighest = anim(target.surfaceContainerHighest),
+        surfaceContainerLow = anim(target.surfaceContainerLow),
+        surfaceContainerLowest = anim(target.surfaceContainerLowest)
+    )
 }
 
 

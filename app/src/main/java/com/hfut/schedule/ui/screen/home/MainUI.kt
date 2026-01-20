@@ -128,7 +128,8 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
@@ -1161,7 +1162,7 @@ fun SearchEditScreen(
                                         it
                                     }
                                 },
-                            color = mixedCardNormalColor(),
+                            color = cardNormalColor(),
                             shape = MaterialTheme.shapes.small
                         ) {
                             TransplantListItem(

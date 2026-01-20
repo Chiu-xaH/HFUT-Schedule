@@ -288,7 +288,7 @@ fun UpdateContents(vm : NetWorkViewModel) {
                 with(item) {
                     val versionName = name.replace(".md","")
                     SmallCard (
-//                        color = mixedCardNormalColor(),
+//                        color = cardNormalColor(),
                         modifier = Modifier.padding(CARD_NORMAL_DP)
                     ) {
                         TransplantListItem(

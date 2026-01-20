@@ -41,7 +41,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
@@ -137,7 +137,7 @@ fun ClassroomScreen2(
                             val item = list[index]
                             val pRoute = AppNavRoute.ClassroomDetail.withArgs(item)
                             SmallCard (
-                                color = mixedCardNormalColor(),
+                                color = cardNormalColor(),
                                 modifier = Modifier
                                     .padding(2.5.dp)
                                     .containerShare(pRoute,)

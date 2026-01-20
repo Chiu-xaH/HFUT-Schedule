@@ -235,6 +235,7 @@ fun HazeBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         dragHandle = null,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = bottomSheetRound(sheetState, autoShape)
     ) {
         Column(modifier = Modifier.bottomSheetBlur(hazeState)){
@@ -257,6 +258,7 @@ fun CustomBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
+        containerColor = MaterialTheme.colorScheme.surface,
         shape = bottomSheetRound(sheetState, autoShape)
     ) {
         content()

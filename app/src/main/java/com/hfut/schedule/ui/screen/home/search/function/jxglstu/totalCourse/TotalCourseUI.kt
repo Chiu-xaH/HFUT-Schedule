@@ -62,7 +62,7 @@ import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.mixedCardNormalColor
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.input.CustomTextField
@@ -854,7 +854,7 @@ fun ClassmatesScreen(
                                 AssistChip(
                                     onClick = { input = item.second },
                                     border = null,
-                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
                                     label = { Text(item.second) },
                                     trailingIcon = {
                                         Text("x" + item.first.toString() )
@@ -872,7 +872,7 @@ fun ClassmatesScreen(
                                 AssistChip(
                                     onClick = { input = item.second },
                                     border = null,
-                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
                                     label = { Text(item.second) },
                                     trailingIcon = {
                                         Text("x" + item.first.toString() )
@@ -890,7 +890,7 @@ fun ClassmatesScreen(
                                 AssistChip(
                                     onClick = { input = item.second },
                                     border = null,
-                                    colors = AssistChipDefaults.assistChipColors(containerColor = mixedCardNormalColor()),
+                                    colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
                                     label = { Text(item.second) },
                                     trailingIcon = {
                                         Text("x" + item.first.toString() )
