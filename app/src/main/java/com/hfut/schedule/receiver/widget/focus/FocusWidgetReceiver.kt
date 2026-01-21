@@ -201,13 +201,13 @@ class FocusWidget : GlanceAppWidget() {
                     CourseType.COMMUNITY.code -> {
                         val weekDayTomorrow = DateTimeManager.dayWeek + 1
                         var weekdayToday = DateTimeManager.dayWeek
-                        var nextWeek = DateTimeManager.weeksBetween.toInt()
+                        var nextWeek = DateTimeManager.weeksBetweenJxglstu.toInt()
                         //当今天为周日时，变0为7
                         //当第二天为下一周的周一时，周数+1
                         when(weekDayTomorrow) { 1 -> nextWeek += 1 }
                         when (weekdayToday) { 0 -> weekdayToday = 7 }
                         //判断是否上完今天的课
-                        val week = DateTimeManager.weeksBetween.toInt()
+                        val week = DateTimeManager.weeksBetweenJxglstu.toInt()
                         todayCourseList = getCourseInfoFromCommunity(weekdayToday,week).flatten().distinct()
                         val lastCourse = todayCourseList.lastOrNull()
                         lastTime = lastCourse?.classTime?.substringAfter("-") ?: "00:00"

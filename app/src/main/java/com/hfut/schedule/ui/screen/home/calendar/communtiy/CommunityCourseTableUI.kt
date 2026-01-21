@@ -10,6 +10,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -27,26 +28,26 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.community.courseDetailDTOList
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetween
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
-import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableData
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getStartWeekFromCommunity
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
@@ -67,16 +68,34 @@ fun CommunityCourseTableUI(
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
+
     val context = LocalContext.current
     //切换周数
-    val initialWeek = if(weeksBetween > MyApplication.MAX_WEEK) {
-        getNewWeek()
-    } else if(weeksBetween < 1) {
-        onDateChange(getStartWeekFromCommunity())
-        1
-    } else weeksBetween
+//    val initialWeek =
+//        if(weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
+//        getNewWeek()
+//    } else
+//        if(weeksBetweenJxglstu < 1) {
+//        onDateChange(
+//            safelySetDate(termStartDate)
+//        )
+//        1
+//    } else weeksBetweenJxglstu
+    var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
+        // 只初始化一次
+        if(currentWeek > 1) {
+            return@LaunchedEffect
+        }
+        if(weeksBetweenJxglstu < 1) {
+            onDateChange(safelySetDate(termStartDate))
+            currentWeek = 1
+        } else {
+            currentWeek = weeksBetweenJxglstu
+        }
+    }
 
-    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
 
     val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
@@ -122,11 +141,13 @@ fun CommunityCourseTableUI(
             showToast("第${currentWeek}周")
         }
         override fun backToCurrentWeek() {
-            if(weeksBetween < 1) {
+            if(weeksBetweenJxglstu < 1) {
                 currentWeek = 1
-                onDateChange(getStartWeekFromCommunity())
+                onDateChange(
+                    safelySetDate(termStartDate)
+                )
             } else {
-                currentWeek = weeksBetween
+                currentWeek = weeksBetweenJxglstu
                 onDateChange(LocalDate.now())
             }
         }

@@ -1,8 +1,6 @@
 package com.hfut.schedule.logic.util.storage.kv
 
 import android.content.Context
-import android.net.Uri
-import androidx.compose.ui.unit.Dp
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -14,18 +12,17 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.storage.kv.IDataStore
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.materialkolor.PaletteStyle
 import com.xah.transition.style.TransitionLevel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -132,6 +129,7 @@ object DataStoreManager : IDataStore {
     private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
     private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
+    private val TERM_START_DATE = stringPreferencesKey("term_start_date")
     private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -190,6 +188,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
     suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
+    suspend fun saveTermStartDate(value: String) = saveValue(TERM_START_DATE,value)
     suspend fun saveUniAppJwt(value: String) = saveValue(UNI_APP_JWT,value)
 
 
@@ -242,6 +241,7 @@ object DataStoreManager : IDataStore {
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)
     private val hefeiElectric = getFlow(HEFEI_ELECTRIC,EMPTY_STRING)
+    val termStartDate = getFlow(TERM_START_DATE, getDefaultStartTerm())
     suspend fun getHefeiElectric(): HefeiElectricStorage? = withContext(Dispatchers.IO) {
         val hefeiBuildingNumber = hefeiBuildingNumber.first()
         val hefeiRoomNumber = hefeiRoomNumber.first()

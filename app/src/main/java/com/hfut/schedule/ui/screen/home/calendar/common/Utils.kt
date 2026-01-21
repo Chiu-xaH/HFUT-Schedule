@@ -1,7 +1,9 @@
 package com.hfut.schedule.ui.screen.home.calendar.common
 
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.uicommon.util.LogUtil
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -20,10 +22,10 @@ fun numToChinese(num : Int) : String {
 }
 
 // 传入YYYY-MM-DD 返回当前第几周周几
-fun dateToWeek(date : String) : Pair<Int,Int>? {
+suspend fun dateToWeek(date : String) : Pair<Int,Int>? {
     try {
         // 第一周的开始日期 为周一  LocalDate
-        val start = getJxglstuStartDate()
+        val start = LocalDate.parse(DataStoreManager.termStartDate.first(), DateTimeManager.formatter_YYYY_MM_DD)
         val target = LocalDate.parse(date)
 
         val days = ChronoUnit.DAYS.between(start, target)
@@ -41,11 +43,11 @@ fun dateToWeek(date : String) : Pair<Int,Int>? {
     }
 }
 // 反函数
-fun weekToDate(week : Int,weekday : Int) : String? {
+suspend fun weekToDate(week : Int,weekday : Int) : String? {
     try {
         if (week < 1 || weekday !in 1..7) return null
 
-        val start = getJxglstuStartDate()
+        val start = LocalDate.parse(DataStoreManager.termStartDate.first(), DateTimeManager.formatter_YYYY_MM_DD)
         val daysToAdd = (week - 1) * 7L + (weekday - 1)
         val target = start.plusDays(daysToAdd)
         return target.toString() // 返回 "YYYY-MM-DD"

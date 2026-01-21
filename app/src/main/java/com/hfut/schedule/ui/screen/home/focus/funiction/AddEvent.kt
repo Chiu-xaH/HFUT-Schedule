@@ -778,8 +778,13 @@ fun AddEventUI(
                 Spacer(Modifier.height(5.dp + CARD_NORMAL_DP))
                 CustomTextField(input = description, label = { Text("备注(可空 可填写网址,地点,位置等)") },singleLine = false) { description = it }
                 Spacer(Modifier.height(5.dp ))
-            val weekInfoStart = dateToWeek(date.first)
-            val weekInfoEnd = dateToWeek(date.second)
+            val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
+                value = dateToWeek(date.first)
+            }
+            val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = date) {
+                value = dateToWeek(date.second)
+            }
+//            val weekInfoEnd = dateToWeek(date.second)
 
 
             CustomCard(color = cardNormalColor()) {

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,6 +45,7 @@ import java.time.ZoneId
 fun DateRangePickerModal(
     isSchedule : Boolean = false,
     text : String = "截止",
+    allowSelectPrevious : Boolean = false,
     onSelected: (Pair<String, String>) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -67,14 +69,27 @@ fun DateRangePickerModal(
         }
     }
 
-    val weekInfoStart = startDateString?.let { dateToWeek(it) }
-    val weekInfoEnd = endDateString?.let { dateToWeek(it) }
-
+//    val weekInfoStart = startDateString?.let { dateToWeek(it) }
+//    val weekInfoEnd = endDateString?.let { dateToWeek(it) }
+    val weekInfoStart by produceState<Pair<Int, Int>?>(initialValue = null,key1 = startDateString) {
+        value = startDateString?.let { dateToWeek(it) }
+    }
+    val weekInfoEnd by produceState<Pair<Int, Int>?>(initialValue = null,key1 = endDateString) {
+        value = endDateString?.let { dateToWeek(it) }
+    }
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(
-                enabled = startDateString  != null && endDateString != null && endDate?.let { e -> startDate?.let { s -> s <= e } } == true,
+                enabled =
+                    startDateString  != null &&
+                    endDateString != null &&
+                    (
+                            if(allowSelectPrevious)
+                                true
+                            else
+                                endDate?.let { e -> startDate?.let { s -> s <= e } } == true
+                    ),
                 onClick = {
                     if(startDateString  != null && endDateString != null) {
                         onSelected(Pair(startDateString!!,endDateString!!))

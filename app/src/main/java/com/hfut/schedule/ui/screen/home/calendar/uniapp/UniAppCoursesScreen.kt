@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -24,11 +25,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -42,7 +44,8 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableD
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.mirror.util.ShaderState
@@ -66,6 +69,7 @@ fun UniAppCoursesScreen(
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
     val scrollState = rememberScrollState()
     var showBottomSheetDetail by remember { mutableStateOf(false) }
     var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
@@ -83,17 +87,36 @@ fun UniAppCoursesScreen(
         }
     }
 
+//
+//    val initialWeek =
+////        if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
+////        getNewWeek()
+////    } else
+//        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+//        onDateChange(
+//            safelySetDate(termStartDate)
+//        )
+//        1L
+//    } else {
+//        DateTimeManager.weeksBetweenJxglstu
+//    }
+//
+//    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
-    val initialWeek = if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-        getNewWeek()
-    } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
-        onDateChange(getJxglstuStartDate())
-        1L
-    } else {
-        DateTimeManager.weeksBetweenJxglstu
+    var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+
+    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
+        // 只初始化一次
+        if(currentWeek > 1) {
+            return@LaunchedEffect
+        }
+        if(weeksBetweenJxglstu < 1) {
+            onDateChange(safelySetDate(termStartDate))
+            currentWeek = 1
+        } else {
+            currentWeek = weeksBetweenJxglstu
+        }
     }
-
-    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
@@ -103,7 +126,7 @@ fun UniAppCoursesScreen(
         override fun backToCurrentWeek() {
             if(DateTimeManager.weeksBetweenJxglstu < 1) {
                 currentWeek = 1
-                onDateChange(getJxglstuStartDate())
+                onDateChange(safelySetDate(termStartDate))
             } else {
                 currentWeek = DateTimeManager.weeksBetweenJxglstu
                 onDateChange(LocalDate.now())

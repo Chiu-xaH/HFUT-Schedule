@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
@@ -22,7 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -60,7 +63,20 @@ fun AppTheme(
             isSystemInDarkTheme()
         }
     }
-
+    // View体系跟随App深浅色
+    LaunchedEffect(currentColorModeIndex) {
+        when(currentColorModeIndex) {
+            ColorMode.DARK.code -> {
+                setNightMode(context,ColorMode.DARK)
+            }
+            ColorMode.LIGHT.code -> {
+                setNightMode(context,ColorMode.LIGHT)
+            }
+            ColorMode.AUTO.code  -> {
+                setNightMode(context, ColorMode.AUTO)
+            }
+        }
+    }
     // OLED 纯黑
     val usePureBlack by DataStoreManager.enablePureDark.collectAsState(initial = false)
 
@@ -112,7 +128,7 @@ fun AppTheme(
         }
     }
 
-    val animatedColorScheme = animateColorScheme(colorScheme)
+    val animatedColorScheme = rememberAnimatedColorScheme(colorScheme)
 
     MaterialExpressiveTheme (
         colorScheme = animatedColorScheme,
@@ -122,59 +138,110 @@ fun AppTheme(
     TransparentSystemBars(isInDark)
 }
 
+/**
+ * 变色过渡
+ * @author Chiu-xaH
+ * @param target
+ * @param durationMillis 时长毫秒
+ * @param enableLowPerformance 启用低性能模式，只动态过度背景色surface与surfaceContainer,实测可以减少性能开销，但是效果变差
+ * @return androidx.compose.material3.ColorScheme
+ */
 @Composable
-fun animateColorScheme(
+fun rememberAnimatedColorScheme(
     target: ColorScheme,
+    durationMillis: Int = AppAnimationManager.ANIMATION_SPEED,
+    enableLowPerformance : Boolean = false
 ): ColorScheme {
     @Composable
     fun anim(color: Color) = animateColorAsState(
         targetValue = color,
         animationSpec = tween(
-            durationMillis = AppAnimationManager.ANIMATION_SPEED,
+            durationMillis = durationMillis,
             easing = FastOutSlowInEasing
         ),
         label = ""
     ).value
-
-    return ColorScheme(
-        primary = anim(target.primary),
-        onPrimary = anim(target.onPrimary),
-        primaryContainer = anim(target.primaryContainer),
-        onPrimaryContainer = anim(target.onPrimaryContainer),
-        inversePrimary = anim(target.inversePrimary),
-        secondary = anim(target.secondary),
-        onSecondary = anim(target.onSecondary),
-        secondaryContainer = anim(target.secondaryContainer),
-        onSecondaryContainer = anim(target.onSecondaryContainer),
-        tertiary = anim(target.tertiary),
-        onTertiary = anim(target.onTertiary),
-        tertiaryContainer = anim(target.tertiaryContainer),
-        onTertiaryContainer = anim(target.onTertiaryContainer),
-        background = anim(target.background),
-        onBackground = anim(target.onBackground),
-        surface = anim(target.surface),
-        onSurface = anim(target.onSurface),
-        surfaceVariant = anim(target.surfaceVariant),
-        onSurfaceVariant = anim(target.onSurfaceVariant),
-        surfaceTint = anim(target.surfaceTint),
-        inverseSurface = anim(target.inverseSurface),
-        inverseOnSurface = anim(target.inverseOnSurface),
-        error = anim(target.error),
-        onError = anim(target.onError),
-        errorContainer = anim(target.errorContainer),
-        onErrorContainer = anim(target.onErrorContainer),
-        outline = anim(target.outline),
-        outlineVariant = anim(target.outlineVariant),
-        scrim = anim(target.scrim),
-        surfaceBright = anim(target.surfaceBright),
-        surfaceDim = anim(target.surfaceDim),
-        surfaceContainer = anim(target.surfaceContainer),
-        surfaceContainerHigh = anim(target.surfaceContainerHigh),
-        surfaceContainerHighest = anim(target.surfaceContainerHighest),
-        surfaceContainerLow = anim(target.surfaceContainerLow),
-        surfaceContainerLowest = anim(target.surfaceContainerLowest)
-    )
+    return if(enableLowPerformance) {
+        ColorScheme(
+            primary = target.primary,
+            onPrimary = target.onPrimary,
+            primaryContainer = target.primaryContainer,
+            onPrimaryContainer = target.onPrimaryContainer,
+            inversePrimary = target.inversePrimary,
+            secondary = target.secondary,
+            onSecondary = target.onSecondary,
+            secondaryContainer = target.secondaryContainer,
+            onSecondaryContainer = target.onSecondaryContainer,
+            tertiary = target.tertiary,
+            onTertiary = target.onTertiary,
+            tertiaryContainer = target.tertiaryContainer,
+            onTertiaryContainer = target.onTertiaryContainer,
+            background = target.background,
+            onBackground = target.onBackground,
+            surface = anim(target.surface),
+            onSurface = target.onSurface,
+            surfaceVariant = target.surfaceVariant,
+            onSurfaceVariant = target.onSurfaceVariant,
+            surfaceTint = target.surfaceTint,
+            inverseSurface = target.inverseSurface,
+            inverseOnSurface = target.inverseOnSurface,
+            error = target.error,
+            onError = target.onError,
+            errorContainer = target.errorContainer,
+            onErrorContainer = target.onErrorContainer,
+            outline = target.outline,
+            outlineVariant = target.outlineVariant,
+            scrim = target.scrim,
+            surfaceBright = target.surfaceBright,
+            surfaceDim = target.surfaceDim,
+            surfaceContainer = anim(target.surfaceContainer),
+            surfaceContainerHigh = target.surfaceContainerHigh,
+            surfaceContainerHighest = target.surfaceContainerHighest,
+            surfaceContainerLow = target.surfaceContainerLow,
+            surfaceContainerLowest = target.surfaceContainerLowest
+        )
+    } else {
+        ColorScheme(
+            primary = anim(target.primary),
+            onPrimary = anim(target.onPrimary),
+            primaryContainer = anim(target.primaryContainer),
+            onPrimaryContainer = anim(target.onPrimaryContainer),
+            inversePrimary = anim(target.inversePrimary),
+            secondary = anim(target.secondary),
+            onSecondary = anim(target.onSecondary),
+            secondaryContainer = anim(target.secondaryContainer),
+            onSecondaryContainer = anim(target.onSecondaryContainer),
+            tertiary = anim(target.tertiary),
+            onTertiary = anim(target.onTertiary),
+            tertiaryContainer = anim(target.tertiaryContainer),
+            onTertiaryContainer = anim(target.onTertiaryContainer),
+            background = anim(target.background),
+            onBackground = anim(target.onBackground),
+            surface = anim(target.surface),
+            onSurface = anim(target.onSurface),
+            surfaceVariant = anim(target.surfaceVariant),
+            onSurfaceVariant = anim(target.onSurfaceVariant),
+            surfaceTint = anim(target.surfaceTint),
+            inverseSurface = anim(target.inverseSurface),
+            inverseOnSurface = anim(target.inverseOnSurface),
+            error = anim(target.error),
+            onError = anim(target.onError),
+            errorContainer = anim(target.errorContainer),
+            onErrorContainer = anim(target.onErrorContainer),
+            outline = anim(target.outline),
+            outlineVariant = anim(target.outlineVariant),
+            scrim = anim(target.scrim),
+            surfaceBright = anim(target.surfaceBright),
+            surfaceDim = anim(target.surfaceDim),
+            surfaceContainer = anim(target.surfaceContainer),
+            surfaceContainerHigh = anim(target.surfaceContainerHigh),
+            surfaceContainerHighest = anim(target.surfaceContainerHighest),
+            surfaceContainerLow = anim(target.surfaceContainerLow),
+            surfaceContainerLowest = anim(target.surfaceContainerLowest)
+        )
+    }
 }
+
 
 
 private val DarkColorScheme = darkColorScheme(

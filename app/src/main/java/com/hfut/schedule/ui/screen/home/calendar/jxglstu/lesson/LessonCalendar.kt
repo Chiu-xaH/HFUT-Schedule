@@ -57,6 +57,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -72,7 +73,8 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -258,20 +260,42 @@ fun JxglstuCourseTableSearch(
     val table = rememberSaveable { List(30) { mutableStateListOf<CardBean>() } }
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<CardBean>() } }
 
-    var currentWeek by rememberSaveable { mutableLongStateOf(
-        if(onDateChange == null) {
-            1L
-        } else {
-            if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-                getNewWeek()
-            } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                onDateChange(getJxglstuStartDate())
-                1L
-            } else {
-                DateTimeManager.weeksBetweenJxglstu
-            }
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
+//    var currentWeek by rememberSaveable { mutableLongStateOf(
+//        if(onDateChange == null) {
+//            1L
+//        } else {
+////            if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
+////                getNewWeek()
+////            } else
+//                if(DateTimeManager.weeksBetweenJxglstu < 1) {
+//                onDateChange(
+//                    safelySetDate(termStartDate)
+//                )
+//                1L
+//            } else {
+//                DateTimeManager.weeksBetweenJxglstu
+//            }
+//        }
+//    ) }
+    var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+
+    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
+        // 只初始化一次
+        if(currentWeek > 1) {
+            return@LaunchedEffect
         }
-    ) }
+        if(onDateChange == null) {
+            currentWeek = 1L
+        } else if(weeksBetweenJxglstu < 1) {
+            onDateChange(safelySetDate(termStartDate))
+            currentWeek = 1
+        } else {
+            currentWeek = weeksBetweenJxglstu
+        }
+    }
+
+
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
@@ -709,7 +733,9 @@ fun JxglstuCourseTableSearch(
             onClick = {
                 if(DateTimeManager.weeksBetweenJxglstu < 1) {
                     currentWeek = 1
-                    onDateChange?.let { it(getJxglstuStartDate()) }
+                    onDateChange?.let { it(
+                        safelySetDate(termStartDate)
+                    ) }
                 } else {
                     currentWeek = DateTimeManager.weeksBetweenJxglstu
                     onDateChange?.let { it(LocalDate.now()) }

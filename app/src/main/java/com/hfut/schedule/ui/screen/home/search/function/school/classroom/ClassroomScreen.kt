@@ -85,6 +85,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -120,7 +121,8 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuInt
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
@@ -213,7 +215,7 @@ fun ClassroomScreen(
 
     var showSelectDateDialog by remember { mutableStateOf(false) }
     if(showSelectDateDialog)
-        DateRangePickerModal(text = "",onSelected = { date = it.second }) { showSelectDateDialog = false }
+        DateRangePickerModal(text = "",onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
 
     CustomTransitionScaffold (
         route = route,
@@ -829,25 +831,44 @@ fun ClassroomLessonsScreen(
                 }
 
 
-                val initialWeek = if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-                    getNewWeek()
-                } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                    1L
-                } else {
-                    DateTimeManager.weeksBetweenJxglstu
-                }
+//                val initialWeek =
+//                    if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
+//                    getNewWeek()
+//                } else
+//                    if(DateTimeManager.weeksBetweenJxglstu < 1) {
+//                    1L
+//                } else {
+//                    DateTimeManager.weeksBetweenJxglstu
+//                }
+//
+//                var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
+                var currentWeek by rememberSaveable { mutableLongStateOf(1) }
 
-                var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
+                LaunchedEffect(weeksBetweenJxglstu) {
+                    // 只初始化一次
+                    if(currentWeek > 1) {
+                        return@LaunchedEffect
+                    }
+                    if(weeksBetweenJxglstu < 1) {
+//                        onDateChange(safelySetDate(termStartDate))
+                        currentWeek = 1
+                    } else {
+                        currentWeek = weeksBetweenJxglstu
+                    }
+                }
 
                 var totalDragX by remember { mutableFloatStateOf(0f) }
                 val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
                 var isExpand by remember { mutableStateOf(false) }
+                val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
 
                 val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
                     override fun backToCurrentWeek() {
                         if(DateTimeManager.weeksBetweenJxglstu < 1) {
                             currentWeek = 1
-                            today = getJxglstuStartDate()
+                            today = LocalDate.parse(
+                                termStartDate, DateTimeManager.formatter_YYYY_MM_DD
+                            )
                         } else {
                             currentWeek = DateTimeManager.weeksBetweenJxglstu
                             today = LocalDate.now()

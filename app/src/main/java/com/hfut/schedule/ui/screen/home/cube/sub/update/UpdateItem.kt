@@ -61,9 +61,13 @@ fun VersionInfo() {
             UpdateItems("新增 空教室点击方块支持查看详细信息")//
             UpdateItems("优化 成绩项目的显示效果","弱化挂科课程的显示、增加补考成绩的图标适配、对子成绩分条显示")//
             UpdateItems("修复 部分组件镜面效果的瑕疵Bug")//
+            UpdateItems("修复 指间工大课程表下侧按钮阴影Bug")//
+            UpdateItems("修复 学期切换后课程表顶部日期不变的Bug")
             UpdateItems("优化 成绩详情界面适配新转场动画")
             UpdateItems("新增 英文语言适配")
-            UpdateItems("移除 上推卡片(BottomSheet)的背景模糊","因某些原因暂时移除，后续恢复")//
+            UpdateItems("新增 自定义学期开始时间","重写学期开始时间的逻辑，现在可以自己自定义了")
+            UpdateItems("重构 多选一开关的样式")
+            UpdateItems("移除 上推卡片(BottomSheet)的背景模糊","考虑到可读性、全屏渲染时的性能开销、与某些新的逻辑出现配色冲突等因素，暂时移除，后续可能会恢复")//
             UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
             UpdateItems("修复 一键评教所有教师失败的Bug","可以用，但是教务系统的接口本身有反爬机制，一键评教速度太快了。尝试通过合工大教务的评教接口吧")//
             UpdateItems("优化 部分界面的显示")//

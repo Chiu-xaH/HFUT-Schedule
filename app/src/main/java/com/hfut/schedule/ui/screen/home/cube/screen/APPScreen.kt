@@ -52,16 +52,19 @@ import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.media.SimpleVideo
-import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
+import com.hfut.schedule.ui.component.media.SimpleVideo
+import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.Screen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.layout.SaveComposeAsImage
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.util.TransitionBackHandler
@@ -109,6 +112,21 @@ fun APPScreen(
         val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
         var showEnded by remember { mutableStateOf(switch_show_ended) }
         saveBoolean("SWITCHSHOWENDED",true,showEnded)
+        val defaultStartDate = remember { getDefaultStartTerm() }
+        val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = defaultStartDate)
+        var showSelectDateDialog by remember { mutableStateOf(false) }
+        if(showSelectDateDialog)
+            DateRangePickerModal(
+                text = "",
+                onSelected = {
+                    scope.launch {
+                        DataStoreManager.saveTermStartDate(it.second)
+                        DateTimeManager.updateWeeksBen()
+                    }
+                },
+                allowSelectPrevious = true
+            ) { showSelectDateDialog = false }
+
 
         saveBoolean("SWITCHFOCUS",true,showfocus)
         val scope = rememberCoroutineScope()
@@ -120,6 +138,8 @@ fun APPScreen(
         LaunchedEffect(maxFlow) {
             freeFeevalue = maxFlow.toFloat()
         }
+
+
         val video by produceState<String?>(initialValue = null) {
             scope.launch {
                 delay(AppAnimationManager.ANIMATION_SPEED*1L)
@@ -375,6 +395,42 @@ fun APPScreen(
                     }
                     Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 }
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "学期开始时间") },
+                    supportingContent = {
+                        Column {
+                            Text(text = termStartDate, fontWeight = FontWeight.Bold)
+                            Text(text = "每次刷新登录状态时会从教务系统拉取并刷新；点击自定义这个学期的开始时间，将会影响课程表的周数计算")
+                        }
+                    },
+                    leadingContent = {
+                        Icon(painterResource(R.drawable.start), contentDescription = "Localized description")
+                    },
+                    modifier = Modifier.clickable {
+                        showSelectDateDialog = true
+                    }
+                )
+                RowHorizontal {
+                    FilledTonalButton(
+                        onClick = {
+                            Starter.refreshLogin(context)
+                        }
+                    ) {
+                        Text("刷新登录状态")
+                    }
+                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                    FilledTonalButton(
+                        enabled = defaultStartDate != termStartDate,
+                        onClick = { scope.launch {
+                            DataStoreManager.saveTermStartDate(defaultStartDate)
+                            DateTimeManager.updateWeeksBen()
+                        } }
+                    ) {
+                        Text("恢复默认值")
+                    }
+                }
+                Spacer(Modifier.height(APP_HORIZONTAL_DP))
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(text = "默认日程账户") },

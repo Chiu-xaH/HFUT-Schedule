@@ -43,6 +43,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.isValidDateTime
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.updateStartDate
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ApplyGrade
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.ChangeMajorInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.GradeAndRank
@@ -546,8 +547,9 @@ object JxglstuRepository {
             transformSuccess = { _, json -> parseLessonIds(json) }
         )
     @JvmStatic
-    private fun parseLessonIds(json : String) : lessonResponse {
+    private suspend fun parseLessonIds(json : String) : lessonResponse {
         SharedPrefs.saveString("courses", json)
+        updateStartDate(json)
         try {
             return Gson().fromJson(json, lessonResponse::class.java)
         } catch (e : Exception) { throw e }

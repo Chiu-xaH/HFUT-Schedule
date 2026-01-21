@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -35,10 +36,12 @@ import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -55,8 +58,9 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableD
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getJxglstuStartDate
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
@@ -66,6 +70,7 @@ import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -140,6 +145,7 @@ fun JxglstuCourseTableUI(
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
@@ -174,16 +180,35 @@ fun JxglstuCourseTableUI(
 
     var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
 
-    val initialWeek = if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-        getNewWeek()
-    } else if(DateTimeManager.weeksBetweenJxglstu < 1) {
-        onDateChange(getJxglstuStartDate())
-        1L
-    } else {
-        DateTimeManager.weeksBetweenJxglstu
+//    val initialWeek =
+////        if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
+////        getNewWeek()
+////    } else
+//        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+//        onDateChange(
+//            safelySetDate(termStartDate)
+//        )
+//        1L
+//    } else {
+//        DateTimeManager.weeksBetweenJxglstu
+//    }
+
+    var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+
+    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
+        // 只初始化一次
+        if(currentWeek > 1) {
+            return@LaunchedEffect
+        }
+        if(weeksBetweenJxglstu < 1) {
+            onDateChange(safelySetDate(termStartDate))
+            currentWeek = 1
+        } else {
+            currentWeek = weeksBetweenJxglstu
+        }
     }
 
-    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
+//    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
@@ -422,7 +447,9 @@ fun JxglstuCourseTableUI(
         override fun backToCurrentWeek() {
             if(DateTimeManager.weeksBetweenJxglstu < 1) {
                 currentWeek = 1
-                onDateChange(getJxglstuStartDate())
+                onDateChange(
+                    safelySetDate(termStartDate)
+                )
             } else {
                 currentWeek = DateTimeManager.weeksBetweenJxglstu
                 onDateChange(LocalDate.now())

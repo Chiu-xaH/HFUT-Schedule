@@ -1,5 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.google.gson.Gson
 import com.hfut.schedule.logic.model.community.CourseResult
 import com.hfut.schedule.logic.model.community.CourseTotalResponse
@@ -7,11 +9,17 @@ import com.hfut.schedule.logic.model.community.courseBasicInfoDTOList
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
+import com.hfut.schedule.logic.network.util.MyApiParse
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.formatter_YYYY_MM_DD
 import com.xah.uicommon.util.LogUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 
 private fun parseDatumCourse(result: String) : List<lessons> = try {
@@ -21,16 +29,37 @@ private fun parseDatumCourse(result: String) : List<lessons> = try {
     emptyList<lessons>()
 }
 
+fun getDefaultStartTerm() =  MyApiParse.getMy()?.startDay ?: getStartWeekFromCommunity()
 
-fun getJxglstuStartDate(): LocalDate {
-    try {
-        val list = parseDatumCourse(prefs.getString("courses","")!!)
-        return LocalDate.parse(list[0].semester.startDate, formatter_YYYY_MM_DD)
+
+
+fun safelySetDate(
+    termStartDate : String
+): LocalDate {
+    LogUtil.info(
+        termStartDate.toString()
+    )
+    return try {
+        LocalDate.parse(
+            termStartDate, formatter_YYYY_MM_DD
+        )
+
     } catch (e : Exception) {
         LogUtil.error(e)
-        return getStartWeekFromCommunity()
+        LocalDate.now()
     }
 }
+
+suspend fun updateStartDate(json : String) {
+    try {
+        val list = parseDatumCourse(json)
+        DataStoreManager.saveTermStartDate(list[0].semester.startDate)
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        DataStoreManager.saveTermStartDate(getStartWeekFromCommunity())
+    }
+}
+
 
 
 // 之前的奇葩脑回路，完全看不懂咋写的
@@ -95,10 +124,10 @@ fun getFormCommunity(friendUserName : String? = null): CourseResult? {
 }
 
 
-fun getStartWeekFromCommunity() : LocalDate {
+private fun getStartWeekFromCommunity() : String {
     try {
         val start = getFormCommunity()!!.start.substringBefore(" ")
-        return LocalDate.parse(start)
+        return start
     } catch (e : Exception) {
         var start = getMy()?.startDay
         if(start == null) {
@@ -111,6 +140,6 @@ fun getStartWeekFromCommunity() : LocalDate {
             }
         }
         LogUtil.error(e)
-        return LocalDate.parse(start)
+        return start
     }
 }
