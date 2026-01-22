@@ -145,7 +145,6 @@ fun JxglstuCourseTableUI(
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
-    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
@@ -180,35 +179,68 @@ fun JxglstuCourseTableUI(
 
     var loadingJxglstu by rememberSaveable { mutableStateOf(refreshLogin) }
 
-//    val initialWeek =
-////        if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-////        getNewWeek()
-////    } else
-//        if(DateTimeManager.weeksBetweenJxglstu < 1) {
-//        onDateChange(
-//            safelySetDate(termStartDate)
-//        )
-//        1L
-//    } else {
-//        DateTimeManager.weeksBetweenJxglstu
-//    }
-
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+    // 记录上一次的学期开始时间
+    var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
-        // 只初始化一次
-        if(currentWeek > 1) {
-            return@LaunchedEffect
+    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+        override fun backToCurrentWeek() {
+            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                if(termStartDate == null) {
+                    return
+                }
+                currentWeek = 1
+                onDateChange(
+                    safelySetDate(termStartDate!!)
+                )
+            } else {
+                currentWeek = DateTimeManager.weeksBetweenJxglstu
+                onDateChange(LocalDate.now())
+            }
         }
-        if(weeksBetweenJxglstu < 1) {
-            onDateChange(safelySetDate(termStartDate))
-            currentWeek = 1
-        } else {
-            currentWeek = weeksBetweenJxglstu
+
+        override fun goToWeek(i: Long) {
+            if(currentWeek == i) {
+                return
+            }
+            if (i in 1..MyApplication.MAX_WEEK) {
+                val day = 7L*(i - currentWeek)
+                onDateChange(today.plusDays(day))
+                currentWeek = i
+            }
+            showToast("第${currentWeek}周")
+        }
+
+        override fun nextWeek() {
+            if (currentWeek < MyApplication.MAX_WEEK) {
+                onDateChange(today.plusDays(7))
+                currentWeek++
+            }
+        }
+
+        override fun previousWeek() {
+            if (currentWeek > 1) {
+                onDateChange(today.minusDays(7))
+                currentWeek--
+            }
+        }
+    } }
+
+    /**
+     * 用户修改学期开始时间  termStartDate变化且不为空  ----->   重新初始化currentWeek
+     * 第一次启动     ----->   初始化currentWeek    后续开关界面不要初始化（rememberSaveable）
+     */
+    LaunchedEffect(termStartDate) {
+        val start = termStartDate ?: return@LaunchedEffect
+
+        // 冷启动 or 用户修改学期开始时间
+        if (lastTermStartDate != start) {
+            LogUtil.debug("重新初始化currentWeek")
+            weekSwap.backToCurrentWeek()
+            lastTermStartDate = start
         }
     }
-
-//    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
     if(refreshLogin) {
         val casCookies = CasInHFUT.casCookies
@@ -443,45 +475,6 @@ fun JxglstuCourseTableUI(
     val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
     var isExpand by remember { mutableStateOf(false) }
 
-    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
-        override fun backToCurrentWeek() {
-            if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                currentWeek = 1
-                onDateChange(
-                    safelySetDate(termStartDate)
-                )
-            } else {
-                currentWeek = DateTimeManager.weeksBetweenJxglstu
-                onDateChange(LocalDate.now())
-            }
-        }
-
-        override fun goToWeek(i: Long) {
-            if(currentWeek == i) {
-                return
-            }
-            if (i in 1..MyApplication.MAX_WEEK) {
-                val day = 7L*(i - currentWeek)
-                onDateChange(today.plusDays(day))
-                currentWeek = i
-            }
-            showToast("第${currentWeek}周")
-        }
-
-        override fun nextWeek() {
-            if (currentWeek < MyApplication.MAX_WEEK) {
-                onDateChange(today.plusDays(7))
-                currentWeek++
-            }
-        }
-
-        override fun previousWeek() {
-            if (currentWeek > 1) {
-                onDateChange(today.minusDays(7))
-                currentWeek--
-            }
-        }
-    } }
 
     if(loadingJxglstu) {
         CenterScreen {

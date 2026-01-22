@@ -58,12 +58,14 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
+import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
@@ -260,41 +262,66 @@ fun JxglstuCourseTableSearch(
     val table = rememberSaveable { List(30) { mutableStateListOf<CardBean>() } }
     val tableAll = rememberSaveable { List(42) { mutableStateListOf<CardBean>() } }
 
-    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
-//    var currentWeek by rememberSaveable { mutableLongStateOf(
-//        if(onDateChange == null) {
-//            1L
-//        } else {
-////            if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-////                getNewWeek()
-////            } else
-//                if(DateTimeManager.weeksBetweenJxglstu < 1) {
-//                onDateChange(
-//                    safelySetDate(termStartDate)
-//                )
-//                1L
-//            } else {
-//                DateTimeManager.weeksBetweenJxglstu
-//            }
-//        }
-//    ) }
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+    // 记录上一次的学期开始时间
+    var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
-        // 只初始化一次
-        if(currentWeek > 1) {
-            return@LaunchedEffect
+    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+        override fun backToCurrentWeek() {
+            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                if(termStartDate == null) {
+                    return
+                }
+                currentWeek = 1
+                onDateChange?.let { it(safelySetDate(termStartDate!!)) }
+            } else {
+                currentWeek = DateTimeManager.weeksBetweenJxglstu
+                onDateChange?.let { it(LocalDate.now()) }
+            }
         }
-        if(onDateChange == null) {
-            currentWeek = 1L
-        } else if(weeksBetweenJxglstu < 1) {
-            onDateChange(safelySetDate(termStartDate))
-            currentWeek = 1
-        } else {
-            currentWeek = weeksBetweenJxglstu
+
+        override fun goToWeek(i: Long) {
+            if(currentWeek == i) {
+                return
+            }
+            if (i in 1..MyApplication.MAX_WEEK) {
+                val day = 7L*(i - currentWeek)
+                today?.let { onDateChange?.let { it1 -> it1(it.plusDays(day)) } }
+                currentWeek = i
+            }
+            showToast("第${currentWeek}周")
+        }
+
+        override fun nextWeek() {
+            if (currentWeek < MyApplication.MAX_WEEK) {
+                onDateChange?.let { today?.let { it1 -> it(it1.plusDays(7)) } }
+                currentWeek++
+            }
+        }
+
+        override fun previousWeek() {
+            if (currentWeek > 1) {
+                onDateChange?.let { today?.let { it1 -> it(it1.minusDays(7)) } }
+                currentWeek--
+            }
+        }
+    } }
+
+    /**
+     * 用户修改学期开始时间  termStartDate变化且不为空  ----->   重新初始化currentWeek
+     * 第一次启动     ----->   初始化currentWeek    后续开关界面不要初始化（rememberSaveable）
+     */
+    LaunchedEffect(termStartDate) {
+        val start = termStartDate ?: return@LaunchedEffect
+
+        // 冷启动 or 用户修改学期开始时间
+        if (lastTermStartDate != start) {
+            LogUtil.debug("重新初始化currentWeek")
+            weekSwap.backToCurrentWeek()
+            lastTermStartDate = start
         }
     }
-
 
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
@@ -566,18 +593,18 @@ fun JxglstuCourseTableSearch(
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
 
-    fun nextWeek() {
-        if (currentWeek < MyApplication.MAX_WEEK) {
-            onDateChange?.let { today?.let { it1 -> it(it1.plusDays(7)) } }
-            currentWeek++
-        }
-    }
-    fun previousWeek() {
-        if (currentWeek > 1) {
-            onDateChange?.let { today?.let { it1 -> it(it1.minusDays(7)) } }
-            currentWeek--
-        }
-    }
+//    fun nextWeek() {
+//        if (currentWeek < MyApplication.MAX_WEEK) {
+//            onDateChange?.let { today?.let { it1 -> it(it1.plusDays(7)) } }
+//            currentWeek++
+//        }
+//    }
+//    fun previousWeek() {
+//        if (currentWeek > 1) {
+//            onDateChange?.let { today?.let { it1 -> it(it1.minusDays(7)) } }
+//            currentWeek--
+//        }
+//    }
 
     Box(modifier = Modifier
         .fillMaxHeight()
@@ -586,9 +613,9 @@ fun JxglstuCourseTableSearch(
                 onDragEnd = {
                     // 手指松开后根据累积的水平拖动量决定
                     if (totalDragX > MyApplication.SWIPE) { // 阈值
-                        previousWeek()
+                        weekSwap.previousWeek()
                     } else if (totalDragX < -MyApplication.SWIPE) {
-                        nextWeek()
+                        weekSwap.nextWeek()
                     }
                     totalDragX = 0f // 重置
                 },
@@ -731,20 +758,12 @@ fun JxglstuCourseTableSearch(
                 ),
             expanded = shouldShowAddButton,
             onClick = {
-                if(DateTimeManager.weeksBetweenJxglstu < 1) {
-                    currentWeek = 1
-                    onDateChange?.let { it(
-                        safelySetDate(termStartDate)
-                    ) }
-                } else {
-                    currentWeek = DateTimeManager.weeksBetweenJxglstu
-                    onDateChange?.let { it(LocalDate.now()) }
-                }
+                weekSwap.backToCurrentWeek()
             },
             currentWeek = currentWeek,
             key = today,
-            onNext = { nextWeek() },
-            onPrevious = { previousWeek() }
+            onNext = { weekSwap.nextWeek() },
+            onPrevious = { weekSwap.previousWeek() }
         )
     }
 }

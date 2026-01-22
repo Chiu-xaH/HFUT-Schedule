@@ -39,6 +39,8 @@ import kotlin.math.roundToInt
 private val padding = 4.dp
 private const val columnCount = 4
 private const val endCourseTime = "21:50"
+private val itemWidth = 90.dp
+private val itemHeight = 160.dp
 
 @Composable
 fun TimeTablePreview(
@@ -47,6 +49,7 @@ fun TimeTablePreview(
     innerPadding : PaddingValues,
     onItemClick : (Int) -> Unit,
 ) {
+
     BackHandler {
         onItemClick(currentWeek)
     }
@@ -58,6 +61,7 @@ fun TimeTablePreview(
     ) {
         LazyVerticalGrid(
             modifier = Modifier.padding(padding),
+//            columns = GridCells.Adaptive(minSize = itemWidth),
             columns = GridCells.Fixed(columnCount),
             horizontalArrangement = Arrangement.spacedBy(padding),
             verticalArrangement = Arrangement.spacedBy(padding)
@@ -71,8 +75,8 @@ fun TimeTablePreview(
                         items = list,
                         endTime = parseTimeToFloat(endCourseTime),
                         modifier = Modifier
-                            .height(160.dp)
-                            .width(90.dp)
+                            .height(itemHeight)
+                            .width(itemWidth)
                             .border(
                                 1.dp,
                                 if (isCurrentWeek) MaterialTheme.colorScheme.primary else DividerDefaults.color,

@@ -51,6 +51,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -68,53 +69,10 @@ fun CommunityCourseTableUI(
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
-    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
-
-    val context = LocalContext.current
-    //切换周数
-//    val initialWeek =
-//        if(weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-//        getNewWeek()
-//    } else
-//        if(weeksBetweenJxglstu < 1) {
-//        onDateChange(
-//            safelySetDate(termStartDate)
-//        )
-//        1
-//    } else weeksBetweenJxglstu
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
-    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
-        // 只初始化一次
-        if(currentWeek > 1) {
-            return@LaunchedEffect
-        }
-        if(weeksBetweenJxglstu < 1) {
-            onDateChange(safelySetDate(termStartDate))
-            currentWeek = 1
-        } else {
-            currentWeek = weeksBetweenJxglstu
-        }
-    }
-
-
-
-    val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
-        value = allToTimeTableData(friendUserName)
-    }
-
-    LaunchedEffect(currentWeek,items) {
-        if(currentWeek > items.size) {
-            Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
-            return@LaunchedEffect
-        } else {
-            val list = items[currentWeek.toInt()-1]
-            val weekend = list.find { it.dayOfWeek == 6 || it.dayOfWeek == 7 } != null
-            if(weekend && !showAll) {
-                // 展开
-                onSwapShowAll(true)
-            }
-        }
-    }
+    // 记录上一次的学期开始时间
+    var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun nextWeek() {
@@ -142,9 +100,12 @@ fun CommunityCourseTableUI(
         }
         override fun backToCurrentWeek() {
             if(weeksBetweenJxglstu < 1) {
+                if(termStartDate == null) {
+                    return
+                }
                 currentWeek = 1
                 onDateChange(
-                    safelySetDate(termStartDate)
+                    safelySetDate(termStartDate!!)
                 )
             } else {
                 currentWeek = weeksBetweenJxglstu
@@ -152,6 +113,42 @@ fun CommunityCourseTableUI(
             }
         }
     } }
+
+    /**
+     * 用户修改学期开始时间  termStartDate变化且不为空  ----->   重新初始化currentWeek
+     * 第一次启动     ----->   初始化currentWeek    后续开关界面不要初始化（rememberSaveable）
+     */
+    LaunchedEffect(termStartDate) {
+        val start = termStartDate ?: return@LaunchedEffect
+
+        // 冷启动 or 用户修改学期开始时间
+        if (lastTermStartDate != start) {
+            LogUtil.debug("重新初始化currentWeek")
+            weekSwap.backToCurrentWeek()
+            lastTermStartDate = start
+        }
+    }
+
+
+
+    val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
+        value = allToTimeTableData(friendUserName)
+    }
+
+    LaunchedEffect(currentWeek,items) {
+        if(currentWeek > items.size) {
+            Exception("LaunchedEffect received week out of bounds for length ${items.size} of items[${currentWeek-1}]").printStackTrace()
+            return@LaunchedEffect
+        } else {
+            val list = items[currentWeek.toInt()-1]
+            val weekend = list.find { it.dayOfWeek == 6 || it.dayOfWeek == 7 } != null
+            if(weekend && !showAll) {
+                // 展开
+                onSwapShowAll(true)
+            }
+        }
+    }
+
 
 
     var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }

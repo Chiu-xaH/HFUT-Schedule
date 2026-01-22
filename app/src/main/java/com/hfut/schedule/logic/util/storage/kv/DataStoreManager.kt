@@ -75,7 +75,7 @@ object DataStoreManager : IDataStore {
     )
 
     enum class ShowTeacherConfig(val code : Int,val description: String) {
-        ONLY_MULTI(0,"只对多老师的课程显示"),ALL(1,"全部显示"),NONE(2,"不显示")
+        ONLY_MULTI(0,"仅多教师课程显示"),ALL(1,"全部显示"),NONE(2,"不显示")
     }
 
 
@@ -188,7 +188,10 @@ object DataStoreManager : IDataStore {
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
     suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
-    suspend fun saveTermStartDate(value: String) = saveValue(TERM_START_DATE,value)
+    suspend fun saveTermStartDate(value: String)  {
+        saveValue(TERM_START_DATE, value)
+        DateTimeManager.updateWeeksBen()
+    }
     suspend fun saveUniAppJwt(value: String) = saveValue(UNI_APP_JWT,value)
 
 

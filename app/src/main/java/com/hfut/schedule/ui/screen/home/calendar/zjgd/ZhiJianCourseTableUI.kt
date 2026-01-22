@@ -70,6 +70,7 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.getMondayOfWeek
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -82,6 +83,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
@@ -118,7 +120,6 @@ fun ZhiJianCourseTableUI(
     hazeState: HazeState,
     onSwapShowAll : (Boolean) -> Unit
 ) {
-    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
     val uiState by vm.zhiJianCourseResp.state.collectAsState()
     val table = remember { List(30) { mutableStateListOf<ZhiJianCourseItemDto>() } }
     val tableAll = remember { List(42) { mutableStateListOf<ZhiJianCourseItemDto>() } }
@@ -132,36 +133,68 @@ fun ZhiJianCourseTableUI(
         vm.getZhiJianCourses(studentId,date,token)
     }
 
-//    var currentWeek by rememberSaveable {
-//        mutableLongStateOf(
-////            if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-////                getNewWeek()
-////            } else
-//                if(DateTimeManager.weeksBetweenJxglstu < 1) {
-//                onDateChange(
-//                    safelySetDate(termStartDate)
-//                )
-//                1L
-//            } else {
-//                DateTimeManager.weeksBetweenJxglstu
-//            }
-//        )
-//    }
 
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+    // 记录上一次的学期开始时间
+    var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
-        // 只初始化一次
-        if(currentWeek > 1) {
-            return@LaunchedEffect
+    val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
+        override fun backToCurrentWeek() {
+            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                if(termStartDate == null) {
+                    return
+                }
+                currentWeek = 1
+                onDateChange(safelySetDate(termStartDate!!))
+            } else {
+                currentWeek = DateTimeManager.weeksBetweenJxglstu
+                onDateChange(LocalDate.now())
+            }
         }
-        if(weeksBetweenJxglstu < 1) {
-            onDateChange(safelySetDate(termStartDate))
-            currentWeek = 1
-        } else {
-            currentWeek = weeksBetweenJxglstu
+
+        override fun goToWeek(i: Long) {
+            if(currentWeek == i) {
+                return
+            }
+            if (i in 1..MyApplication.MAX_WEEK) {
+                val day = 7L*(i - currentWeek)
+                onDateChange(today.plusDays(day))
+                currentWeek = i
+            }
+            showToast("第${currentWeek}周")
+        }
+
+        override fun nextWeek() {
+            if (currentWeek < MyApplication.MAX_WEEK) {
+                onDateChange(today.plusDays(7))
+                currentWeek++
+            }
+        }
+
+        override fun previousWeek() {
+            if (currentWeek > 1) {
+                onDateChange(today.minusDays(7))
+                currentWeek--
+            }
+        }
+    } }
+
+    /**
+     * 用户修改学期开始时间  termStartDate变化且不为空  ----->   重新初始化currentWeek
+     * 第一次启动     ----->   初始化currentWeek    后续开关界面不要初始化（rememberSaveable）
+     */
+    LaunchedEffect(termStartDate) {
+        val start = termStartDate ?: return@LaunchedEffect
+
+        // 冷启动 or 用户修改学期开始时间
+        if (lastTermStartDate != start) {
+            LogUtil.debug("重新初始化currentWeek")
+            weekSwap.backToCurrentWeek()
+            lastTermStartDate = start
         }
     }
+
 
     LaunchedEffect(currentWeek,studentId) {
         if(studentId.length != 10) {
@@ -616,10 +649,7 @@ fun ZhiJianCourseTableUI(
                 FloatingActionButton(
                     elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                     onClick = {
-                        if (currentWeek > 1) {
-                            currentWeek-- - 1
-                            onDateChange(today.minusDays(7))
-                        }
+                        weekSwap.previousWeek()
                     },
                 ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
             }
@@ -636,15 +666,7 @@ fun ZhiJianCourseTableUI(
                 ExtendedFloatingActionButton(
                     elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                     onClick = {
-                        if (DateTimeManager.weeksBetweenJxglstu < 1) {
-                            currentWeek = 1
-                            onDateChange(
-                                safelySetDate(termStartDate)
-                            )
-                        } else {
-                            currentWeek = DateTimeManager.weeksBetweenJxglstu
-                            onDateChange(LocalDate.now())
-                        }
+                        weekSwap.backToCurrentWeek()
                     },
                 ) {
                     AnimatedContent(
@@ -672,10 +694,7 @@ fun ZhiJianCourseTableUI(
                 FloatingActionButton(
                     elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                     onClick = {
-                        if (currentWeek < MyApplication.MAX_WEEK) {
-                            currentWeek++ + 1
-                            onDateChange(today.plusDays(7))
-                        }
+                        weekSwap.nextWeek()
                     },
                 ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
             }

@@ -236,10 +236,11 @@ fun MainScreen(
     //判定是否以聚焦作为第一页
     val first  by rememberSaveable { mutableStateOf(
         if(isLogin) COURSES
-        else when (prefs.getBoolean("SWITCHFOCUS",true)) {
-            true -> FOCUS
-            false -> COURSES
-        }
+        else FOCUS
+//            when (prefs.getBoolean("SWITCHFOCUS",true)) {
+//            true -> FOCUS
+//            false -> COURSES
+//        }
     ) }
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         COURSES.name -> COURSES

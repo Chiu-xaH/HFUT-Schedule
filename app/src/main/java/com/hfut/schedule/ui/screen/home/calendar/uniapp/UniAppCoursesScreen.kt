@@ -36,7 +36,6 @@ import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
@@ -51,6 +50,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.mirror.util.ShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import java.time.LocalDate
 
@@ -69,7 +69,6 @@ fun UniAppCoursesScreen(
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
-    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
     val scrollState = rememberScrollState()
     var showBottomSheetDetail by remember { mutableStateOf(false) }
     var bean by remember { mutableStateOf<List<TimeTableItem>?>(null) }
@@ -87,46 +86,20 @@ fun UniAppCoursesScreen(
         }
     }
 
-//
-//    val initialWeek =
-////        if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-////        getNewWeek()
-////    } else
-//        if(DateTimeManager.weeksBetweenJxglstu < 1) {
-//        onDateChange(
-//            safelySetDate(termStartDate)
-//        )
-//        1L
-//    } else {
-//        DateTimeManager.weeksBetweenJxglstu
-//    }
-//
-//    var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
 
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
     var currentWeek by rememberSaveable { mutableLongStateOf(1) }
-
-    LaunchedEffect(weeksBetweenJxglstu,termStartDate) {
-        // 只初始化一次
-        if(currentWeek > 1) {
-            return@LaunchedEffect
-        }
-        if(weeksBetweenJxglstu < 1) {
-            onDateChange(safelySetDate(termStartDate))
-            currentWeek = 1
-        } else {
-            currentWeek = weeksBetweenJxglstu
-        }
-    }
-
-    var totalDragX by remember { mutableFloatStateOf(0f) }
-    val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-    var isExpand by remember { mutableStateOf(false) }
+    // 记录上一次的学期开始时间
+    var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
             if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                if(termStartDate == null) {
+                    return
+                }
                 currentWeek = 1
-                onDateChange(safelySetDate(termStartDate))
+                onDateChange(safelySetDate(termStartDate!!))
             } else {
                 currentWeek = DateTimeManager.weeksBetweenJxglstu
                 onDateChange(LocalDate.now())
@@ -159,6 +132,27 @@ fun UniAppCoursesScreen(
             }
         }
     } }
+
+    /**
+     * 用户修改学期开始时间  termStartDate变化且不为空  ----->   重新初始化currentWeek
+     * 第一次启动     ----->   初始化currentWeek    后续开关界面不要初始化（rememberSaveable）
+     */
+    LaunchedEffect(termStartDate) {
+        val start = termStartDate ?: return@LaunchedEffect
+
+        // 冷启动 or 用户修改学期开始时间
+        if (lastTermStartDate != start) {
+            LogUtil.debug("重新初始化currentWeek")
+            weekSwap.backToCurrentWeek()
+            lastTermStartDate = start
+        }
+    }
+
+    var totalDragX by remember { mutableFloatStateOf(0f) }
+    val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
+    var isExpand by remember { mutableStateOf(false) }
+
+
     val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
         value = allToTimeTableDataUniApp()
     }

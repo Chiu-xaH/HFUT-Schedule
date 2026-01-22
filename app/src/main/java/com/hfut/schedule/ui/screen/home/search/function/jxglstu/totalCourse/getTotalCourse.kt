@@ -36,9 +36,6 @@ fun getDefaultStartTerm() =  MyApiParse.getMy()?.startDay ?: getStartWeekFromCom
 fun safelySetDate(
     termStartDate : String
 ): LocalDate {
-    LogUtil.info(
-        termStartDate.toString()
-    )
     return try {
         LocalDate.parse(
             termStartDate, formatter_YYYY_MM_DD
