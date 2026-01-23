@@ -13,6 +13,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
+import com.hfut.schedule.ui.screen.home.calendar.common.autoCalculateAndUpdateTermStartDate
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
 import com.hfut.schedule.ui.screen.home.calendar.common.examToCalendar
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
@@ -82,6 +83,7 @@ suspend fun allToTimeTableData(): List<List<TimeTableItem>> = withContext(Dispat
 private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
     val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+    var tag = false
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
         val list = Gson().fromJson(json, UniAppCoursesResponse::class.java).data
@@ -91,6 +93,10 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
             val multiTeacher = item.teacherAssignmentList.size > 1
             for(schedule in item.schedules) {
                 val list = result[schedule.weekIndex-1]
+                if(!tag) {
+                    autoCalculateAndUpdateTermStartDate(schedule.weekIndex,schedule.weekday,schedule.date)
+                    tag = true
+                }
                 val teacher = when(enableCalendarShowTeacher) {
                     ShowTeacherConfig.ALL.code -> schedule.teacherName
                     ShowTeacherConfig.ONLY_MULTI.code -> {
@@ -127,6 +133,7 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
 private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
     val json = LargeStringDataManager.read(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()))
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+    var tag = false
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
 
@@ -144,6 +151,10 @@ private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
 
         for(item in scheduleList) {
             val list = result[item.weekIndex-1]
+            if(!tag) {
+                autoCalculateAndUpdateTermStartDate(item.weekIndex,item.weekday,item.date)
+                tag = true
+            }
             val teacher = when(enableCalendarShowTeacher) {
                 ShowTeacherConfig.ALL.code -> item.personName
                 ShowTeacherConfig.ONLY_MULTI.code -> {

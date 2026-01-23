@@ -176,16 +176,12 @@ fun JxglstuCourseTableTwo(
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
                 LargeStringDataManager.read(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()))?.let { value = JxglstuRepository.parseDatumCourse(it) }
-//                prefs.getString("courses","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
             TotalCourseDataSource.SEARCH -> {
                 onListenStateHolder(vm.courseSearchResponse) { data ->
                     value = data
                 }
             }
-//            TotalCourseDataSource.MINE_NEXT -> {
-//                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
-//            }
         }
     }
 
@@ -264,7 +260,7 @@ fun JxglstuCourseTableSearch(
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+            if(DateTimeManager.weeksBetweenJxglstu < 1 || DateTimeManager.weeksBetweenJxglstu > 20) {
                 if(termStartDate == null) {
                     return
                 }
@@ -330,7 +326,6 @@ fun JxglstuCourseTableSearch(
             clearUnit(table)
         }
         findNewCourse = false
-
         try {
             // 组装
             for(i in list.indices) {
@@ -576,7 +571,7 @@ fun JxglstuCourseTableSearch(
         }
     }
 
-    LaunchedEffect(showAll,currentWeek) {
+    LaunchedEffect(showAll,currentWeek,list) {
         refreshUI()
     }
     LaunchedEffect(findNewCourse) {

@@ -170,7 +170,15 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
     }
     object DormitoryScore : AppNavRoute("DORMITORY_SCORE","寝室",R.drawable.bed)
     object Notifications : AppNavRoute("NOTIFICATIONS","消息中心",R.drawable.notifications)
-    object Survey : AppNavRoute("SURVEY","评教",R.drawable.verified)
+    object Survey : AppNavRoute("SURVEY","评教",R.drawable.verified) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any,override val isNullable: Boolean) : NavArg {
+            IF_SAVED("ifSaved", NavType.BoolType,true,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(ifSaved: Boolean): String = withArgs(
+            Args.IF_SAVED.argName to ifSaved
+        )
+    }
     object WebView : AppNavRoute("WEB_VIEW","网页",R.drawable.net) {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any?,override val isNullable: Boolean) : NavArg {
             URL("url", NavType.StringType,"",false),

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.uniapp.UniAppSchedule
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -44,6 +45,7 @@ private fun VersionInfoCard() {
 }
 
 
+
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
@@ -54,6 +56,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
+
+
             UpdateItems("重构 消息中心","新增 已读机制")
             UpdateItems("重构 成绩详情界面适配新转场动画")//
 
@@ -67,6 +71,7 @@ fun VersionInfo() {
             UpdateItems("修复 指间工大课程表下侧按钮阴影异常显示的Bug")//
             UpdateItems("修复 学期切换后课程表顶部日期不变的Bug")//
             UpdateItems("修复 一键评教所有教师失败的Bug")//
+            UpdateItems("修复 教务备用课程表首次进入无数据的Bug")//
 
             UpdateItems("优化 冷启动的速度")//
             UpdateItems("优化 选项-应用与配置 中的归类")//

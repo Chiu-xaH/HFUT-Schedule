@@ -645,9 +645,20 @@ fun MainHost(
                     TransferScreen(networkVm,navController )
                 }
                 // 评教
-                transitionComposable(route = AppNavRoute.Survey.route) {
-                    SurveyScreen(networkVm,navController )
+                transitionComposable(
+                    route = AppNavRoute.Survey.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.Survey.Args.entries)
+                ) { backStackEntry ->
+                    val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.Survey.Args.IF_SAVED.argName) ?: (AppNavRoute.Survey.Args.IF_SAVED.default as Boolean)
+                    SurveyScreen(
+                        ifSaved,
+                        networkVm,
+                        navController,
+                    )
                 }
+//                transitionComposable(route = AppNavRoute.Survey.route) {
+//                    SurveyScreen(networkVm,navController )
+//                }
                 // 图书馆
                 transitionComposable(route = AppNavRoute.Library.route) {
                     LibraryScreen(networkVm,navController )

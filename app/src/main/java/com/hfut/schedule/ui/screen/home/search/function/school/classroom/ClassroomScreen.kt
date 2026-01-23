@@ -853,7 +853,7 @@ fun ClassroomLessonsScreen(
 
                 val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
                     override fun backToCurrentWeek() {
-                        if(DateTimeManager.weeksBetweenJxglstu < 1) {
+                        if(DateTimeManager.weeksBetweenJxglstu < 1 || DateTimeManager.weeksBetweenJxglstu > 20) {
                             currentWeek = 1
                             today = LocalDate.parse(
                                 termStartDate, DateTimeManager.formatter_YYYY_MM_DD

@@ -85,6 +85,7 @@ fun NotificationItems() {
                             CardBottomButton(list[item].remark, clickable = null),
                             CardBottomButton("已读") {
                                 // TODO 折叠
+                                showToast("正在开发")
                             },
                             CardBottomButton("含网页", show = list[item].url != null) {
                                 clickAction()

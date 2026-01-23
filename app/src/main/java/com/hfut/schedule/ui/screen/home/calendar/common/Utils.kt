@@ -5,6 +5,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.flow.first
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 
@@ -55,6 +56,44 @@ suspend fun weekToDate(week : Int,weekday : Int) : String? {
         LogUtil.error(e)
         return null
     }
+}
+
+/**
+ * 计算学期开始时间（第一周周一的YYYY-MM-DD）
+ * @param week 第几周
+ * @param weekday 星期几（1=周一，7=周日）
+ * @param date YYYY-MM-DD
+ */
+fun calculateTermStartDate(
+    week: Int,
+    weekday: Int,
+    date: String
+): String? {
+    if (week < 1 || weekday !in 1..7) return null
+
+    return try {
+        val formatter = DateTimeFormatter.ISO_LOCAL_DATE
+        val currentDate = LocalDate.parse(date, formatter)
+
+        // 需要回退的天数
+        val daysToSubtract = (week - 1) * 7 + (weekday - 1)
+
+        currentDate
+            .minusDays(daysToSubtract.toLong())
+            .format(formatter)
+    } catch (e: Exception) {
+        null
+    }
+}
+
+suspend fun autoCalculateAndUpdateTermStartDate(
+    week: Int,
+    weekday: Int,
+    date: String
+) {
+    val result = calculateTermStartDate(week,weekday,date) ?: return
+    LogUtil.debug("save $result")
+    DataStoreManager.saveTermStartDate(result)
 }
 
 fun String.simplifyPlace() : String {

@@ -605,7 +605,7 @@ fun CalendarSettingsUI(
             supportingContent = {
                 Column {
                     Text(text = termStartDate, fontWeight = FontWeight.Bold)
-                    Text(text = "每次刷新登录状态时会从教务系统拉取并刷新；点击自定义这个学期的开始时间，将会影响课程表的周数计算")
+                    Text(text = "自动跟随学期切换或者课程表的更换而刷新；也可以自定义这个学期的开始时间，将会影响课程表的周数计算")
                 }
             },
             leadingContent = {

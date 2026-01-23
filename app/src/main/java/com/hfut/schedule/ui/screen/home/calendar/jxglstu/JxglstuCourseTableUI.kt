@@ -186,7 +186,7 @@ fun JxglstuCourseTableUI(
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.weeksBetweenJxglstu < 1) {
+            if(DateTimeManager.weeksBetweenJxglstu < 1 || DateTimeManager.weeksBetweenJxglstu > 20) {
                 if(termStartDate == null) {
                     return
                 }

@@ -126,9 +126,7 @@ fun GradeScreen(
         }
     }
     val gradeOriginList = remember { GradeDataOrigin.entries }
-    val pageState = rememberPagerState { gradeOriginList.size }
-
-
+    val pageState = rememberPagerState(initialPage = if(ifSaved) 0 else 1 ) { gradeOriginList.size }
 
     if (showBottomSheet) {
         HazeBottomSheet (

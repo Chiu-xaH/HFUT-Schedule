@@ -17,7 +17,7 @@ data class CalendarStyle(val showAll: Boolean) {
     val columnCount = 6
 
     val containerColor @Composable
-    get() = MaterialTheme.colorScheme.surfaceContainer
+    get() = MaterialTheme.colorScheme.surfaceContainerHigh
 
     val containerCorner @Composable
     get() = MaterialTheme.shapes.extraSmall

@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
@@ -50,6 +52,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -57,6 +61,7 @@ import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.align.CenterScreen
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.Dispatchers
@@ -80,15 +85,19 @@ fun Survey(
         },
         modifier = Modifier.clickable {
 //            if(ifSaved) refreshLogin(context) else {
-                navController.navigateForTransition(AppNavRoute.Survey,route)
+                navController.navigateForTransition(AppNavRoute.Survey, AppNavRoute.Survey.withArgs(ifSaved))
 //            }
         }
     )
 }
 
+private const val PAGE_UNI_APP = 0
+private const val PAGE_JXGLSTU = 1
+
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SurveyScreen(
+    ifSaved: Boolean,
     vm: NetWorkViewModel,
     navController : NavHostController,
 ) {
@@ -98,38 +107,54 @@ fun SurveyScreen(
     var refresh by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
+    val pagerState = rememberPagerState(initialPage = if(ifSaved) PAGE_UNI_APP else PAGE_JXGLSTU) { 2 }
 
     CustomTransitionScaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
         navHostController = navController,
         topBar = {
-            MediumTopAppBar(
-                scrollBehavior = scrollBehavior,
+            Column(
                 modifier = Modifier.topBarBlur(hazeState),
-                colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.Survey.label) },
-                navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.Survey.icon)
-                },
-                actions = {
-                    Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                        SurveyAllButton(vm,backDrop) {
-                            refresh = !refresh
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(AppNavRoute.Survey.label) },
+                    navigationIcon = {
+                        TopBarNavigationIcon(navController,route, AppNavRoute.Survey.icon)
+                    },
+                    actions = {
+                        Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
+                            SurveyAllButton(vm,backDrop) {
+                                refresh = !refresh
+                            }
                         }
                     }
-                }
-            )
+                )
+                CustomTabRow(pagerState,listOf("合工大教务","教务系统"))
+            }
         },
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .backDropSource(backDrop)
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            SurveyUI(vm,hazeState,refresh,innerPadding)
+            HorizontalPager(pagerState) { page ->
+                when(page) {
+                    PAGE_JXGLSTU -> {
+                        SurveyUI(vm,hazeState,refresh,innerPadding)
+                    }
+                    PAGE_UNI_APP -> {
+                        CenterScreen {
+                            DevelopingIcon()
+                        }
+                    }
+                }
+            }
         }
     }
 }
