@@ -47,6 +47,7 @@ import androidx.core.content.FileProvider
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
@@ -61,6 +62,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
@@ -77,7 +79,7 @@ enum class CourseType(val code : Int,val description: String) {
     UNI_APP(2,"合工大教务"),
     ZHI_JIAN(3,"指间工大"),
     JXGLSTU2(4,"教务备用"),
-    NEXT(5,"下学期"),
+//    NEXT(5,"下学期"),
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
@@ -115,6 +117,7 @@ fun MultiScheduleSettings(
     }
 
     var showBottomSheet_loading by remember { mutableStateOf(false) }
+    var showBottomSheet_settings by remember { mutableStateOf(false) }
 
     if (showBottomSheet_loading) {
         CustomBottomSheet (
@@ -127,6 +130,21 @@ fun MultiScheduleSettings(
             ) {
                 HazeBottomSheetTopBar("上课提醒(以教务课表为数据源)", isPaddingStatusBar = false)
                 EventUI()
+                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+            }
+        }
+    }
+    if (showBottomSheet_settings) {
+        CustomBottomSheet (
+            onDismissRequest = { showBottomSheet_settings = false },
+            showBottomSheet = showBottomSheet_settings,
+            autoShape = false
+        ) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
+                HazeBottomSheetTopBar("课程表配置", isPaddingStatusBar = false)
+                CalendarSettingsUI(cardNormalColor())
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
@@ -247,6 +265,17 @@ fun MultiScheduleSettings(
         Spacer(Modifier.height(CARD_NORMAL_DP))
         DividerTextExpandedWith(text = "操作") {
             CustomCard (color = cardNormalColor()){
+                TransplantListItem(
+                    headlineContent = { Text(text = "学期切换") },
+                    supportingContent = {  Text("切换学期后再次刷新将会缓存新的数据") },
+                    leadingContent = {
+                        Icon(painterResource(id = R.drawable.approval), contentDescription = "")
+                    },
+                    modifier = Modifier.clickable {
+                        showBottomSheet_settings = true
+                    }
+                )
+                PaddingHorizontalDivider()
                 if(select == CourseType.JXGLSTU.code) {
                     TransplantListItem(
                         headlineContent = { Text(text = "导出教务课表") },
@@ -256,7 +285,7 @@ fun MultiScheduleSettings(
                         },
                         modifier = Modifier.clickable {
                             scope.launch {
-                                LargeStringDataManager.read(LargeStringDataManager.DATUM)?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
+                                LargeStringDataManager.read(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()))?.let { saveTextToFile("HFUT-Schedule-Share.txt", it) }
                                 shareTextFile("HFUT-Schedule-Share.txt")
                             }
                         }

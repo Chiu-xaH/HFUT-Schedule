@@ -79,9 +79,9 @@ fun Survey(
             Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            if(ifSaved) refreshLogin(context) else {
+//            if(ifSaved) refreshLogin(context) else {
                 navController.navigateForTransition(AppNavRoute.Survey,route)
-            }
+//            }
         }
     )
 }

@@ -242,15 +242,15 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object NextCourse : AppNavRoute("NEXT_COURSE","下学期课表",R.drawable.calendar) {
-        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
-            IF_SAVED("ifSaved", NavType.BoolType,true,false)
-        }
-        fun receiveRoute() = receiveRoutePair(Args.entries)
-        fun withArgs(ifSaved: Boolean): String = withArgs(
-            Args.IF_SAVED.argName to ifSaved
-        )
-    }
+//    object NextCourse : AppNavRoute("NEXT_COURSE","下学期课表",R.drawable.calendar) {
+//        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+//            IF_SAVED("ifSaved", NavType.BoolType,true,false)
+//        }
+//        fun receiveRoute() = receiveRoutePair(Args.entries)
+//        fun withArgs(ifSaved: Boolean): String = withArgs(
+//            Args.IF_SAVED.argName to ifSaved
+//        )
+//    }
     object SelectCourse : AppNavRoute("SELECT_COURSE","选课",R.drawable.ads_click)
     object WebNavigation : AppNavRoute("WEB_NAVIGATION","网址导航",R.drawable.explore)
     object NotificationBox : AppNavRoute("BOX","收纳",R.drawable.notifications)

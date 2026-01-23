@@ -17,6 +17,7 @@ import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -206,7 +207,7 @@ suspend fun updateCourses(vm: NetWorkViewModel, context: Context) = withContext(
     vm.getLessonTimes(cookie,lessonResponse.timeTableLayoutId)
     vm.getDatum(cookie,lessonResponse.lessonIds)
     val datum = (vm.datumData.state.value as? UiState.Success)?.data ?: return@withContext
-    LargeStringDataManager.save(LargeStringDataManager.DATUM,datum)
+    LargeStringDataManager.save(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()),datum)
 }
 
 private fun getHoliday() : HolidayResponse? {

@@ -18,13 +18,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FilterChip
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.AssistChip
@@ -70,7 +67,6 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -101,7 +97,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.String
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
@@ -111,7 +106,8 @@ fun GradeItemUIJXGLSTU(
     vm: NetWorkViewModel,
     input : String,
     hazeState: HazeState,
-    ifSaved : Boolean
+    ifSaved : Boolean,
+    displayCompactly : Boolean
 ) {
     val context = LocalContext.current
     var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
@@ -216,11 +212,13 @@ fun GradeItemUIJXGLSTU(
                 supportingContent = {
                     if(needSurvey) {
                         Text("点击跳转评教")
+                    } else if(displayCompactly) {
+                        Text(grade.score)
                     }
                 },
             )
 
-            if(!needSurvey) {
+            if(!displayCompactly && !needSurvey) {
                 val list = remember { grade.score.split(" ") }
                 CompositionLocalProvider(
                     LocalMinimumInteractiveComponentSize provides 0.dp
@@ -345,6 +343,7 @@ fun GradeItemUIUniApp(
     vm: NetWorkViewModel,
     input : String,
     hazeState: HazeState,
+    displayCompactly : Boolean
 ) {
     var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -464,41 +463,48 @@ fun GradeItemUIUniApp(
                                                     tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
                                                 )
                                             },
+                                            supportingContent = {
+                                                if(displayCompactly) {
+                                                    Text(subItem.gradeDetail)
+                                                }
+                                            }
                                         )
 
-                                        val list = remember { subItem.gradeDetail.split(" ") }
-                                        CompositionLocalProvider(
-                                            LocalMinimumInteractiveComponentSize provides 0.dp
-                                        ) {
-                                            FlowRow(
-                                                modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP*3),
+                                        if(!displayCompactly) {
+                                            val list = remember { subItem.gradeDetail.split(" ") }
+                                            CompositionLocalProvider(
+                                                LocalMinimumInteractiveComponentSize provides 0.dp
                                             ) {
-                                                list.forEach {
-                                                    val item = it.split(":")
-                                                    val value = try {
-                                                        item[1]
-                                                    } catch (e : Exception) {
-                                                        LogUtil.error(e)
-                                                        null
+                                                FlowRow(
+                                                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP*3),
+                                                ) {
+                                                    list.forEach {
+                                                        val item = it.split(":")
+                                                        val value = try {
+                                                            item[1]
+                                                        } catch (e : Exception) {
+                                                            LogUtil.error(e)
+                                                            null
+                                                        }
+                                                        val key = try {
+                                                            item[0]
+                                                        } catch (e : Exception) {
+                                                            LogUtil.error(e)
+                                                            it
+                                                        }
+                                                        AssistChip(
+                                                            onClick = {  },
+                                                            border = null,
+                                                            colors = AssistChipDefaults.assistChipColors(
+                                                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                                            ),
+                                                            label = { Text(key) },
+                                                            trailingIcon = {
+                                                                value?.let { text -> Text(text) }
+                                                            },
+                                                            modifier = Modifier.padding(end = CARD_NORMAL_DP*3).padding(bottom = CARD_NORMAL_DP*3)
+                                                        )
                                                     }
-                                                    val key = try {
-                                                        item[0]
-                                                    } catch (e : Exception) {
-                                                        LogUtil.error(e)
-                                                        it
-                                                    }
-                                                    AssistChip(
-                                                        onClick = {  },
-                                                        border = null,
-                                                        colors = AssistChipDefaults.assistChipColors(
-                                                            containerColor = MaterialTheme.colorScheme.secondaryContainer
-                                                        ),
-                                                        label = { Text(key) },
-                                                        trailingIcon = {
-                                                            value?.let { text -> Text(text) }
-                                                        },
-                                                        modifier = Modifier.padding(end = CARD_NORMAL_DP*3).padding(bottom = CARD_NORMAL_DP*3)
-                                                    )
                                                 }
                                             }
                                         }

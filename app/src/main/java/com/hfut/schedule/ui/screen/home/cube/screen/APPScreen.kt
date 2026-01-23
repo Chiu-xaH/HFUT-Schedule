@@ -40,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -120,26 +121,10 @@ fun APPScreen(
         val switch_show_ended = prefs.getBoolean("SWITCHSHOWENDED",true)
         var showEnded by remember { mutableStateOf(switch_show_ended) }
         saveBoolean("SWITCHSHOWENDED",true,showEnded)
-        val defaultStartDate = remember { getDefaultStartTerm() }
-        val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = defaultStartDate)
-        var showSelectDateDialog by remember { mutableStateOf(false) }
-        if(showSelectDateDialog)
-            DateRangePickerModal(
-                text = "",
-                onSelected = {
-                    scope.launch {
-                        DataStoreManager.saveTermStartDate(it.second)
-                    }
-                },
-                allowSelectPrevious = true
-            ) { showSelectDateDialog = false }
 
 
 //        saveBoolean("SWITCHFOCUS",true,showfocus)
         val scope = rememberCoroutineScope()
-        val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
-        val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)
-        val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemesterWithoutSuspend())
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
         var freeFeevalue by remember { mutableFloatStateOf(maxFlow.toFloat()) }
         LaunchedEffect(maxFlow) {
@@ -216,204 +201,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("课程表配置") {
-            CustomCard(color = MaterialTheme.colorScheme.surface) {
-                TransplantListItem(
-                    headlineContent = { Text(text = "默认课程表") },
-                    supportingContent = {
-                        Text(text =
-                            if(defaultCalendar == CourseType.COMMUNITY.code)
-                                "智慧社区课表有时会抽风不更新数据，已不再推荐使用，并且不支持调休"
-                            else if(defaultCalendar == CourseType.UNI_APP.code)
-                                "合工大教务数据源的课程表会自动刷新，最优推荐"
-                            else
-                                "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地"
-                        )
-//                        Column {
-//                            Text(text = "您希望打开APP后聚焦展示的数据源以及课程表首先展示的页面")
-//                            Row {
-//                                FilterChip(
-//                                    onClick = {
-//                                        scope.launch {
-//                                            DataStoreManager.saveDefaultCalendar(CourseType.COMMUNITY)
-//                                        }
-//                                    },
-//                                    label = { Text(text = "智慧社区") }, selected = defaultCalendar == CourseType.COMMUNITY.code)
-//                                Spacer(modifier = Modifier.width(10.dp))
-//                                FilterChip(
-//                                    onClick = {
-//                                        scope.launch {
-//                                            DataStoreManager.saveDefaultCalendar(CourseType.JXGLSTU)
-//                                        }
-//                                    },
-//                                    label = { Text(text = "教务(缓存)") }, selected = defaultCalendar == CourseType.JXGLSTU.code)
-//                            }
-//                            Row {
-//                                FilterChip(
-//                                    onClick = {
-//                                        scope.launch {
-//                                            DataStoreManager.saveDefaultCalendar(CourseType.UNI_APP)
-//                                        }
-//                                    },
-//                                    label = { Text(text = "合工大教务") }, selected = defaultCalendar == CourseType.UNI_APP.code)
-//                            }
-//                        }
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.calendar),
-                        contentDescription = "Localized description"
-                    ) },
-                )
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = APP_HORIZONTAL_DP)
-                        .padding(bottom = APP_HORIZONTAL_DP),
-                ) {
-                    val options = remember {
-                        listOf(
-                            CourseType.UNI_APP,
-                            CourseType.JXGLSTU,
-                            CourseType.COMMUNITY
-                        )
-                    }
-                    options.forEachIndexed { index, config ->
-                        val isSelected = defaultCalendar == config.code
-                        val scrollState = rememberScrollState()
-                        val textOverflow = scrollState.canScrollBackward || scrollState.canScrollForward
-
-                        SegmentedButton(
-                            modifier = Modifier,
-                            selected = isSelected,
-                            onClick = {
-                                scope.launch {
-                                    DataStoreManager.saveDefaultCalendar(config)
-                                }
-                            },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = options.size,
-                                baseShape = MaterialTheme.shapes.small
-                            ),
-                            colors = SegmentedButtonDefaults.colors(
-                                activeContainerColor = MaterialTheme.colorScheme.primary,
-                                activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                activeBorderColor = MaterialTheme.colorScheme.primary,
-                                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                            ),
-                            icon = {
-                                if (!textOverflow) {
-                                    SegmentedButtonDefaults.Icon(isSelected)
-                                }
-                            },
-                            label = {
-                                Text(
-                                    modifier = Modifier
-                                        .horizontalScroll(rememberScrollState()),
-                                    text = config.description,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    maxLines = 1,
-                                    softWrap = false,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        )
-                    }
-                }
-
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "当前学期") },
-//                    leadingContent = {
-//                        Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
-//                    },
-                    supportingContent = {
-                        Text(text = parseSemester(if(autoTerm) getSemesterWithoutSuspend() else autoTermValue))
-                    },
-                    modifier = Modifier.clickable {
-                        showToast("修改请关闭开关")
-                    }
-                )
-                TransplantListItem(
-                    headlineContent = { Text(text = "自动计算学期") },
-                    leadingContent = {
-                        Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
-                    },
-                    supportingContent = {
-                        Text(text = "全局学期主控教务课程表等信息，其他部分功能如教评等可在相应功能区自由切换学期\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
-                    },
-                    trailingContent = {
-                        Switch(checked = autoTerm, onCheckedChange = { scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }})
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }
-                    }
-                )
-                if(!autoTerm) {
-                    RowHorizontal {
-                        FilledTonalButton (
-                            onClick = { scope.launch {
-                                if(autoTermValue >= 0) {
-                                    DataStoreManager.saveAutoTermValue(autoTermValue-20)
-                                }
-                            } }
-                        ) {
-                            Icon(Icons.Filled.KeyboardArrowLeft,null)
-                        }
-                        Spacer(Modifier.width(APP_HORIZONTAL_DP))
-                        FilledTonalButton(
-                            onClick = { scope.launch {
-                                reverseGetSemester(DateTimeManager.Date_yyyy_MM)?.let { DataStoreManager.saveAutoTermValue(it) }
-                            } }
-                        ) {
-                            Icon(painterResource(R.drawable.refresh),null)
-                        }
-                        Spacer(Modifier.width(APP_HORIZONTAL_DP))
-                        FilledTonalButton(
-                            onClick = { scope.launch {
-                                DataStoreManager.saveAutoTermValue(autoTermValue+20)
-                            } }
-                        ) {
-                            Icon(Icons.Filled.KeyboardArrowRight,null)
-                        }
-                    }
-                    Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                }
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = "学期开始时间") },
-                    supportingContent = {
-                        Column {
-                            Text(text = termStartDate, fontWeight = FontWeight.Bold)
-                            Text(text = "每次刷新登录状态时会从教务系统拉取并刷新；点击自定义这个学期的开始时间，将会影响课程表的周数计算")
-                        }
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.start), contentDescription = "Localized description")
-                    },
-                    modifier = Modifier.clickable {
-                        showSelectDateDialog = true
-                    }
-                )
-                RowHorizontal {
-                    FilledTonalButton(
-                        onClick = {
-                            Starter.refreshLogin(context)
-                        }
-                    ) {
-                        Text("刷新登录状态")
-                    }
-                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
-                    FilledTonalButton(
-                        enabled = defaultStartDate != termStartDate,
-                        onClick = { scope.launch {
-                            DataStoreManager.saveTermStartDate(defaultStartDate)
-                        } }
-                    ) {
-                        Text("恢复默认值")
-                    }
-                }
-                Spacer(Modifier.height(APP_HORIZONTAL_DP))
-            }
+            CalendarSettingsUI()
         }
         DividerTextExpandedWith("偏好与配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
@@ -622,6 +410,230 @@ fun APPScreen(
             }
         }
         InnerPaddingHeight(innerPaddings,false)
+    }
+}
+@Composable
+fun CalendarSettingsUI(
+    containerColor : Color = MaterialTheme.colorScheme.surface
+) {
+    val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
+    val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)
+    val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemesterWithoutSuspend())
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val defaultStartDate = remember { getDefaultStartTerm() }
+    val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = defaultStartDate)
+    var showSelectDateDialog by remember { mutableStateOf(false) }
+    if(showSelectDateDialog)
+        DateRangePickerModal(
+            text = "",
+            onSelected = {
+                scope.launch {
+                    DataStoreManager.saveTermStartDate(it.second)
+                }
+            },
+            allowSelectPrevious = true
+        ) { showSelectDateDialog = false }
+
+
+    CustomCard(color = containerColor) {
+        TransplantListItem(
+            headlineContent = { Text(text = "默认课程表") },
+            supportingContent = {
+                Text(text =
+                    if(defaultCalendar == CourseType.COMMUNITY.code)
+                        "智慧社区课表有时会抽风不更新数据，已不再推荐使用，并且不支持调休"
+                    else if(defaultCalendar == CourseType.UNI_APP.code)
+                        "合工大教务数据源的课程表会自动刷新，最优推荐"
+                    else
+                        "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地"
+                )
+//                        Column {
+//                            Text(text = "您希望打开APP后聚焦展示的数据源以及课程表首先展示的页面")
+//                            Row {
+//                                FilterChip(
+//                                    onClick = {
+//                                        scope.launch {
+//                                            DataStoreManager.saveDefaultCalendar(CourseType.COMMUNITY)
+//                                        }
+//                                    },
+//                                    label = { Text(text = "智慧社区") }, selected = defaultCalendar == CourseType.COMMUNITY.code)
+//                                Spacer(modifier = Modifier.width(10.dp))
+//                                FilterChip(
+//                                    onClick = {
+//                                        scope.launch {
+//                                            DataStoreManager.saveDefaultCalendar(CourseType.JXGLSTU)
+//                                        }
+//                                    },
+//                                    label = { Text(text = "教务(缓存)") }, selected = defaultCalendar == CourseType.JXGLSTU.code)
+//                            }
+//                            Row {
+//                                FilterChip(
+//                                    onClick = {
+//                                        scope.launch {
+//                                            DataStoreManager.saveDefaultCalendar(CourseType.UNI_APP)
+//                                        }
+//                                    },
+//                                    label = { Text(text = "合工大教务") }, selected = defaultCalendar == CourseType.UNI_APP.code)
+//                            }
+//                        }
+            },
+            leadingContent = { Icon(
+                painterResource(R.drawable.calendar),
+                contentDescription = "Localized description"
+            ) },
+        )
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = APP_HORIZONTAL_DP)
+                .padding(bottom = APP_HORIZONTAL_DP),
+        ) {
+            val options = remember {
+                listOf(
+                    CourseType.UNI_APP,
+                    CourseType.JXGLSTU,
+                    CourseType.COMMUNITY
+                )
+            }
+            options.forEachIndexed { index, config ->
+                val isSelected = defaultCalendar == config.code
+                val scrollState = rememberScrollState()
+                val textOverflow = scrollState.canScrollBackward || scrollState.canScrollForward
+
+                SegmentedButton(
+                    modifier = Modifier,
+                    selected = isSelected,
+                    onClick = {
+                        scope.launch {
+                            DataStoreManager.saveDefaultCalendar(config)
+                        }
+                    },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = options.size,
+                        baseShape = MaterialTheme.shapes.small
+                    ),
+                    colors = SegmentedButtonDefaults.colors(
+                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                        activeBorderColor = MaterialTheme.colorScheme.primary,
+                        inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
+                    ),
+                    icon = {
+                        if (!textOverflow) {
+                            SegmentedButtonDefaults.Icon(isSelected)
+                        }
+                    },
+                    label = {
+                        Text(
+                            modifier = Modifier
+                                .horizontalScroll(rememberScrollState()),
+                            text = config.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                )
+            }
+        }
+
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = { Text(text = "当前学期") },
+//                    leadingContent = {
+//                        Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
+//                    },
+            supportingContent = {
+                Text(text = parseSemester(if(autoTerm) getSemesterWithoutSuspend() else autoTermValue))
+            },
+            modifier = Modifier.clickable {
+                showToast("修改请关闭开关")
+            }
+        )
+        TransplantListItem(
+            headlineContent = { Text(text = "自动计算学期") },
+            leadingContent = {
+                Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
+            },
+            supportingContent = {
+                Text(text = "全局学期主控教务课程表等信息，其他部分功能如教评等可在相应功能区自由切换学期\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
+            },
+            trailingContent = {
+                Switch(checked = autoTerm, onCheckedChange = { scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }})
+            },
+            modifier = Modifier.clickable {
+                scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }
+            }
+        )
+        if(!autoTerm) {
+            RowHorizontal {
+                FilledTonalButton (
+                    onClick = { scope.launch {
+                        if(autoTermValue >= 0) {
+                            DataStoreManager.saveAutoTermValue(autoTermValue-20)
+                        }
+                    } }
+                ) {
+                    Icon(Icons.Filled.KeyboardArrowLeft,null)
+                }
+                Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                FilledTonalButton(
+                    onClick = { scope.launch {
+                        reverseGetSemester(DateTimeManager.Date_yyyy_MM)?.let { DataStoreManager.saveAutoTermValue(it) }
+                    } }
+                ) {
+                    Icon(painterResource(R.drawable.refresh),null)
+                }
+                Spacer(Modifier.width(APP_HORIZONTAL_DP))
+                FilledTonalButton(
+                    onClick = { scope.launch {
+                        DataStoreManager.saveAutoTermValue(autoTermValue+20)
+                    } }
+                ) {
+                    Icon(Icons.Filled.KeyboardArrowRight,null)
+                }
+            }
+            Spacer(Modifier.height(APP_HORIZONTAL_DP))
+        }
+        PaddingHorizontalDivider()
+        TransplantListItem(
+            headlineContent = { Text(text = "学期开始时间") },
+            supportingContent = {
+                Column {
+                    Text(text = termStartDate, fontWeight = FontWeight.Bold)
+                    Text(text = "每次刷新登录状态时会从教务系统拉取并刷新；点击自定义这个学期的开始时间，将会影响课程表的周数计算")
+                }
+            },
+            leadingContent = {
+                Icon(painterResource(R.drawable.start), contentDescription = "Localized description")
+            },
+            modifier = Modifier.clickable {
+                showSelectDateDialog = true
+            }
+        )
+        RowHorizontal {
+            FilledTonalButton(
+                onClick = {
+                    Starter.refreshLogin(context)
+                }
+            ) {
+                Text("刷新登录状态")
+            }
+            Spacer(Modifier.width(APP_HORIZONTAL_DP))
+            FilledTonalButton(
+                enabled = defaultStartDate != termStartDate,
+                onClick = { scope.launch {
+                    DataStoreManager.saveTermStartDate(defaultStartDate)
+                } }
+            ) {
+                Text("恢复默认值")
+            }
+        }
+        Spacer(Modifier.height(APP_HORIZONTAL_DP))
     }
 }
 

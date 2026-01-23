@@ -431,7 +431,7 @@ fun JxglstuCourseTableUI(
                vm.getStudentId(cookie)
                val studentId = (vm.studentId.state.value as? UiState.Success)?.data
                if(studentId == null) {
-                   showToast("获取studentId失败 教务登录中止")
+                   showToast("获取studentId失败 请在聚焦界面下拉刷新")
                    loadingJxglstu = false
                    return@jxglstu
                }
@@ -444,7 +444,7 @@ fun JxglstuCourseTableUI(
                vm.getBizTypeId(cookie,studentId)
                val bizTypeId = (vm.bizTypeIdResponse.state.value as? UiState.Success)?.data
                if(bizTypeId == null) {
-                   showToast("获取bizTypeId失败 教务登录中止")
+                   showToast("获取bizTypeId失败 请在聚焦界面下拉刷新")
                    loadingJxglstu = false
                    return@jxglstu
                }
@@ -460,14 +460,14 @@ fun JxglstuCourseTableUI(
                    loadingJxglstu = false
                }
 
-               launch {
-                   if(nextBoolean) {
-                       vm.getLessonIdsNext(cookie, studentId = studentId, bizTypeId = bizTypeId)
-                       val lessonResponse = (vm.lessonIdsNext.state.value as? UiState.Success)?.data ?: return@launch
-                       vm.getLessonTimesNext(cookie,lessonResponse.timeTableLayoutId)
-                       vm.getDatumNext(cookie,lessonResponse.lessonIds)
-                   }
-               }
+//               launch {
+//                   if(nextBoolean) {
+//                       vm.getLessonIdsNext(cookie, studentId = studentId, bizTypeId = bizTypeId)
+//                       val lessonResponse = (vm.lessonIdsNext.state.value as? UiState.Success)?.data ?: return@launch
+//                       vm.getLessonTimesNext(cookie,lessonResponse.timeTableLayoutId)
+//                       vm.getDatumNext(cookie,lessonResponse.lessonIds)
+//                   }
+//               }
            }
        }
     }
@@ -610,15 +610,15 @@ fun JxglstuCourseTableUI(
     }
 }
 
-fun getNewWeek() : Long {
-    return try {
-        val jxglstuJson = prefs.getString("courses","")
-        val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
-        val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
-        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.getToday()) + 1
-        weeksBetweenJxglstu  //固定本周
-    } catch (_ : Exception) {
-        DateTimeManager.weeksBetweenJxglstu
-    }
-}
+//fun getNewWeek() : Long {
+//    return try {
+//        val jxglstuJson = prefs.getString("courses","")
+//        val resultJxglstu = getTotalCourse(jxglstuJson)[0].semester.startDate
+//        val firstWeekStartJxglstu: LocalDate = LocalDate.parse(resultJxglstu)
+//        val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStartJxglstu, DateTimeManager.getToday()) + 1
+//        weeksBetweenJxglstu  //固定本周
+//    } catch (_ : Exception) {
+//        DateTimeManager.weeksBetweenJxglstu
+//    }
+//}
 

@@ -27,6 +27,37 @@ open class LargeStringDataStore(
         return File(dir, "$safeKey.cache")
     }
 
+    /**
+     * 同级之间迁移：改文件名就行
+     */
+    suspend fun move(oldKey: String, newKey: String): Boolean =
+        withContext(Dispatchers.IO) {
+            if (oldKey == newKey) return@withContext true
+
+            val oldFile = getCacheFile(oldKey)
+            if (!oldFile.exists()) return@withContext false
+
+            val newFile = getCacheFile(newKey)
+
+            // 如果目标已存在，先删除（覆盖语义）
+            if (newFile.exists()) {
+                newFile.delete()
+            }
+
+            val success = oldFile.renameTo(newFile)
+
+            if (success) {
+                // 同步更新内存缓存
+                val value = memoryCache.remove(oldKey)
+                if (value != null) {
+                    memoryCache[newKey] = value
+                }
+            }
+
+            success
+        }
+
+
     override suspend fun save(key: String, content: String) {
         withContext(Dispatchers.IO) {
             val file = getCacheFile(key)

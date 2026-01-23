@@ -55,6 +55,7 @@ import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
@@ -90,7 +91,7 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.flow.first
 
 enum class TotalCourseDataSource {
-    MINE,MINE_NEXT,SEARCH
+    MINE,SEARCH
 }
 
 @SuppressLint("SuspiciousIndentation")
@@ -104,7 +105,11 @@ fun CourseTotalUI(
     ifSaved : Boolean,
     state: LazyListState = rememberLazyListState()
 ) {
-    val courseBookJson by DataStoreManager.courseBookJson.collectAsState(initial = "")
+    val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
+        val json = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO) ?: return@produceState
+        value = JxglstuRepository.parseCourseBook(json)
+    }
+
     if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
         LaunchedEffect(Unit) {
             if(vm.courseBookResponse.state.first() is UiState.Success) return@LaunchedEffect
@@ -112,36 +117,36 @@ fun CourseTotalUI(
             val cookie = getJxglstuCookie() ?: return@LaunchedEffect
             when(dataSource) {
                 TotalCourseDataSource.MINE -> vm.getCourseBook(cookie,term)
-                TotalCourseDataSource.MINE_NEXT -> vm.getCourseBook(cookie, SemesterParser.plusSemester(term))
+//                TotalCourseDataSource.MINE_NEXT -> vm.getCourseBook(cookie, SemesterParser.plusSemester(term))
                 else -> return@LaunchedEffect
             }
         }
     }
-    var courseBookData: Map<Long, CourseBookBean> by remember { mutableStateOf(emptyMap()) }
+//    var courseBookData: Map<Long, CourseBookBean> by remember { mutableStateOf(emptyMap()) }
 
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
-                prefs.getString("courses","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
+                LargeStringDataManager.read(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()))?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
             TotalCourseDataSource.SEARCH -> {
                 onListenStateHolder(vm.courseSearchResponse) { data ->
                     value = data
                 }
             }
-            TotalCourseDataSource.MINE_NEXT -> {
-                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
-            }
+//            TotalCourseDataSource.MINE_NEXT -> {
+//                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
+//            }
         }
     }
 
-    LaunchedEffect(courseBookJson) {
+//    LaunchedEffect(courseBookJson) {
 //         是JSON
-        if(courseBookJson.contains("{")) {
-            val data = JxglstuRepository.parseCourseBook(courseBookJson)
-            courseBookData = data
-        }
-    }
+//        if(courseBookJson.contains("{")) {
+//            val data = JxglstuRepository.parseCourseBook(courseBookJson)
+//            courseBookData = data
+//        }
+//    }
 
     val isSearch = dataSource == TotalCourseDataSource.SEARCH
 

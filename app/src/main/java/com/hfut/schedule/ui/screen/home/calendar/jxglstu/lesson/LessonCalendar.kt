@@ -1,9 +1,6 @@
 package com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -45,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,10 +50,10 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.parse.SemesterParser
+import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -71,11 +67,9 @@ import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.clearUnit
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.getNewWeek
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.DetailItems
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -181,16 +175,17 @@ fun JxglstuCourseTableTwo(
     val list by produceState(initialValue = emptyList<lessons>(),key1 = dataSource) {
         when(dataSource) {
             TotalCourseDataSource.MINE -> {
-                prefs.getString("courses","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
+                LargeStringDataManager.read(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()))?.let { value = JxglstuRepository.parseDatumCourse(it) }
+//                prefs.getString("courses","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
             }
             TotalCourseDataSource.SEARCH -> {
                 onListenStateHolder(vm.courseSearchResponse) { data ->
                     value = data
                 }
             }
-            TotalCourseDataSource.MINE_NEXT -> {
-                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
-            }
+//            TotalCourseDataSource.MINE_NEXT -> {
+//                prefs.getString("coursesNext","")?.let { value = JxglstuRepository.parseDatumCourse(it) }
+//            }
         }
     }
 

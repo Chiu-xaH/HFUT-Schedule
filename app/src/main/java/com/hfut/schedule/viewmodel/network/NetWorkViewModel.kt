@@ -501,10 +501,10 @@ class NetWorkViewModel() : ViewModel() {
 
     fun checkApplying(token : String, id : String, isOk : Boolean) = CommunityRepository.checkApplying(token,id,isOk)
 
-    val lessonIdsNext = StateHolder<lessonResponse>()
-    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int) = JxglstuRepository.getLessonIdsNext(cookie,studentId,bizTypeId,lessonIdsNext)
+//    val lessonIdsNext = StateHolder<lessonResponse>()
+//    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int) = JxglstuRepository.getLessonIdsNext(cookie,studentId,bizTypeId,lessonIdsNext)
 
-    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>) = JxglstuRepository.getDatumNext(cookie,lessonIdList,studentId)
+//    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>) = JxglstuRepository.getDatumNext(cookie,lessonIdList,studentId)
 
     val weatherWarningData = StateHolder<List<QWeatherWarnBean>>()
     suspend fun getWeatherWarn(campus: CampusRegion) = QWeatherRepository.getWeatherWarn(campus,weatherWarningData)

@@ -332,7 +332,7 @@ data class JxglstuCourseSchedule(val time : DateTime, val place : String?, val c
 suspend fun getJxglstuCourseSchedule(
     jsonStr : String? = null,
 ) : List<JxglstuCourseSchedule>  {
-    val json = jsonStr ?: LargeStringDataManager.read(LargeStringDataManager.DATUM)
+    val json = jsonStr ?: LargeStringDataManager.read(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()))
     if(json == null) {
         return emptyList()
     }

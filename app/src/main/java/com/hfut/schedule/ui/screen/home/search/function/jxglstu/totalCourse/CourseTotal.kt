@@ -95,15 +95,15 @@ fun TotalCourseScreen(
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-                            if (isNextOpen()) {
-                                FilledTonalIconButton (
-                                    onClick = {
-                                        next = !next
-                                    }
-                                    ,) {
-                                    Text(text = if(next) "下" else "本")
-                                }
-                            }
+//                            if (isNextOpen()) {
+//                                FilledTonalIconButton (
+//                                    onClick = {
+//                                        next = !next
+//                                    }
+//                                    ,) {
+//                                    Text(text = if(next) "下" else "本")
+//                                }
+//                            }
 //                            Spacer(Modifier.width(CARD_NORMAL_DP))
                             FilledTonalButton(
                                 onClick = { sortType = !sortType },) {
@@ -121,7 +121,7 @@ fun TotalCourseScreen(
                     .fillMaxSize()
             ) {
                 CourseTotalUI(
-                    if(next) TotalCourseDataSource.MINE_NEXT else TotalCourseDataSource.MINE,
+                    TotalCourseDataSource.MINE,
                     sortType,
                     vm,
                     hazeState,

@@ -48,7 +48,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(19, AppNavRoute.Library.label, AppNavRoute.Library.icon),
         SearchAppBeanLite(20, AppNavRoute.Bus.label, AppNavRoute.Bus.icon),
         SearchAppBeanLite(21,"报修",R.drawable.build),
-        SearchAppBeanLite(22, AppNavRoute.NextCourse.label, AppNavRoute.NextCourse.icon),
+//        SearchAppBeanLite(22, AppNavRoute.NextCourse.label, AppNavRoute.NextCourse.icon),
         SearchAppBeanLite(23,"热水",R.drawable.water_voc),
         SearchAppBeanLite(24, AppNavRoute.Classroom.label,AppNavRoute.Classroom.icon),
         SearchAppBeanLite(25,"体测平台",R.drawable.sports_volleyball),

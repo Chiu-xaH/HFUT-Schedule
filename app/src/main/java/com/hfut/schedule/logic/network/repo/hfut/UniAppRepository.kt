@@ -112,7 +112,7 @@ object UniAppRepository {
                 return
             }
             val json = request.body()?.string() ?: return
-            LargeStringDataManager.save(LargeStringDataManager.UNI_APP_COURSES,json)
+            LargeStringDataManager.save(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()),json)
         } catch (e : Exception) {
             LogUtil.error(e)
         }
@@ -120,7 +120,7 @@ object UniAppRepository {
 
     @JvmStatic
     suspend fun parseUniAppCourses(jStr : String? = null) :  List<UniAppCourseBean> {
-        val json = LargeStringDataManager.read( LargeStringDataManager.UNI_APP_COURSES) ?: jStr
+        val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester())) ?: jStr
         return try {
             Gson().fromJson(json, UniAppCoursesResponse::class.java).data
         } catch (e : Exception) {

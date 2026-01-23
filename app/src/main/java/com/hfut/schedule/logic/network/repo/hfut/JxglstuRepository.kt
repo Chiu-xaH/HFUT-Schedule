@@ -7,7 +7,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
 import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -30,15 +29,15 @@ import com.hfut.schedule.logic.model.jxglstu.forStdLessonSurveySearchVms
 import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.api.JxglstuService
-import com.hfut.schedule.logic.network.util.launchRequestNone
-import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.JxglstuServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
+import com.hfut.schedule.logic.network.util.launchRequestNone
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.parse.SemesterParser
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.ui.component.network.onListenStateHolderForNetwork
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.JxglstuExam
@@ -62,7 +61,6 @@ import org.jsoup.Jsoup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.awaitResponse
 
 object JxglstuRepository {
     private fun createJSONService(): JxglstuService {
@@ -548,7 +546,8 @@ object JxglstuRepository {
         )
     @JvmStatic
     private suspend fun parseLessonIds(json : String) : lessonResponse {
-        SharedPrefs.saveString("courses", json)
+        LargeStringDataManager.save(LargeStringDataManager.getTotalCoursesKey(SemesterParser.getSemester()),json)
+//        SharedPrefs.saveString("courses", json)
         updateStartDate(json)
         try {
             return Gson().fromJson(json, lessonResponse::class.java)
@@ -577,7 +576,7 @@ object JxglstuRepository {
     @JvmStatic
     private suspend fun parseDatum(json : String) : String {
         if (json.contains("result")) {
-            LargeStringDataManager.save(LargeStringDataManager.DATUM,json)
+            LargeStringDataManager.save(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()),json)
             try {
                 return json
             } catch (e : Exception) {
@@ -839,7 +838,8 @@ object JxglstuRepository {
         val data = gson.fromJson(json, CourseBookResponse::class.java).textbookAssignMap
         // 将JSON以String只保存data部分
         val dataJson = gson.toJson(data)
-        DataStoreManager.saveCourseBook(dataJson)
+        LargeStringDataManager.save(LargeStringDataManager.BOOK_INFO,dataJson)
+//        DataStoreManager.saveCourseBook(dataJson)
 
         parseCourseBook(json)
     } catch (e : Exception) { throw e }
@@ -899,49 +899,49 @@ object JxglstuRepository {
         parseJxglstuExam(html)
     } catch (e:Exception) { throw e }
 
-    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int,holder : StateHolder<lessonResponse>) =
-        launchRequestState(
-            holder = holder,
-            request = {
-                (SemesterParser.getSemester().plus(20)).toString().let {
-                    jxglstu.getLessonIds(cookie, bizTypeId.toString(), it, studentId.toString())
-                        
-                }
-            },
-            transformSuccess = { _, json -> parseLessonIdsNext(json) }
-        )
-    @JvmStatic
-    private fun parseLessonIdsNext(json : String) : lessonResponse {
-        SharedPrefs.saveString("coursesNext", json)
-        try {
-            return Gson().fromJson(json, lessonResponse::class.java)
-        } catch (e : Exception) { throw e }
-    }
-
-    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>,studentId: StateHolder<Int>) {
-        onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
-            val lessonIdsArray = JsonArray()
-            lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
-            val jsonObject = JsonObject().apply {
-                add("lessonIds", lessonIdsArray)//课程ID
-                addProperty("studentId", sId)//学生ID
-                addProperty("weekIndex", "")
-            }
-            val call = jxglstu.getDatum(cookie, jsonObject)
-
-            call.enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    val body = response.body()?.string()
-                    SharedPrefs.saveString("jsonNext", body)
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    t.printStackTrace()
-                }
-            })
-        }
-    }
+//    suspend fun getLessonIdsNext(cookie : String, studentId : Int, bizTypeId: Int,holder : StateHolder<lessonResponse>) =
+//        launchRequestState(
+//            holder = holder,
+//            request = {
+//                (SemesterParser.getSemester().plus(20)).toString().let {
+//                    jxglstu.getLessonIds(cookie, bizTypeId.toString(), it, studentId.toString())
+//
+//                }
+//            },
+//            transformSuccess = { _, json -> parseLessonIdsNext(json) }
+//        )
+//    @JvmStatic
+//    private fun parseLessonIdsNext(json : String) : lessonResponse {
+//        SharedPrefs.saveString("coursesNext", json)
+//        try {
+//            return Gson().fromJson(json, lessonResponse::class.java)
+//        } catch (e : Exception) { throw e }
+//    }
+//
+//    suspend fun getDatumNext(cookie : String, lessonIdList: List<Int>,studentId: StateHolder<Int>) {
+//        onListenStateHolderForNetwork<Int, Unit>(studentId, null) { sId ->
+//            val lessonIdsArray = JsonArray()
+//            lessonIdList.forEach { lessonIdsArray.add(JsonPrimitive(it)) }
+//            val jsonObject = JsonObject().apply {
+//                add("lessonIds", lessonIdsArray)//课程ID
+//                addProperty("studentId", sId)//学生ID
+//                addProperty("weekIndex", "")
+//            }
+//            val call = jxglstu.getDatum(cookie, jsonObject)
+//
+//            call.enqueue(object : Callback<ResponseBody> {
+//                override fun onResponse(
+//                    call: Call<ResponseBody>,
+//                    response: Response<ResponseBody>
+//                ) {
+//                    val body = response.body()?.string()
+//                    SharedPrefs.saveString("jsonNext", body)
+//                }
+//
+//                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+//                    t.printStackTrace()
+//                }
+//            })
+//        }
+//    }
 }

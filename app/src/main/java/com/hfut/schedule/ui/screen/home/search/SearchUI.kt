@@ -36,8 +36,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
 import com.hfut.schedule.ui.component.container.SEARCH_FUC_CARD_HEIGHT
@@ -60,9 +60,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.Washing
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CoursesSearch
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.Exam
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.Grade
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonUI
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.practice.Practice
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.Program
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse.SelectCourse
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.Survey
@@ -184,7 +182,7 @@ fun SearchScreen(
                 SearchAppBean(19,"${AppNavRoute.Library.label} 座位预约 借阅", { LibraryItem(navController ) },AppNavRoute.Library.route),
                 SearchAppBean(20,"${AppNavRoute.Bus.label}", { SchoolBus(navController ) }, AppNavRoute.Bus.route),
                 SearchAppBean(21,"报修 维修 后勤", { Repair(hazeState) }),
-                SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,navController ) },AppNavRoute.NextCourse.receiveRoute()),
+//                SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,navController ) },AppNavRoute.NextCourse.receiveRoute()),
                 SearchAppBean(23,"饮水机 热水机 趣智校园", { HotWater() }),
                 SearchAppBean(24,"${AppNavRoute.Classroom.label} 空教室", { Classroom(navController ) },AppNavRoute.Classroom.route),
                 SearchAppBean(25,"体育 云运动 乐跑 校园跑 体测 体育测试 体检", { LePaoYun(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.PE_HOME_URL)),

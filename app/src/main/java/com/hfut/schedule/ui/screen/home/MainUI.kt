@@ -1,18 +1,15 @@
 package com.hfut.schedule.ui.screen.home
 
 import android.animation.ValueAnimator
-import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -94,7 +91,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.work.Data
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.hfut.schedule.R
@@ -106,7 +102,6 @@ import com.hfut.schedule.logic.enumeration.BottomBarItems.COURSES
 import com.hfut.schedule.logic.enumeration.BottomBarItems.FOCUS
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SEARCH
 import com.hfut.schedule.logic.enumeration.BottomBarItems.SETTINGS
-import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.model.GiteeReleaseResponse
 import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.model.NavigationBarItemDynamicIcon
@@ -121,6 +116,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
@@ -128,7 +124,6 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -142,7 +137,6 @@ import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.JxglstuCourseTableUINext
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.uniapp.UniAppCoursesScreen
@@ -669,9 +663,9 @@ fun MainScreen(
                                 zhiJianStudentId = it
                             }
                         }
-                        if (swapUI != CourseType.NEXT.code) {
+//                        if (swapUI != CourseType.NEXT.code) {
                             ScheduleTopDate(showAll, today,backGroundSource)
-                        }
+//                        }
                     } else {
                         TopAppBar(
                             colors = topBarTransplantColor(),
@@ -729,9 +723,9 @@ fun MainScreen(
                                 zhiJianStudentId = it
                             }
                         }
-                        if (swapUI != CourseType.NEXT.code) {
+//                        if (swapUI != CourseType.NEXT.code) {
                             ScheduleTopDate(showAll, today)
-                        }
+//                        }
                     }
                 }
             }
@@ -835,15 +829,15 @@ fun MainScreen(
                             // 非好友课表
                             when (swapUI) {
                                 // 下学期
-                                CourseType.NEXT.code -> JxglstuCourseTableUINext(
-                                    showAll,
-                                    vm,
-                                    hazeState,
-                                    navHostTopController,
-                                    innerPadding,
-                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
-                                    { showAll = it },
-                                )
+//                                CourseType.NEXT.code -> JxglstuCourseTableUINext(
+//                                    showAll,
+//                                    vm,
+//                                    hazeState,
+//                                    navHostTopController,
+//                                    innerPadding,
+//                                    backGroundHaze = if (useCustomBackground) backGroundSource else null,
+//                                    { showAll = it },
+//                                )
                                 // 社区
                                 CourseType.COMMUNITY.code -> CommunityCourseTableUI(
                                     scaleFactor.floatValue,

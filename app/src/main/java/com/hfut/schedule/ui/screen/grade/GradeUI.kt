@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -161,6 +162,7 @@ fun GradeScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
+    var displayCompactly by rememberSaveable { mutableStateOf(false) }
     CustomTransitionScaffold (
         route = targetRoute,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -184,6 +186,24 @@ fun GradeScreen(
                                 backdrop = backDrop
                             ) {
                                 Icon(painter = painterResource(id = R.drawable.info),null)
+                            }
+                            if(targetPage != GradeBarItems.COUNT && gradeOriginList[pageState.currentPage] != GradeDataOrigin.COMMUNITY) {
+                                Spacer(Modifier.width(BUTTON_PADDING))
+                                LiquidButton(
+                                    onClick = {
+                                        displayCompactly = !displayCompactly
+                                    } ,
+                                    isCircle = true,
+                                    backdrop = backDrop
+                                ) {
+                                    Icon(
+                                        painterResource(
+                                            if(!displayCompactly) R.drawable.horizontal_split
+                                            else R.drawable.reorder
+                                        ),
+                                        null
+                                    )
+                                }
                             }
                             Spacer(Modifier.width(BUTTON_PADDING))
                             LiquidButton(
@@ -249,8 +269,8 @@ fun GradeScreen(
                     ) { page ->
                         val currentPage = gradeOriginList[page]
                         when(currentPage) {
-                            GradeDataOrigin.JXGLSTU -> GradeItemUIJXGLSTU(innerPadding,vm,input,hazeState,ifSaved)
-                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(innerPadding,vm,input,hazeState)
+                            GradeDataOrigin.JXGLSTU -> GradeItemUIJXGLSTU(innerPadding,vm,input,hazeState,ifSaved,displayCompactly)
+                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(innerPadding,vm,input,hazeState,displayCompactly)
                             GradeDataOrigin.COMMUNITY -> GradeItemUI(vm,innerPadding)
                         }
                     }

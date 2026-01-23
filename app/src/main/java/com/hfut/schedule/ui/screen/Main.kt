@@ -70,7 +70,6 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.Cou
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.courseSearch.CourseSearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamNotificationsScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.ExamScreen
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.nextCourse.NextCourseScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.ClassmatesScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.PersonScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.program.ProgramCompetitionDetailScreen
@@ -797,18 +796,18 @@ fun MainHost(
                     )
                 }
                 // 下学期课表
-                transitionComposable(
-                    route = AppNavRoute.NextCourse.receiveRoute(),
-                    arguments = getArgs(AppNavRoute.NextCourse.Args.entries)
-                ) { backStackEntry ->
-                    val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.NextCourse.Args.IF_SAVED.argName) ?: (AppNavRoute.NextCourse.Args.IF_SAVED.default as Boolean)
-
-                    NextCourseScreen(
-                        networkVm,
-                        ifSaved,
-                        navController,
-                    )
-                }
+//                transitionComposable(
+//                    route = AppNavRoute.NextCourse.receiveRoute(),
+//                    arguments = getArgs(AppNavRoute.NextCourse.Args.entries)
+//                ) { backStackEntry ->
+//                    val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.NextCourse.Args.IF_SAVED.argName) ?: (AppNavRoute.NextCourse.Args.IF_SAVED.default as Boolean)
+//
+//                    NextCourseScreen(
+//                        networkVm,
+//                        ifSaved,
+//                        navController,
+//                    )
+//                }
                 // 培养方案完成情况
                 transitionComposable(
                     route = AppNavRoute.ProgramCompetition.receiveRoute(),

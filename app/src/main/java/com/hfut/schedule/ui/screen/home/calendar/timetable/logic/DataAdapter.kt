@@ -9,6 +9,7 @@ import com.hfut.schedule.logic.database.util.CustomEventMapper.entityToDto
 import com.hfut.schedule.logic.model.jxglstu.DatumResponse
 import com.hfut.schedule.logic.model.uniapp.UniAppCoursesResponse
 import com.hfut.schedule.logic.network.util.toStr
+import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
@@ -79,7 +80,7 @@ suspend fun allToTimeTableData(): List<List<TimeTableItem>> = withContext(Dispat
 }
 
 private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
-    val json = LargeStringDataManager.read(LargeStringDataManager.UNI_APP_COURSES)
+    val json = LargeStringDataManager.read(LargeStringDataManager.getUniAppCoursesKey(SemesterParser.getSemester()))
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
@@ -124,7 +125,7 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
 }
 
 private suspend fun jxglstuToTimeTableData(): List<List<TimeTableItem>> {
-    val json = LargeStringDataManager.read(LargeStringDataManager.DATUM)
+    val json = LargeStringDataManager.read(LargeStringDataManager.getJxglstuDatumKey(SemesterParser.getSemester()))
         ?: return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
     try {
         val result = List(MyApplication.MAX_WEEK) { mutableStateListOf<TimeTableItem>() }
