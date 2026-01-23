@@ -31,8 +31,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -47,11 +49,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPALevel
@@ -73,21 +78,28 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
@@ -101,7 +113,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun GradeItemUIJXGLSTU(
+fun GradeItemJxglstuUI(
+    navController: NavHostController,
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
     input : String,
@@ -110,36 +123,36 @@ fun GradeItemUIJXGLSTU(
     displayCompactly : Boolean
 ) {
     val context = LocalContext.current
-    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        var party by remember { mutableStateOf(false) }
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet= false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Box {
-                Party(show = party)
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar(num.courseName)
-                    },) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState())
-                            .fillMaxSize()
-                    ){
-                        GradeInfo(num) { party = it }
-                        Spacer(modifier = Modifier.height(30.dp))
-                    }
-                }
-            }
-        }
-    }
+//    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
+//    var showBottomSheet by remember { mutableStateOf(false) }
+//    if (showBottomSheet) {
+//        var party by remember { mutableStateOf(false) }
+//        HazeBottomSheet (
+//            onDismissRequest = { showBottomSheet= false },
+//            showBottomSheet = showBottomSheet,
+//            hazeState = hazeState
+//        ) {
+//            Box {
+//                Party(show = party)
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    containerColor = Color.Transparent,
+//                    topBar = {
+//                        HazeBottomSheetTopBar(num.courseName)
+//                    },) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .verticalScroll(rememberScrollState())
+//                            .fillMaxSize()
+//                    ){
+//                        GradeInfo(num) { party = it }
+//                        Spacer(modifier = Modifier.height(30.dp))
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
     var surveyCode by remember { mutableStateOf("") }
@@ -174,7 +187,9 @@ fun GradeItemUIJXGLSTU(
 
         CustomCard(
             color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
-            modifier = Modifier.clickable {
+            modifier = Modifier
+                .containerShare(AppNavRoute.GradeDetail.shareRoute(grade))
+                .clickable {
                 if(needSurvey) {
                     if(ifSaved) {
                         showToast("未评教，请登录后评教")
@@ -185,8 +200,10 @@ fun GradeItemUIJXGLSTU(
                         showBottomSheet_Survey = true
                     }
                 } else {
-                    num = grade
-                    showBottomSheet = true
+                    navController.navigateForTransition(AppNavRoute.GradeDetail, AppNavRoute.GradeDetail.withArgs(grade))
+//                    GradeDetailScreen
+//                    num = grade
+//                    showBottomSheet = true
                 }
             }
         ) {
@@ -339,42 +356,43 @@ fun GradeItemUIJXGLSTU(
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun GradeItemUIUniApp(
+    navController: NavHostController,
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
     input : String,
     hazeState: HazeState,
     displayCompactly : Boolean
 ) {
-    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
-    var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet) {
-        var party by remember { mutableStateOf(false) }
-        HazeBottomSheet (
-            onDismissRequest = { showBottomSheet= false },
-            showBottomSheet = showBottomSheet,
-            hazeState = hazeState
-        ) {
-            Box {
-                Party(show = party)
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar(num.courseName)
-                    },) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .verticalScroll(rememberScrollState())
-                            .fillMaxSize()
-                    ){
-                        GradeInfo(num) { party = it }
-                        Spacer(modifier = Modifier.height(30.dp))
-                    }
-                }
-            }
-        }
-    }
+//    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
+//    var showBottomSheet by remember { mutableStateOf(false) }
+//    if (showBottomSheet) {
+//        var party by remember { mutableStateOf(false) }
+//        HazeBottomSheet (
+//            onDismissRequest = { showBottomSheet= false },
+//            showBottomSheet = showBottomSheet,
+//            hazeState = hazeState
+//        ) {
+//            Box {
+//                Party(show = party)
+//                Scaffold(
+//                    modifier = Modifier.fillMaxSize(),
+//                    containerColor = Color.Transparent,
+//                    topBar = {
+//                        HazeBottomSheetTopBar(num.courseName)
+//                    },) { innerPadding ->
+//                    Column(
+//                        modifier = Modifier
+//                            .padding(innerPadding)
+//                            .verticalScroll(rememberScrollState())
+//                            .fillMaxSize()
+//                    ){
+//                        GradeInfo(num) { party = it }
+//                        Spacer(modifier = Modifier.height(30.dp))
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     val scope = rememberCoroutineScope()
 
@@ -433,18 +451,24 @@ fun GradeItemUIUniApp(
                                     val isFailed = !subItem.passed
 
                                     val finalGpaStr = (if(!isFailed && subItem.gp == 0.0) "--" else subItem.gp).toString()
+
+                                    val bean = GradeResponseJXGLSTU(
+                                        courseName = subItem.courseNameZh,
+                                        credits = subItem.credits.toString(),
+                                        gpa = finalGpaStr,
+                                        score = subItem.gradeDetail,
+                                        detail = subItem.finalGrade.toString(),
+                                        lessonCode = subItem.lessonCode
+                                    )
                                     CustomCard(
                                         color = cardNormalColor(),
-                                        modifier = Modifier.clickable {
-                                            num = GradeResponseJXGLSTU(
-                                                courseName = subItem.courseNameZh,
-                                                credits = subItem.credits.toString(),
-                                                gpa = finalGpaStr,
-                                                score = subItem.gradeDetail,
-                                                detail = subItem.finalGrade.toString(),
-                                                lessonCode = subItem.lessonCode
-                                            )
-                                            showBottomSheet = true
+                                        modifier = Modifier
+                                            .containerShare(AppNavRoute.GradeDetail.shareRoute(bean))
+                                            .clickable {
+                                                navController.navigateForTransition(AppNavRoute.GradeDetail, AppNavRoute.GradeDetail.withArgs(bean))
+
+//                                            num =
+//                                            showBottomSheet = true
                                         }
                                     ) {
                                         TransplantListItem(
@@ -523,43 +547,20 @@ fun GradeItemUIUniApp(
 }
 
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
+fun GradeDetailScreen(
+    bean : GradeResponseJXGLSTU,
+    navController: NavHostController
+) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val list = num.score.split(" ")
-    val radarList = mutableListOf<RadarData>()
-    list.forEach { item ->
-        val label = item.substringBefore(":")
-        val scoreText = item.substringAfter(":")
-        val scoreF = scoreText.toFloatOrNull()
-        // 五星制
-        val score = scoreF ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat() ?: 0f)
-        radarList.add(RadarData(label, score/100f))
-    }
+    val route = remember { AppNavRoute.GradeDetail.shareRoute(bean) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    var party by remember { mutableStateOf(false) }
+    val isFailed = remember { bean.gpa.toFloatOrNull() == 0f }
 
-    var avgPingshi = 0f
-    var examScore = 0f
-    var count = 0
-    radarList.forEach { item ->
-        if (!item.label.contains("期末")) {
-            avgPingshi += item.value
-            count++
-        } else {
-            examScore = item.value
-        }
-    }
-    if (count != 0)
-        avgPingshi /= count
-    else avgPingshi = 0f
-    if (examScore != 0f)
-        avgPingshi /= examScore
-    else avgPingshi = 0f
-
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
+    var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
@@ -570,176 +571,234 @@ fun GradeInfo(num : GradeResponseJXGLSTU,onParty: (Boolean) -> Unit) {
             hazeState = hazeState
         )
     }
-    var party by remember { mutableStateOf(false) }
 
-    val isFailed = num.gpa.toFloatOrNull() == 0f
-    Column(modifier = Modifier.hazeSource(hazeState)) {
-        if(radarList.size > 1) {
-            DividerTextExpandedWith(text = "雷达图") {
-                Spacer(modifier = Modifier.height(35.dp))
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                    RadarChart(
-                        data = radarList,
-                        modifier = Modifier.size(200.dp),
-                        primaryColor = if(isFailed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
-                        onPrimaryColor = if(isFailed) MaterialTheme.colorScheme.error.copy(.25f) else MaterialTheme. colorScheme. inversePrimary
-                    )
-                }
-                val bottomPadding = if(radarList.isEmpty()) {
-                    0
-                } else if(radarList.size == 1) {
-                    0
-                } else if(radarList.size == 3) {
-                    0
-                } else {
-                    25
-                }
-                Spacer(modifier = Modifier.height(bottomPadding.dp))
+    val list = remember { bean.score.split(" ") }
+    val radarList by produceState(initialValue = emptyList<RadarData>()) {
+        value = list.map { item ->
+            val label = item.substringBefore(":")
+            val scoreText = item.substringAfter(":")
+            val scoreF = scoreText.toFloatOrNull()
+            // 五星制
+            val score = scoreF ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat() ?: 0f)
+            RadarData(label, score/100f)
+        }
+    }
+
+
+    var avgPingshi by remember { mutableStateOf(0f) }
+    var examScore by remember { mutableStateOf(0f) }
+    var count by remember { mutableStateOf(0) }
+
+    LaunchedEffect(radarList) {
+        if(radarList.isEmpty()) {
+            return@LaunchedEffect
+        }
+        radarList.forEach { item ->
+            if (!item.label.contains("期末")) {
+                avgPingshi += item.value
+                count++
+            } else {
+                examScore = item.value
             }
         }
+        if (count != 0)
+            avgPingshi /= count
+        else avgPingshi = 0f
+        if (examScore != 0f)
+            avgPingshi /= examScore
+        else avgPingshi = 0f
+    }
 
-        DividerTextExpandedWith(text = "详情",false) {
-            LargeCard("分数 ${num.detail} 绩点 ${num.gpa}") {
-                for (i in list.indices step 2) {
-                    Row {
-                        val l1 = list[i]
-                        val t1 = l1.substringBefore(":")
-                        val score1 = l1.substringAfter(":")
-
-                        TransplantListItem(
-                            headlineContent = {
-                                Text(
-                                    text = score1,
-                                    fontWeight = if(t1.contains("期末考试") || t1.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
-                                    textDecoration = if(t1.contains("期末考试") || t1.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
-                                ) },
-                            overlineContent = { Text(t1) },
-                            modifier = Modifier.weight(.5f),
-                            leadingContent = { GradeIcons(t1) }
-                        )
-                        if (i + 1 < list.size) {
-                            val l2 = list[i+1]
-                            val t2 = l2.substringBefore(":")
-                            val score2 = l2.substringAfter(":")
-                            TransplantListItem(
-                                headlineContent = {
-                                    Text(
-                                        text = score2,
-                                        fontWeight = if(t2.contains("期末考试") || t2.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
-                                        textDecoration = if(t2.contains("期末考试") || t2.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
-                                    ) },
-                                overlineContent = { Text(t2) },
-                                modifier = Modifier.weight(.5f),
-                                leadingContent = { GradeIcons(t2) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Party(show = party)
+        CustomTransitionScaffold (
+            route = route,
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            navHostController = navController,
+            topBar = {
+                Column(modifier = Modifier.topBarBlur(hazeState)) {
+                    MediumTopAppBar(
+                        scrollBehavior = scrollBehavior,
+                        colors = topBarTransplantColor(),
+                        title = { Text(bean.courseName) },
+                        navigationIcon = {
+                            TopBarNavigateIcon(navController)
+                        }
+                    )
+                }
+            },
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .hazeSource(hazeState)
+                    .fillMaxSize()
+            ) {
+                InnerPaddingHeight(innerPadding,true)
+                if(radarList.size > 1) {
+                    DividerTextExpandedWith(text = "雷达图") {
+                        Spacer(modifier = Modifier.height(35.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                            RadarChart(
+                                data = radarList,
+                                modifier = Modifier.size(200.dp),
+                                primaryColor = if(isFailed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary,
+                                onPrimaryColor = if(isFailed) MaterialTheme.colorScheme.error.copy(.25f) else MaterialTheme. colorScheme. inversePrimary
                             )
+                        }
+                        val bottomPadding = if(radarList.isEmpty()) {
+                            0
+                        } else if(radarList.size == 1) {
+                            0
+                        } else if(radarList.size == 3) {
+                            0
+                        } else {
+                            25
+                        }
+                        Spacer(modifier = Modifier.height(bottomPadding.dp))
+                    }
+                }
+
+                DividerTextExpandedWith(text = "详情",false) {
+                    LargeCard("分数 ${bean.detail} 绩点 ${bean.gpa}") {
+                        for (i in list.indices step 2) {
+                            Row {
+                                val l1 = list[i]
+                                val t1 = l1.substringBefore(":")
+                                val score1 = l1.substringAfter(":")
+
+                                TransplantListItem(
+                                    headlineContent = {
+                                        Text(
+                                            text = score1,
+                                            fontWeight = if(t1.contains("期末考试") || t1.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
+                                            textDecoration = if(t1.contains("期末考试") || t1.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                        ) },
+                                    overlineContent = { Text(t1) },
+                                    modifier = Modifier.weight(.5f),
+                                    leadingContent = { GradeIcons(t1) }
+                                )
+                                if (i + 1 < list.size) {
+                                    val l2 = list[i+1]
+                                    val t2 = l2.substringBefore(":")
+                                    val score2 = l2.substringAfter(":")
+                                    TransplantListItem(
+                                        headlineContent = {
+                                            Text(
+                                                text = score2,
+                                                fontWeight = if(t2.contains("期末考试") || t2.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
+                                                textDecoration = if(t2.contains("期末考试") || t2.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                            ) },
+                                        overlineContent = { Text(t2) },
+                                        modifier = Modifier.weight(.5f),
+                                        leadingContent = { GradeIcons(t2) }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-        DividerTextExpandedWith("其他信息") {
-            CustomCard(color = cardNormalColor()) {
-                Row {
-                    TransplantListItem(
-                        leadingContent = {
-                            Icon(
-                                painter = painterResource(id = R.drawable.filter_vintage),
-                                contentDescription = ""
+                DividerTextExpandedWith("其他信息") {
+                    CustomCard(color = cardNormalColor()) {
+                        Row {
+                            TransplantListItem(
+                                leadingContent = {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.filter_vintage),
+                                        contentDescription = ""
+                                    )
+                                },
+                                headlineContent = {
+                                    ScrollText(
+                                        text =  bean.credits
+                                    )
+                                },
+                                overlineContent = {
+                                    Text("学分")
+                                },
+                                modifier = Modifier.weight(.5f)
                             )
-                        },
-                        headlineContent = {
-                            ScrollText(
-                                text =  num.credits
+                            TransplantListItem(
+                                leadingContent = {
+                                    Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
+                                },
+                                headlineContent = {
+                                    ScrollText(
+                                        text = if (avgPingshi != 0f) formatDecimal(
+                                            avgPingshi.toDouble(),
+                                            2
+                                        ) else "未知"
+                                    )
+                                },
+                                overlineContent = {
+                                    Text("平时因数")
+                                },
+                                modifier = Modifier
+                                    .weight(.5f)
+                                    .clickable {
+                                        showDialog = true
+                                    }
                             )
-                        },
-                        overlineContent = {
-                            Text("学分")
-                        },
-                        modifier = Modifier.weight(.5f)
-                    )
-                    TransplantListItem(
-                        leadingContent = {
-                            Icon(painter = painterResource(R.drawable.percent), contentDescription = "")
-                        },
-                        headlineContent = {
-                            ScrollText(
-                                text = if (avgPingshi != 0f) formatDecimal(
-                                    avgPingshi.toDouble(),
-                                    2
-                                ) else "未知"
-                            )
-                        },
-                        overlineContent = {
-                            Text("平时因数")
-                        },
-                        modifier = Modifier
-                            .weight(.5f)
-                            .clickable {
-                                showDialog = true
-                            }
-                    )
-                }
-                TransplantListItem(
-                    leadingContent = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.tag),
-                            contentDescription = ""
-                        )
-                    },
-                    headlineContent = {
-                        ScrollText(
-                            text =  num.lessonCode
-                        )
-                    },
-                    overlineContent = {
-                        Text("代码")
-                    }
-                )
-                with(num) {
-                    if(gpa.toFloatOrNull() != null) {
+                        }
                         TransplantListItem(
-                            headlineContent = {
-                                GPAStarGroup(detail,gpa) {
-                                    onParty(it)
-                                    party = it
-                                }
-                            },
                             leadingContent = {
-                                Icon(painterResource(if(party) R.drawable.thumb_up else R.drawable.stairs),null)
+                                Icon(
+                                    painter = painterResource(id = R.drawable.tag),
+                                    contentDescription = ""
+                                )
+                            },
+                            headlineContent = {
+                                ScrollText(
+                                    text =  bean.lessonCode
+                                )
                             },
                             overlineContent = {
-                                getGradeNextLevel(detail,gpa)?.let { target ->
-                                    detail.toDoubleOrNull().let { current ->
-                                        if(target.score == null) {
-                                            Text(" 下一绩点为${target.gpa}")
-                                        } else if(isFailed) {
-                                            Text("挂科")
-                                        } else {
-                                            Text(" 距离下一绩点${target.gpa}需要${target.score.min - (current ?: 0.0)}分")
-                                        }
-                                    }
-                                }
+                                Text("代码")
                             }
                         )
+                        with(bean) {
+                            if(gpa.toFloatOrNull() != null) {
+                                TransplantListItem(
+                                    headlineContent = {
+                                        GPAStarGroup(detail,gpa) {
+                                            party = it
+                                        }
+                                    },
+                                    leadingContent = {
+                                        Icon(painterResource(if(party) R.drawable.thumb_up else R.drawable.stairs),null)
+                                    },
+                                    overlineContent = {
+                                        getGradeNextLevel(detail,gpa)?.let { target ->
+                                            detail.toDoubleOrNull().let { current ->
+                                                if(target.score == null) {
+                                                    Text(" 下一绩点为${target.gpa}")
+                                                } else if(isFailed) {
+                                                    Text("挂科")
+                                                } else {
+                                                    Text(" 距离下一绩点${target.gpa}需要${target.score.min - (current ?: 0.0)}分")
+                                                }
+                                            }
+                                        }
+                                    }
+                                )
+                            }
+                        }
                     }
-                }
-            }
 
-        }
-        DividerTextExpandedWith("绩点与分数对应关系") {
-            GPAWithScore()
+                }
+                DividerTextExpandedWith("绩点与分数的关系") {
+                    GPAWithScore()
+                }
+                InnerPaddingHeight(innerPadding,false)
+            }
         }
     }
 }
+
+
 @Composable
-fun GPAWithScore(index : Pair<Int, Int>? = null) {
+fun GPAWithScore() {
     CustomCard(color = cardNormalColor()) {
-//        var boldIndex =
-//            if(index?.second == scoreWithGPA.size - 1) {
-//                index.first
-//            }  else {
-//                null
-//            }
         for(i in 0..scoreWithGPA.size-1 step 3) {
             val item1 = scoreWithGPA[i]
             val item2 = scoreWithGPA[i+1]

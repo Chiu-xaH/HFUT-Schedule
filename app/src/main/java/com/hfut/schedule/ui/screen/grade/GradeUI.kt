@@ -41,7 +41,6 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.GradeBarItems
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.LiquidButton
@@ -51,14 +50,13 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.grade.analysis.AnalysisScreen
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
-import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIJXGLSTU
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemJxglstuUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeItemUIUniApp
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade.goToXwx
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -72,7 +70,6 @@ import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -269,8 +266,8 @@ fun GradeScreen(
                     ) { page ->
                         val currentPage = gradeOriginList[page]
                         when(currentPage) {
-                            GradeDataOrigin.JXGLSTU -> GradeItemUIJXGLSTU(innerPadding,vm,input,hazeState,ifSaved,displayCompactly)
-                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(innerPadding,vm,input,hazeState,displayCompactly)
+                            GradeDataOrigin.JXGLSTU -> GradeItemJxglstuUI(navTopController,innerPadding,vm,input,hazeState,ifSaved,displayCompactly)
+                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(navTopController,innerPadding,vm,input,hazeState,displayCompactly)
                             GradeDataOrigin.COMMUNITY -> GradeItemUI(vm,innerPadding)
                         }
                     }

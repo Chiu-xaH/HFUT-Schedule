@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -55,6 +56,7 @@ import com.hfut.schedule.ui.component.button.LocalAppControlCenter
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeDetailScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
@@ -511,6 +513,23 @@ fun MainHost(
                         courseName,
                         id,
                         networkVm,
+                        navController
+                    )
+                }
+                // 成绩详情
+                transitionComposable(
+                    route = AppNavRoute.GradeDetail.receiveRoute(),
+                    arguments = getArgs(AppNavRoute.GradeDetail.Args.entries)
+                ) { backStackEntry ->
+                    val courseName = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.COURSE_NAME.argName) ?: (AppNavRoute.GradeDetail.Args.COURSE_NAME.default as String)
+                    val credits = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.CREDITS.argName) ?: (AppNavRoute.GradeDetail.Args.CREDITS.default as String)
+                    val gpa = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.GPA.argName) ?: (AppNavRoute.GradeDetail.Args.GPA.default as String)
+                    val score = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.SCORE.default as String)
+                    val detail = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.DETAIL.argName) ?: (AppNavRoute.GradeDetail.Args.DETAIL.default as String)
+                    val lessonCode = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.LESSON_CODE.argName) ?: (AppNavRoute.GradeDetail.Args.LESSON_CODE.default as String)
+                    val bean = GradeResponseJXGLSTU(courseName, credits,gpa,score,detail,lessonCode)
+                    GradeDetailScreen(
+                        bean,
                         navController
                     )
                 }

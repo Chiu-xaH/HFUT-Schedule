@@ -54,8 +54,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
-            UpdateItems("重构 消息中心","新增 已读机制")//
-            UpdateItems("重构 成绩详情界面适配新转场动画")
+            UpdateItems("重构 消息中心","新增 已读机制")
+            UpdateItems("重构 成绩详情界面适配新转场动画")//
 
             UpdateItems("新增 课程汇总、教务课程表、合工大教务课程表支持保存多个学期的数据")//
             UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
@@ -66,7 +66,7 @@ fun VersionInfo() {
             UpdateItems("修复 部分组件液态玻璃材质的瑕疵显示的Bug")//
             UpdateItems("修复 指间工大课程表下侧按钮阴影异常显示的Bug")//
             UpdateItems("修复 学期切换后课程表顶部日期不变的Bug")//
-            UpdateItems("修复 一键评教所有教师失败的Bug","可以用，但是教务系统的接口本身有反爬机制，一键评教速度太快了。尝试通过合工大教务的评教接口吧")//
+            UpdateItems("修复 一键评教所有教师失败的Bug")//
 
             UpdateItems("优化 冷启动的速度")//
             UpdateItems("优化 选项-应用与配置 中的归类")//
@@ -75,7 +75,7 @@ fun VersionInfo() {
 
             UpdateItems("移除 下学期课程表","想获取任意学期包括下学期的课程表和课程汇总的，可以去设置-应用及配置-课程表配置-学期切换，切换到指定学期后重新刷新登陆状态")//
             UpdateItems("移除 上推卡片(BottomSheet)的背景模糊","考虑到可读性、全屏渲染时的性能开销、与某些新的逻辑出现配色冲突等因素，暂时移除，后续可能会恢复")//
-            UpdateItems("移除 主界面选择功能")//
+            UpdateItems("移除 冷启动主界面自定义聚焦或课程表的功能")//
 
 //            UpdateItems("新增 英文语言适配")
 //            UpdateItems("优化 长按课程表展开选周预览界面的自适应布局")

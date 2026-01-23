@@ -4,6 +4,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute.NavArg
@@ -242,15 +243,6 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
             Args.IF_SAVED.argName to ifSaved
         )
     }
-//    object NextCourse : AppNavRoute("NEXT_COURSE","下学期课表",R.drawable.calendar) {
-//        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
-//            IF_SAVED("ifSaved", NavType.BoolType,true,false)
-//        }
-//        fun receiveRoute() = receiveRoutePair(Args.entries)
-//        fun withArgs(ifSaved: Boolean): String = withArgs(
-//            Args.IF_SAVED.argName to ifSaved
-//        )
-//    }
     object SelectCourse : AppNavRoute("SELECT_COURSE","选课",R.drawable.ads_click)
     object WebNavigation : AppNavRoute("WEB_NAVIGATION","网址导航",R.drawable.explore)
     object NotificationBox : AppNavRoute("BOX","收纳",R.drawable.notifications)
@@ -261,6 +253,27 @@ sealed class AppNavRoute(val route: String, val label : String, val icon : Int) 
         fun receiveRoute() = receiveRoutePair(Args.entries)
         fun withArgs(inFocus: Boolean): String = withArgs(
             Args.IN_FOCUS.argName to inFocus
+        )
+    }
+    object GradeDetail : AppNavRoute("GRADE_DETAIL","成绩详情",R.drawable.article) {
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            COURSE_NAME("courseName", NavType.StringType,"",false),
+            CREDITS("credits", NavType.StringType,"",false),
+            GPA("gpa", NavType.StringType,"",false),
+            SCORE("score", NavType.StringType,"",false),
+            DETAIL("detail", NavType.StringType,"",false),
+            LESSON_CODE("lessonCode", NavType.StringType,"",false),
+        }
+
+        fun shareRoute(bean : GradeResponseJXGLSTU)  = withArgs(GradeDetail.Args.LESSON_CODE.argName to bean.lessonCode)
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(bean: GradeResponseJXGLSTU): String = withArgs(
+            Args.DETAIL.argName to bean.detail,
+            Args.COURSE_NAME.argName to bean.courseName,
+            Args.LESSON_CODE.argName to bean.lessonCode,
+            Args.GPA.argName to bean.gpa,
+            Args.CREDITS.argName to bean.credits,
+            Args.SCORE.argName to bean.score
         )
     }
     object CourseSearch : AppNavRoute("COURSE_SEARCH","开课查询",R.drawable.search)
