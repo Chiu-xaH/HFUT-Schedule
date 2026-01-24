@@ -33,12 +33,13 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME, MyApplicati
     const val HUI_XIN_INFO = "hui_xin_info"//card_yue
     // 新增
     const val GRADE = "grade"
-    const val BOOK_INFO = "book"
+    private const val BOOK_INFO_HEAD = "book_"
     const val XWX_USER_INFO = "xwx_user_info"
     private const val UNI_APP_COURSES_HEAD = "uni_app_courses_"
     const val UNI_APP_EXAMS = "uni_app_exams"
 
     fun getTotalCoursesKey(semester: Int) = "$COURSES_HEAD$semester"
+    fun getBookKey(semester: Int) = "$BOOK_INFO_HEAD$semester"
     fun getJxglstuDatumKey(semester: Int) = "$DATUM_HEAD$semester"
     fun getUniAppCoursesKey(semester: Int) = "$UNI_APP_COURSES_HEAD$semester"
 
@@ -66,44 +67,44 @@ object LargeStringDataManager : LargeStringDataStore(CACHE_DIR_NAME, MyApplicati
                 // 学籍照
                 moveFromPrefs("photo", PHOTO)
             }
+            // 课程表
             launch {
-                // 课程表
-                launch {
-                    SharedPrefs.prefs.edit { remove("json") }
-                }
-                launch {
-                    SharedPrefs.prefs.edit { remove("jsonNext") }
-                }
-                launch {
-                    // 新架构课程表 支持多学期
-                    move("datum",getJxglstuDatumKey(SemesterParser.getSemester()))
-                }
-                launch {
-                    // 新架构课程表 支持多学期
-                    move("uni_app_courses",getUniAppCoursesKey(SemesterParser.getSemester()))
-                }
+                val key = getJxglstuDatumKey(SemesterParser.getSemester())
+                // 课程表v1 迁移
+                moveFromPrefs("json",key)
+                // 课程表v2 支持多学期
+                move("datum",key)
+            }
+            launch {
+                // 新架构课程表 支持多学期
+                move("uni_app_courses",getUniAppCoursesKey(SemesterParser.getSemester()))
             }
             launch {
                 // 考试
                 moveFromPrefs("examJXGLSTU",EXAM)
             }
             launch {
-                launch {
-                    val content = DataStoreManager.courseBookJson.first()
-                    launch {
-                        save(BOOK_INFO,content)
-                    }
-                    launch {
-                        // 删除
-                        DataStoreManager.saveCourseBook("")
-                    }
-                }
                 // 课程汇总
-                launch {
-                    moveFromPrefs("courses",getTotalCoursesKey(SemesterParser.getSemester()))
+                moveFromPrefs("courses",getTotalCoursesKey(SemesterParser.getSemester()))
+            }
+            // 移除下学期课程表功能
+            launch {
+                SharedPrefs.prefs.edit { remove("coursesNext") }
+            }
+            launch {
+                SharedPrefs.prefs.edit { remove("jsonNext") }
+            }
+            launch moveBook@ {
+                val content = DataStoreManager.courseBookJson.first()
+                if(content.isEmpty() || content.isBlank()) {
+                    return@moveBook
                 }
                 launch {
-                    SharedPrefs.prefs.edit { remove("coursesNext") }
+                    save(getBookKey(SemesterParser.getSemester()),content)
+                }
+                launch {
+                    // 删除
+                    DataStoreManager.saveCourseBook("")
                 }
             }
 //            launch {

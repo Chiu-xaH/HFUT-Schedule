@@ -31,7 +31,8 @@ data class Schedule(
 data class Notifications(val title : String,
                          val info : String,
                          val remark : String,
-                         val url : String?
+                         val url : String?,
+    val id : Int
 )
 
 data class Lab(val title : String,

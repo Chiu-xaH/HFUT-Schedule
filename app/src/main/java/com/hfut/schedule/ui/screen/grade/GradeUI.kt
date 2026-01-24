@@ -265,7 +265,7 @@ fun GradeScreen(
                         val currentPage = gradeOriginList[page]
                         when(currentPage) {
                             GradeDataOrigin.JXGLSTU -> GradeItemJxglstuUI(navTopController,innerPadding,vm,input,hazeState,ifSaved,displayCompactly)
-                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(navTopController,innerPadding,vm,input,hazeState,displayCompactly)
+                            GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(navTopController,innerPadding,vm,input,displayCompactly)
                             GradeDataOrigin.COMMUNITY -> GradeItemUI(vm,innerPadding)
                         }
                     }

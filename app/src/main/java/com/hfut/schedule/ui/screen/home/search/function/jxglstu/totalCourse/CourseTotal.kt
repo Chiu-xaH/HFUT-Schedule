@@ -32,10 +32,12 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -73,63 +75,56 @@ fun TotalCourseScreen(
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
-    var next by remember { mutableStateOf(false) }
     var sortType by remember { mutableStateOf(true) }
 
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
-        CustomTransitionScaffold (
-            route = route,
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
+
+    CustomTransitionScaffold (
+        route = route,
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
 //                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.TotalCourse.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController, AppNavRoute.TotalCourse.withArgs(ifSaved,origin), AppNavRoute.TotalCourse.icon)
-                    },
-                    actions = {
-                        Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-//                            if (isNextOpen()) {
-//                                FilledTonalIconButton (
-//                                    onClick = {
-//                                        next = !next
-//                                    }
-//                                    ,) {
-//                                    Text(text = if(next) "下" else "本")
-//                                }
-//                            }
-//                            Spacer(Modifier.width(CARD_NORMAL_DP))
-                            FilledTonalButton(
-                                onClick = { sortType = !sortType },) {
-                                Text(text = if(sortType) "开课时间" else "学分高低")
-                            }
-                        }
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.TotalCourse.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController, AppNavRoute.TotalCourse.withArgs(ifSaved,origin), AppNavRoute.TotalCourse.icon)
+                },
+                actions = {
+                    LiquidButton(
+                        onClick = {
+                            sortType = !sortType
+                        },
+                        backdrop = rememberLayerBackdrop(),
+                        isCircle = false,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                    ) {
+                        Text(text = if(sortType) "开课时间" else "学分高低")
                     }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .hazeSource(hazeState)
-                    .padding(innerPadding)
-                    .fillMaxSize()
-            ) {
-                CourseTotalUI(
-                    TotalCourseDataSource.MINE,
-                    sortType,
-                    vm,
-                    hazeState,
-                    ifSaved
-                )
-            }
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .padding(innerPadding)
+                .fillMaxSize()
+        ) {
+            CourseTotalUI(
+                TotalCourseDataSource.MINE,
+                sortType,
+                vm,
+                hazeState,
+                ifSaved
+            )
         }
-//    }
+    }
 }
 
 

@@ -110,7 +110,7 @@ fun DraggableWeekButton(
 
     Box(
         modifier = modifier
-            .clip(FloatingActionButtonDefaults.extendedFabShape)
+            .clip(if(expanded) FloatingActionButtonDefaults.extendedFabShape else MaterialTheme.shapes.small)
             .pointerInput(key) {
                 detectDragGestures(
                     onDragEnd = {

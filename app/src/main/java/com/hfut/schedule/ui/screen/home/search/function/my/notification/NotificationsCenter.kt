@@ -20,6 +20,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -50,6 +51,10 @@ fun NotificationsCenter(
 ) {
     val route = remember { AppNavRoute.Notifications.route }
 
+    val count by produceState(initialValue = 0) {
+        value = calculatedReadNotificationCount()
+    }
+
     TransplantListItem(
         headlineContent = { ScrollText(text = AppNavRoute.Notifications.label) },
         modifier = Modifier.clickable {
@@ -58,8 +63,11 @@ fun NotificationsCenter(
         },
         leadingContent = {
             BadgedBox(badge = {
-                if (prefs.getString("Notifications","0") != getNotifications().size.toString())
-                Badge { Text(text = getNotifications().size.toString())}
+                if (count != 0) {
+                    Badge {
+                        Text(text = count.toString())
+                    }
+                }
             }) {
                 Icon(painterResource(AppNavRoute.Notifications.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
 

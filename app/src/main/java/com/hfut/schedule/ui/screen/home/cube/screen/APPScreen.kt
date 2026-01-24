@@ -65,6 +65,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.media.SimpleVideo
@@ -78,6 +79,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -201,7 +203,7 @@ fun APPScreen(
             }
         }
         DividerTextExpandedWith("课程表配置") {
-            CalendarSettingsUI()
+            CalendarSettingsUI(false)
         }
         DividerTextExpandedWith("偏好与配置") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
@@ -414,8 +416,10 @@ fun APPScreen(
 }
 @Composable
 fun CalendarSettingsUI(
-    containerColor : Color = MaterialTheme.colorScheme.surface
+    isInBottomSheet : Boolean ,
+//    containerColor : Color = MaterialTheme.colorScheme.surface
 ) {
+    val containerColor = if(isInBottomSheet) cardNormalColor() else MaterialTheme.colorScheme.surface
     val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
     val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)
     val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemesterWithoutSuspend())
@@ -634,6 +638,9 @@ fun CalendarSettingsUI(
             }
         }
         Spacer(Modifier.height(APP_HORIZONTAL_DP))
+    }
+    if(isInBottomSheet) {
+        BottomTip("修改后请切换到聚焦界页下拉刷新获取新的课程，再回到课程表界面")
     }
 }
 

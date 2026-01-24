@@ -144,7 +144,7 @@ fun MultiScheduleSettings(
                 modifier = Modifier.verticalScroll(rememberScrollState())
             ) {
                 HazeBottomSheetTopBar("课程表配置", isPaddingStatusBar = false)
-                CalendarSettingsUI(cardNormalColor())
+                CalendarSettingsUI(true)
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }

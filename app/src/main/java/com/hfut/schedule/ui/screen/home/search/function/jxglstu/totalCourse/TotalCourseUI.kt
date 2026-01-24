@@ -106,14 +106,17 @@ fun CourseTotalUI(
     state: LazyListState = rememberLazyListState()
 ) {
     val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
-        val json = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO) ?: return@produceState
+        val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
         value = JxglstuRepository.parseCourseBook(json)
     }
 
     if(dataSource != TotalCourseDataSource.SEARCH && ifSaved == false) {
         LaunchedEffect(Unit) {
-            if(vm.courseBookResponse.state.first() is UiState.Success) return@LaunchedEffect
             val term = SemesterParser.getSemester()
+            val skip = (vm.courseBookResponse.state.first() as? UiState.Success)?.data?.first == term
+            if(skip) {
+                return@LaunchedEffect
+            }
             val cookie = getJxglstuCookie() ?: return@LaunchedEffect
             when(dataSource) {
                 TotalCourseDataSource.MINE -> vm.getCourseBook(cookie,term)

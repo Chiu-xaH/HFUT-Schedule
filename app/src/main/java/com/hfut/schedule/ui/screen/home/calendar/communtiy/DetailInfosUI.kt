@@ -172,7 +172,7 @@ fun CourseDetailApiScreen(
         value = list.find { it.course.nameZh == courseName }
     }
     val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
-        val json = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO) ?: return@produceState
+        val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
         value = JxglstuRepository.parseCourseBook(json)
     }
 
@@ -224,7 +224,7 @@ fun CourseDetailApi(courseName : String, vm : NetWorkViewModel, hazeState: HazeS
         value = list.find { it.course.nameZh == courseName }
     }
     val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
-        val json = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO) ?: return@produceState
+        val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
         value = JxglstuRepository.parseCourseBook(json)
     }
 

@@ -815,7 +815,7 @@ object JxglstuRepository {
         semester: Int,
         studentId: StateHolder<Int>,
         bizTypeIdResponse: StateHolder<Int>,
-        courseBookResponse : StateHolder<Map<Long, CourseBookBean>>
+        courseBookResponse : StateHolder<Pair<Int,Map<Long, CourseBookBean>>>
     ) = onListenStateHolderForNetwork(studentId, courseBookResponse) { sId ->
         onListenStateHolderForNetwork(bizTypeIdResponse, courseBookResponse) { bizTypeId ->
             launchRequestState(
@@ -828,20 +828,26 @@ object JxglstuRepository {
                         studentId = sId
                     )
                 },
-                transformSuccess = { _, json -> parseCourseBookNetwork(json) }
+                transformSuccess = { _, json -> parseCourseBookNetwork(json,semester) }
             )
         }
     }
     @JvmStatic
-    private suspend fun parseCourseBookNetwork(json : String) : Map<Long, CourseBookBean> = try {
+    private suspend fun parseCourseBookNetwork(json : String,semester : Int) : Pair<Int,Map<Long, CourseBookBean>> = try {
         val gson = Gson()
         val data = gson.fromJson(json, CourseBookResponse::class.java).textbookAssignMap
-        // 将JSON以String只保存data部分
+//        val originMapJson = LargeStringDataManager.read(LargeStringDataManager.BOOK_INFO)
+//        val originMap = originMapJson?.let {
+//            val type = object : TypeToken<Map<String, CourseBookBean>>() {}.type
+//            val data: Map<String, CourseBookBean> = gson.fromJson(it, type)
+//            data
+//        } ?: emptyMap()
+        // 将JSON以String只保存data部分 增量保存
+//        val finalMap = originMap + data
+//        val dataJson = gson.toJson(finalMap)
         val dataJson = gson.toJson(data)
-        LargeStringDataManager.save(LargeStringDataManager.BOOK_INFO,dataJson)
-//        DataStoreManager.saveCourseBook(dataJson)
-
-        parseCourseBook(json)
+        LargeStringDataManager.save(LargeStringDataManager.getBookKey(SemesterParser.getSemester()),dataJson)
+        Pair(semester,parseCourseBook(json))
     } catch (e : Exception) { throw e }
     @JvmStatic
     fun parseCourseBook(json: String) : Map<Long, CourseBookBean> = try {
@@ -854,7 +860,10 @@ object JxglstuRepository {
                 longKey to value
             }
         }.toMap()
-    } catch (e : Exception) { emptyMap() }
+    } catch (e : Exception) {
+        LogUtil.error(e)
+        emptyMap()
+    }
 
     @JvmStatic
     fun parseDatumCourse(result: String) : List<lessons> = try {

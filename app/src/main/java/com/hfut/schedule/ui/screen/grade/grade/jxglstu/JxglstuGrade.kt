@@ -40,10 +40,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,7 +58,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
@@ -82,6 +84,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -109,6 +112,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.collections.set
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
@@ -123,37 +127,6 @@ fun GradeItemJxglstuUI(
     displayCompactly : Boolean
 ) {
     val context = LocalContext.current
-//    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//    if (showBottomSheet) {
-//        var party by remember { mutableStateOf(false) }
-//        HazeBottomSheet (
-//            onDismissRequest = { showBottomSheet= false },
-//            showBottomSheet = showBottomSheet,
-//            hazeState = hazeState
-//        ) {
-//            Box {
-//                Party(show = party)
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    containerColor = Color.Transparent,
-//                    topBar = {
-//                        HazeBottomSheetTopBar(num.courseName)
-//                    },) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .verticalScroll(rememberScrollState())
-//                            .fillMaxSize()
-//                    ){
-//                        GradeInfo(num) { party = it }
-//                        Spacer(modifier = Modifier.height(30.dp))
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
     var surveyCode by remember { mutableStateOf("") }
     if (showBottomSheet_Survey) {
@@ -181,7 +154,7 @@ fun GradeItemJxglstuUI(
     }
 
 
-    val Item = @Composable { grade : GradeResponseJXGLSTU ->
+    val itemUI = @Composable { grade : GradeResponseJXGLSTU ->
         val isFailed = grade.gpa.toFloatOrNull() == 0f
         val needSurvey = grade.score.contains("评教")
 
@@ -201,9 +174,6 @@ fun GradeItemJxglstuUI(
                     }
                 } else {
                     navController.navigateForTransition(AppNavRoute.GradeDetail, AppNavRoute.GradeDetail.withArgs(grade))
-//                    GradeDetailScreen
-//                    num = grade
-//                    showBottomSheet = true
                 }
             }
         ) {
@@ -274,6 +244,9 @@ fun GradeItemJxglstuUI(
         }
     }
     val scope = rememberCoroutineScope()
+    val expandedMap = remember {
+        mutableStateMapOf<String, Boolean>()
+    }
 
     val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
         Column {
@@ -287,15 +260,28 @@ fun GradeItemJxglstuUI(
                     item {
                         InnerPaddingHeight(innerPadding,true)
                     }
-                    items(gradeList.size) { termIndex ->
-                        val item = gradeList[termIndex]
-                        DividerTextExpandedWith(item.term) {
-                            item.list.filter {
-                                it.courseName.contains(input) || it.lessonCode.contains(input)
-                            }.forEach { subItem ->
-                                Item(subItem)
+                    gradeList.forEach { term ->
+                        val termKey = term.term
+                        var subList = term.list.filter {
+                            it.courseName.contains(input) || it.lessonCode.contains(input)
+                        }
+                        item(key = termKey) {
+                            DividerText(termKey) {
+                                // 收起列表
+                                expandedMap[termKey] = !(expandedMap[termKey] ?: true)
                             }
                         }
+
+                        if (expandedMap[termKey] ?: true) {
+                            items(
+                                subList.size,
+                                key = { subList[it].lessonCode }
+                            ) { index ->
+                                val subItem = subList[index]
+                                itemUI(subItem)
+                            }
+                        }
+
                     }
                     item {
                         InnerPaddingHeight(innerPadding,false)
@@ -360,42 +346,9 @@ fun GradeItemUIUniApp(
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
     input : String,
-    hazeState: HazeState,
     displayCompactly : Boolean
 ) {
-//    var num by remember { mutableStateOf(GradeResponseJXGLSTU("","","","","","")) }
-//    var showBottomSheet by remember { mutableStateOf(false) }
-//    if (showBottomSheet) {
-//        var party by remember { mutableStateOf(false) }
-//        HazeBottomSheet (
-//            onDismissRequest = { showBottomSheet= false },
-//            showBottomSheet = showBottomSheet,
-//            hazeState = hazeState
-//        ) {
-//            Box {
-//                Party(show = party)
-//                Scaffold(
-//                    modifier = Modifier.fillMaxSize(),
-//                    containerColor = Color.Transparent,
-//                    topBar = {
-//                        HazeBottomSheetTopBar(num.courseName)
-//                    },) { innerPadding ->
-//                    Column(
-//                        modifier = Modifier
-//                            .padding(innerPadding)
-//                            .verticalScroll(rememberScrollState())
-//                            .fillMaxSize()
-//                    ){
-//                        GradeInfo(num) { party = it }
-//                        Spacer(modifier = Modifier.height(30.dp))
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     val scope = rememberCoroutineScope()
-
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
     val refreshNetwork: suspend () -> Unit = m@ {
@@ -419,16 +372,26 @@ fun GradeItemUIUniApp(
         }
     }
 
-    val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
-        scope.launch { refreshNetwork() }
-    })
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = refreshing,
+        onRefresh = {
+            scope.launch {
+                refreshNetwork()
+            }
+        }
+    )
 
     Box(modifier = Modifier
         .fillMaxHeight()
-        .pullRefresh(pullRefreshState)){
-        RefreshIndicator(refreshing, pullRefreshState, Modifier
-            .padding(innerPadding)
-            .align(Alignment.TopCenter))
+        .pullRefresh(pullRefreshState)
+    ){
+        RefreshIndicator(
+            refreshing,
+            pullRefreshState,
+            Modifier
+                .padding(innerPadding)
+                .align(Alignment.TopCenter)
+        )
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val gradeList = (uiState as UiState.Success).data.toList().sortedByDescending { it.first }
             Column {
@@ -438,16 +401,29 @@ fun GradeItemUIUniApp(
                     }
                 }
                 else {
+                    val expandedMap = remember {
+                        mutableStateMapOf<String, Boolean>()
+                    }
                     LazyColumn {
-                        item {
-                            InnerPaddingHeight(innerPadding,true)
-                        }
-                        items(gradeList.size) { termIndex ->
-                            val item = gradeList[termIndex]
-                            DividerTextExpandedWith(item.first) {
-                                item.second.filter {
-                                    it.courseNameZh.contains(input) || it.lessonCode.contains(input)
-                                }.forEach { subItem ->
+                        item { InnerPaddingHeight(innerPadding,true) }
+                        gradeList.forEach { term ->
+                            val termKey = term.first
+                            var subList = term.second.filter {
+                                it.courseNameZh.contains(input) || it.lessonCode.contains(input)
+                            }
+                            item(key = term.first) {
+                                DividerText(term.first) {
+                                    // 收起列表
+                                    expandedMap[termKey] = !(expandedMap[termKey] ?: true)
+                                }
+                            }
+
+                            if (expandedMap[termKey] ?: true) {
+                                items(
+                                    subList.size,
+                                    key = { subList[it].lessonCode }
+                                ) { index ->
+                                    val subItem = subList[index]
                                     val isFailed = !subItem.passed
 
                                     val finalGpaStr = (if(!isFailed && subItem.gp == 0.0) "--" else subItem.gp).toString()
@@ -466,10 +442,7 @@ fun GradeItemUIUniApp(
                                             .containerShare(AppNavRoute.GradeDetail.shareRoute(bean))
                                             .clickable {
                                                 navController.navigateForTransition(AppNavRoute.GradeDetail, AppNavRoute.GradeDetail.withArgs(bean))
-
-//                                            num =
-//                                            showBottomSheet = true
-                                        }
+                                            }
                                     ) {
                                         TransplantListItem(
                                             headlineContent = {  Text(subItem.courseNameZh) },
@@ -535,10 +508,9 @@ fun GradeItemUIUniApp(
                                     }
                                 }
                             }
+
                         }
-                        item {
-                            InnerPaddingHeight(innerPadding,false)
-                        }
+                        item { InnerPaddingHeight(innerPadding,false) }
                     }
                 }
             }

@@ -355,7 +355,7 @@ class NetWorkViewModel() : ViewModel() {
 
     suspend fun getPhoto(cookie : String) = JxglstuRepository.getPhoto(cookie,studentId)
 
-    val courseBookResponse = StateHolder<Map<Long,CourseBookBean>>()
+    val courseBookResponse = StateHolder<Pair<Int,Map<Long,CourseBookBean>>>()
     suspend fun getCourseBook(cookie: String,semester: Int) = JxglstuRepository.getCourseBook(cookie,semester,studentId,bizTypeIdResponse, courseBookResponse)
 
     suspend fun goToOne(cookie : String) = CasLoginRepository.goToOne(cookie)

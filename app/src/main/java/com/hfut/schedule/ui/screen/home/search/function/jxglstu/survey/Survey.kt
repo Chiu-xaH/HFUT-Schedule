@@ -84,9 +84,9 @@ fun Survey(
             Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-//            if(ifSaved) refreshLogin(context) else {
+            if(ifSaved) refreshLogin(context) else {
                 navController.navigateForTransition(AppNavRoute.Survey, AppNavRoute.Survey.withArgs(ifSaved))
-//            }
+            }
         }
     )
 }
@@ -132,7 +132,7 @@ fun SurveyScreen(
                         }
                     }
                 )
-                CustomTabRow(pagerState,listOf("合工大教务","教务系统"))
+//                CustomTabRow(pagerState,listOf("合工大教务","教务系统"))
             }
         },
     ) { innerPadding ->
@@ -143,18 +143,18 @@ fun SurveyScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            HorizontalPager(pagerState) { page ->
-                when(page) {
-                    PAGE_JXGLSTU -> {
+//            HorizontalPager(pagerState) { page ->
+//                when(page) {
+//                    PAGE_JXGLSTU -> {
                         SurveyUI(vm,hazeState,refresh,innerPadding)
-                    }
-                    PAGE_UNI_APP -> {
-                        CenterScreen {
-                            DevelopingIcon()
-                        }
-                    }
-                }
-            }
+//                    }
+//                    PAGE_UNI_APP -> {
+//                        CenterScreen {
+//                            DevelopingIcon()
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 }

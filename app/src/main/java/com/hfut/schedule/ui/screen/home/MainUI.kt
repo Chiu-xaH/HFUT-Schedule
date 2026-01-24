@@ -151,6 +151,7 @@ import com.hfut.schedule.ui.screen.home.search.SearchFuncs
 import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
+import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculatedReadNotificationCount
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -349,6 +350,9 @@ fun MainScreen(
     // 捏合手势
     val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 
+    val count by produceState(initialValue = 0) {
+        value = calculatedReadNotificationCount()
+    }
 
     CustomTransitionScaffold (
         navHostController = navHostTopController,
@@ -452,8 +456,11 @@ fun MainScreen(
                                         navHostTopController.navigateForTransition(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
                                     }) {
                                         BadgedBox(badge = {
-                                            if (getNotifications().size.toString() != prefs.getString("Notifications",""))
-                                                Badge()
+                                            if (count != 0) {
+                                                Badge {
+                                                    Text(text = count.toString())
+                                                }
+                                            }
                                         }) {
                                             Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = iconRoute))
                                         }

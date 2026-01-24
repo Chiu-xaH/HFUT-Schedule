@@ -323,38 +323,43 @@ fun NotificationBoxScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.NotificationBox.label) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.NotificationBox.icon)
-                    },
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                MyAPIItem()
-                DividerTextExpandedWith("通知") {
-                    NotificationItems()
-                }
-                DividerTextExpandedWith("实验室") {
-                    LabUI()
-                }
-                InnerPaddingHeight(innerPadding,false)
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(AppNavRoute.NotificationBox.label) },
+                navigationIcon = {
+                    TopBarNavigationIcon(navController,route, AppNavRoute.NotificationBox.icon)
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            MyAPIItem()
+            DividerTextExpandedWith("通知") {
+                NotificationItems()
             }
+            // TODO 解耦给云端共建
+            DividerTextExpandedWith("实验室") {
+                LabUI()
+            }
+            // TODO 新增
+//            DividerTextExpandedWith("使用技巧") {
+//            }
+//            DividerTextExpandedWith("提案板") {
+//            }
+            InnerPaddingHeight(innerPadding,false)
         }
-//    }
+    }
 }
