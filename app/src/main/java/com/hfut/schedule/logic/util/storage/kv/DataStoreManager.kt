@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
@@ -21,6 +22,9 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
+import com.hfut.schedule.ui.util.language.PlainText
+import com.hfut.schedule.ui.util.language.UiText
+import com.hfut.schedule.ui.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.transition.style.TransitionLevel
@@ -37,6 +41,14 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 object DataStoreManager : IDataStore {
+    /**
+     * 实现基类 传入任意枚举
+     * @param code 实际记忆的值 如果能保证枚举类的顺序后期不会调整，也可以去除code，用ordinal代替
+     */
+    interface BaseChoice {
+        val label: UiText
+        val code: Int
+    }
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */
@@ -74,8 +86,10 @@ object DataStoreManager : IDataStore {
         val name : String
     )
 
-    enum class ShowTeacherConfig(val code : Int,val description: String) {
-        ONLY_MULTI(0,"仅多教师课程显示"),ALL(1,"全部显示"),NONE(2,"不显示")
+    enum class ShowTeacherConfig(override val code : Int,override val label: UiText) : BaseChoice {
+        ONLY_MULTI(0,text("仅多教师课程显示")),
+        ALL(1,text("全部显示")),
+        NONE(2, text("不显示"))
     }
 
 
@@ -132,6 +146,7 @@ object DataStoreManager : IDataStore {
     private val TERM_START_DATE = stringPreferencesKey("term_start_date")
     private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
     private val READ_NOTIFICATIONS = stringPreferencesKey("read_notifications")
+    private val LANGUAGE = intPreferencesKey("language")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
@@ -180,6 +195,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCalendarSquareTextPadding(value: Float) = saveValue(CALENDAR_SQUARE_TEXT_PADDING, value)
     suspend fun saveFocusWidgetTextSize(value: Float) = saveValue(FOCUS_WIDGET_TEXT_SIZE, value)
     suspend fun saveDefaultCalendar(value: CourseType) = saveValue(DEFAULT_CALENDAR, value.code)
+    suspend fun saveLanguage(value: Language) = saveValue(LANGUAGE, value.code)
     suspend fun saveHefeiElectric(bean : HefeiElectricStorage)  = withContext(Dispatchers.IO) {
         with(bean) {
             launch { saveHefeiRoomNumber(roomNumber) }
@@ -239,6 +255,7 @@ object DataStoreManager : IDataStore {
     val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
+    val language = getFlow(LANGUAGE, Language.AUTO.code)
     val calendarSquareTextPadding = getFlow(CALENDAR_SQUARE_TEXT_PADDING, MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)

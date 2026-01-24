@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_settings_interaction_half_title">Interaction</string>
+
+    <string name="app_settings_predictive_back_gesture_title">Predictive back gesture</string>
+    <string name="app_settings_predictive_back_gesture_description_supported">When the return gesture between some interfaces of the same Activity is not released, the interface that follows the hand shrinks.</string>
+    <string name="app_settings_predictive_back_gesture_description_unsupported">Require Android 13+</string>
+
+    <string name="app_settings_control_center_title">Launch Center</string>
+    <string name="app_settings_control_center_description">Swipe right from the top bar or long press the back icon in the upper left to bring it up (some interfaces do not support this for the time being), which can quickly switch to the recently opened window and adjust some Settings. The sensitivity of sliding up and down after opening will decrease.</string>
+
+    <string name="app_settings_study_interaction_title">Study interaction</string>
+    <string name="app_settings_study_interaction_description">Study the gesture interaction operations within the application.</string>
+
+    <string name="app_settings_calendar_half_title">Course schedule configuration</string>
+
+    <string name="app_settings_preferences_half_title">Preferences and configurations</string>
+
+    <string name="app_settings_language_title">Language</string>
+
+    <string name="app_settings_display_overdue_courses_on_focus_title">Display overdue courses on Focus page</string>
+    <string name="app_settings_display_overdue_courses_on_focus_description">Show or hide the courses completed today.</string>
+
+    <string name="app_settings_display_overdue_events_on_focus_title">Display overdue schedules on Focus page</string>
+    <string name="app_settings_display_overdue_events_on_focus_description">Show or hide the expired items in the self-added schedule.</string>
+
+    <string name="app_settings_free_flow_of_school_net_of_xc_campus_title">Monthly free quota for the school net of Xuancheng Campus is %1$sGiB</string>
+    <string name="app_settings_free_flow_of_school_net_of_xc_campus_description">Used for calculating and displaying usage percentages. (The initial value is %1$sGiB)</string>
+
+    <string name="app_settings_default_calendar_account_title">Default calendar account</string>
+    <string name="app_settings_default_calendar_account_description">Customize the accounts added to the system calendar; By using email accounts, multi-device synchronization of class schedules and focus schedules can be achieved.</string>
+
+    <string name="app_settings_auto_fill_captcha_title">Automatically fill in the image verification code</string>
+    <string name="app_settings_auto_fill_captcha_description">When refreshing the login, use the OCR capability provided by the Tesseract library to fill in the verification code.</string>
+
+    <string name="app_settings_ai_title">LLM</string>
+    <string name="app_settings_ai_description">The user provides an ApiKey to send the data to the large model, offering more possibilities for the application.</string>
+
+    <string name="app_settings_widget_half_title">Widget</string>
+
+    <string name="app_settings_widget_focus_title">Focus</string>
+    <string name="app_settings_widget_focus_description">Display courses that in Important-Matters of Focus page.</string>
+
+    <string name="app_settings_widget_data_title">Data widget</string>
+    <string name="app_settings_widget_data_description">School card balance, electricity bill, bath, Internet fee, next class and other information.</string>
+
+    <string name="app_settings_school_net_title">School net</string>
+    <string name="app_settings_school_net_description">One-click login and usage data of the school net.</string>
+
+    <string name="app_settings_storage_half_title">Storage</string>
+
+    <string name="app_settings_backup_and_restore_title">Backup and restore</string>
+    <string name="app_settings_backup_and_restore_description">Export or import the local database and preference Settings.</string>
+
+    <string name="app_settings_clear_cache_title">Clear cache</string>
+    <string name="app_settings_clear_cache_description">Clearing some cache won\'t affect the number of applications.</string>
+
+    <string name="app_settings_toast_clear_cache_done">Has been cleaned %1$f MB</string>
+
+    <string name="app_settings_default_calendar_title">Default calendar</string>
+    <string name="app_settings_default_calendar_community_description">The course schedule of Community sometimes malfunctions and fails to update data. It is no longer recommended for use and does not support compensatory leave.</string>
+    <string name="app_settings_default_calendar_uni_app_description">The course schedule of Uni-App will be automatically refreshed and the best recommendations will be made.</string>
+    <string name="app_settings_default_calendar_jxglstu_description">The course schedule of Academic is updated each time the login status is refreshed. After logging into the academic affairs office, if there is a course adjustment or withdrawal, it will change immediately. After the login expires, it will be cached locally.</string>
+
+    <string name="app_settings_current_term_title">Current term</string>
+
+    <string name="app_settings_toast_change_current_term_unsupported">Please turn off the switch when making modifications.</string>
+
+    <string name="app_settings_auto_calculate_term_title">Auto calculate term</string>
+    <string name="app_settings_auto_calculate_term_description">The overall semester mainly controls the academic affairs course schedule and other information. Other functions such as teaching evaluation can be freely switched between semesters in the corresponding functional areas. According to the local function calculation, the second semester is from February to July each year, and the first semester is from August to January.</string>
+
+    <string name="app_settings_start_date_of_term_title">Start date of term</string>
+    <string name="app_settings_start_date_of_term_description">Automatically refresh in response to the switch of semesters or changes in the course schedule; You can also customize the start time of this semester, which will affect the calculation of the number of weeks in the course schedule.</string>
+
+    <string name="app_settings_tips_start_date_of_term">After modification, please switch to the Focus page, pull down to refresh to obtain the new course, and then return to the course schedule interface.</string>
+
+    <string name="app_settings_language_choice_simplified_chinese">Simplified Chinese</string>
+    <string name="app_settings_language_choice_english">English</string>
+    <string name="app_settings_language_choice_auto">Auto</string>
+
+    <string name="app_settings_default_calendar_choice_jxglstu">Academic</string>
+    <string name="app_settings_default_calendar_choice_community">Community</string>
+    <string name="app_settings_default_calendar_choice_uni_app">Uni-App</string>
+    <string name="app_settings_default_calendar_choice_zhi_jian">ZhiJian</string>
+    <string name="app_settings_default_calendar_choice_jxglstu_2">Academic2</string>
+
+</resources>

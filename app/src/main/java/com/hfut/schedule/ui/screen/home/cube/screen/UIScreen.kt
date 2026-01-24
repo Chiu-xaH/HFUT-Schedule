@@ -19,7 +19,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,7 +42,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -93,12 +91,13 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.media.SimpleVideo
-import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
+import com.hfut.schedule.ui.component.button.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.media.SimpleVideo
+import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
 import com.hfut.schedule.ui.util.color.ColorMode
@@ -109,7 +108,6 @@ import com.hfut.schedule.ui.util.color.longToHexColor
 import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.transition.state.TransitionConfig
@@ -129,14 +127,6 @@ import java.io.File
 import java.io.FileOutputStream
 import kotlin.math.cos
 import kotlin.math.sin
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import com.hfut.schedule.ui.component.button.CustomSingleChoiceRow
-import com.hfut.schedule.ui.util.layout.measureDpSize
-import com.xah.uicommon.component.text.ScrollText
 
 private val styleList = ColorStyle.entries
 
@@ -374,68 +364,12 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     ), contentDescription = "Localized description",) },
                 )
-                // 三个状态，三个选项
-                val options = remember {
-                    listOf(
-                        ColorMode.LIGHT to "浅色",
-                        ColorMode.DARK to "深色",
-                        ColorMode.AUTO to "跟随系统"
-                    )
-                }
-
-                SingleChoiceSegmentedButtonRow(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = APP_HORIZONTAL_DP)
-                        .padding(bottom = APP_HORIZONTAL_DP),
-                    // 不撑满就会出现神秘文本测量问题 😎
+                CustomSingleChoiceRow<ColorMode>(
+                    selected = currentColorModeIndex,
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP)
                 ) {
-                    options.forEachIndexed { index, (mode, label) ->
-                        val isSelected = currentColorModeIndex == mode.code
-                        val scrollState = rememberScrollState()
-                        val textOverflow = scrollState.canScrollBackward || scrollState.canScrollForward
-
-                        // 有个缺点是不能为某一个选项单独设置宽度，如果在上面的 Row 里面指定 space 那么在下面的自定义颜色中又会导致边框堆叠
-                        SegmentedButton(
-                            selected = isSelected,
-                            onClick = {
-                                scope.launch {
-                                    DataStoreManager.saveColorMode(mode)
-                                }
-                            },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = options.size,
-                                baseShape = MaterialTheme.shapes.small // 圆角
-                            ),
-                            colors = SegmentedButtonDefaults.colors(
-                                activeContainerColor = MaterialTheme.colorScheme.primary,
-                                activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                activeBorderColor = MaterialTheme.colorScheme.primary,
-                                // pC 描边与选中颜色背景一致，但是相邻选项之间感觉少一条线
-                                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                            ),
-                            icon = {
-                                if (!textOverflow) {
-                                    SegmentedButtonDefaults.Icon(isSelected)
-                                }
-                            },
-                            label = {
-                                Text(
-                                    modifier = Modifier
-                                        .horizontalScroll(scrollState),
-                                    text = label,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    maxLines = 1,
-                                    softWrap = false,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-//                                Text(
-//                                    text = label,
-//                                    style = MaterialTheme.typography.bodyMedium
-//                                )
-                            }
-                        )
+                    scope.launch {
+                        DataStoreManager.saveColorMode(it)
                     }
                 }
             }
@@ -816,94 +750,18 @@ fun CalendarUISettings(
                 headlineContent = {
                     Text("方格内显示教师")
                 },
-//                supportingContent = {
-//                    Column {
-//                        Row {
-//                            FilterChip(
-//                                onClick = {
-//                                    scope.launch {
-//                                        DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.NONE)
-//                                    }
-//                                },
-//                                label = { Text(text = ShowTeacherConfig.NONE.description) },
-//                                selected = enableCalendarShowTeacher == ShowTeacherConfig.NONE.code
-//                            )
-//                            Spacer(modifier = Modifier.width(10.dp))
-//                            FilterChip(
-//                                onClick = {
-//                                    scope.launch {
-//                                        DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ALL)
-//                                    }
-//                                },
-//                                label = { Text(text = ShowTeacherConfig.ALL.description) },
-//                                selected = enableCalendarShowTeacher == ShowTeacherConfig.ALL.code
-//                            )
-//                        }
-//                        FilterChip(
-//                            onClick = {
-//                                scope.launch {
-//                                    DataStoreManager.saveCalendarShowTeacher(ShowTeacherConfig.ONLY_MULTI)
-//                                }
-//                            },
-//                            label = { Text(text = ShowTeacherConfig.ONLY_MULTI.description) },
-//                            selected = enableCalendarShowTeacher == ShowTeacherConfig.ONLY_MULTI.code
-//                        )
-//                    }
-//                },
                 leadingContent = {
                     Icon(painterResource(R.drawable.group), null)
                 },
             )
-
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = APP_HORIZONTAL_DP)
-                    .padding(bottom = APP_HORIZONTAL_DP),
+            CustomSingleChoiceRow<ShowTeacherConfig>(
+                selected = enableCalendarShowTeacher,
+                modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
             ) {
-                val options = remember { ShowTeacherConfig.entries }
-                options.forEachIndexed { index, config ->
-                    val isSelected = enableCalendarShowTeacher == config.code
-                    val scrollState = rememberScrollState()
-                    val textOverflow = scrollState.canScrollBackward || scrollState.canScrollForward
-                    SegmentedButton(
-                        selected = isSelected,
-                        onClick = {
-                            scope.launch {
-                                DataStoreManager.saveCalendarShowTeacher(config)
-                            }
-                        },
-                        shape = SegmentedButtonDefaults.itemShape(
-                            index = index,
-                            count = options.size,
-                            baseShape = MaterialTheme.shapes.small
-                        ),
-                        colors = SegmentedButtonDefaults.colors(
-                            activeContainerColor = MaterialTheme.colorScheme.primary,
-                            activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                            activeBorderColor = MaterialTheme.colorScheme.primary,
-                            inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                        ),
-                        icon = {
-                            if (!textOverflow) {
-                                SegmentedButtonDefaults.Icon(isSelected)
-                            }
-                        },
-                        label = {
-                            Text(
-                                modifier = Modifier
-                                    .horizontalScroll(scrollState),
-                                text = config.description,
-                                style = MaterialTheme.typography.bodyMedium,
-                                maxLines = 1,
-                                softWrap = false,
-                                overflow = TextOverflow.Ellipsis,
-                            )
-                        }
-                    )
+                scope.launch {
+                    DataStoreManager.saveCalendarShowTeacher(it)
                 }
             }
-
 
             PaddingHorizontalDivider()
             TransplantListItem(

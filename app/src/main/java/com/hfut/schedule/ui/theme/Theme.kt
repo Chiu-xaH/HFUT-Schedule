@@ -27,8 +27,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
+import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.deepen
@@ -44,6 +46,12 @@ private val list = ColorStyle.entries
 fun AppTheme(
     content: @Composable () -> Unit
 ) {
+//    val language by DataStoreManager.language.collectAsState(Language.AUTO.code)
+//
+//    LaunchedEffect(language) {
+//        LanguageHelper.changeAppLanguage(language)
+//    }
+
     val context = LocalContext.current
 
     // 自主取色

@@ -50,6 +50,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.BaseChoice
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delAllCourseEvent
@@ -64,6 +65,10 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.util.language.PlainText
+import com.hfut.schedule.ui.util.language.UiText
+import com.hfut.schedule.ui.util.language.res
+import com.hfut.schedule.ui.util.language.text
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -73,13 +78,12 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 
-enum class CourseType(val code : Int,val description: String) {
-    JXGLSTU(0,"教务系统"),
-    COMMUNITY(1,"智慧社区"),
-    UNI_APP(2,"合工大教务"),
-    ZHI_JIAN(3,"指间工大"),
-    JXGLSTU2(4,"教务备用"),
-//    NEXT(5,"下学期"),
+enum class CourseType(override val code : Int,override val label: UiText): BaseChoice {
+    JXGLSTU(0, res(R.string.app_settings_default_calendar_choice_jxglstu)),
+    COMMUNITY(1,res(R.string.app_settings_default_calendar_choice_community)),
+    UNI_APP(2,res(R.string.app_settings_default_calendar_choice_uni_app)),
+    ZHI_JIAN(3,res(R.string.app_settings_default_calendar_choice_zhi_jian)),
+    JXGLSTU2(4,res(R.string.app_settings_default_calendar_choice_jxglstu_2)),
 }
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalSharedTransitionApi::class)
@@ -192,7 +196,7 @@ fun MultiScheduleSettings(
                             modifier = Modifier.align(Alignment.Center),
                         ){
                             Text(
-                                item.description ,
+                                item.label.asString() ,
                                 fontWeight = if(selected) FontWeight.Bold else FontWeight.Light
                             )
                             if(defaultCalendar == item.code) {

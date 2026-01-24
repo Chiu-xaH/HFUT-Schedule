@@ -23,7 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
-import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.AppSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.BackupScreen
@@ -89,7 +89,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             composable(Screen.APPScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer)  {
-                    APPScreen(navController, innerPaddings)
+                    AppSettingsScreen(navController, innerPaddings)
                 }
             }
             composable(Screen.FIxAboutScreen.route) {

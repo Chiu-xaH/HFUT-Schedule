@@ -40,7 +40,7 @@ import com.hfut.schedule.logic.model.NavigationBarItemDataDynamic
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.screen.home.cube.screen.APPScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.AppSettingsScreen
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.xah.mirror.shader.glassLayer

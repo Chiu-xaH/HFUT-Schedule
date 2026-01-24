@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">聚在工大</string>
+    <string name="title_activity_uiacitivity">主界面</string>
+    <string name="title_activity_schedule">聚在工大</string>
+    <string name="title_activity_card">一卡通</string>
+    <string name="card">一卡通</string>
+    <string name="widget_course">聚焦</string>
+    <string name="main">主界面</string>
+    <string name="fix">修复</string>
+    <string name="hot_water">热水</string>
+    <string name="login_web_hefei">校园网(肥)</string>
+    <string name="login_web_xuancheng">校园网(宣)</string>
+    <string name="recharge">一卡通充值</string>
+    <string name="scan">CAS扫码</string>
+    <string name="title_activity_grade">成绩</string>
+    <string name="title_activity_fix">修复与检测</string>
+    <string name="title_activity_shower_login">呱呱物联登录</string>
+    <string name="title_activity_shower">呱呱物联</string>
+    <string name="title_activity_base">基类</string>
+    <string name="title_activity_news">新闻与通知</string>
+    <string name="title_activity_anonymity">游客模式</string>
+    <string name="title_activity_supabase">信息平台</string>
+    <string name="title_activity_web_view">WebView</string>
+    <string name="title_activity_widget_configure">聚焦课程组件-配置</string>
+    <string name="uninstall_title">解除安装“聚在工大”</string>
+    <string name="uninstall_content">缘分让你我相遇，祝前程似锦，欢迎回来看看(github.com/Chiu-xaH/HFUT-Schedule)，再见👋</string>
+    <string name="title_activity_xwx">校务行</string>
+    <string name="toast_developing">正在开发</string>
+</resources>

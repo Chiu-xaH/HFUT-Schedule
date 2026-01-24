@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.util.parse
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.flow.first
@@ -33,7 +34,12 @@ object SemesterParser {
         }
 
         val years= (year + (codes - code) / 4) + 1
-        return years.toString() +  "~" + (years + 1).toString() + "年第" +  upOrDown + "学期"
+
+        return if(LanguageHelper.isChineseLanguage()) {
+            "${years}~${years + 1}年第${upOrDown}学期"
+        } else {
+            "Year ${years}~${years + 1} Term " + if(upOrDown == 1) "1st" else "2nd"
+        }
     }
     @JvmStatic
     fun parseSemesterForDormitory(semester : Int) : String {

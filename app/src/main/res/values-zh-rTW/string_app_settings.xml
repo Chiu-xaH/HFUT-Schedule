@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_settings_interaction_half_title">交互</string>
+
+    <string name="app_settings_predictive_back_gesture_title">预测式返回手势</string>
+    <string name="app_settings_predictive_back_gesture_description_supported">同Activity之间的部分界面返回手势不松手时有跟手的界面缩小</string>
+    <string name="app_settings_predictive_back_gesture_description_unsupported">需 Android 13+</string>
+
+    <string name="app_settings_control_center_title">启动台</string>
+    <string name="app_settings_control_center_description">从顶栏位置的向右轻扫或长按左上返回图标唤出(部分界面暂未支持)，可快速切换到最近打开的窗口和调整一些设置;打开后上下滑动的灵敏度会降低</string>
+
+    <string name="app_settings_study_interaction_title">交互学习</string>
+    <string name="app_settings_study_interaction_description">学习应用内的手势交互操作</string>
+
+    <string name="app_settings_calendar_half_title">课程表配置</string>
+
+    <string name="app_settings_preferences_half_title">偏好与配置</string>
+
+    <string name="app_settings_language_title">语言</string>
+
+    <string name="app_settings_display_overdue_courses_on_focus_title">聚焦仍显示已上完的课程</string>
+    <string name="app_settings_display_overdue_courses_on_focus_description">显示或隐藏今天上完的课程</string>
+
+    <string name="app_settings_display_overdue_events_on_focus_title">聚焦中仍显示已结束的日程</string>
+    <string name="app_settings_display_overdue_events_on_focus_description">显示或隐藏自行添加的日程中已过期的项目</string>
+
+    <string name="app_settings_free_flow_of_school_net_of_xc_campus_title">宣城校区校园网月免费额度 %1$sGiB</string>
+    <string name="app_settings_free_flow_of_school_net_of_xc_campus_description">用于计算和显示使用百分比 (初始值为%1$sGiB)</string>
+
+    <string name="app_settings_default_calendar_account_title">默认日程账户</string>
+    <string name="app_settings_default_calendar_account_description">自定义添加到系统日历的账户;利用邮箱账户，可进行课表、聚焦日程的多设备同步</string>
+
+    <string name="app_settings_auto_fill_captcha_title">图片验证码自动填充</string>
+    <string name="app_settings_auto_fill_captcha_description">刷新登录时,使用Tesseract库提供的OCR能力,填充验证码</string>
+
+    <string name="app_settings_ai_title">大模型</string>
+    <string name="app_settings_ai_description">用户提供ApiKey，将数据发送给大模型，为应用提供更多可能</string>
+
+    <string name="app_settings_widget_half_title">桌面组件</string>
+
+    <string name="app_settings_widget_focus_title">聚焦课程</string>
+    <string name="app_settings_widget_focus_description">展示聚焦重要事项中的课程</string>
+
+    <string name="app_settings_widget_data_title">数据小组件</string>
+    <string name="app_settings_widget_data_description">一卡通余额、电费、洗浴、网费、下节课等信息</string>
+
+    <string name="app_settings_school_net_title">校园网</string>
+    <string name="app_settings_school_net_description">校园网一键登录与使用量数据</string>
+
+    <string name="app_settings_storage_half_title">存储</string>
+
+    <string name="app_settings_backup_and_restore_title">备份与恢复</string>
+    <string name="app_settings_backup_and_restore_description">将本地数据库和偏好设置导出或导入</string>
+
+    <string name="app_settings_clear_cache_title">缓存清理</string>
+    <string name="app_settings_clear_cache_description">清理一些缓存，这不会影响应用数据</string>
+
+    <string name="app_settings_toast_clear_cache_done">已清理 %1$f MB</string>
+
+    <string name="app_settings_default_calendar_title">默认课程表</string>
+    <string name="app_settings_default_calendar_community_description">智慧社区课表有时会抽风不更新数据，已不再推荐使用，并且不支持调休</string>
+    <string name="app_settings_default_calendar_uni_app_description">合工大教务数据源的课程表会自动刷新，最优推荐</string>
+    <string name="app_settings_default_calendar_jxglstu_description">教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地</string>
+
+    <string name="app_settings_current_term_title">当前学期</string>
+
+    <string name="app_settings_toast_change_current_term_unsupported">修改请关闭开关</string>
+
+    <string name="app_settings_auto_calculate_term_title">自动计算学期</string>
+    <string name="app_settings_auto_calculate_term_description">全局学期主控教务课程表等信息，其他部分功能如教评等可在相应功能区自由切换学期;由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期</string>
+
+    <string name="app_settings_start_date_of_term_title">学期开始时间</string>
+    <string name="app_settings_start_date_of_term_description">自动跟随学期切换或者课程表的更换而刷新；也可以自定义这个学期的开始时间，将会影响课程表的周数计算</string>
+
+    <string name="app_settings_tips_start_date_of_term">修改后请切换到聚焦界页下拉刷新获取新的课程，再回到课程表界面</string>
+    <string name="app_settings_language_choice_simplified_chinese">简体中文</string>
+    <string name="app_settings_language_choice_english">英文</string>
+    <string name="app_settings_language_choice_auto">跟随系统</string>
+    <string name="app_settings_default_calendar_choice_jxglstu">教务系统</string>
+    <string name="app_settings_default_calendar_choice_community">智慧社区</string>
+    <string name="app_settings_default_calendar_choice_uni_app">合工大教务</string>
+    <string name="app_settings_default_calendar_choice_zhi_jian">指间工大</string>
+    <string name="app_settings_default_calendar_choice_jxglstu_2">教务备用</string>
+</resources>

@@ -1,10 +1,8 @@
 package com.hfut.schedule.ui.screen.home.cube.screen
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,12 +17,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +27,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -40,16 +34,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.Language
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser.getSemesterWithoutSuspend
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
@@ -57,12 +50,12 @@ import com.hfut.schedule.logic.util.parse.SemesterParser.reverseGetSemester
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -74,8 +67,6 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
-import com.hfut.schedule.ui.util.layout.SaveComposeAsImage
-import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
@@ -87,9 +78,10 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun APPScreen(
+fun AppSettingsScreen(
     navController: NavHostController,
     innerPaddings: PaddingValues,
 ) {
@@ -99,19 +91,14 @@ fun APPScreen(
         scale = it
     }
     val context = LocalContext.current
-    val tabThumbFilePath = remember { mutableStateOf("") }
-    val saveTrigger = remember { mutableIntStateOf(0) }
-    if (saveTrigger.intValue == 1) {
-        SaveComposeAsImage(saveTrigger, "my_tab", tabThumbFilePath)
-    }
+
     val scope = rememberCoroutineScope()
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
-        .padding(innerPaddings).scale(scale)) {
+        .padding(innerPaddings)
+        .scale(scale)) {
         Spacer(modifier = Modifier.height(5.dp))
-//        val switch_focus = prefs.getBoolean("SWITCHFOCUS",true)
-//        var showfocus by remember { mutableStateOf(switch_focus) }
 
         val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
         val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
@@ -124,14 +111,13 @@ fun APPScreen(
         var showEnded by remember { mutableStateOf(switch_show_ended) }
         saveBoolean("SWITCHSHOWENDED",true,showEnded)
 
-
-//        saveBoolean("SWITCHFOCUS",true,showfocus)
         val scope = rememberCoroutineScope()
         val maxFlow by DataStoreManager.maxFlow.collectAsState(initial = MyApplication.DEFAULT_MAX_FREE_FLOW)
         var freeFeevalue by remember { mutableFloatStateOf(maxFlow.toFloat()) }
         LaunchedEffect(maxFlow) {
             freeFeevalue = maxFlow.toFloat()
         }
+        val language by DataStoreManager.language.collectAsState(initial = Language.AUTO.code)
 
 
         val video by produceState<String?>(initialValue = null) {
@@ -141,7 +127,9 @@ fun APPScreen(
             }
         }
         CustomCard (
-            modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+            modifier = Modifier
+                .aspectRatio(16 / 9f)
+                .fillMaxWidth(),
             color = MaterialTheme.colorScheme.surface,
         ) {
             video?.let {
@@ -152,15 +140,15 @@ fun APPScreen(
             }
         }
 
-        DividerTextExpandedWith("交互") {
+        DividerTextExpandedWith(stringResource(R.string.app_settings_interaction_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text(text = "预测式返回") },
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_predictive_back_gesture_title)) },
                     supportingContent = {
                         if(AppVersion.CAN_PREDICTIVE) {
-                            Text(text = "同Activity之间的部分界面返回手势不松手时有跟手的界面缩小(打断动画时自动屏蔽)")
+                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_supported))
                         } else {
-                            Text(text = "需为 Android 13+")
+                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_unsupported))
                         }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
@@ -173,9 +161,9 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("启动台(Beta)") },
+                    headlineContent = { Text(stringResource(R.string.app_settings_control_center_title)) },
                     supportingContent = {
-                        Text("从顶栏位置的向右轻扫或长按左上返回图标唤出(部分界面暂未支持)，可快速切换到最近打开的窗口和调整一些设置;打开后上下滑动的灵敏度可能会降低")
+                        Text(stringResource(R.string.app_settings_control_center_description))
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.flash_on),null)
@@ -189,9 +177,9 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("交互学习") },
+                    headlineContent = { Text(stringResource(R.string.app_settings_study_interaction_title)) },
                     supportingContent = {
-                        Text("学习APP的手势交互操作")
+                        Text(stringResource(R.string.app_settings_study_interaction_description))
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.gesture),null)
@@ -202,48 +190,34 @@ fun APPScreen(
                 )
             }
         }
-        DividerTextExpandedWith("课程表配置") {
+        DividerTextExpandedWith(stringResource(R.string.app_settings_calendar_half_title)) {
             CalendarSettingsUI(false)
         }
-        DividerTextExpandedWith("偏好与配置") {
+        DividerTextExpandedWith(stringResource(R.string.app_settings_preferences_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
-//                TransplantListItem(
-//                    headlineContent = { Text(text = "主页面") },
-//                    supportingContent = {
-//                        Column {
-//                            Text(text = "选择作为冷启动后的第一页面")
-//                            Row {
-//                                FilterChip(
-//                                    onClick = {
-//                                        showfocus = true
-//                                        saveBoolean("SWITCHFOCUS",true,showfocus)
-//                                    },
-//                                    label = { Text(text = "聚焦") }, selected = showfocus)
-//                                Spacer(modifier = Modifier.width(10.dp))
-//                                FilterChip(
-//                                    onClick = {
-//                                        showfocus = false
-//                                        saveBoolean("SWITCHFOCUS",false,showfocus)
-//                                    },
-//                                    label = { Text(text = "课程表") }, selected = !showfocus)
-//                            }
-//                        }
-//                    },
-//                    leadingContent = { Icon(
-//                        painterResource(R.drawable.home),
-//                        contentDescription = "Localized description"
-//                    ) },
-//                    modifier = Modifier.clickable {
-//                        showfocus = !showfocus
-//                        saveBoolean("SWITCHFOCUS",true,showfocus)
-//                    }
-//                )
-//                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_language_title)) },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.translate),
+                        contentDescription = "Localized description"
+                    ) },
+                )
+
+                CustomSingleChoiceRow<Language> (
+                    selected = language,
+                    modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+                ) {
+                    scope.launch {
+                        DataStoreManager.saveLanguage(it)
+                    }
+                }
+
+                PaddingHorizontalDivider()
 
                 TransplantListItem(
-                    headlineContent = { Text(text = "聚焦仍显示已上完的课程") },
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_courses_on_focus_title)) },
                     supportingContent = {
-                        Text("显示或隐藏今天上完的课程")
+                        Text(stringResource(R.string.app_settings_display_overdue_courses_on_focus_description))
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.search_activity),
@@ -254,9 +228,9 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "聚焦其他事项中仍显示已结束的日程") },
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_display_overdue_events_on_focus_title)) },
                     supportingContent = {
-                        Text("显示或隐藏自行添加的日程中已过期的项目")
+                        Text(stringResource(R.string.app_settings_display_overdue_events_on_focus_description))
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.search_activity),
@@ -275,9 +249,17 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("宣城校区校园网月免费额度 ${formatDecimal(freeFeevalue.toDouble(),0)}GiB")},
+                    headlineContent = { Text(
+                        stringResource(
+                            R.string.app_settings_free_flow_of_school_net_of_xc_campus_title,
+                            formatDecimal(freeFeevalue.toDouble(), 0)
+                        ))},
                     supportingContent = {
-                        Text("用于计算和显示使用百分比 (初始值为${MyApplication.DEFAULT_MAX_FREE_FLOW}GiB)")
+                        Text(
+                            stringResource(
+                                R.string.app_settings_free_flow_of_school_net_of_xc_campus_description,
+                                MyApplication.DEFAULT_MAX_FREE_FLOW
+                            ))
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.net),null)
@@ -299,9 +281,9 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "默认日程账户") },
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_account_title)) },
                     supportingContent = {
-                        Text("自定义添加到系统日历的账户;\n利用邮箱账户，可进行课表、聚焦日程的多设备同步")
+                        Text(stringResource(R.string.app_settings_default_calendar_account_description))
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.calendar_add_on),
@@ -311,9 +293,9 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "图片验证码自动填充") },
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_auto_fill_captcha_title)) },
                     supportingContent = {
-                        Text(text = "登录教务时,使用Tesseract库提供的OCR能力,填充验证码")
+                        Text(text = stringResource(R.string.app_settings_auto_fill_captcha_description))
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.center_focus_strong),
@@ -323,26 +305,26 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "大模型") },
+                    headlineContent = { Text(text = stringResource(R.string.app_settings_ai_title)) },
                     supportingContent = {
-                        Text(text = "用户提供ApiKey，将数据发送给大模型，为应用提供更多可能")
+                        Text(text = stringResource(R.string.app_settings_ai_description))
                     },
                     leadingContent = { Icon(
                         painterResource(R.drawable.wand_stars),
                         contentDescription = "Localized description"
                     ) },
-                    modifier = Modifier.clickable { showToast("正在开发") }
+                    modifier = Modifier.clickable { showDevelopingToast() }
                 )
             }
         }
-        DividerTextExpandedWith("桌面组件") {
+        DividerTextExpandedWith(stringResource(R.string.app_settings_widget_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
                     headlineContent = {
-                        Text("聚焦课程")
+                        Text(stringResource(R.string.app_settings_widget_focus_title))
                     },
                     supportingContent = {
-                        Text("展示聚焦重要事项中的课程")
+                        Text(stringResource(R.string.app_settings_widget_focus_description))
                     },
                     modifier = Modifier.clickable {
                         navController.navigate(Screen.FocusWidgetSettingsScreen.route)
@@ -354,13 +336,13 @@ fun APPScreen(
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text("数据小组件")
+                        Text(stringResource(R.string.app_settings_widget_data_title))
                     },
                     supportingContent = {
-                        Text("一卡通余额、电费、洗浴、网费、下节课等信息")
+                        Text(stringResource(R.string.app_settings_widget_data_description))
                     },
                     modifier = Modifier.clickable {
-                        showToast("正在开发")
+                        showDevelopingToast()
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.widgets),null)
@@ -369,13 +351,13 @@ fun APPScreen(
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text("校园网")
+                        Text(stringResource(R.string.app_settings_school_net_title))
                     },
                     supportingContent = {
-                        Text("校园网一键登录与使用量数据")
+                        Text(stringResource(R.string.app_settings_school_net_description))
                     },
                     modifier = Modifier.clickable {
-                        showToast("正在开发")
+                        showDevelopingToast()
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.widgets),null)
@@ -383,13 +365,13 @@ fun APPScreen(
                 )
             }
         }
-        DividerTextExpandedWith("存储") {
+        DividerTextExpandedWith(stringResource(R.string.app_settings_storage_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text("备份与恢复") },
+                    headlineContent = { Text(stringResource(R.string.app_settings_backup_and_restore_title)) },
                     leadingContent = { Icon(painterResource(R.drawable.database),null)},
                     supportingContent = {
-                        Text("将本地数据库和偏好设置导出或导入")
+                        Text(stringResource(R.string.app_settings_backup_and_restore_description))
                     },
                     modifier = Modifier.clickable {
                         navController.navigate(Screen.BackupScreen.route)
@@ -397,15 +379,17 @@ fun APPScreen(
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text("缓存清理") },
+                    headlineContent = { Text(stringResource(R.string.app_settings_clear_cache_title)) },
                     leadingContent = { Icon(painterResource(R.drawable.mop),null)},
                     supportingContent = {
-                        Text("清理一些缓存，这不会影响应用数据")
+                        Text(stringResource(R.string.app_settings_clear_cache_description))
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
                             val result = async { cleanCache(context) }.await()
-                            showToast("已清理 $result MB")
+                            showToast(
+                                context.getString(R.string.app_settings_toast_clear_cache_done, result)
+                            )
                         }
                     }
                 )
@@ -417,11 +401,10 @@ fun APPScreen(
 @Composable
 fun CalendarSettingsUI(
     isInBottomSheet : Boolean ,
-//    containerColor : Color = MaterialTheme.colorScheme.surface
 ) {
     val containerColor = if(isInBottomSheet) cardNormalColor() else MaterialTheme.colorScheme.surface
     val autoTerm by DataStoreManager.enableAutoTerm.collectAsState(initial = true)
-    val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU)
+    val defaultCalendar by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     val autoTermValue by DataStoreManager.customTermValue.collectAsState(initial = getSemesterWithoutSuspend())
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -443,128 +426,57 @@ fun CalendarSettingsUI(
 
     CustomCard(color = containerColor) {
         TransplantListItem(
-            headlineContent = { Text(text = "默认课程表") },
+            headlineContent = { Text(text = stringResource(R.string.app_settings_default_calendar_title)) },
             supportingContent = {
                 Text(text =
                     if(defaultCalendar == CourseType.COMMUNITY.code)
-                        "智慧社区课表有时会抽风不更新数据，已不再推荐使用，并且不支持调休"
+                        stringResource(R.string.app_settings_default_calendar_community_description)
                     else if(defaultCalendar == CourseType.UNI_APP.code)
-                        "合工大教务数据源的课程表会自动刷新，最优推荐"
+                        stringResource(R.string.app_settings_default_calendar_uni_app_description)
                     else
-                        "教务课表跟随每次刷新登陆状态而更新,在登陆教务后,发生调选退课立即发生变动,登录过期后缓存在本地"
+                        stringResource(R.string.app_settings_default_calendar_jxglstu_description)
                 )
-//                        Column {
-//                            Text(text = "您希望打开APP后聚焦展示的数据源以及课程表首先展示的页面")
-//                            Row {
-//                                FilterChip(
-//                                    onClick = {
-//                                        scope.launch {
-//                                            DataStoreManager.saveDefaultCalendar(CourseType.COMMUNITY)
-//                                        }
-//                                    },
-//                                    label = { Text(text = "智慧社区") }, selected = defaultCalendar == CourseType.COMMUNITY.code)
-//                                Spacer(modifier = Modifier.width(10.dp))
-//                                FilterChip(
-//                                    onClick = {
-//                                        scope.launch {
-//                                            DataStoreManager.saveDefaultCalendar(CourseType.JXGLSTU)
-//                                        }
-//                                    },
-//                                    label = { Text(text = "教务(缓存)") }, selected = defaultCalendar == CourseType.JXGLSTU.code)
-//                            }
-//                            Row {
-//                                FilterChip(
-//                                    onClick = {
-//                                        scope.launch {
-//                                            DataStoreManager.saveDefaultCalendar(CourseType.UNI_APP)
-//                                        }
-//                                    },
-//                                    label = { Text(text = "合工大教务") }, selected = defaultCalendar == CourseType.UNI_APP.code)
-//                            }
-//                        }
             },
             leadingContent = { Icon(
                 painterResource(R.drawable.calendar),
                 contentDescription = "Localized description"
             ) },
         )
-        SingleChoiceSegmentedButtonRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = APP_HORIZONTAL_DP)
-                .padding(bottom = APP_HORIZONTAL_DP),
-        ) {
-            val options = remember {
-                listOf(
-                    CourseType.UNI_APP,
-                    CourseType.JXGLSTU,
-                    CourseType.COMMUNITY
-                )
-            }
-            options.forEachIndexed { index, config ->
-                val isSelected = defaultCalendar == config.code
-                val scrollState = rememberScrollState()
-                val textOverflow = scrollState.canScrollBackward || scrollState.canScrollForward
 
-                SegmentedButton(
-                    modifier = Modifier,
-                    selected = isSelected,
-                    onClick = {
-                        scope.launch {
-                            DataStoreManager.saveDefaultCalendar(config)
-                        }
-                    },
-                    shape = SegmentedButtonDefaults.itemShape(
-                        index = index,
-                        count = options.size,
-                        baseShape = MaterialTheme.shapes.small
-                    ),
-                    colors = SegmentedButtonDefaults.colors(
-                        activeContainerColor = MaterialTheme.colorScheme.primary,
-                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                        activeBorderColor = MaterialTheme.colorScheme.primary,
-                        inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
-                    ),
-                    icon = {
-                        if (!textOverflow) {
-                            SegmentedButtonDefaults.Icon(isSelected)
-                        }
-                    },
-                    label = {
-                        Text(
-                            modifier = Modifier
-                                .horizontalScroll(rememberScrollState()),
-                            text = config.description,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 1,
-                            softWrap = false,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                )
-            }
+        val options = remember {
+            listOf(
+                CourseType.UNI_APP,
+                CourseType.JXGLSTU,
+                CourseType.COMMUNITY
+            )
         }
 
+        CustomSingleChoiceRow(
+            options = options,
+            selected = defaultCalendar,
+            modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
+        ) {
+            scope.launch {
+                DataStoreManager.saveDefaultCalendar(it)
+            }
+        }
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "当前学期") },
-//                    leadingContent = {
-//                        Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
-//                    },
+            headlineContent = { Text(text = stringResource(R.string.app_settings_current_term_title)) },
             supportingContent = {
                 Text(text = parseSemester(if(autoTerm) getSemesterWithoutSuspend() else autoTermValue))
             },
             modifier = Modifier.clickable {
-                showToast("修改请关闭开关")
+                showToast(context.getString(R.string.app_settings_toast_change_current_term_unsupported))
             }
         )
         TransplantListItem(
-            headlineContent = { Text(text = "自动计算学期") },
+            headlineContent = { Text(text = stringResource(R.string.app_settings_auto_calculate_term_title)) },
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.approval), contentDescription = "")
             },
             supportingContent = {
-                Text(text = "全局学期主控教务课程表等信息，其他部分功能如教评等可在相应功能区自由切换学期\n由本地函数计算，每年的2~7月为第二学期，8~次1月为第一学期")
+                Text(text = stringResource(R.string.app_settings_auto_calculate_term_description))
             },
             trailingContent = {
                 Switch(checked = autoTerm, onCheckedChange = { scope.launch { DataStoreManager.saveAutoTerm(!autoTerm) }})
@@ -605,11 +517,22 @@ fun CalendarSettingsUI(
         }
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "学期开始时间") },
+            headlineContent = { Text(text = stringResource(R.string.app_settings_start_date_of_term_title)) },
             supportingContent = {
                 Column {
                     Text(text = termStartDate, fontWeight = FontWeight.Bold)
-                    Text(text = "自动跟随学期切换或者课程表的更换而刷新；也可以自定义这个学期的开始时间，将会影响课程表的周数计算")
+                    Text(text = stringResource(R.string.app_settings_start_date_of_term_description))
+                }
+            },
+            trailingContent = {
+                FilledTonalIconButton(
+                    onClick = {
+                        scope.launch {
+                            DataStoreManager.saveTermStartDate(defaultStartDate)
+                        }
+                    }
+                ) {
+                    Icon(painterResource(R.drawable.rotate_right),null)
                 }
             },
             leadingContent = {
@@ -619,28 +542,9 @@ fun CalendarSettingsUI(
                 showSelectDateDialog = true
             }
         )
-        RowHorizontal {
-            FilledTonalButton(
-                onClick = {
-                    Starter.refreshLogin(context)
-                }
-            ) {
-                Text("刷新登录状态")
-            }
-            Spacer(Modifier.width(APP_HORIZONTAL_DP))
-            FilledTonalButton(
-                enabled = defaultStartDate != termStartDate,
-                onClick = { scope.launch {
-                    DataStoreManager.saveTermStartDate(defaultStartDate)
-                } }
-            ) {
-                Text("恢复默认值")
-            }
-        }
-        Spacer(Modifier.height(APP_HORIZONTAL_DP))
     }
     if(isInBottomSheet) {
-        BottomTip("修改后请切换到聚焦界页下拉刷新获取新的课程，再回到课程表界面")
+        BottomTip(stringResource(R.string.app_settings_tips_start_date_of_term))
     }
 }
 
