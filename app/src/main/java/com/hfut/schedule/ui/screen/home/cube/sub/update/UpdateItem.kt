@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-24") },
+                overlineContent = { Text(text = "2026-01-25") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -56,29 +56,10 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
-
-            UpdateItems("新增 成绩详情界面适配新转场动画")
-            UpdateItems("新增 消息中心的已读机制")
-            UpdateItems("新增 课程汇总与课程表支持缓存多个学期的数据")//
-            UpdateItems("新增 切换颜色时的渐变过渡")//
-            UpdateItems("新增 空教室点击方块支持查看更多详细信息")//
-            UpdateItems("新增 自定义学期开始时间","位于 选项-应用与配置-课程表配置")//
-            UpdateItems("修复 部分组件液态玻璃材质的瑕疵显示的Bug")//
-            UpdateItems("修复 指间工大课程表下侧按钮阴影异常显示的Bug")//
-            UpdateItems("修复 学期切换后课程表顶部日期不变的Bug")//
-            UpdateItems("修复 一键评教所有教师失败的Bug")//
-            UpdateItems("修复 教务备用课程表首次进入无数据的Bug")//
-            UpdateItems("修复 成绩界面滑动卡顿的Bug")//
-            UpdateItems("优化 冷启动的速度")//
-            UpdateItems("优化 选项-应用与配置 中的归类")//
-            UpdateItems("优化 成绩项目的显示效果")//
-            UpdateItems("优化 部分界面的显示","新增多选一组件的样式")//
-            UpdateItems("移除 下学期课程表","想获取任意学期包括下学期的课程表和课程汇总的，可以去设置-应用及配置-课程表配置-学期切换，切换到指定学期后重新刷新")//
-            UpdateItems("移除 上推卡片(BottomSheet)的背景模糊","考虑到可读性、全屏渲染时的性能开销、与某些新的逻辑出现配色冲突等因素，暂时移除")//
-            UpdateItems("移除 冷启动主界面自定义聚焦或课程表的功能")//
-
+            UpdateItems("新增 英文语言适配")
+            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
+            UpdateItems("优化 部分界面的显示")//
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
-//            UpdateItems("新增 英文语言适配")
 //            UpdateItems("收纳重构 实验室迁移位置")
 //            UpdateItems("优化 长按课程表展开选周预览界面的自适应布局")
             // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程

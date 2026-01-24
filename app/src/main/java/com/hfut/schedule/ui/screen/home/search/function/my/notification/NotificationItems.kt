@@ -102,7 +102,7 @@ fun NotificationItems() {
                             Icon(
                                 painter = painterResource(id =
                                     if(read) R.drawable.check
-                                    else R.drawable.notifications
+                                    else R.drawable.notifications_unread
                                 ),
                                 contentDescription = ""
                             )
@@ -114,6 +114,9 @@ fun NotificationItems() {
                     CardBottomButtons(
                         listOf(
                             CardBottomButton(item.remark, clickable = null),
+                            CardBottomButton("含网页", show = item.url != null) {
+                                clickAction()
+                            },
                             CardBottomButton(if(!read) "标记为已读" else "标记为未读") {
                                 scope.launch {
                                     if(!read) {
@@ -128,10 +131,7 @@ fun NotificationItems() {
                                         )
                                     }
                                 }
-                            },
-                            CardBottomButton("含网页", show = item.url != null) {
-                                clickAction()
-                            },
+                            }
                         )
                     )
                 }
