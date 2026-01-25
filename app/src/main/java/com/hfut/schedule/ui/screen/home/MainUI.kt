@@ -655,8 +655,10 @@ fun MainScreen(
                                     ,
                                     color = Color.Transparent
                                 ) {
+                                    val animatedImageVector = AnimatedImageVector.animatedVectorResource(id = R.drawable.avd1) 
+                                    val painter = rememberAnimatedVectorPainter(animatedImageVector, showAll)
                                     Icon(
-                                        painter = painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
+                                        painter = painter,//painterResource(id = if (showAll) R.drawable.collapse_content else R.drawable.expand_content),
                                         contentDescription = "",
                                         modifier = Modifier.padding(CARD_NORMAL_DP*3),
                                         tint = iconColor,
