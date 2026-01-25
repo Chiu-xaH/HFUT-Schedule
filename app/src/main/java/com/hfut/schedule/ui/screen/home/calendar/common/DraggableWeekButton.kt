@@ -110,7 +110,6 @@ fun DraggableWeekButton(
 
     Box(
         modifier = modifier
-            .clip(if(expanded) FloatingActionButtonDefaults.extendedFabShape else MaterialTheme.shapes.small)
             .pointerInput(key) {
                 detectDragGestures(
                     onDragEnd = {
@@ -146,8 +145,10 @@ fun DraggableWeekButton(
             }
     ) {
         ShareTwoContainer2D(
-            modifier = Modifier.align(Alignment.Center)
-                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) },
+            modifier = Modifier
+                .align(Alignment.Center)
+                .offset { IntOffset(offset.value.x.roundToInt(), offset.value.y.roundToInt()) }
+                .clip(if(expanded) FloatingActionButtonDefaults.extendedFabShape else MaterialTheme.shapes.small),
             show = !expanded,
             defaultContent = {
                 Surface(
