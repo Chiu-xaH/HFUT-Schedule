@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="network_settings_school_card_password_title">一卡通密码</string>
+    <string name="network_settings_config_half_title">配置</string>
+    <string name="network_settings_init_data_title">预加载数据</string>
+    <string name="network_settings_init_data_description">首页聚焦第一张卡片显示的一些数据,冷启动或下拉刷新时会自动更新这些数据</string>
+    <string name="network_settings_school_card_password_description">若您已经修改过一卡通初始密码,请在此录入新的密码以使用快速充值和校园网登录功能</string>
+    <string name="network_settings_jxglstu_password_title">教务系统密码</string>
+    <string name="network_settings_jxglstu_password_description">若您已经修改过教务系统初始密码,请在此录入新的密码以使用同班同学、教室、全校培养方案功能</string>
+    <string name="network_settings_auto_refresh_login_title">自动刷新登录状态</string>
+    <string name="network_settings_auto_refresh_login_description">冷启动App后，自动在后台进行CAS统一认证登录，请按需开启，这是一个耗时的操作，并非每次使用都需要刷新登录状态</string>
+    <string name="network_settings_others_half_title">其它</string>
+    <string name="network_settings_update_data_title">数据上报</string>
+    <string name="network_settings_update_data_description">允许上传崩溃日志等非敏感数据,以帮助更好的改进体验</string>
+    <string name="network_settings_refresh_login_title">刷新登录状态</string>
+    <string name="network_settings_refresh_login_description">如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次</string>
+</resources>

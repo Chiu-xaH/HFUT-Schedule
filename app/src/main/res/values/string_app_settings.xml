@@ -55,7 +55,7 @@
     <string name="app_settings_clear_cache_title">Clear cache</string>
     <string name="app_settings_clear_cache_description">Clearing some cache won\'t affect the number of applications.</string>
 
-    <string name="app_settings_toast_clear_cache_done">Has been cleaned %1$f MB</string>
+    <string name="app_settings_toast_clear_cache_done">Has been cleaned %1$.2f MB</string>
 
     <string name="app_settings_default_calendar_title">Default calendar</string>
     <string name="app_settings_default_calendar_community_description">The course schedule of Community sometimes malfunctions and fails to update data. It is no longer recommended for use and does not support compensatory leave.</string>

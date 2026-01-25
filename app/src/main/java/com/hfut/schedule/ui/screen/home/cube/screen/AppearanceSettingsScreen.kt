@@ -79,6 +79,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -128,20 +129,18 @@ import java.io.FileOutputStream
 import kotlin.math.cos
 import kotlin.math.sin
 
-private val styleList = ColorStyle.entries
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun UIScreen(innerPaddings : PaddingValues,navController : NavHostController) {
+fun AppearanceSettingsScreen(innerPaddings : PaddingValues, navController : NavHostController) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
     var scale by remember { mutableFloatStateOf(1f) }
     TransitionBackHandler(navController,enablePredictive) {
         scale = it
     }
-    UISettingsScreen(
+    SharedAppearanceSettingsScreen(
         Modifier
             .verticalScroll(rememberScrollState())
             .scale(scale),
@@ -187,7 +186,7 @@ private suspend fun deleteCustomBackground(context: Context) = withContext(Dispa
 
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValues, isControlCenter : Boolean ) {
+fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValues, isControlCenter : Boolean ) {
     val backgroundColor =  if(isControlCenter) {
         MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     } else {
@@ -198,6 +197,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
     } else {
         MaterialTheme.colorScheme.primary
     }
+    val styleList = remember { ColorStyle.entries }
     Column(modifier = modifier) {
         if(!isControlCenter) {
             InnerPaddingHeight(innerPaddings,true)
@@ -261,7 +261,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     .background(MaterialTheme.colorScheme.surface, MaterialTheme.shapes.medium)
                     .padding(vertical = APP_HORIZONTAL_DP)) {
                     CustomTextField(
-                        label = { Text("输入 ARGB Hex 值") },
+                        label = { Text(stringResource(R.string.appearance_settings_tips_input_color)) },
                         input = input,
                         trailingIcon = {
                             parse?.let {
@@ -286,7 +286,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                                 .fillMaxWidth()
                                 .weight(.5f)
                         ) {
-                            Text("设置")
+                            Text(stringResource(R.string.appearance_settings_button_input_color_set))
                         }
                         Spacer(Modifier.width(APP_HORIZONTAL_DP))
                         FilledTonalButton (
@@ -297,7 +297,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                                 .fillMaxWidth()
                                 .weight(.5f)
                         ) {
-                            Text("取消")
+                            Text(stringResource(R.string.appearance_settings_button_input_color_cancel))
                         }
                     }
 
@@ -328,11 +328,11 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
         }
 
 
-        DividerTextExpandedWith("深浅色",contentColor=contentColor) {
+        DividerTextExpandedWith(stringResource(R.string.appearance_settings_theme_half_title),contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
-                    headlineContent = { Text(text = "纯黑深色背景") },
-                    supportingContent = { Text(text = "OLED屏使用此模式在深色模式时可获得不发光的纯黑背景") },
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_pure_black_background_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.appearance_settings_pure_black_background_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.contrast), contentDescription = "Localized description",) },
                     trailingContent = {
                         Switch(checked = currentPureDark, onCheckedChange = { scope.launch { DataStoreManager.savePureDark(!currentPureDark) } })
@@ -343,8 +343,8 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "强制网页深色模式") },
-                    supportingContent = { Text(text = "将强制深色的代码注入到网页中，以尝试适配应用的深色模式，如有网页显示异常，请暂时关闭") },
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_dark_theme_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_dark_theme_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.syringe), contentDescription = "Localized description",) },
                     trailingContent = {
                         Switch(checked = webViewDark, onCheckedChange = { scope.launch { DataStoreManager.saveWebViewDark(!webViewDark) } })
@@ -355,7 +355,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "深浅色") },
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_theme_title)) },
                     leadingContent = { Icon(painterResource(
                         when(currentColorModeIndex) {
                             ColorMode.DARK.code -> R.drawable.dark_mode
@@ -374,12 +374,12 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                 }
             }
         }
-        DividerTextExpandedWith("主题色",contentColor=contentColor) {
+        DividerTextExpandedWith(stringResource(R.string.appearance_settings_color_half_title),contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 Colors(isControlCenter)
-                DividerTextExpandedWith("默认取色") {
+                DividerTextExpandedWith(stringResource(R.string.appearance_settings_default_color_half_title)) {
                     TransplantListItem(
-                        headlineContent = { Text(text = "原生取色") },
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_dynamic_color_title)) },
                         leadingContent = { Icon(painterResource(R.drawable.palette), contentDescription = "Localized description",) },
                         trailingContent = {
                             if(useDynamicColor) {
@@ -393,11 +393,18 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         }
                     )
                 }
-                DividerTextExpandedWith("自定义取色") {
+                DividerTextExpandedWith(stringResource(R.string.appearance_settings_pick_color_half_title)) {
                     if(!useDynamicColor) {
                         val d = styleList.find { it.code == customColorStyle }?.description
                         TransplantListItem(
-                            headlineContent = { Text(text = "浓度 | ${d}") },
+                            headlineContent = {
+                                d?.let {
+                                    Text(text = stringResource(
+                                        R.string.appearance_settings_color_bright_title,
+                                        it
+                                    ))
+                                }
+                            },
                             leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description",) },
                         )
 
@@ -419,7 +426,7 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                         PaddingHorizontalDivider()
                     }
                     TransplantListItem(
-                        headlineContent = { Text(text = "选择图片取色") },
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_photo_title)) },
                         leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description",) },
 
                         modifier = Modifier.clickable {
@@ -430,10 +437,10 @@ fun UISettingsScreen(modifier : Modifier = Modifier, innerPaddings: PaddingValue
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
-                        headlineContent = { Text(text = "色相带取色") },
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_hue_band_title)) },
                         leadingContent = { Icon(painterResource(R.drawable.colorize), contentDescription = "Localized description",) },
                         supportingContent = {
-                            Text("点击手动输入颜色值")
+                            Text(stringResource(R.string.appearance_settings_pick_color_by_hue_band_description))
                         },
                         trailingContent = {
                             if(!useDynamicColor) {

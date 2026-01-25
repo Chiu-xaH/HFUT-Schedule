@@ -25,5 +25,5 @@
     <string name="uninstall_title">Uninstall "HFUT-Schedule"</string>
     <string name="uninstall_content">Fate brought us together. I wish you a bright future and welcome you back to visit.(github.com/Chiu-xaH/HFUT-Schedule)，Bye👋</string>
     <string name="title_activity_xwx">XiaoWuXing</string>
-    <string name="toast_developing">正在开发</string>
+    <string name="toast_developing">Developing…</string>
 </resources>

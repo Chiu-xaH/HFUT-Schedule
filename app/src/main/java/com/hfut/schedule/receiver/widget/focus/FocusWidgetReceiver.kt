@@ -72,7 +72,7 @@ import com.hfut.schedule.ui.screen.home.focus.funiction.getTomorrowUniAppCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.getUniAppCourse
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
-import com.hfut.schedule.ui.screen.home.texts
+import com.hfut.schedule.ui.screen.home.topBarText
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -287,7 +287,7 @@ class FocusWidget : GlanceAppWidget() {
                         ) {
                         // 左侧文本
                         Text(
-                            text = texts(BottomBarItems.FOCUS),
+                            text = topBarText(BottomBarItems.FOCUS),
                             maxLines = 1,
                             modifier = GlanceModifier
                                 .fillMaxWidth(),

@@ -62,7 +62,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.cube.screen.UISettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.SharedAppearanceSettingsScreen
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
@@ -342,7 +342,7 @@ fun ControlCenterScreen(
                     exit = fadeOut()
                 ){
                     Column {
-                        UISettingsScreen(innerPaddings = innerPadding, isControlCenter = true)
+                        SharedAppearanceSettingsScreen(innerPaddings = innerPadding, isControlCenter = true)
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(

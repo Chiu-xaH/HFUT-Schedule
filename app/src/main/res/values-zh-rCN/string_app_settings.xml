@@ -55,7 +55,7 @@
     <string name="app_settings_clear_cache_title">缓存清理</string>
     <string name="app_settings_clear_cache_description">清理一些缓存，这不会影响应用数据</string>
 
-    <string name="app_settings_toast_clear_cache_done">已清理 %1$f MB</string>
+    <string name="app_settings_toast_clear_cache_done">已清理 %1$.2f MB</string>
 
     <string name="app_settings_default_calendar_title">默认课程表</string>
     <string name="app_settings_default_calendar_community_description">智慧社区课表有时会抽风不更新数据，已不再推荐使用，并且不支持调休</string>

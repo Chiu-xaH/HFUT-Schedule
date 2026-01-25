@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -37,6 +38,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -51,11 +53,13 @@ import com.xah.transition.util.TransitionBackHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NetWorkScreen(navController: NavHostController,
-                  innerPaddings : PaddingValues,
-                  ifSaved : Boolean,
+fun NetworkSettingsScreen(
+    navController: NavHostController,
+    innerPaddings : PaddingValues,
+    ifSaved : Boolean,
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
     var scale by remember { mutableFloatStateOf(1f) }
@@ -64,11 +68,12 @@ fun NetWorkScreen(navController: NavHostController,
     }
     val context = LocalContext.current
 
-    // Design your second screen here
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
-        .padding(innerPaddings).scale(scale)) {
+        .padding(innerPaddings)
+        .scale(scale))
+    {
         Spacer(modifier = Modifier.height(5.dp))
 
 
@@ -88,7 +93,9 @@ fun NetWorkScreen(navController: NavHostController,
             }
         }
         CustomCard (
-            modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+            modifier = Modifier
+                .aspectRatio(16 / 9f)
+                .fillMaxWidth(),
             color = MaterialTheme.colorScheme.surface,
         ) {
             video?.let {
@@ -100,11 +107,11 @@ fun NetWorkScreen(navController: NavHostController,
         }
 
 
-        DividerTextExpandedWith("配置") {
+        DividerTextExpandedWith(stringResource(R.string.network_settings_config_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text(text = "预加载数据") },
-                    supportingContent = { Text(text = "APP首页聚焦第一张卡片显示的一些数据,冷启动或下拉刷新时会自动更新这些数据") },
+                    headlineContent = { Text(text = stringResource(R.string.network_settings_init_data_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.network_settings_init_data_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.reset_iso), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.FocusCardScreen.route) }
                 )
@@ -112,42 +119,42 @@ fun NetWorkScreen(navController: NavHostController,
                 ArrangeItem()
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "一卡通密码") },
-                    supportingContent = { Text(text = "若您已经修改过一卡通初始密码,请在此录入新的密码以使用快速充值和校园网登录功能") },
+                    headlineContent = { Text(text = stringResource(R.string.network_settings_school_card_password_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.network_settings_school_card_password_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.credit_card), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.HuiXinPasswordScreen.route) }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "教务系统密码") },
-                    supportingContent = { Text(text = "若您已经修改过教务系统初始密码,请在此录入新的密码以使用同班同学、教室、全校培养方案功能") },
+                    headlineContent = { Text(text = stringResource(R.string.network_settings_jxglstu_password_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.network_settings_jxglstu_password_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.lock), contentDescription = "Localized description",) },
                     modifier = Modifier.clickable { navController.navigate(Screen.JxglstuPasswordScreen.route) }
                 )
-//                PaddingHorizontalDivider()
-//                TransplantListItem(
-//                    headlineContent = { Text(text = "自动刷新登录状态") },
-//                    supportingContent = { Text(text = "冷启动App后，自动在后台进行CAS统一认证登录，请按需开启，这是一个耗时的操作，并非每次使用都需要刷新登录状态") },
-//                    leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
-//                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showToast("正在开发") })},
-//                    modifier = Modifier.clickable { showToast("正在开发") }
-//                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = stringResource(R.string.network_settings_auto_refresh_login_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.network_settings_auto_refresh_login_description)) },
+                    leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
+                    trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showDevelopingToast() })},
+                    modifier = Modifier.clickable { showDevelopingToast() }
+                )
             }
         }
 
-        DividerTextExpandedWith("其它") {
+        DividerTextExpandedWith(stringResource(R.string.network_settings_others_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface){
                 TransplantListItem(
-                    headlineContent = { Text(text = "数据上报") },
-                    supportingContent = { Text(text = "允许上传崩溃日志等非敏感数据,以帮助更好的改进体验") },
+                    headlineContent = { Text(text = stringResource(R.string.network_settings_update_data_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.network_settings_update_data_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.cloud_upload), contentDescription = "Localized description",) },
-                    trailingContent = { Switch(checked = upload, onCheckedChange = { uploadch -> upload = uploadch }, enabled = true) }
+                    trailingContent = { Switch(checked = upload, onCheckedChange = { unUpload -> upload = unUpload }, enabled = true) }
                 )
                 if(ifSaved) {
                     PaddingHorizontalDivider()
                     TransplantListItem(
-                        headlineContent = { Text(text = "刷新登录状态") },
-                        supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
+                        headlineContent = { Text(text = stringResource(R.string.network_settings_refresh_login_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.network_settings_refresh_login_description)) },
                         leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
                         modifier = Modifier.clickable {
                             refreshLogin(context)

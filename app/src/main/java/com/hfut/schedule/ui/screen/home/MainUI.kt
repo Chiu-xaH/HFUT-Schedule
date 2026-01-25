@@ -138,6 +138,7 @@ import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
+import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
@@ -425,7 +426,7 @@ fun MainScreen(
                                 }
                             }
                         },
-                        title = { Text(texts(targetPage)) },
+                        title = { Text(topBarText(targetPage)) },
                         actions = {
                             when (targetPage) {
                                 SEARCH -> {
@@ -531,7 +532,7 @@ fun MainScreen(
                                         ),
                                     color = Color.Transparent
                                 ) {
-                                    Text(texts(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
+                                    Text(topBarText(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
                                 }
                             },
                             title = {
@@ -676,14 +677,12 @@ fun MainScreen(
                                 zhiJianStudentId = it
                             }
                         }
-//                        if (swapUI != CourseType.NEXT.code) {
-                            ScheduleTopDate(showAll, today,backGroundSource)
-//                        }
+                        ScheduleTopDate(showAll, today,backGroundSource)
                     } else {
                         TopAppBar(
                             colors = topBarTransplantColor(),
                             title = {
-                                Text(texts(COURSES))
+                                Text(topBarText(COURSES))
                             },
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
@@ -985,21 +984,12 @@ fun MainScreen(
 }
 
 
-fun texts(num : BottomBarItems) : String = when(num) {
+fun topBarText(num : BottomBarItems) : String = when(num) {
     SEARCH -> "查询中心"
     SETTINGS -> "选项"
     else -> {
-        val chineseNumber  = when (DateTimeManager.dayWeek) {
-            1 -> "一"
-            2 -> "二"
-            3 -> "三"
-            4 -> "四"
-            5 -> "五"
-            6 -> "六"
-            0 -> "日"
-            else -> ""
-        }
-        "$Date_MM_dd 第${currentWeek}周 周$chineseNumber"
+        val chineseNumber  = numToChinese(DateTimeManager.dayWeek)
+        "$Date_MM_dd 第${DateTimeManager.currentWeek}周 周$chineseNumber"
     }
 }
 

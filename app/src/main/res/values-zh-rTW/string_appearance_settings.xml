@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appearance_settings_tips_input_color">输入 ARGB Hex 值</string>
+    <string name="appearance_settings_button_input_color_set">设置</string>
+    <string name="appearance_settings_button_input_color_cancel">取消</string>
+    <string name="appearance_settings_pure_black_background_title">纯黑深色背景</string>
+    <string name="appearance_settings_theme_half_title">深浅色</string>
+    <string name="appearance_settings_pure_black_background_description">OLED屏使用此模式在深色模式时可获得不发光的纯黑背景</string>
+    <string name="appearance_settings_enforce_web_dark_theme_title">强制网页深色模式</string>
+    <string name="appearance_settings_enforce_web_dark_theme_description">将强制深色的代码注入到网页中，以尝试适配应用的深色模式，如有网页显示异常，请暂时关闭</string>
+    <string name="appearance_settings_theme_title">深浅色</string>
+    <string name="appearance_settings_color_half_title">主题色</string>
+    <string name="appearance_settings_default_color_half_title">默认取色</string>
+    <string name="appearance_settings_dynamic_color_title">原生取色</string>
+    <string name="appearance_settings_pick_color_half_title">自定义取色</string>
+    <string name="appearance_settings_color_bright_title">浓度 | %1$s</string>
+    <string name="appearance_settings_pick_color_by_photo_title">选择图片取色</string>
+    <string name="appearance_settings_pick_color_by_hue_band_title">色相带取色</string>
+    <string name="appearance_settings_pick_color_by_hue_band_description">点击手动输入颜色值</string>
+</resources>

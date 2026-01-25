@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="network_settings_school_card_password_title">Password of school card</string>
+    <string name="network_settings_config_half_title">Configuration</string>
+    <string name="network_settings_init_data_title">Preloaded data</string>
+    <string name="network_settings_init_data_description">Some data displayed on Focus page will be automatically updated when cold start or pull-down to refresh.</string>
+    <string name="network_settings_school_card_password_description">If you have already changed the initial password of your school card, please enter a new password here to use the quick recharge and campus network login functions.</string>
+    <string name="network_settings_jxglstu_password_title">Password of the educational administration system</string>
+    <string name="network_settings_jxglstu_password_description">If you have already changed the initial password of the educational administration system, please enter a new password here to use the functions of classmates, classrooms, and the school-wide training program.</string>
+    <string name="network_settings_auto_refresh_login_title">Auto refresh login</string>
+    <string name="network_settings_auto_refresh_login_description">After cold starting the application, a unified CAS login will be automatically performed in the background. Please enable it as needed. This is a time-consuming operation and does not require refreshing the login status every time you use it</string>
+    <string name="network_settings_others_half_title">Others</string>
+    <string name="network_settings_update_data_title">Update some data</string>
+    <string name="network_settings_update_data_description">Allow the upload of non-sensitive data such as crash logs to help improve the experience better.</string>
+    <string name="network_settings_refresh_login_title">Refresh login</string>
+    <string name="network_settings_refresh_login_description">If the school card or exam results cannot be checked, it might be because the login has expired and you need to log in again.</string>
+</resources>

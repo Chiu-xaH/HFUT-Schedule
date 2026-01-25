@@ -24,8 +24,8 @@ import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.screen.home.cube.screen.AppSettingsScreen
-import com.hfut.schedule.ui.screen.home.cube.screen.NetWorkScreen
-import com.hfut.schedule.ui.screen.home.cube.screen.UIScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.NetworkSettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.AppearanceSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.BackupScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
@@ -84,7 +84,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             composable(Screen.UIScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    UIScreen(innerPaddings,navController)
+                    AppearanceSettingsScreen(innerPaddings,navController)
                 }
             }
             composable(Screen.APPScreen.route) {
@@ -99,7 +99,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             composable(Screen.NetWorkScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    NetWorkScreen(navController, innerPaddings,ifSaved)
+                    NetworkSettingsScreen(navController, innerPaddings,ifSaved)
                 }
             }
             composable(FixBarItems.Fix.name) {
