@@ -15,6 +15,10 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
@@ -208,7 +212,7 @@ private fun smoothToOne(scaleFactor: MutableState<Float>) {
     "UnusedMaterial3ScaffoldPaddingParameter"
 )
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
-    ExperimentalGlideComposeApi::class
+    ExperimentalGlideComposeApi::class, ExperimentalAnimationGraphicsApi::class
 )
 @Composable
 fun MainScreen(
