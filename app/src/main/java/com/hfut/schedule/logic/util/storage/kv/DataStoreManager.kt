@@ -22,7 +22,6 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
-import com.hfut.schedule.ui.util.language.PlainText
 import com.hfut.schedule.ui.util.language.UiText
 import com.hfut.schedule.ui.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -208,7 +207,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
     suspend fun saveTermStartDate(value: String)  {
         saveValue(TERM_START_DATE, value)
-        DateTimeManager.updateWeeksBen()
+        DateTimeManager.initCurrentWeekValue()
     }
     suspend fun saveUniAppJwt(value: String) = saveValue(UNI_APP_JWT,value)
 

@@ -15,7 +15,7 @@ object LanguageHelper {
         return currentLanguage
     }
 
-    // 繁体中文也是zh
+    // 繁体中文也是zh 未来不会适配繁体中文，只会有简体中文和英语
     fun isChineseLanguage(context: Context = MyApplication.context): Boolean  = getCurrentAppLanguageTag(context) == "zh"
     fun isEnglishLanguage(context: Context = MyApplication.context): Boolean  = getCurrentAppLanguageTag(context) == "en"
 

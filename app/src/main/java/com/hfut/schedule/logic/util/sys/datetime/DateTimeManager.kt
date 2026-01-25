@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.Duration
@@ -21,26 +20,18 @@ import java.util.Calendar
 import java.util.Date
 
 object DateTimeManager {
-    private val firstWeekStartJxglstu: LocalDate by lazy {
-        runBlocking {
-            LocalDate.parse(DataStoreManager.termStartDate.first(),formatter_YYYY_MM_DD)
-        }
+    /**
+     * 初始化&更新本周
+     */
+    suspend fun initCurrentWeekValue() {
+        val firstWeekStartJxglstu = LocalDate.parse(
+            DataStoreManager.termStartDate.first(),
+            formatter_YYYY_MM_DD
+        )
+       currentWeek =  ChronoUnit.WEEKS.between(firstWeekStartJxglstu, today) + 1
     }
 
-    suspend fun updateWeeksBen() {
-        weeksBetweenJxglstu = ChronoUnit.WEEKS.between(
-            LocalDate.parse(
-                DataStoreManager.termStartDate.first(),
-                formatter_YYYY_MM_DD
-            ),
-            today
-        ) + 1
-    }
-//    init {
-//        GlobalScope.launch(Dispatchers.IO) {
-//            LocalDate.parse(DataStoreManager.termStartDate.first(),formatter_YYYY_MM_DD)
-//        }
-//    }
+
     // 解析
     val simpleFormatter_YYYY_MM = SimpleDateFormat("yyyy-MM")
     val simpleFormatter_YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
@@ -75,12 +66,8 @@ object DateTimeManager {
     val Date_yyyy_MM_dd: String = simpleFormatter_YYYY_MM_DD.format(date)
     private var dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
 
-    // 周数 社区课表
-//    private val firstWeekStart: LocalDate = getStartWeekFromCommunity()
-//    val weeksBetweenJxglstu = ChronoUnit.WEEKS.between(firstWeekStart, today) + 1
-    // 周数 教务课表
-//    private val firstWeekStartJxglstu: LocalDate = runBlocking { LocalDate.parse(DataStoreManager.termStartDate.first(),formatter_YYYY_MM_DD) }
-    var weeksBetweenJxglstu by mutableStateOf(ChronoUnit.WEEKS.between(firstWeekStartJxglstu, today) + 1)
+    // 周数
+    var currentWeek by mutableStateOf(1L)
         private set
     //周几
     val dayWeek = dayOfWeek - 1

@@ -351,7 +351,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
 fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel, hazeState: HazeState) {
 
     val weekdayTomorrow = DateTimeManager.dayWeek + 1
-    var week = DateTimeManager.weeksBetweenJxglstu.toInt()
+    var week = DateTimeManager.currentWeek.toInt()
     //当第二天为下一周的周一时，周数+1
     when(weekdayTomorrow) {
         1 -> week += 1
@@ -598,7 +598,7 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
             else -> {
                 //判断明天是否有早八
                 val weekdayTomorrow = DateTimeManager.dayWeek + 1
-                var week = DateTimeManager.weeksBetweenJxglstu.toInt()
+                var week = DateTimeManager.currentWeek.toInt()
                 //当第二天为下一周的周一时，周数+1
                 when(weekdayTomorrow) {
                     1 -> week += 1

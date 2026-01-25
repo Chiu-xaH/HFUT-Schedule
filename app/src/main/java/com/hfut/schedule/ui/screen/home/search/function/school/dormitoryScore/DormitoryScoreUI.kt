@@ -108,7 +108,7 @@ fun DormitoryScoreScreen(
     }
     LaunchedEffect(Unit) {
         launch {
-            week = DateTimeManager.weeksBetweenJxglstu.toInt()
+            week = DateTimeManager.currentWeek.toInt()
         }
         launch {
             refreshNetwork()
@@ -140,7 +140,7 @@ fun DormitoryScoreScreen(
                     onNextPage = { week = it },
                     onPreviousPage = { week = it },
                     range = Pair(1, MyApplication.MAX_WEEK),
-                    resetPage = DateTimeManager.weeksBetweenJxglstu.toInt(),
+                    resetPage = DateTimeManager.currentWeek.toInt(),
                     text = "第${page}周",
                 )
             }

@@ -29,7 +29,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -96,7 +96,7 @@ fun CommunityCourseTableUI(
             showToast("第${currentWeek}周")
         }
         override fun backToCurrentWeek() {
-            if(DateTimeManager.weeksBetweenJxglstu < 1 || DateTimeManager.weeksBetweenJxglstu > 20) {
+            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
                 if(termStartDate == null) {
                     return
                 }
@@ -105,7 +105,7 @@ fun CommunityCourseTableUI(
                     safelySetDate(termStartDate!!)
                 )
             } else {
-                currentWeek = weeksBetweenJxglstu
+                currentWeek = DateTimeManager.currentWeek
                 onDateChange(LocalDate.now())
             }
         }

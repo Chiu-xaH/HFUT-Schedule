@@ -138,14 +138,14 @@ fun ZhiJianCourseTableUI(
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.weeksBetweenJxglstu < 1 || DateTimeManager.weeksBetweenJxglstu > 20) {
+            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
                 if(termStartDate == null) {
                     return
                 }
                 currentWeek = 1
                 onDateChange(safelySetDate(termStartDate!!))
             } else {
-                currentWeek = DateTimeManager.weeksBetweenJxglstu
+                currentWeek = DateTimeManager.currentWeek
                 onDateChange(LocalDate.now())
             }
         }

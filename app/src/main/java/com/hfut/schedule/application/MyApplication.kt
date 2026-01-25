@@ -8,7 +8,10 @@ import android.os.Bundle
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.model.Location
 import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.xah.uicommon.util.LogUtil
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.Collections
 
 class MyApplication : Application() {
@@ -189,6 +192,9 @@ class MyApplication : Application() {
         super.onCreate()
         context = applicationContext
         LogUtil.tag = APP_NAME
+        GlobalScope.launch {
+            DateTimeManager.initCurrentWeekValue()
+        }
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
             override fun onActivityCreated(a: Activity, b: Bundle?) {
                 activities.add(a)

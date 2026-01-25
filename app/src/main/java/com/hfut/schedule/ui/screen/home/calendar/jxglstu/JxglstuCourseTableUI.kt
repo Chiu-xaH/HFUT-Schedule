@@ -41,7 +41,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -186,7 +186,7 @@ fun JxglstuCourseTableUI(
 
     val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
         override fun backToCurrentWeek() {
-            if(DateTimeManager.weeksBetweenJxglstu < 1 || DateTimeManager.weeksBetweenJxglstu > 20) {
+            if(DateTimeManager.currentWeek < 1 || DateTimeManager.currentWeek > 20) {
                 if(termStartDate == null) {
                     return
                 }
@@ -195,7 +195,7 @@ fun JxglstuCourseTableUI(
                     safelySetDate(termStartDate!!)
                 )
             } else {
-                currentWeek = DateTimeManager.weeksBetweenJxglstu
+                currentWeek = DateTimeManager.currentWeek
                 onDateChange(LocalDate.now())
             }
         }

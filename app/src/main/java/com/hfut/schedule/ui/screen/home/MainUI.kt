@@ -114,7 +114,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.weeksBetweenJxglstu
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
@@ -993,7 +993,7 @@ fun texts(num : BottomBarItems) : String = when(num) {
             0 -> "日"
             else -> ""
         }
-        "$Date_MM_dd 第${weeksBetweenJxglstu}周 周$chineseNumber"
+        "$Date_MM_dd 第${currentWeek}周 周$chineseNumber"
     }
 }
 

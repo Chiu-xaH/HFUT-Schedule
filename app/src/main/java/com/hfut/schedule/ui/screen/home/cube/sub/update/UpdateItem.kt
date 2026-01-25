@@ -56,9 +56,13 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
-            UpdateItems("新增 英文语言适配")
-            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
-            UpdateItems("优化 部分界面的显示")//
+
+
+            UpdateItems("修复 空数据下本应用崩溃的Bug")
+
+//            UpdateItems("新增 英文语言部分适配","选项页面")
+//            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
+//            UpdateItems("优化 部分界面的显示")//
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")
 //            UpdateItems("优化 长按课程表展开选周预览界面的自适应布局")
