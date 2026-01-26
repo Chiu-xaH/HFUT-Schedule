@@ -180,9 +180,11 @@ fun ProgramScreen(
                                 navController.navigateForTransition(AppNavRoute.ProgramSearch,AppNavRoute.ProgramSearch.withArgs(ifSaved))
                             },
                             backdrop = backDrop,
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                            modifier = Modifier
+                                .padding(horizontal = APP_HORIZONTAL_DP)
+                                .containerShare(AppNavRoute.ProgramSearch.receiveRoute(), MaterialTheme.shapes.large)
                         ) {
-                            Text("全校培养方案")
+                            Text("全校培养方案", maxLines = 1)
                         }
                     }
                 )

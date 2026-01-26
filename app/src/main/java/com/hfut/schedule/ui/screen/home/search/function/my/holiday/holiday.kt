@@ -107,7 +107,7 @@ fun HolidayScreen(
                         onClick = {
                             navController.navigateForTransition(AppNavRoute.NewsApi,toRoute)
                         },) {
-                        Text("调休通知")
+                        Text("调休通知", maxLines = 1)
                     }
                 },
                 modifier = Modifier.topBarBlur(hazeState)

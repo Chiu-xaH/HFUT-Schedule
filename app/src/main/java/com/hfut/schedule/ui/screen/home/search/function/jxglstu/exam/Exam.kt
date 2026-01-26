@@ -111,14 +111,13 @@ fun ExamScreen(
                     LiquidButton(
                         modifier = Modifier
                             .containerShare(AppNavRoute.ExamNotifications.route, MaterialTheme.shapes.extraLarge)
-                            .padding(horizontal = APP_HORIZONTAL_DP)
-                        ,
+                            .padding(horizontal = APP_HORIZONTAL_DP),
                         backdrop = backdrop,
                         onClick = {
                             navController.navigateForTransition(AppNavRoute.ExamNotifications, AppNavRoute.ExamNotifications.route)
                         },
                     ) {
-                        Text("全校考试安排")
+                        Text("全校考试安排", maxLines = 1)
                     }
                 },
                 navigationIcon = {

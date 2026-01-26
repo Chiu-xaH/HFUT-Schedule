@@ -170,7 +170,7 @@ fun TransferScreen(
                             .containerShare(toRoute, MaterialTheme.shapes.large)
                             .padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
-                        Text("通知公告")
+                        Text("通知公告", maxLines = 1)
                     }
                 },
                 navigationIcon = {

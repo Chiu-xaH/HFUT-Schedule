@@ -316,10 +316,10 @@ fun SelectCourseDetailScreen(
                                 onClick = {
                                     navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
                                 },
-                                modifier = Modifier.containerShare( AppNavRoute.DropCourse.route),
+                                modifier = Modifier.containerShare(AppNavRoute.DropCourse.route),
                                 backdrop = backDrop
                             ) {
-                                Text(text = "退课")
+                                Text(text = "退课", maxLines = 1)
                             }
                         }
                     }

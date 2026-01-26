@@ -46,6 +46,7 @@ import androidx.compose.ui.util.lerp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.refraction
@@ -108,9 +109,9 @@ fun LiquidButton(
                 highlight = {
                     Highlight.Default.copy(width = 0.25.dp)
                 },
-                backdrop = backdrop,
+                backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
                 shape = { CircleShape },
-                effects = {
+                effects =  {
                     vibrancy()
                     blur(2f.dp.toPx())
                     refraction(12f.dp.toPx(), 24f.dp.toPx())
@@ -164,7 +165,10 @@ fun LiquidButton(
                                 interactiveHighlightShader.apply {
                                     val offset = pressStartPosition + offsetAnimation.value
                                     setFloatUniform("size", size.width, size.height)
-                                    setColorUniform("color", Color.White.copy(0.15f * progress).toArgb())
+                                    setColorUniform(
+                                        "color",
+                                        Color.White.copy(0.15f * progress).toArgb()
+                                    )
                                     setFloatUniform("radius", size.maxDimension)
                                     setFloatUniform(
                                         "offset",
@@ -190,7 +194,7 @@ fun LiquidButton(
                 if (enabled) {
                     it.clickable(
                         interactionSource = null,
-                        indication = null ,
+                        indication = null,
                         role = Role.Button,
                         onClick = onClick
                     )
@@ -206,14 +210,24 @@ fun LiquidButton(
                         val onDragStop: () -> Unit = {
                             animationScope.launch {
                                 launch { progressAnimation.animateTo(0f, progressAnimationSpec) }
-                                launch { offsetAnimation.animateTo(Offset.Zero, offsetAnimationSpec) }
+                                launch {
+                                    offsetAnimation.animateTo(
+                                        Offset.Zero,
+                                        offsetAnimationSpec
+                                    )
+                                }
                             }
                         }
                         inspectDragGestures(
                             onDragStart = { down ->
                                 pressStartPosition = down.position
                                 animationScope.launch {
-                                    launch { progressAnimation.animateTo(1f, progressAnimationSpec) }
+                                    launch {
+                                        progressAnimation.animateTo(
+                                            1f,
+                                            progressAnimationSpec
+                                        )
+                                    }
                                     launch { offsetAnimation.snapTo(Offset.Zero) }
                                 }
                             },
