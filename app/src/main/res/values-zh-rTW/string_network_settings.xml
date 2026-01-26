@@ -14,4 +14,6 @@
     <string name="network_settings_update_data_description">允许上传崩溃日志等非敏感数据,以帮助更好的改进体验</string>
     <string name="network_settings_refresh_login_title">刷新登录状态</string>
     <string name="network_settings_refresh_login_description">如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次</string>
+    <string name="network_settings_request_page_size_title">请求范围 | %1$s 条/页</string>
+    <string name="network_settings_request_page_size_description">自定义加载一页时出现的数目,数目越大,加载时间相应地会更长,但可显示更多信息</string>
 </resources>

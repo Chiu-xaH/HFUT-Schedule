@@ -333,7 +333,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.appearance_settings_pure_black_background_title)) },
                     supportingContent = { Text(text = stringResource(R.string.appearance_settings_pure_black_background_description)) },
-                    leadingContent = { Icon(painterResource(R.drawable.contrast), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.contrast), contentDescription = "Localized description") },
                     trailingContent = {
                         Switch(checked = currentPureDark, onCheckedChange = { scope.launch { DataStoreManager.savePureDark(!currentPureDark) } })
                     },
@@ -345,7 +345,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_dark_theme_title)) },
                     supportingContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_dark_theme_description)) },
-                    leadingContent = { Icon(painterResource(R.drawable.syringe), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.syringe), contentDescription = "Localized description") },
                     trailingContent = {
                         Switch(checked = webViewDark, onCheckedChange = { scope.launch { DataStoreManager.saveWebViewDark(!webViewDark) } })
                     },
@@ -380,7 +380,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 DividerTextExpandedWith(stringResource(R.string.appearance_settings_default_color_half_title)) {
                     TransplantListItem(
                         headlineContent = { Text(text = stringResource(R.string.appearance_settings_dynamic_color_title)) },
-                        leadingContent = { Icon(painterResource(R.drawable.palette), contentDescription = "Localized description",) },
+                        leadingContent = { Icon(painterResource(R.drawable.palette), contentDescription = "Localized description") },
                         trailingContent = {
                             if(useDynamicColor) {
                                 Icon(painterResource(R.drawable.check),null)
@@ -405,7 +405,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                                     ))
                                 }
                             },
-                            leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description",) },
+                            leadingContent = { Icon(painterResource(R.drawable.invert_colors), contentDescription = "Localized description") },
                         )
 
                         CustomSlider(
@@ -427,7 +427,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                     }
                     TransplantListItem(
                         headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_photo_title)) },
-                        leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description",) },
+                        leadingContent = { Icon(painterResource(R.drawable.image), contentDescription = "Localized description") },
 
                         modifier = Modifier.clickable {
                             scope.launch {
@@ -438,7 +438,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = { Text(text = stringResource(R.string.appearance_settings_pick_color_by_hue_band_title)) },
-                        leadingContent = { Icon(painterResource(R.drawable.colorize), contentDescription = "Localized description",) },
+                        leadingContent = { Icon(painterResource(R.drawable.colorize), contentDescription = "Localized description") },
                         supportingContent = {
                             Text(stringResource(R.string.appearance_settings_pick_color_by_hue_band_description))
                         },
@@ -599,7 +599,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                     supportingContent = {
                         Text(text = "界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3")
                     },
-                    leadingContent = { Icon(painterResource(R.drawable.airline_stops), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.airline_stops), contentDescription = "Localized description") },
                 )
                 CustomSlider(
                     value = transition.toFloat(),
@@ -617,7 +617,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                     supportingContent = {
                         Text("底栏切换时进行转场的动画\n平衡性能与美观,推荐为向中心运动或淡入淡出")
                     },
-                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description",) },
+                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
                 )
                 AnimationSetting()
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))

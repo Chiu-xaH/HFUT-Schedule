@@ -159,7 +159,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                     contentDescription = "Localized description",
                                 )
                             },
-                            trailingContent = { Text(if (item.pass) "通过" else "未通过") },
+//                            trailingContent = { Text(if (item.pass) "通过" else "未通过") },
                             index = index
                         )
                     }

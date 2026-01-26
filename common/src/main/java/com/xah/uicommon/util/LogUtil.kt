@@ -18,6 +18,7 @@ object LogUtil {
     fun debug(msg : String = "") = baseLog(Level.DEBUG,msg)
     fun warn(msg : String = "") = baseLog(Level.WARN,msg)
     fun error(throwable: Throwable,msg : String = "") = baseLog(Level.ERROR,msg,throwable)
+    fun error(msg : String = "") = baseLog(Level.ERROR,msg)
 
     private fun findCaller(): StackTraceElement? {
         try {

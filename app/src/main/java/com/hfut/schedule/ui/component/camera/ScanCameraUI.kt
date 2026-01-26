@@ -10,6 +10,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -30,9 +31,12 @@ import com.google.zxing.BinaryBitmap
 import com.google.zxing.MultiFormatReader
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.HybridBinarizer
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.QRCodeAnalyzer
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.uicommon.component.status.LoadingScreen
+import com.xah.uicommon.style.align.CenterScreen
 
 
 @Composable
@@ -45,7 +49,13 @@ fun ScanQrCode(
     when(enableCameraDynamicRecord) {
         true -> ScanQrCodeView2(modifier,onResult)
         false -> ScanQrCodeView(modifier,onResult)
-        null -> LoadingScreen()
+        null -> CenterScreen {
+            StatusIcon(
+                R.drawable.monochrome_photos,
+                text = "加载中",
+                tint = MaterialTheme.colorScheme.surface
+            )
+        }
     }
 }
 @Composable

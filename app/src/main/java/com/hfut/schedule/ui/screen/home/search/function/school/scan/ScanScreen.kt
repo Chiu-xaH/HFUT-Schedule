@@ -108,6 +108,7 @@ fun ScanScreen(
 
     CustomTransitionScaffold (
         route = route,
+        containerColor = Color.Black,
         navHostController = navController,
         bottomBar = {
             val auth by produceState<String?>(initialValue = null) {
@@ -116,8 +117,7 @@ fun ScanScreen(
             ShareTwoContainer2D(
                 modifier = Modifier
                     .padding(bottom = APP_HORIZONTAL_DP)
-                    .navigationBarsPadding()
-                ,
+                    .navigationBarsPadding(),
                 !showTip,
                 defaultContent = {
                     CardListItem(
@@ -277,16 +277,6 @@ fun ScanScreen(
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
-//                        LiquidButton(
-//                            onClick = {
-//                                showToast("正在开发")
-//                            },
-//                            backdrop = backdrop,
-//                            isCircle = true
-//                        ) {
-//                            Icon(painterResource(R.drawable.qr_code_2),null)
-//                        }
-//                        Spacer(Modifier.width(BUTTON_PADDING))
                         LiquidButton(
                             onClick = {
                                 pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -301,7 +291,6 @@ fun ScanScreen(
             )
         },
     ) { innerPadding ->
-
         LaunchedEffect(activity) {
             AppShortcutManager.createScanShortcut(context)
             activity?.let { PermissionSet.checkAndRequestCameraPermission(it) }

@@ -14,4 +14,6 @@
     <string name="network_settings_update_data_description">Allow the upload of non-sensitive data such as crash logs to help improve the experience better.</string>
     <string name="network_settings_refresh_login_title">Refresh login</string>
     <string name="network_settings_refresh_login_description">If the school card or exam results cannot be checked, it might be because the login has expired and you need to log in again.</string>
+    <string name="network_settings_request_page_size_title">Request page size | %1$s items per page</string>
+    <string name="network_settings_request_page_size_description">Customize the number of pages that appear when loading a page. The larger the number, the longer the loading time will be accordingly, but more information can be displayed.</string>
 </resources>

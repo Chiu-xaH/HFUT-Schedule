@@ -8,9 +8,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -137,30 +139,34 @@ fun TransitionScaffold(
         }
     }
 
-    val targetColor =  containerColor ?: if(TransitionConfig.transplantBackground) Color.Transparent else MaterialTheme.colorScheme.surface
+    val targetColor = containerColor ?: MaterialTheme.colorScheme.surface
 
-    Scaffold(
-        containerColor =  targetColor,
-        modifier = modifier.scale(scale),
-        topBar = topBar,
-        bottomBar = {
+    Surface(
+        color = targetColor
+    ) {
+        Scaffold(
+            containerColor =  if(TransitionConfig.transplantBackground) Color.Transparent else targetColor,
+            modifier = modifier.scale(scale),
+            topBar = topBar,
+            bottomBar = {
+                AnimatedVisibility(
+                    visible = show,
+                    enter  = fadeIn(),
+                    exit = fadeOut(tween(durationMillis = 0))
+                ) {
+                    bottomBar()
+                }
+            },
+            floatingActionButton = floatingActionButton,
+            floatingActionButtonPosition = floatingActionButtonPosition,
+        ) { innerPadding ->
             AnimatedVisibility(
                 visible = show,
-                enter  = fadeIn(),
+                enter  = TransitionConfig.enterShowTransition,
                 exit = fadeOut(tween(durationMillis = 0))
             ) {
-                bottomBar()
+                content(innerPadding)
             }
-        },
-        floatingActionButton = floatingActionButton,
-        floatingActionButtonPosition = floatingActionButtonPosition,
-    ) { innerPadding ->
-        AnimatedVisibility(
-            visible = show,
-            enter  = TransitionConfig.enterShowTransition,
-            exit = fadeOut(tween(durationMillis = 0))
-        ) {
-            content(innerPadding)
         }
     }
 }

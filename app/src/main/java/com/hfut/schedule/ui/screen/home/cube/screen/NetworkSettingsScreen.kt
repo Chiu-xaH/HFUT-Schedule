@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
@@ -74,7 +75,7 @@ fun NetworkSettingsScreen(
         .padding(innerPaddings)
         .scale(scale))
     {
-        Spacer(modifier = Modifier.height(5.dp))
+        Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
 
 
         val switch_upload = SharedPrefs.prefs.getBoolean("SWITCHUPLOAD",true )
@@ -165,5 +166,4 @@ fun NetworkSettingsScreen(
         }
         InnerPaddingHeight(innerPaddings,false)
     }
-
 }

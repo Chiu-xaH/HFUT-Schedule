@@ -36,6 +36,7 @@ import androidx.compose.ui.zIndex
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
 
 @Composable
@@ -152,10 +153,10 @@ private fun BoxScope.BasePageController(
     resetPage : Int = range.first ?: 1,
     text : String = "第${currentPage}页",
 ) {
-    require(
-        !((range.first != null && resetPage < range.first!!) || (range.second != null && resetPage > range.second!!))
-    ) {
-        "不合法的resetPage($resetPage),期望在range(${range.first}..${range.second})内"
+    LaunchedEffect(Unit) {
+        if((range.first != null && resetPage < range.first!!) || (range.second != null && resetPage > range.second!!)) {
+            LogUtil.error(msg = "不合法的resetPage($resetPage),期望在range(${range.first}..${range.second})内")
+        }
     }
 
     val scope = rememberCoroutineScope()

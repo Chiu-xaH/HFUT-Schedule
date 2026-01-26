@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -36,27 +37,41 @@ fun ErrorIcon(string: String) = StatusIcon(Icons.Filled.Close,string)
 fun PrepareSearchIcon() = StatusIcon(R.drawable.search,"开始搜索")
 
 @Composable
-fun StatusIcon(iconId : Int, text : String, padding : Dp = APP_HORIZONTAL_DP/2) = BaseStatusUI(text = text,padding = padding) {
+fun StatusIcon(
+    iconId : Int,
+    text : String,
+    padding : Dp = APP_HORIZONTAL_DP/2,
+    tint : Color = MaterialTheme.colorScheme.primary
+) = BaseStatusUI(text = text,padding = padding) {
     Icon(
         painterResource(iconId),
         contentDescription = "",
         Modifier.size(100.dp),
-        tint = MaterialTheme.colorScheme.primary
+        tint = tint
     )
 }
 
 @Composable
-fun StatusIcon(painter : ImageVector, text : String, padding : Dp = APP_HORIZONTAL_DP/2) = BaseStatusUI(text = text,padding = padding) {
+fun StatusIcon(
+    painter : ImageVector,
+    text : String,
+    padding : Dp = APP_HORIZONTAL_DP/2,
+    tint : Color = MaterialTheme.colorScheme.primary
+) = BaseStatusUI(text = text,padding = padding) {
     Icon(
         painter,
         contentDescription = "",
         Modifier.size(100.dp),
-        tint = MaterialTheme.colorScheme.primary
+        tint = tint
     )
 }
 
 @Composable
-private fun BaseStatusUI(text : String, padding : Dp = APP_HORIZONTAL_DP/2,icon : @Composable () -> Unit) {
+private fun BaseStatusUI(
+    text : String,
+    padding : Dp = APP_HORIZONTAL_DP/2,
+    icon : @Composable () -> Unit
+) {
     Column {
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             icon()

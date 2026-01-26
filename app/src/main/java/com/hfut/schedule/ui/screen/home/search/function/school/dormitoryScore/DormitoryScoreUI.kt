@@ -52,6 +52,7 @@ import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.first
@@ -108,7 +109,11 @@ fun DormitoryScoreScreen(
     }
     LaunchedEffect(Unit) {
         launch {
-            week = DateTimeManager.currentWeek.toInt()
+            week = if(DateTimeManager.currentWeek in 1..MyApplication.MAX_WEEK) {
+                DateTimeManager.currentWeek.toInt()
+            } else {
+                1
+            }
         }
         launch {
             refreshNetwork()
