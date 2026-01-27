@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-01-26") },
+                overlineContent = { Text(text = "2026-01-27") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -58,7 +58,7 @@ fun VersionInfo() {
         // TODO 新增培养方案已修学分计算功能
             UpdateItems("修复 寝室页面崩溃的Bug")//
             UpdateItems("修复 课程表右下角按钮拖拽时显示错误的Bug")//
-            UpdateItems("修复 液态玻璃按钮转场动画卡顿的Bug")
+            UpdateItems("修复 液态玻璃按钮转场动画卡顿的Bug")//
             UpdateItems("优化 打开扫码页面时的背景")//
 //            UpdateItems("新增 英文语言部分适配","选项页面")
 //            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
