@@ -1,10 +1,13 @@
 package com.hfut.schedule.ui.util.color
 
+import com.hfut.schedule.R
+import com.hfut.schedule.ui.util.language.UiText
+import com.hfut.schedule.ui.util.language.res
 import com.materialkolor.PaletteStyle
 
-enum class ColorStyle(val code : Int,val description: String,val style : PaletteStyle) {
-    DEFAULT(2,"正常", PaletteStyle.TonalSpot),
-    LIGHT(1,"淡雅", PaletteStyle.Neutral),
-    DEEP(3,"艳丽", PaletteStyle.Vibrant),
-    BLACK(0,"黑白", PaletteStyle.Monochrome),
+enum class ColorStyle(val code : Int,val description: UiText,val style : PaletteStyle) {
+    DEFAULT(2, res(R.string.appearance_settings_choice_bright_normal), PaletteStyle.TonalSpot),
+    LIGHT(1,res(R.string.appearance_settings_choice_bright_tinge), PaletteStyle.Neutral),
+    DEEP(3,res(R.string.appearance_settings_choice_bright_heavy), PaletteStyle.Vibrant),
+    BLACK(0,res(R.string.appearance_settings_choice_bright_monochrome), PaletteStyle.Monochrome),
 }

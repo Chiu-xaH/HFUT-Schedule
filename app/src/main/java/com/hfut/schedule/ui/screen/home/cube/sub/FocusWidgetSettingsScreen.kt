@@ -1,6 +1,12 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import androidx.compose.foundation.background
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -24,28 +31,30 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.receiver.widget.focus.FocusWidget
 import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
 import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.cube.screen.WidgetPreview
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Composable
 fun FocusWidgetSettingsScreen(
@@ -164,3 +173,65 @@ fun FocusWidgetSettingsUI(
         }
     }
 }
+
+
+@Composable
+//@Preview
+fun WidgetPreview(res : Int) {
+    val shapeC = RoundedCornerShape(16.dp)
+    // 自转（绕 Z 轴）
+    val infiniteTransition = rememberInfiniteTransition(label = "rotation")
+    val phaseAngle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 15000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotationZ"
+    )
+
+    // 倾斜幅度（度数），可以调节（越大越明显）
+    // 我们也让幅度缓慢往复，避免过于死板（可去掉）
+    val tiltTransition by infiniteTransition.animateFloat(
+        initialValue = 5f,      // 最小倾斜角度（度）
+        targetValue = 10f,      // 最大倾斜角度（度）
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 10000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "tilt"
+    )
+
+    // 将角度转换为 radians 以做 sin/cos
+    val rad = Math.toRadians(phaseAngle.toDouble())
+
+    // 倾斜在 X、Y 的分量（度）
+    val rotationXc = (tiltTransition * sin(rad)).toFloat()
+    val rotationYc = (-tiltTransition * cos(rad)).toFloat()
+
+    // cameraDistance（像素），让 3D 效果更真实；值可调整
+    val density = LocalDensity.current
+    val cameraDistancePx = with(density) { 10.dp.toPx() } // 值越大透视越弱
+    val color = MaterialTheme.colorScheme.onSurface
+    val shadow = with(density) { APP_HORIZONTAL_DP.toPx() }
+
+    Image(
+        painterResource(res),
+        null,
+        modifier = Modifier
+            .graphicsLayer {
+                clip = true
+                shape = shapeC
+                // 先做 Z 轴自转，再做 X/Y 倾斜
+                rotationX = rotationXc
+                rotationY = rotationYc
+                // camera 距离，防止 3D 透视过强
+                this.cameraDistance = cameraDistancePx
+                shadowElevation = shadow
+                ambientShadowColor = color
+                spotShadowColor = color
+            }
+    )
+}
+

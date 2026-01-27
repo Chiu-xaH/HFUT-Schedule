@@ -16,7 +16,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -36,7 +35,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -77,7 +75,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
@@ -126,10 +123,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.math.cos
-import kotlin.math.sin
 
-
+/* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
@@ -343,8 +338,8 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_dark_theme_title)) },
-                    supportingContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_dark_theme_description)) },
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_page_dark_theme_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.appearance_settings_enforce_web_page_dark_theme_description)) },
                     leadingContent = { Icon(painterResource(R.drawable.syringe), contentDescription = "Localized description") },
                     trailingContent = {
                         Switch(checked = webViewDark, onCheckedChange = { scope.launch { DataStoreManager.saveWebViewDark(!webViewDark) } })
@@ -395,7 +390,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
                 DividerTextExpandedWith(stringResource(R.string.appearance_settings_pick_color_half_title)) {
                     if(!useDynamicColor) {
-                        val d = styleList.find { it.code == customColorStyle }?.description
+                        val d = styleList.find { it.code == customColorStyle }?.description?.asString()
                         TransplantListItem(
                             headlineContent = {
                                 d?.let {
@@ -500,12 +495,15 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
-        DividerTextExpandedWith("特效",contentColor=contentColor) {
+        DividerTextExpandedWith(stringResource(R.string.appearance_settings_effect_half_title),contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
-                    headlineContent = { Text(text = "运动模糊") },
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_motion_blur_title)) },
                     supportingContent = {
-                        Text(text = "部分组件的运动过程伴随实时模糊效果" + if(!AppVersion.CAN_MOTION_BLUR) "(需为 Android 12+)" else "")
+                        Text(text = stringResource(
+                            R.string.appearance_settings_motion_blur_description_supported,
+                            if (!AppVersion.CAN_MOTION_BLUR) stringResource(R.string.appearance_settings_motion_blur_description_unsupported) else ""
+                        ))
                     },
                     leadingContent = { MotionBlurIcon(motionBlur) },
                     trailingContent = {  Switch(checked = motionBlur, onCheckedChange = { scope.launch { DataStoreManager.saveMotionBlur(!motionBlur) } },enabled = AppVersion.CAN_MOTION_BLUR) },
@@ -518,10 +516,10 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "层级模糊")
+                        Text(text = stringResource(R.string.appearance_settings_layer_blur_title))
                     },
                     supportingContent = {
-                        Text(text = "部分层级使用渐进式或带背景色的实时模糊" )
+                        Text(text = stringResource(R.string.appearance_settings_layer_blur_description))
                     },
                     leadingContent = {
                         HazeBlurIcon(blur)
@@ -534,12 +532,12 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "着色器渲染")
+                        Text(text = stringResource(R.string.appearance_settings_shader_title))
                     },
                     supportingContent = {
-                        Text(text = "部分内容渲染为折射或镜面的材质效果" + (
+                        Text(text = stringResource(R.string.appearance_settings_shader_description_supported) + (
                                 if(!AppVersion.CAN_SHADER)
-                                    "(需为Android 13+)"
+                                    stringResource(R.string.appearance_settings_shader_description_unsupported)
                                 else
                                     ""
                         ) )
@@ -565,10 +563,10 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = {
-                        Text(text = "相机实时渲染")
+                        Text(text = stringResource(R.string.appearance_settings_camera_render_real_time_title))
                     },
                     supportingContent = {
-                        Text(text = "将摄像头的画面实时渲染在UI图层上，以实现支持组件化的模糊效果，开启后将带来一些渲染压力")
+                        Text(text = stringResource(R.string.appearance_settings_camera_render_real_time_description))
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.monochrome_photos),null)
@@ -588,16 +586,20 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 )
             }
         }
-        DividerTextExpandedWith("动效",contentColor=contentColor) {
+        DividerTextExpandedWith(stringResource(R.string.appearance_settings_dynamic_effect_half_title),contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
                         Column {
-                            Text(text = "转场动画等级" + " | " + "Level${transition} (${transitionLevels.find { it.code == transition}?.title})")
+                            Text(text = stringResource(
+                                R.string.appearance_settings_transition_level_title,
+                                transition,
+                                transitionLevels.find { it.code == transition }?.title ?: ""
+                            ))
                         }
                     },
                     supportingContent = {
-                        Text(text = "界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3")
+                        Text(text = stringResource(R.string.appearance_settings_transition_level_description))
                     },
                     leadingContent = { Icon(painterResource(R.drawable.airline_stops), contentDescription = "Localized description") },
                 )
@@ -613,9 +615,9 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "底栏转场动画") },
+                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_bottom_bar_title)) },
                     supportingContent = {
-                        Text("底栏切换时进行转场的动画\n平衡性能与美观,推荐为向中心运动或淡入淡出")
+                        Text(stringResource(R.string.appearance_settings_transition_bottom_bar_description))
                     },
                     leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
                 )
@@ -623,19 +625,19 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
-        DividerTextExpandedWith("课程表",contentColor=contentColor) {
+        DividerTextExpandedWith(stringResource(R.string.appearance_settings_calendar_half_title),contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 CalendarUISettings()
             }
         }
-        DividerTextExpandedWith("底栏",contentColor=contentColor) {
+        DividerTextExpandedWith(stringResource(R.string.appearance_settings_bottom_bar_half_title),contentColor=contentColor) {
             CustomCard(color = backgroundColor) {
                 TransplantListItem(
                     headlineContent = {
-                        Text("显示所有底栏标签")
+                        Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_title))
                     },
                     supportingContent = {
-                        Text("显示全部的底栏标签或仅选中项")
+                        Text(stringResource(R.string.appearance_settings_always_display_bottom_bar_labels_description))
                     },
                     modifier = Modifier.clickable {
                         scope.launch { DataStoreManager.saveShowBottomBarLabel(!showBottomBarLabel) }
@@ -655,67 +657,6 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         }
     }
 }
-
-@Composable
-//@Preview
-fun WidgetPreview(res : Int) {
-    val shapeC = RoundedCornerShape(16.dp)
-    // 自转（绕 Z 轴）
-    val infiniteTransition = rememberInfiniteTransition(label = "rotation")
-    val phaseAngle by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 15000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "rotationZ"
-    )
-
-    // 倾斜幅度（度数），可以调节（越大越明显）
-    // 我们也让幅度缓慢往复，避免过于死板（可去掉）
-    val tiltTransition by infiniteTransition.animateFloat(
-        initialValue = 5f,      // 最小倾斜角度（度）
-        targetValue = 10f,      // 最大倾斜角度（度）
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "tilt"
-    )
-
-    // 将角度转换为 radians 以做 sin/cos
-    val rad = Math.toRadians(phaseAngle.toDouble())
-
-    // 倾斜在 X、Y 的分量（度）
-    val rotationXc = (tiltTransition * sin(rad)).toFloat()
-    val rotationYc = (-tiltTransition * cos(rad)).toFloat()
-
-    // cameraDistance（像素），让 3D 效果更真实；值可调整
-    val density = LocalDensity.current
-    val cameraDistancePx = with(density) { 10.dp.toPx() } // 值越大透视越弱
-    val color = MaterialTheme.colorScheme.onSurface
-    val shadow = with(density) { APP_HORIZONTAL_DP.toPx() }
-
-    Image(
-        painterResource(res),
-        null,
-        modifier = Modifier
-            .graphicsLayer {
-                clip = true
-                shape = shapeC
-                // 先做 Z 轴自转，再做 X/Y 倾斜
-                rotationX = rotationXc
-                rotationY = rotationYc
-                // camera 距离，防止 3D 透视过强
-                this.cameraDistance = cameraDistancePx
-                shadowElevation = shadow
-                ambientShadowColor = color
-                spotShadowColor = color
-            }
-    )
-}
-
 
 @Composable
 fun CalendarUISettings(
@@ -741,7 +682,7 @@ fun CalendarUISettings(
                 val savedPath = persistImage(context, imageUri)
                 savedPath?.let {
                     DataStoreManager.saveCustomBackground(it)
-                    showToast("已设置背景")
+                    showToast(context.getString(R.string.appearance_settings_toast_set_calendar_background))
                     extractColor(imageUri)?.let { color ->
                         DataStoreManager.saveCustomColor(color)
                     }
@@ -755,7 +696,7 @@ fun CalendarUISettings(
         if(!tiny){
             TransplantListItem(
                 headlineContent = {
-                    Text("方格内显示教师")
+                    Text(stringResource(R.string.appearance_settings_display_teachers_title))
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.group), null)
@@ -773,11 +714,11 @@ fun CalendarUISettings(
             PaddingHorizontalDivider()
             TransplantListItem(
                 headlineContent = {
-                    Text("合并冲突方格")
+                    Text(stringResource(R.string.appearance_settings_merge_conflict_calendar_squares_title))
                 },
                 supportingContent = {
                     if (!tiny)
-                        Text("打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格")
+                        Text(stringResource(R.string.appearance_settings_merge_conflict_calendar_square_description))
                 },
                 modifier = Modifier.clickable {
                     scope.launch {
@@ -800,11 +741,11 @@ fun CalendarUISettings(
             PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
-                Text("背景图片")
+                Text(stringResource(R.string.appearance_settings_calendar_background_title))
             },
             supportingContent = {
                 if(!tiny)
-                    Text("选择图片作为课程表的背景，同时也会改变色彩")
+                    Text(stringResource(R.string.appearance_settings_calendar_background_description))
             },
             modifier = Modifier.clickable {
                 pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -833,14 +774,18 @@ fun CalendarUISettings(
                 PaddingHorizontalDivider()
             TransplantListItem(
                 headlineContent = {
-                    Text("前景混色 ${formatDecimal((customSquareAlpha*100).toDouble(),0)}%")
+                    Text(
+                        stringResource(
+                            R.string.appearance_settings_calendar_square_alpha_title,
+                            formatDecimal((customSquareAlpha * 100).toDouble(), 0)
+                        ))
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.visibility),null)
                 },
                 supportingContent = {
                     if(!tiny)
-                        Text("值越小，方格和按钮等内容越透明")
+                        Text(stringResource(R.string.appearance_settings_calendar_square_alpha_description))
                 }
             )
             CustomSlider(
@@ -862,11 +807,15 @@ fun CalendarUISettings(
             PaddingHorizontalDivider()
             TransplantListItem(
                 headlineContent = {
-                    Text("方格高度(旧) ${formatDecimal(calendarSquareHeight.toDouble(),0)}")
+                    Text(
+                        stringResource(
+                            R.string.appearance_settings_old_calendar_square_height_title,
+                            formatDecimal(calendarSquareHeight.toDouble(), 0)
+                        ))
                 },
                 supportingContent = {
                     if(!tiny)
-                        Text("自定义方格的高度(默认值为125)")
+                        Text(stringResource(R.string.appearance_settings_old_calendar_square_height_description))
                 },
                 leadingContent = {
                     Icon(painterResource(R.drawable.height),null)
@@ -892,11 +841,19 @@ fun CalendarUISettings(
 
         TransplantListItem(
             headlineContent = {
-                Text("方格高度 ${formatDecimal(calendarSquareHeightNew.toDouble(),1)}")
+                Text(
+                    stringResource(
+                        R.string.appearance_settings_calendar_square_height_title,
+                        formatDecimal(calendarSquareHeightNew.toDouble(), 1)
+                    ))
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格的高度(默认值为${formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.toDouble(),0)});在课程表界面双指捏合可临时缩放方格的高度")
+                    Text(
+                        stringResource(
+                            R.string.appearance_settings_calendar_square_height_description,
+                            formatDecimal(MyApplication.CALENDAR_SQUARE_HEIGHT_NEW.toDouble(), 0)
+                        ))
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.height),null)
@@ -921,11 +878,15 @@ fun CalendarUISettings(
             PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
-                Text("方格文字大小 ${formatDecimal(calendarSquareTextSize.toDouble()*100,0)}%")
+                Text(
+                    stringResource(
+                        R.string.appearance_settings_calendar_square_text_size_title,
+                        formatDecimal(calendarSquareTextSize.toDouble() * 100, 0)
+                    ))
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格内文字的大小及其行距(默认值为100%)")
+                    Text(stringResource(R.string.appearance_settings_calendar_square_text_size_description))
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.translate),null)
@@ -949,11 +910,15 @@ fun CalendarUISettings(
             PaddingHorizontalDivider()
         TransplantListItem(
             headlineContent = {
-                Text("方格文字行距 ${formatDecimal(calendarSquareTextPadding.toDouble(),2)}倍")
+                Text(
+                    stringResource(
+                        R.string.appearance_settings_calendar_square_text_line_padding_title,
+                        formatDecimal(calendarSquareTextPadding.toDouble(), 2)
+                    ))
             },
             supportingContent = {
                 if(!tiny)
-                    Text("自定义方格内文字的行距(默认值为1.35倍)，越小则每行之间越紧密")
+                    Text(stringResource(R.string.appearance_settings_calendar_square_text_line_padding_description))
             },
             leadingContent = {
                 Icon(painterResource(R.drawable.translate),null)
@@ -1187,6 +1152,7 @@ private fun HazeBlurIcon(blur : Boolean) {
         )
     }
 }
+
 @Composable
 private fun Colors(isControlCenter : Boolean) {
     val list = listOf(

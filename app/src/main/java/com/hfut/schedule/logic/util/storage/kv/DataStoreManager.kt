@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.Language
@@ -23,6 +24,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getD
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.language.UiText
+import com.hfut.schedule.ui.util.language.res
 import com.hfut.schedule.ui.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
@@ -86,9 +88,9 @@ object DataStoreManager : IDataStore {
     )
 
     enum class ShowTeacherConfig(override val code : Int,override val label: UiText) : BaseChoice {
-        ONLY_MULTI(0,text("仅多教师课程显示")),
-        ALL(1,text("全部显示")),
-        NONE(2, text("不显示"))
+        ONLY_MULTI(0,res(R.string.appearance_settings_choice_display_teachers_only_multi)),
+        ALL(1,res(R.string.appearance_settings_choice_display_teachers_all)),
+        NONE(2, res(R.string.appearance_settings_choice_display_teachers_none))
     }
 
 
