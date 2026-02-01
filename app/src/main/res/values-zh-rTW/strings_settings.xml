@@ -3,7 +3,7 @@
     <string name="settings_person_info_default_name">游客</string>
     <string name="settings_person_info_tag_debug">运行在开发设备</string>
     <string name="settings_person_info_tag_preview">内部测试版本</string>
-    <string name="settings_person_info_tag_normal">已过 %1$s%</string>
+    <string name="settings_person_info_tag_normal">已过 %1$s%%</string>
     <string name="settings_person_info_student_id_description">学号</string>
     <string name="settings_person_info_half_title">个人信息</string>
     <string name="settings_update_half_title">更新版本</string>
