@@ -46,7 +46,7 @@
     <string name="appearance_settings_merge_conflict_calendar_square_description">After opening, merge the conflicting items into one square based on the earliest start time and the latest end time.</string>
     <string name="appearance_settings_calendar_background_title">Background</string>
     <string name="appearance_settings_calendar_background_description">Select a picture as the background of the course schedule and also change the color.</string>
-    <string name="appearance_settings_calendar_square_alpha_title">The transparency of square %1$s%</string>
+    <string name="appearance_settings_calendar_square_alpha_title">The transparency of square %1$s%%</string>
     <string name="appearance_settings_calendar_square_alpha_description">The smaller the value, the more transparent the grid, buttons and other contents will be.</string>
     <string name="appearance_settings_old_calendar_square_height_title">The height of square (old) %1$s</string>
     <string name="appearance_settings_old_calendar_square_height_description">Customize the height of the square (default value is 125)</string>

@@ -46,7 +46,7 @@
     <string name="appearance_settings_merge_conflict_calendar_square_description">打开后，将冲突项目以最早开始时间和最晚结束时间合并成一个方格</string>
     <string name="appearance_settings_calendar_background_title">背景图片</string>
     <string name="appearance_settings_calendar_background_description">选择图片作为课程表的背景，同时也会改变色彩</string>
-    <string name="appearance_settings_calendar_square_alpha_title">前景混色 %1$s%</string>
+    <string name="appearance_settings_calendar_square_alpha_title">前景混色 %1$s%%</string>
     <string name="appearance_settings_calendar_square_alpha_description">值越小，方格和按钮等内容越透明</string>
     <string name="appearance_settings_old_calendar_square_height_title">方格高度(旧) %1$s</string>
     <string name="appearance_settings_old_calendar_square_height_description">自定义方格的高度(默认值为125)</string>
