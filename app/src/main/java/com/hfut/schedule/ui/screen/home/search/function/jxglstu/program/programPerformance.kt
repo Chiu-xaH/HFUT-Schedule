@@ -108,7 +108,7 @@ fun ProgramCompetitionScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.ProgramCompetition.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.ProgramCompetition.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.ProgramCompetition.icon)
                     }
                 )
             },
@@ -329,7 +329,7 @@ fun ProgramCompetitionDetailScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(title) },
                         navigationIcon = {
-                            com.xah.transition.component.TopBarNavigateIcon(navController)
+                            TopBarNavigationIcon()
                         },
                     )
                     Row(

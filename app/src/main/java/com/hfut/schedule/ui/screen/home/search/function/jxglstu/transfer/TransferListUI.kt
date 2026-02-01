@@ -174,7 +174,7 @@ fun TransferScreen(
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.Transfer.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.Transfer.icon)
                 }
             )
         },
@@ -362,7 +362,6 @@ fun TransferDetailScreen(
                     title = { Text(title) },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navController,
                             route,
                             AppNavRoute.TransferDetail.icon
                         )

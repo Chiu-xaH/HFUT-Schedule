@@ -219,7 +219,7 @@ fun ClassroomScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Classroom.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navTopController,route, AppNavRoute.Classroom.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Classroom.icon)
                     },
                     actions = {
                         if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
@@ -785,7 +785,7 @@ fun ClassroomLessonsScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(name) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         AnimatedIconButton(

@@ -125,7 +125,7 @@ fun FailRateScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.FailRate.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.FailRate.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.FailRate.icon)
                     }
                 )
                 Row(

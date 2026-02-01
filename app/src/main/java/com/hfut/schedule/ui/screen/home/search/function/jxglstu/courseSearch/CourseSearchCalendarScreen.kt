@@ -112,7 +112,7 @@ fun CourseSearchCalendarScreen(
                         }
                     },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route,AppNavRoute.CourseSearchCalendar.icon)
+                        TopBarNavigationIcon(route,AppNavRoute.CourseSearchCalendar.icon)
                     },
                     actions = {
                         Row() {

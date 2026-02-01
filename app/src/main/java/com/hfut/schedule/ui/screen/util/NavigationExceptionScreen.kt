@@ -51,7 +51,7 @@ fun NavigationExceptionScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Exception.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Exception.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Exception.icon)
                     }
                 )
             },

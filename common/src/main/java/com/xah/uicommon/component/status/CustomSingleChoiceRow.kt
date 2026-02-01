@@ -1,4 +1,4 @@
-package com.hfut.schedule.ui.component.button
+package com.xah.uicommon.component.status
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.BaseChoice
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.language.BaseChoice
+
 
 @Composable
 inline fun <reified T> CustomSingleChoiceRow(

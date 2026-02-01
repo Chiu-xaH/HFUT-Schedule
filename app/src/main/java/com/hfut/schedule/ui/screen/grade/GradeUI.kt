@@ -171,7 +171,7 @@ fun GradeScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Grade.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navTopController,targetRoute,AppNavRoute.Grade.icon)
+                        TopBarNavigationIcon(targetRoute,AppNavRoute.Grade.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

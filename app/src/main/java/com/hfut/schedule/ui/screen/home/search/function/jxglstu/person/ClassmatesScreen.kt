@@ -79,7 +79,6 @@ fun ClassmatesScreen(
                 title = { Text(getPersonInfo().className ?: AppNavRoute.Classmates.label) },
                 navigationIcon = {
                     TopBarNavigationIcon(
-                        navTopController,
                         route,
                         AppNavRoute.Classmates.icon
                     )

@@ -143,7 +143,7 @@ fun WorkScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Work.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Work.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Work.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

@@ -240,7 +240,7 @@ fun WebNavigationScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.WebNavigation.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.WebNavigation.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.WebNavigation.icon)
                 },
             )
         },
@@ -335,7 +335,7 @@ fun NotificationBoxScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.NotificationBox.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.NotificationBox.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.NotificationBox.icon)
                 },
             )
         },

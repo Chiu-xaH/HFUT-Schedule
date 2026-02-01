@@ -135,7 +135,7 @@ fun StuTodayCampusScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.StuTodayCampus.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.StuTodayCampus.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.StuTodayCampus.icon)
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

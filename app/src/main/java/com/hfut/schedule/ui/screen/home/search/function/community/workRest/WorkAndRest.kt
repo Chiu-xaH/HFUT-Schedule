@@ -214,7 +214,7 @@ fun TimeTableScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.WorkAndRest.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route,AppNavRoute.WorkAndRest.icon)
+                    TopBarNavigationIcon(route,AppNavRoute.WorkAndRest.icon)
                 },
                 actions = {
                     LiquidButton(

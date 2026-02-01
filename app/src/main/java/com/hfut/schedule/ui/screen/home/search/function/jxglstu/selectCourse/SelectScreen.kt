@@ -189,7 +189,7 @@ fun SelectCourseScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.SelectCourse.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.SelectCourse.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.SelectCourse.icon)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
@@ -295,7 +295,6 @@ fun SelectCourseDetailScreen(
                     title = { Text(title) },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navController,
                             route,
                             AppNavRoute.SelectCourseDetail.icon
                         )
@@ -407,7 +406,6 @@ fun DropCourseScreen(
                     },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navController,
                             route,
                             AppNavRoute.DropCourse.icon
                         )

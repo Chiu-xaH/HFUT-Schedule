@@ -77,7 +77,7 @@ fun AlumniScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.Alumni.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.Alumni.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.Alumni.icon)
                 },
             )
         },

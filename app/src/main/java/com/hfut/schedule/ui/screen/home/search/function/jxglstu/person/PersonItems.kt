@@ -132,7 +132,7 @@ fun PersonScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.Person.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.Person.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.Person.icon)
                 },
                 actions = {
                     LiquidButton(

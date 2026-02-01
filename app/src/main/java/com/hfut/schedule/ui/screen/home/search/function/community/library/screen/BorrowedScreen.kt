@@ -83,7 +83,7 @@ fun LibraryBorrowedScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.LibraryBorrowed.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.LibraryBorrowed.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.LibraryBorrowed.icon)
                 },
             )
         },

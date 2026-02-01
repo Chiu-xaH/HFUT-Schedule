@@ -51,7 +51,6 @@ fun AppointmentScreen(
                     title = { Text(AppNavRoute.Appointment.label) },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navController,
                             route,
                             AppNavRoute.Appointment.icon
                         )

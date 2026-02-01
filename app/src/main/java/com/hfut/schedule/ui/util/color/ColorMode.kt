@@ -1,10 +1,9 @@
 package com.hfut.schedule.ui.util.color
 
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.BaseChoice
-import com.hfut.schedule.ui.util.language.UiText
-import com.hfut.schedule.ui.util.language.res
-import com.hfut.schedule.ui.util.language.text
+import com.xah.uicommon.util.language.BaseChoice
+import com.xah.uicommon.util.language.UiText
+import com.xah.uicommon.util.language.res
 
 enum class ColorMode(
     override val label: UiText,

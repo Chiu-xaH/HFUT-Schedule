@@ -278,7 +278,7 @@ fun AddEventScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(if(eventId <= 0) "添加" else "修改") },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.AddEvent.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.AddEvent.icon)
                 },
                 actions = {
                     if(eventId <= 0) {

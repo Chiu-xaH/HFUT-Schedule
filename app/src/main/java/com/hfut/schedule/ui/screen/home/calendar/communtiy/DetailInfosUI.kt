@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -188,7 +189,7 @@ fun CourseDetailApiScreen(
                 title = { Text(courseName) },
                 colors = topBarTransplantColor(),
                 navigationIcon = {
-                    TopBarNavigateIcon(navController)
+                    TopBarNavigationIcon()
                 }
             )
         }

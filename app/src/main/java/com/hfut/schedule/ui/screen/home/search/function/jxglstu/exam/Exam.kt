@@ -121,7 +121,7 @@ fun ExamScreen(
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.Exam.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.Exam.icon)
                 }
             )
         },

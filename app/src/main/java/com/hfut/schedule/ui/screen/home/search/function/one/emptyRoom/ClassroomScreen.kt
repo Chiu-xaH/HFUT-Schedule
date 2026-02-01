@@ -116,7 +116,7 @@ fun ClassroomScreen2(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Classroom.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Classroom.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Classroom.icon)
                     }
                 )
                 CustomTabRow(pagerState,campusList.map { it.description })
@@ -195,7 +195,7 @@ fun ClassroomDetailScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(name) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController)
+                        TopBarNavigationIcon()
                     }
                 )
             }

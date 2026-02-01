@@ -73,6 +73,7 @@ import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
@@ -594,7 +595,7 @@ fun GradeDetailScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(bean.courseName) },
                         navigationIcon = {
-                            TopBarNavigateIcon(navController)
+                            TopBarNavigationIcon()
                         }
                     )
                 }

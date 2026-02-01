@@ -47,8 +47,8 @@ fun Modifier.clickableWithScale(
             scaleY = scale
         )
         .clickable(
-            interactionSource = interactionSource, // 👈 关键：传给 clickable
-            indication = LocalIndication.current, // 去掉水波纹
+            interactionSource = interactionSource,
+            indication = LocalIndication.current,
             onClick = onClick
         )
 }

@@ -131,7 +131,7 @@ fun AIScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.AI.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.AI.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.AI.icon)
                 },
             )
         },

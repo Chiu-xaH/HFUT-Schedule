@@ -121,7 +121,6 @@ fun OfficeHallScreen(
                     title = { Text(AppNavRoute.OfficeHall.label) },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navController,
                             route,
                             AppNavRoute.OfficeHall.icon
                         )

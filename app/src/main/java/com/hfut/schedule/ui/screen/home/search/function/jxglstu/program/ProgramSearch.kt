@@ -44,6 +44,7 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramListBean
 import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCardListItem
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
@@ -138,7 +139,7 @@ fun ProgramSearchScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.ProgramSearch.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController)
+                        TopBarNavigationIcon()
                     },
                 )
                 Row(

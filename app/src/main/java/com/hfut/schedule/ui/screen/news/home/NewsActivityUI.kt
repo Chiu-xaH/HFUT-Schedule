@@ -189,7 +189,6 @@ fun NewsScreen(
                     title = { Text(AppNavRoute.News.label) },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navTopController,
                             route,
                             AppNavRoute.News.icon
                         )

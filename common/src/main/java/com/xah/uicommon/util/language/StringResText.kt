@@ -1,10 +1,9 @@
-package com.hfut.schedule.ui.util.language
+package com.xah.uicommon.util.language
 
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.hfut.schedule.application.MyApplication
 
 data class StringResText(
     @StringRes val resId: Int,

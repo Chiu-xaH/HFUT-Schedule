@@ -117,7 +117,7 @@ fun FeeScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.Fee.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route,AppNavRoute.Fee.icon)
+                    TopBarNavigationIcon(route,AppNavRoute.Fee.icon)
                 },
                 actions = {
                     LiquidButton(

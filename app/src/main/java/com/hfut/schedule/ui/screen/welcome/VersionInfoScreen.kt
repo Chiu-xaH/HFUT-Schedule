@@ -97,7 +97,7 @@ fun VersionInfoScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.VersionInfo.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.VersionInfo.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.VersionInfo.icon)
                 },
                 actions = {
                     LiquidButton (

@@ -90,7 +90,7 @@ fun HolidayScreen(
                 colors = topBarTransplantColor(),
                 title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.label}") },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route,AppNavRoute.Holiday.icon)
+                    TopBarNavigationIcon(route,AppNavRoute.Holiday.icon)
                 },
                 actions = {
                     val toRoute = remember { AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
@@ -178,7 +178,7 @@ fun NewsApiScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(keyword) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.NewsApi.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.NewsApi.icon)
                     }
                 )
             }

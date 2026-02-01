@@ -161,7 +161,7 @@ fun NotificationsScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.Notifications.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.Notifications.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.Notifications.icon)
                 },
             )
         },

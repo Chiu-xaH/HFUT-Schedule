@@ -131,7 +131,7 @@ fun DormitoryScoreScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.DormitoryScore.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.DormitoryScore.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.DormitoryScore.icon)
                     },
                 )
             }

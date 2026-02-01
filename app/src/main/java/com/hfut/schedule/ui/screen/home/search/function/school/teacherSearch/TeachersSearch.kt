@@ -119,7 +119,7 @@ fun TeacherSearchScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.TeacherSearch.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.TeacherSearch.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.TeacherSearch.icon)
                     },
                     actions = {
                         LiquidButton(

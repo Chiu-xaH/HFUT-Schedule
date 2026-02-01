@@ -97,7 +97,7 @@ fun ExamNotificationsScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.ExamNotifications.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.ExamNotifications.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.ExamNotifications.icon)
                     }
                 )
                 CustomTabRow(pagerState,titles)

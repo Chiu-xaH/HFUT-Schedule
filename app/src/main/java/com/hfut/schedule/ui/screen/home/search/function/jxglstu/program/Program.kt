@@ -172,7 +172,7 @@ fun ProgramScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Program.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Program.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Program.icon)
                     },
                     actions = {
                         LiquidButton (

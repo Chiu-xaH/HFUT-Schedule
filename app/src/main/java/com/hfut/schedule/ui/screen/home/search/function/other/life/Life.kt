@@ -80,7 +80,7 @@ fun LifeScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Life.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Life.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Life.icon)
                     },
                 )
             },

@@ -23185,7 +23185,7 @@ PLcom/hfut/schedule/ui/component/button/IconButtonKt$$ExternalSyntheticLambda1;-
 PLcom/hfut/schedule/ui/component/button/IconButtonKt$AnimatedIconButton$2;-><init>(Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;J)V
 PLcom/hfut/schedule/ui/component/button/IconButtonKt$AnimatedIconButton$2;->invoke(Landroidx/compose/runtime/Composer;I)V
 PLcom/hfut/schedule/ui/component/button/IconButtonKt$AnimatedIconButton$2;->invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-PLcom/hfut/schedule/ui/component/button/TopBarNavigationIconKt;->TopBarNavigationIcon(Landroidx/navigation/NavHostController;Ljava/lang/String;ILandroidx/compose/runtime/Composer;I)V
+PLcom/hfut/schedule/ui/component/button/TopBarNavigationIconKt;->TopBarNavigationIcon(navController,Landroidx/navigation/NavHostController;Ljava/lang/String;ILandroidx/compose/runtime/Composer;I)V
 PLcom/hfut/schedule/ui/component/button/TopBarNavigationIconKt$$ExternalSyntheticLambda2;-><init>(Landroidx/navigation/NavHostController;Ljava/lang/String;II)V
 PLcom/hfut/schedule/ui/component/container/CardBottomButton;-><clinit>()V
 PLcom/hfut/schedule/ui/component/container/CardBottomButton;-><init>(Ljava/lang/String;ZLkotlin/jvm/functions/Function0;)V

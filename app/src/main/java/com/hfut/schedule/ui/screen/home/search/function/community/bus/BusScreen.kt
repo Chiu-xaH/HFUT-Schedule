@@ -111,7 +111,6 @@ fun BusScreen(
                     title = { Text(AppNavRoute.Bus.label) },
                     navigationIcon = {
                         TopBarNavigationIcon(
-                            navController,
                             route,
                             AppNavRoute.Bus.icon
                         )

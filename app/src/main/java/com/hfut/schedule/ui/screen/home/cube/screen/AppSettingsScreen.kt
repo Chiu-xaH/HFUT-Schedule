@@ -55,7 +55,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.CustomSingleChoiceRow
+import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor

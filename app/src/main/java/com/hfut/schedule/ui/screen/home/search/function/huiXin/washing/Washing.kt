@@ -55,6 +55,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -136,7 +137,7 @@ fun HaiLeWashingScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.HaiLeWashing.label) },
                     navigationIcon = {
-                        TopBarNavigateIcon(navController)
+                        TopBarNavigationIcon()
                     }
                 )
             },

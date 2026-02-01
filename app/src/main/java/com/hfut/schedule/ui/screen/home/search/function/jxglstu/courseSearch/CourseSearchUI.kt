@@ -145,7 +145,7 @@ fun CourseSearchScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.CourseSearch.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.CourseSearch.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.CourseSearch.icon)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {

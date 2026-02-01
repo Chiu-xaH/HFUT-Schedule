@@ -76,7 +76,7 @@ fun SecondClassScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.SecondClass.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.SecondClass.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.SecondClass.icon)
                 },
             )
         },

@@ -110,7 +110,7 @@ fun WebVpnScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.WebVpn.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.WebVpn.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.WebVpn.icon)
                 },
                 actions = {
                     LiquidButton(

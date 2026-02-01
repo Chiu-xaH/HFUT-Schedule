@@ -50,7 +50,6 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.BaseChoice
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.addCourseToEvent
 import com.hfut.schedule.logic.util.sys.delAllCourseEvent
@@ -65,14 +64,15 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.hfut.schedule.ui.util.language.PlainText
-import com.hfut.schedule.ui.util.language.UiText
-import com.hfut.schedule.ui.util.language.res
-import com.hfut.schedule.ui.util.language.text
+import com.xah.uicommon.util.language.PlainText
+import com.xah.uicommon.util.language.UiText
+import com.xah.uicommon.util.language.res
+import com.xah.uicommon.util.language.text
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.util.language.BaseChoice
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File

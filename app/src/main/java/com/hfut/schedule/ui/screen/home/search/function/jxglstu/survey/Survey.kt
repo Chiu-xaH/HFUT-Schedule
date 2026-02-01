@@ -122,7 +122,7 @@ fun SurveyScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Survey.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Survey.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Survey.icon)
                     },
                     actions = {
                         Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

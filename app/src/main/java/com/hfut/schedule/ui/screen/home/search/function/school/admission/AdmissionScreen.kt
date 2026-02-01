@@ -98,7 +98,7 @@ fun AdmissionScreen(
                     colors = topBarTransplantColor(),
                     title = { Text("本科招生") },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route,R.drawable.publics)
+                        TopBarNavigationIcon(route,R.drawable.publics)
                     },
                 )
             }
@@ -213,7 +213,7 @@ fun AdmissionRegionScreen(
                         colors = topBarTransplantColor(),
                         title = { Text(type + " : "+ data.key) },
                         navigationIcon = {
-                            TopBarNavigateIcon(navController)
+                            TopBarNavigationIcon()
                         }
                     )
                     CustomTabRow(pagerState,titles)

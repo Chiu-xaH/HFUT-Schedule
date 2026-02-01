@@ -23,12 +23,13 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
-import com.hfut.schedule.ui.util.language.UiText
-import com.hfut.schedule.ui.util.language.res
-import com.hfut.schedule.ui.util.language.text
+import com.xah.uicommon.util.language.UiText
+import com.xah.uicommon.util.language.res
+import com.xah.uicommon.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.transition.style.TransitionLevel
+import com.xah.uicommon.util.language.BaseChoice
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -42,14 +43,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 object DataStoreManager : IDataStore {
-    /**
-     * 实现基类 传入任意枚举
-     * @param code 实际记忆的值 如果能保证枚举类的顺序后期不会调整，也可以去除code，用ordinal代替
-     */
-    interface BaseChoice {
-        val label: UiText
-        val code: Int
-    }
+
     /* 用法
     val XXX by DataStoreManager.XXX.collectAsState(initial = 默认值)
      */

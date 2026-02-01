@@ -57,18 +57,15 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
 
-//            UpdateItems("新增 英文语言部分适配","选项页面")
-//            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
-//            UpdateItems("优化 部分界面的显示")//
+//            UpdateItems("新增 启动台与聚焦支持固定项目")
+            UpdateItems("新增 长按左上角返回按钮支持选择返回栈")
+            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
+            UpdateItems("新增 英文语言部分适配","选项页面")
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")
 //            UpdateItems("优化 长按课程表展开选周预览界面的自适应布局")
             // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程
-//            UpdateItems("新增 长按左上角返回图标打开启动台，快速切换到其他界面")
-//            UpdateItems("修复 成绩界面横向滑动时卡顿的Bug")
 //            UpdateItems("新增 新课程表的日视图")
-//            UpdateItems("新增 选课页面中的通知公告快速检索入口")
-//            UpdateItems("新增 启动台支持固定项目")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
@@ -87,8 +84,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 智慧社区的座位预约","位于 查询中心-社区预约")
 //            UpdateItems("新增 自动CAS登录")
 //            UpdateItems("新增 地图和校车支持为游客显示了")
-//            UpdateItems("修复 窗口变化与深浅色切换而导致启动台自动收起的Bug")
-//            UpdateItems("优化 冷启动速度", type = UpdateType.PERFORMANCE)
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 为低版本Android用户的开屏显示")
 //            UpdateItems("新增 单独登录教务系统")

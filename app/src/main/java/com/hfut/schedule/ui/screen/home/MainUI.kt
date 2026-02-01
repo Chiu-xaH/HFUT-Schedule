@@ -1102,7 +1102,7 @@ fun SearchEditScreen(
             colors = topBarTransplantColor(),
             title = { Text(AppNavRoute.SearchEdit.label) },
             navigationIcon = {
-                    TopBarNavigationIcon(navController,route, AppNavRoute.SearchEdit.icon)
+                TopBarNavigationIcon(route, AppNavRoute.SearchEdit.icon)
             },
             actions = {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

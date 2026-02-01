@@ -173,7 +173,7 @@ fun LibraryScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(AppNavRoute.Library.label) },
                     navigationIcon = {
-                        TopBarNavigationIcon(navController,route, AppNavRoute.Library.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Library.icon)
                     },
                 )
             }

@@ -93,7 +93,7 @@ fun TotalCourseScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(AppNavRoute.TotalCourse.label) },
                 navigationIcon = {
-                    TopBarNavigationIcon(navController, AppNavRoute.TotalCourse.withArgs(ifSaved,origin), AppNavRoute.TotalCourse.icon)
+                    TopBarNavigationIcon( AppNavRoute.TotalCourse.withArgs(ifSaved,origin), AppNavRoute.TotalCourse.icon)
                 },
                 actions = {
                     LiquidButton(
