@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_person_info_default_name">游客</string>
+    <string name="settings_person_info_tag_debug">运行在开发设备</string>
+    <string name="settings_person_info_tag_preview">内部测试版本</string>
+    <string name="settings_person_info_tag_normal">已过 %1$s%</string>
+    <string name="settings_person_info_student_id_description">学号</string>
+    <string name="settings_person_info_half_title">个人信息</string>
+    <string name="settings_update_half_title">更新版本</string>
+    <string name="settings_update_tips_none_patch">为了保证您的使用体验，建议及时跟进更新</string>
+    <string name="settings_always_display_half_title">常驻项目</string>
+    <string name="settings_half_title">应用设置</string>
+    <string name="settings_update_tips_different_architectures">当前安装的是非ARM64架构安装包,无法直接更新,请从备用更新通道下载对应包体</string>
+    <string name="settings_important_notice_half_title">重要通知</string>
+</resources>

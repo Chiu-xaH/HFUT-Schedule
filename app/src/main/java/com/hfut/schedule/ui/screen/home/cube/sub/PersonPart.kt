@@ -1,7 +1,5 @@
 package com.hfut.schedule.ui.screen.home.cube.sub
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -28,20 +26,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.parse.formatDecimal
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.ui.component.container.CustomCard
-import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
+import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.ColumnVertical
 
-@RequiresApi(Build.VERSION_CODES.O)
+/* 本kt文件已完成多语言文案适配 */
 @Composable
 fun PersonPart() {
     var expandItems by remember { mutableStateOf(prefs.getBoolean("expandPerson",false)) }
@@ -49,45 +48,33 @@ fun PersonPart() {
     val endDate = getPersonInfo().endDate
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         Column() {
-//             {
-//
-//            }
-//            Card(
-//                elevation = CardDefaults.cardElevation(
-//                    defaultElevation = 1.75.dp
-//                ),
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(
-//                        horizontal = APP_HORIZONTAL_DP,
-//                        vertical = 4.dp
-//                    ),
-//                shape = MaterialTheme.shapes.medium,
-//                colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primaryContainer)
-//            )
-            CustomCard(color = MaterialTheme.colorScheme.secondaryContainer)
-            {
-
-
+            CustomCard(color = MaterialTheme.colorScheme.secondaryContainer) {
                 TransplantListItem(
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.person), contentDescription = "")},
-                    headlineContent = { Text(text = getPersonInfo().name ?: "游客")  },
+                    headlineContent = { Text(text = getPersonInfo().name ?: stringResource(R.string.settings_person_info_default_name))  },
                     trailingContent = {
                         Row {
                             ColumnVertical {
                                 if(AppVersion.isInDebugRunning()) {
-                                    Text("运行在开发设备")
+                                    Text(stringResource(R.string.settings_person_info_tag_debug))
                                 }
                                 if(AppVersion.isPreview()) {
-                                    Text("内部测试版本")
+                                    Text(stringResource(R.string.settings_person_info_tag_preview))
                                 }
                                 if(startDate != null && endDate != null && startDate != "" && endDate != "") {
-                                    Text(text = "已过 ${formatDecimal(DateTimeManager.getPercent(startDate,endDate),1)}%")
+                                    Text(text = stringResource(
+                                        R.string.settings_person_info_tag_normal,
+                                        formatDecimal(
+                                            DateTimeManager.getPercent(
+                                                startDate,
+                                                endDate
+                                            ), 1
+                                        )
+                                    ))
                                 } else { null }
                             }
                         }
-                                      },
-//                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    },
                     modifier = Modifier.clickable {
                         expandItems = !expandItems
                         SharedPrefs.saveBoolean("expandPerson",true,expandItems)
@@ -109,7 +96,7 @@ fun PersonPart() {
                         getPersonInfo().studentId?.let{
                             Row {
                                 TransplantListItem(
-                                    overlineContent = { Text(text = "学号") },
+                                    overlineContent = { Text(text = stringResource(R.string.settings_person_info_student_id_description)) },
                                     headlineContent = {  ScrollText(text = it)  },
                                     leadingContent = {
                                         Icon(

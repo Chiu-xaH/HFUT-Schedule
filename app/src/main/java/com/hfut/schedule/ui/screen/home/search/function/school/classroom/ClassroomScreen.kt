@@ -4,6 +4,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -116,6 +117,8 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
+import com.hfut.schedule.ui.screen.home.smoothToOne
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
@@ -771,6 +774,7 @@ fun ClassroomLessonsScreen(
     LaunchedEffect(semester) {
         refreshNetwork()
     }
+    val scaleFactor = rememberSaveable { mutableFloatStateOf(1f) } // 捏合手势缩放因子
 
     var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -798,7 +802,15 @@ fun ClassroomLessonsScreen(
             }
         },
     ) { innerPadding ->
-        Column(modifier = Modifier.hazeSource(hazeState).fillMaxSize()) {
+        Column(modifier = Modifier
+            .hazeSource(hazeState)
+            .fillMaxSize()
+            .pointerInput(Unit) {
+                detectTransformGestures { _, pan, zoom, _ ->
+                    scaleFactor.floatValue *= zoom
+                }
+            }
+        ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork) {
                 val list = (uiState as UiState.Success).data
 
@@ -819,37 +831,11 @@ fun ClassroomLessonsScreen(
                     }
                 }
 
-
-//                val initialWeek =
-//                    if(DateTimeManager.weeksBetweenJxglstu > MyApplication.MAX_WEEK) {
-//                    getNewWeek()
-//                } else
-//                    if(DateTimeManager.weeksBetweenJxglstu < 1) {
-//                    1L
-//                } else {
-//                    DateTimeManager.weeksBetweenJxglstu
-//                }
-//
-//                var currentWeek by rememberSaveable { mutableLongStateOf(initialWeek) }
+                val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = null)
                 var currentWeek by rememberSaveable { mutableLongStateOf(1) }
+                // 记录上一次的学期开始时间
+                var lastTermStartDate by rememberSaveable { mutableStateOf<String?>(null) }
 
-                LaunchedEffect(DateTimeManager.currentWeek) {
-                    // 只初始化一次
-                    if(currentWeek > 1) {
-                        return@LaunchedEffect
-                    }
-                    if(DateTimeManager.currentWeek < 1) {
-//                        onDateChange(safelySetDate(termStartDate))
-                        currentWeek = 1
-                    } else {
-                        currentWeek = DateTimeManager.currentWeek
-                    }
-                }
-
-                var totalDragX by remember { mutableFloatStateOf(0f) }
-                val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
-                var isExpand by remember { mutableStateOf(false) }
-                val termStartDate by DataStoreManager.termStartDate.collectAsState(initial = getDefaultStartTerm())
 
                 val weekSwap = remember(currentWeek) { object : TimeTableWeekSwap {
                     override fun backToCurrentWeek() {
@@ -890,6 +876,25 @@ fun ClassroomLessonsScreen(
                         }
                     }
                 } }
+
+                /**
+                 * 用户修改学期开始时间  termStartDate变化且不为空  ----->   重新初始化currentWeek
+                 * 第一次启动     ----->   初始化currentWeek    后续开关界面不要初始化（rememberSaveable）
+                 */
+                LaunchedEffect(termStartDate) {
+                    val start = termStartDate ?: return@LaunchedEffect
+
+                    // 冷启动 or 用户修改学期开始时间
+                    if (lastTermStartDate != start) {
+                        LogUtil.debug("重新初始化currentWeek")
+                        weekSwap.backToCurrentWeek()
+                        lastTermStartDate = start
+                    }
+                }
+
+                var totalDragX by remember { mutableFloatStateOf(0f) }
+                val shouldShowAddButton by remember { derivedStateOf { scrollState.value == 0 } }
+                var isExpand by remember { mutableStateOf(false) }
 
                 val items by produceState(initialValue = List(MyApplication.MAX_WEEK) { emptyList() }) {
                     value = withContext(Dispatchers.Default) {
@@ -944,9 +949,11 @@ fun ClassroomLessonsScreen(
                             if(isExpand) {
                                 isExpand = false
                             } else {
-                                showToast("长按切换周")
+                                smoothToOne(scaleFactor)
+//                                showToast("长按切换周")
                             }
                         },
+                        scaleFactor = scaleFactor.floatValue,
                         onLongTapBlankRegion = {
                             isExpand = !isExpand
                         },

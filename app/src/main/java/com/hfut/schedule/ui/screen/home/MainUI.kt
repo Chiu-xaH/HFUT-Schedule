@@ -194,7 +194,7 @@ import java.io.File
 
 private val titles = listOf("重要安排","其他事项")
 
-private fun smoothToOne(scaleFactor: MutableState<Float>) {
+fun smoothToOne(scaleFactor: MutableState<Float>) {
     // 创建一个 ValueAnimator，从当前值平滑过渡到 1f
     val animator = ValueAnimator.ofFloat(scaleFactor.value, 1f)
     animator.duration = AppAnimationManager.ANIMATION_SPEED*1L
@@ -821,11 +821,12 @@ fun MainScreen(
                             Color.Transparent
                         },
 
-                        modifier = Modifier .pointerInput(Unit) {
+                        modifier = Modifier
+                            .pointerInput(Unit) {
                                 detectTransformGestures { _, pan, zoom, _ ->
                                     scaleFactor.floatValue *= zoom
                                 }
-                        }
+                            }
 
 //                    modifier = Modifier.pointerInput(Unit) {
 //                            detectTransformGestures { _, _, zoom, _ ->

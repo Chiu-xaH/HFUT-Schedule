@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_person_info_default_name">Guest</string>
+    <string name="settings_person_info_tag_debug">Running on AVD</string>
+    <string name="settings_person_info_tag_preview">Insider Preview</string>
+    <string name="settings_person_info_tag_normal">Have past %1$s%%</string>
+    <string name="settings_person_info_student_id_description">Student ID</string>
+    <string name="settings_person_info_half_title">Me</string>
+    <string name="settings_update_half_title">Update</string>
+    <string name="settings_update_tips_none_patch">To ensure your user experience, different architectures are recommended to be updated in a timely manner.</string>
+    <string name="settings_always_display_half_title">Always</string>
+    <string name="settings_half_title">Settings</string>
+    <string name="settings_update_tips_different_architectures">The currently installed package is for a non-ARM64 architecture and cannot be updated directly. Please download the corresponding package from the backup update channel.</string>
+    <string name="settings_important_notice_half_title">Important notice</string>
+</resources>

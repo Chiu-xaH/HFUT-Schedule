@@ -58,8 +58,8 @@ fun VersionInfo() {
         // TODO 新增培养方案已修学分计算功能
 
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
-            UpdateItems("新增 长按左上角返回按钮支持选择返回栈")
-            UpdateItems("优化 教室课程表与其余课程表功能的统一性","支持捏合缩放、修复起始周数的Bug")
+            UpdateItems("新增 长按左上角返回按钮支持启动台的部分功能")//
+            UpdateItems("优化 教室课程表与其余课程表功能的统一性")//
             UpdateItems("新增 英文语言部分适配","选项页面")
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")

@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.network.util.MyApiParse.getSettingInfo
@@ -40,7 +41,7 @@ fun MyAPIItem(
     val show by remember { mutableStateOf(data.show) }
 
     if(show) {
-        DividerTextExpandedWith(text = "重要通知") {
+        DividerTextExpandedWith(text = stringResource(R.string.settings_important_notice_half_title)) {
             CustomCard(color = color) {
                 TransplantListItem(
                     headlineContent = {

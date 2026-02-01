@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.hfut.schedule.R
@@ -118,7 +119,9 @@ fun PartOne(navController: NavController) {
             headlineContent = { Text(text = "维护与关于") },
             supportingContent = { Text(text = "反馈 关于 疑难修复")},
             leadingContent = {
-                Icon(painter = painterResource(id = R.drawable.partner_exchange), contentDescription ="",modifier = Modifier.size(22.dp).padding(start = 1.dp) )
+                Icon(painter = painterResource(id = R.drawable.partner_exchange), contentDescription ="",modifier = Modifier
+                    .size(22.dp)
+                    .padding(start = 1.dp) )
             },
             modifier = Modifier.clickable { navController.navigate(Screen.FIxAboutScreen.route)  }
         )
@@ -183,7 +186,7 @@ fun HomeSettingScreen(navController: NavController,
 
         Spacer(modifier = Modifier.height(5.dp))
 
-        DividerTextExpandedWith(text = "个人信息") {
+        DividerTextExpandedWith(text = stringResource(R.string.settings_person_info_half_title)) {
             PersonPart()
         }
 
@@ -191,7 +194,7 @@ fun HomeSettingScreen(navController: NavController,
         MyAPIItem(color = MaterialTheme.colorScheme.surface)
         if (showUpdate) {
             val canUseUpdate = AppVersion.getSplitType() ==  AppVersion.SplitType.ARM64
-            DividerTextExpandedWith(text = "更新版本") {
+            DividerTextExpandedWith(text = stringResource(R.string.settings_update_half_title)) {
                 UpdateUI(vm,update)
                 if(canUseUpdate) {
                     val activity = LocalActivity.current
@@ -209,7 +212,7 @@ fun HomeSettingScreen(navController: NavController,
                         PaddingHorizontalDivider(isDashed = true)
                         PatchUpdateUI(patchItem!!,vm,update)
                     } else if(!AppVersion.isPreview()) {
-                        BottomTip("为了保证您的使用体验，建议及时跟进更新")
+                        BottomTip(stringResource(R.string.settings_update_tips_none_patch))
                         // 清理
                         if(!hasCleaned) {
                             hasCleaned = BsdiffUpdate.deleteCache(context)
@@ -217,17 +220,17 @@ fun HomeSettingScreen(navController: NavController,
                     }
                 }
                 if(!canUseUpdate) {
-                    BottomTip("当前安装的是非ARM64架构安装包,无法直接更新,请从备用更新通道下载对应包体")
+                    BottomTip(stringResource(R.string.settings_update_tips_different_architectures))
                 }
             }
         }
 
-        DividerTextExpandedWith(text = "常驻项目") {
+        DividerTextExpandedWith(text = stringResource(R.string.settings_always_display_half_title)) {
             AlwaysItem(navHostTopController,update)
         }
 
 
-        DividerTextExpandedWith(text = "应用设置") {
+        DividerTextExpandedWith(text = stringResource(R.string.settings_half_title)) {
             PartOne(navController)
         }
 
@@ -322,8 +325,8 @@ fun AlwaysItem(
         modifier = Modifier.let{ if(show) it.containerShare(route) else it }
     ) {
         TransplantListItem(
-            headlineContent = { Text(text = "刷新登录状态") },
-            supportingContent = { Text(text = "如果一卡通或者考试成绩等无法查询,可能是登陆过期,需重新登录一次") },
+            headlineContent = { Text(text = stringResource(R.string.network_settings_refresh_login_title)) },
+            supportingContent = { Text(text = stringResource(R.string.network_settings_refresh_login_description)) },
             leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
             modifier = Modifier.clickable { refreshLogin(context) },
         )
