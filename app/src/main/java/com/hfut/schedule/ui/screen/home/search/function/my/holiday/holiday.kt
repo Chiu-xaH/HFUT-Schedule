@@ -89,7 +89,7 @@ fun HolidayScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text("${DateTimeManager.Date_yyyy}年 ${AppNavRoute.Holiday.label}") },
+                title = { Text("${DateTimeManager.Date_yyyy}年 ${stringResource(AppNavRoute.Holiday.label)}") },
                 navigationIcon = {
                     TopBarNavigationIcon(route,AppNavRoute.Holiday.icon)
                 },

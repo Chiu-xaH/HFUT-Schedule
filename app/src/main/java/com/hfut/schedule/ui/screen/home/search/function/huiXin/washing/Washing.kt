@@ -227,7 +227,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                         )
                     }
                     XUANCHENG_TAB -> {
-                        EmptyIcon("请使用${AppNavRoute.HaiLeWashing.label}")
+                        EmptyIcon("请使用${stringResource(AppNavRoute.HaiLeWashing.label)}")
                     }
                 }
                 Spacer(Modifier.height(APP_HORIZONTAL_DP*3))
