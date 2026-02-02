@@ -18,7 +18,7 @@ class ScanTileService : TileService() {
         unlockAndRun {
             try {
                 val intent = Intent(this, MainActivity::class.java).apply {
-                    putExtra("route", AppNavRoute.Scan.route)
+                    putExtra("route", AppNavRoute.ScanQrCode.route)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 }
 

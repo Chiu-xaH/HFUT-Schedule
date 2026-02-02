@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -143,7 +144,7 @@ fun CourseSearchScreen(
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.CourseSearch.label) },
+                title = { Text(stringResource(AppNavRoute.CourseSearch.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route, AppNavRoute.CourseSearch.icon)
                 },
@@ -155,7 +156,7 @@ fun CourseSearchScreen(
                         val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
                         LiquidButton(
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.CourseSearchCalendar,AppNavRoute.CourseSearchCalendar.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
+                                navController.navigateForTransition(AppNavRoute.CourseSearchTable,AppNavRoute.CourseSearchTable.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
                             },
                             isCircle = true,
                             enabled = uiState is UiState.Success && !canNotUse,
@@ -164,7 +165,7 @@ fun CourseSearchScreen(
                             Icon(
                                 painterResource(R.drawable.calendar),
                                 null,
-                                modifier = Modifier.iconElementShare( route = AppNavRoute.CourseSearchCalendar.route)
+                                modifier = Modifier.iconElementShare( route = AppNavRoute.CourseSearchTable.route)
                             )
                         }
 

@@ -14,7 +14,9 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
@@ -32,8 +34,9 @@ import dev.chrisbanes.haze.HazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeState: HazeState) {
+    val context = LocalContext.current
     val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
-    var room by remember { mutableStateOf("寝室电费") }
+    var room by remember { mutableStateOf(context.getString(R.string.navigation_label_dormitory_electricity_bill)) }
 
     var showBottomSheet by remember { mutableStateOf(false) }
     if(useHefei) {
@@ -49,7 +52,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
             "12" -> "空调"
             "21" -> if(buildingNumber.toInt() > 5 )"照明" else "北边"
             "22" -> "空调"
-            else -> "寝室电费"
+            else -> stringResource(R.string.navigation_label_dormitory_electricity_bill)
         }
     }
 
@@ -80,7 +83,7 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
     TransplantListItem(
         headlineContent = {
             ScrollText(
-                text = if(!card) "寝室电费" else "￥${f}",
+                text = if(!card) stringResource(R.string.navigation_label_dormitory_electricity_bill) else "￥${f}",
                 color = if(showRed) MaterialTheme.colorScheme.error else LocalContentColor.current
             )
         },

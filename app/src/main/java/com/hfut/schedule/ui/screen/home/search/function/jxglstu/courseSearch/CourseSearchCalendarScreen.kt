@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -64,7 +65,7 @@ fun CourseSearchCalendarScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.CourseSearchCalendar.route }
+    val route = remember { AppNavRoute.CourseSearchTable.route }
     var showAll by remember { mutableStateOf(false) }
     val backdrop = rememberLayerBackdrop()
 
@@ -82,7 +83,7 @@ fun CourseSearchCalendarScreen(
                     scrollBehavior = scrollBehavior,
                     title = {
                         Column {
-                            Text(AppNavRoute.CourseSearchCalendar.label)
+                            Text(stringResource(AppNavRoute.CourseSearchTable.label))
                             classes?.let {
                                 Text(
                                     "检索班级: $it",
@@ -112,7 +113,7 @@ fun CourseSearchCalendarScreen(
                         }
                     },
                     navigationIcon = {
-                        TopBarNavigationIcon(route,AppNavRoute.CourseSearchCalendar.icon)
+                        TopBarNavigationIcon(route,AppNavRoute.CourseSearchTable.icon)
                     },
                     actions = {
                         Row() {

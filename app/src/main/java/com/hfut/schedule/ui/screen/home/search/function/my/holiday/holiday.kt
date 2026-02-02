@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -60,7 +61,7 @@ fun Holiday(
     val route = remember { AppNavRoute.Holiday.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Holiday.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Holiday.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },

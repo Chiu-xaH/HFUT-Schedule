@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
@@ -30,7 +31,7 @@ fun News(
     val route = remember { AppNavRoute.News.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.News.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.News.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.News.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },

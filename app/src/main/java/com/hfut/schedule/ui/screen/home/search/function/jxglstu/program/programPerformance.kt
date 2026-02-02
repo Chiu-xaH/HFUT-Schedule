@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
@@ -106,7 +107,7 @@ fun ProgramCompetitionScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.ProgramCompetition.label) },
+                    title = { Text(stringResource(AppNavRoute.ProgramCompetition.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.ProgramCompetition.icon)
                     }

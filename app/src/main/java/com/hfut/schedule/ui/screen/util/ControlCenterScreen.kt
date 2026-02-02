@@ -50,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -386,7 +387,7 @@ fun RecentlyStackUI(
                                     onExit()
                                 },
                             ) {
-                                Text(item.app.label)
+                                Text(stringResource(item.app.label))
                             }
                             Spacer(Modifier.width(4.dp))
                         } else {
@@ -413,7 +414,7 @@ fun RecentlyStackUI(
                     val isCurrent = currentRoute == item.app.route && index == 0
                     CardListItem(
                         headlineContent = {
-                            Text(item.app.label ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
+                            Text(stringResource(item.app.label) ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
                         },
                         supportingContent = {
                             label?.let {

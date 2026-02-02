@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
@@ -82,7 +83,7 @@ fun Pay(
     val route = remember { AppNavRoute.Fee.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Fee.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Fee.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -115,7 +116,7 @@ fun FeeScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.Fee.label) },
+                title = { Text(stringResource(AppNavRoute.Fee.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route,AppNavRoute.Fee.icon)
                 },

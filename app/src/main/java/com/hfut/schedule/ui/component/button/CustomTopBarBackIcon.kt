@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -172,7 +173,7 @@ private fun FakeBackButton(
                                 val isCurrent = currentRoute == item.app.route && index == 0
                                 TransplantListItem(
                                     headlineContent = {
-                                        Text(item.app.label ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
+                                        Text(stringResource(item.app.label) ,fontWeight = if(isCurrent) FontWeight.Bold else FontWeight.Normal)
                                     },
                                     supportingContent = {
                                         label?.let {

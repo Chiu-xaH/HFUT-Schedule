@@ -1,2 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="settings_about_update_by_github_title">Github update channel</string>
+    <string name="about_settings_history_update_log_title">History update logs</string>
+    <string name="about_settings_different_supported_title">Functional availability support</string>
+    <string name="about_settings_different_supported_description">Depending on the Android version and the customized systems of different domestic manufacturers, some functions of the APP may not be supported.</string>
+    <string name="about_settings_about_half_title">About</string>
+    <string name="about_settings_version_info_description">Update content of this version</string>
+    <string name="about_settings_about_description">Open source,Build,Developer</string>
+    <string name="about_settings_feedback_title">Feedback</string>
+    <string name="about_settings_feedback_description">Send email to developer</string>
+    <string name="about_settings_tips_title">Useful tips</string>
+    <string name="about_settings_about_title">About</string>
+    <string name="about_settings_tips_description">Find more skills of %1$s</string>
+    <string name="about_settings_promote_title">Promote</string>
+    <string name="about_settings_promote_description">Long press to share the APK installation package, click to display the QR code of the download link, and double-click to copy the link.</string>
+    <string name="about_settings_toast_promote">The download link has been copied to the clipboard.</string>
+    <string name="about_settings_fix_half_title">Fix</string>
+    <string name="about_setting_fix_title">Fix</string>
+    <string name="about_setting_fix_description">When the crash or failure is not updated, the table can be used to fix the desktop icon.</string>
+    <string name="about_settings_develop_half_title">Develop</string>
+    <string name="about_settings_developer_title">Developer options</string>
+    <string name="about_settings_developer_description">Some options available for experienced users.</string>
+    <string name="about_settings_test_title">Test page</string>
+
+</resources>

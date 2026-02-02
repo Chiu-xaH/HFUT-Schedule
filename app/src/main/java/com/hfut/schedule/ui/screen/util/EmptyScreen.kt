@@ -43,7 +43,7 @@ fun OpenOuterApplicationScreen(
     navController : NavHostController,
 ) {
     val context = LocalContext.current
-    val route = remember { AppNavRoute.OpenOuterApplication.withArgs(app) }
+    val route = remember { AppNavRoute.ToOuterApplication.withArgs(app) }
     CustomTransitionScaffold(
         route = route,
         containerColor = app.iconBackgroundColor,

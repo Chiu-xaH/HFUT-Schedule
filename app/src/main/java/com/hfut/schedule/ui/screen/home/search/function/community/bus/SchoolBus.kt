@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
@@ -28,7 +29,7 @@ fun SchoolBus(
 ) {
     val route = remember { AppNavRoute.Bus.route }
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Bus.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Bus.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Bus.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },

@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
@@ -58,7 +59,7 @@ fun Mail(
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     TransplantListItem(
-        headlineContent = { ScrollText(text = "校园邮箱") },
+        headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_school_email)) },
 //        overlineContent = { ScrollText(text = MyApplication.EMAIL) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.mail), contentDescription = "") },
         modifier = Modifier.clickable {

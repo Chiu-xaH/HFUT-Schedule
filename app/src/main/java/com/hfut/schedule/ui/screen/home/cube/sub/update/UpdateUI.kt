@@ -4,7 +4,6 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -24,9 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,10 +36,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -83,6 +80,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import java.io.File
+/* 本kt文件已完成多语言文案适配 */
 
 sealed class DownloadResult {
     data class Downloaded(val file : File) : DownloadResult()
@@ -233,8 +231,12 @@ fun UpdateUI(
 
     CustomCard(color = MaterialTheme.colorScheme.surface) {
         TransplantListItem(
-            headlineContent = { Text(text = if(canDownload)"发现新版本" else "检查更新失败") },
-            supportingContent = { Text(text = if(canDownload) "${AppVersion.getVersionName()} → ${update?.name}" else "${update?.name} 点击手动下载") },
+            headlineContent = { Text(text = if(canDownload) stringResource(R.string.settings_update_title_find_new_version) else stringResource(
+                R.string.settings_update_title_failed
+            )) },
+            supportingContent = { Text(text = if(canDownload) "${AppVersion.getVersionName()} → ${update?.name}" else stringResource(
+                R.string.settings_update_description, update?.name ?: ""
+            )) },
             leadingContent = {
                 BadgedBox(
                     badge = {
@@ -269,7 +271,7 @@ fun UpdateUI(
             exit = slideOutVertically() + shrinkVertically() + fadeOut() + scaleOut(targetScale = 1.2f)) {
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text(text ="更新日志") },
+                headlineContent = { Text(text = stringResource(R.string.settings_update_detail_title)) },
                 supportingContent = {
                     update?.body?.let { Text(text = it) }
                 },
@@ -292,9 +294,15 @@ fun UpdateUI(
                             }
                         },
                         text =
-                            "下载" + if(uiState is UiState.Success) {
-                                " ("+formatDecimal((uiState as UiState.Success).data,2) + "MB)"
-                            } else "",
+                            stringResource(
+                                R.string.settings_update_button_download,
+                                if (uiState is UiState.Success) {
+                                    stringResource(
+                                        R.string.settings_update_button_download_file_size,
+                                        formatDecimal((uiState as UiState.Success).data, 2)
+                                    )
+                                } else ""
+                            ),
                     )
                 }
             }
@@ -315,8 +323,10 @@ fun UpdateUI(
                     onClick = {
                         installApk((downloadState as DownloadResult.Downloaded).file,context)
                     },
-                    modifier = Modifier.fillMaxWidth().weight(1/3f),
-                    text = "安装",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1 / 3f),
+                    text = stringResource(R.string.settings_update_button_install),
                     icon = R.drawable.apk_document,
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -327,8 +337,10 @@ fun UpdateUI(
                         (downloadState as DownloadResult.Downloaded).file.delete()
                         viewModel.reset()
                     },
-                    modifier = Modifier.fillMaxWidth().weight(1/3f),
-                    text = "删除",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1 / 3f),
+                    text = stringResource(R.string.settings_update_button_delete),
                     icon = R.drawable.delete,
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError
@@ -338,8 +350,10 @@ fun UpdateUI(
                     onClick = {
                         openDownload()
                     },
-                    modifier = Modifier.fillMaxWidth().weight(1/3f),
-                    text = "下载管理",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1 / 3f),
+                    text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -360,7 +374,9 @@ fun UpdateUI(
                         openDownload()
                     },
                     enabled = false,
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
                     text = "${(downloadState as DownloadResult.Progress).progress}%",
                     icon = R.drawable.apk_install,
                     containerColor = MaterialTheme.colorScheme.primary,
@@ -371,8 +387,10 @@ fun UpdateUI(
                     onClick = {
                         openDownload()
                     },
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
-                    text = "下载管理",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -390,8 +408,10 @@ fun UpdateUI(
                     onClick = {
                         installApk((downloadState as DownloadResult.Success).file,context)
                     },
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
-                    text = "安装",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    text = stringResource(R.string.settings_update_button_install),
                     icon = R.drawable.apk_document,
                     containerColor = MaterialTheme.colorScheme.primary,
                     contentColor = MaterialTheme.colorScheme.onPrimary
@@ -401,8 +421,10 @@ fun UpdateUI(
                     onClick = {
                         openDownload()
                     },
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
-                    text = "下载管理",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -420,8 +442,10 @@ fun UpdateUI(
                     onClick = {
                         viewModel.reset()
                     },
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
-                    text = "重试",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    text = stringResource(R.string.settings_update_button_failed),
                     icon = R.drawable.refresh,
                     containerColor = MaterialTheme.colorScheme.error,
                     contentColor = MaterialTheme.colorScheme.onError
@@ -431,8 +455,10 @@ fun UpdateUI(
                     onClick = {
                         openDownload()
                     },
-                    modifier = Modifier.fillMaxWidth().weight(.5f),
-                    text = "下载管理",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                    text = stringResource(R.string.settings_update_button_download_manage),
                     icon = R.drawable.folder_managed,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -441,7 +467,7 @@ fun UpdateUI(
             Spacer(Modifier.height(CARD_NORMAL_DP))
             CardListItem(
                 headlineContent = {
-                    Text("下载失败")
+                    Text(stringResource(R.string.settings_update_failed_title))
                 },
                 color = MaterialTheme.colorScheme.surface,
                 supportingContent = {
@@ -479,16 +505,17 @@ fun PatchUpdateUI(
     val context = LocalContext.current
 
     if(loadingPatch) {
-        LoadingUI("正在校验与合并")
+        LoadingUI(stringResource(R.string.settings_update_patch_loading))
     } else {
         Spacer(Modifier.height(CARD_NORMAL_DP))
         CustomCard( color = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
-                headlineContent = { Text(text = "增量更新至" +
-                        patch.newVersion.let{ if (it == update?.name) "最新版本" else (""+ it) }
+                headlineContent = { Text(text = stringResource(
+                    R.string.settings_update_merge_patch_title,
+                    patch.newVersion.let { if (it == update?.name) stringResource(R.string.settings_update_patch_title_latest) else ("" + it) })
                 ) },
                 supportingContent = {
-                    Text(text = "开发者为一个月(动态调整)内的过去版本的ARM64分包提供增量包，可节省至少40%的下载实现版本更新")
+                    Text(text = stringResource(R.string.settings_update_patch_description))
                 },
                 leadingContent = { Icon(painterResource(R.drawable.package_2), contentDescription = "Localized description",) },
             )
@@ -507,11 +534,24 @@ fun PatchUpdateUI(
                             }
                         },
                         text =
-                            patch.newVersion.let { if(it != update?.name) "更新至 $it" else "下载" } +
-                                    if(uiStatePatch is UiState.Success) {
-                                        " ("+ formatDecimal((uiStatePatch as UiState.Success).data,2) + "MB)"
-                                    } else ""
-                        ,
+                            "${
+                                patch.newVersion.let {
+                                    if(it != update?.name)
+                                        stringResource(
+                                            R.string.settings_update_patch_button_download_to_version,
+                                            it
+                                        )
+                                    else
+                                        stringResource(R.string.settings_update_patch_button__download_to_latest)
+                                }
+                            }${
+                                if(uiStatePatch is UiState.Success) {
+                                    stringResource(
+                                        R.string.settings_update_button_download_file_size,
+                                        formatDecimal((uiStatePatch as UiState.Success).data, 2)
+                                    )
+                                } else ""  
+                            }",
                     )
                 }
                 else -> {}
@@ -522,7 +562,9 @@ fun PatchUpdateUI(
             is DownloadResult.Downloaded -> {
                 Spacer(Modifier.height(CARD_NORMAL_DP))
                 // 检查是否有下载好的文件 有就显示
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
                     LargeButton(
                         onClick = {
                             coroutineScope.launch {
@@ -535,8 +577,10 @@ fun PatchUpdateUI(
                                 launch { loadingPatch = false }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().weight(1/3f),
-                        text = "安装",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f),
+                        text = stringResource(R.string.settings_update_button_install),
                         icon = R.drawable.apk_document,
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -547,8 +591,10 @@ fun PatchUpdateUI(
                             (downloadState as DownloadResult.Downloaded).file.delete()
                             viewModel.reset()
                         },
-                        modifier = Modifier.fillMaxWidth().weight(1/3f),
-                        text = "删除",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f),
+                        text = stringResource(R.string.settings_update_button_delete),
                         icon = R.drawable.delete,
                         containerColor = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError
@@ -558,8 +604,10 @@ fun PatchUpdateUI(
                         onClick = {
                             openDownload()
                         },
-                        modifier = Modifier.fillMaxWidth().weight(1/3f),
-                        text = "下载管理",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1 / 3f),
+                        text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -570,13 +618,17 @@ fun PatchUpdateUI(
             is DownloadResult.Progress -> {
                 Spacer(Modifier.height(CARD_NORMAL_DP))
                 // 更新进度
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
                     LargeButton(
                         onClick = {
                             openDownload()
                         },
                         enabled = false,
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
                         text = "${(downloadState as DownloadResult.Progress).progress}%",
                         icon = R.drawable.apk_install,
                         containerColor = MaterialTheme.colorScheme.primary,
@@ -587,8 +639,10 @@ fun PatchUpdateUI(
                         onClick = {
                             openDownload()
                         },
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        text = "下载管理",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -597,7 +651,9 @@ fun PatchUpdateUI(
             }
             is DownloadResult.Success -> {
                 Spacer(Modifier.height(CARD_NORMAL_DP))
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
                     LargeButton(
                         onClick = {
                             coroutineScope.launch {
@@ -610,8 +666,10 @@ fun PatchUpdateUI(
                                 launch { loadingPatch = false }
                             }
                         },
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        text = "安装",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        text = stringResource(R.string.settings_update_button_install),
                         icon = R.drawable.apk_document,
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
@@ -621,8 +679,10 @@ fun PatchUpdateUI(
                         onClick = {
                             openDownload()
                         },
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        text = "下载管理",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -631,13 +691,17 @@ fun PatchUpdateUI(
             }
             is DownloadResult.Failed -> {
                 Spacer(Modifier.height(CARD_NORMAL_DP))
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = APP_HORIZONTAL_DP), horizontalArrangement = Arrangement.Center)  {
                     LargeButton(
                         onClick = {
                             viewModel.reset()
                         },
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        text = "重试",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        text =  stringResource(R.string.settings_update_button_failed),
                         icon = R.drawable.refresh,
                         containerColor = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError
@@ -647,8 +711,10 @@ fun PatchUpdateUI(
                         onClick = {
                             openDownload()
                         },
-                        modifier = Modifier.fillMaxWidth().weight(.5f),
-                        text = "下载管理",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(.5f),
+                        text = stringResource(R.string.settings_update_button_download_manage),
                         icon = R.drawable.folder_managed,
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
                         contentColor = MaterialTheme.colorScheme.onSecondaryContainer
@@ -658,7 +724,7 @@ fun PatchUpdateUI(
 
                 CardListItem(
                     headlineContent = {
-                        Text("下载失败")
+                        Text( stringResource(R.string.settings_update_failed_title))
                     },
                     color = MaterialTheme.colorScheme.surface,
                     supportingContent = {

@@ -47,7 +47,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.screen.home.cube.apiCheck
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.util.TransitionBackHandler
@@ -59,9 +58,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun FixUI(innerPadding : PaddingValues, vm : NetWorkViewModel,navController: NavHostController) {
     val context = LocalContext.current
-    val switch_api = prefs.getBoolean("SWITCHMYAPI", apiCheck())
-    var showapi by remember { mutableStateOf(switch_api) }
-    SharedPrefs.saveBoolean("SWITCHMYAPI", false, showapi)
+//    val switch_api = prefs.getBoolean("SWITCHMYAPI", apiCheck())
+//    var showapi by remember { mutableStateOf(switch_api) }
+//    SharedPrefs.saveBoolean("SWITCHMYAPI", false, showapi)
     val scope = rememberCoroutineScope()
 
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)

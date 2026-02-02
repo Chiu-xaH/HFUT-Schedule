@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -159,7 +160,7 @@ fun NotificationsScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.Notifications.label) },
+                title = { Text(stringResource(AppNavRoute.Notifications.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route, AppNavRoute.Notifications.icon)
                 },

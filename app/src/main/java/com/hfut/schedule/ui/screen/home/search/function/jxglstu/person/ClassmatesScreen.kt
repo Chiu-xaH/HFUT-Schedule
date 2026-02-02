@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -76,7 +77,7 @@ fun ClassmatesScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(getPersonInfo().className ?: AppNavRoute.Classmates.label) },
+                title = { Text(getPersonInfo().className ?: stringResource(AppNavRoute.Classmates.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(
                         route,

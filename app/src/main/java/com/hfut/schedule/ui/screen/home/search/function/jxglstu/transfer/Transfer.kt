@@ -10,12 +10,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.component.iconElementShare
+import com.xah.uicommon.component.text.ScrollText
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -24,17 +26,17 @@ fun Transfer(
     ifSaved : Boolean,
     navController : NavHostController,
 ){
-    val route = remember { AppNavRoute.Transfer.route }
+    val route = remember { AppNavRoute.TransferMajor.route }
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { Text(text = AppNavRoute.Transfer.label) },
+        headlineContent = { ScrollText(text =stringResource(AppNavRoute.TransferMajor.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Transfer.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.TransferMajor.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context) else {
-                navController.navigateForTransition(AppNavRoute.Transfer,route)
+                navController.navigateForTransition(AppNavRoute.TransferMajor,route)
             }
         }
     )

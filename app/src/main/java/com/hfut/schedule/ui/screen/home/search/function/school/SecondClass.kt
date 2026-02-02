@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
@@ -45,7 +46,7 @@ fun SecondClass(
     val route = remember { AppNavRoute.SecondClass.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.SecondClass.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.SecondClass.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.SecondClass.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
@@ -74,7 +75,7 @@ fun SecondClassScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.SecondClass.label) },
+                title = { Text(stringResource(AppNavRoute.SecondClass.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route, AppNavRoute.SecondClass.icon)
                 },

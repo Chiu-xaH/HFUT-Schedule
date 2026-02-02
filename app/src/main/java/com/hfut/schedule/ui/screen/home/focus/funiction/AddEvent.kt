@@ -99,6 +99,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.parseToDateTime
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -284,7 +285,7 @@ fun AddEventScreen(
                     if(eventId <= 0) {
                         FilledTonalIconButton(
                             onClick = {
-                                showToast("正在开发")
+                                showDevelopingToast()
                             }
                         ) {
                             Icon(painterResource(R.drawable.wand_stars),null)
@@ -293,7 +294,7 @@ fun AddEventScreen(
                             FilledTonalButton(onClick = {
                                 Starter.startSupabase(context)
                             }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
-                                Text("云端共建")
+                                Icon(painterResource(R.drawable.cloud),null)
                             }
                         }
                     } else {

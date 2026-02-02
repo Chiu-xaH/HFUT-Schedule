@@ -149,12 +149,12 @@ fun AdmissionListUI(
                     ) {
                         items(list.size) { index ->
                             val item = list[index]
-                            val route = AppNavRoute.AdmissionRegionDetail.withArgs(index, pageList[page].description)
+                            val route = AppNavRoute.AdmissionDetail.withArgs(index, pageList[page].description)
                             SmallCard (
                                 color = cardNormalColor(),
                                 modifier = Modifier.padding(2.5.dp)
                                     .clickableWithScale(ClickScale.SMALL.scale) {
-                                        navController.navigateForTransition(AppNavRoute.AdmissionRegionDetail,route)
+                                        navController.navigateForTransition(AppNavRoute.AdmissionDetail,route)
                                     }
                                     .containerShare(route,)
                             ) {
@@ -182,7 +182,7 @@ fun AdmissionRegionScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.AdmissionRegionDetail.withArgs(index,type) }
+    val route = remember { AppNavRoute.AdmissionDetail.withArgs(index,type) }
 
     val listState by vm.admissionListResp.state.collectAsState()
     val data = (listState as? UiState.Success)?.data?.second?.entries?.toList()[index] ?: return

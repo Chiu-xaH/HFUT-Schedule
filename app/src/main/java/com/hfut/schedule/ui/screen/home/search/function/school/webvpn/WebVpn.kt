@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -30,7 +31,7 @@ fun WebVpn(
     val route = remember { AppNavRoute.WebVpn.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.WebVpn.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebVpn.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },

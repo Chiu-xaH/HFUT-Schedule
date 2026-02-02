@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -47,7 +48,7 @@ fun Life(
     val route = remember { AppNavRoute.Life.withArgs(false) }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Life.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Life.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Life.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -78,7 +79,7 @@ fun LifeScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState, ),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Life.label) },
+                    title = { Text(stringResource(AppNavRoute.Life.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.Life.icon)
                     },

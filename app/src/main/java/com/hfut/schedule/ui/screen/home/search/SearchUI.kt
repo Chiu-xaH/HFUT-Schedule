@@ -33,7 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -108,7 +110,7 @@ data class SearchAppBean(
 )
 data class SearchAppBeanLite(
     val id : Int,
-    val name : String,
+    val name : Int,
     val icon : Int,
 //    val route : String? = null,
 //    val clickable: (() -> Unit)? = null
@@ -156,58 +158,59 @@ fun SearchScreen(
     navController : NavHostController,
     hazeState: HazeState,
 ) {
+    val context = LocalContext.current
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     //建立索引 <搜索关键词,功能>
     var funcMaps by remember(vm, ifSaved, vmUI, navController, hazeState) {
         mutableStateOf(
             listOf(
-                SearchAppBean(1,"一卡通 校园卡 账单 充值 缴费 慧新易校" , { SchoolCardItem(vmUI, true) }, isHigh = true),
-                SearchAppBean(2,"${AppNavRoute.Scan.label} 扫码 指尖工大 CAS统一认证登录", { Scan(navController) }, AppNavRoute.Scan.route,isHigh = true),
-                SearchAppBean(3,"寝室电费 缴费 慧新易校" , { Electric(vm, false, vmUI,hazeState) },isHigh = true),
-                SearchAppBean(4,"校园网 慧新易校 缴费" , { LoginWeb(vmUI, false, vm,hazeState) },isHigh = true),
-                SearchAppBean(5,"教育邮箱 校园邮箱" , { Mail(vm,hazeState) }),
-                SearchAppBean(6,"${AppNavRoute.Exam.label}安排 教务处考试安排" , { Exam(navController) },AppNavRoute.Exam.withArgs()),
-                SearchAppBean(7,"${AppNavRoute.Grade.label}", { Grade(ifSaved,navController) }, AppNavRoute.Grade.receiveRoute()),
-                SearchAppBean(8,"${AppNavRoute.FailRate.label}", { FailRate(navController) },AppNavRoute.FailRate.route),
-                SearchAppBean(9,"${AppNavRoute.TotalCourse.label} 教材 课本", { CourseTotal(ifSaved,navController) },AppNavRoute.TotalCourse.receiveRoute()),
-                SearchAppBean(10,"${AppNavRoute.Person.label}", { PersonUI(navController) },AppNavRoute.Person.route),
-                SearchAppBean(11,"${AppNavRoute.WebNavigation.label} 实验室 收纳", { WebUI(navController) }, AppNavRoute.WebNavigation.route),
-                SearchAppBean(12,"洗浴 洗澡 呱呱物联 慧新易校 缴费", { Shower(vm,hazeState) }),
-                SearchAppBean(13,"${AppNavRoute.SelectCourse.label}", { SelectCourse(ifSaved, navController) },AppNavRoute.SelectCourse.route),
-                SearchAppBean(14,"${AppNavRoute.DormitoryScore.label} 寝室卫生评分 寝室卫生分数", { DormitoryScoreXuanCheng(navController) }, AppNavRoute.DormitoryScore.route),
-                SearchAppBean(15,"${AppNavRoute.Notifications.label} 通知中心 收纳", { NotificationsCenter(navController) },AppNavRoute.Notifications.route),
-                SearchAppBean(16,"${AppNavRoute.Survey.label} 教师评教 教师教评", { Survey(ifSaved,navController) },AppNavRoute.Survey.route),
-                SearchAppBean(17,"${AppNavRoute.News.label} 新闻 教务处", { News(navController) },AppNavRoute.News.route),
-                SearchAppBean(18,"${AppNavRoute.Program.label}完成情况", { Program(ifSaved,navController) },AppNavRoute.Program.receiveRoute()),
-                SearchAppBean(19,"${AppNavRoute.Library.label} 座位预约 借阅", { LibraryItem(navController ) },AppNavRoute.Library.route),
-                SearchAppBean(20,"${AppNavRoute.Bus.label}", { SchoolBus(navController ) }, AppNavRoute.Bus.route),
-                SearchAppBean(21,"报修 维修 后勤", { Repair(hazeState) }),
+                SearchAppBean(1,"${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 ${context.getString(R.string.navigation_label_school_card)}" , { SchoolCardItem(vmUI, true) }, isHigh = true),
+                SearchAppBean(2,"${context.getString(AppNavRoute.ScanQrCode.label)} 扫码 指尖工大 CAS统一认证登录", { Scan(navController) }, AppNavRoute.ScanQrCode.route,isHigh = true),
+                SearchAppBean(3,"${context.getString(R.string.navigation_label_dormitory_electricity_bill)} 缴费 ${context.getString(R.string.navigation_label_hui_xin)}" , { Electric(vm, false, vmUI,hazeState) },isHigh = true),
+                SearchAppBean(4,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_school_net)} 缴费" , { LoginWeb(vmUI, false, vm,hazeState) },isHigh = true),
+                SearchAppBean(5,"${context.getString(R.string.navigation_label_school_email)} 校园邮箱" , { Mail(vm,hazeState) }),
+                SearchAppBean(6,"${context.getString(AppNavRoute.Exam.label)}安排 教务处考试安排 ${context.getString(R.string.navigation_label_exam_news)}" , { Exam(navController) },AppNavRoute.Exam.withArgs()),
+                SearchAppBean(7,"${context.getString(AppNavRoute.Grade.label)}", { Grade(ifSaved,navController) }, AppNavRoute.Grade.receiveRoute()),
+                SearchAppBean(8,"${context.getString(AppNavRoute.FailRate.label)}", { FailRate(navController) },AppNavRoute.FailRate.route),
+                SearchAppBean(9,"${context.getString(AppNavRoute.TermCourses.label)} 教材 课本", { CourseTotal(ifSaved,navController) },AppNavRoute.TermCourses.receiveRoute()),
+                SearchAppBean(10,"${context.getString(AppNavRoute.PersonInfo.label)}", { PersonUI(navController) },AppNavRoute.PersonInfo.route),
+                SearchAppBean(11,"${context.getString(AppNavRoute.WebFolder.label)} 实验室 ${context.getString(R.string.navigation_label_hui_xin)}", { WebUI(navController) }, AppNavRoute.WebFolder.route),
+                SearchAppBean(12,"${context.getString(R.string.navigation_label_shower)} 洗澡 呱呱物联 ${context.getString(R.string.navigation_label_notification_box)} 缴费", { Shower(vm,hazeState) }),
+                SearchAppBean(13,"${context.getString(AppNavRoute.SelectCourses.label)}", { SelectCourse(ifSaved, navController) },AppNavRoute.SelectCourses.route),
+                SearchAppBean(14,"${context.getString(AppNavRoute.Dormitory.label)} 寝室卫生评分 寝室卫生分数", { DormitoryScoreXuanCheng(navController) }, AppNavRoute.Dormitory.route),
+                SearchAppBean(15,"${context.getString(AppNavRoute.Notifications.label)} ${context.getString(R.string.navigation_label_notifications)} 收纳", { NotificationsCenter(navController) },AppNavRoute.Notifications.route),
+                SearchAppBean(16,"${context.getString(AppNavRoute.Survey.label)} 教师评教 教师教评", { Survey(ifSaved,navController) },AppNavRoute.Survey.route),
+                SearchAppBean(17,"${context.getString(AppNavRoute.News.label)} 新闻 教务处", { News(navController) },AppNavRoute.News.route),
+                SearchAppBean(18,"${context.getString(AppNavRoute.Program.label)}完成情况", { Program(ifSaved,navController) },AppNavRoute.Program.receiveRoute()),
+                SearchAppBean(19,"${context.getString(AppNavRoute.Library.label)} 座位预约 ${context.getString(R.string.navigation_label_library_borrowed)}", { LibraryItem(navController ) },AppNavRoute.Library.route),
+                SearchAppBean(20,"${context.getString(AppNavRoute.Bus.label)}", { SchoolBus(navController ) }, AppNavRoute.Bus.route),
+                SearchAppBean(21,"${context.getString(R.string.navigation_label_repair)} 维修 后勤", { Repair(hazeState) }),
 //                SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,navController ) },AppNavRoute.NextCourse.receiveRoute()),
-                SearchAppBean(23,"饮水机 热水机 趣智校园", { HotWater() }),
-                SearchAppBean(24,"${AppNavRoute.Classroom.label} 空教室", { Classroom(navController ) },AppNavRoute.Classroom.route),
-                SearchAppBean(25,"体育 云运动 乐跑 校园跑 体测 体育测试 体检", { LePaoYun(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.PE_HOME_URL)),
-                SearchAppBean(26,"${AppNavRoute.WorkAndRest.label} 校历", { WorkAndRest(navController ) },AppNavRoute.WorkAndRest.withArgs()),
-                SearchAppBean(27,"学信网", { XueXin(navController ) },AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL)),
-                SearchAppBean(28,"${AppNavRoute.Life.label} 校园 校园 天气 教学楼 建筑 学堂", { Life(navController ) },AppNavRoute.Life.withArgs(false)),
-                SearchAppBean(29,"${AppNavRoute.Transfer.label}", { Transfer(ifSaved,navController ) }, AppNavRoute.Transfer.route),
-                SearchAppBean(30,"${AppNavRoute.CourseSearch.label} 全校开课 课程", { CoursesSearch(ifSaved,navController ) }, AppNavRoute.CourseSearch.route),
-                SearchAppBean(31,"${AppNavRoute.TeacherSearch.label} 老师检索", { TeacherSearch(navController ) }, AppNavRoute.TeacherSearch.route),
-                SearchAppBean(32,"${AppNavRoute.Fee.label} 费用 欠缴学费", { Pay(navController ) }, AppNavRoute.Fee.route),
+                SearchAppBean(23,"饮水机 ${context.getString(R.string.navigation_label_hot_water)}机 趣智校园", { HotWater() }),
+                SearchAppBean(24,"${context.getString(AppNavRoute.Classroom.label)} 空教室", { Classroom(navController ) },AppNavRoute.Classroom.route),
+                SearchAppBean(25,"体育 云运动 乐跑 校园跑 ${context.getString(R.string.navigation_label_physical_fitness_test)} 体育测试 体检", { LePaoYun(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.PE_HOME_URL)),
+                SearchAppBean(26,"${context.getString(AppNavRoute.WorkAndRest.label)} 校历", { WorkAndRest(navController ) },AppNavRoute.WorkAndRest.withArgs()),
+                SearchAppBean(27,"${context.getString(R.string.navigation_label_chsi)}", { XueXin(navController ) },AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL)),
+                SearchAppBean(28,"${context.getString(AppNavRoute.Life.label)} 校园 天气 新生 地图", { Life(navController ) },AppNavRoute.Life.withArgs(false)),
+                SearchAppBean(29,"${context.getString(AppNavRoute.TransferMajor.label)}", { Transfer(ifSaved,navController ) }, AppNavRoute.TransferMajor.route),
+                SearchAppBean(30,"${context.getString(AppNavRoute.CourseSearch.label)} 全校开课 课程", { CoursesSearch(ifSaved,navController ) }, AppNavRoute.CourseSearch.route),
+                SearchAppBean(31,"${context.getString(AppNavRoute.TeacherSearch.label)} 老师检索", { TeacherSearch(navController ) }, AppNavRoute.TeacherSearch.route),
+                SearchAppBean(32,"${context.getString(AppNavRoute.Fee.label)} 费用 欠缴学费", { Pay(navController ) }, AppNavRoute.Fee.route),
 //                SearchAppBean(33,"实习", { Practice(ifSaved) }),
-                SearchAppBean(34,"${AppNavRoute.Alumni.label} 校友 毕业", { Alumni(navController ) },AppNavRoute.Alumni.route),
-                SearchAppBean(35,"${AppNavRoute.StuTodayCampus.label} 学工系统 学工平台 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus(navController ) }, AppNavRoute.StuTodayCampus.route),
-                SearchAppBean(36,"大创系统 大学生创新创业系统", { IETP(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
-                SearchAppBean(37,"${AppNavRoute.Work.label} 实习 春招 双选 秋招", { Work(navController ) }, AppNavRoute.Work.route),
-                SearchAppBean(38,"${AppNavRoute.Holiday.label} 国家法定节假日 假期 节日 调休", { Holiday(navController ) },AppNavRoute.Holiday.route),
-                SearchAppBean(39,"共建平台 信息共建 日程 网课 网址导航", { Supabase() }),
-                SearchAppBean(40,"洗衣机 洗鞋机 烘干机 慧新易校 海乐生活 缴费", { Washing(vm,hazeState,navController ) }),
-                SearchAppBean(41,"${AppNavRoute.Admission.label} 历年分数线 招生计划", { Admission(navController ) }, AppNavRoute.Admission.route),
-                SearchAppBean(42,"${AppNavRoute.WebVpn.label} 外地访问 内网", { WebVpn(navController ) },AppNavRoute.WebVpn.route),
-                SearchAppBean(43,"${AppNavRoute.OfficeHall.label}", { OfficeHall(navController ) },AppNavRoute.OfficeHall.route),
-                SearchAppBean(44,"慧新易校 一卡通 校园卡 账单 充值 缴费 合肥" , { HuiXin(navController ) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
-                SearchAppBean(45,"${AppNavRoute.SecondClass.label}", { SecondClass(navController ) }, AppNavRoute.SecondClass.route),
-                SearchAppBean(46,"${AppNavRoute.Appointment.label} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment(navController ) }, AppNavRoute.Appointment.route),
-                SearchAppBean(47,"AI 人工智能 大模型", { AI(navController ) }, AppNavRoute.AI.route),
+                SearchAppBean(34,"${context.getString(AppNavRoute.Alumni.label)} 校友 毕业", { Alumni(navController ) },AppNavRoute.Alumni.route),
+                SearchAppBean(35,"${context.getString(AppNavRoute.StuTodayCampus.label)} 学工系统 学工平台 请假 助学金 奖学金 贫困 寝室 心理 日常", { ToadyCampus(navController ) }, AppNavRoute.StuTodayCampus.route),
+                SearchAppBean(36,"${context.getString(R.string.navigation_label_ietp)} 大学生创新创业系统", { IETP(navController ) }, AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL)),
+                SearchAppBean(37,"${context.getString(AppNavRoute.Work.label)} 实习 春招 双选 秋招", { Work(navController ) }, AppNavRoute.Work.route),
+                SearchAppBean(38,"${context.getString(AppNavRoute.Holiday.label)} 国家法定节假日 假期 节日 调休", { Holiday(navController ) },AppNavRoute.Holiday.route),
+                SearchAppBean(39,"${context.getString(R.string.navigation_label_supabase)} 信息共建 日程 网课 网址导航", { Supabase() }),
+                SearchAppBean(40,"${context.getString(R.string.navigation_label_laundry)} 洗鞋机 烘干机 ${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_washing)} 缴费", { Washing(vm,hazeState,navController ) }),
+                SearchAppBean(41,"${context.getString(AppNavRoute.Admission.label)} 历年分数线 招生计划", { Admission(navController ) }, AppNavRoute.Admission.route),
+                SearchAppBean(42,"${context.getString(AppNavRoute.WebVpn.label)} 外地访问 内网", { WebVpn(navController ) },AppNavRoute.WebVpn.route),
+                SearchAppBean(43,"${context.getString(AppNavRoute.OfficeHall.label)}", { OfficeHall(navController ) },AppNavRoute.OfficeHall.route),
+                SearchAppBean(44,"${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_hui_xin)} 校园卡 账单 充值 缴费 合肥" , { HuiXin(navController ) }, AppNavRoute.WebView.shareRoute(getHuiXinURL())),
+                SearchAppBean(45,"${context.getString(AppNavRoute.SecondClass.label)}", { SecondClass(navController ) }, AppNavRoute.SecondClass.route),
+                SearchAppBean(46,"${context.getString(AppNavRoute.CommunityAppointment.label)} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment(navController ) }, AppNavRoute.CommunityAppointment.route),
+                SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI(navController ) }, AppNavRoute.AI.route),
             )
         )
     }

@@ -1,2 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="settings_about_update_by_github_title">备用更新通道</string>
+    <string name="about_settings_history_update_log_title">历史更新日志</string>
+    <string name="about_settings_different_supported_title">功能可用性支持</string>
+    <string name="about_settings_different_supported_description">根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持</string>
+    <string name="about_settings_about_half_title">关于</string>
+    <string name="about_settings_version_info_description">查看此版本的更新内容</string>
+    <string name="about_settings_about_description">开源 构建 开发者</string>
+    <string name="about_settings_feedback_title">反馈</string>
+    <string name="about_settings_feedback_description">向开发者发送邮件</string>
+    <string name="about_settings_tips_title">使用提示</string>
+    <string name="about_settings_about_title">关于</string>
+    <string name="about_settings_tips_description">学习%1$s的隐藏技巧</string>
+    <string name="about_settings_promote_title">推广</string>
+    <string name="about_settings_promote_description">长按分享APK安装包,点击展示下载链接二维码,双击复制链接</string>
+    <string name="about_settings_toast_promote">已将下载链接复制到剪切板</string>
+    <string name="about_settings_fix_half_title">修复</string>
+    <string name="about_setting_fix_title">疑难解答与修复</string>
+    <string name="about_setting_fix_description">当出现崩溃或无法更新时,可从此处进入或长按桌面图标选择修复</string>
+    <string name="about_settings_develop_half_title">开发</string>
+    <string name="about_settings_developer_title">开发者选项</string>
+    <string name="about_settings_developer_description">一些可用于有经验用户的选项</string>
+    <string name="about_settings_test_title">测试页面</string>
+</resources>

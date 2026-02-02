@@ -60,6 +60,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -220,7 +221,7 @@ fun ClassroomScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Classroom.label) },
+                    title = { Text(stringResource(AppNavRoute.Classroom.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.Classroom.icon)
                     },
@@ -526,14 +527,14 @@ private fun EmptyClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size,key = { it }) { index ->
                         val item = list[index]
-                        val route = AppNavRoute.ClassroomLessons.withArgs(item.id,item.nameZh)
+                        val route = AppNavRoute.ClassroomCourseTable.withArgs(item.id,item.nameZh)
                         val activities = item.roomOccupationInfoVms ?: emptyList()
                         val isAllDayFree = activities.isEmpty()
                         val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
                             color = cardNormalColor(),
                             modifier = Modifier.containerShare(route).clickable {
-                                navTopController.navigateForTransition(AppNavRoute.ClassroomLessons,route)
+                                navTopController.navigateForTransition(AppNavRoute.ClassroomCourseTable,route)
                             }
                         ) {
                             TransplantListItem(
@@ -707,7 +708,7 @@ private fun SearchClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size, key = { list[it].id }) { index ->
                         val item = list[index]
-                        val route = AppNavRoute.ClassroomLessons.withArgs(item.id,item.nameZh)
+                        val route = AppNavRoute.ClassroomCourseTable.withArgs(item.id,item.nameZh)
                         CardListItem(
                             leadingContent = {
                                 Icon(painterResource(R.drawable.meeting_room),null)
@@ -718,7 +719,7 @@ private fun SearchClassroomScreen(
                             color = cardNormalColor(),
                             cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
                             modifier = Modifier.clickable {
-                                navTopController.navigateForTransition(AppNavRoute.ClassroomLessons,route)
+                                navTopController.navigateForTransition(AppNavRoute.ClassroomCourseTable,route)
                             }
                         )
                     }
@@ -749,7 +750,7 @@ fun ClassroomLessonsScreen(
     var showAll by remember { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ClassroomLessons.withArgs(roomId,name) }
+    val route = remember { AppNavRoute.ClassroomCourseTable.withArgs(roomId,name) }
     val semester by produceState<Int?>(initialValue = null) {
         value = SemesterParser.getSemester()
     }

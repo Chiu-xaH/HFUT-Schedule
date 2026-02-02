@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -38,8 +39,8 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     when(getCampusRegion()) {
         CampusRegion.HEFEI -> {
             TransplantListItem(
-                headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text = "-- GiB") },
-                overlineContent = { if(!card) ScrollText(text = "-- MiB") else ScrollText(text = "校园网")},
+                headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text = "-- GiB") },
+                overlineContent = { if(!card) ScrollText(text = "-- MiB") else ScrollText(text = stringResource(R.string.navigation_label_school_net))},
                 leadingContent = { Icon(
                     painterResource(R.drawable.net),
                     contentDescription = "Localized description",
@@ -63,7 +64,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * maxFlow)) * 100,2)
 
             TransplantListItem(
-                headlineContent = { if(!card)ScrollText(text = "校园网") else ScrollText(text =
+                headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text =
                     if(showPercent) "${precent}%" else "$str GiB"
                 ) },
                 overlineContent = { if(!card) ScrollText(text = "${vmUI.webValue.value?.flow?: memoryWeb} MB") else ScrollText(text = "校园网")},

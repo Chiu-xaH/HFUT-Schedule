@@ -192,10 +192,10 @@ private fun firstPage(
             ?: if(!haveImportantUpdate()) {
                 AppNavRoute.Home.route
             } else {
-                AppNavRoute.UpdateSuccess.route
+                AppNavRoute.UpdateSuccessfully.route
             }
     } else {
-        AppNavRoute.UseAgreement.route
+        AppNavRoute.Agreement.route
     }
 }
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -248,13 +248,13 @@ fun MainHost(
     val enableControlCenterGesture by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val currentRoute = navController.currentRouteWithoutArgs()
-    val disabledGesture = currentRoute == AppNavRoute.WebView.route || currentRoute == AppNavRoute.UseAgreement.route
+    val disabledGesture = currentRoute == AppNavRoute.WebView.route || currentRoute == AppNavRoute.Agreement.route
 
     val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
     val disabledBlur = if(enableCameraDynamicRecord) {
         false
     } else {
-        currentRoute == AppNavRoute.Scan.route
+        currentRoute == AppNavRoute.ScanQrCode.route
     }
 
     val enableGesture = enableControlCenterGesture && !disabledGesture
@@ -420,13 +420,13 @@ fun MainHost(
                         mainUI(celebration.str)
                     }
                     // 用户协议
-                    transitionComposable(AppNavRoute.UseAgreement.route) {
+                    transitionComposable(AppNavRoute.Agreement.route) {
                         Box {
                             UseAgreementScreen(navController)
                         }
                     }
                     // 更新完成引导
-                    transitionComposable(AppNavRoute.UpdateSuccess.route) {
+                    transitionComposable(AppNavRoute.UpdateSuccessfully.route) {
                         UpdateSuccessScreen(navController )
                     }
                     // 本版本新特性
@@ -435,10 +435,10 @@ fun MainHost(
                     }
                     // 打开外部应用
                     transitionComposable(
-                        route = AppNavRoute.OpenOuterApplication.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.OpenOuterApplication.Args.entries)
+                        route = AppNavRoute.ToOuterApplication.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.ToOuterApplication.Args.entries)
                     ) { backStackEntry ->
-                        val target = backStackEntry.arguments?.getString(AppNavRoute.OpenOuterApplication.Args.PACKAGE_NAME.argName) ?: return@transitionComposable
+                        val target = backStackEntry.arguments?.getString(AppNavRoute.ToOuterApplication.Args.PACKAGE_NAME.argName) ?: return@transitionComposable
                         val app = Starter.AppPackages.entries.find { it.packageName == target } ?: return@transitionComposable
                         OpenOuterApplicationScreen(
                             app,
@@ -492,11 +492,11 @@ fun MainHost(
                     }
                     // 招生 二级界面
                     transitionComposable(
-                        route = AppNavRoute.AdmissionRegionDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.AdmissionRegionDetail.Args.entries)
+                        route = AppNavRoute.AdmissionDetail.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.AdmissionDetail.Args.entries)
                     ) { backStackEntry ->
-                        val index = backStackEntry.arguments?.getInt(AppNavRoute.AdmissionRegionDetail.Args.INDEX.argName) ?: (AppNavRoute.AdmissionRegionDetail.Args.INDEX.default as Int)
-                        val type = backStackEntry.arguments?.getString(AppNavRoute.AdmissionRegionDetail.Args.TYPE.argName) ?: (AppNavRoute.AdmissionRegionDetail.Args.TYPE.default as String)
+                        val index = backStackEntry.arguments?.getInt(AppNavRoute.AdmissionDetail.Args.INDEX.argName) ?: (AppNavRoute.AdmissionDetail.Args.INDEX.default as Int)
+                        val type = backStackEntry.arguments?.getString(AppNavRoute.AdmissionDetail.Args.TYPE.argName) ?: (AppNavRoute.AdmissionDetail.Args.TYPE.default as String)
                         if(index < 0) return@transitionComposable
                         AdmissionRegionScreen(
                             networkVm,
@@ -558,11 +558,11 @@ fun MainHost(
                     }
                     // 教室课程表
                     transitionComposable(
-                        route = AppNavRoute.ClassroomLessons.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.ClassroomLessons.Args.entries)
+                        route = AppNavRoute.ClassroomCourseTable.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.ClassroomCourseTable.Args.entries)
                     ) { backStackEntry ->
-                        val roomId = backStackEntry.arguments?.getInt(AppNavRoute.ClassroomLessons.Args.ROOM_ID.argName) ?: (AppNavRoute.ClassroomLessons.Args.ROOM_ID.default as Int)
-                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomLessons.Args.NAME.argName) ?: (AppNavRoute.ClassroomLessons.Args.NAME.default as String)
+                        val roomId = backStackEntry.arguments?.getInt(AppNavRoute.ClassroomCourseTable.Args.ROOM_ID.argName) ?: (AppNavRoute.ClassroomCourseTable.Args.ROOM_ID.default as Int)
+                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomCourseTable.Args.NAME.argName) ?: (AppNavRoute.ClassroomCourseTable.Args.NAME.default as String)
                         if(roomId < 0) {
                             return@transitionComposable
                         }
@@ -625,7 +625,7 @@ fun MainHost(
                         CourseSearchScreen(networkVm,navController )
                     }
                     // 个人信息
-                    transitionComposable(route = AppNavRoute.Person.route) {
+                    transitionComposable(route = AppNavRoute.PersonInfo.route) {
                         PersonScreen(networkVm,navController )
                     }
                     // 消息中心
@@ -633,7 +633,7 @@ fun MainHost(
                         NotificationsScreen(navController )
                     }
                     // 寝室评分
-                    transitionComposable(route = AppNavRoute.DormitoryScore.route) {
+                    transitionComposable(route = AppNavRoute.Dormitory.route) {
                         DormitoryScoreScreen(networkVm,navController )
                     }
                     // 考试
@@ -645,7 +645,7 @@ fun MainHost(
                         ExamScreen(navController,origin)
                     }
                     // 转专业
-                    transitionComposable(route = AppNavRoute.Transfer.route) {
+                    transitionComposable(route = AppNavRoute.TransferMajor.route) {
                         TransferScreen(networkVm,navController )
                     }
                     // 评教
@@ -672,11 +672,11 @@ fun MainHost(
                         FailRateScreen(networkVm, navController )
                     }
                     // 选课
-                    transitionComposable(AppNavRoute.SelectCourse.route) {
+                    transitionComposable(AppNavRoute.SelectCourses.route) {
                         SelectCourseScreen(networkVm,navController)
                     }
                     // 网址导航
-                    transitionComposable(AppNavRoute.WebNavigation.route) {
+                    transitionComposable(AppNavRoute.WebFolder.route) {
                         WebNavigationScreen(navController)
                     }
                     // 收纳
@@ -692,7 +692,7 @@ fun MainHost(
                         NewsApiScreen(navController,networkVm,keyword)
                     }
                     // 本周考试安排
-                    transitionComposable(AppNavRoute.ExamNotifications.route) {
+                    transitionComposable(AppNavRoute.ExamNews.route) {
                         ExamNotificationsScreen(navController,networkVm)
                     }
                     // 生活服务
@@ -705,11 +705,11 @@ fun MainHost(
                     }
                     // 选课二级界面
                     transitionComposable(
-                        route = AppNavRoute.SelectCourseDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.SelectCourseDetail.Args.entries)
+                        route = AppNavRoute.SelectCoursesDetail.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.SelectCoursesDetail.Args.entries)
                     ) { backStackEntry ->
-                        val index = backStackEntry.arguments?.getInt(AppNavRoute.SelectCourseDetail.Args.COURSE_ID.argName) ?: (AppNavRoute.SelectCourseDetail.Args.COURSE_ID.default as Int)
-                        val title = backStackEntry.arguments?.getString(AppNavRoute.SelectCourseDetail.Args.NAME.argName) ?: (AppNavRoute.SelectCourseDetail.Args.NAME.default as String)
+                        val index = backStackEntry.arguments?.getInt(AppNavRoute.SelectCoursesDetail.Args.COURSE_ID.argName) ?: (AppNavRoute.SelectCoursesDetail.Args.COURSE_ID.default as Int)
+                        val title = backStackEntry.arguments?.getString(AppNavRoute.SelectCoursesDetail.Args.NAME.argName) ?: (AppNavRoute.SelectCoursesDetail.Args.NAME.default as String)
 
                         if(index <= 0) {
                             return@transitionComposable
@@ -723,11 +723,11 @@ fun MainHost(
                     }
                     // 退课
                     transitionComposable(
-                        route = AppNavRoute.DropCourse.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.DropCourse.Args.entries)
+                        route = AppNavRoute.DropCourses.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.DropCourses.Args.entries)
                     ) { backStackEntry ->
-                        val index = backStackEntry.arguments?.getInt(AppNavRoute.DropCourse.Args.COURSE_ID.argName) ?: (AppNavRoute.DropCourse.Args.COURSE_ID.default as Int)
-                        val title = backStackEntry.arguments?.getString(AppNavRoute.DropCourse.Args.NAME.argName) ?: (AppNavRoute.DropCourse.Args.NAME.default as String)
+                        val index = backStackEntry.arguments?.getInt(AppNavRoute.DropCourses.Args.COURSE_ID.argName) ?: (AppNavRoute.DropCourses.Args.COURSE_ID.default as Int)
+                        val title = backStackEntry.arguments?.getString(AppNavRoute.DropCourses.Args.NAME.argName) ?: (AppNavRoute.DropCourses.Args.NAME.default as String)
 
                         if(index <= 0) {
                             return@transitionComposable
@@ -741,12 +741,12 @@ fun MainHost(
                     }
                     // 转专业二级界面
                     transitionComposable(
-                        route = AppNavRoute.TransferDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.TransferDetail.Args.entries)
+                        route = AppNavRoute.TransferMajorDetail.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.TransferMajorDetail.Args.entries)
                     ) { backStackEntry ->
-                        val title = backStackEntry.arguments?.getString(AppNavRoute.TransferDetail.Args.NAME.argName) ?: (AppNavRoute.TransferDetail.Args.NAME.default as String)
-                        val batchId = backStackEntry.arguments?.getString(AppNavRoute.TransferDetail.Args.BATCH_ID.argName) ?: (AppNavRoute.TransferDetail.Args.BATCH_ID.default as String)
-                        val isHidden = backStackEntry.arguments?.getBoolean(AppNavRoute.TransferDetail.Args.IS_HIDDEN.argName) ?: (AppNavRoute.TransferDetail.Args.IS_HIDDEN.default as Boolean)
+                        val title = backStackEntry.arguments?.getString(AppNavRoute.TransferMajorDetail.Args.NAME.argName) ?: (AppNavRoute.TransferMajorDetail.Args.NAME.default as String)
+                        val batchId = backStackEntry.arguments?.getString(AppNavRoute.TransferMajorDetail.Args.BATCH_ID.argName) ?: (AppNavRoute.TransferMajorDetail.Args.BATCH_ID.default as String)
+                        val isHidden = backStackEntry.arguments?.getBoolean(AppNavRoute.TransferMajorDetail.Args.IS_HIDDEN.argName) ?: (AppNavRoute.TransferMajorDetail.Args.IS_HIDDEN.default as Boolean)
 
                         TransferDetailScreen(
                             isHidden,
@@ -769,7 +769,7 @@ fun MainHost(
                         ClassmatesScreen(networkVm,navController)
                     }
                     // 扫码登录
-                    transitionComposable(AppNavRoute.Scan.route) {
+                    transitionComposable(AppNavRoute.ScanQrCode.route) {
                         ScanScreen(networkVm,navController)
                     }
                     // 校车
@@ -777,7 +777,7 @@ fun MainHost(
                         BusScreen(networkVm,navController)
                     }
                     // 社区预约
-                    transitionComposable(AppNavRoute.Appointment.route) {
+                    transitionComposable(AppNavRoute.CommunityAppointment.route) {
                         AppointmentScreen(networkVm,navController)
                     }
                     // 办事
@@ -785,15 +785,15 @@ fun MainHost(
                         OfficeHallScreen(networkVm,navController)
                     }
                     // 查询中心编辑
-                    transitionComposable(AppNavRoute.SearchEdit.route) {
+                    transitionComposable(AppNavRoute.FunctionsSort.route) {
                         SearchEditScreen(navController)
                     }
                     // 全校培养方案
                     transitionComposable(
-                        route = AppNavRoute.ProgramSearch.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.ProgramSearch.Args.entries)
+                        route = AppNavRoute.AllPrograms.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.AllPrograms.Args.entries)
                     ) { backStackEntry ->
-                        val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.ProgramSearch.Args.IF_SAVED.argName) ?: (AppNavRoute.ProgramSearch.Args.IF_SAVED.default as Boolean)
+                        val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.AllPrograms.Args.IF_SAVED.argName) ?: (AppNavRoute.AllPrograms.Args.IF_SAVED.default as Boolean)
 
                         ProgramSearchScreen(
                             networkVm,
@@ -816,11 +816,11 @@ fun MainHost(
                     }
                     // 课程汇总
                     transitionComposable(
-                        route = AppNavRoute.TotalCourse.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.TotalCourse.Args.entries)
+                        route = AppNavRoute.TermCourses.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.TermCourses.Args.entries)
                     ) { backStackEntry ->
-                        val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.TotalCourse.Args.IF_SAVED.argName) ?: (AppNavRoute.TotalCourse.Args.IF_SAVED.default as Boolean)
-                        val origin = backStackEntry.arguments?.getString(AppNavRoute.TotalCourse.Args.ORIGIN.argName) ?: (AppNavRoute.TotalCourse.Args.ORIGIN.default as String)
+                        val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.TermCourses.Args.IF_SAVED.argName) ?: (AppNavRoute.TermCourses.Args.IF_SAVED.default as Boolean)
+                        val origin = backStackEntry.arguments?.getString(AppNavRoute.TermCourses.Args.ORIGIN.argName) ?: (AppNavRoute.TermCourses.Args.ORIGIN.default as String)
 
                         TotalCourseScreen(
                             networkVm,
@@ -894,16 +894,16 @@ fun MainHost(
                     }
                     // 开课课程表
                     transitionComposable(
-                        route = AppNavRoute.CourseSearchCalendar.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.CourseSearchCalendar.Args.entries)
+                        route = AppNavRoute.CourseSearchTable.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.CourseSearchTable.Args.entries)
                     ) { backStackEntry ->
-                        val term = backStackEntry.arguments?.getInt(AppNavRoute.CourseSearchCalendar.Args.TERM.argName)
+                        val term = backStackEntry.arguments?.getInt(AppNavRoute.CourseSearchTable.Args.TERM.argName)
                         if(term == null || term == -1) {
                             return@transitionComposable
                         }
-                        val name = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchCalendar.Args.COURSE_NAME.argName)
-                        val code = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchCalendar.Args.COURSE_CODE.argName)
-                        val classes = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchCalendar.Args.CLASSES.argName)
+                        val name = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchTable.Args.COURSE_NAME.argName)
+                        val code = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchTable.Args.COURSE_CODE.argName)
+                        val classes = backStackEntry.arguments?.getString(AppNavRoute.CourseSearchTable.Args.CLASSES.argName)
 
                         CourseSearchCalendarScreen(
                             term,

@@ -76,8 +76,6 @@ fun NetworkSettingsScreen(
         .scale(scale))
     {
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
-
-
         val switch_upload = SharedPrefs.prefs.getBoolean("SWITCHUPLOAD",true )
         var upload by remember { mutableStateOf(switch_upload) }
         saveBoolean("SWITCHUPLOAD",true,upload)

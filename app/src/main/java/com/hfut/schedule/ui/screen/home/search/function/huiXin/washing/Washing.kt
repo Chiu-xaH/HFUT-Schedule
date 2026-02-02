@@ -36,6 +36,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
@@ -94,7 +95,7 @@ fun Washing(
     }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "洗衣机") },
+        headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_laundry)) },
         leadingContent = {
             Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
         },
@@ -135,7 +136,7 @@ fun HaiLeWashingScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.HaiLeWashing.label) },
+                    title = { Text(stringResource(AppNavRoute.HaiLeWashing.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     }
@@ -169,7 +170,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar(AppNavRoute.HaiLeWashing.label)
+                    HazeBottomSheetTopBar(stringResource(AppNavRoute.HaiLeWashing.label))
                 },) {innerPadding ->
                 Column(
                     modifier = Modifier
@@ -201,7 +202,7 @@ fun WashingUI(vm : NetWorkViewModel,hazeState : HazeState) {
             FilledTonalButton(onClick = {
                 showBottomSheet = true
             }) {
-                Text(AppNavRoute.HaiLeWashing.label)
+                Text(stringResource(AppNavRoute.HaiLeWashing.label))
             }
         }
         CustomTabRow(pagerState,titles)

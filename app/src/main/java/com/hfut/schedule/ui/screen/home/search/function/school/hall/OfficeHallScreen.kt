@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
@@ -118,7 +119,7 @@ fun OfficeHallScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.OfficeHall.label) },
+                    title = { Text(stringResource(AppNavRoute.OfficeHall.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(
                             route,

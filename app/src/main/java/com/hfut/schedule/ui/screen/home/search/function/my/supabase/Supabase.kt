@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -35,7 +36,7 @@ fun Supabase() {
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "共建平台") },
+        headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_supabase)) },
         leadingContent = {
 //            if(loading) {
 //                LoadingIcon()

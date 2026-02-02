@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -66,7 +67,7 @@ fun DormitoryScoreScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.DormitoryScore.route }
+    val route = remember { AppNavRoute.Dormitory.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val dormitoryUiState by vm.dormitoryFromCommunityResp.state.collectAsState()
     val dormitoryInfoUiState by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
@@ -129,9 +130,9 @@ fun DormitoryScoreScreen(
                     modifier = Modifier.topBarBlur(hazeState),
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.DormitoryScore.label) },
+                    title = { Text(stringResource(AppNavRoute.Dormitory.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.DormitoryScore.icon)
+                        TopBarNavigationIcon(route, AppNavRoute.Dormitory.icon)
                     },
                 )
             }

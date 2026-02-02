@@ -72,7 +72,7 @@ fun ScanScreen(
 ) {
     val color = MaterialTheme.colorScheme.surface
     var resultText by remember { mutableStateOf("") }
-    val route = remember { AppNavRoute.Scan.route }
+    val route = remember { AppNavRoute.ScanQrCode.route }
     val context = LocalContext.current
     val activity = LocalActivity.current
     val showTip = resultText.isEmpty() || resultText.isBlank()
@@ -257,7 +257,7 @@ fun ScanScreen(
                 colors = topBarTransplantColor(),
                 title = { Text("") },
                 navigationIcon = {
-                    LiquidTopBarNavigateIcon(backdrop,navController,route, AppNavRoute.Scan.icon,)
+                    LiquidTopBarNavigateIcon(backdrop,navController,route, AppNavRoute.ScanQrCode.icon,)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

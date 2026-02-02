@@ -10,7 +10,6 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
@@ -51,19 +51,19 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
     )
     val cardValue by remember { derivedStateOf { vmUI.cardValue } }
     var text by remember { mutableStateOf(cardValue?.balance ?: prefs.getString("card","00")) }
+    val context = LocalContext.current
 
     LaunchedEffect(cardValue) {
         text = cardValue?.balance ?: prefs.getString("card","00")
-        if(text == "00") { text = "未登录" }
+        if(text == "00") { text = context.getString(R.string.navigation_label_school_card_not_login) }
     }
-    val context = LocalContext.current
 
     val showAdd = prefs.getBoolean("SWITCHCARDADD",true)
     TransplantListItem(
         headlineContent = {
             ScrollText(
-                text = if(cardBool)"￥$text" else "一卡通 ￥$text",
-                color = if (text != null && text != "未登录") {
+                text = if(cardBool)"￥$text" else "${context.getString(R.string.navigation_label_school_card)} ￥$text",
+                color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                     if(text!!.length <= 4){
                         MaterialTheme.colorScheme.error
                     } else LocalContentColor.current
@@ -72,12 +72,12 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
         },
         overlineContent = { if(cardBool) {
             ScrollText(
-                if (text != null && text != "未登录") {
+                if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                     if(text!!.length <= 4){
-                        "余额不足"
-                    } else "一卡通"
-                } else "一卡通",
-                color = if (text != null && text != "未登录") {
+                        stringResource(R.string.navigation_label_school_card_warn)
+                    } else stringResource(R.string.navigation_label_school_card)
+                } else stringResource(R.string.navigation_label_school_card),
+                color = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                     if(text!!.length <= 4){
                         MaterialTheme.colorScheme.error
                     } else LocalContentColor.current
@@ -89,14 +89,14 @@ fun SchoolCardItem(vmUI : UIViewModel,cardBool : Boolean) {
         leadingContent = { Icon(
             painterResource(R.drawable.credit_card),
             contentDescription = "Localized description",
-            tint = if (text != null && text != "未登录") {
+            tint = if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                 if(text!!.length <= 4){
                     MaterialTheme.colorScheme.error
                 } else LocalContentColor.current
             } else LocalContentColor. current
             ) },
         trailingContent={
-            if (text != null && text != "未登录") {
+            if (text != null && text != stringResource(R.string.navigation_label_school_card_not_login)) {
                 if(showAdd || !cardBool || text!!.length <= 4)
                 FilledTonalIconButton(
                     modifier = Modifier

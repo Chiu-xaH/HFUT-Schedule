@@ -89,7 +89,7 @@ fun StartAppIconShare(
     )
     Box(
         modifier = Modifier
-            .containerShare(AppNavRoute.OpenOuterApplication.withArgs(app),shape)
+            .containerShare(AppNavRoute.ToOuterApplication.withArgs(app),shape)
 
     ) {
         Image(

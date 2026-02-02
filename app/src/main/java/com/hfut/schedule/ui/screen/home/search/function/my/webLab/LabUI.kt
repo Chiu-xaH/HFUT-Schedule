@@ -38,7 +38,7 @@ fun LabUI() {
                 leadingContent = { Icon(painterResource(R.drawable.net), contentDescription = "Localized description",) },
                 modifier = Modifier.clickable {
                     scope.launch {
-                        Starter.startWebView(context ,item.info,item.title, icon=AppNavRoute.WebNavigation.icon)
+                        Starter.startWebView(context ,item.info,item.title, icon=AppNavRoute.WebFolder.icon)
                     }
                 }
             )

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -20,15 +21,15 @@ import com.xah.uicommon.component.text.ScrollText
 fun DormitoryScoreXuanCheng(
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.DormitoryScore.route }
+    val route = remember { AppNavRoute.Dormitory.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(AppNavRoute.DormitoryScore.label) },
+        headlineContent = { ScrollText(stringResource(AppNavRoute.Dormitory.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.DormitoryScore.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.Dormitory.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.DormitoryScore,route)
+            navController.navigateForTransition(AppNavRoute.Dormitory,route)
         }
     )
 }

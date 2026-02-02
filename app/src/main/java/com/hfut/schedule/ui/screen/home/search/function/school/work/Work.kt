@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMap
 import androidx.navigation.NavHostController
@@ -96,7 +97,7 @@ fun Work(
     val route = remember { AppNavRoute.Work.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Work.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Work.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -141,7 +142,7 @@ fun WorkScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Work.label) },
+                    title = { Text(stringResource(AppNavRoute.Work.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.Work.icon)
                     },

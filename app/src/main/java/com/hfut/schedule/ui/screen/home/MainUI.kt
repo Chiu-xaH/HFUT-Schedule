@@ -88,6 +88,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -430,10 +431,10 @@ fun MainScreen(
                         actions = {
                             when (targetPage) {
                                 SEARCH -> {
-                                    val route = remember { AppNavRoute.SearchEdit.route }
+                                    val route = remember { AppNavRoute.FunctionsSort.route }
                                     IconButton(onClick = {
                                         navHostTopController.navigateForTransition(
-                                            AppNavRoute.SearchEdit,
+                                            AppNavRoute.FunctionsSort,
                                             route,
                                             transplantBackground = true
                                         )
@@ -518,7 +519,7 @@ fun MainScreen(
                                 Surface(
                                     shape = CircleShape,
                                     modifier = Modifier
-                                        .padding(horizontal = APP_HORIZONTAL_DP-(if (showAll) 1.75.dp else 2.5.dp)*3)
+                                        .padding(horizontal = APP_HORIZONTAL_DP - (if (showAll) 1.75.dp else 2.5.dp) * 3)
                                         .clip(CircleShape)
                                         .glassLayer(
                                             backGroundSource,
@@ -576,7 +577,7 @@ fun MainScreen(
                                         )
                                     }
                                 } else {
-                                    val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
+                                    val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
                                     Surface(
                                         shape = CircleShape,
                                         modifier = Modifier
@@ -593,7 +594,7 @@ fun MainScreen(
                                             )
                                             .clickable {
                                                 navHostTopController.navigateForTransition(
-                                                    AppNavRoute.TotalCourse,
+                                                    AppNavRoute.TermCourses,
                                                     route,
                                                     transplantBackground = true
                                                 )
@@ -701,12 +702,12 @@ fun MainScreen(
                                         )
                                     }
                                 } else {
-                                    val route = AppNavRoute.TotalCourse.withArgs(ifSaved,COURSES.name)
+                                    val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
                                     IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(AppNavRoute.TotalCourse, route,transplantBackground = true)
+                                        navHostTopController.navigateForTransition(AppNavRoute.TermCourses, route,transplantBackground = true)
                                     }) {
                                         Icon(
-                                            painter = painterResource(id = AppNavRoute.TotalCourse.icon),
+                                            painter = painterResource(id = AppNavRoute.TermCourses.icon),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.primary,
                                             modifier = Modifier.iconElementShare(route)
@@ -986,11 +987,11 @@ fun MainScreen(
 
 
 fun topBarText(num : BottomBarItems) : String = when(num) {
-    SEARCH -> "查询中心"
-    SETTINGS -> "选项"
+    SEARCH -> MyApplication.context.getString(R.string.functions_center_title)
+    SETTINGS -> MyApplication.context.getString(R.string.settings_title)
     else -> {
         val chineseNumber  = numToChinese(DateTimeManager.dayWeek)
-        "$Date_MM_dd 第${DateTimeManager.currentWeek}周 周$chineseNumber"
+        "$Date_MM_dd 第${currentWeek}周 周$chineseNumber"
     }
 }
 
@@ -1038,7 +1039,7 @@ fun SearchEditScreen(
 ) {
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.SearchEdit.route }
+    val route = remember { AppNavRoute.FunctionsSort.route }
     val funcMaps by produceState(initialValue = GlobalUIStateHolder.funcMaps, key1 = searchSort, key2 = GlobalUIStateHolder.funcMaps) {
         if(searchSort.isNotEmpty() && searchSort.isNotBlank()) {
             value = GlobalUIStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
@@ -1101,9 +1102,9 @@ fun SearchEditScreen(
             },
             scrollBehavior = scrollBehavior,
             colors = topBarTransplantColor(),
-            title = { Text(AppNavRoute.SearchEdit.label) },
+            title = { Text(stringResource(AppNavRoute.FunctionsSort.label)) },
             navigationIcon = {
-                TopBarNavigationIcon(route, AppNavRoute.SearchEdit.icon)
+                TopBarNavigationIcon(route, AppNavRoute.FunctionsSort.icon)
             },
             actions = {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -1169,7 +1170,7 @@ fun SearchEditScreen(
                             shape = MaterialTheme.shapes.small
                         ) {
                             TransplantListItem(
-                                headlineContent = { ScrollText(item.name) },
+                                headlineContent = { ScrollText(stringResource(item.name)) },
                                 leadingContent = {
                                     Icon(painterResource(item.icon),null)
                                 },
@@ -1279,7 +1280,9 @@ private fun ZhiJianSearchBar(
                                 showAddDialog = false
                             },
                             shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
                         ) {
                             Text("取消")
                         }
@@ -1310,7 +1313,9 @@ private fun ZhiJianSearchBar(
                                 }
                             },
                             shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.fillMaxWidth().weight(.5f)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(.5f)
                         ) {
                             Text("保存")
                         }

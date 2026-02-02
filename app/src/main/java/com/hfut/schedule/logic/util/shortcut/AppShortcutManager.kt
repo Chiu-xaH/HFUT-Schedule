@@ -17,7 +17,7 @@ object AppShortcutManager {
         val intent = Intent(context, MainActivity::class.java).apply {
 //            Intent.setAction = Intent.ACTION_VIEW
             action = Intent.ACTION_VIEW
-            putExtra("route", AppNavRoute.Scan.route)
+            putExtra("route", AppNavRoute.ScanQrCode.route)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
 

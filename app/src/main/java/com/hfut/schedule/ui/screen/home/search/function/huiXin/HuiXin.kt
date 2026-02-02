@@ -8,6 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -25,7 +26,7 @@ fun HuiXin(
     navController : NavHostController,
 ) {
     val icon = remember { R.drawable.corporate_fare }
-    val title = remember { "慧新易校" }
+    val title = stringResource(R.string.navigation_label_hui_xin)
     val url = remember { getHuiXinURL() }
     val route = AppNavRoute.WebView.shareRoute(url)
     val scope = rememberCoroutineScope()

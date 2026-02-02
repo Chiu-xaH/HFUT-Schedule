@@ -69,6 +69,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -145,7 +146,7 @@ fun SelectCourseScreen(
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.SelectCourse.route }
+    val route = remember { AppNavRoute.SelectCourses.route }
     val scope = rememberCoroutineScope()
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie() ?: ""
@@ -187,9 +188,9 @@ fun SelectCourseScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.SelectCourse.label) },
+                title = { Text(stringResource(AppNavRoute.SelectCourses.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.SelectCourse.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.SelectCourses.icon)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
@@ -268,7 +269,7 @@ fun SelectCourseDetailScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.SelectCourseDetail.withArgs(courseId,title) }
+    val route = remember { AppNavRoute.SelectCoursesDetail.withArgs(courseId,title) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
     var input by rememberSaveable { mutableStateOf("") }
@@ -296,7 +297,7 @@ fun SelectCourseDetailScreen(
                     navigationIcon = {
                         TopBarNavigationIcon(
                             route,
-                            AppNavRoute.SelectCourseDetail.icon
+                            AppNavRoute.SelectCoursesDetail.icon
                         )
                     },
                     actions = {
@@ -313,9 +314,9 @@ fun SelectCourseDetailScreen(
                             }
                             LiquidButton(
                                 onClick = {
-                                    navController.navigateForTransition(AppNavRoute.DropCourse, AppNavRoute.DropCourse.withArgs(courseId,title))
+                                    navController.navigateForTransition(AppNavRoute.DropCourses, AppNavRoute.DropCourses.withArgs(courseId,title))
                                 },
-                                modifier = Modifier.containerShare(AppNavRoute.DropCourse.route),
+                                modifier = Modifier.containerShare(AppNavRoute.DropCourses.route),
                                 backdrop = backDrop
                             ) {
                                 Text(text = "退课", maxLines = 1)
@@ -386,7 +387,7 @@ fun DropCourseScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.DropCourse.route }
+    val route = remember { AppNavRoute.DropCourses.route }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -407,7 +408,7 @@ fun DropCourseScreen(
                     navigationIcon = {
                         TopBarNavigationIcon(
                             route,
-                            AppNavRoute.DropCourse.icon
+                            AppNavRoute.DropCourses.icon
                         )
                     },
                 )
@@ -456,7 +457,7 @@ private fun SelectCourseList(
                             trailingIcon = {
                                 IconButton(onClick = {
                                     input.toIntOrNull()?.let { i ->
-                                        navController.navigateForTransition(AppNavRoute.SelectCourseDetail, AppNavRoute.SelectCourseDetail.withArgs(i,"入口$i"))
+                                        navController.navigateForTransition(AppNavRoute.SelectCoursesDetail, AppNavRoute.SelectCoursesDetail.withArgs(i,"入口$i"))
                                     } ?: showToast("必须为数字")
                                 }) {
                                     Icon(Icons.Default.ArrowForward,null)
@@ -478,13 +479,13 @@ private fun SelectCourseList(
                 val data = list[item]
                 var expand by remember { mutableStateOf(false) }
                 with(data) {
-                    val route = AppNavRoute.SelectCourseDetail.withArgs(id,name)
+                    val route = AppNavRoute.SelectCoursesDetail.withArgs(id,name)
                     AnimationCustomCard (
                         modifier = Modifier
                             .containerShare( route)
                             .clickable {
                                 navController.navigateForTransition(
-                                    AppNavRoute.SelectCourseDetail,
+                                    AppNavRoute.SelectCoursesDetail,
                                     route
                                 )
                             },
@@ -801,7 +802,7 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             modifier = Modifier.weight(.5f)
         )
         TransplantListItem(
-            headlineContent = { Text(text = AppNavRoute.FailRate.label) },
+            headlineContent = { Text(text = stringResource(AppNavRoute.FailRate.label)) },
             leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
             modifier = Modifier
                 .clickable {

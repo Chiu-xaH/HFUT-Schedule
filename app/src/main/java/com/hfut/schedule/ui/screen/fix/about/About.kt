@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.google.zxing.BarcodeFormat
@@ -52,7 +53,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -75,7 +76,9 @@ import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Hashtable
+import androidx.core.graphics.createBitmap
 
+/* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavHostController, hazeState: HazeState) {
@@ -87,7 +90,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
     }
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
-        .padding(innerPadding).scale(scale)){
+        .padding(innerPadding)
+        .scale(scale)){
         Spacer(modifier = Modifier.height(5.dp))
 
         var showBottomSheet by remember { mutableStateOf(false) }
@@ -121,7 +125,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                     modifier = Modifier.fillMaxSize(),
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar("历史更新日志")
+                        HazeBottomSheetTopBar(stringResource(R.string.about_settings_history_update_log_title))
                     },
                 ) { innerPadding ->
                     Column(
@@ -145,9 +149,9 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                     modifier = Modifier.fillMaxSize(),
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar("本版本新特性") {
+                        HazeBottomSheetTopBar(stringResource(AppNavRoute.VersionInfo.label)) {
                             FilledTonalButton(onClick = { showBottomSheetUpdate = true }) {
-                                Text("历史更新日志")
+                                Text(stringResource(R.string.about_settings_history_update_log_title))
                             }
                         }
                     },
@@ -196,7 +200,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 Scaffold(
                     containerColor = androidx.compose.ui.graphics.Color.Transparent,
                     topBar = {
-                        HazeBottomSheetTopBar("功能可用性支持")
+                        HazeBottomSheetTopBar(stringResource(R.string.about_settings_different_supported_title))
                     },
                 ) { innerPadding ->
                     Support(innerPadding)
@@ -211,7 +215,9 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             }
         }
         CustomCard (
-            modifier = Modifier.aspectRatio(16/9f).fillMaxWidth(),
+            modifier = Modifier
+                .aspectRatio(16 / 9f)
+                .fillMaxWidth(),
             color = MaterialTheme.colorScheme.surface,
         ) {
             video?.let {
@@ -222,18 +228,18 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             }
         }
 
-        DividerTextExpandedWith("关于") {
+        DividerTextExpandedWith(stringResource(R.string.about_settings_about_half_title)) {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 TransplantListItem(
-                    headlineContent = { Text(text = AppNavRoute.VersionInfo.label) },
-                    supportingContent = { Text(text = "查看此版本的更新内容")},
+                    headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
+                    supportingContent = { Text(text = stringResource(R.string.about_settings_version_info_description))},
                     modifier = Modifier.clickable { showBottomSheet_version = true },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.sdk), contentDescription = "")}
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "关于") },
-                    supportingContent = { Text(text = "开源 构建 开发者")},
+                    headlineContent = { Text(text = stringResource(R.string.about_settings_about_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.about_settings_about_description))},
                     modifier = Modifier.combinedClickable(
                         onClick = { showBottomSheet_info = true},
                         onLongClick = {
@@ -244,8 +250,8 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "反馈") },
-                    supportingContent = { Text(text = "向开发者发送邮件")},
+                    headlineContent = { Text(text = stringResource(R.string.about_settings_feedback_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.about_settings_feedback_description))},
                     leadingContent = {
                         Icon(painterResource(R.drawable.alternate_email), contentDescription = "Localized description")
                     },
@@ -255,8 +261,11 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "使用提示") },
-                    supportingContent = { Text(text = "学习${MyApplication.APP_NAME}的隐藏技巧")},
+                    headlineContent = { Text(text = stringResource(R.string.about_settings_tips_title)) },
+                    supportingContent = { Text(text = stringResource(
+                        R.string.about_settings_tips_description,
+                        stringResource(R.string.app_name)
+                    ))},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.lightbulb),
@@ -264,13 +273,13 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                         )
                     },
                     modifier = Modifier.clickable {
-                        showToast("正在开发")
+                        showDevelopingToast()
                     }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "推广") },
-                    supportingContent = { Text(text = "长按分享APK安装包,点击展示下载链接二维码,双击复制链接")},
+                    headlineContent = { Text(text = stringResource(R.string.about_settings_promote_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.about_settings_promote_description))},
                     leadingContent = {
                         Icon(
                             painterResource(R.drawable.ios_share),
@@ -283,14 +292,17 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                         },
                         onLongClick = { ShareTo.shareAPK() },
                         onDoubleClick = {
-                            ClipBoardHelper.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android","已将下载链接复制到剪切板")
+                            ClipBoardHelper.copy(MyApplication.GITEE_UPDATE_URL + "releases/tag/Android",
+                                context.getString(
+                                    R.string.about_settings_toast_promote
+                                ))
                         }
                     )
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
-                    headlineContent = { Text(text = "功能可用性支持") },
-                    supportingContent = { Text(text = "根据Android版本与国内不同厂商定制UI的不同，APP会有若干功能不被支持")},
+                    headlineContent = { Text(text = stringResource(R.string.about_settings_different_supported_title)) },
+                    supportingContent = { Text(text = stringResource(R.string.about_settings_different_supported_description))},
                     modifier = Modifier.clickable { showBottomSheet_support = true },
                     leadingContent = { Icon(painter = painterResource(id = R.drawable.support), contentDescription = "")}
                 )
@@ -298,34 +310,39 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         }
 
         if(cubeShow) {
-            DividerTextExpandedWith("修复") {
+            DividerTextExpandedWith(stringResource(R.string.about_settings_fix_half_title)) {
                 CustomCard(
                     color = MaterialTheme.colorScheme.surface
                 ) {
                     GithubDownloadUI()
                     PaddingHorizontalDivider()
                     TransplantListItem(
-                        headlineContent = { Text(text = "疑难解答与修复") },
-                        supportingContent = { Text(text = "当出现崩溃或无法更新时,可从此处进入或长按桌面图标选择修复")},
-                        leadingContent = { Icon(painterResource(R.drawable.build), contentDescription = "Localized description",) },
+                        headlineContent = { Text(text = stringResource(R.string.about_setting_fix_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.about_setting_fix_description))},
+                        leadingContent = { Icon(
+                            painterResource(R.drawable.build),
+                            contentDescription = "Localized description"
+                        ) },
                         modifier = Modifier.clickable{ navController.navigate(Screen.FIxScreen.route) },
                     )
                 }
             }
-            DividerTextExpandedWith("开发") {
+            DividerTextExpandedWith(stringResource(R.string.about_settings_develop_half_title)) {
                 CustomCard(color = MaterialTheme.colorScheme.surface) {
                     TransplantListItem(
-                        headlineContent = { Text(text = "开发者选项") },
-                        supportingContent = { Text(text = "一些可用于有经验用户的选项")},
+                        headlineContent = { Text(text = stringResource(R.string.about_settings_developer_title)) },
+                        supportingContent = { Text(text = stringResource(R.string.about_settings_developer_description))},
                         modifier = Modifier.clickable { navController.navigate(Screen.DeveloperScreen.route) },
                         leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "")}
                     )
                     if(AppVersion.isPreview()) {
                         PaddingHorizontalDivider()
                         TransplantListItem(
-                            headlineContent = { Text(text = "测试 调试") },
-                            supportingContent = { Text(text = "用户禁入!")},
-                            leadingContent = { Icon(painterResource(R.drawable.error), contentDescription = "Localized description",) },
+                            headlineContent = { Text(text = stringResource(R.string.about_settings_test_title)) },
+                            leadingContent = { Icon(
+                                painterResource(R.drawable.error),
+                                contentDescription = "Localized description"
+                            ) },
                             modifier = Modifier.clickable{ navController.navigate(Screen.DebugScreen.route) }
                         )
                     }
@@ -341,24 +358,21 @@ fun createQRCodeBitmap(
     content: String,
     width: Int,
     height: Int,
-    character_set: String = "UTF-8",
-    error_correction: String = "H",
-    margin: String = "1"
 ): Bitmap? {
     if (width < 0 || height < 0) {
         return null
     }
   //  try {
         val hints: Hashtable<EncodeHintType, String> = Hashtable()
-        if (character_set.isNotEmpty()) {
-            hints[EncodeHintType.CHARACTER_SET] = character_set
-        }
-        if (error_correction.isNotEmpty()) {
-            hints[EncodeHintType.ERROR_CORRECTION] = error_correction
-        }
-        if (margin.isNotEmpty()) {
-            hints[EncodeHintType.MARGIN] = margin
-        }
+//        if (character_set.isNotEmpty()) {
+            hints[EncodeHintType.CHARACTER_SET] = "UTF-8"
+//        }
+//        if (error_correction.isNotEmpty()) {
+            hints[EncodeHintType.ERROR_CORRECTION] = "H"
+//        }
+//        if (margin.isNotEmpty()) {
+            hints[EncodeHintType.MARGIN] = "1"
+//        }
         val bitMatrix = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, width, height, hints)
 
         val colorPrimary = MaterialTheme.colorScheme.primary.toArgb()
@@ -375,7 +389,7 @@ fun createQRCodeBitmap(
             }
         }
 
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        val bitmap = createBitmap(width, height)
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height)
         return bitmap
    // } catch (e: WriterException) {

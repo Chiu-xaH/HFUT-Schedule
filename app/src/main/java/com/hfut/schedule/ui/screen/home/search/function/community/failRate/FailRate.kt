@@ -31,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -68,7 +69,7 @@ fun FailRate(
     val route = remember { AppNavRoute.FailRate.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.FailRate.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.FailRate.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -123,7 +124,7 @@ fun FailRateScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.FailRate.label) },
+                    title = { Text(stringResource(AppNavRoute.FailRate.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.FailRate.icon)
                     }

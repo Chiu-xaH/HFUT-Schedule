@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -56,7 +57,7 @@ fun NotificationsCenter(
     }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Notifications.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Notifications.label)) },
         modifier = Modifier.clickable {
             navController.navigateForTransition(AppNavRoute.Notifications,route)
             saveString("Notifications", getNotifications().size.toString())

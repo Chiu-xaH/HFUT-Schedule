@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
@@ -34,7 +35,7 @@ fun AppointmentScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Appointment.route }
+    val route = remember { AppNavRoute.CommunityAppointment.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     CustomTransitionScaffold (
@@ -48,11 +49,11 @@ fun AppointmentScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Appointment.label) },
+                    title = { Text(stringResource(AppNavRoute.CommunityAppointment.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(
                             route,
-                            AppNavRoute.Appointment.icon
+                            AppNavRoute.CommunityAppointment.icon
                         )
                     }
                 )

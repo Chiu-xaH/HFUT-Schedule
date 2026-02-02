@@ -12,6 +12,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -29,16 +30,16 @@ fun SelectCourse(
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.SelectCourse.route }
+    val route = remember { AppNavRoute.SelectCourses.route }
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.SelectCourse.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.SelectCourses.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.SelectCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.SelectCourses.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            if(!ifSaved) navController.navigateForTransition(AppNavRoute.SelectCourse,route)
+            if(!ifSaved) navController.navigateForTransition(AppNavRoute.SelectCourses,route)
             else refreshLogin(context)
         }
     )

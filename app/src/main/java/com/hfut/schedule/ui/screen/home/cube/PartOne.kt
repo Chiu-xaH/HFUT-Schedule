@@ -72,16 +72,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
 
-
-fun apiCheck() : Boolean {
-    return try {
-        val classes = getPersonInfo().className
-        return classes!!.contains("计算机") && classes.contains("23")
-    } catch (e : Exception) {
-        LogUtil.error(e)
-        false
-    }
-}
+/* 本kt文件已完成多语言文案适配 */
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun PartOne(navController: NavController) {
@@ -89,8 +80,8 @@ fun PartOne(navController: NavController) {
         color = MaterialTheme.colorScheme.surface
     ){
         TransplantListItem(
-            headlineContent = { Text(text = "外观与效果") },
-            supportingContent = { Text(text = "色彩 动效 动态模糊")},
+            headlineContent = { Text(text = stringResource(R.string.appearance_settings_title)) },
+            supportingContent = { Text(text = stringResource(R.string.appearance_settings_description))},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.format_paint), contentDescription ="" )
             },
@@ -98,8 +89,8 @@ fun PartOne(navController: NavController) {
         )
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "应用及配置") },
-            supportingContent = { Text(text = "交互 缓存清理 偏好配置")},
+            headlineContent = { Text(text = stringResource(R.string.app_settings_title)) },
+            supportingContent = { Text(text = stringResource(R.string.app_settings_description))},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.joystick), contentDescription ="",  )
             },
@@ -107,8 +98,8 @@ fun PartOne(navController: NavController) {
         )
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "网络") },
-            supportingContent = { Text(text = "预加载 一卡通密码")},
+            headlineContent = { Text(text = stringResource(R.string.network_settings_title)) },
+            supportingContent = { Text(text = stringResource(R.string.network_settings_description))},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.net), contentDescription ="" )
             },
@@ -116,8 +107,8 @@ fun PartOne(navController: NavController) {
         )
         PaddingHorizontalDivider()
         TransplantListItem(
-            headlineContent = { Text(text = "维护与关于") },
-            supportingContent = { Text(text = "反馈 关于 疑难修复")},
+            headlineContent = { Text(text = stringResource(R.string.about_settings_title)) },
+            supportingContent = { Text(text = stringResource(R.string.about_settings_description))},
             leadingContent = {
                 Icon(painter = painterResource(id = R.drawable.partner_exchange), contentDescription ="",modifier = Modifier
                     .size(22.dp)
@@ -246,10 +237,10 @@ fun GithubDownloadUI() {
     val context = LocalContext.current
     TransplantListItem(
         headlineContent = {
-            Text("备用更新通道")
+            Text(stringResource(R.string.settings_about_update_by_github_title))
         },
         supportingContent = {
-            Text("通过Github发行版下载最新版本,不会限速;\n请注意选择后缀'arm64-v8a'(即普通Android移动设备)的APK下载")
+            Text(stringResource(R.string.settings_about_update_by_github_description))
         },
         leadingContent = { Icon(painterResource(R.drawable.github),null)},
         modifier = Modifier.clickable {
@@ -333,8 +324,10 @@ fun AlwaysItem(
         if (show) {
             PaddingHorizontalDivider()
             TransplantListItem(
-                headlineContent = { Text(text = AppNavRoute.VersionInfo.label) },
-                supportingContent = { Text(text = if(isPreview) "当前为内部测试版" else "当前已为最新版本 $currentVersion") },
+                headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
+                supportingContent = { Text(text = if(isPreview) stringResource(R.string.settings_version_info_description_preview) else stringResource(
+                    R.string.settings_version_info_description, currentVersion
+                )) },
                 leadingContent = {
                     Icon(
                         painterResource(AppNavRoute.VersionInfo.icon),

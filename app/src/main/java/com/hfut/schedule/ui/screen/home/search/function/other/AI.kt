@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -47,7 +48,7 @@ fun AI(
     val route = remember { AppNavRoute.AI.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.AI.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.AI.label)) },
         leadingContent = {
             Box() {
 //                RotatingRainbowGlow(
@@ -129,7 +130,7 @@ fun AIScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.AI.label) },
+                title = { Text(stringResource(AppNavRoute.AI.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route, AppNavRoute.AI.icon)
                 },

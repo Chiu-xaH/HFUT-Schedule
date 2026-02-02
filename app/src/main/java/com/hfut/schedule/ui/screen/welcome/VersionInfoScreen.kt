@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -95,7 +96,7 @@ fun VersionInfoScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.VersionInfo.label) },
+                title = { Text(stringResource(AppNavRoute.VersionInfo.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route, AppNavRoute.VersionInfo.icon)
                 },

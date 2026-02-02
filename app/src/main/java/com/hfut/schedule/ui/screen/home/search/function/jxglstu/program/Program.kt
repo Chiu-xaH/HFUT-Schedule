@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -68,20 +69,20 @@ fun Program(
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
-    val iconRoute = remember { AppNavRoute.ProgramSearch.receiveRoute() }
+    val iconRoute = remember { AppNavRoute.AllPrograms.receiveRoute() }
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Program.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Program.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         trailingContent = {
             FilledTonalIconButton(
                 onClick = {
-                    navController.navigateForTransition(AppNavRoute.ProgramSearch,AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                    navController.navigateForTransition(AppNavRoute.AllPrograms,AppNavRoute.AllPrograms.withArgs(ifSaved))
                 },
                 modifier = Modifier.size(30.dp).containerShare(iconRoute)
             ) {
@@ -147,7 +148,7 @@ fun ProgramScreen(
                             }
                         },
                         icon = AppNavRoute.ProgramCompetition.icon,
-                        text = AppNavRoute.ProgramCompetition.label,
+                        text = stringResource(AppNavRoute.ProgramCompetition.label),
                         shape = MaterialTheme.shapes.large,
                         modifier =
                             Modifier
@@ -170,19 +171,19 @@ fun ProgramScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Program.label) },
+                    title = { Text(stringResource(AppNavRoute.Program.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.Program.icon)
                     },
                     actions = {
                         LiquidButton (
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.ProgramSearch,AppNavRoute.ProgramSearch.withArgs(ifSaved))
+                                navController.navigateForTransition(AppNavRoute.AllPrograms,AppNavRoute.AllPrograms.withArgs(ifSaved))
                             },
                             backdrop = backDrop,
                             modifier = Modifier
                                 .padding(horizontal = APP_HORIZONTAL_DP)
-                                .containerShare(AppNavRoute.ProgramSearch.receiveRoute(), MaterialTheme.shapes.large)
+                                .containerShare(AppNavRoute.AllPrograms.receiveRoute(), MaterialTheme.shapes.large)
                         ) {
                             Text("全校培养方案", maxLines = 1)
                         }

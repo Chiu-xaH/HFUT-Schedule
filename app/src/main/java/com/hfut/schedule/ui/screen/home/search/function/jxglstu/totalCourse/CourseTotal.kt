@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -52,15 +53,15 @@ fun CourseTotal(
     ifSaved : Boolean,
     navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.TotalCourse.withArgs(ifSaved,"SEARCH") }
+    val route = remember { AppNavRoute.TermCourses.withArgs(ifSaved,"SEARCH") }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.TotalCourse.label) },
+        headlineContent = { ScrollText(text =stringResource(AppNavRoute.TermCourses.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TotalCourse.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TotalCourse,route)
+            navController.navigateForTransition(AppNavRoute.TermCourses,route)
         }
     )
 
@@ -80,7 +81,7 @@ fun TotalCourseScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TotalCourse.receiveRoute() }
+    val route = remember { AppNavRoute.TermCourses.receiveRoute() }
 
     CustomTransitionScaffold (
         route = route,
@@ -91,9 +92,9 @@ fun TotalCourseScreen(
                 scrollBehavior = scrollBehavior,
 //                    modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.TotalCourse.label) },
+                title = { Text(stringResource(AppNavRoute.TermCourses.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon( AppNavRoute.TotalCourse.withArgs(ifSaved,origin), AppNavRoute.TotalCourse.icon)
+                    TopBarNavigationIcon( AppNavRoute.TermCourses.withArgs(ifSaved,origin), AppNavRoute.TermCourses.icon)
                 },
                 actions = {
                     LiquidButton(

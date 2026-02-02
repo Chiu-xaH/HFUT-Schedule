@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.enumeration.PostMode
 import com.hfut.schedule.logic.util.network.state.UiState
@@ -79,7 +80,7 @@ fun Survey(
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Survey.label)},
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Survey.label))},
         leadingContent = {
             Icon(painterResource(AppNavRoute.Survey.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -120,7 +121,7 @@ fun SurveyScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Survey.label) },
+                    title = { Text(stringResource(AppNavRoute.Survey.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.Survey.icon)
                     },

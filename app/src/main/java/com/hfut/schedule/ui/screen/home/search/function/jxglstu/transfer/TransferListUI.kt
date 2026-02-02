@@ -62,6 +62,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -124,7 +125,7 @@ fun TransferScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.Transfer.route }
+    val route = remember { AppNavRoute.TransferMajor.route }
     val scope = rememberCoroutineScope()
     val backDrop = rememberLayerBackdrop()
     val uiState by vm.transferListData.state.collectAsState()
@@ -159,7 +160,7 @@ fun TransferScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.Transfer.label) },
+                title = { Text(stringResource(AppNavRoute.TransferMajor.label)) },
                 actions = {
                     LiquidButton(
                         onClick = {
@@ -174,7 +175,7 @@ fun TransferScreen(
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Transfer.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.TransferMajor.icon)
                 }
             )
         },
@@ -208,13 +209,13 @@ fun TransferScreen(
                             val data = transferList[index]
                             val batchId = data.batchId
                             val name = data.title
-                            val route = AppNavRoute.TransferDetail.withArgs(false,batchId,name)
+                            val route = AppNavRoute.TransferMajorDetail.withArgs(false,batchId,name)
                             var expand by remember { mutableStateOf(false) }
                             CustomCard (
                                 modifier = Modifier
                                     .clickable {
                                         navController.navigateForTransition(
-                                            AppNavRoute.TransferDetail,
+                                            AppNavRoute.TransferMajorDetail,
                                             route
                                         )
                                     }
@@ -281,7 +282,7 @@ fun TransferScreen(
                                                 trailingIcon = {
                                                     IconButton(onClick = {
                                                         if(input.toIntOrNull() != null) {
-                                                            navController.navigateForTransition(AppNavRoute.TransferDetail,AppNavRoute.TransferDetail.withArgs(true,input,"入口$input"))
+                                                            navController.navigateForTransition(AppNavRoute.TransferMajorDetail,AppNavRoute.TransferMajorDetail.withArgs(true,input,"入口$input"))
                                                         } else {
                                                             showToast("必须为数字")
                                                         }
@@ -318,7 +319,7 @@ fun TransferDetailScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TransferDetail.withArgs(isHidden,batchId,title) }
+    val route = remember { AppNavRoute.TransferMajorDetail.withArgs(isHidden,batchId,title) }
     var showBottomSheet_apply by remember { mutableStateOf(false) }
     val backDrop = rememberLayerBackdrop()
     if (showBottomSheet_apply) {
@@ -363,7 +364,7 @@ fun TransferDetailScreen(
                     navigationIcon = {
                         TopBarNavigationIcon(
                             route,
-                            AppNavRoute.TransferDetail.icon
+                            AppNavRoute.TransferMajorDetail.icon
                         )
                     },
                     actions = {

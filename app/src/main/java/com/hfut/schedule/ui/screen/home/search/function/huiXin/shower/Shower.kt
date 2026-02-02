@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.icon.LoadingIcon
@@ -45,7 +46,7 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
 
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "洗浴") },
+        headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_shower)) },
         leadingContent = {
             if(loading) {
                 LoadingIcon()

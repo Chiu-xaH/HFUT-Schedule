@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -76,7 +77,7 @@ fun Exam(
     val route = remember { AppNavRoute.Exam.withArgs() }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.Exam.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.Exam.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.Exam.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -106,15 +107,15 @@ fun ExamScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.Exam.label) },
+                title = { Text(stringResource(AppNavRoute.Exam.label)) },
                 actions = {
                     LiquidButton(
                         modifier = Modifier
-                            .containerShare(AppNavRoute.ExamNotifications.route, MaterialTheme.shapes.extraLarge)
+                            .containerShare(AppNavRoute.ExamNews.route, MaterialTheme.shapes.extraLarge)
                             .padding(horizontal = APP_HORIZONTAL_DP),
                         backdrop = backdrop,
                         onClick = {
-                            navController.navigateForTransition(AppNavRoute.ExamNotifications, AppNavRoute.ExamNotifications.route)
+                            navController.navigateForTransition(AppNavRoute.ExamNews, AppNavRoute.ExamNews.route)
                         },
                     ) {
                         Text("全校考试安排", maxLines = 1)

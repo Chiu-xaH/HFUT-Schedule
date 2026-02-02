@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -49,7 +50,7 @@ fun NavigationExceptionScreen(
                     scrollBehavior = scrollBehavior,
                     modifier = Modifier.topBarBlur(hazeState),
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.Exception.label) },
+                    title = { Text(stringResource(AppNavRoute.Exception.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.Exception.icon)
                     }

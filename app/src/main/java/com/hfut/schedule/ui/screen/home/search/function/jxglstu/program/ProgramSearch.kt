@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -84,7 +85,7 @@ fun ProgramSearchScreen(
     var input by remember { mutableStateOf("") }
     val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.ProgramSearch.receiveRoute() }
+    val route = remember { AppNavRoute.AllPrograms.receiveRoute() }
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork: suspend () -> Unit = m@ {
@@ -137,7 +138,7 @@ fun ProgramSearchScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.ProgramSearch.label) },
+                    title = { Text(stringResource(AppNavRoute.AllPrograms.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon()
                     },

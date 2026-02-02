@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.network.util.MyApiParse.getMy
@@ -172,7 +173,7 @@ fun WorkAndRest(
     val route = remember { AppNavRoute.WorkAndRest.withArgs() }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.WorkAndRest.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.WorkAndRest.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
@@ -212,7 +213,7 @@ fun TimeTableScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.WorkAndRest.label) },
+                title = { Text(stringResource(AppNavRoute.WorkAndRest.label)) },
                 navigationIcon = {
                     TopBarNavigationIcon(route,AppNavRoute.WorkAndRest.icon)
                 },

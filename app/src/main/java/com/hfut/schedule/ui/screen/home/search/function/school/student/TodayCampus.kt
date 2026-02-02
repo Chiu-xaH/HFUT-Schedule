@@ -43,6 +43,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
@@ -98,7 +99,7 @@ fun ToadyCampus(
     val route = remember { AppNavRoute.StuTodayCampus.route }
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = AppNavRoute.StuTodayCampus.label) },
+        headlineContent = { ScrollText(text = stringResource(AppNavRoute.StuTodayCampus.label)) },
         leadingContent = {
             Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
@@ -133,7 +134,7 @@ fun StuTodayCampusScreen(
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),
-                    title = { Text(AppNavRoute.StuTodayCampus.label) },
+                    title = { Text(stringResource(AppNavRoute.StuTodayCampus.label)) },
                     navigationIcon = {
                         TopBarNavigationIcon(route, AppNavRoute.StuTodayCampus.icon)
                     },

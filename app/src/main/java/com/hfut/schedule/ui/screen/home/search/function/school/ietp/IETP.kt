@@ -14,6 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
@@ -39,7 +40,7 @@ fun IETP(
 ) {
     val route = remember { AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL) }
     val icon = remember { R.drawable.groups }
-    val title = remember { "大创系统" }
+    val title = stringResource(R.string.navigation_label_ietp)
     val scope = rememberCoroutineScope()
     TransplantListItem(
         headlineContent = { ScrollText(text = title) },

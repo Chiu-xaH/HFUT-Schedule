@@ -88,7 +88,7 @@ fun UpdateSuccessScreen(
     navController : NavHostController,
 ) {
     val context = LocalContext.current
-    val route = remember { AppNavRoute.UpdateSuccess.route }
+    val route = remember { AppNavRoute.UpdateSuccessfully.route }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val oldVersion = prefs.getString("versionName","上版本")

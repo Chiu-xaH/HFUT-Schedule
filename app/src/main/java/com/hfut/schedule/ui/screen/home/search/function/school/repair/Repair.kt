@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
@@ -32,7 +33,7 @@ fun Repair(hazeState : HazeState) {
     val context = LocalContext.current
 
     TransplantListItem(
-        headlineContent = { ScrollText(text = "后勤报修") },
+        headlineContent = { ScrollText(text = stringResource(R.string.navigation_label_repair)) },
         leadingContent = { Icon(painter = painterResource(id = R.drawable.build), contentDescription = "") },
         modifier = Modifier.clickable {
             showBottomSheet = true

@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
@@ -100,7 +101,7 @@ fun PersonScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Person.route }
+    val route = remember { AppNavRoute.PersonInfo.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -130,9 +131,9 @@ fun PersonScreen(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.topBarBlur(hazeState),
                 colors = topBarTransplantColor(),
-                title = { Text(AppNavRoute.Person.label) },
+                title = { Text(stringResource(AppNavRoute.PersonInfo.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Person.icon)
+                    TopBarNavigationIcon(route, AppNavRoute.PersonInfo.icon)
                 },
                 actions = {
                     LiquidButton(
@@ -331,7 +332,7 @@ private fun PersonItems(
                                 navController.navigateForTransition(AppNavRoute.Classmates,route)
                             }
                         ) {
-                            Text(AppNavRoute.Classmates.label)
+                            Text(stringResource(AppNavRoute.Classmates.label))
                         }
                     },
                 )
