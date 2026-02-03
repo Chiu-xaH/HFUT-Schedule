@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
@@ -47,8 +48,13 @@ interface LibraryService {
     ) : Call<ResponseBody>
 
 
+    data class BookSearchRequest(val page : Int, val conditions : List<BookSearchRequestKeywordBean>, val source : BookSearchRequestSourceBean?, val size : Int = getPageSize(), val sort : Int = 0)
+    data class BookSearchRequestKeywordBean(val value : String)
+    data class BookSearchRequestSourceBean(val Cats : List<String>)
     @POST("svc/space/mate/search")
+    @Headers("Content-Type: application/json")
     fun search(
-        @Header("authorization") auth : String
+        @Header("authorization") auth : String,
+        @Body body : BookSearchRequest
     ) : Call<ResponseBody>
 }

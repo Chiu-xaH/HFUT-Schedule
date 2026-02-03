@@ -4,16 +4,17 @@ import com.google.gson.Gson
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryBorrowedResponse
+import com.hfut.schedule.logic.model.library.LibrarySearchResponse
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.library.LibraryStatusResponse
 import com.hfut.schedule.logic.network.api.LibraryService
+import com.hfut.schedule.logic.network.api.LibraryService.BookSearchRequestSourceBean
 import com.hfut.schedule.logic.network.servicecreator.LibraryServiceCreator
 import com.hfut.schedule.logic.network.util.launchRequestNone
 import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.getPageSize
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import retrofit2.awaitResponse
 
 object LibraryRepository {
     private val library = LibraryServiceCreator.create(LibraryService::class.java)
@@ -83,6 +84,34 @@ object LibraryRepository {
     @JvmStatic
     private fun parseBorrowed(json : String) : List<LibraryBorrowedBean> = try {
         Gson().fromJson(json, LibraryBorrowedResponse::class.java).data.list
+    } catch (e : Exception) { throw e }
+
+    suspend fun search(
+        token : String,
+        page : Int,
+        keyword : String,
+        holder : StateHolder<LibrarySearchResponse>
+    ) = launchRequestState(
+        holder = holder,
+        request = {
+            library.search(
+                token,
+                LibraryService.BookSearchRequest(
+                    page,
+                    listOf(
+                        LibraryService.BookSearchRequestKeywordBean(keyword)
+                    ),
+                    BookSearchRequestSourceBean(
+                        listOf("gczzts","wgdzs")
+                    )
+                )
+            )
+        },
+        transformSuccess = { _,json -> parseSearch(json) }
+    )
+    @JvmStatic
+    private fun parseSearch(json : String) : LibrarySearchResponse = try {
+        Gson().fromJson(json, LibrarySearchResponse::class.java)
     } catch (e : Exception) { throw e }
 }
 

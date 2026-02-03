@@ -692,7 +692,29 @@ fun LibrarySearchUI(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues
 ) {
+
+    /* https://lib.hfut.edu.cn/svc/space/mate/search
+    POST
+    Content-Type:application/json
+    {
+  "page": 1,
+  "size" : 1,
+  "sort": 0,
+  "conditions": [
+    {
+      "value": "android艺术探索"
+    }
+  ],
+  "source": {
+    "Cats": [
+      "wgdzs",
+      "gczzts"
+    ]
+  },
+}
+     */
     CenterScreen {
         DevelopingIcon()
     }
 }
+

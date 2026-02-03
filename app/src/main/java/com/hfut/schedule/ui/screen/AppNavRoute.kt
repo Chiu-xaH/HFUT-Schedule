@@ -143,6 +143,7 @@ sealed class AppNavRoute(val route: String, val label: Int, val icon: Int) {
     object News : AppNavRoute("News", R.string.navigation_label_news,R.drawable.stream)
     object Alumni : AppNavRoute("ALUMNI", R.string.navigation_label_alumni,R.drawable.person_book)
     object AI : AppNavRoute("LARGE_MODEL", R.string.navigation_label_ai,R.drawable.wand_stars)
+    object Track : AppNavRoute("TRACK", R.string.navigation_label_track,R.drawable.track_changes)
     object CommunityAppointment : AppNavRoute("APPOINTMENT", R.string.navigation_label_community_appointment,R.drawable.table_restaurant)
     object WorkAndRest : AppNavRoute("WORK_AND_REST", R.string.navigation_label_work_and_rest,R.drawable.schedule)  {
         enum class Args(override val argName: String, override val navType: NavType<out Any?>,override val default : Any?,override val isNullable: Boolean) : NavArg {

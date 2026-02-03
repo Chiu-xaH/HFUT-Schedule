@@ -74,6 +74,7 @@ object GlobalUIStateHolder {
         SearchAppBeanLite(45, AppNavRoute.SecondClass.label,AppNavRoute.SecondClass.icon),
         SearchAppBeanLite(46, AppNavRoute.CommunityAppointment.label,AppNavRoute.CommunityAppointment.icon),
         SearchAppBeanLite(47, AppNavRoute.AI.label,AppNavRoute.AI.icon),
+        SearchAppBeanLite(48, AppNavRoute.Track.label,AppNavRoute.Track.icon),
     )
 
     val funcMaps = funcDefault.toMutableStateList()

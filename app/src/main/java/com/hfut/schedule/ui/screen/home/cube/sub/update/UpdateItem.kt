@@ -58,19 +58,20 @@ fun VersionInfo() {
         // TODO 新增培养方案已修学分计算功能
 
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
+//            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
+            UpdateItems("新增 图书馆-斛兵知搜","位于 查询中心-图书馆")
             UpdateItems("新增 长按左上角返回按钮支持启动台的部分功能")//
+            UpdateItems("新增 英文语言部分适配")
             UpdateItems("优化 教室课程表与其余课程表功能的统一性")//
-            UpdateItems("新增 英文语言部分适配","选项页面")
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")
-//            UpdateItems("优化 长按课程表展开选周预览界面的自适应布局")
             // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程
 //            UpdateItems("新增 新课程表的日视图")
 //            UpdateItems("修复 启动台开启后,上下滑动手势不灵敏的Bug")
 //            UpdateItems("新增 开课查询数据源：合工大教务")
 //            UpdateItems("修复 一卡通消费统计一直加载的Bug")
 //            UpdateItems("修复 点击聚焦页面的日程后延迟响应的Bug")
-//            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
+//
 //            UpdateItems("新增 合肥校区电费的快速充值")
 
             // TODO 远期规划

@@ -80,4 +80,5 @@
     <string name="navigation_label_school_card_not_login">未登录</string>
     <string name="navigation_label_school_card_warn">余额不足</string>
     <string name="navigation_label_scan_qr_code_description">CAS扫码登录</string>
+    <string name="navigation_label_track">提案板</string>
 </resources>

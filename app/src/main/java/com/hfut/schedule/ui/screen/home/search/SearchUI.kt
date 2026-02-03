@@ -76,6 +76,7 @@ import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.Classroom
 import com.hfut.schedule.ui.screen.home.search.function.one.mail.Mail
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.Pay
 import com.hfut.schedule.ui.screen.home.search.function.other.AI
+import com.hfut.schedule.ui.screen.home.search.function.other.Track
 import com.hfut.schedule.ui.screen.home.search.function.other.life.Life
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.Alumni
 import com.hfut.schedule.ui.screen.home.search.function.other.xueXin.XueXin
@@ -211,6 +212,7 @@ fun SearchScreen(
                 SearchAppBean(45,"${context.getString(AppNavRoute.SecondClass.label)}", { SecondClass(navController ) }, AppNavRoute.SecondClass.route),
                 SearchAppBean(46,"${context.getString(AppNavRoute.CommunityAppointment.label)} 场地预约 座位预约 宿舍自习室预约 智慧社区平台", { Appointment(navController ) }, AppNavRoute.CommunityAppointment.route),
                 SearchAppBean(47,"AI 人工智能 ${context.getString(R.string.navigation_label_ai)}", { AI(navController ) }, AppNavRoute.AI.route),
+                SearchAppBean(48,"事务跟踪 事务追踪 issue 反馈 开发 ${context.getString(R.string.navigation_label_track)}", { Track(navController ) }, AppNavRoute.Track.route),
             )
         )
     }

@@ -93,6 +93,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.WebNavigationS
 import com.hfut.schedule.ui.screen.home.search.function.one.emptyRoom.ClassroomDetailScreen
 import com.hfut.schedule.ui.screen.home.search.function.one.pay.FeeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.AIScreen
+import com.hfut.schedule.ui.screen.home.search.function.other.TrackScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.life.LifeScreen
 import com.hfut.schedule.ui.screen.home.search.function.other.wechat.AlumniScreen
 import com.hfut.schedule.ui.screen.home.search.function.school.SecondClassScreen
@@ -787,6 +788,10 @@ fun MainHost(
                     // 查询中心编辑
                     transitionComposable(AppNavRoute.FunctionsSort.route) {
                         SearchEditScreen(navController)
+                    }
+                    // 事务追踪
+                    transitionComposable(AppNavRoute.Track.route) {
+                        TrackScreen(navController)
                     }
                     // 全校培养方案
                     transitionComposable(
