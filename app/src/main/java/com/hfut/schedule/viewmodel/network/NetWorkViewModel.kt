@@ -68,6 +68,7 @@ import com.hfut.schedule.logic.model.jxglstu.lessonResponse
 import com.hfut.schedule.logic.model.jxglstu.lessons
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
+import com.hfut.schedule.logic.model.library.LibrarySearchBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.model.one.ClassroomBean
@@ -298,6 +299,9 @@ class NetWorkViewModel() : ViewModel() {
 
     val libraryBorrowedResp = StateHolder<List<LibraryBorrowedBean>>()
     suspend fun getBorrowed(token : String,page : Int,status : BorrowedStatus? = null,pageSize : Int = getPageSize()) = LibraryRepository.getBorrowed(token,page,status,pageSize,libraryBorrowedResp)
+
+    val librarySearchResp = StateHolder<List<LibrarySearchBean>>()
+    suspend fun searchLibrary(keyword : String,page : Int) = LibraryRepository.search(page,keyword,librarySearchResp)
 
     val loginCommunityData = StateHolder<String>()
     suspend fun loginCommunity(ticket : String) = CommunityRepository.loginCommunity(ticket,loginCommunityData)

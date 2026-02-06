@@ -35,6 +35,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -459,17 +460,19 @@ private fun EmptyClassroomScreen(
             ) {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
                 CustomCard(color = cardNormalColor()) {
-                    TransplantListItem(
-                        headlineContent = {
-                            Text(info!!.teacherName)
-                        },
-                        overlineContent = {
-                            Text("教师")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.person),null)
-                        }
-                    )
+                    info!!.teacherName?.let { teacherName ->
+                        TransplantListItem(
+                            headlineContent = {
+                                Text(teacherName)
+                            },
+                            overlineContent = {
+                                Text("教师")
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.person),null)
+                            }
+                        )
+                    }
                     TransplantListItem(
                         headlineContent = {
                             Text("${info!!.date} ${info!!.startTimeString}~${info!!.endTimeString}"  )
@@ -617,6 +620,35 @@ private fun ClassroomSchedule(
 
         // 绘制课程时间块
         lessons.forEach { lesson ->
+            val containerColor = when(lesson.activityType) {
+                ClassroomOccupiedCause.BORROWED.activityType -> {
+                    MaterialTheme.colorScheme.primary
+                }
+                ClassroomOccupiedCause.IN_LESSON.activityType -> {
+                    MaterialTheme.colorScheme.inversePrimary
+                }
+                ClassroomOccupiedCause.EXAM.activityType -> {
+                    MaterialTheme.colorScheme.error
+                }
+                else -> {
+                    MaterialTheme.colorScheme.primary
+                }
+            }
+//            val contentColor = when(lesson.activityType) {
+//                ClassroomOccupiedCause.BORROWED.activityType -> {
+//                    MaterialTheme.colorScheme.onPrimary
+//                }
+//                ClassroomOccupiedCause.IN_LESSON.activityType -> {
+//                    MaterialTheme.colorScheme.onPrimaryContainer
+//                }
+//                ClassroomOccupiedCause.EXAM.activityType -> {
+//                    MaterialTheme.colorScheme.onError
+//                }
+//                else -> {
+//                    MaterialTheme.colorScheme.onPrimary
+//                }
+//            }
+            val contentColor = contentColorFor(containerColor)
             val startMinutes = convertTimeToMinutes(lesson.startTimeString)
             val endMinutes = convertTimeToMinutes(lesson.endTimeString)
 
@@ -634,7 +666,7 @@ private fun ClassroomSchedule(
                     .width(width.dp)
                     .fillMaxHeight()
                     .clip(MaterialTheme.shapes.extraSmall)
-                    .background(MaterialTheme.colorScheme.primary)
+                    .background(containerColor)
                     .align(Alignment.TopStart)
                     .onGloballyPositioned { coordinates ->
                         parentHeight = coordinates.size.height.dp
@@ -649,16 +681,18 @@ private fun ClassroomSchedule(
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(
+                        maxLines = 1,
                         text = lesson.startTimeString,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = contentColor,
                         fontSize = fontSize,
                         lineHeight = fontSize,
                         modifier = Modifier.align(Alignment.TopCenter)
                     )
 
                     Text(
+                        maxLines = 1,
                         text = lesson.endTimeString,
-                        color = MaterialTheme.colorScheme.onPrimary,
+                        color = contentColor,
                         lineHeight = fontSize,
                         fontSize = fontSize,
                         modifier = Modifier.align(Alignment.BottomCenter)
@@ -1042,10 +1076,52 @@ private suspend fun uniAppToTimeTableData(targetPlace : String,list: List<UniApp
             }
         }
         // 去重
-        distinctUnit(result)
+        distinct(result)
+        // 如果只有教师不同则合并
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
+    }
+}
+
+private data class TimeTableItemKey(
+    val type: TimeTableType,
+    val name: String,
+    val dayOfWeek: Int,
+    val startTime: String,
+    val endTime: String,
+    val place: String?
+)
+
+private fun distinct(list: List<SnapshotStateList<TimeTableItem>>) {
+    for (weekList in list) {
+        val uniqueItems = weekList
+            .groupBy { item ->
+                // 使用自定义的 Key 类进行分组
+                TimeTableItemKey(
+                    item.type,
+                    item.name,
+                    item.dayOfWeek,
+                    item.startTime,
+                    item.endTime,
+                    item.place
+                )
+            }
+            .map { (_, items) ->
+                // 如果有多个教师，则合并
+                val teachers = items.mapNotNull { it.teacher }.distinct()
+                if (teachers.size > 1) {
+                    // 合并教师
+                    items.first().copy(teacher = teachers.joinToString(", "))
+                } else {
+                    // 只有一个教师
+                    items.first()
+                }
+            }
+
+        // 清空原列表，加入去重后的数据
+        weekList.clear()
+        weekList.addAll(uniqueItems)
     }
 }

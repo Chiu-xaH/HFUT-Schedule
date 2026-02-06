@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.hfut.schedule.logic.model.library.BorrowedStatus
 import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryBorrowedResponse
+import com.hfut.schedule.logic.model.library.LibrarySearchBean
 import com.hfut.schedule.logic.model.library.LibrarySearchResponse
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.model.library.LibraryStatusResponse
@@ -87,15 +88,13 @@ object LibraryRepository {
     } catch (e : Exception) { throw e }
 
     suspend fun search(
-        token : String,
         page : Int,
         keyword : String,
-        holder : StateHolder<LibrarySearchResponse>
+        holder : StateHolder<List<LibrarySearchBean>>
     ) = launchRequestState(
         holder = holder,
         request = {
             library.search(
-                token,
                 LibraryService.BookSearchRequest(
                     page,
                     listOf(
@@ -110,8 +109,8 @@ object LibraryRepository {
         transformSuccess = { _,json -> parseSearch(json) }
     )
     @JvmStatic
-    private fun parseSearch(json : String) : LibrarySearchResponse = try {
-        Gson().fromJson(json, LibrarySearchResponse::class.java)
+    private fun parseSearch(json : String) : List<LibrarySearchBean> = try {
+        Gson().fromJson(json, LibrarySearchResponse::class.java).data.rows
     } catch (e : Exception) { throw e }
 }
 

@@ -1,12 +1,19 @@
 package com.hfut.schedule.logic.model.library
 
 data class LibrarySearchResponse(
+    val data : LibrarySearchRows
+)
+
+data class LibrarySearchRows(
+    val rows : List<LibrarySearchBean>
+)
+
+data class LibrarySearchBean(
     val categoryPath : List<String>,
     val publishers : String,
     val year : Int,
     val title : String,
-    val abstract : String,
-//    val language : String,
+    val abstract : String?,
     /**
      * 点击量
      */
@@ -16,7 +23,7 @@ data class LibrarySearchResponse(
     /**
      * 来源
      */
-    val ds : List<LibrarySearchBean>,
+    val ds : List<LibrarySearchOrigin>,
     /**
      * 机构
      */
@@ -27,7 +34,7 @@ data class LibrarySearchResponse(
     val gc : List<LibrarySearchPositionBean>
 )
 
-data class LibrarySearchBean(
+data class LibrarySearchOrigin(
     val tName : String,
 )
 

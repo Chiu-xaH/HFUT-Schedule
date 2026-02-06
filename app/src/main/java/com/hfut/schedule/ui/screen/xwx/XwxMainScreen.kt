@@ -387,7 +387,6 @@ private fun LoginUI(vm : XwxViewModel, navHostController: NavHostController) {
             }
         }
     }
-
 }
 
 

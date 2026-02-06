@@ -13,11 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,7 +41,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,16 +53,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.library.BorrowedStatus
-import com.hfut.schedule.logic.model.library.LibraryBorrowedBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
-import com.hfut.schedule.logic.network.util.StatusCode
-import com.hfut.schedule.logic.network.util.isNotBadRequest
-import com.hfut.schedule.logic.util.network.state.CONNECTION_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.TIMEOUT_ERROR_CODE
-import com.hfut.schedule.logic.util.network.state.UNKNOWN_ERROR_CODE
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
@@ -78,19 +73,17 @@ import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -102,7 +95,6 @@ import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
-import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
@@ -111,7 +103,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 enum class LibraryBarItems(val page : Int) {
-    SEARCH_BOOK(0),SEARCH_ALL(1),MINE(2)
+    SEARCH(0),MINE(2)
 }
 
 private val items = listOf(
@@ -122,18 +114,21 @@ private val items = listOf(
         R.drawable.person_filled,
     ),
     NavigationBarItemData(
-        LibraryBarItems.SEARCH_BOOK.name,
-        "馆藏",
-        R.drawable.book_5,
-        R.drawable.book_5_filled,
-    ),
-    NavigationBarItemData(
-        LibraryBarItems.SEARCH_ALL.name,
-        "斛兵知搜",
+        LibraryBarItems.SEARCH.name,
+        "搜索",
         R.drawable.search,
         R.drawable.search_filled,
-    )
+    ),
+//    NavigationBarItemData(
+//        LibraryBarItems.SEARCH_ALL.name,
+//        "斛兵知搜",
+//        R.drawable.search,
+//        R.drawable.search_filled,
+//    )
 )
+
+private const val TAB_PAGE_COMMUNITY = 0
+private const val TAB_PAGE_LIBRARY = 1
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -149,8 +144,8 @@ fun LibraryScreen(
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(libraryNavController.currentRouteWithoutArgs()) {
-        LibraryBarItems.SEARCH_ALL.name ->LibraryBarItems.SEARCH_ALL
-        LibraryBarItems.SEARCH_BOOK.name -> LibraryBarItems.SEARCH_BOOK
+        LibraryBarItems.SEARCH.name ->LibraryBarItems.SEARCH
+//        LibraryBarItems.SEARCH_BOOK.name -> LibraryBarItems.SEARCH_BOOK
         else -> LibraryBarItems.MINE
     }
     // 保存上一页页码 用于决定左右动画
@@ -159,7 +154,11 @@ fun LibraryScreen(
             currentPage = targetPage.page
         }
     }
+    var inputKeyword by remember { mutableStateOf("") }
 
+    val scope = rememberCoroutineScope()
+    var pageState = rememberPagerState { 2 }
+    val titles = remember { listOf("智慧社区","斛兵知搜") }
 
     CustomTransitionScaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -177,6 +176,42 @@ fun LibraryScreen(
                         TopBarNavigationIcon(route, AppNavRoute.Library.icon)
                     },
                 )
+                if(targetPage != LibraryBarItems.MINE) {
+                    CustomTabRow(pageState,titles)
+                    CustomTextField(
+                        input = inputKeyword,
+                        label = { Text(
+                            when(pageState.currentPage) {
+                                TAB_PAGE_LIBRARY -> {
+                                    "搜索馆藏与电子书"
+                                }
+                                else -> {
+                                    "搜索馆藏"
+                                }
+                            }
+                        ) },
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        when(pageState.currentPage) {
+                                            TAB_PAGE_COMMUNITY -> {
+
+                                            }
+                                            TAB_PAGE_LIBRARY -> {
+
+                                            }
+                                        }
+                                    }
+                                }) {
+                                Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+                            }
+                        },
+                    ) {
+                        inputKeyword = it
+                    }
+                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                }
             }
         },
         bottomBar = {
@@ -191,16 +226,26 @@ fun LibraryScreen(
             exitTransition = { animation.exit },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
-            composable(LibraryBarItems.SEARCH_ALL.name) {
+            composable(LibraryBarItems.SEARCH.name) {
                 Column (modifier = Modifier.fillMaxSize()) {
-                    LibrarySearchUI(vm,innerPadding)
+                    HorizontalPager(pageState) { pager ->
+                        when(pager) {
+                            TAB_PAGE_COMMUNITY -> BookSearchUI(vm,hazeState,innerPadding,inputKeyword)
+                            TAB_PAGE_LIBRARY -> LibrarySearchUI(vm,innerPadding,inputKeyword)
+                        }
+                    }
                 }
             }
-            composable(LibraryBarItems.SEARCH_BOOK.name) {
-                Column (modifier = Modifier.fillMaxSize()){
-                    BookSearchUI(vm,hazeState,innerPadding)
-                }
-            }
+//            composable(LibraryBarItems.SEARCH_ALL.name) {
+//                Column (modifier = Modifier.fillMaxSize()) {
+//                    LibrarySearchUI(vm,innerPadding)
+//                }
+//            }
+//            composable(LibraryBarItems.SEARCH_BOOK.name) {
+//                Column (modifier = Modifier.fillMaxSize()){
+//                    BookSearchUI(vm,hazeState,innerPadding)
+//                }
+//            }
             composable(LibraryBarItems.MINE.name) {
                 Column (modifier = Modifier
                     .fillMaxSize()
@@ -216,7 +261,7 @@ fun LibraryScreen(
         }
     }
 }
-private val seatUrl = MyApplication.LIBRARY_SEAT + "home/web/f_second"
+private const val seatUrl = MyApplication.LIBRARY_SEAT + "home/web/f_second"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -224,9 +269,9 @@ fun BookSearchUI(
     vm: NetWorkViewModel,
     hazeState: HazeState,
     innerPadding : PaddingValues,
+    inputKeyword : String,
 ) {
-    var startUse by remember { mutableStateOf(false) }
-    var input by remember { mutableStateOf("") }
+//    var startUse by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf("地点") }
     var callNum by remember { mutableStateOf<String>("") }
     var page by remember { mutableIntStateOf(1) }
@@ -234,19 +279,19 @@ fun BookSearchUI(
     val refreshNetwork : suspend () -> Unit = {
         prefs.getString("TOKEN","")?.let {
             vm.libraryData.clear()
-            vm.searchBooks(it,input,page)
-            startUse = true
+            vm.searchBooks(it,inputKeyword,page)
+//            startUse = true
         }
     }
 
     LaunchedEffect(Unit) {
         vm.libraryData.emitPrepare()
     }
-    LaunchedEffect(page) {
-        if(startUse)
+    LaunchedEffect(page,inputKeyword) {
+//        if(startUse)
             refreshNetwork()
     }
-    val scope = rememberCoroutineScope()
+
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
         HazeBottomSheet (
@@ -262,90 +307,55 @@ fun BookSearchUI(
         }
     }
 
-    val searchBar = @Composable {
-        Column {
-            CustomTextField(
-                input = input,
-                label = { Text("搜索馆藏" ) },
-                trailingIcon = {
-                    IconButton(
-                        onClick = {
-                            scope.launch { refreshNetwork() }
-                        }) {
-                        Icon(painter = painterResource(R.drawable.search), contentDescription = "description")
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
+        val books = (uiState as UiState.Success).data
+        val listState = rememberLazyListState()
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(state = listState) {
+                item { InnerPaddingHeight(innerPadding,true) }
+                items (books.size){ index ->
+                    val item = books[index]
+                    val name = item.name
+                    val callNo = item.callNumber
+                    AnimationCustomCard(
+                        containerColor = cardNormalColor(),
+                        index = index,
+                        modifier = Modifier.clickable {
+                            title = name
+                            callNum = callNo
+                            showBottomSheet = true
+                        }
+                    ) {
+                        TransplantListItem(
+                            headlineContent = { Text(text = name,fontWeight = FontWeight.Bold) },
+                            supportingContent = { Text(text = "索书号 $callNo") },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(AppNavRoute.Library.icon),
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                        )
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { item.author?.let { Text(text = it) } },
+                            supportingContent = {Text(text = item.year +  "  " + item.publisher) },
+                            leadingContent = {
+                                Icon(
+                                    painterResource(R.drawable.person),
+                                    contentDescription = "Localized description",
+                                )
+                            }
+                        )
                     }
-                },
-            ) { input = it }
-            Spacer(Modifier.height(CARD_NORMAL_DP))
+                }
+                item { InnerPaddingHeight(innerPadding,false) }
+                item { PaddingForPageControllerButton() }
+            }
+            PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
         }
     }
-//    Column {
-        CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)) {
-                Box(
-                    modifier = Modifier.align(Alignment.TopCenter)
-                ) {
-                    searchBar()
-                }
-                Box(
-                    modifier = Modifier.align(Alignment.Center)
-                ) {
-                    PrepareSearchIcon()
-                }
-            }
-        }) {
-            val books = (uiState as UiState.Success).data
-            val listState = rememberLazyListState()
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(state = listState) {
-                    item { InnerPaddingHeight(innerPadding,true) }
-                    item { searchBar() }
-                    items (books.size){ index ->
-                        val item = books[index]
-                        val name = item.name
-                        val callNo = item.callNumber
-                        AnimationCustomCard(
-                            containerColor = cardNormalColor(),
-                            index = index,
-                            modifier = Modifier.clickable {
-                                title = name
-                                callNum = callNo
-                                showBottomSheet = true
-                            }
-                        ) {
-                            TransplantListItem(
-                                headlineContent = { Text(text = name,fontWeight = FontWeight.Bold) },
-                                supportingContent = { Text(text = "索书号 $callNo") },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(AppNavRoute.Library.icon),
-                                        contentDescription = "Localized description",
-                                    )
-                                }
-                            )
-                            PaddingHorizontalDivider()
-                            TransplantListItem(
-                                headlineContent = { item.author?.let { Text(text = it) } },
-                                supportingContent = {Text(text = item.year +  "  " + item.publisher) },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.person),
-                                        contentDescription = "Localized description",
-                                    )
-                                }
-                            )
-                        }
-                    }
-                    item { InnerPaddingHeight(innerPadding,false) }
-                    item { PaddingForPageControllerButton() }
-                }
-                PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
-            }
-        }
-//    }
 }
 
 
@@ -554,30 +564,30 @@ fun LibraryMineUI(
                             Text("搜索图书馆中的纸质书本")
                         },
                         headlineContent = {
-                            Text("馆藏")
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.book_5),null)
-                        },
-                        modifier = Modifier.clickable {
-                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH_BOOK.name)
-                        }
-                    )
-                    PaddingHorizontalDivider()
-                    TransplantListItem(
-                        headlineContent = {
-                            Text("斛兵知搜")
-                        },
-                        supportingContent = {
-                            Text("搜索电子图书馆中的所有资料")
+                            Text("搜索")
                         },
                         leadingContent = {
                             Icon(painterResource(R.drawable.search),null)
                         },
                         modifier = Modifier.clickable {
-                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH_ALL.name)
+                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH.name)
                         }
                     )
+//                    PaddingHorizontalDivider()
+//                    TransplantListItem(
+//                        headlineContent = {
+//                            Text("斛兵知搜")
+//                        },
+//                        supportingContent = {
+//                            Text("搜索电子图书馆中的所有资料")
+//                        },
+//                        leadingContent = {
+//                            Icon(painterResource(R.drawable.search),null)
+//                        },
+//                        modifier = Modifier.clickable {
+//                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH_ALL.name)
+//                        }
+//                    )
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
@@ -680,7 +690,6 @@ fun LibraryMineUI(
                     )
                 }
             }
-
             InnerPaddingHeight(innerPadding,false)
         }
     }
@@ -690,31 +699,55 @@ fun LibraryMineUI(
 @Composable
 fun LibrarySearchUI(
     vm: NetWorkViewModel,
-    innerPadding: PaddingValues
+    innerPadding: PaddingValues,
+    inputKeyword : String,
 ) {
-
-    /* https://lib.hfut.edu.cn/svc/space/mate/search
-    POST
-    Content-Type:application/json
-    {
-  "page": 1,
-  "size" : 1,
-  "sort": 0,
-  "conditions": [
-    {
-      "value": "android艺术探索"
+//    var startUse by remember { mutableStateOf(false) }
+    var page by remember { mutableIntStateOf(1) }
+    val uiState by vm.librarySearchResp.state.collectAsState()
+    val refreshNetwork : suspend () -> Unit = {
+        vm.librarySearchResp.clear()
+        vm.searchLibrary(inputKeyword,page)
+//        startUse = true
     }
-  ],
-  "source": {
-    "Cats": [
-      "wgdzs",
-      "gczzts"
-    ]
-  },
-}
-     */
-    CenterScreen {
-        DevelopingIcon()
+
+//    LaunchedEffect(Unit) {
+//        vm.libraryData.emitPrepare()
+//    }
+    LaunchedEffect(page,inputKeyword) {
+//        if(startUse)
+            refreshNetwork()
+    }
+
+    CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
+        val books = (uiState as UiState.Success).data
+        val listState = rememberLazyListState()
+
+        Box(modifier = Modifier.fillMaxSize()) {
+            LazyColumn(state = listState) {
+                item { InnerPaddingHeight(innerPadding,true) }
+                items (books.size){ index ->
+                    val item = books[index]
+                    CardListItem(
+                        headlineContent = {
+                            Text(item.title.removeHtmlTags())
+                        },
+                        supportingContent = {
+                            item.abstract?.removeHtmlTags()?.let { Text(it) }
+                        },
+                        leadingContent = {
+                            Icon(painterResource(R.drawable.book_5),null)
+                        },
+
+                    )
+                }
+                item { InnerPaddingHeight(innerPadding,false) }
+                item { PaddingForPageControllerButton() }
+            }
+            PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, modifier = Modifier.padding(innerPadding), paddingBottom = false)
+        }
     }
 }
 
+
+fun String.removeHtmlTags(): String = this.replace("<[^>]*>".toRegex() , "")

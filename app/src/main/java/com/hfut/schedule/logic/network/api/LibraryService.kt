@@ -54,7 +54,6 @@ interface LibraryService {
     @POST("svc/space/mate/search")
     @Headers("Content-Type: application/json")
     fun search(
-        @Header("authorization") auth : String,
         @Body body : BookSearchRequest
     ) : Call<ResponseBody>
 }

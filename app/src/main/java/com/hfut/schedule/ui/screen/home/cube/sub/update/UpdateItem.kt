@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-02-03") },
+                overlineContent = { Text(text = "2026-02-04") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -59,7 +59,9 @@ fun VersionInfo() {
 
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
 //            UpdateItems("新增 图书馆我的书架、收藏、斛兵知搜","位于 查询中心-图书馆")
-            UpdateItems("新增 图书馆-斛兵知搜","位于 查询中心-图书馆")
+            UpdateItems("新增 图书馆-斛兵知搜","位于 查询中心-图书馆")//
+            UpdateItems("修复 教室课表多教师时出现异常显示的Bug")//TODO
+            UpdateItems("修复 空教室点击某时间轴方块崩溃的Bug")//
             UpdateItems("新增 长按左上角返回按钮支持启动台的部分功能")//
             UpdateItems("新增 英文语言部分适配")
             UpdateItems("优化 教室课程表与其余课程表功能的统一性")//

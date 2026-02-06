@@ -26,7 +26,7 @@ data class UniAppEmptyClassroomLesson(
     val endTimeString : String,
     val activityType : String,
     val activityName : String,
-    val teacherName : String
+    val teacherName : String?
 )
 
 data class UniAppEmptyClassroomRequest(
