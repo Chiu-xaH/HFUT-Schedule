@@ -48,7 +48,7 @@ interface LibraryService {
     ) : Call<ResponseBody>
 
 
-    data class BookSearchRequest(val page : Int, val conditions : List<BookSearchRequestKeywordBean>, val source : BookSearchRequestSourceBean?, val size : Int = getPageSize(), val sort : Int = 0)
+    data class BookSearchRequest(val page : Int, val conditions : List<BookSearchRequestKeywordBean>, val source : BookSearchRequestSourceBean?, val size : Int = getPageSize(), val sort : Int = 1)
     data class BookSearchRequestKeywordBean(val value : String)
     data class BookSearchRequestSourceBean(val Cats : List<String>)
     @POST("svc/space/mate/search")
