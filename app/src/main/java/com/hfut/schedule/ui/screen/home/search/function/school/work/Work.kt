@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -26,6 +27,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -79,6 +81,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -118,26 +121,23 @@ fun WorkScreen(
     val route = remember { AppNavRoute.Work.route }
     val backDrop = rememberLayerBackdrop()
     var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
-
-    val types = remember { listOf(
-        WorkSearchType.ALL,
-        WorkSearchType.JOB_FAIR,
-        WorkSearchType.JOB_FAIR_COMPANY,
-        WorkSearchType.PRESENTATION,
-        WorkSearchType.ONLINE_RECRUITMENT,
-        WorkSearchType.POSITION,
-        WorkSearchType.ANNOUNCEMENT
-    ) }
+    val types = remember { WorkSearchType.entries }
     val pagerState = rememberPagerState(pageCount = { types.size })
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
+    var input by remember { mutableStateOf("") }
+    val refreshNetwork: suspend (Int,Int) -> Unit =  { currentPage,page ->
+        vm.workSearchResult.clear()
+        vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
+    }
+
     CustomTransitionScaffold (
         route = route,
         navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column (
-                modifier = Modifier.topBarBlur(hazeState, ),
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
@@ -189,6 +189,30 @@ fun WorkScreen(
                     }
                 )
                 CustomTabRow(pagerState,types.fastMap { it.description })
+                CustomTextField(
+                    input = input,
+                    label = { Text("搜索") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = APP_HORIZONTAL_DP)
+                        .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
+                    trailingIcon = { IconButton(
+                        onClick = { scope.launch { refreshNetwork(1,pagerState.currentPage) } }
+                    ) { Icon(painterResource(R.drawable.search),null) } },
+//                    leadingIcon = if(!(input.isEmpty() || input.isBlank())) {
+//                        {
+//                            IconButton(
+//                                onClick = {
+//                                    scope.launch {
+//                                        input = ""
+//                                        refreshNetwork()
+//                                    }
+//                                }
+//                            ) { Icon(painterResource(R.drawable.close),null) }
+//                        }
+//                    } else null
+                ) { input = it }
+                Spacer(Modifier.height(CARD_NORMAL_DP))
             }
         },
     ) { innerPadding ->
@@ -198,10 +222,9 @@ fun WorkScreen(
                 .hazeSource(hazeState)
                 .fillMaxSize()
         ) {
-            WorkSearchUI(vm,campus,pagerState,innerPadding,navController)
+            WorkSearchUI(vm,campus,pagerState,innerPadding,refreshNetwork)
         }
     }
-//    }
 }
 // 模范写法
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterialApi::class)
@@ -212,54 +235,32 @@ private fun WorkSearchUI(
     campus: CampusRegion,
     pagerState : PagerState,
     innerPadding : PaddingValues,
-    navController : NavHostController,
+//    input : String,
+    refreshNetwork: suspend (Int,Int) -> Unit
 ) {
-    var input by remember { mutableStateOf("") }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     HorizontalPager(state = pagerState) { page ->
         val uiState by vm.workSearchResult.state.collectAsState()
-        var currentPage by rememberSaveable { mutableIntStateOf(1) }
-        val refreshNetwork: suspend () -> Unit =  {
-            vm.workSearchResult.clear()
-            vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
-        }
+        var currentPage by remember { mutableIntStateOf(1) }
+//        val refreshNetwork: suspend () -> Unit =  {
+//            vm.workSearchResult.clear()
+//            vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
+//        }
 
         LaunchedEffect(currentPage,campus) {
             // 避免旧数据影响
-            refreshNetwork()
+            refreshNetwork(currentPage,page)
         }
-        val context = LocalContext.current
 
-        CommonNetworkScreen(uiState, onReload = { refreshNetwork() }) {
+        CommonNetworkScreen(uiState, onReload = { refreshNetwork(currentPage,page) }) {
             val response = (uiState as UiState.Success).data
             val repos = response.data
             val listState = rememberLazyListState()
             Box(modifier = Modifier.fillMaxSize()) {
                 LazyColumn(state = listState) {
                     item { InnerPaddingHeight(innerPadding,true) }
-                    item {
-                        CustomTextField(
-                            input = input,
-                            label = { Text("搜索") },
-                            trailingIcon = { IconButton(
-                                onClick = { scope.launch { refreshNetwork() } }
-                            ) { Icon(painterResource(R.drawable.search),null) } },
-                            leadingIcon = if(!(input.isEmpty() || input.isBlank())) {
-                                {
-                                    IconButton(
-                                        onClick = {
-                                            scope.launch {
-                                                input = ""
-                                                refreshNetwork()
-                                            }
-                                        }
-                                    ) { Icon(painterResource(R.drawable.close),null) }
-                                }
-                            } else null
-                        ) { input = it }
-                        Spacer(Modifier.height(CARD_NORMAL_DP))
-                    }
                     items(repos.size, key = { it }) { index ->
                         with(repos[index]) {
                             val enumType = when(type) {
@@ -277,7 +278,6 @@ private fun WorkSearchUI(
                                 } + "detail/" + enumType.url +  id
                                 AnimationCardListItem(
                                     color = cardNormalColor(),
-//                                    cardModifier = containerShare(animatedContentScope=animatedContentScope, route = AppNavRoute.WebView.shareRoute(url)),
                                     headlineContent = { Text(title) },
                                     overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
                                     index = index,
@@ -288,7 +288,6 @@ private fun WorkSearchUI(
                                     },
                                     leadingContent = { Text((index+1).toString()) }
                                 )
-//                            }
                         }
                     }
                     item { PaddingForPageControllerButton() }

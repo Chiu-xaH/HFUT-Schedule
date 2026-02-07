@@ -10,7 +10,7 @@ data class LibrarySearchRows(
 
 data class LibrarySearchBean(
     val categoryPath : List<String>,
-    val publishers : String,
+    val publishers : String?,
     val year : Int,
     val title : String,
     val abstract : String?,
@@ -23,15 +23,11 @@ data class LibrarySearchBean(
     /**
      * 来源
      */
-    val ds : List<LibrarySearchOrigin>,
-    /**
-     * 机构
-     */
-    val unit : List<String>,
+    val ds : List<LibrarySearchOrigin>?,
     /**
      * 位置
      */
-    val gc : List<LibrarySearchPositionBean>
+    val gc : List<LibrarySearchPositionBean>?
 )
 
 data class LibrarySearchOrigin(
@@ -47,5 +43,8 @@ data class LibrarySearchPositionBean(
      * 索书号
      */
     val `in` : String,
-
+    /**
+     * 状态
+     */
+    val js : String?
 )

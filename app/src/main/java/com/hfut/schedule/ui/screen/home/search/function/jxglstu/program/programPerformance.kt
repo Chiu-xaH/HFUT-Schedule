@@ -67,9 +67,12 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -96,30 +99,29 @@ fun ProgramCompetitionScreen(
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CustomTransitionScaffold (
-            roundShape = MaterialTheme.shapes.large,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.ProgramCompetition.label)) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.ProgramCompetition.icon)
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState).fillMaxSize()
-            ) {
-                ProgramPerformance(vm,ifSaved,innerPadding,navController)
-            }
+    CustomTransitionScaffold (
+        roundShape = MaterialTheme.shapes.large,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        route = route,
+        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(stringResource(AppNavRoute.ProgramCompetition.label)) },
+                navigationIcon = {
+                    TopBarNavigationIcon(route, AppNavRoute.ProgramCompetition.icon)
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+        ) {
+            ProgramPerformance(vm,ifSaved,innerPadding,navController)
         }
+    }
 //    }
 }
 
@@ -314,69 +316,70 @@ fun ProgramCompetitionDetailScreen(
     var input by remember { mutableStateOf("") }
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val backDrop = rememberLayerBackdrop()
 
-        CustomTransitionScaffold (
-            roundShape = MaterialTheme.shapes.medium,
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                Column(
-                    modifier = Modifier.topBarBlur(hazeState),
-                ) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(title) },
-                        navigationIcon = {
-                            TopBarNavigationIcon()
-                        },
-                    )
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = input,
-                            onValueChange = {
-                                input = it
-                            },
-                            label = { Text("课程代码 或 课程名") },
-                            singleLine = true,
-                            trailingIcon = {
-                                IconButton(
-                                    onClick = {
-                                        // TODO
-                                    }) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.search),
-                                        contentDescription = "description"
-                                    )
-                                }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant()
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                }
-
-            },
-        ) { innerPadding ->
+    CustomTransitionScaffold (
+        roundShape = MaterialTheme.shapes.medium,
+        route = route,
+        navHostController = navController,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
             Column(
-                modifier = Modifier
-//                    .padding(innerPadding)
-                    .hazeSource(hazeState)
-                    .fillMaxSize()
+                modifier = Modifier.topBarBlur(hazeState),
             ) {
-                PerformanceInfo(vm,moduleIndex,hazeState,innerPadding,input)
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(title) },
+                    navigationIcon = {
+                        TopBarNavigationIcon()
+                    },
+                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                        ,
+                        value = input,
+                        onValueChange = {
+                            input = it
+                        },
+                        label = { Text("课程代码 或 课程名") },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
+                                    // TODO
+                                }) {
+                                Icon(
+                                    painter = painterResource(R.drawable.search),
+                                    contentDescription = "description"
+                                )
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant()
+                    )
+                }
+                Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
             }
+
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .hazeSource(hazeState)
+                .backDropSource(backDrop)
+                .fillMaxSize()
+        ) {
+            PerformanceInfo(vm,moduleIndex,hazeState,innerPadding,input)
         }
-//    }
+    }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

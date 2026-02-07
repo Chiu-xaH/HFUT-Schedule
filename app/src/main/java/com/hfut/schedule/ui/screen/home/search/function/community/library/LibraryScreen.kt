@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -55,6 +57,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.model.library.BorrowedStatus
+import com.hfut.schedule.logic.model.library.LibrarySearchPositionBean
 import com.hfut.schedule.logic.model.library.LibraryStatus
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -62,11 +65,15 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
+import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardBottomButton
+import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -85,16 +92,20 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
+import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
@@ -155,7 +166,7 @@ fun LibraryScreen(
         }
     }
     var inputKeyword by remember { mutableStateOf("") }
-
+    val backDrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
     var pageState = rememberPagerState { 2 }
     val titles = remember { listOf("智慧社区","斛兵知搜") }
@@ -179,6 +190,10 @@ fun LibraryScreen(
                 if(targetPage != LibraryBarItems.MINE) {
                     CustomTabRow(pageState,titles)
                     CustomTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .containerBackDrop(backDrop, MaterialTheme.shapes.medium),
                         input = inputKeyword,
                         label = { Text(
                             when(pageState.currentPage) {
@@ -224,14 +239,16 @@ fun LibraryScreen(
             startDestination = LibraryBarItems.MINE.name,
             enterTransition = { animation.enter },
             exitTransition = { animation.exit },
-            modifier = Modifier.hazeSource(state = hazeState)
+            modifier = Modifier
+                .hazeSource(state = hazeState)
+                .backDropSource(backDrop)
         ) {
             composable(LibraryBarItems.SEARCH.name) {
                 Column (modifier = Modifier.fillMaxSize()) {
                     HorizontalPager(pageState) { pager ->
                         when(pager) {
                             TAB_PAGE_COMMUNITY -> BookSearchUI(vm,hazeState,innerPadding,inputKeyword)
-                            TAB_PAGE_LIBRARY -> LibrarySearchUI(vm,innerPadding,inputKeyword)
+                            TAB_PAGE_LIBRARY -> LibrarySearchUI(vm,innerPadding,inputKeyword,hazeState)
                         }
                     }
                 }
@@ -340,7 +357,7 @@ fun BookSearchUI(
                         PaddingHorizontalDivider()
                         TransplantListItem(
                             headlineContent = { item.author?.let { Text(text = it) } },
-                            supportingContent = {Text(text = item.year +  "  " + item.publisher) },
+                            supportingContent = {Text(text = "${item.year}  ${item.publisher}" ) },
                             leadingContent = {
                                 Icon(
                                     painterResource(R.drawable.person),
@@ -457,8 +474,13 @@ fun LibraryMineUI(
             refreshNetwork(false)
         }
     })
-    Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
-        RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .pullRefresh(pullRefreshState)) {
+        RefreshIndicator(refreshing, pullRefreshState, Modifier
+            .align(Alignment.TopCenter)
+            .zIndex(1f)
+            .padding(innerPadding))
         Column(modifier = Modifier.verticalScroll(scrollState)) {
             InnerPaddingHeight(innerPadding,true)
             DividerTextExpandedWith("状态",openBlurAnimation = false) {
@@ -487,8 +509,12 @@ fun LibraryMineUI(
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
-                                    if(!loading) {
-                                        navController.navigateForTransition(AppNavRoute.LibraryBorrowed, AppNavRoute.LibraryBorrowed.route,transplantBackground = true)
+                                    if (!loading) {
+                                        navController.navigateForTransition(
+                                            AppNavRoute.LibraryBorrowed,
+                                            AppNavRoute.LibraryBorrowed.route,
+                                            transplantBackground = true
+                                        )
                                     }
                                 }
                         )
@@ -502,8 +528,12 @@ fun LibraryMineUI(
                                 modifier = Modifier
                                     .weight(0.5f)
                                     .clickable {
-                                        if(!loading) {
-                                            navController.navigateForTransition(AppNavRoute.LibraryBorrowed, AppNavRoute.LibraryBorrowed.route,transplantBackground = true)
+                                        if (!loading) {
+                                            navController.navigateForTransition(
+                                                AppNavRoute.LibraryBorrowed,
+                                                AppNavRoute.LibraryBorrowed.route,
+                                                transplantBackground = true
+                                            )
                                         }
                                     }
                             )
@@ -517,7 +547,7 @@ fun LibraryMineUI(
                                 modifier = Modifier
                                     .weight(0.5f)
                                     .clickable {
-                                        if(!loading) {
+                                        if (!loading) {
                                             showToast("正在开发")
                                         }
                                     }
@@ -534,7 +564,7 @@ fun LibraryMineUI(
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
-                                    if(!loading) {
+                                    if (!loading) {
                                         showToast("正在开发")
                                     }
                                 }
@@ -548,7 +578,7 @@ fun LibraryMineUI(
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
-                                    if(!loading) {
+                                    if (!loading) {
                                         showToast("正在开发")
                                     }
                                 }
@@ -701,6 +731,7 @@ fun LibrarySearchUI(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
     inputKeyword : String,
+    hazeState: HazeState
 ) {
 //    var startUse by remember { mutableStateOf(false) }
     var page by remember { mutableIntStateOf(1) }
@@ -718,6 +749,45 @@ fun LibrarySearchUI(
 //        if(startUse)
             refreshNetwork()
     }
+    var detailBean: List<LibrarySearchPositionBean>? by remember { mutableStateOf(null) }
+    var title by remember { mutableStateOf("详情") }
+
+    var showBottomSheet by remember { mutableStateOf(false) }
+    if (showBottomSheet && detailBean != null) {
+        HazeBottomSheet (
+            onDismissRequest = { showBottomSheet = false },
+            hazeState = hazeState,
+            showBottomSheet = showBottomSheet,
+            autoShape = false
+        ) {
+            Column {
+                HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
+                LazyColumn {
+                    items(detailBean!!.size,key = { it }) { index ->
+                        val item = detailBean!![index]
+                        CardListItem(
+                            headlineContent = {
+                                Text(item.`in`)
+                            },
+                            leadingContent = {
+                                Icon(painterResource(R.drawable.near_me),null)
+                            },
+                            supportingContent = {
+                                Text("索书号 ${item.cp}")
+                            },
+                            trailingContent = {
+                                item.js?.let { Text(it) }
+                            }
+                        )
+                    }
+                    item {
+                        Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
+                    }
+                }
+                // 位置:${item.gc?.joinToString(","){ "位置${it.cp} 索书号${it.`in`}" }
+            }
+        }
+    }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
         val books = (uiState as UiState.Success).data
@@ -728,18 +798,90 @@ fun LibrarySearchUI(
                 item { InnerPaddingHeight(innerPadding,true) }
                 items (books.size){ index ->
                     val item = books[index]
-                    CardListItem(
-                        headlineContent = {
-                            Text(item.title.removeHtmlTags())
-                        },
-                        supportingContent = {
-                            item.abstract?.removeHtmlTags()?.let { Text(it) }
-                        },
-                        leadingContent = {
-                            Icon(painterResource(R.drawable.book_5),null)
-                        },
 
-                    )
+                    CustomCard(
+                        color = cardNormalColor(),
+                        modifier = Modifier.clickable {
+                            detailBean = item.gc
+                            showBottomSheet = true
+                        }
+                    ) {
+                        Column {
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text(item.title.removeHtmlTags())
+                                },
+                                supportingContent = {
+                                    Text("ISBN ${item.isbn}")
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.book_5),null)
+                                }
+                            )
+                            PaddingHorizontalDivider()
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text(item.author.joinToString(","))
+                                },
+                                supportingContent = {
+                                    Text("${item.year} ${item.publishers}")
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.person),null)
+                                }
+                            )
+                            PaddingHorizontalDivider()
+                            TransplantListItem(
+                                headlineContent = {
+                                    Text("${item.ds?.joinToString(","){ it.tName }}")
+                                },
+                                supportingContent = {
+                                    item.abstract?.removeHtmlTags()?.let { Text(it) }
+                                },
+                                leadingContent = {
+                                    Icon(painterResource(R.drawable.info),null)
+                                }
+                            )
+                            CardBottomButtons(listOf(
+                                CardBottomButton(
+                                    show = true,
+                                    text = "加入书架",
+                                    clickable = {
+                                        showDevelopingToast()
+                                    }
+                                ),
+                                CardBottomButton(
+                                    show = true,
+                                    text = "收藏",
+                                    clickable = {
+                                        showDevelopingToast()
+                                    }
+                                ),
+                                CardBottomButton(
+                                    show = true,
+                                    text = "阅读",
+                                    clickable = {
+                                        showDevelopingToast()
+                                    }
+                                ),
+                                CardBottomButton(
+                                    show = true,
+                                    text = "预约",
+                                    clickable = {
+                                        showDevelopingToast()
+                                    }
+                                ),
+                                CardBottomButton(
+                                    show = true,
+                                    text = "详情",
+                                    clickable = {
+                                        detailBean = item.gc
+                                        showBottomSheet = true
+                                    }
+                                ),
+                            ))
+                        }
+                    }
                 }
                 item { InnerPaddingHeight(innerPadding,false) }
                 item { PaddingForPageControllerButton() }

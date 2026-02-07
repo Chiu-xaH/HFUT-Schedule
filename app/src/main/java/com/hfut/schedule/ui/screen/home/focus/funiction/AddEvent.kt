@@ -101,6 +101,8 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardBottomButton
@@ -130,6 +132,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
@@ -243,9 +246,10 @@ fun AddEventScreen(
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
+    val backDrop = rememberLayerBackdrop()
 
 
-    if(showDialog)
+    if(showDialog) {
         LittleDialog(
             onDismissRequest = { showDialog = false },
             onConfirmation = {
@@ -263,6 +267,7 @@ fun AddEventScreen(
             },
             dialogText = "要删除此项吗",
         )
+    }
 
     CustomTransitionScaffold (
         route = route,
@@ -283,26 +288,38 @@ fun AddEventScreen(
                 },
                 actions = {
                     if(eventId <= 0) {
-                        FilledTonalIconButton(
+                        LiquidButton(
                             onClick = {
                                 showDevelopingToast()
-                            }
+                            },
+                            isCircle = true,
+                            backdrop = backDrop
                         ) {
                             Icon(painterResource(R.drawable.wand_stars),null)
                         }
                         if(!isSupabase) {
-                            FilledTonalButton(onClick = {
-                                Starter.startSupabase(context)
-                            }, modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
+                            LiquidButton(
+                                onClick = {
+                                    Starter.startSupabase(context)
+                                },
+                                modifier = Modifier
+                                    .padding(end = APP_HORIZONTAL_DP)
+                                    .padding(start = BUTTON_PADDING)
+                                ,
+                                isCircle = true,
+                                backdrop = backDrop
+                            ) {
                                 Icon(painterResource(R.drawable.cloud),null)
                             }
                         }
                     } else {
-                        FilledTonalIconButton(
+                        LiquidButton(
                             onClick = {
                                 showDialog = true
                             },
-                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP)
+                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                            isCircle = true,
+                            backdrop = backDrop
                         ) {
                             Icon(painterResource(R.drawable.delete),null)
                         }
