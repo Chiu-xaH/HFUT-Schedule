@@ -21,12 +21,14 @@ import com.xah.uicommon.util.language.BaseChoice
 inline fun <reified T> CustomSingleChoiceRow(
     selected: T,
     modifier: Modifier = Modifier,
+    enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
     noinline onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice =
     CustomSingleChoiceRow(
         selected.code,
         modifier,
+        enabled,
         itemShape,
         onItemSelected
     )
@@ -35,6 +37,7 @@ inline fun <reified T> CustomSingleChoiceRow(
 inline fun <reified T> CustomSingleChoiceRow(
     selected: Int,
     modifier: Modifier = Modifier,
+    enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
     noinline onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice =
@@ -42,6 +45,7 @@ inline fun <reified T> CustomSingleChoiceRow(
         enumValues<T>().toList(),
         selected,
         modifier,
+        enabled,
         itemShape,
         onItemSelected
     )
@@ -52,6 +56,7 @@ fun <T> CustomSingleChoiceRow(
     options: List<T>,
     selected: T,
     modifier: Modifier = Modifier,
+    enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
     onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice =
@@ -59,6 +64,7 @@ fun <T> CustomSingleChoiceRow(
         options,
         selected.code,
         modifier,
+        enabled,
         itemShape,
         onItemSelected
     )
@@ -71,6 +77,7 @@ fun <T> CustomSingleChoiceRow(
     options: List<T>,
     selected: Int,
     modifier: Modifier = Modifier,
+    enabled : Boolean = true,
     itemShape: CornerBasedShape = MaterialTheme.shapes.small,
     onItemSelected: (T) -> Unit
 ) where T : Enum<T>, T : BaseChoice = SingleChoiceSegmentedButtonRow(
@@ -86,6 +93,7 @@ fun <T> CustomSingleChoiceRow(
 
         // 有个缺点是不能为某一个选项单独设置宽度，如果在上面的 Row 里面指定 space 那么在下面的自定义颜色中又会导致边框堆叠
         SegmentedButton(
+            enabled = enabled,
             selected = isSelected,
             onClick = { onItemSelected(mode) },
             shape = SegmentedButtonDefaults.itemShape(
@@ -98,7 +106,13 @@ fun <T> CustomSingleChoiceRow(
                 activeContentColor = MaterialTheme.colorScheme.onPrimary,
                 activeBorderColor = MaterialTheme.colorScheme.primary,
                 // pC 描边与选中颜色背景一致，但是相邻选项之间感觉少一条线
-                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant
+                inactiveBorderColor = MaterialTheme.colorScheme.outlineVariant,
+                // 适配 enabled==false 态
+                disabledInactiveContentColor = MaterialTheme.colorScheme.outlineVariant,
+                disabledActiveContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledActiveContentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                disabledActiveBorderColor = MaterialTheme.colorScheme.secondaryContainer,
+                disabledInactiveBorderColor = MaterialTheme.colorScheme.outlineVariant,
             ),
             icon = {
                 if (!textOverflow) {

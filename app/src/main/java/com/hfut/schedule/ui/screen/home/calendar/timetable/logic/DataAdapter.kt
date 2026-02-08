@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.calendar.timetable.logic
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.google.gson.Gson
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.database.DataBaseManager
@@ -26,6 +27,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.first
 import kotlin.collections.plus
 
 // 分配20周
@@ -122,7 +126,7 @@ private suspend fun uniAppToTimeTableData(): List<List<TimeTableItem>> {
             }
         }
         // 去重
-        distinctUnit(result)
+        distinctForUniApp(result)
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
@@ -341,13 +345,7 @@ private suspend fun communityToTimeTableData(friendStudentId : String? = null) :
     } catch (e : Exception) {
         LogUtil.error(e)
     }
-    for(t in result) {
-        val uniqueItems = t.distinctBy {
-            it.name + it.place + it.dayOfWeek + it.startTime + it.endTime
-        }
-        t.clear()
-        t.addAll(uniqueItems)
-    }
+    distinctForCommunity(result)
     return result
 }
 
@@ -355,4 +353,57 @@ fun parseJxglstuIntTime(time : Int) : String {
     val hour = time / 100
     val minute = time % 100
     return "${parseTimeItem(hour)}:${parseTimeItem(minute)}"
+}
+
+
+
+private data class TimeTableItemKey(
+    val type: TimeTableType,
+    val name: String,
+    val dayOfWeek: Int,
+    val startTime: String,
+    val endTime: String,
+    val place: String?
+)
+
+fun distinctForUniApp(list: List<SnapshotStateList<TimeTableItem>>) {
+    for (weekList in list) {
+        val uniqueItems = weekList
+            .groupBy { item ->
+                // 使用自定义的 Key 类进行分组
+                TimeTableItemKey(
+                    item.type,
+                    item.name,
+                    item.dayOfWeek,
+                    item.startTime,
+                    item.endTime,
+                    item.place
+                )
+            }
+            .map { (_, items) ->
+                // 如果有多个教师，则合并
+                val teachers = items.mapNotNull { it.teacher }.distinct()
+                if (teachers.size > 1) {
+                    // 合并教师
+                    items.first().copy(teacher = teachers.joinToString(", "))
+                } else {
+                    // 只有一个教师
+                    items.first()
+                }
+            }
+
+        // 清空原列表，加入去重后的数据
+        weekList.clear()
+        weekList.addAll(uniqueItems)
+    }
+}
+
+fun distinctForCommunity(list: List<SnapshotStateList<TimeTableItem>>) {
+    for(t in list) {
+        val uniqueItems = t.distinctBy {
+            it.name + it.place + it.dayOfWeek + it.startTime + it.endTime
+        }
+        t.clear()
+        t.addAll(uniqueItems)
+    }
 }

@@ -22,7 +22,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,7 +66,6 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.AnimationCustomCard
@@ -129,13 +127,7 @@ private val items = listOf(
         "搜索",
         R.drawable.search,
         R.drawable.search_filled,
-    ),
-//    NavigationBarItemData(
-//        LibraryBarItems.SEARCH_ALL.name,
-//        "斛兵知搜",
-//        R.drawable.search,
-//        R.drawable.search_filled,
-//    )
+    )
 )
 
 private const val TAB_PAGE_COMMUNITY = 0
@@ -170,7 +162,16 @@ fun LibraryScreen(
     val scope = rememberCoroutineScope()
     var pageState = rememberPagerState { 2 }
     val titles = remember { listOf("智慧社区","斛兵知搜") }
-
+    val refreshNetworkCommunity : suspend (Int) -> Unit = { page ->
+        prefs.getString("TOKEN","")?.let {
+            vm.libraryData.clear()
+            vm.searchBooks(it,inputKeyword,page)
+        }
+    }
+    val refreshNetworkLibrary : suspend (Int) -> Unit = { page ->
+        vm.librarySearchResp.clear()
+        vm.searchLibrary(inputKeyword,page)
+    }
     CustomTransitionScaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         route = route,
@@ -211,10 +212,10 @@ fun LibraryScreen(
                                     scope.launch {
                                         when(pageState.currentPage) {
                                             TAB_PAGE_COMMUNITY -> {
-
+                                                refreshNetworkCommunity(1)
                                             }
                                             TAB_PAGE_LIBRARY -> {
-
+                                                refreshNetworkLibrary(1)
                                             }
                                         }
                                     }
@@ -247,22 +248,12 @@ fun LibraryScreen(
                 Column (modifier = Modifier.fillMaxSize()) {
                     HorizontalPager(pageState) { pager ->
                         when(pager) {
-                            TAB_PAGE_COMMUNITY -> BookSearchUI(vm,hazeState,innerPadding,inputKeyword)
-                            TAB_PAGE_LIBRARY -> LibrarySearchUI(vm,innerPadding,inputKeyword,hazeState)
+                            TAB_PAGE_COMMUNITY -> SearchScreenCommunity(vm,hazeState,innerPadding,refreshNetworkCommunity)
+                            TAB_PAGE_LIBRARY -> SearchScreenLibrary(vm,innerPadding,hazeState,refreshNetworkLibrary)
                         }
                     }
                 }
             }
-//            composable(LibraryBarItems.SEARCH_ALL.name) {
-//                Column (modifier = Modifier.fillMaxSize()) {
-//                    LibrarySearchUI(vm,innerPadding)
-//                }
-//            }
-//            composable(LibraryBarItems.SEARCH_BOOK.name) {
-//                Column (modifier = Modifier.fillMaxSize()){
-//                    BookSearchUI(vm,hazeState,innerPadding)
-//                }
-//            }
             composable(LibraryBarItems.MINE.name) {
                 Column (modifier = Modifier
                     .fillMaxSize()
@@ -282,31 +273,25 @@ private const val seatUrl = MyApplication.LIBRARY_SEAT + "home/web/f_second"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookSearchUI(
+private fun SearchScreenCommunity(
     vm: NetWorkViewModel,
     hazeState: HazeState,
     innerPadding : PaddingValues,
-    inputKeyword : String,
+    refreshNetwork : suspend (Int) -> Unit
 ) {
-//    var startUse by remember { mutableStateOf(false) }
+    var startUse by rememberSaveable { mutableStateOf(false) }
     var title by remember { mutableStateOf("地点") }
     var callNum by remember { mutableStateOf<String>("") }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.libraryData.state.collectAsState()
-    val refreshNetwork : suspend () -> Unit = {
-        prefs.getString("TOKEN","")?.let {
-            vm.libraryData.clear()
-            vm.searchBooks(it,inputKeyword,page)
-//            startUse = true
-        }
-    }
 
-    LaunchedEffect(Unit) {
-        vm.libraryData.emitPrepare()
-    }
-    LaunchedEffect(page,inputKeyword) {
-//        if(startUse)
-            refreshNetwork()
+    LaunchedEffect(page) {
+        if(startUse == false) {
+            vm.libraryData.emitPrepare()
+            startUse = true
+        } else if(uiState !is UiState.Success) {
+            refreshNetwork(page)
+        }
     }
 
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -324,7 +309,7 @@ fun BookSearchUI(
         }
     }
 
-    CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
+    CommonNetworkScreen(uiState, onReload = { refreshNetwork(page) }, prepareContent = { PrepareSearchIcon() }) {
         val books = (uiState as UiState.Success).data
         val listState = rememberLazyListState()
 
@@ -725,29 +710,25 @@ fun LibraryMineUI(
     }
 }
 
-// TODO 状态、加入书架、收藏
+// TODO 加入书架、收藏
 @Composable
-fun LibrarySearchUI(
+private fun SearchScreenLibrary(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
-    inputKeyword : String,
-    hazeState: HazeState
+    hazeState: HazeState,
+    refreshNetwork : suspend (Int) -> Unit
 ) {
-//    var startUse by remember { mutableStateOf(false) }
+    var startUse by remember { mutableStateOf(false) }
     var page by remember { mutableIntStateOf(1) }
     val uiState by vm.librarySearchResp.state.collectAsState()
-    val refreshNetwork : suspend () -> Unit = {
-        vm.librarySearchResp.clear()
-        vm.searchLibrary(inputKeyword,page)
-//        startUse = true
-    }
 
-//    LaunchedEffect(Unit) {
-//        vm.libraryData.emitPrepare()
-//    }
-    LaunchedEffect(page,inputKeyword) {
-//        if(startUse)
-            refreshNetwork()
+    LaunchedEffect(page) {
+        if(startUse == false) {
+            vm.librarySearchResp.emitPrepare()
+            startUse = true
+        } else if(uiState !is UiState.Success) {
+            refreshNetwork(page)
+        }
     }
     var detailBean: List<LibrarySearchPositionBean>? by remember { mutableStateOf(null) }
     var title by remember { mutableStateOf("详情") }
@@ -781,15 +762,16 @@ fun LibrarySearchUI(
                         )
                     }
                     item {
-                        Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
+                        Spacer(Modifier
+                            .height(APP_HORIZONTAL_DP)
+                            .navigationBarsPadding())
                     }
                 }
-                // 位置:${item.gc?.joinToString(","){ "位置${it.cp} 索书号${it.`in`}" }
             }
         }
     }
 
-    CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
+    CommonNetworkScreen(uiState, onReload = { refreshNetwork(page) }, prepareContent = { PrepareSearchIcon() }) {
         val books = (uiState as UiState.Success).data
         val listState = rememberLazyListState()
 
@@ -824,7 +806,7 @@ fun LibrarySearchUI(
                                     Text(item.author.joinToString(","))
                                 },
                                 supportingContent = {
-                                    Text("${item.year} ${item.publishers}")
+                                    Text("${item.year}" + (item.publishers?.let { " $it" } ?: ""))
                                 },
                                 leadingContent = {
                                     Icon(painterResource(R.drawable.person),null)

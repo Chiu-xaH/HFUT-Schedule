@@ -114,6 +114,7 @@ import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
+import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniApp
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuIntTime
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
@@ -1076,52 +1077,11 @@ private suspend fun uniAppToTimeTableData(targetPlace : String,list: List<UniApp
             }
         }
         // 去重
-        distinct(result)
+        distinctForUniApp(result)
         // 如果只有教师不同则合并
         return result
     } catch (e : Exception) {
         LogUtil.error(e)
         return List(MyApplication.MAX_WEEK) { emptyList<TimeTableItem>() }
-    }
-}
-
-private data class TimeTableItemKey(
-    val type: TimeTableType,
-    val name: String,
-    val dayOfWeek: Int,
-    val startTime: String,
-    val endTime: String,
-    val place: String?
-)
-
-private fun distinct(list: List<SnapshotStateList<TimeTableItem>>) {
-    for (weekList in list) {
-        val uniqueItems = weekList
-            .groupBy { item ->
-                // 使用自定义的 Key 类进行分组
-                TimeTableItemKey(
-                    item.type,
-                    item.name,
-                    item.dayOfWeek,
-                    item.startTime,
-                    item.endTime,
-                    item.place
-                )
-            }
-            .map { (_, items) ->
-                // 如果有多个教师，则合并
-                val teachers = items.mapNotNull { it.teacher }.distinct()
-                if (teachers.size > 1) {
-                    // 合并教师
-                    items.first().copy(teacher = teachers.joinToString(", "))
-                } else {
-                    // 只有一个教师
-                    items.first()
-                }
-            }
-
-        // 清空原列表，加入去重后的数据
-        weekList.clear()
-        weekList.addAll(uniqueItems)
     }
 }
