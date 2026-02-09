@@ -134,6 +134,7 @@ sealed class Screen(val route: String) {
     data object DeveloperScreen : Screen("Developer")
     data object GestureStudyScreen : Screen("GestureStudyScreen")
     data object FocusWidgetSettingsScreen : Screen("FocusWidgetSettingsScreen")
+    data object ApiKeyScreen : Screen("ApiKeyScreen")
     data object DownloadScreen : Screen("Download")
     data object CalendarScreen : Screen("Calendar")
     data object LockScreen : Screen("Lock")

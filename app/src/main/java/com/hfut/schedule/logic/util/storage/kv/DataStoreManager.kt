@@ -141,6 +141,7 @@ object DataStoreManager : IDataStore {
     private val TERM_START_DATE = stringPreferencesKey("term_start_date")
     private val DEFAULT_CALENDAR = intPreferencesKey("default_calendar")
     private val READ_NOTIFICATIONS = stringPreferencesKey("read_notifications")
+    private val API_KEY = stringPreferencesKey("llm_api_key")
     private val LANGUAGE = intPreferencesKey("language")
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
@@ -179,6 +180,7 @@ object DataStoreManager : IDataStore {
     private suspend fun saveHefeiElectricName(value: String) = saveValue(HEFEI_ELECTRIC, value)
     private suspend fun saveHefeiRoomNumber(value: String) = saveValue(HEFEI_ROOM_NUMBER, value)
     suspend fun saveHefeiElectricFee(value: String) = saveValue(HEFEI_ELECTRIC_FEE, value)
+    suspend fun saveApiKey(value: String) = saveValue(API_KEY, value)
     suspend fun saveUseHefeiElectric(value: Boolean) = saveValue(USE_HEFEI_ELECTRIC, value)
     suspend fun saveLiquidGlass(value: Boolean) = saveValue(LIQUID_GLASS, value)
     suspend fun saveCalendarShowTeacher(value: ShowTeacherConfig) = saveValue(CALENDAR_SHOW_TEACHER, value.code)
@@ -255,6 +257,7 @@ object DataStoreManager : IDataStore {
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)
     val jxglstuPassword = getFlow(JXGLSTU_PASSWORD, getJxglstuDefaultPassword() ?: EMPTY_STRING)
     val uniAppJwt = getFlow(UNI_APP_JWT,  EMPTY_STRING)
+    val apiKey = getFlow(API_KEY,  EMPTY_STRING)
     val defaultCalendar = getFlow(DEFAULT_CALENDAR, CourseType.JXGLSTU.code)
     private val hefeiBuildingNumber = getFlow(HEFEI_BUILDING_NUMBER,EMPTY_STRING)
     private val hefeiRoomNumber = getFlow(HEFEI_ROOM_NUMBER,EMPTY_STRING)

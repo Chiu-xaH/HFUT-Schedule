@@ -30,7 +30,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -137,6 +136,20 @@ fun NetworkSettingsScreen(
                     leadingContent = { Icon(painterResource(R.drawable.rotate_auto), contentDescription = "Localized description",) },
                     trailingContent = { Switch(checked = false, enabled = false, onCheckedChange = { showDevelopingToast() })},
                     modifier = Modifier.clickable { showDevelopingToast() }
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = stringResource(R.string.network_settings_ai_title)) },
+                    supportingContent = {
+                        Text(text = stringResource(R.string.network_settings_ai_description))
+                    },
+                    leadingContent = { Icon(
+                        painterResource(R.drawable.wand_stars),
+                        contentDescription = "Localized description"
+                    ) },
+                    modifier = Modifier.clickable {
+                        navController.navigate(Screen.ApiKeyScreen.route)
+                    }
                 )
             }
         }

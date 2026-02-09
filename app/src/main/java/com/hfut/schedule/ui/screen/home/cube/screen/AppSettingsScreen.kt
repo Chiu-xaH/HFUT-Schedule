@@ -305,18 +305,6 @@ fun AppSettingsScreen(
                     ) },
                     modifier = Modifier.clickable { navController.navigate(Screen.DownloadScreen.route) }
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.app_settings_ai_title)) },
-                    supportingContent = {
-                        Text(text = stringResource(R.string.app_settings_ai_description))
-                    },
-                    leadingContent = { Icon(
-                        painterResource(R.drawable.wand_stars),
-                        contentDescription = "Localized description"
-                    ) },
-                    modifier = Modifier.clickable { showDevelopingToast() }
-                )
             }
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_widget_half_title)) {

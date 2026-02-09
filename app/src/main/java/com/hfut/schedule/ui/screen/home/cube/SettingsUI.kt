@@ -26,6 +26,7 @@ import com.hfut.schedule.ui.screen.fix.fix.FixUI
 import com.hfut.schedule.ui.screen.home.cube.screen.AppSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetworkSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.AppearanceSettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.sub.ApiKeyScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.BackupScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.CalendarSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.DeveloperScreen
@@ -160,6 +161,11 @@ fun SettingsScreen(vm : NetWorkViewModel,
             composable(Screen.BackupScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     BackupScreen(innerPaddings,navController)
+                }
+            }
+            composable(Screen.ApiKeyScreen.route) {
+                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
+                    ApiKeyScreen(innerPaddings,navController)
                 }
             }
         }
