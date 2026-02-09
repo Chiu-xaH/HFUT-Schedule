@@ -1,8 +1,8 @@
 package com.hfut.schedule.logic.model.zhijian
 
 import com.google.gson.annotations.SerializedName
+import com.hfut.schedule.ui.screen.home.calendar.common.parseSingleChineseDigit
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.parseSingleChineseDigit
 import com.xah.uicommon.util.LogUtil
 
 data class ZhiJianCoursesResponse(

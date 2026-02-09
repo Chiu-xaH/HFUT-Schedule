@@ -287,7 +287,7 @@ class FocusWidget : GlanceAppWidget() {
                         ) {
                         // 左侧文本
                         Text(
-                            text = topBarText(BottomBarItems.FOCUS),
+                            text = topBarText(BottomBarItems.FOCUS,context),
                             maxLines = 1,
                             modifier = GlanceModifier
                                 .fillMaxWidth(),

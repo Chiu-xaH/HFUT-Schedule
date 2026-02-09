@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen.home
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
@@ -114,12 +115,10 @@ import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.SEARCH_DEFAULT_STR
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveInt
+import com.hfut.schedule.logic.util.sys.LanguageHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.Date_MM_dd
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
@@ -142,7 +141,7 @@ import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.CommunityCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.lesson.JxglstuCourseTableTwo
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
 import com.hfut.schedule.ui.screen.home.calendar.uniapp.UniAppCoursesScreen
@@ -158,7 +157,6 @@ import com.hfut.schedule.ui.screen.home.search.SearchScreen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.TotalCourseDataSource
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculatedReadNotificationCount
-import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
@@ -427,7 +425,7 @@ fun MainScreen(
                                 }
                             }
                         },
-                        title = { Text(topBarText(targetPage)) },
+                        title = { Text(topBarText(targetPage,context)) },
                         actions = {
                             when (targetPage) {
                                 SEARCH -> {
@@ -533,7 +531,7 @@ fun MainScreen(
                                         ),
                                     color = Color.Transparent
                                 ) {
-                                    Text(topBarText(COURSES), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
+                                    Text(topBarText(COURSES,context), modifier = Modifier.padding(vertical = CARD_NORMAL_DP*2, horizontal = CARD_NORMAL_DP*3), fontSize = 20.5.sp)
                                 }
                             },
                             title = {
@@ -683,7 +681,7 @@ fun MainScreen(
                         TopAppBar(
                             colors = topBarTransplantColor(),
                             title = {
-                                Text(topBarText(COURSES))
+                                Text(topBarText(COURSES,context))
                             },
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
@@ -986,12 +984,27 @@ fun MainScreen(
 }
 
 
-fun topBarText(num : BottomBarItems) : String = when(num) {
+fun topBarText(num : BottomBarItems,context: Context) : String = when(num) {
     SEARCH -> MyApplication.context.getString(R.string.functions_center_title)
-    SETTINGS -> MyApplication.context.getString(R.string.settings_title)
+    SETTINGS -> context.getString(R.string.settings_title)
     else -> {
-        val chineseNumber  = numToChinese(DateTimeManager.dayWeek)
-        "$Date_MM_dd 第${currentWeek}周 周$chineseNumber"
+        val chineseNumber  =
+//            "周${numToChinese(DateTimeManager.dayWeek)}"
+        if(LanguageHelper.isChineseLanguage(context)) {
+            "周${numToChinese(DateTimeManager.dayWeek)}"
+        } else {
+            when(DateTimeManager.dayWeek) {
+                1 -> "Mon."
+                2 -> "Tue."
+                3 -> "Wed."
+                4 -> "Thur."
+                5 -> "Fri."
+                6 -> "Sat."
+                0,7 -> "Sun."
+                else -> ""
+            }
+        }
+        context.getString(R.string.focus_and_calendar_title, DateTimeManager.Date_MM_dd, DateTimeManager.currentWeek, chineseNumber)
     }
 }
 

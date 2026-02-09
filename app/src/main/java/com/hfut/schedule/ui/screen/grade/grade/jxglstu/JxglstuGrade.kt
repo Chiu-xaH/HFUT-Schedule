@@ -40,13 +40,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,7 +96,6 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
@@ -113,7 +112,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.collections.set
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
@@ -519,6 +517,8 @@ fun GradeItemUIUniApp(
     }
 }
 
+private const val avgContent = "将期末考试、期中考试、补考成绩三者计算出平均分，其他项目得分也计算为平均分，平时因数=考试的平均分/平时的平均分，可大致反映最终成绩平时分占比：越接近1越平衡,越>1最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿"
+private fun isExam(label : String) = label.contains("期末考试") || label.contains("期中考试") || label.contains("补考")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -533,12 +533,17 @@ fun GradeDetailScreen(
     var party by remember { mutableStateOf(false) }
     val isFailed = remember { bean.gpa.toFloatOrNull() == 0f }
 
+    var otherAvgScore by remember { mutableFloatStateOf(0f) }
+    var examAvgScore by remember { mutableFloatStateOf(0f) }
+
+
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
         LittleDialog(
+            dialogTitle = if(otherAvgScore == 0f) "提示" else "平时因数: ${formatDecimal(examAvgScore.toDouble(),2)} / ${formatDecimal(otherAvgScore.toDouble(),2)}",
             onDismissRequest = { showDialog = false },
             onConfirmation = { showDialog = false },
-            dialogText = "平时因数=除去期末成绩各项平均分/期末分数,可大致反映最终成绩平时分占比\n越接近1则平衡,越>1则表明最终成绩可能更靠平时分,越<1表明最终成绩可能因平时分拖后腿",
+            dialogText = avgContent,
             conformText = "好",
             dismissText = "关闭",
             hazeState = hazeState
@@ -557,29 +562,37 @@ fun GradeDetailScreen(
         }
     }
 
-
-    var avgPingshi by remember { mutableStateOf(0f) }
-    var examScore by remember { mutableStateOf(0f) }
-    var count by remember { mutableStateOf(0) }
-
     LaunchedEffect(radarList) {
         if(radarList.isEmpty()) {
             return@LaunchedEffect
         }
+        var otherScore = 0f
+        var examScore = 0f
+        var otherCount = 0
+        var examCount = 0
         radarList.forEach { item ->
-            if (!item.label.contains("期末")) {
-                avgPingshi += item.value
-                count++
+            if (!isExam(item.label)) {
+                otherScore += item.value
+                otherCount++
             } else {
-                examScore = item.value
+                examScore += item.value
+                examCount++
             }
         }
-        if (count != 0)
-            avgPingshi /= count
-        else avgPingshi = 0f
-        if (examScore != 0f)
-            avgPingshi /= examScore
-        else avgPingshi = 0f
+        if(otherCount != 0) {
+            otherAvgScore = otherScore / otherCount
+        }
+        if(examCount != 0) {
+            examAvgScore = examScore / examCount
+        }
+    }
+
+    val factor = remember(otherAvgScore,examAvgScore) {
+        if(examAvgScore != 0f) {
+            otherAvgScore / examAvgScore
+        } else {
+            0f
+        }
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -639,13 +652,14 @@ fun GradeDetailScreen(
                                 val l1 = list[i]
                                 val t1 = l1.substringBefore(":")
                                 val score1 = l1.substringAfter(":")
+                                val isExamT1 = isExam(t1)
 
                                 TransplantListItem(
                                     headlineContent = {
                                         Text(
                                             text = score1,
-                                            fontWeight = if(t1.contains("期末考试") || t1.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
-                                            textDecoration = if(t1.contains("期末考试") || t1.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                            fontWeight = if(isExamT1) FontWeight.Bold else FontWeight.Normal,
+                                            textDecoration = if(isExamT1) TextDecoration.Underline else TextDecoration.None
                                         ) },
                                     overlineContent = { Text(t1) },
                                     modifier = Modifier.weight(.5f),
@@ -655,12 +669,13 @@ fun GradeDetailScreen(
                                     val l2 = list[i+1]
                                     val t2 = l2.substringBefore(":")
                                     val score2 = l2.substringAfter(":")
+                                    val isExamT2 = isExam(t2)
                                     TransplantListItem(
                                         headlineContent = {
                                             Text(
                                                 text = score2,
-                                                fontWeight = if(t2.contains("期末考试") || t2.contains("期中考试")) FontWeight.Bold else FontWeight.Normal,
-                                                textDecoration = if(t2.contains("期末考试") || t2.contains("期中考试")) TextDecoration.Underline else TextDecoration.None
+                                                fontWeight = if(isExamT2) FontWeight.Bold else FontWeight.Normal,
+                                                textDecoration = if(isExamT2) TextDecoration.Underline else TextDecoration.None
                                             ) },
                                         overlineContent = { Text(t2) },
                                         modifier = Modifier.weight(.5f),
@@ -697,14 +712,18 @@ fun GradeDetailScreen(
                                 },
                                 headlineContent = {
                                     ScrollText(
-                                        text = if (avgPingshi != 0f) formatDecimal(
-                                            avgPingshi.toDouble(),
-                                            2
-                                        ) else "未知"
+                                        text =
+                                            if (factor != 0f) formatDecimal(factor.toDouble(), 2)
+                                            else "未知"
                                     )
                                 },
                                 overlineContent = {
-                                    Text("平时因数")
+                                    Text(
+                                        if(factor == 0f) "平时因数"
+                                        else if(factor > 1f) "偏平时分"
+                                        else if(factor < 1f) "偏考试分"
+                                        else "平时因数"
+                                    )
                                 },
                                 modifier = Modifier
                                     .weight(.5f)

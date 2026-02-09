@@ -33,7 +33,7 @@ import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.next.CourseDetailOrigin
+import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_END_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_TIME
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem

@@ -28,5 +28,6 @@
     <string name="toast_developing">Developing…</string>
     <string name="functions_center_title">Functions</string>
     <string name="settings_title">Options</string>
+    <string name="focus_and_calendar_title">%1$s %3$s Week %2$d</string>
 
 </resources>

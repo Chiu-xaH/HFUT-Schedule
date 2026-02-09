@@ -29,4 +29,5 @@
     <string name="toast_developing">正在开发</string>
     <string name="functions_center_title">查询中心</string>
     <string name="settings_title">选项</string>
+    <string name="focus_and_calendar_title">%1$s 第%2$d周 %3$s</string>
 </resources>

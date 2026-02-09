@@ -17,9 +17,23 @@ fun numToChinese(num : Int) : String {
         4 -> "四"
         5 -> "五"
         6 -> "六"
-        7 -> "日"
+        0,7 -> "日"
         else -> ""
     }
+}
+
+fun parseSingleChineseDigit(text: Char): Int = when (text) {
+    '零', '〇' -> 0
+    '一' -> 1
+    '二', '两' -> 2
+    '三' -> 3
+    '四' -> 4
+    '五' -> 5
+    '六' -> 6
+    '七', '日' -> 7
+    '八' -> 8
+    '九' -> 9
+    else -> throw IllegalArgumentException("未知数字: $text")
 }
 
 // 传入YYYY-MM-DD 返回当前第几周周几
