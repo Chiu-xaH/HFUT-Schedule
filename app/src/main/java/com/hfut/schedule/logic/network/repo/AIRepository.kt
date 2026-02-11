@@ -1,13 +1,8 @@
 package com.hfut.schedule.logic.network.repo
 
-import com.hfut.schedule.ChatResponse
 import com.hfut.schedule.logic.enumeration.ChatModel
-import com.hfut.schedule.logic.model.ChatRequest
 import com.hfut.schedule.logic.network.api.AIService
-import com.hfut.schedule.logic.network.api.JxglstuService
 import com.hfut.schedule.logic.network.servicecreator.AIServiceCreator
-import com.hfut.schedule.logic.network.util.launchRequestState
-import com.hfut.schedule.logic.util.network.state.StateHolder
 
 object AIRepository {
 

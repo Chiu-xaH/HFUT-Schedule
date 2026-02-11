@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.util.safeDiv
 import kotlin.math.abs
 
 private val SLIDER_SIZE = 23.dp
@@ -93,7 +94,7 @@ fun CustomSlider(
                     )
             ) {
                 if(isPressed && showProcessText) {
-                    val percentage = ((value - valueRange.start) / (valueRange.endInclusive - valueRange.start)) * 100f
+                    val percentage = ((value - valueRange.start) safeDiv (valueRange.endInclusive - valueRange.start)) * 100f
                     Text(
                         processText ?:
                          (percentage.toString().substringBefore(".") + "%"),

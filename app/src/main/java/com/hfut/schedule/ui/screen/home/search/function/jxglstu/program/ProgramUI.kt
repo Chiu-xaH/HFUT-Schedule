@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -79,7 +80,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProgramScreenMini(vm: NetWorkViewModel, ifSaved: Boolean, hazeState: HazeState,innerPadding : PaddingValues) {
-    val context = LocalContext.current
     val programData by produceState<ProgramResponse?>(initialValue = null) {
         if(!ifSaved) {
             onListenStateHolder(vm.programData) { data ->
@@ -185,7 +185,7 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
                     prepare = false,
                     title = "已修 ${it.total.actual}/${it.total.full}",
                     rightTop = {
-                        val res = it.total.actual/it.total.full * 100.0
+                        val res = (it.total.actual safeDiv it.total.full) * 100.0
                         Text(text = "${formatDecimal(res,1)} %")
                     },
                     loading = loading
@@ -209,12 +209,12 @@ fun ProgramCompetitionScreenMini(vm: NetWorkViewModel,ifSaved: Boolean,innerPadd
             Spacer(Modifier.height(APP_HORIZONTAL_DP))
 
             CustomLineProgressIndicator(
-                (completion.total.actual/completion.total.full).toFloat(),
+                (completion.total.actual safeDiv completion.total.full).toFloat(),
                 color = MaterialTheme.colorScheme.error,
             )
             Spacer(Modifier.height(CARD_NORMAL_DP*2))
             for (i in 0 until completion.other.size) {
-                CustomLineProgressIndicator((completion.other[i].actual/completion.other[i].full).toFloat())
+                CustomLineProgressIndicator((completion.other[i].actual safeDiv completion.other[i].full).toFloat())
                 if(i != completion.other.size-1) {
                     Spacer(Modifier.height(CARD_NORMAL_DP*2))
                 }

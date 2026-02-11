@@ -105,6 +105,7 @@ import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.util.LogUtil
+import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -579,12 +580,12 @@ fun GradeDetailScreen(
                 examCount++
             }
         }
-        if(otherCount != 0) {
-            otherAvgScore = otherScore / otherCount
-        }
-        if(examCount != 0) {
-            examAvgScore = examScore / examCount
-        }
+//        if(otherCount != 0) {
+            otherAvgScore = otherScore safeDiv otherCount
+//        }
+//        if(examCount != 0) {
+            examAvgScore = examScore safeDiv examCount
+//        }
     }
 
     val factor = remember(otherAvgScore,examAvgScore) {

@@ -21,6 +21,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
+import com.xah.uicommon.util.safeDiv
 
 enum class ClickScale(val scale : Float) {
     SMALL(0.9F),MEDIUM(0.95F)
@@ -94,8 +95,8 @@ fun Modifier.clickableWithRotation(
                 val size = size
                 val centerX = size.width / 2
                 val centerY = size.height / 2
-                val offsetX = (offset.x - centerX) / centerX
-                val offsetY = (centerY - offset.y) / centerY
+                val offsetX = (offset.x - centerX) safeDiv centerX
+                val offsetY = (centerY - offset.y) safeDiv centerY
 
                 // 设置按压时的缩放和旋转
                 scale = pressedScale
@@ -170,15 +171,15 @@ fun Modifier.clickableWithRotation(
                 val compSize = minOf(size.width, size.height)
 
                 // 线性映射到 0.8 ~ 0.95 范围，组件越小，scale 越小
-                val dynamicScale = (compSize - minSize).coerceIn(0f, maxSize - minSize) / (maxSize - minSize) * 0.05f + 0.9f
+                val dynamicScale = (compSize - minSize).coerceIn(0f, maxSize - minSize) safeDiv (maxSize - minSize) * 0.05f + 0.9f
 
                 // 动态调整 maxTilt，组件越大，maxTilt 越小（范围：5 到 20）
-                val dynamicMaxTilt = 15f - (compSize - minSize).coerceIn(0f, maxSize - minSize) / (maxSize - minSize) * 10f
+                val dynamicMaxTilt = 15f - (compSize - minSize).coerceIn(0f, maxSize - minSize) safeDiv (maxSize - minSize) * 10f
                 // 显示动态的缩放和倾斜值
 //                showToast("Scale: $dynamicScale, MaxTilt: $dynamicMaxTilt")
 
-                val offsetX = (offset.x - centerX) / centerX
-                val offsetY = (centerY - offset.y) / centerY
+                val offsetX = (offset.x - centerX) safeDiv centerX
+                val offsetY = (centerY - offset.y) safeDiv centerY
 
                 // 设置按压时的缩放和旋转
                 scale = dynamicScale

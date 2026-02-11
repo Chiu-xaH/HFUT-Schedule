@@ -132,6 +132,7 @@ import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.util.LogUtil
+import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -278,7 +279,7 @@ fun MainHost(
             if (maxOffset == 0f) {
                 0.dp // 未校准前不模糊
             } else {
-                val fraction = 1 - (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
+                val fraction = 1 - (drawerState.currentOffset safeDiv maxOffset).coerceIn(0f, 1f)
                 (fraction * 42.5).dp//42.5 0.85f 0.4f
             }
         }
@@ -288,7 +289,7 @@ fun MainHost(
             if (maxOffset == 0f) {
                 1f
             } else {
-                val fraction =  (drawerState.currentOffset / maxOffset).coerceIn(0f, 1f)
+                val fraction =  (drawerState.currentOffset safeDiv maxOffset).coerceIn(0f, 1f)
                 (0.85f) * (1 - fraction) + fraction
             }
         }

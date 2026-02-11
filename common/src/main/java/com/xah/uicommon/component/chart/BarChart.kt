@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.util.safeDiv
 
 @Composable
 fun BarChart(
@@ -44,7 +45,7 @@ fun BarChart(
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             data.forEach { (label, value) ->
-                val ratio = if (maxVal == 0f) 0f else value / maxVal
+                val ratio = value safeDiv maxVal
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

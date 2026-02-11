@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.xah.uicommon.util.safeDiv
 import kotlin.math.roundToInt
 
 //滚轮 组件
@@ -70,7 +71,7 @@ fun <T> WheelPicker(
                     currentsAdjust = 0.75f + 0.25f * if (itemCenterY < pickerCenterLinePx) {
                         itemCenterY / pickerCenterLinePx
                     } else {
-                        1 - (itemCenterY - pickerCenterLinePx) / pickerCenterLinePx
+                        1 - (itemCenterY - pickerCenterLinePx) safeDiv pickerCenterLinePx
                     }
                     if (!listState.isScrollInProgress
                         && item.offset < pickerCenterLinePx

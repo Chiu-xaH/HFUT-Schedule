@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.program
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -201,21 +202,23 @@ fun ProgramScreen(
         ) {
             HorizontalPager(state = pageState) { page ->
                 Column(
-
                 ) {
                     when(page) {
                         PAGE_PROGRAM -> {
-                            ProgramScreenMini(vm,ifSaved,hazeState,innerPadding)
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                ProgramScreenMini(vm,ifSaved,hazeState,innerPadding)
+                            }
                         }
                         PAGE_COMPETITION -> {
-                            ProgramCompetitionScreenMini(vm,ifSaved,innerPadding)
+                            Box(modifier = Modifier.fillMaxSize()) {
+                                ProgramCompetitionScreenMini(vm,ifSaved,innerPadding)
+                            }
                         }
                     }
                 }
             }
         }
     }
-//    }
 }
 
 

@@ -1,4 +1,4 @@
-package com.hfut.schedule
+package com.hfut.schedule.logic.model
 
 import com.google.gson.annotations.SerializedName
 

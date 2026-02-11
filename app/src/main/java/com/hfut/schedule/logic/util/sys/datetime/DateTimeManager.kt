@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.DateTimeBean
+import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
@@ -101,7 +102,7 @@ object DateTimeManager {
         val totalDays = endDate.toEpochDay() - startDate.toEpochDay()
         val pastDays = today.toEpochDay() - startDate.toEpochDay()
         // 计算百分比
-        val percentage = (pastDays.toDouble() / totalDays.toDouble()) * 100
+        val percentage = (pastDays.toDouble() safeDiv totalDays.toDouble()) * 100
         return percentage
     }
     //计算目前已经过了多久
@@ -112,7 +113,7 @@ object DateTimeManager {
         val totalSeconds = Duration.between(startTime, endTime).seconds.toDouble()
         val passedSeconds = Duration.between(startTime, currentTime).seconds.toDouble()
 
-        val percentage = (passedSeconds / totalSeconds).coerceIn(0.0, 1.0)
+        val percentage = (passedSeconds safeDiv totalSeconds).coerceIn(0.0, 1.0)
         return percentage
     }
     fun getPassedMinutesInRange(startTimeStr: String, endTimeStr: String): Int? {

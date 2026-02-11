@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.util.safeDiv
 
 data class PieChartData(
     val label: String,
@@ -36,7 +37,7 @@ fun PieChart(
         Canvas(modifier = pieModifier) {
             var startAngle = -90f
             data.forEachIndexed { index, entry ->
-                val sweepAngle = (entry.value / total) * 360f
+                val sweepAngle = (entry.value safeDiv total) * 360f
                 drawArc(
                     color = colors[index % colors.size],
                     startAngle = startAngle,

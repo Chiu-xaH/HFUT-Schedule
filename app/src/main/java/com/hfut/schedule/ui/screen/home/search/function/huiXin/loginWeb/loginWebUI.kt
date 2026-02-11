@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.util.LogUtil
+import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -123,7 +124,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
     // 百分比
     val percent = try {
-        formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * maxFlow)) * 100,2)
+        formatDecimal(((flow?.toDouble() ?: 0.0) safeDiv (1024 * maxFlow)) * 100,2)
     } catch (e:Exception) {
         LogUtil.error(e)
         "未知"

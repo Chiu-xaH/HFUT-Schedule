@@ -27,7 +27,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-02-09") },
+                overlineContent = { Text(text = "2026-02-11") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -57,11 +57,12 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
 
+            UpdateItems("修复 偶见除数为0时崩溃的Bug")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
 //            UpdateItems("新增 图书馆我的书架、收藏","位于 查询中心-图书馆")
 //            UpdateItems("新增 图书馆斛兵知搜支持阅读电子书")
-            UpdateItems("新增 英文语言部分适配")
-            UpdateItems("新增 大模型","位于 查询中心-大模型")
+//            UpdateItems("新增 英文语言部分适配")
+//            UpdateItems("新增 大模型","位于 查询中心-大模型")
 //            UpdateItems("新增 合工大教务接口的评教","位于 查询中心-评教")
 //            UpdateItems("收纳重构 实验室迁移位置")
             // 寒假计划：大模型应用场景：通知公告的提炼、新增聚焦日程

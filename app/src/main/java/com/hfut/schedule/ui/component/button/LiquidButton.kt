@@ -52,6 +52,7 @@ import com.kyant.backdrop.effects.blur
 import com.kyant.backdrop.effects.refraction
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
+import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.atan2
@@ -129,19 +130,19 @@ fun LiquidButton(
                         val maxOffset = size.minDimension
                         val initialDerivative = 0.05f
                         val offset = offsetAnimation.value
-                        translationX = maxOffset * tanh(initialDerivative * offset.x / maxOffset)
-                        translationY = maxOffset * tanh(initialDerivative * offset.y / maxOffset)
+                        translationX = maxOffset * tanh(initialDerivative * offset.x safeDiv maxOffset)
+                        translationY = maxOffset * tanh(initialDerivative * offset.y safeDiv maxOffset)
 
                         val maxDragScale = 0.1f
                         val offsetAngle = atan2(offset.y, offset.x)
                         scaleX =
                             scale +
-                                    maxDragScale * abs(cos(offsetAngle) * offset.x / size.maxDimension) *
-                                    (width / height).fastCoerceAtMost(1f)
+                                    maxDragScale * abs(cos(offsetAngle) * offset.x safeDiv size.maxDimension) *
+                                    (width safeDiv height).fastCoerceAtMost(1f)
                         scaleY =
                             scale +
-                                    maxDragScale * abs(sin(offsetAngle) * offset.y / size.maxDimension) *
-                                    (height / width).fastCoerceAtMost(1f)
+                                    maxDragScale * abs(sin(offsetAngle) * offset.y safeDiv size.maxDimension) *
+                                    (height safeDiv width).fastCoerceAtMost(1f)
                     }
                 } else {
                     null

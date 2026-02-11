@@ -26,6 +26,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 
@@ -61,7 +62,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
             val gB = (flow?.toDouble() ?: 0.0) / 1024
             val str = formatDecimal(gB,2)
 
-            val precent = formatDecimal(((flow?.toDouble() ?: 0.0) / (1024 * maxFlow)) * 100,2)
+            val precent = formatDecimal(((flow?.toDouble() ?: 0.0) safeDiv (1024 * maxFlow)) * 100,2)
 
             TransplantListItem(
                 headlineContent = { if(!card)ScrollText(text = stringResource(R.string.navigation_label_school_net)) else ScrollText(text =

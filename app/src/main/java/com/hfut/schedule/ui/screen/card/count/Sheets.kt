@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.logic.model.huixin.BillMonth
+import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
@@ -32,7 +33,7 @@ fun drawLineChart(data: List<BillMonth>) {
     val primaryColor = MaterialTheme.colorScheme.primary
     Canvas(modifier = Modifier.size(600.dp,120.dp)) {
         val xInterval = 30f
-        val yInterval = size.height / data.maxOf { it.balance.toFloat() }
+        val yInterval = size.height safeDiv data.maxOf { it.balance.toFloat() }
         path.moveTo(0f, size.height - data.first().balance.toFloat() * yInterval)
         data.forEachIndexed { index, pair ->
             val x = index * xInterval
