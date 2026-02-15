@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.uniapp.UniAppSchedule
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -27,7 +28,7 @@ private fun VersionInfoCard() {
     ) {
         Row {
             TransplantListItem(
-                overlineContent = { Text(text = "2026-02-11") },
+                overlineContent = { Text(text = "2026-02-18") },
                 leadingContent = { Icon(painter = painterResource(id = R.drawable.code), contentDescription = "") },
                 headlineContent = { Text(text = "版本号 ${AppVersion.getVersionCode()}") },
                 modifier = Modifier.weight(.5f)
@@ -49,7 +50,7 @@ private fun VersionInfoCard() {
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun VersionInfo() {
-    Spacer(Modifier.height(3.dp))
+    Spacer(Modifier.height(CARD_NORMAL_DP))
     DividerTextExpandedWith("版本信息",openBlurAnimation = false) {
         VersionInfoCard()
     }
@@ -57,7 +58,11 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
 
-            UpdateItems("修复 偶见除数为0时崩溃的Bug")
+//            UpdateItems("新增 培养方案完成情况统计")
+            UpdateItems("优化 指尖工大课程表搜索栏颜色")
+            UpdateItems("优化 部分界面的显示")//
+            UpdateItems("翻页器底部自动展开、中间隐藏")
+            UpdateItems("发生Crash后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
 //            UpdateItems("新增 图书馆我的书架、收藏","位于 查询中心-图书馆")
 //            UpdateItems("新增 图书馆斛兵知搜支持阅读电子书")

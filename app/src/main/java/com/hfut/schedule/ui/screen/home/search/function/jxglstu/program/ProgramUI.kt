@@ -53,8 +53,9 @@ import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
@@ -266,14 +267,13 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
         LazyColumn() {
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
                     supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
                         bean = dataItem
                     },
-                    index = item
                 )
             }
             entity.requireInfo?.let {
@@ -357,7 +357,7 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                 val name = course.nameZh
                 val department = listItem.openDepartment.nameZh.substringBefore("（")
                 val term = listItem.readableTerms.let { if(it.isNotEmpty()) it[0] else null }
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = name) },
                     supportingContent = { Text(text = department) },
                     overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" } )},
@@ -367,7 +367,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
                         courseInfo = listItem
                         showInfo = true
                     },
-                    index = item
                 )
             }
             entity.requireInfo?.let {

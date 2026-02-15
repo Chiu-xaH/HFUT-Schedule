@@ -51,9 +51,11 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -189,9 +191,8 @@ private fun ProgramPerformance(
                     val summary = item.completionSummary
                     val route = AppNavRoute.ProgramCompetitionDetail.withArgs(item.nameZh,index)
                     DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
-                        AnimationCustomCard(
-                            index = index,
-                            containerColor = cardNormalColor(),
+                        CustomCard(
+                            color = cardNormalColor(),
                             modifier = Modifier
                                 .clickableWithScale() {
                                     navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
@@ -246,8 +247,8 @@ private fun ProgramPerformance(
                 item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                 item {
                     val route = AppNavRoute.ProgramCompetitionDetail.withArgs("培养方案外课程",999)
-                    AnimationCustomCard(
-                        containerColor = cardNormalColor(),
+                    CustomCard(
+                        color = cardNormalColor(),
                         modifier = Modifier
                             .clickableWithScale() {
                                 navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
@@ -421,7 +422,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                         val item = filteredList[index]
                         val term = transferTerm(item.terms)
                         val type = getProgramCompetitionType(item.resultType)
-                        AnimationCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
                                 if(type == ProgramCompetitionType.FAILED || type == ProgramCompetitionType.PASSED) {
@@ -454,8 +455,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                             modifier = Modifier.clickable {
                                 itemForInfo = item
                                 showBottomSheet = true
-                            },
-                            index = index
+                            }
                         )
                     }
                 }
@@ -479,7 +479,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                     items(filteredList.size) { index ->
                         val item = filteredList[index]
                         val type = getProgramCompetitionType(item.resultType)
-                        AnimationCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = item.nameZh) },
                             supportingContent = {
                                 if(type == ProgramCompetitionType.PASSED || type == ProgramCompetitionType.FAILED) {
@@ -507,7 +507,6 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
                                 itemForInfo = item
                                 showBottomSheet = true
                             },
-                            index = index
                         )
                     }
                 }

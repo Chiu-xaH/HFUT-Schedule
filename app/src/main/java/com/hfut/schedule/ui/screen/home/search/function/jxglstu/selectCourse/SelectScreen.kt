@@ -91,10 +91,11 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
@@ -438,8 +439,7 @@ private fun SelectCourseList(
     var input by remember { mutableStateOf("") }
 
     val ui = @Composable {
-        AnimationCardListItem(
-            index = list.size,
+        CardListItem(
             headlineContent = {
                 Text("手动输入代号查看被隐藏掉的选课入口")
             },
@@ -480,7 +480,7 @@ private fun SelectCourseList(
                 var expand by remember { mutableStateOf(false) }
                 with(data) {
                     val route = AppNavRoute.SelectCoursesDetail.withArgs(id,name)
-                    AnimationCustomCard (
+                    CustomCard (
                         modifier = Modifier
                             .containerShare( route)
                             .clickable {
@@ -489,8 +489,7 @@ private fun SelectCourseList(
                                     route
                                 )
                             },
-                        index = item,
-                        containerColor = cardNormalColor()
+                        color = cardNormalColor()
                     ) {
                         TransplantListItem(
                             headlineContent = { Text(text = name) },

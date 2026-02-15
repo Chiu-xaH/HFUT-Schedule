@@ -44,7 +44,7 @@ import com.hfut.schedule.logic.util.parse.SemesterParser.getSemester
 import com.hfut.schedule.logic.util.parse.SemesterParser.parseSemester
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.status.EmptyIcon
@@ -52,7 +52,9 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
  
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+import com.hfut.schedule.ui.component.container.CardListItem
+
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -185,9 +187,8 @@ private fun CourseSurveyListUI(
                 val submittedMap = teachers.map { it.submitted }
                 val submittedCount = submittedMap.filter { it == true }.size
                 val allSubmitted = submittedCount == submittedMap.size
-                AnimationCustomCard(
-                    containerColor = cardNormalColor(),
-                    index = item
+                CustomCard(
+                    color = cardNormalColor(),
                 ) {
                     Column {
                         TransplantListItem(
@@ -292,7 +293,7 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
                 val listItem = list[item]
                 val isSubmitted = listItem.submitted
                 val tName = listItem.teacher.person?.nameZh
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { tName?.let { Text(text = it) } },
                     leadingContent = { Icon(painterResource(R.drawable.person),null) },
                     trailingContent = { if(!isSubmitted) Icon(Icons.Filled.ArrowForward, contentDescription = "") else Text(text = "已评") },
@@ -304,7 +305,6 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
                             showBottomSheet = true
                         } else showToast("已评教")
                     },
-                    index = item
                 )
             }
             item {

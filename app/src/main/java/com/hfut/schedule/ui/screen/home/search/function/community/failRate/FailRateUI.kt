@@ -30,8 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -55,7 +56,7 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
             item { Spacer(Modifier.height(CARD_NORMAL_DP)) }
             item { InnerPaddingHeight(innerPadding,true) }
             items(list.size){ item ->
-                AnimationCardListItem(
+                CardListItem(
                     overlineContent = { Text(list[item].courseMetaId)},
                     headlineContent = {  Text(list[item].courseName) },
                     leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
@@ -63,7 +64,6 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
                         showBottomSheet = true
                         num = item
                     },
-                    index = item
                 )
             }
             item { PaddingForPageControllerButton() }
@@ -98,13 +98,12 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
                         items(detailList.size){ item ->
                             val dataItem = detailList[item]
                             val rate = (1 - dataItem.successRate) * 100
-                            AnimationCardListItem(
+                            CardListItem(
                                 headlineContent = {  Text("平均分 ${dataItem.avgScore}") },
                                 supportingContent = { Text("人数: 挂科 ${dataItem.failCount} | 总 ${dataItem.totalCount}") },
                                 overlineContent = { Text(text = "${dataItem.xn}年 第${dataItem.xq}学期")},
                                 leadingContent = { Icon(painterResource(R.drawable.article), contentDescription = "Localized description",) },
                                 trailingContent = { Text("挂科率 ${String.format("%.2f", rate)} %") },
-                                index = item
                             )
                         }
                     }

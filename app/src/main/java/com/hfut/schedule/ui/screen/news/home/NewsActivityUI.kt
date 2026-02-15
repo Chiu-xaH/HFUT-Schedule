@@ -58,7 +58,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -327,7 +327,7 @@ fun TotalNewsScreen(
                 item { innerPadding?.let { InnerPaddingHeight(it,true) } }
                 items(list.size, key = { it }){ item ->
                     val listItem = list[item]
-                    AnimationCardListItem(
+                    CardListItem(
                         overlineContent = { Text(text = listItem.date) },
                         headlineContent = { Text(listItem.title) },
                         leadingContent = { Text(text = (item + 1).toString()) },
@@ -342,7 +342,6 @@ fun TotalNewsScreen(
                                 autoWebVpnForNews(context,links,listItem.title, icon = R.drawable.stream, cookie = cookies)
                             }
                         },
-                        index = item
                     )
                 }
                 item { innerPadding?.let { InnerPaddingHeight(it,false) } }

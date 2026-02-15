@@ -102,11 +102,11 @@ import com.hfut.schedule.logic.util.sys.parseToDateTime
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
+import com.hfut.schedule.ui.component.button.CardBottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -813,7 +813,7 @@ fun AddEventUI(
                         ) },
                         leadingContent = { Icon(painterResource(R.drawable.schedule),null) }
                     )
-                    CardBottomButtons(
+                    BottomTextButtonGroup(
                         listOf(
                             CardBottomButton(if(isScheduleType)"选择日期范围" else "选择截止日期") {
                                 showSelectDateDialog = true

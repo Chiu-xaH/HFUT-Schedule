@@ -33,7 +33,7 @@ import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeType
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -43,6 +43,7 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.Campus
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.uicommon.style.align.ColumnVertical
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -148,8 +149,7 @@ fun HaiLeScreen(
                     items (list.size, key = { list[it].id } ){ index ->
                         val item = list[index]
                         with(item) {
-                            AnimationCardListItem(
-                                index = index,
+                            CardListItem(
                                 headlineContent = { Text(name) },
                                 supportingContent = {
                                     Text(
@@ -213,8 +213,7 @@ fun HaiLeDetailScreen(vm : NetWorkViewModel,itemId : Long,onType : (HaiLeType) -
                     items (list.size, key = { list[it].name } ){ index ->
                         val item = list[index]
                         with(item) {
-                            AnimationCardListItem(
-                                index = index,
+                            CardListItem(
                                 headlineContent = { Text(name) },
                                 leadingContent = {
                                     if(finishTime  != null) {

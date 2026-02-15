@@ -69,7 +69,8 @@ fun isSpecificWorkDay() : Boolean = getHolidays().any { !it.isOffDay && it.date 
 // 明天调休
 fun isSpecificWorkDayTomorrow() : Boolean = getHolidays().any { !it.isOffDay && it.date == DateTimeManager.tomorrow_YYYY_MM_DD }
 
-fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name?.substringBefore("节")
+fun getTodayHoliday(): String? = getHolidays().firstOrNull { it.isOffDay && it.date == DateTimeManager.Date_yyyy_MM_dd }?.name
+//    ?.substringBefore("节")
 
 data class Celebration(val use : Boolean,val str : String?,val time : Long = 1L)
 

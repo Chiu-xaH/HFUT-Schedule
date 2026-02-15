@@ -8,9 +8,10 @@ plugins {
 }
 
 android {
+    def packageName = "com.hfut.schedule"
     def maxAndroidVersion = Integer.parseInt(libs.versions.maxAndroidVersion.get())
 
-    namespace 'com.hfut.schedule'
+    namespace packageName
 
     compileSdk maxAndroidVersion
 
@@ -25,11 +26,11 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.hfut.schedule"
+        applicationId packageName
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 248
-        versionName "4.19.3.5"
+        versionCode 249
+        versionName "4.19.4 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true

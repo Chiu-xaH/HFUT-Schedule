@@ -46,8 +46,9 @@ import com.hfut.schedule.logic.model.jxglstu.ProgramSearchBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
@@ -201,7 +202,7 @@ fun ProgramSearchScreen(
                                 var department = data.department.nameZh
                                 val name = data.nameZh
                                 department = department.substringBefore("（")
-                                AnimationCardListItem(
+                                CardListItem(
                                     headlineContent = { Text(name) },
                                     overlineContent = { Text(data.grade + "级 " + department + " " + data.major.nameZh) },
                                     leadingContent = { DepartmentIcons(department) },
@@ -210,7 +211,6 @@ fun ProgramSearchScreen(
                                         id = data.id
                                         showBottomSheet = true
                                     },
-                                    index = index
                                 )
                             }
                             item { InnerPaddingHeight(innerPadding,false) }
@@ -294,14 +294,13 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
         LazyColumn {
             items(children.size, key = { it }) { item ->
                 val dataItem = children[item]
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = dataItem.type?.nameZh + dataItem.requireInfo?.requiredCredits.let { if(it != 0.0)" (要求" + it + "学分)" else "" }) },
                     supportingContent = { dataItem.remark?.let { Text(it) } },
                     modifier = Modifier.clickable {
                         showBottomSheet_Program = true
                         bean = dataItem
-                    },
-                    index = item
+                    }
                 )
             }
             entity.requireInfo?.let {
@@ -382,7 +381,7 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
                 val name = course.nameZh
                 val department = listItem.openDepartment.nameZh.substringBefore("（")
                 val term = listItem.terms.let { if(it.isNotEmpty()) it[0] else null }?.substringAfter("_")?.toIntOrNull()
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = name) },
                     supportingContent = { Text(text = department) },
                     overlineContent = { Text(text = term?.let { "第" + it + "学期  " }+ course.credits?.let { "| 学分 $it" })},
@@ -392,7 +391,6 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
                         courseInfo = listItem
                         showInfo = true
                     },
-                    index = item
                 )
             }
             entity.requireInfo?.let {

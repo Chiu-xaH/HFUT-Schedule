@@ -4,15 +4,10 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -21,7 +16,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -31,58 +25,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.ANIMATION_SPEED
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.shimmerEffect
 
-
 val CARD_NORMAL_DP : Dp = 2.5.dp
-
-
-data class CardBottomButton(
-    val text : String,
-    val show : Boolean = true,
-    val clickable :  (() -> Unit)? = null
-)
-private val CARD_BOTTOM_BUTTON_SIZE = 14.sp
-@Composable
-fun ColumnScope.CardBottomButtons(buttons : List<CardBottomButton>) {
-    PaddingHorizontalDivider()
-    LazyRow (modifier = Modifier.align(Alignment.End).padding(horizontal = APP_HORIZONTAL_DP)) {
-        items(buttons.size,key = { it }) { index ->
-            val bean = buttons[index]
-            with(bean) {
-                if(show) {
-                    Spacer(Modifier.width(APP_HORIZONTAL_DP))
-                    Text(
-                        text = text,
-                        color =
-                            if(clickable == null)
-                                MaterialTheme.colorScheme.onSurface
-                            else {
-                                if(text.contains("删除")) {
-                                    MaterialTheme.colorScheme.error
-                                } else {
-                                    MaterialTheme.colorScheme.primary
-                                }
-                            },
-                        fontSize = CARD_BOTTOM_BUTTON_SIZE,
-                        modifier = Modifier
-                            .padding(vertical = APP_HORIZONTAL_DP - 5.dp)
-                            .let {
-                                clickable?.let { click ->
-                                    it.clickable { click() }
-                                } ?: it
-                            }
-                    )
-                }
-            }
-        }
-    }
-}
-
 
 @Composable
 fun CustomCard(
@@ -137,6 +85,7 @@ fun SmallCard(
 }
 
 val SEARCH_FUC_CARD_HEIGHT = 72.dp
+
 @Composable
 fun TransplantListItem(
     headlineContent :  @Composable () -> Unit,
@@ -211,81 +160,9 @@ fun CardListItem(
         shape = shape, shadow = shadow
     )
 }
-// 用在LazyColumn
-@Composable
-fun AnimationCardListItem(
-    headlineContent :  @Composable () -> Unit,
-    overlineContent  : @Composable() (() -> Unit)? = null,
-    supportingContent : @Composable() (() -> Unit)? = null,
-    trailingContent : @Composable() (() -> Unit)? = null,
-    leadingContent : @Composable() (() -> Unit)? = null,
-    color : Color? = null,
-    index : Int,
-    scale : Float = 0.8f,
-    shape: Shape = MaterialTheme.shapes.medium,
-    modifier: Modifier = Modifier,
-    cardModifier: Modifier = Modifier,
-) {
-//    val animatedProgress = remember { Animatable(scale) }
 
-//    LaunchedEffect(index) {
-//        animatedProgress.animateTo(
-//            targetValue = 1f,
-//            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
-//        )
-//    }
-    CardListItem(
-        headlineContent,
-        overlineContent,
-        supportingContent,
-        trailingContent,
-        leadingContent,
-        color,
-        shape,
-        modifier=modifier,
-        cardModifier=cardModifier
-//            .graphicsLayer {
-//            scaleX = animatedProgress.value
-//            scaleY = animatedProgress.value
-//        },
-    )
-}
-
-@Composable
-fun AnimationCustomCard(
-    modifier: Modifier = Modifier,
-    containerColor : Color? = null,
-    index : Int = 1,
-    scale : Float = 0.8f,
-    content: @Composable () -> Unit) {
-//    val animatedProgress = remember { Animatable(scale) }
-
-//    LaunchedEffect(index) {
-//        animatedProgress.animateTo(
-//            targetValue = 1f,
-//            animationSpec = tween(ANIMATION_SPEED, easing = EaseInOutQuad)
-//        )
-//    }
-
-    CustomCard(
-        modifier = modifier
-//            .graphicsLayer {
-//            scaleX = animatedProgress.value
-//            scaleY = animatedProgress.value
-//        }
-        ,
-        color = containerColor,
-    ) {
-        content()
-    }
-}
-
-
-//@Composable
-//fun cardNormalColor() : Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = .05f)
 @Composable
 fun largeCardColor() : Color = MaterialTheme.colorScheme.surfaceVariant
-
 
 @Composable
 fun LargeCard(

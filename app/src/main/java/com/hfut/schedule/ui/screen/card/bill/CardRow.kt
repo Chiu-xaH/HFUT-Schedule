@@ -33,11 +33,11 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.screen.card.bill.main.BillsInfo
@@ -73,7 +73,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
     //添加间距
 //    Spacer(modifier = Modifier.height(5.dp))
 
-    AnimationCustomCard(containerColor = cardNormalColor()) {
+    CustomCard(color = cardNormalColor()) {
         Row {
             TransplantListItem(
                 headlineContent = { ScrollText(text = "余额 ￥${cardValue?.now ?: now}") },

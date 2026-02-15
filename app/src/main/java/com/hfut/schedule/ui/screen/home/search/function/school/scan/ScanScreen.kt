@@ -46,8 +46,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.LiquidTopBarNavigateIcon
 import com.hfut.schedule.ui.component.camera.ScanQrCode
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
@@ -208,7 +208,7 @@ fun ScanScreen(
                             if(isCas) {
 
                             } else if(isValidWebUrl(resultText)) {
-                                CardBottomButtons(
+                                BottomTextButtonGroup(
                                     listOf(
                                         CardBottomButton("复制") {
                                             ClipBoardHelper.copy(resultText)
@@ -224,7 +224,7 @@ fun ScanScreen(
                                     )
                                 )
                             } else if(isWifiContent(resultText)) {
-                                CardBottomButtons(
+                                BottomTextButtonGroup(
                                     listOf(
                                         CardBottomButton("连接") {
                                             parseWifiQrCode(resultText)?.password?.let { ClipBoardHelper.copy(it) }
@@ -236,7 +236,7 @@ fun ScanScreen(
                                     )
                                 )
                             } else {
-                                CardBottomButtons(
+                                BottomTextButtonGroup(
                                     listOf(
                                         CardBottomButton("复制") {
                                             ClipBoardHelper.copy(resultText)

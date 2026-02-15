@@ -59,8 +59,9 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -211,7 +212,7 @@ fun CourseTotalUI(
                 val weeksInfo = data.scheduleWeeksInfo
 
                 val code = data.code
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = {  Text(data.course.nameZh) },
                     overlineContent = { ScrollText(text =
                         "学分 ${data.course.credits}" +
@@ -242,7 +243,6 @@ fun CourseTotalUI(
                         showBottomSheet = true
                         numItem = item
                     },
-                    index = item
                 )
             }
             if(isSearch)

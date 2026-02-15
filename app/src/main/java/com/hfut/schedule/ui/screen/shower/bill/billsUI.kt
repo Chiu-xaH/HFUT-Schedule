@@ -15,7 +15,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -40,7 +41,7 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
             item { Spacer(modifier = Modifier.height(5.dp)) }
             items(list.size) {item ->
                 val info = list[item].description
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = {
                         ScrollText(text =
                             if(info.contains("热水表: ")) info.substringAfter(": ")
@@ -72,7 +73,6 @@ fun GuaguaBills(innerPadding: PaddingValues, vm: GuaGuaViewModel) {
                                 }
                             ), contentDescription = "")
                     },
-                    index = item
                 )
             }
             item { InnerPaddingHeight(innerPadding,false) }

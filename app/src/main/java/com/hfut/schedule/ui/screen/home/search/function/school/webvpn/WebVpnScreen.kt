@@ -52,8 +52,8 @@ import com.hfut.schedule.ui.component.button.BottomButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -273,7 +273,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             Text("转换结果")
                         },
                     )
-                    CardBottomButtons(
+                    BottomTextButtonGroup(
                         listOf(
                             CardBottomButton("复制") {
                                 ClipBoardHelper.copy(it)
@@ -377,7 +377,7 @@ fun WebVpnUI(vm: NetWorkViewModel) {
                             Text("转换结果")
                         },
                     )
-                    CardBottomButtons(
+                    BottomTextButtonGroup(
                         listOf(
                             CardBottomButton("复制") {
                                 ClipBoardHelper.copy(it)

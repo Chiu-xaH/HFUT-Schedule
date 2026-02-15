@@ -34,8 +34,8 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -150,7 +150,7 @@ private fun SupportItem(item : SupportItemBean) {
                     }
                 }
             )
-            CardBottomButtons(
+            BottomTextButtonGroup(
                 listOf(
                     CardBottomButton(item.android),
                     CardBottomButton("预览效果",item.url != null) {

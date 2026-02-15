@@ -63,7 +63,6 @@ fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campu
     CampusRegion.XUANCHENG -> "101221401"
     CampusRegion.HEFEI -> "101220101"
 }
-var countFunc = 0
 
 @Composable
 fun LifeScreenMini(vm: NetWorkViewModel) {

@@ -37,7 +37,8 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.xah.uicommon.component.text.BottomTip
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -125,7 +126,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                     val paidDate = paidTime.substringBefore(" ")
                     val delay = finalDate != paidDate
                     Box(modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)) {
-                        AnimationCardListItem(
+                        CardListItem(
                             headlineContent = { Text(text = name) },
                             supportingContent = { Text(text = processTranamt(bills)) },
                             overlineContent = { Text(text = (if(sorted) paidTime else finalTime )  + (if(delay) " (延迟入账)" else "")) },
@@ -137,8 +138,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
                             modifier = Modifier.clickable {
                                 infoNum = bills
                                 showBottomSheet = true
-                            },
-                            index = item
+                            }
                         )
                     }
                 }

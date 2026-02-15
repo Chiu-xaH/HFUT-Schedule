@@ -46,7 +46,7 @@ import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.SmallCard
@@ -61,6 +61,7 @@ import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
@@ -69,6 +70,7 @@ import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 import dev.chrisbanes.haze.hazeSource
@@ -106,7 +108,6 @@ fun AdmissionScreen(
         ) { innerPadding ->
         AdmissionListUI(vm,innerPadding,navController)
     }
-//    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterialApi::class)
@@ -145,14 +146,14 @@ fun AdmissionListUI(
                     val list = (uiState as UiState.Success).data.second.entries.toList()
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
-                        modifier = Modifier.padding(horizontal = 10.dp),
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP),
                     ) {
                         items(list.size) { index ->
                             val item = list[index]
                             val route = AppNavRoute.AdmissionDetail.withArgs(index, pageList[page].description)
                             SmallCard (
                                 color = cardNormalColor(),
-                                modifier = Modifier.padding(2.5.dp)
+                                modifier = Modifier.padding(CARD_NORMAL_DP)
                                     .clickableWithScale(ClickScale.SMALL.scale) {
                                         navController.navigateForTransition(AppNavRoute.AdmissionDetail,route)
                                     }
@@ -194,6 +195,7 @@ fun AdmissionRegionScreen(
         vm.getAdmissionToken()
         vm.getAdmissionDetail(type,bean,region)
     }
+
     LaunchedEffect(pagerState.currentPage) {
         val bean = data.value[pagerState.currentPage]
         val typeE = AdmissionType.entries.find { it.description == type }!!
@@ -201,147 +203,121 @@ fun AdmissionRegionScreen(
         refreshNetwork(typeE,bean,region)
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        CustomTransitionScaffold (
-            route = route,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            
-            navHostController = navController,
-            topBar = {
-                Column(modifier = Modifier.topBarBlur(hazeState)) {
-                    MediumTopAppBar(
-                        scrollBehavior = scrollBehavior,
-                        colors = topBarTransplantColor(),
-                        title = { Text(type + " : "+ data.key) },
-                        navigationIcon = {
-                            TopBarNavigationIcon()
-                        }
-                    )
-                    CustomTabRow(pagerState,titles)
-                }
-            },
-        ) { innerPadding ->
-            HorizontalPager(pagerState) { page ->
-                val bean = data.value[page]
-                val typeE = AdmissionType.entries.find { it.description == type }!!
-                val region = data.key
-                CommonNetworkScreen(uiState, onReload = { refreshNetwork(typeE,bean,region)}) {
-                    val data = (uiState as UiState.Success).data
-//        val ui : LazyListScope.() -> Unit =   {
-//
-//        }
-                    LazyColumn(modifier = Modifier.hazeSource(hazeState)) {
-                        item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
-                        when (data) {
-                            is AdmissionDetailBean.History -> {
-                                val majorList = data.data.majorSituationList
-                                val generalList = data.data.generalSituationList
-                                items(generalList.size,key = { it }) { index ->
-                                    val item = generalList[index]
-                                    AnimationCustomCard (containerColor = MaterialTheme.colorScheme.secondaryContainer, index = index) {
-                                        Column {
-                                            Row {
-                                                item.minScore?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("最低分") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.arrow_downward),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                                item.maxScore?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("最高分") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.arrow_upward),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                            }
-                                            Row {
-                                                item.avgScore?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("平均分") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.filter_vintage),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                                item.fsx?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("控制线") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.stat_minus_2),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                item { DividerText("专业分数线") }
-                                items(majorList.size,key= { it + generalList.size }) { index ->
-                                    val item = majorList[index]
-                                    AnimationCustomCard  (containerColor = cardNormalColor(), index = index+generalList.size) {
-                                        Column {
-                                            TransplantListItem(
-                                                headlineContent = { Text(item.major,fontWeight = FontWeight.Bold) }
-                                            )
-                                            PaddingHorizontalDivider()
-                                            Row {
-                                                item.minScore?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("最低分") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.arrow_downward),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                                item.maxScore?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it.toString()) },
-                                                        overlineContent = { Text("最高分") },
-                                                        leadingContent = { Icon(painterResource(R.drawable.arrow_upward),null)},
-                                                        modifier = Modifier.weight(.5f)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            is AdmissionDetailBean.Plan -> {
-                                val majorList = data.data.majorSituationList
-                                val generalList = data.data.generalSituationList
-                                items(generalList.size, key = { it }) { index ->
-                                    val item = generalList[index]
+
+    CustomTransitionScaffold (
+        route = route,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        navHostController = navController,
+        topBar = {
+            Column(modifier = Modifier.topBarBlur(hazeState)) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(type + " : "+ data.key) },
+                    navigationIcon = {
+                        TopBarNavigationIcon()
+                    }
+                )
+                CustomTabRow(pagerState,titles)
+            }
+        },
+    ) { innerPadding ->
+        HorizontalPager(pagerState) { page ->
+            val bean = data.value[page]
+            val typeE = AdmissionType.entries.find { it.description == type }!!
+            val region = data.key
+            CommonNetworkScreen(uiState, onReload = { refreshNetwork(typeE,bean,region)}) {
+                val data = (uiState as UiState.Success).data
+
+                LazyColumn(modifier = Modifier.hazeSource(hazeState)) {
+                    item { Spacer(Modifier.height(innerPadding.calculateTopPadding())) }
+                    when (data) {
+                        is AdmissionDetailBean.History -> {
+                            val majorList = data.data.majorSituationList
+                            val generalList = data.data.generalSituationList
+                            items(generalList.size,key = { it }) { index ->
+                                val item = generalList[index]
+                                CustomCard (color =cardNormalColor()) {
                                     Column {
-                                        Spacer(Modifier.height(CARD_NORMAL_DP))
-                                        LargeCard("合计招生 ${item.count} 人") {
-                                            Column {
-                                                item.firstSubjectRequirement?.let {
-                                                    TransplantListItem(
-                                                        headlineContent = { Text(it) },
-                                                        overlineContent = { Text("首选科目要求") }
-                                                    )
-                                                }
+                                        Row {
+                                            item.minScore?.let {
                                                 TransplantListItem(
-                                                    headlineContent = { Text(item.subjectRequirement) },
-                                                    overlineContent = { Text("选科要求") }
+                                                    headlineContent = { Text(it.toString()) },
+                                                    overlineContent = { Text("最低分") },
+                                                    leadingContent = { Icon(painterResource(R.drawable.arrow_downward),null)},
+                                                    modifier = Modifier.weight(.5f)
+                                                )
+                                            }
+                                            item.maxScore?.let {
+                                                TransplantListItem(
+                                                    headlineContent = { Text(it.toString()) },
+                                                    overlineContent = { Text("最高分") },
+                                                    leadingContent = { Icon(painterResource(R.drawable.arrow_upward),null)},
+                                                    modifier = Modifier.weight(.5f)
+                                                )
+                                            }
+                                        }
+                                        Row {
+                                            item.avgScore?.let {
+                                                TransplantListItem(
+                                                    headlineContent = { Text(it.toString()) },
+                                                    overlineContent = { Text("平均分") },
+                                                    leadingContent = { Icon(painterResource(R.drawable.filter_vintage),null)},
+                                                    modifier = Modifier.weight(.5f)
+                                                )
+                                            }
+                                            item.fsx?.let {
+                                                TransplantListItem(
+                                                    headlineContent = { Text(it.toString()) },
+                                                    overlineContent = { Text("控制线") },
+                                                    leadingContent = { Icon(painterResource(R.drawable.stat_minus_2),null)},
+                                                    modifier = Modifier.weight(.5f)
                                                 )
                                             }
                                         }
                                     }
                                 }
-                                item { DividerText("招生专业") }
-                                items(majorList.size,key = { generalList.size + it }) { index ->
-                                    val item = majorList[index]
-                                    AnimationCustomCard (containerColor = cardNormalColor(), index = generalList.size + index) {
+                            }
+                            item { DividerText("专业分数线") }
+                            items(majorList.size,key= { it + generalList.size }) { index ->
+                                val item = majorList[index]
+                                CustomCard  (color = cardNormalColor()) {
+                                    Column {
+                                        TransplantListItem(
+                                            headlineContent = { Text(item.major,fontWeight = FontWeight.Bold) }
+                                        )
+                                        PaddingHorizontalDivider()
+                                        Row {
+                                            item.minScore?.let {
+                                                TransplantListItem(
+                                                    headlineContent = { Text(it.toString()) },
+                                                    overlineContent = { Text("最低分") },
+                                                    leadingContent = { Icon(painterResource(R.drawable.arrow_downward),null)},
+                                                    modifier = Modifier.weight(.5f)
+                                                )
+                                            }
+                                            item.maxScore?.let {
+                                                TransplantListItem(
+                                                    headlineContent = { Text(it.toString()) },
+                                                    overlineContent = { Text("最高分") },
+                                                    leadingContent = { Icon(painterResource(R.drawable.arrow_upward),null)},
+                                                    modifier = Modifier.weight(.5f)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        is AdmissionDetailBean.Plan -> {
+                            val majorList = data.data.majorSituationList
+                            val generalList = data.data.generalSituationList
+                            items(generalList.size, key = { it }) { index ->
+                                val item = generalList[index]
+                                Column {
+                                    Spacer(Modifier.height(CARD_NORMAL_DP))
+                                    LargeCard("合计招生 ${item.count} 人") {
                                         Column {
-                                            TransplantListItem(
-                                                headlineContent = { Text(item.major, fontWeight = FontWeight.Bold)},
-                                                trailingContent = { Text(item.count.toString() + "人")}
-                                            )
-                                            PaddingHorizontalDivider()
                                             item.firstSubjectRequirement?.let {
                                                 TransplantListItem(
                                                     headlineContent = { Text(it) },
@@ -356,11 +332,34 @@ fun AdmissionRegionScreen(
                                     }
                                 }
                             }
+                            item { DividerText("招生专业") }
+                            items(majorList.size,key = { generalList.size + it }) { index ->
+                                val item = majorList[index]
+                                CustomCard (color = cardNormalColor()) {
+                                    Column {
+                                        TransplantListItem(
+                                            headlineContent = { Text(item.major, fontWeight = FontWeight.Bold)},
+                                            trailingContent = { Text(item.count.toString() + "人")}
+                                        )
+                                        PaddingHorizontalDivider()
+                                        item.firstSubjectRequirement?.let {
+                                            TransplantListItem(
+                                                headlineContent = { Text(it) },
+                                                overlineContent = { Text("首选科目要求") }
+                                            )
+                                        }
+                                        TransplantListItem(
+                                            headlineContent = { Text(item.subjectRequirement) },
+                                            overlineContent = { Text("选科要求") }
+                                        )
+                                    }
+                                }
+                            }
                         }
-                        item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
                     }
+                    item { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
                 }
             }
         }
-//    }
+    }
 }

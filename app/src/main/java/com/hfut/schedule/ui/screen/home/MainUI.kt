@@ -734,9 +734,7 @@ fun MainScreen(
                                 zhiJianStudentId = it
                             }
                         }
-//                        if (swapUI != CourseType.NEXT.code) {
-                            ScheduleTopDate(showAll, today)
-//                        }
+                        ScheduleTopDate(showAll, today)
                     }
                 }
             }
@@ -1430,7 +1428,7 @@ private fun ZhiJianSearchBar(
                                 showSelectDialog = true
                             }
                         ) {
-                            Icon(painterResource(R.drawable.database),null)
+                            Icon(painterResource(R.drawable.swap_vert),null)
                         }
                     }
                 },

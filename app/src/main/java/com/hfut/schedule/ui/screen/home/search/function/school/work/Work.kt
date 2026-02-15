@@ -56,7 +56,7 @@ import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -80,6 +80,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.containerBackDrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -276,11 +277,11 @@ private fun WorkSearchUI(
                                     CampusRegion.HEFEI -> MyApplication.WORK_URL
                                     CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
                                 } + "detail/" + enumType.url +  id
-                                AnimationCardListItem(
+                            CardListItem(
                                     color = cardNormalColor(),
                                     headlineContent = { Text(title) },
                                     overlineContent = { Text(time + if(page == 0) " " + enumType.description else "") },
-                                    index = index,
+                                
                                     modifier = Modifier.clickable {
                                         scope.launch {
                                             Starter.startWebView(context,url,title, icon = AppNavRoute.Work.icon)

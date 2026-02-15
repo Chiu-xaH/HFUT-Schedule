@@ -27,8 +27,8 @@ import com.hfut.schedule.logic.util.sys.ShareTo
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
@@ -123,7 +123,7 @@ fun StorageWeb(hazeState : HazeState) {
                                     }
                                 )
                             )
-                            CardBottomButtons(
+                            BottomTextButtonGroup(
                                 listOf(
                                     CardBottomButton(
                                         "来源: " + when(t) {

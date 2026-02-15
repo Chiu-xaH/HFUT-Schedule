@@ -28,7 +28,8 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.AcademicType
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -99,7 +100,7 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                         items(list.size, key = { it }) { index ->
                             val item = list[index]
 //                    MyCustomCard {
-                            AnimationCardListItem(
+                            CardListItem(
                                 headlineContent = { Text(item.title) },
                                 overlineContent = { Text(item.date) },
                                 leadingContent = { Text((index+1).toString()) },
@@ -123,7 +124,6 @@ fun AcademicTotalScreen(innerPadding : PaddingValues,vm : NetWorkViewModel) {
                                         )
                                     }
                                 },
-                                index = index
                             )
 //                    }
                         }

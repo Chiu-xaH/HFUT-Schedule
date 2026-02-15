@@ -68,10 +68,9 @@ import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.CardBottomButton
-import com.hfut.schedule.ui.component.container.CardBottomButtons
+import com.hfut.schedule.ui.component.button.CardBottomButton
+import com.hfut.schedule.ui.component.button.BottomTextButtonGroup
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LoadingLargeCard
@@ -320,9 +319,8 @@ private fun SearchScreenCommunity(
                     val item = books[index]
                     val name = item.name
                     val callNo = item.callNumber
-                    AnimationCustomCard(
-                        containerColor = cardNormalColor(),
-                        index = index,
+                    CustomCard(
+                        color = cardNormalColor(),
                         modifier = Modifier.clickable {
                             title = name
                             callNum = callNo
@@ -824,7 +822,7 @@ private fun SearchScreenLibrary(
                                     Icon(painterResource(R.drawable.info),null)
                                 }
                             )
-                            CardBottomButtons(listOf(
+                            BottomTextButtonGroup(listOf(
                                 CardBottomButton(
                                     show = true,
                                     text = "加入书架",

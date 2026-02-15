@@ -38,7 +38,8 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
@@ -52,12 +53,11 @@ private fun TotalGrade(vm : NetWorkViewModel) {
     val uiState by vm.gradeFromCommunityResponse.state.collectAsState()
     val result = (uiState as UiState.Success).data
     with(result) {
-        AnimationCardListItem(
+        CardListItem(
             headlineContent = {  Text("绩点(GPA)  $gpa") },
             supportingContent = { Text("班级排名: $classRanking   专业排名: $majorRanking") },
             leadingContent = { Icon(painterResource(R.drawable.flag), contentDescription = "Localized description",) },
             color = MaterialTheme.colorScheme.secondaryContainer,
-            index = 0
         )
     }
 }
@@ -150,7 +150,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                     item { TotalGrade(vm) }
                     items(list.size) { index ->
                         val item = list[index]
-                        AnimationCardListItem(
+                        CardListItem(
                             headlineContent = { Text(item.courseName) },
                             supportingContent = { Text("学分: " + item.credit + "   绩点: " + item.gpa + "   分数: ${item.score}") },
                             leadingContent = {
@@ -160,18 +160,17 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 )
                             },
 //                            trailingContent = { Text(if (item.pass) "通过" else "未通过") },
-                            index = index
+//                            index = index
                         )
                     }
                     item {
-                        AnimationCardListItem(
+                        CardListItem(
                             headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
                             supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
                             trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
                             modifier = Modifier.clickable {
                                 refreshLogin(context)
                             },
-                            index = 0
                         )
                     }
                     item { InnerPaddingHeight(innerPadding,false) }

@@ -75,8 +75,8 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
-import com.hfut.schedule.ui.component.container.AnimationCustomCard
+
+
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -92,7 +92,6 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.screen.home.search.function.other.life.countFunc
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -263,8 +262,7 @@ fun TransferScreen(
                             }
                         }
                         item {
-                            AnimationCardListItem(
-                                index = transferList.size,
+                            CardListItem(
                                 headlineContent = {
                                     Text("手动输入代号查看被隐藏掉的转专业入口")
                                 },
@@ -455,7 +453,6 @@ private fun TransferUI(
     }
 
     if(showBottomSheet) {
-        countFunc = 0
         HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
@@ -596,8 +593,7 @@ private fun TransferUI(
             if(response.data.isNotEmpty()) {
                 item {
                     val item = list[0].changeMajorBatch ?: return@item
-                    AnimationCardListItem(
-                        index = 0,
+                    CardListItem(
                         headlineContent = {
                             Text(if(isHidden) item.nameZh else "申请提示")
                         },
@@ -622,7 +618,7 @@ private fun TransferUI(
                 val count = dataItem.applyStdCount
                 val limit = dataItem.preparedStdCount
                 val isFull = count > limit
-                AnimationCardListItem(
+                CardListItem(
                     headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
                     supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
                     overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
@@ -638,7 +634,6 @@ private fun TransferUI(
                     } else {
                         null
                     },
-                    index = item+1
                 )
             }
             item { InnerPaddingHeight(innerPadding,false) }

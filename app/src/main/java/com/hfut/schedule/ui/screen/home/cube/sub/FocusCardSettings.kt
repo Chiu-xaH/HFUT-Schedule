@@ -452,8 +452,8 @@ fun Special(
 
             }) {
             TransplantListItem(
-                headlineContent = { ScrollText(text = "节假日休息(已隐藏今日课程)" ) },
-                overlineContent = { ScrollText(text = "今天") },
+                headlineContent = { ScrollText(text = "节假日休息" ) },
+                overlineContent = { ScrollText(text = "已隐藏今日课程") },
                 leadingContent = { Icon(painter = painterResource(R.drawable.beach_access) , contentDescription = "")},
             )
         }

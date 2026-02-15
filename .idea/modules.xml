@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/肥工课程表.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/肥工课程表.app.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/shared/肥工课程表.shared.main.iml" filepath="$PROJECT_DIR$/.idea/modules/shared/肥工课程表.shared.main.iml" />
     </modules>
   </component>
 </project>

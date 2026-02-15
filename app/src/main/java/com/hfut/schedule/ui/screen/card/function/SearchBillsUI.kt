@@ -30,7 +30,8 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.BillsIcons
 import com.xah.uicommon.style.align.CenterScreen
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -143,12 +144,11 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
                                     val item = list[index]
                                     var name = item.resume
                                     if (name.contains("有限公司")) name = name.replace("有限公司","")
-                                    AnimationCardListItem(
+                                    CardListItem(
                                         headlineContent = { Text(text = name) },
                                         supportingContent = { Text(text = processTranamt(item))},
                                         overlineContent = { Text(text = "交易 " + item.jndatetimeStr + "\n入账 " + item.effectdateStr)},
                                         leadingContent = { BillsIcons(name) },
-                                        index = index,
                                         modifier = Modifier.clickable {
                                             infoNum = item
                                             showBottomSheet = true

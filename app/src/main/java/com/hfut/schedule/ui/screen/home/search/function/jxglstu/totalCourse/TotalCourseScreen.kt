@@ -7,7 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.lessons
-import com.hfut.schedule.ui.component.container.AnimationCardListItem
+
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.xah.uicommon.component.text.ScrollText
 
 @Composable
@@ -15,7 +16,7 @@ fun TermFirstlyInfo(list: List<lessons>) {
     if(list.isEmpty()) return
 
     val info = list[0].semester
-    AnimationCardListItem(
+    CardListItem(
         overlineContent = { Text(text = info.startDate + " ~ " + info.endDate)},
         headlineContent = {  ScrollText(info.nameZh) },
         leadingContent = { Icon(
@@ -26,7 +27,6 @@ fun TermFirstlyInfo(list: List<lessons>) {
         trailingContent = {
             Text(text = "学分 ${periodsSum(list)}")
         },
-        index = 0
     )
 }
 
