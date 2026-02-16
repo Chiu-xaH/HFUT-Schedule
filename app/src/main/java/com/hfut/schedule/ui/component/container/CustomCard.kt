@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.ANIMATION_SPEED
+import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.shimmerEffect
 
@@ -181,10 +182,10 @@ fun LargeCard(
     ) {
         TransplantListItem(
             headlineContent = {
-                Text(
+                ScrollText(
                     text = title,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+//                    maxLines = 1,
+//                    overflow = TextOverflow.Ellipsis,
                     fontSize = 28.sp,
                     modifier = Modifier.padding(top = APP_HORIZONTAL_DP/6, bottom = 0.dp)
                 )

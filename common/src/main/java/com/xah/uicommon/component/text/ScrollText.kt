@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
 import kotlinx.coroutines.delay
 
 @Composable
@@ -17,6 +18,7 @@ fun ScrollText(
     text : String,
     modifier: Modifier = Modifier,
     textDecoration: TextDecoration? = null,
+    fontSize: TextUnit = TextUnit.Unspecified,
     style : TextStyle =  LocalTextStyle. current,
     color : Color = Color.Unspecified,
 ) {
@@ -30,6 +32,7 @@ fun ScrollText(
 
     Text(
         text = text,
+        fontSize = fontSize,
         modifier = modifier.horizontalScroll(scrollState),
         textDecoration = textDecoration,
         style = style,

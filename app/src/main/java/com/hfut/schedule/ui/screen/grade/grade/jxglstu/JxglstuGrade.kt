@@ -41,12 +41,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -80,6 +80,7 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.Party
@@ -97,11 +98,17 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
+import com.xah.uicommon.component.chart.BarChart
+import com.xah.uicommon.component.chart.LineChart
+import com.xah.uicommon.component.chart.PieChart
+import com.xah.uicommon.component.chart.PieChartData
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.util.LogUtil
@@ -113,6 +120,31 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+
+private fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
+    val totalCredits = termBean.list.fold(0f) { init,acc->
+        init.plus(acc.credits.toFloatOrNull() ?: 0f)
+    }
+    return totalCredits
+}
+
+private fun getTotalGpa(termBean : GradeJxglstuDTO) : Float {
+    val totalGpa = termBean.list.fold(0f) { init, acc ->
+        val avg = acc.gpa.toFloatOrNull()?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
+        init.plus(avg)
+    }
+    return totalGpa
+}
+
+private fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
+    val totalScore = termBean.list.fold(0f) { init, acc ->
+        val avg = acc.detail.toFloatOrNull()?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
+        init.plus(avg)
+    }
+    return totalScore
+}
+
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
@@ -163,19 +195,22 @@ fun GradeItemJxglstuUI(
             modifier = Modifier
                 .containerShare(AppNavRoute.GradeDetail.shareRoute(grade))
                 .clickable {
-                if(needSurvey) {
-                    if(ifSaved) {
-                        showToast("未评教，请登录后评教")
-                        Starter.refreshLogin(context)
+                    if (needSurvey) {
+                        if (ifSaved) {
+                            showToast("未评教，请登录后评教")
+                            Starter.refreshLogin(context)
+                        } else {
+                            surveyCode = grade.lessonCode
+                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+                            showBottomSheet_Survey = true
+                        }
                     } else {
-                        surveyCode = grade.lessonCode
-                        showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
-                        showBottomSheet_Survey = true
+                        navController.navigateForTransition(
+                            AppNavRoute.GradeDetail,
+                            AppNavRoute.GradeDetail.withArgs(grade)
+                        )
                     }
-                } else {
-                    navController.navigateForTransition(AppNavRoute.GradeDetail, AppNavRoute.GradeDetail.withArgs(grade))
                 }
-            }
         ) {
             TransplantListItem(
                 headlineContent = {  Text(grade.courseName) },
@@ -211,7 +246,9 @@ fun GradeItemJxglstuUI(
                     LocalMinimumInteractiveComponentSize provides 0.dp
                 ) {
                     FlowRow(
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP*3),
+                        modifier = Modifier
+                            .padding(horizontal = APP_HORIZONTAL_DP)
+                            .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
                     ) {
                         list.forEach {
                             val item = it.split(":")
@@ -235,7 +272,9 @@ fun GradeItemJxglstuUI(
                                 trailingIcon = {
                                     value?.let { text -> Text(text) }
                                 },
-                                modifier = Modifier.padding(end = CARD_NORMAL_DP*3).padding(bottom = CARD_NORMAL_DP*3)
+                                modifier = Modifier
+                                    .padding(end = CARD_NORMAL_DP * 3)
+                                    .padding(bottom = CARD_NORMAL_DP * 3)
                             )
                         }
                     }
@@ -249,6 +288,18 @@ fun GradeItemJxglstuUI(
     }
 
     val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
+        val allTotalCredits by produceState(initialValue = 0f) {
+            value = gradeList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
+        }
+
+        val allAvgGpa by produceState(initialValue = 0f, key1 = allTotalCredits) {
+            value = gradeList.fold(0f) { init,acc -> init + getTotalGpa(acc) } safeDiv allTotalCredits
+        }
+
+        val allAvgScore by produceState(initialValue = 0f, key1 = allTotalCredits) {
+            value = gradeList.fold(0f) { init,acc -> init + getTotalScore(acc) } safeDiv allTotalCredits
+        }
+
         Column {
             if(gradeList.isEmpty()) {
                 CenterScreen {
@@ -259,6 +310,33 @@ fun GradeItemJxglstuUI(
                 LazyColumn {
                     item {
                         InnerPaddingHeight(innerPadding,true)
+                    }
+                    item(key = "total") {
+                        Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
+                        LargeCard(
+                            title = "分数 ${formatDecimal(allAvgScore.toDouble(),2)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),2)}",
+                        ) {
+                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
+                            BarChart(gradeList.reversed().associate { it.term to getTotalGpa(it) })
+
+                            gradeList.reversed().forEach {
+                                val totalCredits = remember { getTotalCredits(it) }
+                                val totalGpa = remember { getTotalGpa(it) }
+                                val totalScore = remember { getTotalScore(it) }
+                                val avgGpa = totalGpa safeDiv totalCredits
+                                val avgScore = totalScore safeDiv totalCredits
+
+                                TransplantListItem(
+                                    trailingContent = {
+                                        Text("占比${formatDecimal((totalCredits/allTotalCredits*100).toDouble(),0)}%")
+                                    },
+                                    headlineContent = {
+                                        ScrollText("分数 ${formatDecimal(avgScore.toDouble(),2)} | 绩点 ${formatDecimal(avgGpa.toDouble(),2)} | 学分 $totalCredits")
+                                    },
+                                    overlineContent = { Text(it.term) }
+                                )
+                            }
+                        }
                     }
                     gradeList.forEach { term ->
                         val termKey = term.term
@@ -441,7 +519,10 @@ fun GradeItemUIUniApp(
                                         modifier = Modifier
                                             .containerShare(AppNavRoute.GradeDetail.shareRoute(bean))
                                             .clickable {
-                                                navController.navigateForTransition(AppNavRoute.GradeDetail, AppNavRoute.GradeDetail.withArgs(bean))
+                                                navController.navigateForTransition(
+                                                    AppNavRoute.GradeDetail,
+                                                    AppNavRoute.GradeDetail.withArgs(bean)
+                                                )
                                             }
                                     ) {
                                         TransplantListItem(
@@ -473,7 +554,9 @@ fun GradeItemUIUniApp(
                                                 LocalMinimumInteractiveComponentSize provides 0.dp
                                             ) {
                                                 FlowRow(
-                                                    modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP*3),
+                                                    modifier = Modifier
+                                                        .padding(horizontal = APP_HORIZONTAL_DP)
+                                                        .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
                                                 ) {
                                                     list.forEach {
                                                         val item = it.split(":")
@@ -499,7 +582,9 @@ fun GradeItemUIUniApp(
                                                             trailingIcon = {
                                                                 value?.let { text -> Text(text) }
                                                             },
-                                                            modifier = Modifier.padding(end = CARD_NORMAL_DP*3).padding(bottom = CARD_NORMAL_DP*3)
+                                                            modifier = Modifier
+                                                                .padding(end = CARD_NORMAL_DP * 3)
+                                                                .padding(bottom = CARD_NORMAL_DP * 3)
                                                         )
                                                     }
                                                 }
@@ -1008,7 +1093,8 @@ fun StarGroup(level: Pair<Int, Int>,onParty : (Boolean) -> Unit) {
                     painter = painterResource(id = painter),
                     contentDescription = null,
                     tint = color,
-                    modifier = Modifier.size(22.dp)
+                    modifier = Modifier
+                        .size(22.dp)
                         .graphicsLayer {
                             scaleX = scale
                             scaleY = scale

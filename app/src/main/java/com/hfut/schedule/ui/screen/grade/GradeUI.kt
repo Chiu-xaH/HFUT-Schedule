@@ -87,7 +87,7 @@ private val items = listOf(
 //        GradeBarItems.UNI_APP.name,"合工大教务源", R.drawable.article, R.drawable.article_filled
 //    ),
     NavigationBarItemData(
-        GradeBarItems.COUNT.name,"计算", R.drawable.leaderboard,R.drawable.leaderboard_filled
+        GradeBarItems.COUNT.name,"统计", R.drawable.leaderboard,R.drawable.leaderboard_filled
     )
 )
 
@@ -116,8 +116,6 @@ fun GradeScreen(
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         GradeBarItems.GRADE.name ->GradeBarItems.GRADE
         GradeBarItems.COUNT.name -> GradeBarItems.COUNT
-//        GradeBarItems.COMMUNITY.name -> GradeBarItems.COMMUNITY
-//        GradeBarItems.UNI_APP.name -> GradeBarItems.UNI_APP
         else -> GradeBarItems.GRADE
     }
     // 保存上一页页码 用于决定左右动画
@@ -201,18 +199,20 @@ fun GradeScreen(
                                     )
                                 }
                             }
-                            Spacer(Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                onClick = {
-                                    scope.launch {
-                                        loading = true
-                                        goToXwx(viewModel,context)
-                                        loading = false
-                                    }
-                                } ,
-                                backdrop = backDrop
-                            ) {
-                               Text("校务行")
+                            if(targetPage != GradeBarItems.COUNT) {
+                                Spacer(Modifier.width(BUTTON_PADDING))
+                                LiquidButton(
+                                    onClick = {
+                                        scope.launch {
+                                            loading = true
+                                            goToXwx(viewModel,context)
+                                            loading = false
+                                        }
+                                    } ,
+                                    backdrop = backDrop
+                                ) {
+                                    Text("校务行")
+                                }
                             }
                         }
                     }
