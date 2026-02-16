@@ -46,7 +46,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -99,16 +98,12 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.chart.BarChart
-import com.xah.uicommon.component.chart.LineChart
-import com.xah.uicommon.component.chart.PieChart
-import com.xah.uicommon.component.chart.PieChartData
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
+import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
-import com.xah.uicommon.style.align.ColumnVertical
-import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.xah.uicommon.util.LogUtil
@@ -123,27 +118,76 @@ import kotlinx.coroutines.launch
 
 private fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
     val totalCredits = termBean.list.fold(0f) { init,acc->
-        init.plus(acc.credits.toFloatOrNull() ?: 0f)
+        val avg = getCredit(acc.credits) ?: 0f
+        if(avg == 0f) {
+            LogUtil.error("avg==0 $acc")
+        }
+        init.plus(avg)
     }
     return totalCredits
 }
 
 private fun getTotalGpa(termBean : GradeJxglstuDTO) : Float {
     val totalGpa = termBean.list.fold(0f) { init, acc ->
-        val avg = acc.gpa.toFloatOrNull()?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
+        val avg = getGpa(acc.gpa)?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
+        if(avg == 0f) {
+            LogUtil.error("avg==0 $acc")
+        }
         init.plus(avg)
     }
     return totalGpa
 }
 
+private fun getGpa(gpaText : String) : Float? = gpaText.toFloatOrNull()
+private fun getCredit(creditText : String) : Float? = creditText.toFloatOrNull()
+private fun getScore(scoreText : String) : Float? = scoreText.toFloatOrNull() ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat())
+
 private fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
     val totalScore = termBean.list.fold(0f) { init, acc ->
-        val avg = acc.detail.toFloatOrNull()?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
+        val avg = getScore(acc.detail)?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
+        if(avg == 0f) {
+            LogUtil.error("avg==0 $acc")
+        }
         init.plus(avg)
     }
     return totalScore
 }
 
+private fun avgGpaWithoutCourse(
+    totalGpa: Float,
+    totalCredit: Float,
+    remove: GradeResponseJXGLSTU
+): Float {
+    val removeCredit = getCredit(remove.credits) ?: return 0f
+    val removeGpa = getGpa(remove.gpa) ?: return 0f
+    val newTotalCredit = totalCredit - removeCredit
+    if (newTotalCredit <= 0f) return 0f
+    // 还原总加权和
+    val totalPoint = totalGpa * totalCredit
+    // 减去该课程的加权值
+    val newTotalPoint = totalPoint - removeGpa * removeCredit
+    val newAvg = newTotalPoint / newTotalCredit
+    // 返回差值 原 - 新
+    return totalGpa - newAvg
+}
+
+private fun avgScoreWithoutCourse(
+    totalScore: Float,
+    totalCredit: Float,
+    remove: GradeResponseJXGLSTU
+): Float {
+    val removeCredit = getCredit(remove.credits) ?: return 0f
+    val removeScore = getScore(remove.detail) ?: return 0f
+    val newTotalCredit = totalCredit - removeCredit
+    if (newTotalCredit <= 0f) return 0f
+    // 还原总加权和
+    val totalPoint = totalScore * totalCredit
+    // 减去该课程的加权值
+    val newTotalPoint = totalPoint - removeScore * removeCredit
+    val newAvg = newTotalPoint / newTotalCredit
+    // 返回差值 原 - 新
+    return totalScore - newAvg
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
@@ -185,119 +229,127 @@ fun GradeItemJxglstuUI(
         }
     }
 
-
-    val itemUI = @Composable { grade : GradeResponseJXGLSTU ->
-        val isFailed = grade.gpa.toFloatOrNull() == 0f
-        val needSurvey = grade.score.contains("评教")
-
-        CustomCard(
-            color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
-            modifier = Modifier
-                .containerShare(AppNavRoute.GradeDetail.shareRoute(grade))
-                .clickable {
-                    if (needSurvey) {
-                        if (ifSaved) {
-                            showToast("未评教，请登录后评教")
-                            Starter.refreshLogin(context)
-                        } else {
-                            surveyCode = grade.lessonCode
-                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
-                            showBottomSheet_Survey = true
-                        }
-                    } else {
-                        navController.navigateForTransition(
-                            AppNavRoute.GradeDetail,
-                            AppNavRoute.GradeDetail.withArgs(grade)
-                        )
-                    }
-                }
-        ) {
-            TransplantListItem(
-                headlineContent = {  Text(grade.courseName) },
-                overlineContent = { Text(
-                    if(!needSurvey)
-                        "分数 "+ grade.detail + " | 绩点 " + grade.gpa +  " | 学分 " + grade.credits
-                    else grade.lessonCode
-                ) },
-                leadingContent = {
-                    Icon(
-                        painterResource(
-                            if(isFailed) {
-                                R.drawable.error
-                            } else {
-                                R.drawable.check_circle
-                            }
-                        ),
-                        contentDescription = "Localized description",
-                        tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
-                    ) },
-                supportingContent = {
-                    if(needSurvey) {
-                        Text("点击跳转评教")
-                    } else if(displayCompactly) {
-                        Text(grade.score)
-                    }
-                },
-            )
-
-            if(!displayCompactly && !needSurvey) {
-                val list = remember { grade.score.split(" ") }
-                CompositionLocalProvider(
-                    LocalMinimumInteractiveComponentSize provides 0.dp
-                ) {
-                    FlowRow(
-                        modifier = Modifier
-                            .padding(horizontal = APP_HORIZONTAL_DP)
-                            .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
-                    ) {
-                        list.forEach {
-                            val item = it.split(":")
-                            val value = try {
-                                item[1]
-                            } catch (e : Exception) {
-                                LogUtil.error(e)
-                                null
-                            }
-                            val key = try {
-                                item[0]
-                            } catch (e : Exception) {
-                                LogUtil.error(e)
-                                it
-                            }
-                            AssistChip(
-                                onClick = {  },
-                                border = null,
-                                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-                                label = { Text(key) },
-                                trailingIcon = {
-                                    value?.let { text -> Text(text) }
-                                },
-                                modifier = Modifier
-                                    .padding(end = CARD_NORMAL_DP * 3)
-                                    .padding(bottom = CARD_NORMAL_DP * 3)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    val itemUI = @Composable { grade : GradeResponseJXGLSTU ->
+//        val isFailed = grade.gpa.toFloatOrNull() == 0f
+//        val needSurvey = grade.score.contains("评教")
+//
+//        CustomCard(
+//            color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
+//            modifier = Modifier
+//                .containerShare(AppNavRoute.GradeDetail.shareRoute(grade))
+//                .clickable {
+//                    if (needSurvey) {
+//                        if (ifSaved) {
+//                            showToast("未评教，请登录后评教")
+//                            Starter.refreshLogin(context)
+//                        } else {
+//                            surveyCode = grade.lessonCode
+//                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+//                            showBottomSheet_Survey = true
+//                        }
+//                    } else {
+//                        navController.navigateForTransition(
+//                            AppNavRoute.GradeDetail,
+//                            AppNavRoute.GradeDetail.withArgs(grade)
+//                        )
+//                    }
+//                }
+//        ) {
+//            TransplantListItem(
+//                headlineContent = {  Text(grade.courseName) },
+//                overlineContent = { Text(
+//                    if(!needSurvey)
+//                        "分数 "+ grade.detail + " | 绩点 " + grade.gpa +  " | 学分 " + grade.credits
+//                    else grade.lessonCode
+//                ) },
+//                leadingContent = {
+//                    Icon(
+//                        painterResource(
+//                            if(isFailed) {
+//                                R.drawable.error
+//                            } else {
+//                                R.drawable.check_circle
+//                            }
+//                        ),
+//                        contentDescription = "Localized description",
+//                        tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
+//                    ) },
+//                supportingContent = {
+//                    if(needSurvey) {
+//                        Text("点击跳转评教")
+//                    } else if(displayCompactly) {
+//                        Text(grade.score)
+//                    }
+//                },
+//            )
+//
+//            if(!displayCompactly && !needSurvey) {
+//                val list = remember { grade.score.split(" ") }
+//                CompositionLocalProvider(
+//                    LocalMinimumInteractiveComponentSize provides 0.dp
+//                ) {
+//                    FlowRow(
+//                        modifier = Modifier
+//                            .padding(horizontal = APP_HORIZONTAL_DP)
+//                            .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
+//                    ) {
+//                        list.forEach {
+//                            val item = it.split(":")
+//                            val value = try {
+//                                item[1]
+//                            } catch (e : Exception) {
+//                                LogUtil.error(e)
+//                                null
+//                            }
+//                            val key = try {
+//                                item[0]
+//                            } catch (e : Exception) {
+//                                LogUtil.error(e)
+//                                it
+//                            }
+//                            AssistChip(
+//                                onClick = {  },
+//                                border = null,
+//                                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+//                                label = { Text(key) },
+//                                trailingIcon = {
+//                                    value?.let { text -> Text(text) }
+//                                },
+//                                modifier = Modifier
+//                                    .padding(end = CARD_NORMAL_DP * 3)
+//                                    .padding(bottom = CARD_NORMAL_DP * 3)
+//                            )
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
     val scope = rememberCoroutineScope()
     val expandedMap = remember {
         mutableStateMapOf<String, Boolean>()
     }
 
     val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
+        // 剔除getScore(it.detail)
+        val safelyMap = mutableMapOf<String, List<GradeResponseJXGLSTU>>()
+        gradeList.associate { it.term to it.list }.forEach { key,items ->
+            safelyMap[key] = items.filter { bean ->
+                getGpa(bean.gpa) != null
+            }
+        }
+        val safelyList = safelyMap.map { GradeJxglstuDTO(it.key,it.value) }
+
         val allTotalCredits by produceState(initialValue = 0f) {
-            value = gradeList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
+            value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
         }
 
         val allAvgGpa by produceState(initialValue = 0f, key1 = allTotalCredits) {
-            value = gradeList.fold(0f) { init,acc -> init + getTotalGpa(acc) } safeDiv allTotalCredits
+            value = safelyList.fold(0f) { init,acc -> init + getTotalGpa(acc) } safeDiv allTotalCredits
         }
 
         val allAvgScore by produceState(initialValue = 0f, key1 = allTotalCredits) {
-            value = gradeList.fold(0f) { init,acc -> init + getTotalScore(acc) } safeDiv allTotalCredits
+            value = safelyList.fold(0f) { init,acc -> init + getTotalScore(acc) } safeDiv allTotalCredits
         }
 
         Column {
@@ -317,9 +369,9 @@ fun GradeItemJxglstuUI(
                             title = "分数 ${formatDecimal(allAvgScore.toDouble(),2)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),2)}",
                         ) {
                             Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                            BarChart(gradeList.reversed().associate { it.term to getTotalGpa(it) })
+                            BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
 
-                            gradeList.reversed().forEach {
+                            safelyList.reversed().forEach {
                                 val totalCredits = remember { getTotalCredits(it) }
                                 val totalGpa = remember { getTotalGpa(it) }
                                 val totalScore = remember { getTotalScore(it) }
@@ -337,6 +389,7 @@ fun GradeItemJxglstuUI(
                                 )
                             }
                         }
+                        BottomTip("数据仅供参考，以校务行为准")
                     }
                     gradeList.forEach { term ->
                         val termKey = term.term
@@ -356,7 +409,128 @@ fun GradeItemJxglstuUI(
                                 key = { subList[it].lessonCode }
                             ) { index ->
                                 val subItem = subList[index]
-                                itemUI(subItem)
+                                val isFailed = subItem.gpa.toFloatOrNull() == 0f
+                                val needSurvey = subItem.score.contains("评教")
+
+                                CustomCard(
+                                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
+                                    modifier = Modifier
+                                        .containerShare(AppNavRoute.GradeDetail.shareRoute(subItem))
+                                        .clickable {
+                                            if (needSurvey) {
+                                                if (ifSaved) {
+                                                    showToast("未评教，请登录后评教")
+                                                    Starter.refreshLogin(context)
+                                                } else {
+                                                    surveyCode = subItem.lessonCode
+                                                    showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
+                                                    showBottomSheet_Survey = true
+                                                }
+                                            } else {
+                                                navController.navigateForTransition(
+                                                    AppNavRoute.GradeDetail,
+                                                    AppNavRoute.GradeDetail.withArgs(subItem)
+                                                )
+                                            }
+                                        }
+                                ) {
+                                    TransplantListItem(
+                                        headlineContent = {  Text(subItem.courseName) },
+                                        overlineContent = { Text(
+                                            if(!needSurvey)
+                                                "分数 "+ subItem.detail + " | 绩点 " + subItem.gpa +  " | 学分 " + subItem.credits
+                                            else subItem.lessonCode
+                                        ) },
+                                        leadingContent = {
+                                            Icon(
+                                                painterResource(
+                                                    if(isFailed) {
+                                                        R.drawable.error
+                                                    } else {
+                                                        R.drawable.check_circle
+                                                    }
+                                                ),
+                                                contentDescription = "Localized description",
+                                                tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
+                                            ) },
+                                        supportingContent = {
+                                            if(needSurvey) {
+                                                Text("点击跳转评教")
+                                            } else if(displayCompactly) {
+                                                Text(subItem.score)
+                                            }
+                                        },
+                                    )
+
+                                    if(!displayCompactly && !needSurvey) {
+                                        val list = remember { subItem.score.split(" ") }
+                                        CompositionLocalProvider(
+                                            LocalMinimumInteractiveComponentSize provides 0.dp
+                                        ) {
+                                            FlowRow(
+                                                modifier = Modifier
+                                                    .padding(horizontal = APP_HORIZONTAL_DP)
+                                                    .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
+                                            ) {
+                                                list.forEach {
+                                                    val item = it.split(":")
+                                                    val value = try {
+                                                        item[1]
+                                                    } catch (e : Exception) {
+                                                        LogUtil.error(e)
+                                                        null
+                                                    }
+                                                    val key = try {
+                                                        item[0]
+                                                    } catch (e : Exception) {
+                                                        LogUtil.error(e)
+                                                        it
+                                                    }
+                                                    AssistChip(
+                                                        onClick = {  },
+                                                        border = null,
+                                                        colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
+                                                        label = { Text(key) },
+                                                        trailingIcon = {
+                                                            value?.let { text -> Text(text) }
+                                                        },
+                                                        modifier = Modifier
+                                                            .padding(end = CARD_NORMAL_DP * 3)
+                                                            .padding(bottom = CARD_NORMAL_DP * 3)
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    PaddingHorizontalDivider()
+                                    TransplantListItem(
+                                        overlineContent = { Text("影响(如果没有这门课会导致的变动)") },
+                                        headlineContent = {
+                                            Text(
+                                                "绩点${
+                                                    formatDecimal(
+                                                        avgGpaWithoutCourse(
+                                                            allAvgGpa,
+                                                            allTotalCredits,
+                                                            subItem
+                                                        ).toDouble(),
+                                                        2
+                                                    )
+                                                } 分数${
+                                                    formatDecimal(
+                                                        avgScoreWithoutCourse(
+                                                            allAvgScore,
+                                                            allTotalCredits,
+                                                            subItem
+                                                        ).toDouble(),
+                                                        2
+                                                    )
+                                                }"
+                                            )
+                                        }
+                                    )
+                                }
                             }
                         }
 

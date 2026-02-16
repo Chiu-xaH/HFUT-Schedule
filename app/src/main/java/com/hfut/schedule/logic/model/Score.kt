@@ -4,8 +4,8 @@ data class ScoreWithGPA(val gpa : Float,val score : Score)
 data class Score(val min : Double,val max : Double,)
 // 五星制
 enum class ScoreGrade(val label : String,val gpa : Float,val score : Int) {
-    // 100 80 70 60 0
-    A("优",3.9f,100),B("良",3.0f,80),C("中",2.0f,70),D("及格",1.2f,60),F("不及格",0.0f,0)
+    // 90 80 70 60 0
+    A("优",3.9f,90),B("良",3.0f,80),C("中",2.0f,70),D("及格",1.2f,60),F("不及格",0.0f,0)
 }
 
 val scoreWithGPA = listOf(
