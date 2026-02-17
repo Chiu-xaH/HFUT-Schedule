@@ -58,6 +58,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
@@ -75,10 +76,11 @@ import com.hfut.schedule.ui.screen.news.academic.AcademicTotalScreen
 import com.hfut.schedule.ui.screen.news.academic.AcademicXCScreen
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.screen.news.xuancheng.XuanquNewsUI
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
@@ -220,6 +222,7 @@ fun NewsScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         TextField(
+                            colors = textFiledAllTransplant(),
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(horizontal = APP_HORIZONTAL_DP)
@@ -241,7 +244,7 @@ fun NewsScreen(
                                 }
                             },
                             shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
+//                            colors = textFiledTransplant(),
                         )
                     }
                     Spacer(Modifier.height(CARD_NORMAL_DP))

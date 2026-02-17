@@ -69,8 +69,10 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -134,7 +136,7 @@ fun BusScreen(
                         label = { Text("起点") },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+                        colors = textFiledAllTransplant(),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     TextField(
@@ -148,7 +150,7 @@ fun BusScreen(
                         label = { Text("终点") },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+                        colors = textFiledAllTransplant(),
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp-CARD_NORMAL_DP))

@@ -91,6 +91,7 @@ import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
 
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 
 
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -111,10 +112,11 @@ import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiTo
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.screen.home.updateCourses
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
@@ -330,6 +332,7 @@ fun SelectCourseDetailScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
+                        colors = textFiledAllTransplant(),
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -351,7 +354,7 @@ fun SelectCourseDetailScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+//                        colors = textFiledTransplant(),
                     )
                 }
                 Spacer(Modifier.height(CARD_NORMAL_DP))

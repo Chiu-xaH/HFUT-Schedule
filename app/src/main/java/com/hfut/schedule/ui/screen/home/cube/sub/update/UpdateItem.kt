@@ -58,11 +58,12 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
 
+            UpdateItems("新增 平均成绩的计算","位于 查询中心-成绩")//
 //            UpdateItems("新增 培养方案完成情况统计")
             UpdateItems("优化 指尖工大课程表搜索栏颜色")
             UpdateItems("优化 部分界面的显示")//
             UpdateItems("翻页器底部自动展开、中间隐藏")
-            UpdateItems("发生Crash后再次进入app进入专属界面")
+//            UpdateItems("发生Crash后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
 //            UpdateItems("新增 图书馆我的书架、收藏","位于 查询中心-图书馆")
 //            UpdateItems("新增 图书馆斛兵知搜支持阅读电子书")

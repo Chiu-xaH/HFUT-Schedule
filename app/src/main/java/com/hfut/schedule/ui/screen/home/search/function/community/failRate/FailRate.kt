@@ -49,8 +49,10 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -134,6 +136,7 @@ fun FailRateScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     TextField(
+                        colors = textFiledAllTransplant(),
                         modifier = Modifier
                             .weight(1f)
                             .padding(horizontal = APP_HORIZONTAL_DP)
@@ -154,7 +157,7 @@ fun FailRateScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-                        colors = textFiledTransplant(),
+//                        colors = textFiledTransplant(),
                     )
                 }
             }

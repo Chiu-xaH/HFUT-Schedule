@@ -62,7 +62,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPALevel
 import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.scoreWithGPA
 import com.hfut.schedule.logic.network.repo.hfut.JxglstuRepository.parseJxglstuGrade
 import com.hfut.schedule.logic.network.repo.hfut.UniAppRepository
@@ -116,7 +116,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-private fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
+fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
     val totalCredits = termBean.list.fold(0f) { init,acc->
         val avg = getCredit(acc.credits) ?: 0f
         if(avg == 0f) {
@@ -127,7 +127,7 @@ private fun getTotalCredits(termBean : GradeJxglstuDTO) : Float {
     return totalCredits
 }
 
-private fun getTotalGpa(termBean : GradeJxglstuDTO) : Float {
+fun getTotalGpa(termBean : GradeJxglstuDTO) : Float {
     val totalGpa = termBean.list.fold(0f) { init, acc ->
         val avg = getGpa(acc.gpa)?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
         if(avg == 0f) {
@@ -138,11 +138,11 @@ private fun getTotalGpa(termBean : GradeJxglstuDTO) : Float {
     return totalGpa
 }
 
-private fun getGpa(gpaText : String) : Float? = gpaText.toFloatOrNull()
-private fun getCredit(creditText : String) : Float? = creditText.toFloatOrNull()
-private fun getScore(scoreText : String) : Float? = scoreText.toFloatOrNull() ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat())
+fun getGpa(gpaText : String) : Float? = gpaText.toFloatOrNull()
+fun getCredit(creditText : String) : Float? = creditText.toFloatOrNull()
+fun getScore(scoreText : String) : Float? = scoreText.toFloatOrNull() ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat())
 
-private fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
+fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
     val totalScore = termBean.list.fold(0f) { init, acc ->
         val avg = getScore(acc.detail)?.times(acc.credits.toFloatOrNull() ?: 0f) ?: 0f
         if(avg == 0f) {
@@ -153,10 +153,10 @@ private fun getTotalScore(termBean : GradeJxglstuDTO) : Float {
     return totalScore
 }
 
-private fun avgGpaWithoutCourse(
+fun avgGpaWithoutCourse(
     totalGpa: Float,
     totalCredit: Float,
-    remove: GradeResponseJXGLSTU
+    remove: GradeJxglstuResponse
 ): Float {
     val removeCredit = getCredit(remove.credits) ?: return 0f
     val removeGpa = getGpa(remove.gpa) ?: return 0f
@@ -171,11 +171,32 @@ private fun avgGpaWithoutCourse(
     return totalGpa - newAvg
 }
 
-private fun avgScoreWithoutCourse(
+fun avgGpaWithCourse(
+    totalGpa: Float,
+    totalCredit: Float,
+    course: GradeJxglstuResponse
+): Float {
+    val addCredit = getCredit(course.credits) ?: return 0f
+    val addGpa = getGpa(course.gpa) ?: return 0f
+    if (addCredit <= 0f) return 0f
+    // 还原总加权和
+    val totalPoint = totalGpa * totalCredit
+    // 加上该课程
+    val newTotalPoint = totalPoint + addGpa * addCredit
+    val newTotalCredit = totalCredit + addCredit
+    val newAvg = newTotalPoint / newTotalCredit
+    // 返回影响值（新 - 原）
+    return newAvg - totalGpa
+}
+
+fun avgScoreWithoutCourse(
     totalScore: Float,
     totalCredit: Float,
-    remove: GradeResponseJXGLSTU
+    remove: GradeJxglstuResponse
 ): Float {
+    if(getGpa(remove.gpa) == null) {
+        return 0f
+    }
     val removeCredit = getCredit(remove.credits) ?: return 0f
     val removeScore = getScore(remove.detail) ?: return 0f
     val newTotalCredit = totalCredit - removeCredit
@@ -189,6 +210,32 @@ private fun avgScoreWithoutCourse(
     return totalScore - newAvg
 }
 
+fun avgScoreWithCourse(
+    totalScore: Float,
+    totalCredit: Float,
+    course: GradeJxglstuResponse
+): Float {
+    if(getGpa(course.gpa) == null) {
+        return 0f
+    }
+    val addCredit = getCredit(course.credits) ?: return 0f
+    val addGpa = getScore(course.detail) ?: return 0f
+
+    if (addCredit <= 0f) return 0f
+
+    // 还原总加权和
+    val totalPoint = totalScore * totalCredit
+
+    // 加上该课程
+    val newTotalPoint = totalPoint + addGpa * addCredit
+    val newTotalCredit = totalCredit + addCredit
+
+    val newAvg = newTotalPoint / newTotalCredit
+
+    // 返回影响值（新 - 原）
+    return newAvg - totalScore
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @SuppressLint("SuspiciousIndentation")
@@ -200,7 +247,8 @@ fun GradeItemJxglstuUI(
     input : String,
     hazeState: HazeState,
     ifSaved : Boolean,
-    displayCompactly : Boolean
+    displayCompactly : Boolean,
+    onChangeLargeButtonText : (String) -> Unit
 ) {
     val context = LocalContext.current
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
@@ -229,116 +277,23 @@ fun GradeItemJxglstuUI(
         }
     }
 
-//    val itemUI = @Composable { grade : GradeResponseJXGLSTU ->
-//        val isFailed = grade.gpa.toFloatOrNull() == 0f
-//        val needSurvey = grade.score.contains("评教")
-//
-//        CustomCard(
-//            color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
-//            modifier = Modifier
-//                .containerShare(AppNavRoute.GradeDetail.shareRoute(grade))
-//                .clickable {
-//                    if (needSurvey) {
-//                        if (ifSaved) {
-//                            showToast("未评教，请登录后评教")
-//                            Starter.refreshLogin(context)
-//                        } else {
-//                            surveyCode = grade.lessonCode
-//                            showToast("请为本课程的所有老师评教，下拉刷新以查看成绩")
-//                            showBottomSheet_Survey = true
-//                        }
-//                    } else {
-//                        navController.navigateForTransition(
-//                            AppNavRoute.GradeDetail,
-//                            AppNavRoute.GradeDetail.withArgs(grade)
-//                        )
-//                    }
-//                }
-//        ) {
-//            TransplantListItem(
-//                headlineContent = {  Text(grade.courseName) },
-//                overlineContent = { Text(
-//                    if(!needSurvey)
-//                        "分数 "+ grade.detail + " | 绩点 " + grade.gpa +  " | 学分 " + grade.credits
-//                    else grade.lessonCode
-//                ) },
-//                leadingContent = {
-//                    Icon(
-//                        painterResource(
-//                            if(isFailed) {
-//                                R.drawable.error
-//                            } else {
-//                                R.drawable.check_circle
-//                            }
-//                        ),
-//                        contentDescription = "Localized description",
-//                        tint = if(isFailed) MaterialTheme.colorScheme.error else LocalContentColor.current
-//                    ) },
-//                supportingContent = {
-//                    if(needSurvey) {
-//                        Text("点击跳转评教")
-//                    } else if(displayCompactly) {
-//                        Text(grade.score)
-//                    }
-//                },
-//            )
-//
-//            if(!displayCompactly && !needSurvey) {
-//                val list = remember { grade.score.split(" ") }
-//                CompositionLocalProvider(
-//                    LocalMinimumInteractiveComponentSize provides 0.dp
-//                ) {
-//                    FlowRow(
-//                        modifier = Modifier
-//                            .padding(horizontal = APP_HORIZONTAL_DP)
-//                            .padding(bottom = APP_HORIZONTAL_DP - CARD_NORMAL_DP * 3),
-//                    ) {
-//                        list.forEach {
-//                            val item = it.split(":")
-//                            val value = try {
-//                                item[1]
-//                            } catch (e : Exception) {
-//                                LogUtil.error(e)
-//                                null
-//                            }
-//                            val key = try {
-//                                item[0]
-//                            } catch (e : Exception) {
-//                                LogUtil.error(e)
-//                                it
-//                            }
-//                            AssistChip(
-//                                onClick = {  },
-//                                border = null,
-//                                colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
-//                                label = { Text(key) },
-//                                trailingIcon = {
-//                                    value?.let { text -> Text(text) }
-//                                },
-//                                modifier = Modifier
-//                                    .padding(end = CARD_NORMAL_DP * 3)
-//                                    .padding(bottom = CARD_NORMAL_DP * 3)
-//                            )
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
     val scope = rememberCoroutineScope()
     val expandedMap = remember {
         mutableStateMapOf<String, Boolean>()
     }
 
     val ui = @Composable { gradeList : List<GradeJxglstuDTO> ->
-        // 剔除getScore(it.detail)
-        val safelyMap = mutableMapOf<String, List<GradeResponseJXGLSTU>>()
-        gradeList.associate { it.term to it.list }.forEach { key,items ->
-            safelyMap[key] = items.filter { bean ->
-                getGpa(bean.gpa) != null
-            }
+        val safelyList = remember(gradeList) {
+            gradeList
+                .associate { it.term to it.list }
+                .map { (term, items) ->
+                    GradeJxglstuDTO(
+                        term,
+                        items.filter { getGpa(it.gpa) != null }
+                    )
+                }
         }
-        val safelyList = safelyMap.map { GradeJxglstuDTO(it.key,it.value) }
+
 
         val allTotalCredits by produceState(initialValue = 0f) {
             value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
@@ -351,6 +306,9 @@ fun GradeItemJxglstuUI(
         val allAvgScore by produceState(initialValue = 0f, key1 = allTotalCredits) {
             value = safelyList.fold(0f) { init,acc -> init + getTotalScore(acc) } safeDiv allTotalCredits
         }
+        LaunchedEffect(allAvgScore,allAvgGpa) {
+            onChangeLargeButtonText("平均成绩 ${formatDecimal(allAvgScore.toDouble(),2)} | ${formatDecimal(allAvgGpa.toDouble(),2)}")
+        }
 
         Column {
             if(gradeList.isEmpty()) {
@@ -362,34 +320,6 @@ fun GradeItemJxglstuUI(
                 LazyColumn {
                     item {
                         InnerPaddingHeight(innerPadding,true)
-                    }
-                    item(key = "total") {
-                        Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
-                        LargeCard(
-                            title = "分数 ${formatDecimal(allAvgScore.toDouble(),2)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),2)}",
-                        ) {
-                            Spacer(Modifier.height(APP_HORIZONTAL_DP))
-                            BarChart(safelyList.reversed().associate { it.term to getTotalGpa(it) })
-
-                            safelyList.reversed().forEach {
-                                val totalCredits = remember { getTotalCredits(it) }
-                                val totalGpa = remember { getTotalGpa(it) }
-                                val totalScore = remember { getTotalScore(it) }
-                                val avgGpa = totalGpa safeDiv totalCredits
-                                val avgScore = totalScore safeDiv totalCredits
-
-                                TransplantListItem(
-                                    trailingContent = {
-                                        Text("占比${formatDecimal((totalCredits/allTotalCredits*100).toDouble(),0)}%")
-                                    },
-                                    headlineContent = {
-                                        ScrollText("分数 ${formatDecimal(avgScore.toDouble(),2)} | 绩点 ${formatDecimal(avgGpa.toDouble(),2)} | 学分 $totalCredits")
-                                    },
-                                    overlineContent = { Text(it.term) }
-                                )
-                            }
-                        }
-                        BottomTip("数据仅供参考，以校务行为准")
                     }
                     gradeList.forEach { term ->
                         val termKey = term.term
@@ -429,7 +359,12 @@ fun GradeItemJxglstuUI(
                                             } else {
                                                 navController.navigateForTransition(
                                                     AppNavRoute.GradeDetail,
-                                                    AppNavRoute.GradeDetail.withArgs(subItem)
+                                                    AppNavRoute.GradeDetail.withArgs(
+                                                        subItem,
+                                                        allAvgGpa,
+                                                        allAvgScore,
+                                                        allTotalCredits
+                                                    )
                                                 )
                                             }
                                         }
@@ -461,7 +396,6 @@ fun GradeItemJxglstuUI(
                                             }
                                         },
                                     )
-
                                     if(!displayCompactly && !needSurvey) {
                                         val list = remember { subItem.score.split(" ") }
                                         CompositionLocalProvider(
@@ -487,7 +421,17 @@ fun GradeItemJxglstuUI(
                                                         it
                                                     }
                                                     AssistChip(
-                                                        onClick = {  },
+                                                        onClick = {
+                                                            navController.navigateForTransition(
+                                                                AppNavRoute.GradeDetail,
+                                                                AppNavRoute.GradeDetail.withArgs(
+                                                                    subItem,
+                                                                    allAvgGpa,
+                                                                    allAvgScore,
+                                                                    allTotalCredits
+                                                                )
+                                                            )
+                                                        },
                                                         border = null,
                                                         colors = AssistChipDefaults.assistChipColors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                                                         label = { Text(key) },
@@ -502,34 +446,6 @@ fun GradeItemJxglstuUI(
                                             }
                                         }
                                     }
-
-                                    PaddingHorizontalDivider()
-                                    TransplantListItem(
-                                        overlineContent = { Text("影响(如果没有这门课会导致的变动)") },
-                                        headlineContent = {
-                                            Text(
-                                                "绩点${
-                                                    formatDecimal(
-                                                        avgGpaWithoutCourse(
-                                                            allAvgGpa,
-                                                            allTotalCredits,
-                                                            subItem
-                                                        ).toDouble(),
-                                                        2
-                                                    )
-                                                } 分数${
-                                                    formatDecimal(
-                                                        avgScoreWithoutCourse(
-                                                            allAvgScore,
-                                                            allTotalCredits,
-                                                            subItem
-                                                        ).toDouble(),
-                                                        2
-                                                    )
-                                                }"
-                                            )
-                                        }
-                                    )
                                 }
                             }
                         }
@@ -598,7 +514,8 @@ fun GradeItemUIUniApp(
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
     input : String,
-    displayCompactly : Boolean
+    displayCompactly : Boolean,
+    onChangeLargeButtonText : (String) -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val uiState by vm.uniAppGradesResp.state.collectAsState()
@@ -646,6 +563,45 @@ fun GradeItemUIUniApp(
         )
         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
             val gradeList = (uiState as UiState.Success).data.toList().sortedByDescending { it.first }
+            val safelyList = remember(gradeList) {
+                gradeList
+                    .associate { it.first to it.second }
+                    .map { (term, items) ->
+                        GradeJxglstuDTO(
+                            term,
+                            items.filter {
+                                !(it.passed && it.gp == 0.0) && it.finalGrade != null
+                            }.map {
+                                GradeJxglstuResponse(
+                                    it.courseNameZh,
+                                    it.credits.toString(),
+                                    it.gp.toString(),
+                                    it.gradeDetail,
+                                    it.finalGrade!!,
+                                    it.lessonCode
+                                )
+                            }
+                        )
+                    }
+            }
+
+
+            val allTotalCredits by produceState(initialValue = 0f) {
+                value = safelyList.fold(0f) { init,acc -> init + getTotalCredits(acc) }
+            }
+
+            val allAvgGpa by produceState(initialValue = 0f, key1 = allTotalCredits) {
+                value = safelyList.fold(0f) { init,acc -> init + getTotalGpa(acc) } safeDiv allTotalCredits
+            }
+
+            val allAvgScore by produceState(initialValue = 0f, key1 = allTotalCredits) {
+                value = safelyList.fold(0f) { init,acc -> init + getTotalScore(acc) } safeDiv allTotalCredits
+            }
+
+            LaunchedEffect(allAvgScore,allAvgGpa) {
+                onChangeLargeButtonText("平均成绩 ${formatDecimal(allAvgScore.toDouble(),2)} | ${formatDecimal(allAvgGpa.toDouble(),2)}")
+            }
+
             Column {
                 if(gradeList.isEmpty()) {
                     CenterScreen {
@@ -680,7 +636,7 @@ fun GradeItemUIUniApp(
 
                                     val finalGpaStr = (if(!isFailed && subItem.gp == 0.0) "--" else subItem.gp).toString()
 
-                                    val bean = GradeResponseJXGLSTU(
+                                    val bean = GradeJxglstuResponse(
                                         courseName = subItem.courseNameZh,
                                         credits = subItem.credits.toString(),
                                         gpa = finalGpaStr,
@@ -695,12 +651,17 @@ fun GradeItemUIUniApp(
                                             .clickable {
                                                 navController.navigateForTransition(
                                                     AppNavRoute.GradeDetail,
-                                                    AppNavRoute.GradeDetail.withArgs(bean)
+                                                    AppNavRoute.GradeDetail.withArgs(
+                                                        bean,
+                                                        allAvgGpa,
+                                                        allAvgScore,
+                                                        allTotalCredits
+                                                    )
                                                 )
                                             }
                                     ) {
                                         TransplantListItem(
-                                            headlineContent = {  Text(subItem.courseNameZh) },
+                                            headlineContent = { Text(subItem.courseNameZh) },
                                             overlineContent = { Text("分数 "+ subItem.finalGrade + " | 绩点 " + finalGpaStr +  " | 学分 " + subItem.credits) },
                                             leadingContent = {
                                                 Icon(
@@ -747,7 +708,17 @@ fun GradeItemUIUniApp(
                                                             it
                                                         }
                                                         AssistChip(
-                                                            onClick = {  },
+                                                            onClick = {
+                                                                navController.navigateForTransition(
+                                                                    AppNavRoute.GradeDetail,
+                                                                    AppNavRoute.GradeDetail.withArgs(
+                                                                        bean,
+                                                                        allAvgGpa,
+                                                                        allAvgScore,
+                                                                        allTotalCredits
+                                                                    )
+                                                                )
+                                                            },
                                                             border = null,
                                                             colors = AssistChipDefaults.assistChipColors(
                                                                 containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -783,7 +754,10 @@ private fun isExam(label : String) = label.contains("期末考试") || label.con
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradeDetailScreen(
-    bean : GradeResponseJXGLSTU,
+    bean : GradeJxglstuResponse,
+    allAvgGpa : Float,
+    allAvgScore : Float,
+    allTotalCredits : Float,
     navController: NavHostController
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -795,7 +769,6 @@ fun GradeDetailScreen(
 
     var otherAvgScore by remember { mutableFloatStateOf(0f) }
     var examAvgScore by remember { mutableFloatStateOf(0f) }
-
 
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
@@ -815,10 +788,11 @@ fun GradeDetailScreen(
         value = list.map { item ->
             val label = item.substringBefore(":")
             val scoreText = item.substringAfter(":")
-            val scoreF = scoreText.toFloatOrNull()
+//            val scoreF = scoreText.toFloatOrNull()
             // 五星制
-            val score = scoreF ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat() ?: 0f)
-            RadarData(label, score/100f)
+            val score = getScore(scoreText) ?: 0f
+//                scoreF ?: (ScoreGrade.entries.find { it.label == scoreText }?.score?.toFloat() ?: 0f)
+            RadarData(label, score / 100f)
         }
     }
 
@@ -839,12 +813,8 @@ fun GradeDetailScreen(
                 examCount++
             }
         }
-//        if(otherCount != 0) {
-            otherAvgScore = otherScore safeDiv otherCount
-//        }
-//        if(examCount != 0) {
-            examAvgScore = examScore safeDiv examCount
-//        }
+        otherAvgScore = otherScore safeDiv otherCount
+        examAvgScore = examScore safeDiv examCount
     }
 
     val factor = remember(otherAvgScore,examAvgScore) {
@@ -881,6 +851,7 @@ fun GradeDetailScreen(
                     .fillMaxSize()
             ) {
                 InnerPaddingHeight(innerPadding,true)
+
                 if(radarList.size > 1) {
                     DividerTextExpandedWith(text = "雷达图") {
                         Spacer(modifier = Modifier.height(35.dp))
@@ -1009,7 +980,7 @@ fun GradeDetailScreen(
                             }
                         )
                         with(bean) {
-                            if(gpa.toFloatOrNull() != null) {
+                            if(getGpa(gpa) != null) {
                                 TransplantListItem(
                                     headlineContent = {
                                         GPAStarGroup(detail,gpa) {
@@ -1036,9 +1007,11 @@ fun GradeDetailScreen(
                             }
                         }
                     }
-
                 }
-                DividerTextExpandedWith("绩点与分数的关系") {
+                DividerTextExpandedWith("平均成绩",false) {
+                    AvgImportance(bean,allAvgGpa,allAvgScore,allTotalCredits,hazeState)
+                }
+                DividerTextExpandedWith("绩点与分数对应关系") {
                     GPAWithScore()
                 }
                 InnerPaddingHeight(innerPadding,false)
@@ -1323,4 +1296,121 @@ fun GradeIcons(text : String) {
     } else {
         Icon(painterResource(R.drawable.category),null)
     }
+}
+
+@Composable
+fun AvgImportance(
+    subItem : GradeJxglstuResponse,
+    allAvgGpa : Float,
+    allAvgScore : Float,
+    allTotalCredits : Float,
+    hazeState: HazeState,
+    format : Int = 2,
+) {
+    val finalGpa = remember(allAvgGpa,allTotalCredits,subItem) {
+        avgGpaWithCourse(
+            allAvgGpa,
+            allTotalCredits,
+            subItem
+        )
+    }
+    val finalScore = remember(allAvgGpa,allTotalCredits,subItem) {
+        avgScoreWithCourse(
+            allAvgScore,
+            allTotalCredits,
+            subItem
+        )
+    }
+    var displayTipsDialog by remember { mutableStateOf(false) }
+    if(displayTipsDialog) {
+        LittleDialog(
+            hazeState = hazeState,
+            onConfirmation = { displayTipsDialog = false },
+            onDismissRequest = { displayTipsDialog = false },
+            dialogText = "数值表示这门课导致的平均成绩的变动，即加上本门课导致整体平均绩点分数发生的变化，实际以左侧图标为准，数值经过了四舍五入"
+        )
+    }
+
+    LargeCard(
+        title = "分数 ${formatDecimal(allAvgScore.toDouble(),format)} 绩点 ${formatDecimal(allAvgGpa.toDouble(),format)}",
+    ) {
+        // 影响(这门课导致的平均成绩变动)
+        Row(modifier = Modifier.clickable {
+            displayTipsDialog = true
+        }) {
+            TransplantListItem(
+                overlineContent = { Text("绩点") },
+                headlineContent = {
+                    Text(
+                        finalGpa.let { result ->
+                            formatDecimal(
+                                result.toDouble(),
+                                format
+                            ).let { formatResult ->
+                                if(result > 0) {
+                                    "+$formatResult"
+                                } else if(result < 0) {
+                                    formatResult
+                                } else {
+                                    "无影响"
+                                }
+                            }
+                        }
+                    )
+                },
+                leadingContent = {
+                    Icon(
+                        painterResource(
+                            if(finalGpa > 0) {
+                                R.drawable.arrow_upward
+                            } else if(finalGpa < 0) {
+                                R.drawable.arrow_downward
+                            } else {
+                                R.drawable.remove
+                            }
+                        ),
+                        null
+                    )
+                },
+                modifier = Modifier.weight(.5f)
+            )
+            TransplantListItem(
+                overlineContent = { Text("分数") },
+                headlineContent = {
+                    Text(
+                        finalScore.let { result ->
+                            formatDecimal(
+                                result.toDouble(),
+                                format
+                            ).let { formatResult ->
+                                if(result > 0) {
+                                    "+$formatResult"
+                                } else if(result < 0) {
+                                    formatResult
+                                } else {
+                                    "无影响"
+                                }
+                            }
+                        }
+                    )
+                },
+                leadingContent = {
+                    Icon(
+                        painterResource(
+                            if(finalScore > 0) {
+                                R.drawable.arrow_upward
+                            } else if(finalScore < 0) {
+                                R.drawable.arrow_downward
+                            } else {
+                                R.drawable.remove
+                            }
+                        ),
+                        null
+                    )
+                },
+                modifier = Modifier.weight(.5f)
+            )
+        }
+    }
+    BottomTip("数据仅供参考，以校务行为准")
 }

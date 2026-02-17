@@ -13,9 +13,9 @@ data class scoreInfoDTOList(val courseName : String,
                             val gpa : Float,
                             val pass : Boolean)
 
-data class GradeJxglstuDTO(val term : String,val list : List<GradeResponseJXGLSTU>)
+data class GradeJxglstuDTO(val term : String,val list : List<GradeJxglstuResponse>)
 
-data class GradeResponseJXGLSTU(val courseName : String,
+data class GradeJxglstuResponse(val courseName : String,
                                 val credits : String,
                                 val gpa : String,
                                 val score : String,

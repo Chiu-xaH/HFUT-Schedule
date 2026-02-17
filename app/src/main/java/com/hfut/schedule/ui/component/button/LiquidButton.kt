@@ -32,6 +32,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
@@ -261,4 +262,82 @@ fun LiquidButton(
             content()
         }
     }
+}
+
+
+@Composable
+fun Modifier.containerBackDrop(
+    backdrop: Backdrop,
+    shape: Shape,
+    enabled : Boolean = true,
+    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
+) : Modifier {
+    val progressAnimation = remember { Animatable(0f) }
+    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val tint = Color.Unspecified
+    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
+    val interactiveHighlightShader = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RuntimeShader(SHADER)
+        } else {
+            Unit
+        }
+    }
+
+    return this.drawBackdrop(
+        highlight = {
+            Highlight.Default.copy(width = 0.25.dp)
+        },
+        backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
+        shape = { shape },
+        effects = {
+            vibrancy()
+            blur(7.5f.dp.toPx())
+            refraction(15f.dp.toPx(), 25f.dp.toPx())
+        },
+        shadow = null,
+        onDrawSurface = {
+            if (tint.isSpecified) {
+                drawRect(tint, blendMode = BlendMode.Hue)
+                drawRect(tint.copy(alpha = 0.75f))
+            }
+            if (surfaceColor.isSpecified) {
+                drawRect(surfaceColor)
+            }
+            if (enabled) {
+                val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
+                if (progress > 0f) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
+                        drawRect(
+                            Color.White.copy(0.1f * progress),
+                            blendMode = BlendMode.Plus
+                        )
+                        interactiveHighlightShader.apply {
+                            val offset = pressStartPosition + offsetAnimation.value
+                            setFloatUniform("size", size.width, size.height)
+                            setColorUniform(
+                                "color",
+                                Color.White.copy(0.15f * progress).toArgb()
+                            )
+                            setFloatUniform("radius", size.maxDimension)
+                            setFloatUniform(
+                                "offset",
+                                offset.x.fastCoerceIn(0f, size.width),
+                                offset.y.fastCoerceIn(0f, size.height)
+                            )
+                        }
+                        drawRect(
+                            ShaderBrush(interactiveHighlightShader),
+                            blendMode = BlendMode.Plus
+                        )
+                    } else {
+                        drawRect(
+                            Color.White.copy(0.25f * progress),
+                            blendMode = BlendMode.Plus
+                        )
+                    }
+                }
+            }
+        }
+    )
 }

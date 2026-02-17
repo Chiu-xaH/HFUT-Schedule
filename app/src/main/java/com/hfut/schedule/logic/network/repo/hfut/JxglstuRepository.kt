@@ -8,7 +8,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.logic.model.community.GradeJxglstuDTO
-import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
 import com.hfut.schedule.logic.model.jxglstu.CourseBookResponse
 import com.hfut.schedule.logic.model.jxglstu.CourseSearchResponse
@@ -466,7 +466,7 @@ object JxglstuRepository {
                 val term = termElement.text()
                 val table = tableElements.getOrNull(index) ?: continue
                 val rows = table.select("tr")
-                val list = mutableListOf<GradeResponseJXGLSTU>()
+                val list = mutableListOf<GradeJxglstuResponse>()
 
                 for(row in rows) {
                     val tds = row.select("td") // 选择tr标签下的所有td标签
@@ -477,7 +477,7 @@ object JxglstuRepository {
                         val gpa = tds[4].text()
                         val totalGrade = tds[5].text()
                         val grades = tds[6].text()
-                        list.add(GradeResponseJXGLSTU(titles, scores, gpa, grades, totalGrade, codes))
+                        list.add(GradeJxglstuResponse(titles, scores, gpa, grades, totalGrade, codes))
                     }
                 }
                 result.add(GradeJxglstuDTO(term, list))

@@ -4,7 +4,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.model.one.BuildingBean
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute.NavArg
@@ -272,17 +272,28 @@ sealed class AppNavRoute(val route: String, val label: Int, val icon: Int) {
             SCORE("score", NavType.StringType,"",false),
             DETAIL("detail", NavType.StringType,"",false),
             LESSON_CODE("lessonCode", NavType.StringType,"",false),
+            ALL_AVG_GPA("allAvgGpa", NavType.FloatType,0f,false),
+            ALL_AVG_SCORE("allAvgScore", NavType.FloatType,0f,false),
+            ALL_TOTAL_CREDITS("allTotalCredits", NavType.FloatType,0f,false),
         }
 
-        fun shareRoute(bean : GradeResponseJXGLSTU)  = withArgs(GradeDetail.Args.LESSON_CODE.argName to bean.lessonCode)
+        fun shareRoute(bean : GradeJxglstuResponse)  = withArgs(GradeDetail.Args.LESSON_CODE.argName to bean.lessonCode)
         fun receiveRoute() = receiveRoutePair(Args.entries)
-        fun withArgs(bean: GradeResponseJXGLSTU): String = withArgs(
+        fun withArgs(
+            bean: GradeJxglstuResponse,
+            allAvgGpa : Float,
+            allAvgScore : Float,
+            allTotalCredits : Float
+        ): String = withArgs(
             Args.DETAIL.argName to bean.detail,
             Args.COURSE_NAME.argName to bean.courseName,
             Args.LESSON_CODE.argName to bean.lessonCode,
             Args.GPA.argName to bean.gpa,
             Args.CREDITS.argName to bean.credits,
-            Args.SCORE.argName to bean.score
+            Args.SCORE.argName to bean.score,
+            Args.ALL_AVG_GPA.argName to allAvgGpa,
+            Args.ALL_TOTAL_CREDITS.argName to allTotalCredits,
+            Args.ALL_AVG_SCORE.argName to allAvgScore,
         )
     }
     object CourseSearch : AppNavRoute("COURSE_SEARCH",R.string.navigation_label_course_search,R.drawable.search)
@@ -304,6 +315,15 @@ sealed class AppNavRoute(val route: String, val label: Int, val icon: Int) {
         fun receiveRoute() = receiveRoutePair(Args.entries)
         fun withArgs(ifSaved: Boolean): String = withArgs(
             Args.IF_SAVED.argName to ifSaved
+        )
+    }
+    object AverageGrade : AppNavRoute("AVERAGE_GRADE", R.string.navigation_labelaverage_grade,R.drawable.leaderboard){
+        enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
+            USE_UNI_APP_DATA("useUniAppData", NavType.BoolType,false,false)
+        }
+        fun receiveRoute() = receiveRoutePair(Args.entries)
+        fun withArgs(useUniAppData: Boolean): String = withArgs(
+            Args.USE_UNI_APP_DATA.argName to useUniAppData
         )
     }
     object ProgramCompetitionDetail : AppNavRoute("PROGRAM_COMPETITION_DETAIL", R.string.navigation_label_program_competition_detail,R.drawable.leaderboard) {

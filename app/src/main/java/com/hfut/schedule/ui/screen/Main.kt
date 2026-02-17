@@ -41,7 +41,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.model.community.GradeResponseJXGLSTU
+import com.hfut.schedule.logic.model.community.GradeJxglstuResponse
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -56,6 +56,7 @@ import com.hfut.schedule.ui.component.button.LocalAppControlCenter
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
 import com.hfut.schedule.ui.screen.grade.GradeScreen
+import com.hfut.schedule.ui.screen.grade.analysis.AverageGradeScreen
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GradeDetailScreen
 import com.hfut.schedule.ui.screen.home.MainScreen
 import com.hfut.schedule.ui.screen.home.SearchEditScreen
@@ -488,6 +489,18 @@ fun MainHost(
                             navController,
                         )
                     }
+                    // 平均成绩
+                    transitionComposable(
+                        route = AppNavRoute.AverageGrade.receiveRoute(),
+                        arguments = getArgs(AppNavRoute.AverageGrade.Args.entries)
+                    ) { backStackEntry ->
+                        val  useUniAppData = backStackEntry.arguments?.getBoolean(AppNavRoute.Grade.Args.IF_SAVED.argName) ?: (AppNavRoute.Grade.Args.IF_SAVED.default as Boolean)
+                        AverageGradeScreen(
+                            networkVm,
+                            useUniAppData,
+                            navController,
+                        )
+                    }
                     // 招生
                     transitionComposable(AppNavRoute.Admission.route) {
                         AdmissionScreen(networkVm , navController)
@@ -533,9 +546,15 @@ fun MainHost(
                         val score = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.SCORE.default as String)
                         val detail = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.DETAIL.argName) ?: (AppNavRoute.GradeDetail.Args.DETAIL.default as String)
                         val lessonCode = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.LESSON_CODE.argName) ?: (AppNavRoute.GradeDetail.Args.LESSON_CODE.default as String)
-                        val bean = GradeResponseJXGLSTU(courseName, credits,gpa,score,detail,lessonCode)
+                        val allAvgScore = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_AVG_SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_AVG_SCORE.default as Float)
+                        val allAvgGpa = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_AVG_GPA.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_AVG_GPA.default as Float)
+                        val allTotalCredits = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_TOTAL_CREDITS.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_TOTAL_CREDITS.default as Float)
+                        val bean = GradeJxglstuResponse(courseName, credits,gpa,score,detail,lessonCode)
                         GradeDetailScreen(
                             bean,
+                            allAvgGpa,
+                            allAvgScore,
+                            allTotalCredits,
                             navController
                         )
                     }

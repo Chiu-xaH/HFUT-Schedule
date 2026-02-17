@@ -80,9 +80,11 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -191,6 +193,8 @@ fun WorkScreen(
                 )
                 CustomTabRow(pagerState,types.fastMap { it.description })
                 CustomTextField(
+                    colors = textFiledAllTransplant(),
+
                     input = input,
                     label = { Text("搜索") },
                     modifier = Modifier

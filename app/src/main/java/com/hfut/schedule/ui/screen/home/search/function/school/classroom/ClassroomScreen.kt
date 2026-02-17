@@ -55,6 +55,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
@@ -91,6 +92,7 @@ import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -122,9 +124,10 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.screen.home.smoothToOne
+import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.hfut.schedule.ui.style.special.containerBackDrop
+
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
@@ -244,8 +247,8 @@ fun ClassroomScreen(
 
                 if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
                     CustomCard(
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(.35f),
-                        modifier = Modifier.containerBackDrop(backDrop, MaterialTheme.shapes.medium)
+                        color = Color.Transparent,
+                        modifier = Modifier.containerBackDrop(backDrop, MaterialTheme.shapes.medium, surfaceColor = MaterialTheme.colorScheme.primaryContainer.copy(.35f))
                     ) {
                         // 校区选择 多个Chip
                         val campusList = Campus.entries
@@ -330,6 +333,7 @@ fun ClassroomScreen(
                     }
                 } else {
                     CustomTextField(
+                        colors = textFiledAllTransplant(),
                         input = input,
                         modifier = Modifier
                             .padding(horizontal = APP_HORIZONTAL_DP)
