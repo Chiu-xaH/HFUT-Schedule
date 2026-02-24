@@ -644,7 +644,9 @@ private fun TransferUI(
                                     Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "")
                                 }
                                 Text("$count/$limit (${
-                                    if(successRate == 0.0 || successRate >= 1.0) "稳" else "前${formatDecimal(successRate*100,0)}%"
+                                    if(successRate == 1.0) "满" 
+                                    else if(successRate == 0.0 || successRate >= 1.0) "稳" 
+                                    else "前${formatDecimal(successRate*100,0)}%"
                                 })")
                             }
                         },
