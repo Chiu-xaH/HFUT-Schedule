@@ -262,7 +262,7 @@ fun GradeScreen(
                                         true
                                     }
                                 }
-                            ))
+                            ),true)
                         },
                         icon = AppNavRoute.AverageGrade.icon,
                         text = buttonText,

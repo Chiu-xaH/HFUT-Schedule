@@ -35,7 +35,6 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
@@ -195,7 +194,7 @@ fun AverageGradeScreen(
                                         )
                                     }
                                 }
-                                BottomTip("数据仅供参考，以校务行为准")
+                                BottomTip("数据由本地计算，实际以校务行为准")
                             }
                         }
                         item {
@@ -274,7 +273,7 @@ fun AverageGradeScreen(
                                         )
                                     }
                                 }
-                                BottomTip("数据仅供参考，以校务行为准")
+                                BottomTip("数据由本地计算，实际以校务行为准")
                             }
 //                            Spacer(modifier = Modifier.height(CARD_NORMAL_DP))
 

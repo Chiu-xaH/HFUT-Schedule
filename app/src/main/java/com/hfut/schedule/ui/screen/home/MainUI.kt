@@ -730,7 +730,7 @@ fun MainScreen(
                             },
                         )
                         if(swapUI == CourseType.ZHI_JIAN.code) {
-                            ZhiJianSearchBar(backGroundSource,1f,false,zhiJianStudentId,showAll) {
+                            ZhiJianSearchBar(null,1f,false,zhiJianStudentId,showAll) {
                                 zhiJianStudentId = it
                             }
                         }
@@ -1388,14 +1388,15 @@ private fun ZhiJianSearchBar(
         }
     }
 
+
     Column {
         Row(modifier = Modifier.padding(horizontal =
             APP_HORIZONTAL_DP - (
-                    if(shaderState == null) {
-                        (if (showAll) 1.75.dp else 2.5.dp)*3
-                    } else {
+//                    if(shaderState == null) {
+//                        (if (showAll) 1.75.dp else 2.5.dp)*3
+//                    } else {
                         if (showAll) 1.75.dp else 2.5.dp
-                    }
+//                    }
             )
         )) {
             TextField(
@@ -1455,7 +1456,7 @@ private fun ZhiJianSearchBar(
                 },
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
-                colors = textFiledTransplant(),
+                colors = textFiledTransplant()
             )
         }
         Spacer(Modifier.height(CARD_NORMAL_DP*2))

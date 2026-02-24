@@ -204,7 +204,7 @@ fun SearchScreen(
                 SearchAppBean(37,"${context.getString(AppNavRoute.Work.label)} 实习 春招 双选 秋招", { Work(navController ) }, AppNavRoute.Work.route),
                 SearchAppBean(38,"${context.getString(AppNavRoute.Holiday.label)} 国家法定节假日 假期 节日 调休", { Holiday(navController ) },AppNavRoute.Holiday.route),
                 SearchAppBean(39,"${context.getString(R.string.navigation_label_supabase)} 信息共建 日程 网课 网址导航", { Supabase() }),
-                SearchAppBean(40,"${context.getString(R.string.navigation_label_laundry)} 洗鞋机 烘干机 ${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_washing)} 缴费", { Washing(vm,hazeState,navController ) }),
+                SearchAppBean(40,"${context.getString(R.string.navigation_label_laundry)} 洗鞋机 烘干机 ${context.getString(R.string.navigation_label_hui_xin)} ${context.getString(R.string.navigation_label_washing)} 缴费", { Washing(hazeState,navController ) }),
                 SearchAppBean(41,"${context.getString(AppNavRoute.Admission.label)} 历年分数线 招生计划", { Admission(navController ) }, AppNavRoute.Admission.route),
                 SearchAppBean(42,"${context.getString(AppNavRoute.WebVpn.label)} 外地访问 内网", { WebVpn(navController ) },AppNavRoute.WebVpn.route),
                 SearchAppBean(43,"${context.getString(AppNavRoute.OfficeHall.label)}", { OfficeHall(navController ) },AppNavRoute.OfficeHall.route),

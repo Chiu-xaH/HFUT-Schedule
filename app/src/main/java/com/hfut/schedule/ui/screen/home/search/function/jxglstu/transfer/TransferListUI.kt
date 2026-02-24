@@ -1,11 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer
 
-
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -36,7 +32,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -63,21 +58,18 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
-
-
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -97,19 +89,17 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -535,6 +525,19 @@ private fun TransferUI(
                         )
                     }
                     Spacer(Modifier.height(5.dp))
+                    prefs.getString("PHONENUM","")?.let {
+                        if(it.isNotEmpty()) {
+                            CardListItem(
+                                headlineContent = { Text(it) },
+                                overlineContent = { Text("呱呱物联登录手机号") },
+                                modifier = Modifier.clickable {
+                                    telephone = it
+                                    showBottomSheet_select = false
+                                    showBottomSheet = true
+                                }
+                            )
+                        }
+                    }
                     personInfo.mobile?.let {
                         if(it.isNotEmpty()) {
                             CardListItem(
@@ -561,19 +564,7 @@ private fun TransferUI(
                                 )
                         }
                     }
-                    prefs.getString("PHONENUM","")?.let {
-                        if(it.isNotEmpty()) {
-                                CardListItem(
-                                    headlineContent = { Text(it) },
-                                    overlineContent = { Text("呱呱物联登录手机号") },
-                                    modifier = Modifier.clickable {
-                                        telephone = it
-                                        showBottomSheet_select = false
-                                        showBottomSheet = true
-                                    }
-                                )
-                        }
-                    }
+
                     Spacer(modifier = Modifier.height(20.dp))
                 }
             }
@@ -589,7 +580,7 @@ private fun TransferUI(
                     item.department.nameZh.contains(input) || item.major.nameZh.contains(input)
                 }
             }
-        }
+        }.sortedBy { it.department.nameZh }
 
         LazyColumn() {
             item { InnerPaddingHeight(innerPadding,true) }
@@ -620,24 +611,52 @@ private fun TransferUI(
                 if(department.contains("(")) department = department.substringBefore("(")
                 val count = dataItem.applyStdCount
                 val limit = dataItem.preparedStdCount
-                val isFull = count > limit
-                CardListItem(
-                    headlineContent = { Text(text = dataItem.major.nameZh, fontWeight = FontWeight.Bold) },
-                    supportingContent = { dataItem.registrationConditions?.let { Text(text = it) } },
-                    overlineContent = { ScrollText(text = "已申请 $count / $limit $department") },
-                    leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
-                    trailingContent = {  FilledTonalIconButton(onClick = {
-                        id = dataItem.id
-                        showBottomSheet_select = true
-                    },
-                        colors = if(!isFull) IconButtonDefaults.filledTonalIconButtonColors() else IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                    ) { Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "") } },
+                val isFull = count >= limit
+                var successRate = limit.toDouble() safeDiv count.toDouble()
+
+                // 已申请 $count / $limit
+                CustomCard(
                     color = if(isFull) {
                         MaterialTheme.colorScheme.errorContainer
                     } else {
-                        null
-                    },
-                )
+                        cardNormalColor()
+                    }
+                ) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = dataItem.major.nameZh) },
+                        overlineContent = { ScrollText(text = department) },
+                        leadingContent = { DepartmentIcons(dataItem.department.nameZh) },
+                        trailingContent = {
+                            Column(
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        id = dataItem.id
+                                        showBottomSheet_select = true
+                                    },
+                                    colors =
+                                        if(!isFull)
+                                            IconButtonDefaults.filledTonalIconButtonColors()
+                                        else
+                                            IconButtonDefaults.filledTonalIconButtonColors(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.add_2), contentDescription = "")
+                                }
+                                Text("$count/$limit (${
+                                    if(successRate == 0.0 || successRate >= 1.0) "稳" else "前${formatDecimal(successRate*100,0)}%"
+                                })")
+                            }
+                        },
+                    )
+                    dataItem.registrationConditions?.let {
+                        PaddingHorizontalDivider()
+                        TransplantListItem(
+                            headlineContent = { Text(text = "申请要求",) },
+                            supportingContent = { Text(text = it) },
+                        )
+                    }
+                }
             }
             item { InnerPaddingHeight(innerPadding,false) }
         }

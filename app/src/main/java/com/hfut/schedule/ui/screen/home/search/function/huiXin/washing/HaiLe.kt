@@ -1,5 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.huiXin.washing
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,11 +10,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,28 +31,38 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.enumeration.Campus
+import com.hfut.schedule.logic.enumeration.CampusRegion
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.HaiLeDeviceDetailRequestBody
 import com.hfut.schedule.logic.model.HaiLeNearPositionRequestDTO
 import com.hfut.schedule.logic.model.HaiLeType
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.showToast
-
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.icon.LoadingIcon
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.Campus
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.xah.uicommon.style.align.ColumnVertical
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
+import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 private val d = mapOf<String, String>(
@@ -56,18 +71,41 @@ private val d = mapOf<String, String>(
     HaiLeType.WASHING_MACHINE.typeCode to HaiLeType.WASHING_MACHINE.description,
 )
 
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3ExpressiveApi::class
+)
 @Composable
-fun HaiLeScreen(
+fun HaiLeWashingScreen(
     vm : NetWorkViewModel,
-    hazeState : HazeState,
-    paddingBottom : Boolean
+    navController : NavHostController,
 ) {
+    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val hazeState = rememberHazeState(blurEnabled = blur)
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    val route = remember { AppNavRoute.HaiLeWashing.route }
+
     val t = remember { Campus.entries }
     val titles = remember { t.map { it.description } }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage = when(getCampusRegion()) {
         CampusRegion.HEFEI -> 1
         CampusRegion.XUANCHENG -> t.lastIndex
     })
+
+    var page by remember { mutableIntStateOf(1) }
+    val refreshNetwork = suspend {
+        vm.haiLeNearPositionResp.clear()
+        vm.getHaiLeNearPosition(
+            HaiLeNearPositionRequestDTO(
+                campus = t[pagerState.currentPage],
+                page = page
+            )
+        )
+    }
+    LaunchedEffect(pagerState.currentPage,page) {
+        refreshNetwork()
+    }
+
     val uiState by vm.haiLeNearPositionResp.state.collectAsState()
     var itemId: Long by remember { mutableLongStateOf(-1) }
     var itemName by remember { mutableStateOf("详情") }
@@ -115,68 +153,84 @@ fun HaiLeScreen(
             }
         }
     }
-    var page by remember { mutableIntStateOf(1) }
 
-    val refreshNetwork = suspend {
-        vm.haiLeNearPositionResp.clear()
-        vm.getHaiLeNearPosition(
-            HaiLeNearPositionRequestDTO(
-                campus = t[pagerState.currentPage],
-                page = page
-            )
-        )
-    }
-    LaunchedEffect(pagerState.currentPage,page) {
-        refreshNetwork()
-    }
-    CustomTabRow(pagerState,titles)
-    HorizontalPager(state = pagerState) { pager ->
-        val campus = t[pager]
-        CommonNetworkScreen(uiState = uiState, onReload = refreshNetwork) {
-            val list = (uiState as UiState.Success).data
-                .filter {
-                    when(campus) {
-                        Campus.XC -> it.address.contains("宣州区薰化路301号")
-                        Campus.TXL -> it.address.contains("合肥工业大学") || it.name.contains(Campus.TXL.description)
-                        Campus.FCH -> it.address.contains("合肥工业大学") || it.name.contains(Campus.FCH.description)
+
+    CustomTransitionScaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        roundShape = MaterialTheme.shapes.extraExtraLarge,
+        route = route,
+        navHostController = navController,
+        topBar = {
+            Column(
+                modifier = Modifier.topBarBlur(hazeState),
+            ) {
+                MediumTopAppBar(
+                    scrollBehavior = scrollBehavior,
+                    colors = topBarTransplantColor(),
+                    title = { Text(stringResource(AppNavRoute.HaiLeWashing.label)) },
+                    navigationIcon = {
+                        TopBarNavigationIcon()
                     }
-                }
-                .sortedBy { it.id }
-            val listState = rememberLazyListState()
-
-            Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(state = listState) {
-                    items (list.size, key = { list[it].id } ){ index ->
-                        val item = list[index]
-                        with(item) {
-                            CardListItem(
-                                headlineContent = { Text(name) },
-                                supportingContent = {
-                                    Text(
-                                        categoryCodeList.map { d[it] }.filter { it != null }.joinToString(" ")
-                                    ) },
-                                overlineContent = { Text(address) },
-                                leadingContent = {
-                                    Icon(painterResource(R.drawable.near_me),null)
-                                },
-                                trailingContent = {
-                                    Text(if(enableReserve)"可预约 $reserveNum/$idleCount" else "设备数 $idleCount")
-                                },
-                                modifier = Modifier.clickable {
-                                    itemId = id
-                                    itemName = name
-                                    showBottomSheet = true
-                                }
-                            )
+                )
+                CustomTabRow(pagerState,titles)
+            }
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState).fillMaxSize()
+        ) {
+            HorizontalPager(state = pagerState) { pager ->
+                val campus = t[pager]
+                CommonNetworkScreen(uiState = uiState, onReload = refreshNetwork) {
+                    val list = (uiState as UiState.Success).data
+                        .filter {
+                            when(campus) {
+                                Campus.XC -> it.address.contains("宣州区薰化路301号")
+                                Campus.TXL -> it.address.contains("合肥工业大学") || it.name.contains(Campus.TXL.description)
+                                Campus.FCH -> it.address.contains("合肥工业大学") || it.name.contains(Campus.FCH.description)
+                            }
                         }
+                        .sortedBy { it.id }
+                    val listState = rememberLazyListState()
+
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        LazyColumn(state = listState) {
+                            item { InnerPaddingHeight(innerPadding,true) }
+                            items (list.size, key = { list[it].id } ){ index ->
+                                val item = list[index]
+                                with(item) {
+                                    CardListItem(
+                                        headlineContent = { Text(name) },
+                                        supportingContent = {
+                                            Text(
+                                                categoryCodeList.map { d[it] }.filter { it != null }.joinToString(" ")
+                                            ) },
+                                        overlineContent = { Text(address) },
+                                        leadingContent = {
+                                            Icon(painterResource(R.drawable.near_me),null)
+                                        },
+                                        trailingContent = {
+                                            Text(if(enableReserve)"可预约 $reserveNum/$idleCount" else "设备数 $idleCount")
+                                        },
+                                        modifier = Modifier.clickable {
+                                            itemId = id
+                                            itemName = name
+                                            showBottomSheet = true
+                                        }
+                                    )
+                                }
+                            }
+                            item { InnerPaddingHeight(innerPadding,false) }
+                            item { PaddingForPageControllerButton() }
+                        }
+                        PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it })
                     }
-                    item { PaddingForPageControllerButton() }
                 }
-                PageController(listState,page,onNextPage = { page = it }, onPreviousPage = { page = it }, paddingSafely = paddingBottom)
             }
         }
     }
 }
+
 
 @Composable
 fun HaiLeDetailScreen(vm : NetWorkViewModel,itemId : Long,onType : (HaiLeType) -> Unit) {

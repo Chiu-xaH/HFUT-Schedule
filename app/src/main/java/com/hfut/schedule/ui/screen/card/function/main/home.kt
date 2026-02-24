@@ -231,7 +231,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                         Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
                     },
                     modifier = Modifier.clickable {
-                        showBottomSheet_Washing = true
+                        showToast("前往查询中心")
                     }
                 )
 
@@ -288,6 +288,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             ShowerUI(vm,hazeState = hazeState)
         }
     }
+
     if (showBottomSheet_Washing) {
         ModalBottomSheet(
             onDismissRequest = {
@@ -295,10 +296,9 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             sheetState = sheetState_Washing,
         ) {
-            WashingUI(vm,hazeState)
+            WashingUI(navController)
         }
     }
-
 
     if(showBottomSheet_Range) {
         HazeBottomSheet (
