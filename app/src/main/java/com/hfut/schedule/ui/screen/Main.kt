@@ -389,94 +389,92 @@ fun MainHost(
                         }
                     ,
                 )  {
-                    // 登录
-                    transitionComposable(AppNavRoute.Login.route) {
-                        LoginScreen(
-                            loginVm,
-                            networkVm,
-                        )
-                    }
-                    // 主UI
-                    transitionComposable(AppNavRoute.Home.route) {
-                        val mainUI = @Composable { celebrationText : String? ->
-                            if(isSuccessActivity) {
-                                MainScreen(
-                                    vm = networkVm,
-                                    vmUI = uiVm,
-                                    celebrationText = celebrationText,
-                                    isLogin = true,
-                                    navHostTopController = navController,
-                                )
-                            } else if(!login) {
-                                MainScreen(
-                                    networkVm,
-                                    uiVm,
-                                    celebrationText,
-                                    false,
-                                    navHostTopController = navController,
-                                )
-                            } else LoginScreen(
-                                loginVm,
-                                networkVm,
-                            )
-                        }
-                        mainUI(celebration.str)
-                    }
-                    // 用户协议
-                    transitionComposable(AppNavRoute.Agreement.route) {
-                        Box {
-                            UseAgreementScreen(navController)
-                        }
-                    }
-                    // 更新完成引导
-                    transitionComposable(AppNavRoute.UpdateSuccessfully.route) {
-                        UpdateSuccessScreen(navController )
-                    }
-                    // 本版本新特性
-                    transitionComposable(AppNavRoute.VersionInfo.route) {
-                        VersionInfoScreen(networkVm,navController)
-                    }
-                    // 打开外部应用
-                    transitionComposable(
-                        route = AppNavRoute.ToOuterApplication.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.ToOuterApplication.Args.entries)
-                    ) { backStackEntry ->
-                        val target = backStackEntry.arguments?.getString(AppNavRoute.ToOuterApplication.Args.PACKAGE_NAME.argName) ?: return@transitionComposable
-                        val app = Starter.AppPackages.entries.find { it.packageName == target } ?: return@transitionComposable
-                        OpenOuterApplicationScreen(
-                            app,
-                            navController,
-                        )
-                    }
-                    // 图书借阅
-                    transitionComposable(AppNavRoute.LibraryBorrowed.route) {
-                        LibraryBorrowedScreen(networkVm,navController)
-                    }
-                    // 添加聚焦日程
-                    transitionComposable(
-                        route = AppNavRoute.AddEvent.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.AddEvent.Args.entries)
-                    ) { backStackEntry ->
-                        val id = backStackEntry.arguments?.getInt(AppNavRoute.AddEvent.Args.ID.argName)
-                        val origin = backStackEntry.arguments?.getString(AppNavRoute.AddEvent.Args.ORIGIN.argName) ?: return@transitionComposable
-                        val eventId = if(id == null || id <= 0) {
-                            -1
-                        } else {
-                            id
-                        }
-                        AddEventScreen(networkVm,navController,eventId,origin)
-                    }
-                    // 导航中转空白页
-                    transitionComposable(
-                        route = AppNavRoute.Empty.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.Empty.Args.entries)
-                    ) { backStackEntry ->
-                        val targetRoute = backStackEntry.arguments?.getString(AppNavRoute.Empty.Args.TARGET_ROUTE.argName) ?: return@transitionComposable
-                        EmptyScreen(
-                            targetRoute,
-                            navController,
-                        )
-                    }
+//                    // 登录
+//                    transitionComposable(AppNavRoute.Login.route) {
+//                        LoginScreen(
+//                            loginVm,
+//                            networkVm,
+//                        )
+//                    }
+//                    // 主UI
+//                    transitionComposable(AppNavRoute.Home.route) {
+//                        val mainUI = @Composable { celebrationText : String? ->
+//                            if(isSuccessActivity) {
+//                                MainScreen(
+//                                    vm = networkVm,
+//                                    vmUI = uiVm,
+//                                    celebrationText = celebrationText,
+//                                    isLogin = true,
+//                                )
+//                            } else if(!login) {
+//                                MainScreen(
+//                                    networkVm,
+//                                    uiVm,
+//                                    celebrationText,
+//                                    false,
+//                                )
+//                            } else LoginScreen(
+//                                loginVm,
+//                                networkVm,
+//                            )
+//                        }
+//                        mainUI(celebration.str)
+//                    }
+//                    // 用户协议
+//                    transitionComposable(AppNavRoute.Agreement.route) {
+//                        Box {
+//                            UseAgreementScreen(navController)
+//                        }
+//                    }
+//                    // 更新完成引导
+//                    transitionComposable(AppNavRoute.UpdateSuccessfully.route) {
+//                        UpdateSuccessScreen(navController )
+//                    }
+//                    // 本版本新特性
+//                    transitionComposable(AppNavRoute.VersionInfo.route) {
+//                        VersionInfoScreen(networkVm,navController)
+//                    }
+//                    // 打开外部应用
+//                    transitionComposable(
+//                        route = AppNavRoute.ToOuterApplication.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.ToOuterApplication.Args.entries)
+//                    ) { backStackEntry ->
+//                        val target = backStackEntry.arguments?.getString(AppNavRoute.ToOuterApplication.Args.PACKAGE_NAME.argName) ?: return@transitionComposable
+//                        val app = Starter.AppPackages.entries.find { it.packageName == target } ?: return@transitionComposable
+//                        OpenOuterApplicationScreen(
+//                            app,
+//                            navController,
+//                        )
+//                    }
+//                    // 图书借阅
+//                    transitionComposable(AppNavRoute.LibraryBorrowed.route) {
+//                        LibraryBorrowedScreen(networkVm,navController)
+//                    }
+//                    // 添加聚焦日程
+//                    transitionComposable(
+//                        route = AppNavRoute.AddEvent.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.AddEvent.Args.entries)
+//                    ) { backStackEntry ->
+//                        val id = backStackEntry.arguments?.getInt(AppNavRoute.AddEvent.Args.ID.argName)
+//                        val origin = backStackEntry.arguments?.getString(AppNavRoute.AddEvent.Args.ORIGIN.argName) ?: return@transitionComposable
+//                        val eventId = if(id == null || id <= 0) {
+//                            -1
+//                        } else {
+//                            id
+//                        }
+//                        AddEventScreen(networkVm,navController,eventId,origin)
+//                    }
+//                    // 导航中转空白页
+//                    transitionComposable(
+//                        route = AppNavRoute.Empty.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.Empty.Args.entries)
+//                    ) { backStackEntry ->
+//                        val targetRoute = backStackEntry.arguments?.getString(AppNavRoute.Empty.Args.TARGET_ROUTE.argName) ?: return@transitionComposable
+//                        EmptyScreen(
+//                            targetRoute,
+//                            navController,
+//                        )
+//                    }
                     // 成绩
                     transitionComposable(
                         route = AppNavRoute.Grade.receiveRoute(),

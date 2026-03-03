@@ -133,6 +133,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavigationController
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
@@ -232,10 +233,10 @@ enum class AddEventOrigin {
 @Composable
 fun AddEventScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
     eventId : Int = -1,
     origin : String
 ) {
+    val navController = LocalNavigationController.current
     val route = remember { AppNavRoute.AddEvent.withArgs(eventId,origin) }
 
     val isSupabase = false
@@ -258,7 +259,7 @@ fun AddEventScreen(
                         async { DataBaseManager.customEventDao.del(eventId) }.await()
                         launch { showDialog = false }
                         launch(Dispatchers.Main) {
-                            navController.popBackStackForTransition()
+                            navController.pop()
                         }
                     }
                 } else {
@@ -269,14 +270,7 @@ fun AddEventScreen(
         )
     }
 
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
-        roundShape = when(origin) {
-            AddEventOrigin.FOCUS_EDITED.name -> MaterialTheme.shapes.medium
-            AddEventOrigin.FOCUS_ADD.name -> FloatingActionButtonDefaults.shape
-            else -> MaterialTheme.shapes.extraSmall
-        },
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -340,7 +334,7 @@ fun AddEventScreen(
                 }
                 true -> {
                     AddEventUI(vm,isSupabase,eventId) {
-                        navController.popBackStack()
+                        navController.pop()
                     }
                 }
                 false -> {

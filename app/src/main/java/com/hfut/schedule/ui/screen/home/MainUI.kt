@@ -173,6 +173,7 @@ import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
+import com.xah.navigation.utils.LocalNavigationController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -220,8 +221,8 @@ fun MainScreen(
     vmUI : UIViewModel,
     celebrationText : String?,
     isLogin : Boolean,
-    navHostTopController : NavHostController,
 ) {
+    val navHostTopController = LocalNavigationController.current
     val navController = rememberNavController()
     var isEnabled by rememberSaveable { mutableStateOf(!isLogin) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -358,10 +359,7 @@ fun MainScreen(
         value = calculatedReadNotificationCount()
     }
 
-    CustomTransitionScaffold (
-        navHostController = navHostTopController,
-        route = AppNavRoute.Home.route,
-        roundShape = RoundedCornerShape(0.dp),
+    Scaffold (
         modifier = Modifier.let {
             if (targetPage != COURSES) {
                 it.nestedScroll(scrollBehavior.nestedScrollConnection)
@@ -384,7 +382,8 @@ fun MainScreen(
                         ),
                     elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                     onClick = {
-                        navHostTopController.navigateForTransition(
+
+                        navHostTopController.push(
                             AppNavRoute.AddEvent,
                             addRoute
                         )
@@ -431,7 +430,7 @@ fun MainScreen(
                                 SEARCH -> {
                                     val route = remember { AppNavRoute.FunctionsSort.route }
                                     IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(
+                                        navHostTopController.push(
                                             AppNavRoute.FunctionsSort,
                                             route,
                                             transplantBackground = true
@@ -457,7 +456,7 @@ fun MainScreen(
                                     ApiToSupabase(vm)
                                     val iconRoute = remember { AppNavRoute.NotificationBox.route }
                                     IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
+                                        navHostTopController.push(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
                                     }) {
                                         BadgedBox(badge = {
                                             if (count != 0) {
@@ -556,7 +555,7 @@ fun MainScreen(
                                                 enableLiquidGlass
                                             )
                                             .clickable {
-                                                navHostTopController.navigateForTransition(
+                                                navHostTopController.push(
                                                     AppNavRoute.WorkAndRest,
                                                     route,
                                                     transplantBackground = true
@@ -591,7 +590,7 @@ fun MainScreen(
                                                 enableLiquidGlass
                                             )
                                             .clickable {
-                                                navHostTopController.navigateForTransition(
+                                                navHostTopController.push(
                                                     AppNavRoute.TermCourses,
                                                     route,
                                                     transplantBackground = true
@@ -689,7 +688,7 @@ fun MainScreen(
                                     val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
                                     IconButton(
                                         onClick = {
-                                            navHostTopController.navigateForTransition(AppNavRoute.WorkAndRest, route,transplantBackground = true)
+                                            navHostTopController.push(AppNavRoute.WorkAndRest, route,transplantBackground = true)
                                         }
                                     ) {
                                         Icon(
@@ -702,7 +701,7 @@ fun MainScreen(
                                 } else {
                                     val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
                                     IconButton(onClick = {
-                                        navHostTopController.navigateForTransition(AppNavRoute.TermCourses, route,transplantBackground = true)
+                                        navHostTopController.push(AppNavRoute.TermCourses, route,transplantBackground = true)
                                     }) {
                                         Icon(
                                             painter = painterResource(id = AppNavRoute.TermCourses.icon),

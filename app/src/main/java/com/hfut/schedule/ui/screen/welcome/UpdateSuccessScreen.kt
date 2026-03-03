@@ -27,6 +27,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
@@ -68,6 +69,8 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.navigateAndClear
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.xah.navigation.model.LaunchMode
+import com.xah.navigation.utils.LocalNavigationController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -84,19 +87,15 @@ import kotlinx.coroutines.launch
     ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
-fun UpdateSuccessScreen(
-    navController : NavHostController,
-) {
+fun UpdateSuccessScreen() {
+    val navController = LocalNavigationController.current
     val context = LocalContext.current
-    val route = remember { AppNavRoute.UpdateSuccessfully.route }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val oldVersion = prefs.getString("versionName","上版本")
     val scope = rememberCoroutineScope()
 
-    CustomTransitionScaffold(
-        route = route,
-        navHostController = navController,
+    Scaffold(
         topBar = {
             LargeTopAppBar(
                 colors = topAppBarColors(
@@ -122,10 +121,9 @@ fun UpdateSuccessScreen(
                         ,
                         shape = MaterialTheme.shapes.extraLarge,
                         onClick = {
-                            navController.navigateForTransition(
+                            navController.push(
                                 AppNavRoute.VersionInfo,
                                 targetRoute,
-                                transplantBackground = true
                             )
                         }
                     ) {
@@ -152,7 +150,7 @@ fun UpdateSuccessScreen(
                             )
                         }.await()
                         GlobalUIStateHolder.useEnterAnimation = true
-                        navController.navigateAndClear(AppNavRoute.Home.route)
+                        navController.push(AppNavRoute.Home.route, LaunchMode.CLEAR_STACK)
                     }
                 },
                 shape = MaterialTheme.shapes.extraLarge,

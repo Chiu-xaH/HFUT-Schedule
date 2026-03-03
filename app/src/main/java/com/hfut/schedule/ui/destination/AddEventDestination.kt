@@ -1,0 +1,29 @@
+package com.hfut.schedule.ui.destination
+
+import androidx.compose.runtime.Composable
+import com.hfut.schedule.R
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventScreen
+import com.hfut.schedule.ui.util.NavDestination
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavDependencies
+import com.xah.uicommon.util.language.UiText
+import com.xah.uicommon.util.language.res
+
+data class AddEventDestination(
+    val id : Int?,
+    val origin : String
+) : NavDestination() {
+    override val key: String = "library_borrowed"
+    override val title: UiText = res(R.string.navigation_label_library_borrowed)
+
+    @Composable
+    override fun Content() {
+        val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
+        val eventId = if(id == null || id <= 0) {
+            -1
+        } else {
+            id
+        }
+        AddEventScreen(vm,eventId,origin)
+    }
+}
