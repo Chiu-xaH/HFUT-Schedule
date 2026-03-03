@@ -57,9 +57,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
-
-        //            UpdateItems("新增 培养方案完成情况统计")
-
+            UpdateItems("重构 自研第二代全局转场动效体系")
+//            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
