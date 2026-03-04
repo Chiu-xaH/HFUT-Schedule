@@ -81,7 +81,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
@@ -96,6 +96,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.chart.BarChart
 import com.xah.uicommon.component.chart.RadarChart
@@ -241,7 +242,7 @@ fun avgScoreWithCourse(
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun GradeItemJxglstuUI(
-    navController: NavHostController,
+//    navController: NavHostController,
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
     input : String,
@@ -250,6 +251,7 @@ fun GradeItemJxglstuUI(
     displayCompactly : Boolean,
     onChangeLargeButtonText : (String) -> Unit
 ) {
+    val navController = LocalNavController.current
     val context = LocalContext.current
     var showBottomSheet_Survey by remember { mutableStateOf(false) }
     var surveyCode by remember { mutableStateOf("") }
@@ -357,7 +359,7 @@ fun GradeItemJxglstuUI(
                                                     showBottomSheet_Survey = true
                                                 }
                                             } else {
-                                                navController.navigateForTransition(
+                                                navController.push(
                                                     AppNavRoute.GradeDetail,
                                                     AppNavRoute.GradeDetail.withArgs(
                                                         subItem,
@@ -422,7 +424,7 @@ fun GradeItemJxglstuUI(
                                                     }
                                                     AssistChip(
                                                         onClick = {
-                                                            navController.navigateForTransition(
+                                                            navController.push(
                                                                 AppNavRoute.GradeDetail,
                                                                 AppNavRoute.GradeDetail.withArgs(
                                                                     subItem,
@@ -510,13 +512,14 @@ fun GradeItemJxglstuUI(
 @SuppressLint("SuspiciousIndentation")
 @Composable
 fun GradeItemUIUniApp(
-    navController: NavHostController,
+//    navController: NavHostController,
     innerPadding: PaddingValues,
     vm: NetWorkViewModel,
     input : String,
     displayCompactly : Boolean,
     onChangeLargeButtonText : (String) -> Unit
 ) {
+    val navController = LocalNavController.current
     val scope = rememberCoroutineScope()
     val uiState by vm.uniAppGradesResp.state.collectAsState()
 
@@ -649,7 +652,7 @@ fun GradeItemUIUniApp(
                                         modifier = Modifier
                                             .containerShare(AppNavRoute.GradeDetail.shareRoute(bean))
                                             .clickable {
-                                                navController.navigateForTransition(
+                                                navController.push(
                                                     AppNavRoute.GradeDetail,
                                                     AppNavRoute.GradeDetail.withArgs(
                                                         bean,
@@ -709,7 +712,7 @@ fun GradeItemUIUniApp(
                                                         }
                                                         AssistChip(
                                                             onClick = {
-                                                                navController.navigateForTransition(
+                                                                navController.push(
                                                                     AppNavRoute.GradeDetail,
                                                                     AppNavRoute.GradeDetail.withArgs(
                                                                         bean,
@@ -758,8 +761,9 @@ fun GradeDetailScreen(
     allAvgGpa : Float,
     allAvgScore : Float,
     allTotalCredits : Float,
-    navController: NavHostController
+//    navController: NavHostController
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.GradeDetail.shareRoute(bean) }
@@ -827,10 +831,10 @@ fun GradeDetailScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Party(show = party)
-        CustomTransitionScaffold (
-            route = route,
+        Scaffold (
+//            route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            navHostController = navController,
+//            navHostController = navController,
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     MediumTopAppBar(

@@ -117,7 +117,7 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
@@ -133,7 +133,7 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.navigation.utils.LocalNavigationController
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
@@ -236,7 +236,7 @@ fun AddEventScreen(
     eventId : Int = -1,
     origin : String
 ) {
-    val navController = LocalNavigationController.current
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.AddEvent.withArgs(eventId,origin) }
 
     val isSupabase = false

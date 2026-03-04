@@ -22,6 +22,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -60,7 +61,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
@@ -77,6 +78,7 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -97,7 +99,7 @@ import org.jsoup.Jsoup
 @Composable
 fun PersonScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -122,10 +124,10 @@ fun PersonScreen(
     }
 
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -161,7 +163,7 @@ fun PersonScreen(
                     .fillMaxSize()
             ) {
                 InnerPaddingHeight(innerPadding,true)
-                PersonItems(vm,navController)
+                PersonItems()
                 InnerPaddingHeight(innerPadding,false)
             }
         }
@@ -174,9 +176,10 @@ fun PersonScreen(
 )
 @Composable
 private fun PersonItems(
-    vm : NetWorkViewModel,
-    navController : NavHostController,
+//    vm : NetWorkViewModel,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val photo by produceState<String?>(initialValue = null) {
         value = LargeStringDataManager.read( LargeStringDataManager.PHOTO)
     }
@@ -329,7 +332,7 @@ private fun PersonItems(
                     trailingContent = {
                         FilledTonalButton(
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.Classmates,route)
+                                navController.push(AppNavRoute.Classmates,route)
                             }
                         ) {
                             Text(stringResource(AppNavRoute.Classmates.label))

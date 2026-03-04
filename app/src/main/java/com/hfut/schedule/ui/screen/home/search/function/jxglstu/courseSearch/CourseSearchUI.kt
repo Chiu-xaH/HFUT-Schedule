@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -78,8 +79,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun CourseSearchScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.CourseSearch.route }
@@ -133,10 +135,10 @@ fun CourseSearchScreen(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -153,7 +155,7 @@ fun CourseSearchScreen(
                         val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
                         LiquidButton(
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.CourseSearchTable,AppNavRoute.CourseSearchTable.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
+                                navController.push(AppNavRoute.CourseSearchTable,AppNavRoute.CourseSearchTable.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
                             },
                             isCircle = true,
                             enabled = uiState is UiState.Success && !canNotUse,

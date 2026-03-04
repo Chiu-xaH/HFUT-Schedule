@@ -24,6 +24,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -55,7 +56,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -66,6 +67,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -81,17 +83,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdmissionScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Admission.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column {
                 MediumTopAppBar(
@@ -106,7 +109,7 @@ fun AdmissionScreen(
             }
         },
         ) { innerPadding ->
-        AdmissionListUI(vm,innerPadding,navController)
+        AdmissionListUI(vm,innerPadding)
     }
 }
 
@@ -115,8 +118,9 @@ fun AdmissionScreen(
 fun AdmissionListUI(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-    navController: NavHostController,
+//    navController: NavHostController,
 ) {
+    val navController = LocalNavController.current
     val pageList = remember { AdmissionType.entries }
     val titles = remember { pageList.map { it.description } }
     val pagerState = rememberPagerState { pageList.size }
@@ -155,7 +159,7 @@ fun AdmissionListUI(
                                 color = cardNormalColor(),
                                 modifier = Modifier.padding(CARD_NORMAL_DP)
                                     .clickableWithScale(ClickScale.SMALL.scale) {
-                                        navController.navigateForTransition(AppNavRoute.AdmissionDetail,route)
+                                        navController.push(AppNavRoute.AdmissionDetail,route)
                                     }
                                     .containerShare(route,)
                             ) {
@@ -177,10 +181,11 @@ fun AdmissionListUI(
 @Composable
 fun AdmissionRegionScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
     type : String,
     index: Int
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.AdmissionDetail.withArgs(index,type) }
@@ -204,10 +209,10 @@ fun AdmissionRegionScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 MediumTopAppBar(

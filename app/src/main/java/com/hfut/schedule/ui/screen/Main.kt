@@ -476,185 +476,185 @@ fun MainHost(
 //                        )
 //                    }
                     // 成绩
-                    transitionComposable(
-                        route = AppNavRoute.Grade.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.Grade.Args.entries)
-                    ) { backStackEntry ->
-                        val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.Grade.Args.IF_SAVED.argName) ?: (AppNavRoute.Grade.Args.IF_SAVED.default as Boolean)
-                        GradeScreen(
-                            ifSaved,
-                            networkVm,
-                            navController,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.Grade.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.Grade.Args.entries)
+//                    ) { backStackEntry ->
+//                        val ifSaved = backStackEntry.arguments?.getBoolean(AppNavRoute.Grade.Args.IF_SAVED.argName) ?: (AppNavRoute.Grade.Args.IF_SAVED.default as Boolean)
+//                        GradeScreen(
+//                            ifSaved,
+//                            networkVm,
+//                            navController,
+//                        )
+//                    }
                     // 平均成绩
-                    transitionComposable(
-                        route = AppNavRoute.AverageGrade.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.AverageGrade.Args.entries)
-                    ) { backStackEntry ->
-                        val  useUniAppData = backStackEntry.arguments?.getBoolean(AppNavRoute.Grade.Args.IF_SAVED.argName) ?: (AppNavRoute.Grade.Args.IF_SAVED.default as Boolean)
-                        AverageGradeScreen(
-                            networkVm,
-                            useUniAppData,
-                            navController,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.AverageGrade.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.AverageGrade.Args.entries)
+//                    ) { backStackEntry ->
+//                        val  useUniAppData = backStackEntry.arguments?.getBoolean(AppNavRoute.Grade.Args.IF_SAVED.argName) ?: (AppNavRoute.Grade.Args.IF_SAVED.default as Boolean)
+//                        AverageGradeScreen(
+//                            networkVm,
+//                            useUniAppData,
+//                            navController,
+//                        )
+//                    }
                     // 招生
-                    transitionComposable(AppNavRoute.Admission.route) {
-                        AdmissionScreen(networkVm , navController)
-                    }
+//                    transitionComposable(AppNavRoute.Admission.route) {
+//                        AdmissionScreen(networkVm , navController)
+//                    }
                     // 招生 二级界面
-                    transitionComposable(
-                        route = AppNavRoute.AdmissionDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.AdmissionDetail.Args.entries)
-                    ) { backStackEntry ->
-                        val index = backStackEntry.arguments?.getInt(AppNavRoute.AdmissionDetail.Args.INDEX.argName) ?: (AppNavRoute.AdmissionDetail.Args.INDEX.default as Int)
-                        val type = backStackEntry.arguments?.getString(AppNavRoute.AdmissionDetail.Args.TYPE.argName) ?: (AppNavRoute.AdmissionDetail.Args.TYPE.default as String)
-                        if(index < 0) return@transitionComposable
-                        AdmissionRegionScreen(
-                            networkVm,
-                            navController,
-                            type,
-                            index,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.AdmissionDetail.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.AdmissionDetail.Args.entries)
+//                    ) { backStackEntry ->
+//                        val index = backStackEntry.arguments?.getInt(AppNavRoute.AdmissionDetail.Args.INDEX.argName) ?: (AppNavRoute.AdmissionDetail.Args.INDEX.default as Int)
+//                        val type = backStackEntry.arguments?.getString(AppNavRoute.AdmissionDetail.Args.TYPE.argName) ?: (AppNavRoute.AdmissionDetail.Args.TYPE.default as String)
+//                        if(index < 0) return@transitionComposable
+//                        AdmissionRegionScreen(
+//                            networkVm,
+//                            navController,
+//                            type,
+//                            index,
+//                        )
+//                    }
                     // 课程详情
-                    transitionComposable(
-                        route = AppNavRoute.CourseDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.CourseDetail.Args.entries)
-                    ) { backStackEntry ->
-                        val courseName = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.NAME.argName) ?: (AppNavRoute.CourseDetail.Args.NAME.default as String)
-                        val id = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.INDEX.argName) ?: (AppNavRoute.CourseDetail.Args.INDEX.default as String)
-
-                        CourseDetailApiScreen(
-                            courseName,
-                            id,
-                            networkVm,
-                            navController
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.CourseDetail.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.CourseDetail.Args.entries)
+//                    ) { backStackEntry ->
+//                        val courseName = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.NAME.argName) ?: (AppNavRoute.CourseDetail.Args.NAME.default as String)
+//                        val id = backStackEntry.arguments?.getString(AppNavRoute.CourseDetail.Args.INDEX.argName) ?: (AppNavRoute.CourseDetail.Args.INDEX.default as String)
+//
+//                        CourseDetailApiScreen(
+//                            courseName,
+//                            id,
+//                            networkVm,
+//                            navController
+//                        )
+//                    }
                     // 成绩详情
-                    transitionComposable(
-                        route = AppNavRoute.GradeDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.GradeDetail.Args.entries)
-                    ) { backStackEntry ->
-                        val courseName = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.COURSE_NAME.argName) ?: (AppNavRoute.GradeDetail.Args.COURSE_NAME.default as String)
-                        val credits = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.CREDITS.argName) ?: (AppNavRoute.GradeDetail.Args.CREDITS.default as String)
-                        val gpa = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.GPA.argName) ?: (AppNavRoute.GradeDetail.Args.GPA.default as String)
-                        val score = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.SCORE.default as String)
-                        val detail = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.DETAIL.argName) ?: (AppNavRoute.GradeDetail.Args.DETAIL.default as String)
-                        val lessonCode = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.LESSON_CODE.argName) ?: (AppNavRoute.GradeDetail.Args.LESSON_CODE.default as String)
-                        val allAvgScore = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_AVG_SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_AVG_SCORE.default as Float)
-                        val allAvgGpa = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_AVG_GPA.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_AVG_GPA.default as Float)
-                        val allTotalCredits = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_TOTAL_CREDITS.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_TOTAL_CREDITS.default as Float)
-                        val bean = GradeJxglstuResponse(courseName, credits,gpa,score,detail,lessonCode)
-                        GradeDetailScreen(
-                            bean,
-                            allAvgGpa,
-                            allAvgScore,
-                            allTotalCredits,
-                            navController
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.GradeDetail.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.GradeDetail.Args.entries)
+//                    ) { backStackEntry ->
+//                        val courseName = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.COURSE_NAME.argName) ?: (AppNavRoute.GradeDetail.Args.COURSE_NAME.default as String)
+//                        val credits = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.CREDITS.argName) ?: (AppNavRoute.GradeDetail.Args.CREDITS.default as String)
+//                        val gpa = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.GPA.argName) ?: (AppNavRoute.GradeDetail.Args.GPA.default as String)
+//                        val score = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.SCORE.default as String)
+//                        val detail = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.DETAIL.argName) ?: (AppNavRoute.GradeDetail.Args.DETAIL.default as String)
+//                        val lessonCode = backStackEntry.arguments?.getString(AppNavRoute.GradeDetail.Args.LESSON_CODE.argName) ?: (AppNavRoute.GradeDetail.Args.LESSON_CODE.default as String)
+//                        val allAvgScore = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_AVG_SCORE.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_AVG_SCORE.default as Float)
+//                        val allAvgGpa = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_AVG_GPA.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_AVG_GPA.default as Float)
+//                        val allTotalCredits = backStackEntry.arguments?.getFloat(AppNavRoute.GradeDetail.Args.ALL_TOTAL_CREDITS.argName) ?: (AppNavRoute.GradeDetail.Args.ALL_TOTAL_CREDITS.default as Float)
+//                        val bean = GradeJxglstuResponse(courseName, credits,gpa,score,detail,lessonCode)
+//                        GradeDetailScreen(
+//                            bean,
+//                            allAvgGpa,
+//                            allAvgScore,
+//                            allTotalCredits,
+//                            navController
+//                        )
+//                    }
                     // 教室 二级界面
-                    transitionComposable(
-                        route = AppNavRoute.ClassroomDetail.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.ClassroomDetail.Args.entries)
-                    ) { backStackEntry ->
-                        val code = backStackEntry.arguments?.getString(AppNavRoute.ClassroomDetail.Args.CODE.argName) ?: (AppNavRoute.ClassroomDetail.Args.CODE.default as String)
-                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomDetail.Args.NAME.argName) ?: (AppNavRoute.ClassroomDetail.Args.NAME.default as String)
-
-                        ClassroomDetailScreen(
-                            networkVm,
-                            navController,
-                            code,
-                            name,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.ClassroomDetail.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.ClassroomDetail.Args.entries)
+//                    ) { backStackEntry ->
+//                        val code = backStackEntry.arguments?.getString(AppNavRoute.ClassroomDetail.Args.CODE.argName) ?: (AppNavRoute.ClassroomDetail.Args.CODE.default as String)
+//                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomDetail.Args.NAME.argName) ?: (AppNavRoute.ClassroomDetail.Args.NAME.default as String)
+//
+//                        ClassroomDetailScreen(
+//                            networkVm,
+//                            navController,
+//                            code,
+//                            name,
+//                        )
+//                    }
                     // 教室状态
-                    transitionComposable(route = AppNavRoute.Classroom.route) {
-                        ClassroomScreen(networkVm,navController)
-                    }
+//                    transitionComposable(route = AppNavRoute.Classroom.route) {
+//                        ClassroomScreen(networkVm,navController)
+//                    }
                     // 教室课程表
-                    transitionComposable(
-                        route = AppNavRoute.ClassroomCourseTable.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.ClassroomCourseTable.Args.entries)
-                    ) { backStackEntry ->
-                        val roomId = backStackEntry.arguments?.getInt(AppNavRoute.ClassroomCourseTable.Args.ROOM_ID.argName) ?: (AppNavRoute.ClassroomCourseTable.Args.ROOM_ID.default as Int)
-                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomCourseTable.Args.NAME.argName) ?: (AppNavRoute.ClassroomCourseTable.Args.NAME.default as String)
-                        if(roomId < 0) {
-                            return@transitionComposable
-                        }
-                        ClassroomLessonsScreen(
-                            networkVm,
-                            navController,
-                            roomId,
-                            name,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.ClassroomCourseTable.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.ClassroomCourseTable.Args.entries)
+//                    ) { backStackEntry ->
+//                        val roomId = backStackEntry.arguments?.getInt(AppNavRoute.ClassroomCourseTable.Args.ROOM_ID.argName) ?: (AppNavRoute.ClassroomCourseTable.Args.ROOM_ID.default as Int)
+//                        val name = backStackEntry.arguments?.getString(AppNavRoute.ClassroomCourseTable.Args.NAME.argName) ?: (AppNavRoute.ClassroomCourseTable.Args.NAME.default as String)
+//                        if(roomId < 0) {
+//                            return@transitionComposable
+//                        }
+//                        ClassroomLessonsScreen(
+//                            networkVm,
+//                            navController,
+//                            roomId,
+//                            name,
+//                        )
+//                    }
                     // 法定假日
-                    transitionComposable(route = AppNavRoute.Holiday.route,) {
-                        HolidayScreen(navController)
-                    }
+//                    transitionComposable(route = AppNavRoute.Holiday.route,) {
+//                        HolidayScreen(navController)
+//                    }
                     // 校友平台
-                    transitionComposable(route = AppNavRoute.Alumni.route) {
-                        AlumniScreen(navController)
-                    }
+//                    transitionComposable(route = AppNavRoute.Alumni.route) {
+//                        AlumniScreen(navController)
+//                    }
                     // 大模型
-                    transitionComposable(route = AppNavRoute.AI.route) {
-                        AIScreen(navController)
-                    }
+//                    transitionComposable(route = AppNavRoute.AI.route) {
+//                        AIScreen(navController)
+//                    }
                     // 第二课堂
-                    transitionComposable(route = AppNavRoute.SecondClass.route) {
-                        SecondClassScreen(navController)
-                    }
+//                    transitionComposable(route = AppNavRoute.SecondClass.route) {
+//                        SecondClassScreen(navController)
+//                    }
                     // 作息
-                    transitionComposable(
-                        route = AppNavRoute.WorkAndRest.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.WorkAndRest.Args.entries)
-                    ) { backStackEntry ->
-                        val name = backStackEntry.arguments?.getString(AppNavRoute.WorkAndRest.Args.FRIEND_ID.argName) ?: (AppNavRoute.WorkAndRest.Args.FRIEND_ID.default as String?) ?: null
-                        TimeTableScreen(
-                            navController,
-                            name,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.WorkAndRest.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.WorkAndRest.Args.entries)
+//                    ) { backStackEntry ->
+//                        val name = backStackEntry.arguments?.getString(AppNavRoute.WorkAndRest.Args.FRIEND_ID.argName) ?: (AppNavRoute.WorkAndRest.Args.FRIEND_ID.default as String?) ?: null
+//                        TimeTableScreen(
+//                            navController,
+//                            name,
+//                        )
+//                    }
                     // 海乐生活
-                    transitionComposable(route = AppNavRoute.HaiLeWashing.route) {
-                        HaiLeWashingScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.HaiLeWashing.route) {
+//                        HaiLeWashingScreen(networkVm,navController )
+//                    }
                     // 学费
-                    transitionComposable(route = AppNavRoute.Fee.route) {
-                        FeeScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.Fee.route) {
+//                        FeeScreen(networkVm,navController )
+//                    }
                     // 学工系统/今日校园
-                    transitionComposable(route = AppNavRoute.StuTodayCampus.route) {
-                        StuTodayCampusScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.StuTodayCampus.route) {
+//                        StuTodayCampusScreen(networkVm,navController )
+//                    }
                     // 教师检索
-                    transitionComposable(route = AppNavRoute.TeacherSearch.route) {
-                        TeacherSearchScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.TeacherSearch.route) {
+//                        TeacherSearchScreen(networkVm,navController )
+//                    }
                     // 就业
-                    transitionComposable(route = AppNavRoute.Work.route) {
-                        WorkScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.Work.route) {
+//                        WorkScreen(networkVm,navController )
+//                    }
                     // 开课查询
-                    transitionComposable(route = AppNavRoute.CourseSearch.route) {
-                        CourseSearchScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.CourseSearch.route) {
+//                        CourseSearchScreen(networkVm,navController )
+//                    }
                     // 个人信息
-                    transitionComposable(route = AppNavRoute.PersonInfo.route) {
-                        PersonScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.PersonInfo.route) {
+//                        PersonScreen(networkVm,navController )
+//                    }
                     // 消息中心
-                    transitionComposable(route = AppNavRoute.Notifications.route) {
-                        NotificationsScreen(navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.Notifications.route) {
+//                        NotificationsScreen(navController )
+//                    }
                     // 寝室评分
-                    transitionComposable(route = AppNavRoute.Dormitory.route) {
-                        DormitoryScoreScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.Dormitory.route) {
+//                        DormitoryScoreScreen(networkVm,navController )
+//                    }
                     // 考试
                     transitionComposable(
                         route = AppNavRoute.Exam.receiveRoute(),
@@ -683,33 +683,33 @@ fun MainHost(
 //                    SurveyScreen(networkVm,navController )
 //                }
                     // 图书馆
-                    transitionComposable(route = AppNavRoute.Library.route) {
-                        LibraryScreen(networkVm,navController )
-                    }
+//                    transitionComposable(route = AppNavRoute.Library.route) {
+//                        LibraryScreen(networkVm,navController )
+//                    }
                     // 挂科率
-                    transitionComposable(AppNavRoute.FailRate.route) {
-                        FailRateScreen(networkVm, navController )
-                    }
+//                    transitionComposable(AppNavRoute.FailRate.route) {
+//                        FailRateScreen(networkVm, navController )
+//                    }
                     // 选课
-                    transitionComposable(AppNavRoute.SelectCourses.route) {
-                        SelectCourseScreen(networkVm,navController)
-                    }
+//                    transitionComposable(AppNavRoute.SelectCourses.route) {
+//                        SelectCourseScreen(networkVm,navController)
+//                    }
                     // 网址导航
-                    transitionComposable(AppNavRoute.WebFolder.route) {
-                        WebNavigationScreen(navController)
-                    }
+//                    transitionComposable(AppNavRoute.WebFolder.route) {
+//                        WebNavigationScreen(navController)
+//                    }
                     // 收纳
-                    transitionComposable(AppNavRoute.NotificationBox.route) {
-                        NotificationBoxScreen(navController)
-                    }
+//                    transitionComposable(AppNavRoute.NotificationBox.route) {
+//                        NotificationBoxScreen(navController)
+//                    }
                     // 通知公告专注
-                    transitionComposable(
-                        route = AppNavRoute.NewsApi.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.NewsApi.Args.entries)
-                    ) { backStackEntry ->
-                        val keyword = backStackEntry.arguments?.getString(AppNavRoute.NewsApi.Args.KEYWORD.argName) ?: (AppNavRoute.NewsApi.Args.KEYWORD.default as String)
-                        NewsApiScreen(navController,networkVm,keyword)
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.NewsApi.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.NewsApi.Args.entries)
+//                    ) { backStackEntry ->
+//                        val keyword = backStackEntry.arguments?.getString(AppNavRoute.NewsApi.Args.KEYWORD.argName) ?: (AppNavRoute.NewsApi.Args.KEYWORD.default as String)
+//                        NewsApiScreen(navController,networkVm,keyword)
+//                    }
                     // 本周考试安排
                     transitionComposable(AppNavRoute.ExamNews.route) {
                         ExamNotificationsScreen(navController,networkVm)
@@ -939,17 +939,17 @@ fun MainHost(
                         )
                     }
                     // Exception
-                    transitionComposable(
-                        route = AppNavRoute.Exception.receiveRoute(),
-                        arguments = getArgs(AppNavRoute.Exception.Args.entries)
-                    ) { backStackEntry ->
-                        val exception = backStackEntry.arguments?.getString(AppNavRoute.Exception.Args.EXCEPTION.argName) ?: (AppNavRoute.Exception.Args.EXCEPTION.default as String)
-
-                        NavigationExceptionScreen(
-                            exception,
-                            navController,
-                        )
-                    }
+//                    transitionComposable(
+//                        route = AppNavRoute.Exception.receiveRoute(),
+//                        arguments = getArgs(AppNavRoute.Exception.Args.entries)
+//                    ) { backStackEntry ->
+//                        val exception = backStackEntry.arguments?.getString(AppNavRoute.Exception.Args.EXCEPTION.argName) ?: (AppNavRoute.Exception.Args.EXCEPTION.default as String)
+//
+//                        NavigationExceptionScreen(
+//                            exception,
+//                            navController,
+//                        )
+//                    }
                 }
             }
         }

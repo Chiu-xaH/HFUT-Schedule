@@ -44,7 +44,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Deta
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -157,8 +158,9 @@ fun CourseDetailApiScreen(
     courseName : String,
     id : String,
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val hazeState = remember { HazeState() }
     val numItem by produceState<lessons?>(initialValue = null) {
@@ -178,11 +180,8 @@ fun CourseDetailApiScreen(
     }
 
     val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,id) }
-    CustomTransitionScaffold(
+    Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
-        route = route,
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -198,7 +197,7 @@ fun CourseDetailApiScreen(
             CenterScreen {
                 EmptyIcon("未找到本门课的信息(尝试切换到这门课所在的学期后再刷新登陆状态)")
             }
-            return@CustomTransitionScaffold
+            return@Scaffold
         }
         Column(
             modifier = Modifier

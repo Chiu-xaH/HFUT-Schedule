@@ -78,7 +78,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -142,7 +142,7 @@ fun TransferScreen(
     val toRoute = remember {
         AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword)
     }
-    CustomTransitionScaffold (
+    Scaffold (
         route = route,
         navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -338,7 +338,7 @@ fun TransferDetailScreen(
     }
     var input by remember { mutableStateOf("") }
 
-    CustomTransitionScaffold (
+    Scaffold (
         route = route,
         navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

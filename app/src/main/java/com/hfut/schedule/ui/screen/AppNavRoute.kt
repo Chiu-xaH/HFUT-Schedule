@@ -317,7 +317,7 @@ sealed class AppNavRoute(val route: String, val label: Int, val icon: Int) {
             Args.IF_SAVED.argName to ifSaved
         )
     }
-    object AverageGrade : AppNavRoute("AVERAGE_GRADE", R.string.navigation_labelaverage_grade,R.drawable.leaderboard){
+    object AverageGrade : AppNavRoute("AVERAGE_GRADE", R.string.navigation_label_average_grade,R.drawable.leaderboard){
         enum class Args(override val argName: String, override val navType: NavType<out Any?>, override val default : Any?, override val isNullable: Boolean) : NavArg {
             USE_UNI_APP_DATA("useUniAppData", NavType.BoolType,false,false)
         }

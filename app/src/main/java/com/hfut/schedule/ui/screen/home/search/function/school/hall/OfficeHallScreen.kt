@@ -50,7 +50,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -110,7 +110,7 @@ fun OfficeHallScreen(
     val scope = rememberCoroutineScope()
     val imageSize = remember { 25.dp }
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
+    Scaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         navHostController = navController,

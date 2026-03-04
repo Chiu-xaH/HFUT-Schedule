@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -25,7 +25,7 @@ fun EmptyScreen(
     navController : NavHostController,
 ) {
     val route = remember { AppNavRoute.Empty.withArgs(targetRoute) }
-    CustomTransitionScaffold(
+    Scaffold(
         route = route,
         navHostController = navController,
     ) { innerPadding ->
@@ -44,7 +44,7 @@ fun OpenOuterApplicationScreen(
 ) {
     val context = LocalContext.current
     val route = remember { AppNavRoute.ToOuterApplication.withArgs(app) }
-    CustomTransitionScaffold(
+    Scaffold(
         route = route,
         containerColor = app.iconBackgroundColor,
         navHostController = navController,

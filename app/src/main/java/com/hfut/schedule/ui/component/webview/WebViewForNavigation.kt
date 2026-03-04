@@ -29,7 +29,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.util.webview.WebViewBackHandler
@@ -114,7 +114,7 @@ fun WebViewScreenForNavigation(
         }
     }
 
-    CustomTransitionScaffold (
+    Scaffold (
         enablePredictive = false,
         route = route,
         navHostController = navController,

@@ -33,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.contentColorFor
@@ -103,7 +104,7 @@ import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -134,6 +135,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -167,8 +169,9 @@ private val items = listOf(
 @Composable
 fun ClassroomScreen(
     vm : NetWorkViewModel,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
 ) {
+    val navTopController = LocalNavController.current
     val route = remember { AppNavRoute.Classroom.route }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -215,10 +218,10 @@ fun ClassroomScreen(
     if(showSelectDateDialog)
         DateRangePickerModal(text = "",onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navTopController,
+//        navHostController = navTopController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -371,10 +374,10 @@ fun ClassroomScreen(
                 .hazeSource(state = hazeState)
         ) {
             composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
-                EmptyClassroomScreen(vm,innerPadding,navTopController,date,campus,selectedBuildings,selectedFloors,hazeState)
+                EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors,hazeState)
             }
             composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
-                SearchClassroomScreen(vm,navTopController,innerPadding) {
+                SearchClassroomScreen(vm,innerPadding) {
                     scope.launch {
                         refreshNetworkSearch()
                     }
@@ -390,13 +393,14 @@ fun ClassroomScreen(
 private fun EmptyClassroomScreen(
     vm : NetWorkViewModel,
     innerPadding : PaddingValues,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
     date : String,
     campus : Campus?,
     selectedBuildings: SnapshotStateList<UniAppBuildingBean>,
     selectedFloors: SnapshotStateList<Int>,
     hazeState: HazeState
 ) {
+    val navTopController = LocalNavController.current
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
     val refreshNetworkChips = suspend m@ {
         if(chipsUiState is UiState.Success) {
@@ -542,7 +546,7 @@ private fun EmptyClassroomScreen(
                         CustomCard(
                             color = cardNormalColor(),
                             modifier = Modifier.containerShare(route).clickable {
-                                navTopController.navigateForTransition(AppNavRoute.ClassroomCourseTable,route)
+                                navTopController.push(AppNavRoute.ClassroomCourseTable,route)
                             }
                         ) {
                             TransplantListItem(
@@ -718,10 +722,11 @@ private fun convertTimeToMinutes(time: String): Int {
 @Composable
 private fun SearchClassroomScreen(
     vm : NetWorkViewModel,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
     innerPadding : PaddingValues,
     refreshNetwork : () -> Unit
 ) {
+    val navTopController = LocalNavController.current
     val uiState by vm.uniAppSearchClassroomsResp.state.collectAsState()
     LaunchedEffect(Unit) {
         if(uiState is UiState.Loading) {
@@ -758,7 +763,7 @@ private fun SearchClassroomScreen(
                             color = cardNormalColor(),
                             cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
                             modifier = Modifier.clickable {
-                                navTopController.navigateForTransition(AppNavRoute.ClassroomCourseTable,route)
+                                navTopController.push(AppNavRoute.ClassroomCourseTable,route)
                             }
                         )
                     }
@@ -782,7 +787,7 @@ private fun SearchClassroomScreen(
 @Composable
 fun ClassroomLessonsScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
     roomId : Int,
     name: String
 ) {
@@ -818,10 +823,10 @@ fun ClassroomLessonsScreen(
 
     var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 MediumTopAppBar(

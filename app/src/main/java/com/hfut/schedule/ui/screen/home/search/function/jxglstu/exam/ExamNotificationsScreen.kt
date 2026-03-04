@@ -39,7 +39,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -84,7 +84,7 @@ fun ExamNotificationsScreen(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    CustomTransitionScaffold (
+    Scaffold (
         route = route,
         roundShape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

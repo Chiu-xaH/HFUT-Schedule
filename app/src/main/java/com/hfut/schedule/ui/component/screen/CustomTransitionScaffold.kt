@@ -27,7 +27,7 @@ import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun CustomTransitionScaffold(
+fun Scaffold(
     modifier: Modifier = Modifier,
     roundShape : Shape = MaterialTheme.shapes.small,
     route: String,

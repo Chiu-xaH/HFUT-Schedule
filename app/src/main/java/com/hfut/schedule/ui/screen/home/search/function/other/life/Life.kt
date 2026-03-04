@@ -24,7 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
@@ -70,7 +70,7 @@ fun LifeScreen(
     val route = remember { AppNavRoute.Life.withArgs(inFocus) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        CustomTransitionScaffold (
+        Scaffold (
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             route = route,
             navHostController = navController,

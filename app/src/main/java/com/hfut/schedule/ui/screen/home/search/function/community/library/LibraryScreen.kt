@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -80,7 +81,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -100,6 +101,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
@@ -138,8 +140,8 @@ private const val TAB_PAGE_LIBRARY = 1
 @Composable
 fun LibraryScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val libraryNavController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -173,10 +175,10 @@ fun LibraryScreen(
         vm.librarySearchResp.clear()
         vm.searchLibrary(inputKeyword,page)
     }
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -264,7 +266,7 @@ fun LibraryScreen(
                         vm,
                         innerPadding,
                         libraryNavController,
-                        navController
+//                        navController
                     )
                 }
             }
@@ -406,8 +408,9 @@ fun LibraryMineUI(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
     libraryNavController : NavHostController,
-    navController: NavHostController,
+//    navController: NavHostController,
 ) {
+    val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     var libraryStatusCode by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -496,7 +499,7 @@ fun LibraryMineUI(
                                 .weight(0.5f)
                                 .clickable {
                                     if (!loading) {
-                                        navController.navigateForTransition(
+                                        navController.push(
                                             AppNavRoute.LibraryBorrowed,
                                             AppNavRoute.LibraryBorrowed.route,
                                             transplantBackground = true
@@ -515,7 +518,7 @@ fun LibraryMineUI(
                                     .weight(0.5f)
                                     .clickable {
                                         if (!loading) {
-                                            navController.navigateForTransition(
+                                            navController.push(
                                                 AppNavRoute.LibraryBorrowed,
                                                 AppNavRoute.LibraryBorrowed.route,
                                                 transplantBackground = true

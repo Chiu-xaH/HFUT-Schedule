@@ -102,7 +102,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -123,6 +123,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -144,8 +145,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectCourseScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -182,10 +184,10 @@ fun SelectCourseScreen(
     val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -254,7 +256,7 @@ fun SelectCourseScreen(
             Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
                 RefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter).zIndex(1f).padding(innerPadding))
                 CommonNetworkScreen(uiState, onReload = { refreshNetwork(false) }) {
-                    SelectCourseList(vm,innerPadding,navController)
+                    SelectCourseList(vm,innerPadding)
                 }
             }
         }
@@ -285,7 +287,7 @@ fun SelectCourseDetailScreen(
     }
     var refreshCount by remember { mutableIntStateOf(0) }
 
-    CustomTransitionScaffold (
+    Scaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         navHostController = navController,
@@ -395,7 +397,7 @@ fun DropCourseScreen(
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    CustomTransitionScaffold (
+    Scaffold (
         route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         navHostController = navController,
@@ -435,8 +437,9 @@ fun DropCourseScreen(
 private fun SelectCourseList(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-    navController : NavHostController,
+//    navController : NavHostController,
  ) {
+    val navController = LocalNavController.current
     val uiState by vm.selectCourseData.state.collectAsState()
     val list = (uiState as UiState.Success).data
     var input by remember { mutableStateOf("") }
@@ -460,7 +463,7 @@ private fun SelectCourseList(
                             trailingIcon = {
                                 IconButton(onClick = {
                                     input.toIntOrNull()?.let { i ->
-                                        navController.navigateForTransition(AppNavRoute.SelectCoursesDetail, AppNavRoute.SelectCoursesDetail.withArgs(i,"入口$i"))
+                                        navController.push(AppNavRoute.SelectCoursesDetail, AppNavRoute.SelectCoursesDetail.withArgs(i,"入口$i"))
                                     } ?: showToast("必须为数字")
                                 }) {
                                     Icon(Icons.Default.ArrowForward,null)
@@ -487,7 +490,7 @@ private fun SelectCourseList(
                         modifier = Modifier
                             .containerShare( route)
                             .clickable {
-                                navController.navigateForTransition(
+                                navController.push(
                                     AppNavRoute.SelectCoursesDetail,
                                     route
                                 )

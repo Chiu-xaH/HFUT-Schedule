@@ -57,7 +57,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -96,7 +96,7 @@ fun ProgramCompetitionScreen(
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    CustomTransitionScaffold (
+    Scaffold (
         roundShape = MaterialTheme.shapes.large,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         route = route,
@@ -314,7 +314,7 @@ fun ProgramCompetitionDetailScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
 
-    CustomTransitionScaffold (
+    Scaffold (
         roundShape = MaterialTheme.shapes.medium,
         route = route,
         navHostController = navController,

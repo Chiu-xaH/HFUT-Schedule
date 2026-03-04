@@ -23,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -68,7 +69,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
@@ -83,6 +84,7 @@ import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
@@ -115,7 +117,7 @@ fun ToadyCampus(
 @Composable
 fun StuTodayCampusScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -125,10 +127,10 @@ fun StuTodayCampusScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf("") }
 
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         topBar = {
             Column (
                 modifier = Modifier.topBarBlur(hazeState),
@@ -182,7 +184,7 @@ fun StuTodayCampusScreen(
 //                .shaderSource(shaderState)
                 .hazeSource(hazeState)
         ) {
-            StuAppsScreen(vm,input,innerPadding,navController)
+            StuAppsScreen(vm,input,innerPadding)
         }
     }
 //    }
@@ -194,8 +196,9 @@ fun StuAppsScreen(
     vm : NetWorkViewModel,
     input : String,
     innerPadding : PaddingValues,
-    navController: NavHostController
+//    navController: NavHostController
 ) {
+    val navController = LocalNavController.current
     val refreshNetwork : suspend () -> Unit = {
         prefs.getString("TOKEN","")?.let {
             vm.stuAppsResponse.clear()
