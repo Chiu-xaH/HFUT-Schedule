@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -72,6 +73,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.status.LoadingScreen
 import com.xah.uicommon.component.text.ScrollText
@@ -89,18 +91,19 @@ import dev.chrisbanes.haze.rememberHazeState
 fun ProgramCompetitionScreen(
     vm: NetWorkViewModel,
     ifSaved: Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-        roundShape = MaterialTheme.shapes.large,
+//        roundShape = MaterialTheme.shapes.large,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -116,7 +119,7 @@ fun ProgramCompetitionScreen(
         Column(
             modifier = Modifier.hazeSource(hazeState).fillMaxSize()
         ) {
-            ProgramPerformance(vm,ifSaved,innerPadding,navController)
+            ProgramPerformance(vm,ifSaved,innerPadding)
         }
     }
 //    }
@@ -128,8 +131,9 @@ private fun ProgramPerformance(
     vm : NetWorkViewModel,
     ifSaved : Boolean,
     innerPadding : PaddingValues,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val context = LocalContext.current
     val uiState by vm.programPerformanceData.state.collectAsState()
     val data by produceState<ProgramBean?>(initialValue = null) {
@@ -190,7 +194,7 @@ private fun ProgramPerformance(
                             color = cardNormalColor(),
                             modifier = Modifier
                                 .clickableWithScale() {
-                                    navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                                    navController.push(AppNavRoute.ProgramCompetitionDetail,route)
                                 }
                                 .containerShare(
 //                                sharedTransitionScope,
@@ -225,7 +229,7 @@ private fun ProgramPerformance(
                                     trailingContent = {
                                         Button(
                                             onClick = {
-                                                navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                                                navController.push(AppNavRoute.ProgramCompetitionDetail,route)
                                             },
                                         ) {
                                             Text(text = "查看详情")
@@ -246,7 +250,7 @@ private fun ProgramPerformance(
                         color = cardNormalColor(),
                         modifier = Modifier
                             .clickableWithScale() {
-                                navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                                navController.push(AppNavRoute.ProgramCompetitionDetail,route)
                             }
                             .containerShare(
 //                            sharedTransitionScope,
@@ -281,7 +285,7 @@ private fun ProgramPerformance(
                                 trailingContent = {
                                     Button(
                                         onClick = {
-                                            navController.navigateForTransition(AppNavRoute.ProgramCompetitionDetail,route)
+                                            navController.push(AppNavRoute.ProgramCompetitionDetail,route)
                                         },
                                     ) {
                                         Text(text = "查看详情")
@@ -305,8 +309,9 @@ fun ProgramCompetitionDetailScreen(
     vm: NetWorkViewModel,
     title : String,
     moduleIndex : Int,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var input by remember { mutableStateOf("") }
@@ -315,9 +320,9 @@ fun ProgramCompetitionDetailScreen(
     val backDrop = rememberLayerBackdrop()
 
     Scaffold (
-        roundShape = MaterialTheme.shapes.medium,
-        route = route,
-        navHostController = navController,
+//        roundShape = MaterialTheme.shapes.medium,
+//        route = route,
+//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(

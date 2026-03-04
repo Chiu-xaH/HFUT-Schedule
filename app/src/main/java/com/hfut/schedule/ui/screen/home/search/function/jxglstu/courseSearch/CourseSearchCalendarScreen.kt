@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -55,8 +56,8 @@ fun CourseSearchCalendarScreen(
     courseCode : String?,
     classes : String?,
     vm : NetWorkViewModel,
-    vmUI : UIViewModel,
-    navController : NavHostController,
+//    vmUI : UIViewModel,
+//    navController : NavHostController,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -67,9 +68,9 @@ fun CourseSearchCalendarScreen(
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        roundShape = MaterialTheme.shapes.medium,
-        route = route,
-        navHostController = navController,
+//        roundShape = MaterialTheme.shapes.medium,
+//        route = route,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),

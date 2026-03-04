@@ -17,6 +17,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -100,7 +101,7 @@ private const val PAGE_JXGLSTU = 1
 fun SurveyScreen(
     ifSaved: Boolean,
     vm: NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -111,9 +112,9 @@ fun SurveyScreen(
     val pagerState = rememberPagerState(initialPage = if(ifSaved) PAGE_UNI_APP else PAGE_JXGLSTU) { 2 }
 
     Scaffold (
-        route = route,
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),

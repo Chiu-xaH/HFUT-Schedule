@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -85,7 +86,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun WebVpnScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -101,9 +102,9 @@ fun WebVpnScreen(
 //    )
 
     Scaffold (
-        route = route,
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,

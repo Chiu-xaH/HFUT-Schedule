@@ -93,6 +93,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -111,8 +112,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun TransferScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -143,8 +145,8 @@ fun TransferScreen(
         AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword)
     }
     Scaffold (
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -155,7 +157,7 @@ fun TransferScreen(
                 actions = {
                     LiquidButton(
                         onClick = {
-                            navController.navigateForTransition(AppNavRoute.NewsApi, toRoute)
+                            navController.push(AppNavRoute.NewsApi, toRoute)
                         },
                         backdrop = backDrop,
                         modifier = Modifier
@@ -205,7 +207,7 @@ fun TransferScreen(
                             CustomCard (
                                 modifier = Modifier
                                     .clickable {
-                                        navController.navigateForTransition(
+                                        navController.push(
                                             AppNavRoute.TransferMajorDetail,
                                             route
                                         )
@@ -272,7 +274,7 @@ fun TransferScreen(
                                                 trailingIcon = {
                                                     IconButton(onClick = {
                                                         if(input.toIntOrNull() != null) {
-                                                            navController.navigateForTransition(AppNavRoute.TransferMajorDetail,AppNavRoute.TransferMajorDetail.withArgs(true,input,"入口$input"))
+                                                            navController.push(AppNavRoute.TransferMajorDetail,AppNavRoute.TransferMajorDetail.withArgs(true,input,"入口$input"))
                                                         } else {
                                                             showToast("必须为数字")
                                                         }
@@ -304,8 +306,9 @@ fun TransferDetailScreen(
     batchId: String,
     title : String,
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -339,14 +342,11 @@ fun TransferDetailScreen(
     var input by remember { mutableStateOf("") }
 
     Scaffold (
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            Column (
-                modifier = Modifier.topBarBlur(hazeState),
-
-                ){
+            Column (modifier = Modifier.topBarBlur(hazeState),){
                 MediumTopAppBar(
                     scrollBehavior = scrollBehavior,
                     colors = topBarTransplantColor(),

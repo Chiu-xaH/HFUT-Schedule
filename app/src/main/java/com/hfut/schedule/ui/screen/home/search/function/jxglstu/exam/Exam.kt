@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAppNavController
@@ -90,18 +92,19 @@ fun Exam(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ExamScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
     origin : String?
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Exam.withArgs(origin) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
     Scaffold (
-        route = route,
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -115,7 +118,7 @@ fun ExamScreen(
                             .padding(horizontal = APP_HORIZONTAL_DP),
                         backdrop = backdrop,
                         onClick = {
-                            navController.navigateForTransition(AppNavRoute.ExamNews, AppNavRoute.ExamNews.route)
+                            navController.push(AppNavRoute.ExamNews, AppNavRoute.ExamNews.route)
                         },
                     ) {
                         Text("全校考试安排", maxLines = 1)

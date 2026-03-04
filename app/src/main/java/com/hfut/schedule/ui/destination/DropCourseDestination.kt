@@ -3,21 +3,22 @@ package com.hfut.schedule.ui.destination
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.grade.GradeScreen
-import com.hfut.schedule.ui.screen.home.search.function.my.holiday.NewsApiScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse.DropCourseScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.uicommon.util.language.res
 
-data class NewsApiDestination(
-    val keyword : String
+data class DropCourseDestination(
+    val index : Int,
+    val name : String,
 ) : NavDestination() {
-    override val key = "news_api"
-    override val title = res(R.string.navigation_label_news)
+    override val key = "drop_courses"
+    override val title = res(R.string.navigation_label_drop_courses)
 
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        NewsApiScreen(vm,keyword)
+        DropCourseScreen(vm,index,name)
     }
 }

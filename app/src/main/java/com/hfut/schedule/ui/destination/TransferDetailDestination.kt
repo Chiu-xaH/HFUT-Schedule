@@ -3,21 +3,23 @@ package com.hfut.schedule.ui.destination
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.grade.GradeScreen
-import com.hfut.schedule.ui.screen.home.search.function.my.holiday.NewsApiScreen
+import com.hfut.schedule.ui.screen.home.search.function.jxglstu.transfer.TransferDetailScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.uicommon.util.language.res
 
-data class NewsApiDestination(
-    val keyword : String
+data class TransferDetailDestination(
+    val name : String,
+    val batchId : String,
+    val isHidden : Boolean
 ) : NavDestination() {
-    override val key = "news_api"
-    override val title = res(R.string.navigation_label_news)
+    override val key = "transfer_major_detail"
+    override val title = res(R.string.navigation_label_transfer_major_detail)
 
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        NewsApiScreen(vm,keyword)
+        TransferDetailScreen(isHidden,batchId,name,vm)
     }
 }

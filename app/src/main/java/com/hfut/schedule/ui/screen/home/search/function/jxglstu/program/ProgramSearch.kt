@@ -81,7 +81,7 @@ import kotlinx.coroutines.launch
 fun ProgramSearchScreen(
     vm : NetWorkViewModel,
     ifSaved: Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -132,8 +132,8 @@ fun ProgramSearchScreen(
     val scope = rememberCoroutineScope()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),

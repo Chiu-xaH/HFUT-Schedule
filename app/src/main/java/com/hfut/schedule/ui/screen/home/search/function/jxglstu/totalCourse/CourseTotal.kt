@@ -13,6 +13,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -74,7 +75,7 @@ fun TotalCourseScreen(
     vm : NetWorkViewModel,
     origin : String,
     ifSaved : Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     var sortType by remember { mutableStateOf(true) }
 
@@ -84,8 +85,8 @@ fun TotalCourseScreen(
     val route = remember { AppNavRoute.TermCourses.receiveRoute() }
 
     Scaffold (
-        route = route,
-        navHostController = navController,
+//        route = route,
+//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(

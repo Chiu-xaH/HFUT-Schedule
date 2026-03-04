@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -67,6 +68,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -95,8 +97,9 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
 @Composable
 fun OfficeHallScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.OfficeHall.route }
@@ -111,9 +114,9 @@ fun OfficeHallScreen(
     val imageSize = remember { 25.dp }
     val backdrop = rememberLayerBackdrop()
     Scaffold (
-        route = route,
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),

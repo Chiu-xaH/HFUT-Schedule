@@ -13,6 +13,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -57,7 +58,7 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun ClassmatesScreen(
     vm: NetWorkViewModel,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -68,10 +69,9 @@ fun ClassmatesScreen(
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        roundShape = MaterialTheme.shapes.medium,
-        route = route,
-
-        navHostController = navTopController,
+//        roundShape = MaterialTheme.shapes.medium,
+//        route = route,
+//        navHostController = navTopController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,

@@ -19,6 +19,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -53,6 +54,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -113,8 +115,9 @@ private const val PAGE_PROGRAM = 1
 fun ProgramScreen(
     vm: NetWorkViewModel,
     ifSaved: Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Program.receiveRoute() }
@@ -129,9 +132,9 @@ fun ProgramScreen(
     val scope = rememberCoroutineScope()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        roundShape = MaterialTheme.shapes.extraExtraLarge,
-        route = route,
-        navHostController = navController,
+//        roundShape = MaterialTheme.shapes.extraExtraLarge,
+//        route = route,
+//        navHostController = navController,
         bottomBar = {
             AnimatedVisibility(
                 visible = pageState.currentPage == PAGE_COMPETITION,
@@ -144,7 +147,7 @@ fun ProgramScreen(
                         onClick = {
                             scope.launch {
                                 val json = LargeStringDataManager.read( LargeStringDataManager.PROGRAM_PERFORMANCE)
-                                if(json?.contains("children") == true || !ifSaved) navController.navigateForTransition(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
+                                if(json?.contains("children") == true || !ifSaved) navController.push(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
                                 else refreshLogin(context)
                             }
                         },
@@ -179,7 +182,7 @@ fun ProgramScreen(
                     actions = {
                         LiquidButton (
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.AllPrograms,AppNavRoute.AllPrograms.withArgs(ifSaved))
+                                navController.push(AppNavRoute.AllPrograms,AppNavRoute.AllPrograms.withArgs(ifSaved))
                             },
                             backdrop = backDrop,
                             modifier = Modifier

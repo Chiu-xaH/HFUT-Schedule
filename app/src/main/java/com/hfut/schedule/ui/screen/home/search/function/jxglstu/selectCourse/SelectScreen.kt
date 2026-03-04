@@ -270,8 +270,9 @@ fun SelectCourseDetailScreen(
     vm: NetWorkViewModel,
     courseId : Int,
     title : String,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.SelectCoursesDetail.withArgs(courseId,title) }
@@ -288,9 +289,9 @@ fun SelectCourseDetailScreen(
     var refreshCount by remember { mutableIntStateOf(0) }
 
     Scaffold (
-        route = route,
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -319,7 +320,7 @@ fun SelectCourseDetailScreen(
                             }
                             LiquidButton(
                                 onClick = {
-                                    navController.navigateForTransition(AppNavRoute.DropCourses, AppNavRoute.DropCourses.withArgs(courseId,title))
+                                    navController.push(AppNavRoute.DropCourses, AppNavRoute.DropCourses.withArgs(courseId,title))
                                 },
                                 modifier = Modifier.containerShare(AppNavRoute.DropCourses.route),
                                 backdrop = backDrop
@@ -389,7 +390,7 @@ fun DropCourseScreen(
     vm: NetWorkViewModel,
     courseId : Int,
     title : String,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
@@ -398,9 +399,9 @@ fun DropCourseScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-        route = route,
+//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
+//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),

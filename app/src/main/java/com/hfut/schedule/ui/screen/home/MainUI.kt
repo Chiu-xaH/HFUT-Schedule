@@ -1045,7 +1045,7 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SearchEditScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

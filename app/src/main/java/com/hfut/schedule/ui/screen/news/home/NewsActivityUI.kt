@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarDefaults
@@ -86,6 +87,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -111,8 +113,9 @@ private val items = listOf(
 @Composable
 fun NewsScreen(
     vm: NetWorkViewModel,
-    navTopController : NavHostController,
+//    navTopController : NavHostController,
 ) {
+    val navTopController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.News.route }
@@ -179,8 +182,8 @@ fun NewsScreen(
     var input by remember { mutableStateOf(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
 
     Scaffold (
-        route = route,
-        navHostController = navTopController,
+//        route = route,
+//        navHostController = navTopController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(

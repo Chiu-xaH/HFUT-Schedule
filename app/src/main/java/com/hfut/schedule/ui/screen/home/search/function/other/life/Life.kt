@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -63,38 +65,39 @@ fun Life(
 fun LifeScreen(
     inFocus : Boolean,
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Life.withArgs(inFocus) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-        Scaffold (
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            route = route,
-            navHostController = navController,
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState, ),
-                    colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Life.label)) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Life.icon)
-                    },
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.hazeSource(hazeState)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                LifeScreenMini(vm)
-                InnerPaddingHeight(innerPadding,false)
-            }
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        route = route,
+//        navHostController = navController,
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState, ),
+                colors = topBarTransplantColor(),
+                title = { Text(stringResource(AppNavRoute.Life.label)) },
+                navigationIcon = {
+                    TopBarNavigationIcon(route, AppNavRoute.Life.icon)
+                },
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.hazeSource(hazeState)
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            LifeScreenMini(vm)
+            InnerPaddingHeight(innerPadding,false)
         }
+    }
 //    }
 }
