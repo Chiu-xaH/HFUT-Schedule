@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.screen.home.search.function.my.holiday.NewsApiScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel

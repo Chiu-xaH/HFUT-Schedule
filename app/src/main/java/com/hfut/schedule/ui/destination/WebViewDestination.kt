@@ -2,11 +2,7 @@ package com.hfut.schedule.ui.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.component.webview.WebViewScreenForNavigation
-import com.hfut.schedule.ui.screen.grade.GradeScreen
 import com.hfut.schedule.ui.util.NavDestination
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.uicommon.util.language.res
 
 data class WebViewDestination(
@@ -20,6 +16,19 @@ data class WebViewDestination(
 
     @Composable
     override fun Content() {
+//        val url = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.URL.argName) ?: return@transitionComposable
+//        val cookies = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.COOKIES.argName)
+//        val title = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.TITLE.argName) ?: getPureUrl(url)
+//        val icon = backStackEntry.arguments?.getInt(AppNavRoute.WebView.Args.ICON.argName)
+//
+//        WebViewScreenForNavigation(
+//            url,
+//            title,
+//            icon,
+//            cookies,
+//            navController,
+//            drawerState
+//        ) { containerColor = it }
 //        WebViewScreenForNavigation(url, name, icon, cookies)
     }
 }

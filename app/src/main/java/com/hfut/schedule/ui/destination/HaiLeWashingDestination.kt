@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.washing.HaiLeWashingScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
