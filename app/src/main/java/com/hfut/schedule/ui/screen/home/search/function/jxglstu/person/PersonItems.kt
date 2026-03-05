@@ -75,6 +75,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.destination.ClassmatesDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
@@ -332,7 +333,7 @@ private fun PersonItems(
                     trailingContent = {
                         FilledTonalButton(
                             onClick = {
-                                navController.push(AppNavRoute.Classmates,route)
+                                navController.push(ClassmatesDestination)
                             }
                         ) {
                             Text(stringResource(AppNavRoute.Classmates.label))

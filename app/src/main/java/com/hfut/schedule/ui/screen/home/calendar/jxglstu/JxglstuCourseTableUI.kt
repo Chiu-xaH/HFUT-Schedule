@@ -44,6 +44,9 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
+import com.hfut.schedule.ui.destination.AddEventDestination
+import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.ExamDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
@@ -55,6 +58,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.allToTimeTableData
+import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventOrigin
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -66,6 +70,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
@@ -138,13 +143,14 @@ fun JxglstuCourseTableUI(
     onDateChange: (LocalDate) ->Unit,
     today: LocalDate,
     hazeState: HazeState,
-    navController: NavHostController,
+//    navController: NavHostController,
     backGroundHaze : ShaderState?,
     isEnabled : Boolean,
     onEnabled : (Boolean) -> Unit,
     onSwapShowAll : (Boolean) -> Unit,
     onRestoreHeight : () -> Unit
 ) {
+    val navController = LocalNavController.current
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     var showBottomSheetTotalCourse by remember { mutableStateOf(false) }
@@ -542,9 +548,11 @@ fun JxglstuCourseTableUI(
                     isExpand = !isExpand
                 },
                 onDoubleTapBlankRegion = {
-                    navController.navigateForTransition(
-                        AppNavRoute.AddEvent,
-                        AppNavRoute.AddEvent.withArgs()
+                    navController.push(
+                        AddEventDestination(
+                            null,
+                            AddEventOrigin.FOCUS_EDITED.name
+                        )
                     )
                 }
             ) { list ->
@@ -554,15 +562,29 @@ fun JxglstuCourseTableUI(
                     // 如果是考试
                     when(item.type) {
                         TimeTableType.COURSE -> {
-                            navController.navigateForTransition(AppNavRoute.CourseDetail, AppNavRoute.CourseDetail.withArgs(item.name, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ))
+                            navController.push(
+                                CourseDetailDestination(
+                                    item.name,
+                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                                )
+                            )
                         }
                         TimeTableType.FOCUS -> {
                             item.id?.let {
-                                navController.navigateForTransition(AppNavRoute.AddEvent, AppNavRoute.AddEvent.withArgs(it, CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ))
+                                navController.push(
+                                    AddEventDestination(
+                                        it,
+                                        CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                                    )
+                                )
                             }
                         }
                         TimeTableType.EXAM -> {
-                            navController.navigateForTransition(AppNavRoute.Exam, AppNavRoute.Exam.withArgs(CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"))
+                            navController.push(
+                                ExamDestination(
+                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                                )
+                            )
                         }
                     }
                 } else if (list.size > 1) {

@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
@@ -63,8 +64,9 @@ fun SettingsScreen(vm : NetWorkViewModel,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
                    hazeState: HazeState,
-                   navHostTopController : NavController,
+//                   navHostTopController : NavController,
 ) {
+    val navHostTopController = LocalNavController.current
     val navController = rememberNavController()
     Scaffold() { _ ->
         NavHost(
@@ -80,7 +82,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
 
             composable(Screen.HomeScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    HomeSettingScreen(navController, innerPaddings,vm,navHostTopController)
+                    HomeSettingScreen(navController, innerPaddings,vm)
                 }
             }
             composable(Screen.UIScreen.route) {

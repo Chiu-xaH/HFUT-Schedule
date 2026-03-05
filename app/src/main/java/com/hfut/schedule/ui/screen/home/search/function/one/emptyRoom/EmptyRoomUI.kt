@@ -11,17 +11,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.ClassroomDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Classroom(
-    navController : NavHostController,
-){
+fun Classroom() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Classroom.route }
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Classroom.label)) },
@@ -33,7 +34,7 @@ fun Classroom(
             )
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Classroom,route)
+            navController.push(ClassroomDestination)
         }
     )
 }

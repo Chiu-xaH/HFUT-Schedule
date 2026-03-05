@@ -23,9 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -648,7 +645,7 @@ fun ZhiJianCourseTableUI(
                     onClick = {
                         weekSwap.previousWeek()
                     },
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                ) { Icon(painterResource(R.drawable.arrow_back), "Add Button") }
             }
             // 中间
             AnimatedVisibility(
@@ -693,7 +690,7 @@ fun ZhiJianCourseTableUI(
                     onClick = {
                         weekSwap.nextWeek()
                     },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                ) { Icon(painterResource(R.drawable.arrow_forward), "Add Button") }
             }
         }
     }
@@ -919,7 +916,7 @@ private fun CourseDetail(
                 showBottomSheet_Search = true
             },
             trailingContent = {
-                Icon(Icons.Default.ArrowForward,null)
+                Icon(painterResource(R.drawable.arrow_forward),null)
             }
         )
         Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())

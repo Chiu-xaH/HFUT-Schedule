@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -484,7 +481,7 @@ fun CalendarSettingsUI(
                         }
                     } }
                 ) {
-                    Icon(Icons.Filled.KeyboardArrowLeft,null)
+                    Icon(painterResource(R.drawable.keyboard_arrow_left),null)
                 }
                 Spacer(Modifier.width(APP_HORIZONTAL_DP))
                 FilledTonalButton(
@@ -500,7 +497,7 @@ fun CalendarSettingsUI(
                         DataStoreManager.saveAutoTermValue(autoTermValue+20)
                     } }
                 ) {
-                    Icon(Icons.Filled.KeyboardArrowRight,null)
+                    Icon(painterResource(R.drawable.keyboard_arrow_right),null)
                 }
             }
             Spacer(Modifier.height(APP_HORIZONTAL_DP))

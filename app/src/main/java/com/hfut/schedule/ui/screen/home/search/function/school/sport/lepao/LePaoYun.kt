@@ -30,9 +30,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun LePaoYun(
-    navController : NavHostController,
-) {
+fun LePaoYun() {
     val context = LocalContext.current
     val icon = remember { R.drawable.sports_volleyball }
     val title = stringResource(R.string.navigation_label_physical_fitness_test)
@@ -54,7 +52,7 @@ fun LePaoYun(
         modifier = Modifier.clickable {
             scope.launch {
                 Starter.startWebView(
-                    navController,
+                    context,
                     url = MyApplication.PE_HOME_URL,
                     title = title,
                     icon = icon,

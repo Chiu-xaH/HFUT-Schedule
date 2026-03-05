@@ -67,8 +67,10 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.destination.FeeDestination
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -78,9 +80,8 @@ import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Pay(
-    navController : NavHostController,
-) {
+fun Pay() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Fee.route }
 
     TransplantListItem(
@@ -89,7 +90,7 @@ fun Pay(
             Icon(painterResource(AppNavRoute.Fee.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Fee,route)
+            navController.push(FeeDestination)
         }
     )
 }

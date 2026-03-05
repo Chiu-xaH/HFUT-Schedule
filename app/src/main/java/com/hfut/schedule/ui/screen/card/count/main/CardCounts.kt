@@ -17,9 +17,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -239,14 +236,14 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 month--
                             else showToast("请切换年份")
                         },
-                    ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
+                    ) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
                     Spacer(modifier = Modifier.padding(horizontal =APP_HORIZONTAL_DP))
                     FloatingActionButton(
                         onClick = {
                             if(month.toInt() <= 11)
                                 month++
                         },
-                    ) { Icon(Icons.Filled.ArrowForward, contentDescription = "")}
+                    ) { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "")}
                 }
             }
         }

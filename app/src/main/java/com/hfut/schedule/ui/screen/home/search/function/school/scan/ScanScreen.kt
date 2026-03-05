@@ -260,7 +260,7 @@ fun ScanScreen(
                 colors = topBarTransplantColor(),
                 title = { Text("") },
                 navigationIcon = {
-                    LiquidTopBarNavigateIcon(backdrop,navController,route, AppNavRoute.ScanQrCode.icon,)
+                    LiquidTopBarNavigateIcon(backdrop)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

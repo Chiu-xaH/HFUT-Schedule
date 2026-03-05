@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
@@ -63,6 +62,8 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
+import com.hfut.schedule.ui.destination.HomeDestination
+import com.hfut.schedule.ui.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
@@ -84,7 +85,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class,
-    ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun UpdateSuccessScreen() {
@@ -121,10 +121,7 @@ fun UpdateSuccessScreen() {
                         ,
                         shape = MaterialTheme.shapes.extraLarge,
                         onClick = {
-                            navController.push(
-                                AppNavRoute.VersionInfo,
-                                targetRoute,
-                            )
+                            navController.push(VersionInfoDestination)
                         }
                     ) {
                         Icon(
@@ -150,7 +147,7 @@ fun UpdateSuccessScreen() {
                             )
                         }.await()
                         GlobalUIStateHolder.useEnterAnimation = true
-                        navController.push(AppNavRoute.Home.route, LaunchMode.CLEAR_STACK)
+                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                     }
                 },
                 shape = MaterialTheme.shapes.extraLarge,

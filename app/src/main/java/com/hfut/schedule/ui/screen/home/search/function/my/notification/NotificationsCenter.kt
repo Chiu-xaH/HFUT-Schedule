@@ -33,9 +33,11 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.NotificationsDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -47,9 +49,8 @@ import dev.chrisbanes.haze.HazeState
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NotificationsCenter(
-    navController : NavHostController,
-) {
+fun NotificationsCenter() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Notifications.route }
 
     val count by produceState(initialValue = 0) {
@@ -59,8 +60,7 @@ fun NotificationsCenter(
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Notifications.label)) },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Notifications,route)
-            saveString("Notifications", getNotifications().size.toString())
+            navController.push(NotificationsDestination)
         },
         leadingContent = {
             BadgedBox(badge = {

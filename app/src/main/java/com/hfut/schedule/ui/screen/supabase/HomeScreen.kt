@@ -2,29 +2,17 @@ package com.hfut.schedule.ui.screen.supabase
 
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,8 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -48,7 +35,6 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.CardBarItems
@@ -56,27 +42,24 @@ import com.hfut.schedule.logic.enumeration.SortType
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.button.HazeBottomBar
-import com.xah.uicommon.style.padding.NavigationBarSpacer
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventFloatButton
 import com.hfut.schedule.ui.screen.supabase.cube.SupabaseSettingsScreen
 import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
-import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.style.special.transitionBackground2
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.transition.util.currentRouteWithoutArgs
+import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+
 private val items = listOf(
     NavigationBarItemData(
         SupabaseScreen.HOME.name,"源", R.drawable.cloud,  R.drawable.cloud_filled
@@ -148,7 +131,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                             IconButton(onClick = {
                                 context?.finish()
                             }) {
-                                Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                Icon(painterResource(R.drawable.arrow_back), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                             }
                         },
                         actions = {
@@ -156,7 +139,15 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
                                 IconButton(onClick = {
                                     sortReversed = !sortReversed
                                 }) {
-                                    Icon(if(sortReversed) Icons.Filled.KeyboardArrowDown else Icons.Filled.KeyboardArrowUp, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                                    Icon(painterResource(
+                                        R.drawable.keyboard_arrow_down
+                                    ), contentDescription = "", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.rotate(
+                                        if(sortReversed) {
+                                            0f
+                                        } else {
+                                            180f
+                                        }
+                                    ))
                                 }
 
                                 TextButton(

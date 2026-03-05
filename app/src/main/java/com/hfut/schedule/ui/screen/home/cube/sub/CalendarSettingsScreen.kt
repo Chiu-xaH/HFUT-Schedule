@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +20,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet
@@ -71,7 +71,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostC
 //                            },
                             trailingContent = {
                                 if(isSelected) {
-                                    Icon(Icons.Filled.Check,null)
+                                    Icon(painterResource(R.drawable.check),null)
                                 }
                             },
                             modifier = Modifier.clickable {

@@ -134,8 +134,12 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.destination.AddEventDestination
+import com.hfut.schedule.ui.destination.NotificationBoxDestination
+import com.hfut.schedule.ui.destination.FunctionsSortDestination
+import com.hfut.schedule.ui.destination.WorkAndRestDestination
+import com.hfut.schedule.ui.destination.TermCoursesDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.numToChinese
@@ -144,6 +148,7 @@ import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableUI
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableTwo
 import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.calendar.multi.MultiScheduleSettings
+import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.uniapp.UniAppCoursesScreen
 import com.hfut.schedule.ui.screen.home.calendar.zjgd.ZhiJianCourseTableUI
 import com.hfut.schedule.ui.screen.home.cube.SettingsScreen
@@ -163,7 +168,6 @@ import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
@@ -382,10 +386,11 @@ fun MainScreen(
                         ),
                     elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                     onClick = {
-
                         navHostTopController.push(
-                            AppNavRoute.AddEvent,
-                            addRoute
+                            AddEventDestination(
+                                null,
+                                AddEventOrigin.FOCUS_ADD.name
+                            )
                         )
                     },
                 ) {
@@ -430,11 +435,7 @@ fun MainScreen(
                                 SEARCH -> {
                                     val route = remember { AppNavRoute.FunctionsSort.route }
                                     IconButton(onClick = {
-                                        navHostTopController.push(
-                                            AppNavRoute.FunctionsSort,
-                                            route,
-                                            transplantBackground = true
-                                        )
+                                        navHostTopController.push(FunctionsSortDestination)
                                     }) {
                                         Icon(
                                             painterResource(id = R.drawable.edit),
@@ -456,7 +457,7 @@ fun MainScreen(
                                     ApiToSupabase(vm)
                                     val iconRoute = remember { AppNavRoute.NotificationBox.route }
                                     IconButton(onClick = {
-                                        navHostTopController.push(AppNavRoute.NotificationBox,iconRoute,transplantBackground = true)
+                                        navHostTopController.push(NotificationBoxDestination)
                                     }) {
                                         BadgedBox(badge = {
                                             if (count != 0) {
@@ -556,12 +557,11 @@ fun MainScreen(
                                             )
                                             .clickable {
                                                 navHostTopController.push(
-                                                    AppNavRoute.WorkAndRest,
-                                                    route,
-                                                    transplantBackground = true
+                                                    WorkAndRestDestination(
+                                                        swapUI.toString()
+                                                    )
                                                 )
-                                            }
-                                        ,
+                                            },
                                         color = Color.Transparent
                                     ) {
                                         Icon(
@@ -591,9 +591,10 @@ fun MainScreen(
                                             )
                                             .clickable {
                                                 navHostTopController.push(
-                                                    AppNavRoute.TermCourses,
-                                                    route,
-                                                    transplantBackground = true
+                                                    TermCoursesDestination(
+                                                        ifSaved,
+                                                        COURSES.name
+                                                    )
                                                 )
                                             }
                                         ,
@@ -688,7 +689,11 @@ fun MainScreen(
                                     val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
                                     IconButton(
                                         onClick = {
-                                            navHostTopController.push(AppNavRoute.WorkAndRest, route,transplantBackground = true)
+                                            navHostTopController.push(
+                                                WorkAndRestDestination(
+                                                    swapUI.toString()
+                                                )
+                                            )
                                         }
                                     ) {
                                         Icon(
@@ -701,7 +706,12 @@ fun MainScreen(
                                 } else {
                                     val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
                                     IconButton(onClick = {
-                                        navHostTopController.push(AppNavRoute.TermCourses, route,transplantBackground = true)
+                                        navHostTopController.push(
+                                            TermCoursesDestination(
+                                                ifSaved,
+                                                COURSES.name
+                                            )
+                                        )
                                     }) {
                                         Icon(
                                             painter = painterResource(id = AppNavRoute.TermCourses.icon),
@@ -857,7 +867,7 @@ fun MainScreen(
                                     hazeState = hazeState,
                                     backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                     onSwapShowAll = { showAll = it },
-                                    navController = navHostTopController,
+//                                    navController = navHostTopController,
                                     onRestoreHeight = { smoothToOne(scaleFactor) }
                                 )
                                 // 合工大教务
@@ -872,7 +882,7 @@ fun MainScreen(
                                     },
                                     today,
                                     hazeState,
-                                    navHostTopController,
+//                                    navHostTopController,
                                     if (useCustomBackground) backGroundSource else null,
                                     { showAll = it },
                                     { smoothToOne(scaleFactor) }
@@ -888,7 +898,7 @@ fun MainScreen(
                                     { newDate -> today = newDate },
                                     today,
                                     hazeState,
-                                    navHostTopController,
+//                                    navHostTopController,
                                     if (useCustomBackground) backGroundSource else null,
                                     isEnabled,
                                     { isEnabled = it },
@@ -933,7 +943,7 @@ fun MainScreen(
                                 hazeState,
                                 backGroundHaze = if (useCustomBackground) backGroundSource else null,
                                 onSwapShowAll = { showAll = it },
-                                navController = navHostTopController,
+//                                navController = navHostTopController,
                                 onRestoreHeight = { smoothToOne(scaleFactor) }
                             )
                     }
@@ -948,7 +958,7 @@ fun MainScreen(
                         ifSaved,
                         pagerState,
                         hazeState = hazeState,
-                        navHostTopController,
+//                        navHostTopController,
                     )
                 }
             }
@@ -960,7 +970,7 @@ fun MainScreen(
                         innerPadding,
                         vmUI,
                         searchText,
-                        navController = navHostTopController,
+//                        navController = navHostTopController,
                         hazeState = hazeState,
                     )
                 }
@@ -972,7 +982,7 @@ fun MainScreen(
                         ifSaved,
                         innerPadding,
                         hazeState,
-                        navHostTopController,
+//                        navHostTopController,
                     )
                 }
             }

@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,32 +31,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.file.LargeStringDataManager
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
-
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
+import com.hfut.schedule.ui.destination.AllProgramsDestination
+import com.hfut.schedule.ui.destination.ProgramCompetitionDestination
+import com.hfut.schedule.ui.destination.ProgramDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -70,8 +65,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Program(
     ifSaved : Boolean,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val iconRoute = remember { AppNavRoute.AllPrograms.receiveRoute() }
     val route = remember { AppNavRoute.Program.receiveRoute() }
     val context = LocalContext.current
@@ -85,7 +80,7 @@ fun Program(
         trailingContent = {
             FilledTonalIconButton(
                 onClick = {
-                    navController.navigateForTransition(AppNavRoute.AllPrograms,AppNavRoute.AllPrograms.withArgs(ifSaved))
+                    navController.push(AllProgramsDestination(ifSaved))
                 },
                 modifier = Modifier.size(30.dp).containerShare(iconRoute)
             ) {
@@ -97,7 +92,7 @@ fun Program(
                 val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM)
 
                 if (json?.contains("children") == true || !ifSaved) {
-                    navController.navigateForTransition(AppNavRoute.Program,AppNavRoute.Program.withArgs(ifSaved))
+                    navController.push(ProgramDestination(ifSaved))
                 }
                 else refreshLogin(context)
             }
@@ -109,7 +104,6 @@ fun Program(
 private const val PAGE_COMPETITION = 0
 private const val PAGE_PROGRAM = 1
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun ProgramScreen(
@@ -147,7 +141,7 @@ fun ProgramScreen(
                         onClick = {
                             scope.launch {
                                 val json = LargeStringDataManager.read( LargeStringDataManager.PROGRAM_PERFORMANCE)
-                                if(json?.contains("children") == true || !ifSaved) navController.push(AppNavRoute.ProgramCompetition,AppNavRoute.ProgramCompetition.withArgs(ifSaved))
+                                if(json?.contains("children") == true || !ifSaved) navController.push(ProgramCompetitionDestination(ifSaved))
                                 else refreshLogin(context)
                             }
                         },
@@ -182,7 +176,7 @@ fun ProgramScreen(
                     actions = {
                         LiquidButton (
                             onClick = {
-                                navController.push(AppNavRoute.AllPrograms,AppNavRoute.AllPrograms.withArgs(ifSaved))
+                                navController.push(AllProgramsDestination(ifSaved))
                             },
                             backdrop = backDrop,
                             modifier = Modifier

@@ -10,6 +10,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.MaterialTheme
@@ -54,8 +56,8 @@ import com.hfut.schedule.ui.component.button.LocalAppControlCenter
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.destination.AgreementDestination
 import com.hfut.schedule.ui.destination.HomeDestination
-import com.hfut.schedule.ui.destination.ScanDestination
-import com.hfut.schedule.ui.destination.UpdateSuccessDestination
+import com.hfut.schedule.ui.destination.ScanQrCodeDestination
+import com.hfut.schedule.ui.destination.UpdateSuccessfullyDestination
 import com.hfut.schedule.ui.screen.util.ControlCenterScreen
 import com.hfut.schedule.ui.screen.util.limitDrawerSwipeArea
 import com.hfut.schedule.ui.util.NavDestination
@@ -127,13 +129,13 @@ private fun firstPage(
     startRoute : String?
 ) : NavDestination {
     return if(prefs.getBoolean("canUse",false)) {
-        if(startRoute == null) {
-            ScanDestination
+        if(startRoute != null) {
+            ScanQrCodeDestination
         } else {
             if(!haveImportantUpdate()) {
                 HomeDestination
             } else {
-                UpdateSuccessDestination
+                UpdateSuccessfullyDestination
             }
         }
     } else {

@@ -51,10 +51,12 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
+import com.hfut.schedule.ui.destination.FailRateDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -66,10 +68,9 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun FailRate(
-    navController : NavHostController,
-) {
+fun FailRate() {
     val route = remember { AppNavRoute.FailRate.route }
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.FailRate.label)) },
@@ -77,7 +78,7 @@ fun FailRate(
             Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.FailRate,route)
+            navController.push(FailRateDestination)
         }
     )
 }

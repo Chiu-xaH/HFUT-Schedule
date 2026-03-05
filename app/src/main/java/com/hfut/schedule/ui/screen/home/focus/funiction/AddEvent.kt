@@ -38,10 +38,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -378,7 +374,7 @@ private fun SharedTransitionScope.ButtonUI(
                 ),
             elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
             onClick = { showChange(true) },
-        ) { Icon(Icons.Filled.Add, "Add Button") }
+        ) { Icon(painterResource(R.drawable.add), "Add Button") }
     }
 }
 
@@ -471,7 +467,7 @@ private fun SharedTransitionScope.SurfaceUI(
                         IconButton(
                             onClick = { showChange(false) }
                         ) {
-                            Icon(Icons.Filled.ArrowBack,null,tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(R.drawable.arrow_back),null,tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )
@@ -944,7 +940,7 @@ fun AddEventUI(
                                                         showDelDialog = true
                                                     },
                                                     label = { Text(classList[index]) },
-                                                    leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                    leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                 )
 
                                                 if(index+1 != classList.size) {
@@ -955,7 +951,7 @@ fun AddEventUI(
                                                             showDelDialog = true
                                                         },
                                                         label = { Text(classList[index+1]) },
-                                                        leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                        leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                     )
                                                 }
                                             }

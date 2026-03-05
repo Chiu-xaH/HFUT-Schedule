@@ -25,10 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,7 +56,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.parse.formatDecimal
@@ -78,10 +73,11 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.NewsApiDestination
+import com.hfut.schedule.ui.destination.TransferMajorDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
@@ -90,7 +86,6 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.navigation.utils.LocalNavController
@@ -157,7 +152,11 @@ fun TransferScreen(
                 actions = {
                     LiquidButton(
                         onClick = {
-                            navController.push(AppNavRoute.NewsApi, toRoute)
+                            navController.push(
+                                NewsApiDestination(
+                                    AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword
+                                )
+                            )
                         },
                         backdrop = backDrop,
                         modifier = Modifier
@@ -208,8 +207,11 @@ fun TransferScreen(
                                 modifier = Modifier
                                     .clickable {
                                         navController.push(
-                                            AppNavRoute.TransferMajorDetail,
-                                            route
+                                            TransferMajorDetailDestination(
+                                                name,
+                                                batchId,
+                                                false,
+                                            )
                                         )
                                     }
                                     .containerShare(route),
@@ -274,12 +276,18 @@ fun TransferScreen(
                                                 trailingIcon = {
                                                     IconButton(onClick = {
                                                         if(input.toIntOrNull() != null) {
-                                                            navController.push(AppNavRoute.TransferMajorDetail,AppNavRoute.TransferMajorDetail.withArgs(true,input,"入口$input"))
+                                                            navController.push(
+                                                                TransferMajorDetailDestination(
+                                                                    "入口$input",
+                                                                    input,
+                                                                    true,
+                                                                )
+                                                            )
                                                         } else {
                                                             showToast("必须为数字")
                                                         }
                                                     }) {
-                                                        Icon(Icons.Default.ArrowForward,null)
+                                                        Icon(painterResource(R.drawable.arrow_forward),null)
                                                     }
                                                 },
                                                 shape = MaterialTheme.shapes.medium,
@@ -517,7 +525,7 @@ private fun TransferUI(
                                        showBottomSheet = true
                                    }
                                ) {
-                                   Icon(Icons.Filled.Check, null)
+                                   Icon(painterResource(R.drawable.check), null)
                                }
                             },
                             shape = MaterialTheme.shapes.medium,
@@ -685,6 +693,6 @@ private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, ph
 
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
         val msg = (uiState as UiState.Success).data
-        StatusIcon(painter = if(msg == "成功" ) Icons.Filled.Check else Icons.Filled.Close, text = msg)
+        StatusIcon(if(msg == "成功" ) R.drawable.check else R.drawable.close, text = msg)
     }
 }

@@ -43,12 +43,14 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -168,9 +170,8 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun WorkAndRest(
-    navController : NavHostController,
-) {
+fun WorkAndRest() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.WorkAndRest.withArgs() }
 
     TransplantListItem(
@@ -179,7 +180,7 @@ fun WorkAndRest(
             Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.WorkAndRest,route)
+            navController.push(WorkAndRestDestination(null))
         }
     )
 }

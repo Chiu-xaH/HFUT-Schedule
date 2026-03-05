@@ -35,6 +35,7 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.destination.LifeDestination
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -44,9 +45,8 @@ import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun Life(
-    navController : NavHostController,
-) {
+fun Life() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Life.withArgs(false) }
 
     TransplantListItem(
@@ -55,7 +55,7 @@ fun Life(
             Icon(painterResource(AppNavRoute.Life.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Life,route)
+            navController.push(LifeDestination(false))
         }
     )
 }

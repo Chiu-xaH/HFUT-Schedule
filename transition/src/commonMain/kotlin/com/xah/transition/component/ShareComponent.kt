@@ -3,31 +3,21 @@ package com.xah.transition.component
 import androidx.compose.animation.BoundsTransform
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.SharedTransitionScope.ResizeMode.Companion.ScaleToBounds
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.transition.state.NavAction
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
-import com.xah.transition.util.currentRouteWithoutArgs
-import com.xah.transition.util.isCurrentRouteWithoutArgs
 
 private val spring = spring(
     dampingRatio = TransitionConfig.curveStyle.dampingRatio,
@@ -41,6 +31,7 @@ fun Modifier.containerShare(
     route : String,
     roundShape : Shape = MaterialTheme.shapes.small,
 ) : Modifier {
+    return this
     if(TransitionConfig.transitionBackgroundStyle.level == TransitionLevel.NONE_ALL) {
         return this
     }
@@ -79,6 +70,8 @@ fun Modifier.singleElementShare(
     title : String,
     route : String,
 ) : Modifier {
+    return this
+
     val sharedTransitionScope = LocalSharedTransitionScope.current
     val animatedContentScope = LocalAnimatedContentScope.current
     return with(sharedTransitionScope) {

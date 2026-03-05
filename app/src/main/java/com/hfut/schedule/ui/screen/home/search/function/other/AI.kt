@@ -30,9 +30,11 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.destination.AiDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
@@ -44,10 +46,9 @@ import dev.chrisbanes.haze.rememberHazeState
 )
 @Composable
 fun AI(
-    navController : NavHostController,
 ) {
     val route = remember { AppNavRoute.AI.route }
-
+    val navController = LocalNavController.current
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.AI.label)) },
         leadingContent = {
@@ -60,7 +61,7 @@ fun AI(
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.AI,route)
+            navController.push(AiDestination)
         }
     )
 }

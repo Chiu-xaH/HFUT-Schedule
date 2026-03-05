@@ -10,10 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -38,26 +34,26 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.MyApplyModels
 import com.hfut.schedule.logic.model.jxglstu.TransferData
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.icon.DepartmentIcons
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.status.EmptyIcon
-import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.xah.uicommon.component.text.ScrollText
-import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.icon.DepartmentIcons
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
+import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.hfut.schedule.ui.component.status.StatusIcon
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.component.text.ScrollText
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -165,7 +161,7 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                                     displayWarningDialog = true
                                 }
                             ) {
-                                Icon(Icons.Filled.Close,null)
+                                Icon(painterResource(R.drawable.close),null)
                             }
                         },
                         modifier = Modifier.clickable {
@@ -263,7 +259,7 @@ fun MyApply(vm: NetWorkViewModel, batchId : String, indexs : Int) {
                             TransplantListItem(
                                 headlineContent = { ScrollText(text = data!!.major.nameZh) },
                                 overlineContent = { ScrollText(text = data!!.department.nameZh) },
-                                leadingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
+                                leadingContent = { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") },
                                 modifier = Modifier.weight(.6f)
                             )
                         }
@@ -381,6 +377,6 @@ private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: I
         val result = (uiState as UiState.Success).data
         var msg  by remember { mutableStateOf("结果") }
         msg = if(result) "成功"  else "未知错误"
-        StatusIcon(painter = if(msg == "成功") Icons.Filled.Check else Icons.Filled.Close, text = msg)
+        StatusIcon(if(msg == "成功") R.drawable.check else R.drawable.close, text = msg)
     }
 }

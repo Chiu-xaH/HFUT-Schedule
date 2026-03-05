@@ -49,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,6 +90,7 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.LibraryBorrowedDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
@@ -410,6 +412,7 @@ fun LibraryMineUI(
     libraryNavController : NavHostController,
 //    navController: NavHostController,
 ) {
+    val context = LocalContext.current
     val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
@@ -499,11 +502,7 @@ fun LibraryMineUI(
                                 .weight(0.5f)
                                 .clickable {
                                     if (!loading) {
-                                        navController.push(
-                                            AppNavRoute.LibraryBorrowed,
-                                            AppNavRoute.LibraryBorrowed.route,
-                                            transplantBackground = true
-                                        )
+                                        navController.push(LibraryBorrowedDestination)
                                     }
                                 }
                         )
@@ -518,11 +517,7 @@ fun LibraryMineUI(
                                     .weight(0.5f)
                                     .clickable {
                                         if (!loading) {
-                                            navController.push(
-                                                AppNavRoute.LibraryBorrowed,
-                                                AppNavRoute.LibraryBorrowed.route,
-                                                transplantBackground = true
-                                            )
+                                            navController.push(LibraryBorrowedDestination)
                                         }
                                     }
                             )
@@ -623,7 +618,7 @@ fun LibraryMineUI(
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = MyApplication.NEW_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.globe_book,
@@ -648,7 +643,7 @@ fun LibraryMineUI(
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = MyApplication.OLD_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.net,
@@ -673,7 +668,7 @@ fun LibraryMineUI(
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = seatUrl,
                                         title = "座位预约",
                                         icon = R.drawable.table_restaurant
@@ -698,7 +693,7 @@ fun LibraryMineUI(
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = MyApplication.MEETING_ROOM_URL,
                                         title = "研讨间预约",
                                         icon = R.drawable.meeting_room

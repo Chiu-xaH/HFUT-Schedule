@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.UrlImage
 
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.destination.StuTodayCampusDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
@@ -97,9 +98,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun ToadyCampus(
-    navController : NavHostController,
-){
+fun ToadyCampus() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.StuTodayCampus.route }
 
     TransplantListItem(
@@ -108,7 +108,7 @@ fun ToadyCampus(
             Icon(painterResource(AppNavRoute.StuTodayCampus.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.StuTodayCampus,route)
+            navController.push(StuTodayCampusDestination)
         }
     )
 }
@@ -243,7 +243,7 @@ fun StuAppsScreen(
                                 headlineContent = { ScrollText(name) },
                                 modifier = Modifier.clickable {
                                     scope.launch {
-                                        Starter.startWebView(navController,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                     }
                                 }
                             )
@@ -269,7 +269,7 @@ fun StuAppsScreen(
                                     headlineContent = { ScrollText(name) },
                                     modifier = Modifier.clickable {
                                         scope.launch {
-                                            Starter.startWebView(navController,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                            Starter.startWebView(context,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                         }
                                     }
                                 )
@@ -302,7 +302,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebView(navController,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                        Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                     }
                                                 }
                                             )
@@ -323,7 +323,7 @@ fun StuAppsScreen(
                                                     headlineContent = { ScrollText(name) },
                                                     modifier = Modifier.clickable {
                                                         scope.launch {
-                                                            Starter.startWebView(navController,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                            Starter.startWebView(context,openUrl, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                         }
                                                     }
                                                 )
@@ -359,7 +359,7 @@ fun StuAppsScreen(
                                             headlineContent = { ScrollText(name) },
                                             modifier = Modifier.clickable {
                                                 scope.launch {
-                                                    Starter.startWebView(navController,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                    Starter.startWebView(context,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                 }
                                             }
                                         )
@@ -383,7 +383,7 @@ fun StuAppsScreen(
                                                 headlineContent = { ScrollText(name) },
                                                 modifier = Modifier.clickable {
                                                     scope.launch {
-                                                        Starter.startWebView(navController,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
+                                                        Starter.startWebView(context,url, title = name, cookie =cookie, icon = AppNavRoute.StuTodayCampus.icon)
                                                     }
                                                 }
                                             )

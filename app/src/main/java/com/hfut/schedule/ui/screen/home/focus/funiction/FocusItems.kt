@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.FilledTonalIconButton
@@ -36,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
@@ -71,6 +68,8 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.AddEventDestination
+import com.hfut.schedule.ui.destination.CourseDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
@@ -79,8 +78,8 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
@@ -316,7 +315,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
                     }
                     ENDED -> {
                         Icon(
-                            Icons.Filled.Check,
+                            painterResource(R.drawable.check),
                             contentDescription = "Localized description",
                         )
                     }
@@ -391,10 +390,11 @@ fun CustomItem(
     isFuture: Boolean,
     activity: Activity,
     showTomorrow : Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
     showOutOfDateItems : Boolean = true,
     refresh : () -> Unit
 ) {
+    val navController = LocalNavController.current
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
@@ -407,14 +407,14 @@ fun CustomItem(
             // 显示在首页
             // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh,navController = navController)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh)
         } else {
             // 显示在第二页
             if(isFuture) {
                 // 判断是否过期
                 val isOutOfDate = nowTimeNum > endNum
                 if(!showOutOfDateItems && isOutOfDate) { } else {
-                    CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh,navController = navController)
+                    CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh)
                 }
             }
         }
@@ -423,14 +423,14 @@ fun CustomItem(
         if((endNum / 10000 == nowTimeNum  / 10000) && (endNum % 10000 >= nowTimeNum % 10000)) {
             // 显示在首页
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh,navController = navController)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh)
         } else {
             // 显示在第二页
             if(isFuture) {
                 // 判断是否过期
                 val isOutOfDate = nowTimeNum > endNum
                 if(!showOutOfDateItems && isOutOfDate) { } else {
-                    CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh,navController = navController)
+                    CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh)
                 }
             }
         }
@@ -445,9 +445,10 @@ fun CustomItemUI(
     activity: Activity,
     hazeState: HazeState,
     isOutOfDate : Boolean = false,
-    navController: NavHostController,
+//    navController: NavHostController,
     isTomorrow : Boolean,refresh: () -> Unit
 ) {
+    val navController = LocalNavController.current
     val title = item.title
     val description = item.description
     val dateTime = item.dateTime
@@ -544,7 +545,12 @@ fun CustomItemUI(
         },
         modifier = Modifier.combinedClickable(
             onClick = {
-                navController.navigateForTransition(AppNavRoute.AddEvent,route)
+                navController.push(
+                    AddEventDestination(
+                        item.id,
+                        AddEventOrigin.FOCUS_EDITED.name
+                    )
+                )
             },
             onDoubleClick = {
                 showToast("长按删除，单击编辑")
@@ -758,8 +764,9 @@ fun JxglstuTodayCourseItem(
     item : JxglstuCourseSchedule,
     switchShowEnded: Boolean,
     timeNow : String,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
@@ -786,7 +793,7 @@ fun JxglstuTodayCourseItem(
                     }
                     ENDED -> {
                         Icon(
-                            Icons.Filled.Check,
+                            painterResource(R.drawable.check),
                             contentDescription = "Localized description",
                         )
                     }
@@ -794,7 +801,12 @@ fun JxglstuTodayCourseItem(
 
             },
             modifier = Modifier.clickable {
-                navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
+                navController.push(
+                    CourseDetailDestination(
+                        name,
+                        CourseDetailOrigin.FOCUS_TODAY.t + "$index"
+                    )
+                )
             },
             color = cardNormalColor(),
             trailingContent = {
@@ -823,8 +835,9 @@ fun JxglstuTodayCourseItem(
 fun JxglstuTomorrowCourseItem(
     index : Int,
     item : JxglstuCourseSchedule,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
@@ -838,7 +851,12 @@ fun JxglstuTomorrowCourseItem(
         cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
+            navController.push(
+                CourseDetailDestination(
+                    name,
+                    CourseDetailOrigin.FOCUS_TOMORROW.t + "$index"
+                )
+            )
         },
         color = cardNormalColor(),
         trailingContent = { Text(text = "明日")}

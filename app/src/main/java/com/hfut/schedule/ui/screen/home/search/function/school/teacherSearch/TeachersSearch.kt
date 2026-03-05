@@ -44,6 +44,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
+import com.hfut.schedule.ui.destination.TeacherSearchDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
@@ -57,6 +58,7 @@ import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -67,9 +69,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun TeacherSearch(
-    navController : NavHostController,
-) {
+fun TeacherSearch() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.TeacherSearch.route }
 
     TransplantListItem(
@@ -78,7 +79,7 @@ fun TeacherSearch(
             Icon(painterResource(AppNavRoute.TeacherSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TeacherSearch,route)
+            navController.push(TeacherSearchDestination)
         }
     )
 }

@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.ProgramCompetitionDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
@@ -194,7 +195,12 @@ private fun ProgramPerformance(
                             color = cardNormalColor(),
                             modifier = Modifier
                                 .clickableWithScale() {
-                                    navController.push(AppNavRoute.ProgramCompetitionDetail,route)
+                                    navController.push(
+                                        ProgramCompetitionDetailDestination(
+                                            index,
+                                            item.nameZh,
+                                        )
+                                    )
                                 }
                                 .containerShare(
 //                                sharedTransitionScope,
@@ -229,7 +235,12 @@ private fun ProgramPerformance(
                                     trailingContent = {
                                         Button(
                                             onClick = {
-                                                navController.push(AppNavRoute.ProgramCompetitionDetail,route)
+                                                navController.push(
+                                                    ProgramCompetitionDetailDestination(
+                                                        index,
+                                                        item.nameZh,
+                                                    )
+                                                )
                                             },
                                         ) {
                                             Text(text = "查看详情")
@@ -250,11 +261,14 @@ private fun ProgramPerformance(
                         color = cardNormalColor(),
                         modifier = Modifier
                             .clickableWithScale() {
-                                navController.push(AppNavRoute.ProgramCompetitionDetail,route)
+                                navController.push(
+                                    ProgramCompetitionDetailDestination(
+                                        999,
+                                        "培养方案外课程",
+                                    )
+                                )
                             }
                             .containerShare(
-//                            sharedTransitionScope,
-//                            animatedContentScope=animatedContentScope,
                             route=route,
                             roundShape = MaterialTheme.shapes.medium,
                         )
@@ -285,7 +299,12 @@ private fun ProgramPerformance(
                                 trailingContent = {
                                     Button(
                                         onClick = {
-                                            navController.push(AppNavRoute.ProgramCompetitionDetail,route)
+                                            navController.push(
+                                                ProgramCompetitionDetailDestination(
+                                                    999,
+                                                    "培养方案外课程",
+                                                )
+                                            )
                                         },
                                     ) {
                                         Text(text = "查看详情")

@@ -9,10 +9,10 @@ import android.webkit.WebViewClient
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
@@ -47,6 +48,7 @@ import com.hfut.schedule.ui.util.webview.sharedInterceptRequest
 import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
 import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
+import com.xah.transition.component.TransitionScaffold
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.util.LogUtil
@@ -55,7 +57,6 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3ExpressiveApi::class
 )
 @Composable
 fun WebViewScreenForNavigation(
@@ -114,7 +115,7 @@ fun WebViewScreenForNavigation(
         }
     }
 
-    Scaffold (
+    CustomTransitionScaffold  (
         enablePredictive = false,
         route = route,
         navHostController = navController,

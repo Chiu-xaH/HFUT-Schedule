@@ -10,7 +10,6 @@ import android.webkit.WebViewClient
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -46,7 +45,7 @@ import com.xah.uicommon.util.LogUtil
 import java.net.HttpURLConnection
 import java.net.URL
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebViewScreenForActivity(

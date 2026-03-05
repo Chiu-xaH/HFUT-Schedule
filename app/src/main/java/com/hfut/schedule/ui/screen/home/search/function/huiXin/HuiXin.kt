@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -22,9 +23,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun HuiXin(
-    navController : NavHostController,
-) {
+fun HuiXin() {
+    val context = LocalContext.current
     val icon = remember { R.drawable.corporate_fare }
     val title = stringResource(R.string.navigation_label_hui_xin)
     val url = remember { getHuiXinURL() }
@@ -38,7 +38,7 @@ fun HuiXin(
         modifier = Modifier.clickable {
             scope.launch {
                 Starter.startWebView(
-                    navController,
+                    context,
                     url = url,
                     title = title,
                     icon = icon,

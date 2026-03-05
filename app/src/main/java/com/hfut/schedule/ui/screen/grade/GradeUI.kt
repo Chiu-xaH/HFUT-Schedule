@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.AverageGradeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
@@ -252,19 +253,21 @@ fun GradeScreen(
                     LargeButton(
                         iconModifier = Modifier.iconElementShare(route),
                         onClick = {
-                            navTopController.push(AppNavRoute.AverageGrade,AppNavRoute.AverageGrade.withArgs(
-                                when(gradeOriginList[pageState.currentPage]) {
-                                    GradeDataOrigin.JXGLSTU -> {
-                                        false
+                            navTopController.push(
+                                AverageGradeDestination(
+                                    when(gradeOriginList[pageState.currentPage]) {
+                                        GradeDataOrigin.JXGLSTU -> {
+                                            false
+                                        }
+                                        GradeDataOrigin.COMMUNITY -> {
+                                            false
+                                        }
+                                        GradeDataOrigin.UNI_APP -> {
+                                            true
+                                        }
                                     }
-                                    GradeDataOrigin.COMMUNITY -> {
-                                        false
-                                    }
-                                    GradeDataOrigin.UNI_APP -> {
-                                        true
-                                    }
-                                }
-                            ),true)
+                                )
+                            )
                         },
                         icon = AppNavRoute.AverageGrade.icon,
                         text = buttonText,

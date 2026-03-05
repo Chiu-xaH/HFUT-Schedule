@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -35,9 +36,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun IETP(
-    navController : NavHostController,
-) {
+fun IETP() {
+    val context = LocalContext.current
     val route = remember { AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL) }
     val icon = remember { R.drawable.groups }
     val title = stringResource(R.string.navigation_label_ietp)
@@ -50,7 +50,7 @@ fun IETP(
         modifier = Modifier.clickable {
             scope.launch {
                 Starter.startWebView(
-                    navController,
+                    context,
                     url = MyApplication.IETP_URL,
                     title = title,
                     icon = icon,

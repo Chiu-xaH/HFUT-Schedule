@@ -16,8 +16,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.OfficeHallDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 
@@ -25,9 +27,8 @@ import com.xah.uicommon.component.text.ScrollText
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun OfficeHall(
-    navController : NavHostController,
-) {
+fun OfficeHall() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.OfficeHall.route }
 
     TransplantListItem(
@@ -36,7 +37,7 @@ fun OfficeHall(
             Icon(painterResource(AppNavRoute.OfficeHall.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.OfficeHall,route)
+            navController.push(OfficeHallDestination)
         }
     )
 }

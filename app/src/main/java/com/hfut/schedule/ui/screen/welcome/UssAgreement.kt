@@ -39,6 +39,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
+import com.hfut.schedule.ui.destination.HomeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
@@ -118,7 +119,7 @@ fun UseAgreementScreen() {
                                         launch { SharedPrefs.saveString("versionName", AppVersion.getVersionName()) }
                                         launch { SharedPrefs.saveBoolean("canUse", default = false, save = true) }
                                     }.await()
-                                    navController.push(AppNavRoute.Home.route, LaunchMode.CLEAR_STACK)
+                                    navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                                 }
                             },
                             shape = MaterialTheme.shapes.extraLarge,

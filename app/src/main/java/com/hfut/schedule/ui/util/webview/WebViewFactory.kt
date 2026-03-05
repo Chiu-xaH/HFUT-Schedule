@@ -27,9 +27,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -233,9 +230,9 @@ fun WebViewTools(
     if(webView?.canGoBack() == true) {
         IconButton(onClick = {
             webView.goBack()
-        }) { Icon(Icons.Default.ArrowBack, contentDescription = "") }
+        }) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
     } else {
-        IconButton(onClick = onExit) { Icon(Icons.Default.Close, contentDescription = "") }
+        IconButton(onClick = onExit) { Icon(painterResource(R.drawable.close), contentDescription = "") }
     }
 
     IconButton(onClick = { webView?.reload() }) { Icon(
@@ -504,9 +501,9 @@ fun WebViewBackIcon(
         }
     }
     val cIcon = if(webView?.canGoBack() == true) {
-        Icons.Default.ArrowBack
+        painterResource(R.drawable.arrow_back)
     } else {
-        Icons.Default.Close
+        painterResource(R.drawable.close)
     }
     val button = @Composable { content  : @Composable () -> Unit ->
         Box(

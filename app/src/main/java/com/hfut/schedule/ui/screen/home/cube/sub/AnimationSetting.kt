@@ -20,8 +20,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -340,7 +338,7 @@ private fun ScreenApp(
             .containerShare("test$index", roundShape = RoundedCornerShape(6.dp))
     ) {
         Icon(
-            Icons.Default.ArrowBack,
+            painterResource(R.drawable.arrow_back),
             null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(start = 6.dp, top = 6.dp).align(Alignment.TopStart).size(11.dp)

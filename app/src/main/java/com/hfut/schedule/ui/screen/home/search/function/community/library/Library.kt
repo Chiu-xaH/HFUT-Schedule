@@ -14,10 +14,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.LibraryDestination
 
 
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -26,9 +28,8 @@ import com.xah.uicommon.component.text.ScrollText
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun LibraryItem(
-    navController : NavHostController,
-) {
+fun LibraryItem() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Library.route }
 
     TransplantListItem(
@@ -37,7 +38,7 @@ fun LibraryItem(
             Icon(painterResource(AppNavRoute.Library.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Library,route)
+            navController.push(LibraryDestination)
         }
     )
 }

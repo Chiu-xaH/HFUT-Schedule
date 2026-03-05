@@ -26,9 +26,11 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.destination.SecondClassDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -41,9 +43,8 @@ import dev.chrisbanes.haze.rememberHazeState
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun SecondClass(
-    navController : NavHostController,
-) {
+fun SecondClass() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.SecondClass.route }
 
     TransplantListItem(
@@ -52,7 +53,7 @@ fun SecondClass(
             Icon(painterResource(AppNavRoute.SecondClass.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.SecondClass,route)
+            navController.push(SecondClassDestination)
         }
     )
 }

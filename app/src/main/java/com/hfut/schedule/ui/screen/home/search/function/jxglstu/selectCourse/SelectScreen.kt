@@ -1,11 +1,10 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.selectCourse
 
+
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,10 +32,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -73,12 +68,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.enumeration.SelectType
 import com.hfut.schedule.logic.model.jxglstu.SelectCourseInfo
 import com.hfut.schedule.logic.network.util.StatusCode
@@ -89,11 +82,8 @@ import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.LiquidButton
-
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
-
-
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
@@ -102,10 +92,11 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.DropCoursesDestination
+import com.hfut.schedule.ui.destination.SelectCoursesDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
@@ -116,17 +107,12 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.align.ColumnVertical
@@ -216,7 +202,7 @@ fun SelectCourseScreen(
                             onClick = {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = url,
                                         title = "教务系统",
                                         cookie = cookie
@@ -320,7 +306,12 @@ fun SelectCourseDetailScreen(
                             }
                             LiquidButton(
                                 onClick = {
-                                    navController.push(AppNavRoute.DropCourses, AppNavRoute.DropCourses.withArgs(courseId,title))
+                                    navController.push(
+                                        DropCoursesDestination(
+                                            courseId,
+                                            title
+                                        )
+                                    )
                                 },
                                 modifier = Modifier.containerShare(AppNavRoute.DropCourses.route),
                                 backdrop = backDrop
@@ -464,10 +455,15 @@ private fun SelectCourseList(
                             trailingIcon = {
                                 IconButton(onClick = {
                                     input.toIntOrNull()?.let { i ->
-                                        navController.push(AppNavRoute.SelectCoursesDetail, AppNavRoute.SelectCoursesDetail.withArgs(i,"入口$i"))
+                                        navController.push(
+                                            SelectCoursesDetailDestination(
+                                                i,
+                                                "入口$i"
+                                            )
+                                        )
                                     } ?: showToast("必须为数字")
                                 }) {
-                                    Icon(Icons.Default.ArrowForward,null)
+                                    Icon(painterResource(R.drawable.arrow_forward),null)
                                 }
                             },
                             shape = MaterialTheme.shapes.medium,
@@ -492,8 +488,10 @@ private fun SelectCourseList(
                             .containerShare( route)
                             .clickable {
                                 navController.push(
-                                    AppNavRoute.SelectCoursesDetail,
-                                    route
+                                    SelectCoursesDetailDestination(
+                                        id,
+                                        name
+                                    )
                                 )
                             },
                         color = cardNormalColor()
@@ -718,7 +716,7 @@ fun SelectCourseResultLoad(vm : NetWorkViewModel, courseId : Int, lessonId : Int
         CommonNetworkScreen(uiState, onReload = refreshNetwork, isFullScreen = false) {
             val data = (uiState as UiState.Success).data
             ColumnVertical(modifier = Modifier.fillMaxWidth()) {
-                Icon( if(data.first) Icons.Filled.Check else Icons.Filled.Close, contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
+                Icon( if(data.first) painterResource(R.drawable.check) else painterResource(R.drawable.close), contentDescription = "",Modifier.size(100.dp), tint = MaterialTheme.colorScheme.primary)
                 Text(text = data.second, color = MaterialTheme.colorScheme.primary)
             }
         }
@@ -966,7 +964,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
                         name = names
                         showDialog = true
                     }) {
-                        Icon(Icons.Filled.Close, contentDescription = "")
+                        Icon(painterResource(R.drawable.close), contentDescription = "")
                     }},
                     modifier = Modifier.clickable {
                         showBottomSheet_info = true

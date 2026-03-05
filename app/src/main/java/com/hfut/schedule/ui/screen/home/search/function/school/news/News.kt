@@ -15,8 +15,10 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.NewsDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -25,9 +27,8 @@ import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun News(
-    navController : NavHostController,
-) {
+fun News() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.News.route }
 
     TransplantListItem(
@@ -36,7 +37,7 @@ fun News(
             Icon(painterResource(AppNavRoute.News.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.News,route)
+            navController.push(NewsDestination)
         }
     )
 }

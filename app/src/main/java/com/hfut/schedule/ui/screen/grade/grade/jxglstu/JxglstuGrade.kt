@@ -57,7 +57,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.ScoreGrade
 import com.hfut.schedule.logic.model.ScoreWithGPALevel
@@ -79,26 +78,23 @@ import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.dialog.LittleDialog
-import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.GradeDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.survey.SurveyUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
-import com.xah.uicommon.component.chart.BarChart
 import com.xah.uicommon.component.chart.RadarChart
 import com.xah.uicommon.component.chart.RadarData
 import com.xah.uicommon.component.text.BottomTip
@@ -360,8 +356,7 @@ fun GradeItemJxglstuUI(
                                                 }
                                             } else {
                                                 navController.push(
-                                                    AppNavRoute.GradeDetail,
-                                                    AppNavRoute.GradeDetail.withArgs(
+                                                    GradeDetailDestination(
                                                         subItem,
                                                         allAvgGpa,
                                                         allAvgScore,
@@ -425,8 +420,7 @@ fun GradeItemJxglstuUI(
                                                     AssistChip(
                                                         onClick = {
                                                             navController.push(
-                                                                AppNavRoute.GradeDetail,
-                                                                AppNavRoute.GradeDetail.withArgs(
+                                                                GradeDetailDestination(
                                                                     subItem,
                                                                     allAvgGpa,
                                                                     allAvgScore,
@@ -653,8 +647,7 @@ fun GradeItemUIUniApp(
                                             .containerShare(AppNavRoute.GradeDetail.shareRoute(bean))
                                             .clickable {
                                                 navController.push(
-                                                    AppNavRoute.GradeDetail,
-                                                    AppNavRoute.GradeDetail.withArgs(
+                                                    GradeDetailDestination(
                                                         bean,
                                                         allAvgGpa,
                                                         allAvgScore,
@@ -713,8 +706,7 @@ fun GradeItemUIUniApp(
                                                         AssistChip(
                                                             onClick = {
                                                                 navController.push(
-                                                                    AppNavRoute.GradeDetail,
-                                                                    AppNavRoute.GradeDetail.withArgs(
+                                                                    GradeDetailDestination(
                                                                         bean,
                                                                         allAvgGpa,
                                                                         allAvgScore,

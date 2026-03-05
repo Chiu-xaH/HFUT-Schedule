@@ -54,6 +54,7 @@ import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -155,7 +156,16 @@ fun CourseSearchScreen(
                         val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
                         LiquidButton(
                             onClick = {
-                                navController.push(AppNavRoute.CourseSearchTable,AppNavRoute.CourseSearchTable.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
+                                semester?.let {
+                                    navController.push(
+                                        CourseSearchTableDestination(
+                                            it,
+                                            classNameNil,
+                                            courseCodeNil,
+                                            courseNameNil,
+                                        )
+                                    )
+                                }
                             },
                             isCircle = true,
                             enabled = uiState is UiState.Success && !canNotUse,

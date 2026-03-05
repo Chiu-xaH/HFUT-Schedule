@@ -28,11 +28,13 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.GradeDestination
 import com.hfut.schedule.ui.screen.MainHost
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.XwxViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.component.titleElementShare
@@ -48,8 +50,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Grade(
     ifSaved : Boolean,
-    navController : NavHostController,
 )  {
+    val navController = LocalNavController.current
     val viewModel = viewModel { XwxViewModel() }
     var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -77,7 +79,7 @@ fun Grade(
                 Modifier.size(21.dp)) }
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Grade,AppNavRoute.Grade.withArgs(ifSaved))
+            navController.push(GradeDestination(ifSaved))
         }
     )
 }

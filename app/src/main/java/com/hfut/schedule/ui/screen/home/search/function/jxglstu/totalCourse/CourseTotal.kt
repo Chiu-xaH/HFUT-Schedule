@@ -39,7 +39,9 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.destination.TermCoursesDestination
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -52,8 +54,8 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun CourseTotal(
     ifSaved : Boolean,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.TermCourses.withArgs(ifSaved,"SEARCH") }
 
     TransplantListItem(
@@ -62,10 +64,14 @@ fun CourseTotal(
             Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TermCourses,route)
+            navController.push(
+                TermCoursesDestination(
+                    ifSaved,
+                    "SEARCH"
+                )
+            )
         }
     )
-
 }
 
 

@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,17 +36,15 @@ import com.hfut.schedule.logic.model.jxglstu.blankQuestionAnswer
 import com.hfut.schedule.logic.model.jxglstu.radioQuestionAnswer
 import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.dialog.LittleDialog
- 
-import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.input.CustomTextField
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
-import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -130,7 +126,7 @@ private fun SurveyList(
                     IconButton(
                         onClick = { showTextField = false }
                     ) {
-                        Icon(Icons.Filled.Close,null)
+                        Icon(painterResource(R.drawable.close),null)
                     }
                 },
                 label = {

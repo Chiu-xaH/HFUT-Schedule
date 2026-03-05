@@ -15,18 +15,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun Scan(
-    navController : NavHostController,
-) {
+fun Scan() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.ScanQrCode.route }
 
     TransplantListItem(
@@ -36,7 +37,7 @@ fun Scan(
             Icon(painterResource(AppNavRoute.ScanQrCode.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.ScanQrCode,route)
+            navController.push(ScanQrCodeDestination)
         }
     )
 }

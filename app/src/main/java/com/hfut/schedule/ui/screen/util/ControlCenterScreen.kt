@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -249,7 +247,7 @@ fun ControlCenterScreen(
                         IconButton(
                             onClick = onExit
                         ) {
-                            Icon(Icons.Filled.ArrowBack,null, tint = contentColor)
+                            Icon(painterResource(R.drawable.arrow_back),null, tint = contentColor)
                         }
                     },
                 )

@@ -16,9 +16,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.CourseSearchDestination
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -29,8 +31,8 @@ import com.xah.transition.state.LocalSharedTransitionScope
 @Composable
 fun CoursesSearch(
     ifSaved :  Boolean,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.CourseSearch.route }
     val context = LocalContext.current
 
@@ -41,7 +43,7 @@ fun CoursesSearch(
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context)
-            else navController.navigateForTransition(AppNavRoute.CourseSearch,route)
+            else navController.push(CourseSearchDestination)
         }
     )
 }

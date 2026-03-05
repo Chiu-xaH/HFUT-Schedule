@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
@@ -238,7 +236,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 CardListItem(
                     headlineContent = { Text("慧新易校平台") },
                     leadingContent = {
-                        Icon(Icons.Default.ArrowForward, contentDescription = "")
+                        Icon(painterResource(R.drawable.arrow_forward), contentDescription = "")
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
@@ -296,7 +294,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             sheetState = sheetState_Washing,
         ) {
-            WashingUI(navController)
+            WashingUI()
         }
     }
 

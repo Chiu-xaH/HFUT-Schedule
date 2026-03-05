@@ -44,6 +44,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.destination.HolidayDestination
+import com.hfut.schedule.ui.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -57,9 +59,8 @@ import dev.chrisbanes.haze.rememberHazeState
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Holiday(
-    navController : NavHostController,
-) {
+fun Holiday() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Holiday.route }
 
     TransplantListItem(
@@ -68,7 +69,7 @@ fun Holiday(
             Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Holiday,route)
+            navController.push(HolidayDestination)
         }
     )
 }
@@ -109,7 +110,11 @@ fun HolidayScreen(
                             .padding(horizontal = APP_HORIZONTAL_DP)
                         ,
                         onClick = {
-                            navController.push(AppNavRoute.NewsApi,toRoute)
+                            navController.push(
+                                NewsApiDestination(
+                                    AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword
+                                )
+                            )
                         },) {
                         Text("调休通知", maxLines = 1)
                     }

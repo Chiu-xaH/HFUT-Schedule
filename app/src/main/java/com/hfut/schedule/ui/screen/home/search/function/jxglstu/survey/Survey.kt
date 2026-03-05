@@ -56,9 +56,11 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.destination.SurveyDestination
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -75,8 +77,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Survey(
     ifSaved : Boolean,
-    navController : NavHostController,
-){
+) {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Survey.route }
     val context = LocalContext.current
 
@@ -87,7 +89,7 @@ fun Survey(
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context) else {
-                navController.navigateForTransition(AppNavRoute.Survey, AppNavRoute.Survey.withArgs(ifSaved))
+                navController.push(SurveyDestination(ifSaved))
             }
         }
     )

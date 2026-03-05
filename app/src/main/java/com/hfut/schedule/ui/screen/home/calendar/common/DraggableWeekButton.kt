@@ -23,10 +23,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
@@ -46,9 +42,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
@@ -194,7 +192,7 @@ fun DraggableWeekButton(
 
                         // 左箭头（展开时显示）
                         Icon(
-                            Icons.Filled.ArrowBack,
+                            painterResource(R.drawable.arrow_back),
                             contentDescription = null,
                             tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
                             modifier = Modifier
@@ -210,7 +208,7 @@ fun DraggableWeekButton(
 
                         // 右箭头（展开时显示）
                         Icon(
-                            Icons.Filled.ArrowForward,
+                            painterResource(R.drawable.arrow_forward),
                             contentDescription = null,
                             tint = if(shaderState == null) contentColor else IconButtonDefaults.iconButtonColors().contentColor,
                             modifier = Modifier

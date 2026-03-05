@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -30,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.network.state.UiState
-
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -38,8 +35,8 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)

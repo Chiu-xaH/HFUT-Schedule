@@ -21,11 +21,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.PersonInfoDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -35,9 +37,8 @@ import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun PersonUI(
-    navController : NavHostController,
-) {
+fun PersonUI() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.PersonInfo.route }
 
     TransplantListItem(
@@ -47,7 +48,7 @@ fun PersonUI(
 
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.PersonInfo,route)
+            navController.push(PersonInfoDestination)
         }
     )
 }

@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -54,24 +52,23 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.parse.formatDecimal
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.divider.ScrollHorizontalTopDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.transition.component.awaitTransition
 import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.transition.util.allRouteStack
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -108,7 +105,7 @@ fun GestureStudyScreen(
                     enter = DefaultTransitionStyle.centerAllAnimation.enter,
                     exit = DefaultTransitionStyle.centerAllAnimation.exit
                 ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                    Icon(painterResource(R.drawable.arrow_back), contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                 }
             }
         }

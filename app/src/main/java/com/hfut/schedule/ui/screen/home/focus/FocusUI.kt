@@ -72,6 +72,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.exam.getExamFrom
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
@@ -93,8 +94,9 @@ fun TodayScreen(
     ifSaved : Boolean,
     state: PagerState,
     hazeState: HazeState,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val context = LocalContext.current
     var scheduleList by remember { mutableStateOf(getSchedule()) }
     var netCourseList by remember { mutableStateOf(getNetCourse()) }
@@ -233,7 +235,7 @@ fun TodayScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     when(page) {
                         TAB_LEFT -> {
-                            item { FocusCard(vmUI,vm,hazeState, navController,) }
+                            item { FocusCard(vmUI,vm,hazeState) }
                             //课表
                             when(courseDataSource) {
                                 CourseType.COMMUNITY.code -> {
@@ -252,7 +254,7 @@ fun TodayScreen(
                                         if(!isHolidayTomorrow()) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],navController,)
+                                                    JxglstuTomorrowCourseItem(item,list[item])
                                                 }
                                             }
                                         }
@@ -260,7 +262,7 @@ fun TodayScreen(
                                         if(!isHoliday()) {
                                             todayJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow,navController,)
+                                                    JxglstuTodayCourseItem(item,list[item], switchShowEnded,timeNow)
                                                 }
                                             }
                                         }
@@ -271,7 +273,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow, navController = navController) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = false,showTomorrow = showTomorrow) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
@@ -301,7 +303,7 @@ fun TodayScreen(
                             customScheduleList.let { list ->
                                 items(list.size){ item ->
                                     activity?.let { it1 ->
-                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, navController = navController, showOutOfDateItems = enableShowOutOfDateEvent) { refreshDB = !refreshDB }
+                                        CustomItem(item = list[item], hazeState = hazeState, activity = it1, isFuture = true,showTomorrow = false, showOutOfDateItems = enableShowOutOfDateEvent) { refreshDB = !refreshDB }
                                     }
                                 }
                             }
@@ -338,7 +340,7 @@ fun TodayScreen(
                                         if (DateTimeManager.compareTime(jxglstuLastTime) == DateTimeManager.TimeState.NOT_STARTED) {
                                             tomorrowJxglstuList.let { list ->
                                                 items(list.size) { item ->
-                                                    JxglstuTomorrowCourseItem(item,list[item],navController,)
+                                                    JxglstuTomorrowCourseItem(item,list[item],)
                                                 }
                                             }
                                         }

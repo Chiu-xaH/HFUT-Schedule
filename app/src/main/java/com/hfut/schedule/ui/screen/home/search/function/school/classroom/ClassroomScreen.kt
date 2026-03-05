@@ -110,6 +110,7 @@ import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButto
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.ClassroomCourseTableDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
@@ -546,7 +547,12 @@ private fun EmptyClassroomScreen(
                         CustomCard(
                             color = cardNormalColor(),
                             modifier = Modifier.containerShare(route).clickable {
-                                navTopController.push(AppNavRoute.ClassroomCourseTable,route)
+                                navTopController.push(
+                                    ClassroomCourseTableDestination(
+                                        item.id,
+                                        item.nameZh
+                                    )
+                                )
                             }
                         ) {
                             TransplantListItem(
@@ -763,7 +769,12 @@ private fun SearchClassroomScreen(
                             color = cardNormalColor(),
                             cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
                             modifier = Modifier.clickable {
-                                navTopController.push(AppNavRoute.ClassroomCourseTable,route)
+                                navTopController.push(
+                                    ClassroomCourseTableDestination(
+                                        item.id,
+                                        item.nameZh
+                                    )
+                                )
                             }
                         )
                     }

@@ -83,6 +83,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.destination.WorkDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 
@@ -99,9 +100,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Work(
-    navController : NavHostController,
-) {
+fun Work() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Work.route }
 
     TransplantListItem(
@@ -110,7 +110,7 @@ fun Work(
             Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Work,route)
+            navController.push(WorkDestination)
         }
     )
 }
@@ -136,7 +136,7 @@ fun WorkScreen(
         vm.workSearchResult.clear()
         vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
     }
-
+    val context = LocalContext.current
     Scaffold (
 //        route = route,
 //        navHostController = navController,
@@ -168,7 +168,7 @@ fun WorkScreen(
                                 onClick = {
                                     scope.launch {
                                         Starter.startWebView(
-                                            navController,
+                                            context,
                                             url = url,
                                             title = "就业网(${campus.description})",
                                             icon = R.drawable.net,

@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CustomCard
+import com.hfut.schedule.ui.destination.AdmissionDetailDestination
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
@@ -159,7 +160,12 @@ fun AdmissionListUI(
                                 color = cardNormalColor(),
                                 modifier = Modifier.padding(CARD_NORMAL_DP)
                                     .clickableWithScale(ClickScale.SMALL.scale) {
-                                        navController.push(AppNavRoute.AdmissionDetail,route)
+                                        navController.push(
+                                            AdmissionDetailDestination(
+                                                index,
+                                                pageList[page].description
+                                            )
+                                        )
                                     }
                                     .containerShare(route,)
                             ) {

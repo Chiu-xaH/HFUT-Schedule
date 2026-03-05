@@ -3,8 +3,6 @@ package com.hfut.schedule.ui.screen.fix
 import android.annotation.SuppressLint
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,12 +17,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.FixBarItems
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.model.NavigationBarItemData
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -84,7 +82,7 @@ fun Fix(vm : NetWorkViewModel) {
                         IconButton(onClick = {
                             context?.finish()
                         }) {
-                            Icon(Icons.Filled.ArrowBack, contentDescription = "", tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(R.drawable.arrow_back), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )

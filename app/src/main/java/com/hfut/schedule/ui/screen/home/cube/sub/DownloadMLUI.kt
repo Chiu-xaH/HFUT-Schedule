@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -143,7 +141,7 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
                             }
 
                         } else {
-                            Icon(Icons.Filled.Check, null)
+                            Icon(painterResource(R.drawable.check), null)
                         }
                     },
                     modifier = Modifier.combinedClickable(

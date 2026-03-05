@@ -17,9 +17,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
@@ -55,23 +52,22 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.ShowerLabelEntity
 import com.hfut.schedule.logic.util.network.state.UiState
-import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
-import com.xah.uicommon.component.text.BottomTip
-import com.hfut.schedule.ui.component.camera.ScanQrCodeView
-import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.dialog.LittleDialog
- 
+import com.hfut.schedule.logic.util.sys.PermissionSet.checkAndRequestCameraPermission
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.camera.ScanQrCodeView
+import com.hfut.schedule.ui.component.dialog.LittleDialog
+import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.status.StatusIcon
-import com.xah.uicommon.style.align.RowHorizontal
-import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -98,7 +94,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as UiState.Success).data
-        StatusIcon(painter = if(response.contains("成功")) Icons.Filled.Check else Icons.Filled.Close, text = response)
+        StatusIcon(if(response.contains("成功")) R.drawable.check else R.drawable.close, text = response)
     }
 }
 
@@ -163,7 +159,7 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
                     colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = .7f)),
                     modifier = Modifier.align(Alignment.BottomEnd).padding(APP_HORIZONTAL_DP).size(60.dp),
                 ) {
-                    Icon(Icons.Filled.Close,null, modifier = Modifier.size(30.dp))
+                    Icon(painterResource(R.drawable.close),null, modifier = Modifier.size(30.dp))
                 }
                 FilledTonalIconButton (
                     onClick = { isFull = !isFull },

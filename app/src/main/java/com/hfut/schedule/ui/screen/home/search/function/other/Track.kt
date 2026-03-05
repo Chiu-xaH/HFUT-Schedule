@@ -22,9 +22,11 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 
 import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.destination.TrackDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
@@ -39,9 +41,8 @@ import dev.chrisbanes.haze.rememberHazeState
 负责人 不可空（可多位，用逗号隔开，github用户名）
  */
 @Composable
-fun Track(
-    navController : NavHostController,
-) {
+fun Track() {
+    val navController = LocalNavController.current
     val route = remember { AppNavRoute.Track.route }
 
     TransplantListItem(
@@ -50,7 +51,7 @@ fun Track(
             Icon(painterResource(AppNavRoute.Track.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Track,route)
+            navController.push(TrackDestination)
         }
     )
 }
