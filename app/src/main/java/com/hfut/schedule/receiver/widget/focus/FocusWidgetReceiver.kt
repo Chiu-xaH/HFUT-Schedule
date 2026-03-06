@@ -165,7 +165,7 @@ class FocusWidget : GlanceAppWidget() {
     private fun MyContent(textSize : Float) {
         val context = LocalContext.current
         val isDarkTheme = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
-        val courseDataSource = DataStoreManager.getSyncDefaultCalendar()
+        val courseDataSource = DataStoreManager.getSyncDefaultCalendar() ?: CourseType.JXGLSTU.code
         var todayJxglstuList by remember { mutableStateOf<List<JxglstuCourseSchedule>>(emptyList()) }
         var todayCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
         var lastTime by remember { mutableStateOf("00:00") }
