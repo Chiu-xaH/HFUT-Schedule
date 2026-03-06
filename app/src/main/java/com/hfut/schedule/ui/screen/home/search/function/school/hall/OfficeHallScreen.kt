@@ -67,7 +67,8 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -112,7 +113,7 @@ fun OfficeHallScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val imageSize = remember { 25.dp }
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Scaffold (
 //        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

@@ -1,11 +1,7 @@
 package com.hfut.schedule.ui.style.special
 
-import android.graphics.RuntimeShader
-import android.os.Build
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -21,27 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ShaderBrush
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastCoerceAtMost
-import androidx.compose.ui.util.fastCoerceIn
-import androidx.compose.ui.util.lerp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -49,25 +32,14 @@ import com.hfut.schedule.logic.util.other.AppVersion.CAN_HAZE_BLUR_BAR
 import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.largeCardColor
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.backdrops.LayerBackdrop
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.kyant.backdrop.drawBackdrop
-import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.refraction
-import com.kyant.backdrop.effects.vibrancy
-import com.kyant.backdrop.highlight.Highlight
+import com.xah.mirror.util.ShaderState
+import com.xah.mirror.util.shaderSource
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
-import com.xah.transition.style.transitionBackground
-import com.xah.transition.style.transitionSkip
-import com.xah.transition.util.isCurrentRouteWithoutArgs
-import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState
@@ -76,21 +48,20 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.materials.ExperimentalHazeMaterialsApi
 import kotlinx.coroutines.delay
-import kotlin.math.abs
-import kotlin.math.atan2
-import kotlin.math.cos
-import kotlin.math.sin
-import kotlin.math.tanh
 
 
 @OptIn(ExperimentalHazeMaterialsApi::class)
 @Composable
-fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,1.5f,color,.5f, limit = CAN_HAZE_BLUR_BAR)
+fun Modifier.containerBlur(hazeState: HazeState, color : Color) : Modifier = blurStyle(hazeState,1.5f,color,.5f, enabled = CAN_HAZE_BLUR_BAR)
 @Composable
-fun Modifier.bottomBarBlur(hazeState : HazeState,color : Color = MaterialTheme.colorScheme.surface) : Modifier {
+fun Modifier.bottomBarBlur(
+    hazeState : HazeState,
+    color : Color = MaterialTheme.colorScheme.surface,
+) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
     return if(
-        !GlobalUIStateHolder.isTransiting &&
+        !isTransitioning &&
         blur
         && CAN_HAZE_BLUR_BAR
         && !HAZE_BLUR_FOR_S
@@ -133,7 +104,8 @@ fun Modifier.topBarBlur(
     color : Color = backgroundColor
 ) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(!GlobalUIStateHolder.isTransiting && blur && CAN_HAZE_BLUR_BAR) {
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    return if(!isTransitioning && blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -166,11 +138,12 @@ fun Modifier.topBarBlur(
 }
 @Composable
 fun Modifier.backDropSource(
-    backdrop : LayerBackdrop
+    backdrop : ShaderState
 ): Modifier {
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-    return if(enableLiquidGlass) {
-        this.layerBackdrop(backdrop)
+    return if(enableLiquidGlass && !isTransitioning) {
+        this.shaderSource(backdrop)
     } else {
         this
     }
@@ -183,8 +156,9 @@ fun Modifier.normalTopBarBlur(
     backgroundColor : Color = MaterialTheme.colorScheme.surface,
     color : Color = Color.Transparent
 ) : Modifier {
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(blur && CAN_HAZE_BLUR_BAR) {
+    return if(!isTransitioning && blur && CAN_HAZE_BLUR_BAR) {
         this.hazeEffect(
             state = hazeState,
             style = HazeStyle(
@@ -205,10 +179,10 @@ private fun Modifier.blurStyle(
     radius : Float = 1f,
     tint : Color = MaterialTheme.colorScheme.surface,
     alpha : Float = .3f,
-    limit : Boolean = true
+    enabled : Boolean = true
 ) : Modifier {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-    return if(blur&& limit) {
+    return if(blur&& enabled) {
         this.hazeEffect(state = hazeState, style = HazeStyle(
             tint = HazeTint(color =  tint.copy(alpha)),
             backgroundColor = tint,
@@ -273,77 +247,6 @@ fun CustomBottomSheet(
         content()
     }
 }
-
-// isExpanded=true时，下层背景进入高斯模糊，并用黑色压暗，伴随缩放，上层背景展开
-@Composable
-fun Modifier.transitionBackground2(isExpanded : Boolean) : Modifier {
-    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-    val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
-    // 👍 NONE
-    if(transition <= TransitionLevel.NONE.code) {
-        return this
-    }
-
-    // 蒙版
-    val backgroundColor by animateFloatAsState(
-        targetValue = if(isExpanded) TransitionConfig.transitionBackgroundStyle.backgroundDark else 0f,
-        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED, easing = FastOutSlowInEasing),
-    )
-
-    val darkModifier = this.let {
-        if(transition >= TransitionLevel.LOW.code) {
-            it.drawWithContent {
-                drawContent()
-                drawRect(Color.Black.copy(alpha = backgroundColor))
-            }
-        } else it
-    }
-    // 👍 LOW
-    if(transition == TransitionLevel.LOW.code) {
-        return darkModifier
-    }
-
-
-    val scale = animateFloatAsState(
-        targetValue = if (isExpanded) {
-            with(TransitionConfig.transitionBackgroundStyle) {
-                scale
-            }
-        } else 1f, // 按下时为0.9，松开时为1
-        animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
-        label = "" // 使用弹簧动画
-    )
-
-    if(transition >= TransitionLevel.MEDIUM.code) {
-        LaunchedEffect(isExpanded) {
-            GlobalUIStateHolder.isTransiting = true
-            delay((AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2)*1L)
-            GlobalUIStateHolder.isTransiting = false
-        }
-    }
-
-    // 👍 MEDIUM
-    if(transition == TransitionLevel.MEDIUM.code) {
-        return darkModifier.scale(scale.value)
-    }
-
-    // 稍微晚于运动结束
-    val blurSize by animateDpAsState(
-        targetValue = if (isExpanded && motionBlur) {
-            with(TransitionConfig.transitionBackgroundStyle) {
-                blurRadius
-            }
-        } else 0.dp, label = ""
-        ,animationSpec = tween(AppAnimationManager.ANIMATION_SPEED + AppAnimationManager.ANIMATION_SPEED/2, easing = FastOutSlowInEasing),
-    )
-
-    // 👍 HIGH
-    return darkModifier
-        .blur(blurSize)
-        .scale(scale.value)
-}
-
-
 
 // 用于遮挡的blur
 @Composable

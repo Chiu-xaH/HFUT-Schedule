@@ -49,7 +49,8 @@ import com.hfut.schedule.ui.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -84,7 +85,7 @@ fun HolidayScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Holiday.route }
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
 //        route = route,

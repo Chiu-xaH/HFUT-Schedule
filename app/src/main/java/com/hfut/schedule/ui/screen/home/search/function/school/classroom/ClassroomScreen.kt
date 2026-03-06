@@ -135,7 +135,8 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.transition.component.containerShare
@@ -192,7 +193,7 @@ fun ClassroomScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
 
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
 

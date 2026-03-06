@@ -36,9 +36,9 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.util.webview.isThemeDark
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
+import com.xah.mirror.util.rememberShaderState
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -97,7 +97,7 @@ fun SimpleVideo(
         }
     }
 
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Box(
         modifier = modifier.clickable {
             showButton = !showButton
@@ -121,7 +121,7 @@ fun SimpleVideo(
                     }
                     isPlaying = mediaPlayer.isPlaying
                 },
-                surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
+//                surfaceColor = MaterialTheme.colorScheme.surface.copy(.45f),
                 backdrop = backdrop,
                 isCircle = true,
             ) {

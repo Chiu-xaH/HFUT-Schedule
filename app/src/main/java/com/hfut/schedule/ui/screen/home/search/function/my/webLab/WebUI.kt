@@ -243,7 +243,7 @@ fun WebNavigationScreen(
                 elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 onClick = { showBottomSheet_Add = true }
             ) {
-                Icon(painterResource(R.drawable.add_2),null)
+                Icon(painterResource(R.drawable.add),null)
             }
         }
     ) { innerPadding ->

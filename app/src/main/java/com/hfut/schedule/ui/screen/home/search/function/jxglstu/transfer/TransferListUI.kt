@@ -87,7 +87,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.ScrollText
@@ -115,7 +116,7 @@ fun TransferScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TransferMajor.route }
     val scope = rememberCoroutineScope()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val uiState by vm.transferListData.state.collectAsState()
     val refreshing = uiState is UiState.Loading
 
@@ -322,7 +323,7 @@ fun TransferDetailScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.TransferMajorDetail.withArgs(isHidden,batchId,title) }
     var showBottomSheet_apply by remember { mutableStateOf(false) }
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     if (showBottomSheet_apply) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },

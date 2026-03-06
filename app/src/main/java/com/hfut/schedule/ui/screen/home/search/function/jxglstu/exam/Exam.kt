@@ -47,7 +47,8 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -90,7 +91,7 @@ fun ExamScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Exam.withArgs(origin) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Scaffold (
 //        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

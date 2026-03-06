@@ -50,7 +50,6 @@ import com.hfut.schedule.ui.screen.supabase.focus.SupabaseStorageScreen
 import com.hfut.schedule.ui.screen.supabase.home.SupabaseHomeScreen
 import com.hfut.schedule.ui.screen.supabase.manage.SupabaseMeScreenRefresh
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.style.special.transitionBackground2
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -120,7 +119,7 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         }
 
         Scaffold(
-            modifier = Modifier.transitionBackground2(if(bottomBarItems == SupabaseScreen.STORAGE) isAddUIExpandedS else isAddUIExpanded ).nestedScroll(scrollBehavior.nestedScrollConnection),
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     MediumTopAppBar(

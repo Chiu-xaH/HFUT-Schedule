@@ -52,7 +52,8 @@ import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
@@ -70,7 +71,7 @@ fun ExamNotificationsScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.ExamNews.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     val campusList = remember { CampusRegion.entries }
     val titles = remember { campusList.map { it.description } }
     val pagerState = rememberPagerState(

@@ -53,7 +53,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.rememberShaderState
@@ -110,7 +110,7 @@ fun TeacherSearchScreen(
     val shaderState = rememberShaderState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     Scaffold (
 //        route = route,
 //        navHostController = navController,

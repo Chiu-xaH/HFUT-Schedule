@@ -86,8 +86,9 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.destination.WorkDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.xah.mirror.util.rememberShaderState
 
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -125,7 +126,7 @@ fun WorkScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Work.route }
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
     val types = remember { WorkSearchType.entries }
     val pagerState = rememberPagerState(pageCount = { types.size })

@@ -58,8 +58,8 @@ import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.destination.SurveyDestination
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.kyant.backdrop.Backdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.ShaderState
+import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -110,7 +110,7 @@ fun SurveyScreen(
     val route = remember { AppNavRoute.Survey.route }
     var refresh by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val pagerState = rememberPagerState(initialPage = if(ifSaved) PAGE_UNI_APP else PAGE_JXGLSTU) { 2 }
 
     Scaffold (
@@ -166,7 +166,7 @@ fun SurveyScreen(
 @Composable
 private fun SurveyAllButton(
     vm: NetWorkViewModel,
-    backDrop : Backdrop,
+    backDrop : ShaderState,
     refresh : suspend () -> Unit
 ) {
     val surveyListData by vm.surveyListData.state.collectAsState()

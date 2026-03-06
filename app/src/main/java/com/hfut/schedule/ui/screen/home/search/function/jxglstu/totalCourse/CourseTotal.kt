@@ -40,7 +40,8 @@ import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.destination.TermCoursesDestination
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -108,7 +109,7 @@ fun TotalCourseScreen(
                         onClick = {
                             sortType = !sortType
                         },
-                        backdrop = rememberLayerBackdrop(),
+                        backdrop = rememberShaderState(),
                         isCircle = false,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {

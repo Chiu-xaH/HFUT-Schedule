@@ -110,7 +110,8 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -167,7 +168,7 @@ fun SelectCourseScreen(
     val toRoute = remember {
         AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword)
     }
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
     Scaffold (
@@ -263,7 +264,7 @@ fun SelectCourseDetailScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.SelectCoursesDetail.withArgs(courseId,title) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     var input by rememberSaveable { mutableStateOf("") }
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie()

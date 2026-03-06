@@ -54,8 +54,9 @@ import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.destination.FailRateDestination
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.xah.mirror.util.rememberShaderState
 
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -116,7 +117,7 @@ fun FailRateScreen(
     }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Scaffold (
 //        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

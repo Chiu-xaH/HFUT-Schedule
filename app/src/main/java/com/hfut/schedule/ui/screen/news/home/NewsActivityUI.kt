@@ -86,7 +86,8 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -177,7 +178,7 @@ fun NewsScreen(
             }
         }
     }
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
 

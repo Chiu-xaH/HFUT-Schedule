@@ -3,6 +3,7 @@ package com.hfut.schedule.ui.destination
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.search.function.community.library.LibraryScreen
+import com.hfut.schedule.ui.screen.home.search.function.school.student.StuTodayCampusScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
@@ -15,6 +16,6 @@ object StuTodayCampusDestination : NavDestination() {
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        LibraryScreen(vm)
+        StuTodayCampusScreen(vm)
     }
 }

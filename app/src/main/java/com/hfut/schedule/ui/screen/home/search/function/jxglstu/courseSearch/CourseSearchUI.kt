@@ -66,7 +66,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -135,7 +136,7 @@ fun CourseSearchScreen(
     val listState = rememberLazyListState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Scaffold (
 //        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

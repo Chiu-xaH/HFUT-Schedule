@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.screen.grade.grade.jxglstu.getTotalScore
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.chart.BarChart
 import com.xah.uicommon.component.text.BottomTip
@@ -79,7 +79,7 @@ fun AverageGradeScreen(
     val route = remember { AppNavRoute.AverageGrade.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
 
     Scaffold (
 //        roundShape = MaterialTheme.shapes.large,

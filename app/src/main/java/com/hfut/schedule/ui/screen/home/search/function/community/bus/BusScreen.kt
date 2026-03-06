@@ -73,8 +73,9 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
+import com.xah.mirror.util.rememberShaderState
 
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
@@ -99,7 +100,7 @@ fun BusScreen(
     var startInput by remember { mutableStateOf("") }
     var endInput by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

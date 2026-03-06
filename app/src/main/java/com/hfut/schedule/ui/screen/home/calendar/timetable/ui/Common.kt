@@ -40,6 +40,7 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
 import com.xah.mirror.util.ShaderState
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
@@ -99,6 +100,7 @@ fun TimeTable(
             maxOf(parseTimeToFloat(it), defaultTime)
         } ?: defaultTime
     }
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     if(enableMergeSquare) {
         TimetableCommonSquare(
@@ -147,7 +149,7 @@ fun TimeTable(
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
-                                            enableLiquidGlass,
+                                            enableLiquidGlass && !isTransitioning,
                                         )
                                     } else {
                                         it
@@ -348,7 +350,7 @@ fun TimeTable(
                                             MaterialTheme.colorScheme.surface.copy(
                                                 customBackgroundAlpha
                                             ),
-                                            enableLiquidGlass,
+                                            enableLiquidGlass && !isTransitioning,
                                         )
                                     } else {
                                         it

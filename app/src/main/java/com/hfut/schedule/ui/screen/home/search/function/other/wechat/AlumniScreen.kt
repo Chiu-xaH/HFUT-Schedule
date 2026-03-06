@@ -48,7 +48,7 @@ import com.hfut.schedule.ui.screen.fix.about.createQRCodeBitmap
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen

@@ -50,7 +50,8 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -122,7 +123,7 @@ fun ProgramScreen(
     val competitionRoute = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val scope = rememberCoroutineScope()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

@@ -102,7 +102,8 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
@@ -163,7 +164,7 @@ fun LibraryScreen(
         }
     }
     var inputKeyword by remember { mutableStateOf("") }
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val scope = rememberCoroutineScope()
     var pageState = rememberPagerState { 2 }
     val titles = remember { listOf("智慧社区","斛兵知搜") }

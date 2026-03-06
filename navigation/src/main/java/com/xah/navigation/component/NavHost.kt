@@ -36,6 +36,7 @@ import com.xah.navigation.model.Dependencies
 import com.xah.navigation.shared.SharedNavHelper
 import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.navigation.utils.LocalNavController
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.navigation.utils.scaleMirror
 
 @Composable
@@ -71,6 +72,7 @@ private fun NavHost(
     }
 
     CompositionLocalProvider(
+        LocalNavControllerSafely provides navController,
         LocalNavController provides navController,
         LocalNavDependencies provides dependencies
     ) {

@@ -59,7 +59,8 @@ import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -91,7 +92,7 @@ fun ScanScreen(
             }
         }
     }
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
 
     Scaffold (
 //        route = route,

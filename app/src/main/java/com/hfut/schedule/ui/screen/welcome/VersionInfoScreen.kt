@@ -40,7 +40,8 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
@@ -82,7 +83,7 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
             }
         }
     }
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.VersionInfo.route }
     Scaffold (

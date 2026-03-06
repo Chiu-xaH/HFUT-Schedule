@@ -78,7 +78,8 @@ import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.destination.ClassmatesDestination
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -124,7 +125,7 @@ fun PersonScreen(
         }
     }
 
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     Scaffold (
 //        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

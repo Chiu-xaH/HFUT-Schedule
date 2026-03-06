@@ -69,7 +69,8 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.destination.FeeDestination
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.transition.state.LocalAnimatedContentScope
@@ -106,7 +107,7 @@ fun FeeScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.Fee.route }
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

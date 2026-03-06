@@ -65,7 +65,8 @@ import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.transition.component.TopBarNavigateIcon
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -86,7 +87,7 @@ fun ProgramSearchScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var input by remember { mutableStateOf("") }
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.AllPrograms.receiveRoute() }
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)

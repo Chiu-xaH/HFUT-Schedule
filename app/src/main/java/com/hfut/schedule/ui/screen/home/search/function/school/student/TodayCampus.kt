@@ -79,7 +79,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.ShaderState
@@ -123,7 +123,7 @@ fun StuTodayCampusScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.StuTodayCampus.route }
     val context = LocalContext.current
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf("") }
 

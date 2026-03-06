@@ -48,7 +48,7 @@ import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.screen.util.getLabel
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.kyant.backdrop.Backdrop
+import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.TransitionConfig
@@ -256,7 +256,7 @@ private fun FakeBackButton(
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun LiquidTopBarNavigateIcon(
-    backdrop: Backdrop,
+    backdrop: ShaderState,
 //    navController : NavHostController,
 //    route : String,
 //    icon :  Int,

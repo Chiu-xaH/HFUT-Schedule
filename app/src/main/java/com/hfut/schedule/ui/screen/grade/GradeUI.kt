@@ -70,7 +70,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.network.XwxViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -129,7 +129,7 @@ fun GradeScreen(
     var input by remember { mutableStateOf("") }
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
     var displayCompactly by rememberSaveable { mutableStateOf(false) }
 
     var isNavigationIconVisible by rememberSaveable { mutableStateOf(true) }

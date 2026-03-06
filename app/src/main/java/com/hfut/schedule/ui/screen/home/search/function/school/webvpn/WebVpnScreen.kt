@@ -70,8 +70,8 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -93,7 +93,7 @@ fun WebVpnScreen(
     val route = remember { AppNavRoute.WebVpn.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
 
 //    val providerState = rememberLiquidGlassProviderState(
         // if the providing content has any transparent area and there is a background behind the content, set the

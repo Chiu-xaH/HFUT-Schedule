@@ -73,7 +73,8 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.status.LoadingScreen
@@ -336,7 +337,7 @@ fun ProgramCompetitionDetailScreen(
     var input by remember { mutableStateOf("") }
     val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberLayerBackdrop()
+    val backDrop = rememberShaderState()
 
     Scaffold (
 //        roundShape = MaterialTheme.shapes.medium,

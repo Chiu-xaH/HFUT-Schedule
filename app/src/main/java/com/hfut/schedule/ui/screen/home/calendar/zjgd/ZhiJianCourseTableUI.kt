@@ -93,6 +93,7 @@ import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
@@ -231,6 +232,7 @@ fun ZhiJianCourseTableUI(
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -520,7 +522,7 @@ fun ZhiJianCourseTableUI(
                                                     it.calendarSquareGlass(
                                                         backGroundHaze,
                                                         squareColor,
-                                                        enableLiquidGlass,
+                                                        enableLiquidGlass && !isTransitioning,
                                                     )
                                                 } else {
                                                     it

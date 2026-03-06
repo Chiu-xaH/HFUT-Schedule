@@ -49,7 +49,8 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getF
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
@@ -204,7 +205,7 @@ fun TimeTableScreen(
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val route = remember { AppNavRoute.WorkAndRest.withArgs(friendId) }
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

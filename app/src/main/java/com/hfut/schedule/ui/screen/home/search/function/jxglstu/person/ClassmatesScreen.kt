@@ -47,8 +47,8 @@ import com.xah.uicommon.style.color.topBarTransplantColor
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.style.special.backDropSource
-import com.kyant.backdrop.backdrops.layerBackdrop
-import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
 import com.xah.transition.state.LocalAnimatedContentScope
 import com.xah.transition.state.LocalSharedTransitionScope
 import dev.chrisbanes.haze.hazeSource
@@ -65,7 +65,7 @@ fun ClassmatesScreen(
     val route = remember { AppNavRoute.Classmates.route }
     var nameSort by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberLayerBackdrop()
+    val backdrop = rememberShaderState()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

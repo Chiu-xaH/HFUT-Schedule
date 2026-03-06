@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.kyant.backdrop.Backdrop
+import com.xah.mirror.util.ShaderState
 import com.xah.transition.component.containerShare
 import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -32,7 +32,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 @Composable
 fun StartAppIconButton(
-    backdrop: Backdrop,
+    backdrop: ShaderState,
     app : Starter.AppPackages,
     modifier: Modifier = Modifier
 ) {
@@ -42,7 +42,7 @@ fun StartAppIconButton(
         backdrop = backdrop,
         onClick = { Starter.startAppLaunch(app,context) },
         modifier = modifier,
-        innerPadding = 6.5.dp
+//        innerPadding = 6.5.dp
     ) {
         Image(
             painterResource(app.icon),

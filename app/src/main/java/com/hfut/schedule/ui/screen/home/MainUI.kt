@@ -165,6 +165,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.notification.calculat
 import com.hfut.schedule.ui.screen.supabase.login.ApiToSupabase
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
@@ -815,7 +816,7 @@ fun MainScreen(
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
-                                .shaderSource(backGroundSource)
+                                .backDropSource(backGroundSource)
                                 .fillMaxSize()
                         )
                     }
