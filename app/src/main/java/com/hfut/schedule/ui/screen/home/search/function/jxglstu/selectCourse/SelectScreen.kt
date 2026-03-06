@@ -305,6 +305,7 @@ fun SelectCourseDetailScreen(
                             ) {
                                 Icon(painterResource(R.drawable.rotate_right), null)
                             }
+                            Spacer(Modifier.width(BUTTON_PADDING))
                             LiquidButton(
                                 onClick = {
                                     navController.push(
