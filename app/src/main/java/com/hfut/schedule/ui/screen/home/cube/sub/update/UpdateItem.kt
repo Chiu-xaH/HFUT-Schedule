@@ -58,10 +58,7 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
 
-            UpdateItems("新增 平均成绩的计算","位于 查询中心-成绩")//
-            UpdateItems("优化 转专业功能的部分交互与显示")//
-            UpdateItems("优化 部分界面的显示")//
-//            UpdateItems("新增 培养方案完成情况统计")
+        //            UpdateItems("新增 培养方案完成情况统计")
 
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
