@@ -1,9 +1,6 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.admission
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,47 +32,39 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.enumeration.AdmissionType
 import com.hfut.schedule.logic.model.AdmissionDetailBean
 import com.hfut.schedule.logic.model.AdmissionMapBean
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.SmallCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
+import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerText
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.destination.AdmissionDetailDestination
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
+import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
@@ -84,18 +73,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun AdmissionScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val route = remember { AppNavRoute.Admission.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column {
                 MediumTopAppBar(
@@ -119,7 +104,6 @@ fun AdmissionScreen(
 fun AdmissionListUI(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
-//    navController: NavHostController,
 ) {
     val navController = LocalNavController.current
     val pageList = remember { AdmissionType.entries }
@@ -155,27 +139,28 @@ fun AdmissionListUI(
                     ) {
                         items(list.size) { index ->
                             val item = list[index]
-                            val route = AppNavRoute.AdmissionDetail.withArgs(index, pageList[page].description)
+                            val dest = AdmissionDetailDestination(
+                                index,
+                                pageList[page].description
+                            )
                             SmallCard (
+                                shape = RectangleShape,
                                 color = cardNormalColor(),
-                                modifier = Modifier.padding(CARD_NORMAL_DP)
+                                modifier = Modifier
+                                    .padding(CARD_NORMAL_DP)
+                                    .sharedContainer(
+                                        dest.key,
+                                        MaterialTheme.shapes.small
+                                    )
                                     .clickableWithScale(ClickScale.SMALL.scale) {
-                                        navController.push(
-                                            AdmissionDetailDestination(
-                                                index,
-                                                pageList[page].description
-                                            )
-                                        )
+                                        navController.push(dest)
                                     }
-                                    .containerShare(route,)
                             ) {
                                 TransplantListItem(
                                     headlineContent = { Text(item.key) },
-//                                    modifier = Modifier
                                 )
                             }
                         }
-//                        items(3) { Spacer(Modifier.height(innerPadding.calculateBottomPadding())) }
                     }
                 }
             }
@@ -191,10 +176,8 @@ fun AdmissionRegionScreen(
     type : String,
     index: Int
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.AdmissionDetail.withArgs(index,type) }
 
     val listState by vm.admissionListResp.state.collectAsState()
     val data = (listState as? UiState.Success)?.data?.second?.entries?.toList()[index] ?: return

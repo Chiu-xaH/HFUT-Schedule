@@ -13,7 +13,7 @@ data class GradeDetailDestination(
     val allAvgGpa : Float,
     val allTotalCredits : Float
 ) : NavDestination() {
-    override val key = "grade_detail"
+    override val key = "grade_detail_${bean.hashCode()}"
     override val title = res(R.string.navigation_label_grade_detail)
 
     @Composable

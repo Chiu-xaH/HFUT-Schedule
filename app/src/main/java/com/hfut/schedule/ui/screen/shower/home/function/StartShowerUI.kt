@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.xah.uicommon.component.text.BottomTip
@@ -243,13 +244,13 @@ fun StartShowerUI(vm: GuaGuaViewModel, hazeState: HazeState) {
     }
 
     if (showBottomSheet) {
-
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+            showBottomSheet = showBottomSheet,
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

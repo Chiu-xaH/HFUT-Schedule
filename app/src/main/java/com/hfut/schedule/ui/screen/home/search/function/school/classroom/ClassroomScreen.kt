@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
@@ -67,7 +68,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -87,7 +87,6 @@ import com.hfut.schedule.logic.util.parse.SemesterParser
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
-import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.HazeBottomBar
@@ -104,7 +103,6 @@ import com.hfut.schedule.ui.component.dialog.DateRangePickerModal
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
@@ -115,7 +113,6 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
 import com.hfut.schedule.ui.screen.home.calendar.common.ScheduleTopDate
 import com.hfut.schedule.ui.screen.home.calendar.common.TimeTableWeekSwap
-import com.hfut.schedule.ui.screen.home.calendar.jxglstu.distinctUnit
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.distinctForUniApp
@@ -123,23 +120,17 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseJxglstuInt
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTable
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTableDetail
 import com.hfut.schedule.ui.screen.home.calendar.timetable.ui.TimeTablePreview
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.safelySetDate
 import com.hfut.schedule.ui.screen.home.smoothToOne
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.TopBarNavigateIcon
-import com.xah.transition.component.containerShare
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -541,20 +532,22 @@ private fun EmptyClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size,key = { it }) { index ->
                         val item = list[index]
-                        val route = AppNavRoute.ClassroomCourseTable.withArgs(item.id,item.nameZh)
+                        val dest = ClassroomCourseTableDestination(
+                            item.id,
+                            item.nameZh
+                        )
                         val activities = item.roomOccupationInfoVms ?: emptyList()
                         val isAllDayFree = activities.isEmpty()
                         val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
+//                            shape = RectangleShape,
                             color = cardNormalColor(),
-                            modifier = Modifier.containerShare(route).clickable {
-                                navTopController.push(
-                                    ClassroomCourseTableDestination(
-                                        item.id,
-                                        item.nameZh
-                                    )
-                                )
-                            }
+                            modifier = Modifier
+                                .clickable { navTopController.push(dest) }
+//                                .sharedContainer(
+//                                    dest.key,
+//                                    MaterialTheme.shapes.medium
+//                                )
                         ) {
                             TransplantListItem(
                                 headlineContent = { Text(item.nameZh) },
@@ -759,8 +752,12 @@ private fun SearchClassroomScreen(
                     item { InnerPaddingHeight(innerPadding,true) }
                     items(list.size, key = { list[it].id }) { index ->
                         val item = list[index]
-                        val route = AppNavRoute.ClassroomCourseTable.withArgs(item.id,item.nameZh)
+                        val dest = ClassroomCourseTableDestination(
+                            item.id,
+                            item.nameZh
+                        )
                         CardListItem(
+                            shape = RectangleShape,
                             leadingContent = {
                                 Icon(painterResource(R.drawable.meeting_room),null)
                             },
@@ -768,28 +765,17 @@ private fun SearchClassroomScreen(
                             overlineContent = { Text("${item.building.campus.nameZh} ${item.building.nameZh}")},
                             supportingContent = { Text("${item.floor}F | ${item.roomType.nameZh} | ${item.seatsForLesson}人") },
                             color = cardNormalColor(),
-                            cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+                            cardModifier = Modifier.sharedContainer(
+                                dest.key,
+                                MaterialTheme.shapes.medium
+                            ),
                             modifier = Modifier.clickable {
-                                navTopController.push(
-                                    ClassroomCourseTableDestination(
-                                        item.id,
-                                        item.nameZh
-                                    )
-                                )
+                                navTopController.push(dest)
                             }
                         )
                     }
-//                    item { PaddingForPageControllerButton() }
                     item { InnerPaddingHeight(innerPadding,false) }
                 }
-//                PageController(
-//                    listState,
-//                    page,
-//                    nextPage = { page = it },
-//                    previousPage = { page = it },
-//                    paddingBottom = false,
-//                    modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()),
-//                )
             }
         }
     }

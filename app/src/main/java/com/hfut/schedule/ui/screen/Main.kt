@@ -68,6 +68,7 @@ import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.container.utils.LocalSharedRegistry
 import com.xah.mirror.shader.scaleMirror
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.component.DefaultBackHandler
@@ -288,11 +289,11 @@ fun MainHost(
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {
-            ControlCenterScreen(navController) {
-                scope.launch {
-                    drawerState.animationClose()
-                }
-            }
+//            ControlCenterScreen(navController) {
+//                scope.launch {
+//                    drawerState.animationClose()
+//                }
+//            }
         },
     ) {
         CompositionLocalProvider(
@@ -345,11 +346,28 @@ fun MainHost(
                         }
                 ) {
                     val navController = LocalNavController.current
+                    val registry = LocalSharedRegistry.current
                     val transitionLevels = remember { EffectLevel.entries }
                     val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
+                    val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
+                    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+                    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
                     LaunchedEffect(transition) {
                         navController.transitionLevel = transitionLevels.find { it.levelNum == transition } ?: EffectLevel.NO_BLUR
+                    }
+
+                    LaunchedEffect(useDoubleExtension) {
+                        registry.extensionDouble = useDoubleExtension
+                    }
+
+                    LaunchedEffect(enableLiquidGlass) {
+                        navController.enableShader = enableLiquidGlass
+                        registry.enableShader = enableLiquidGlass
+                    }
+
+                    LaunchedEffect(motionBlur) {
+                        navController.enableBlur = motionBlur
                     }
 
                     DefaultBackHandler()

@@ -33,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -74,7 +75,6 @@ import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.destination.AddEventDestination
 import com.hfut.schedule.ui.destination.CourseDetailDestination
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -83,8 +83,8 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.ColumnVertical
@@ -449,7 +449,6 @@ fun CustomItemUI(
     activity: Activity,
     hazeState: HazeState,
     isOutOfDate : Boolean = false,
-//    navController: NavHostController,
     isTomorrow : Boolean,refresh: () -> Unit
 ) {
     val navController = LocalNavController.current
@@ -478,11 +477,15 @@ fun CustomItemUI(
             hazeState = hazeState
         )
 
-    val route = remember { AppNavRoute.AddEvent.withArgs(item.id) }
+    val dest = AddEventDestination(
+        item.id,
+        AddEventOrigin.FOCUS_EDITED.name
+    )
 
     CardListItem(
         color = cardNormalColor(),
-        cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+        shape = RectangleShape,
+        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
@@ -544,17 +547,11 @@ fun CustomItemUI(
                 if(isTomorrow) {
                     Text("明日")
                 }
-//                Text(if(isOutOfDate) "过期" else if(item.supabaseId == null)"本地" else "导入")
             }
         },
         modifier = Modifier.combinedClickable(
             onClick = {
-                navController.push(
-                    AddEventDestination(
-                        item.id,
-                        AddEventOrigin.FOCUS_EDITED.name
-                    )
-                )
+                navController.push(dest)
             },
             onDoubleClick = {
                 showToast("长按删除，单击编辑")
@@ -673,7 +670,6 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
         if (showBottomSheet ) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
-//                expandFully = false,
                 showBottomSheet = showBottomSheet,
                 hazeState = hazeState
             ) {
@@ -763,7 +759,6 @@ fun JxglstuTodayCourseItem(
     item : JxglstuCourseSchedule,
     switchShowEnded: Boolean,
     timeNow : String,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val time = item.time
@@ -771,14 +766,17 @@ fun JxglstuTodayCourseItem(
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
     val name = item.courseName
-    val route = AppNavRoute.CourseDetail.withArgs(name,CourseDetailOrigin.FOCUS_TODAY.t + "$index")
+    val dest = CourseDetailDestination(
+        name,
+        CourseDetailOrigin.FOCUS_TODAY.t + "$index"
+    )
 
     val itemUI = @Composable {
         CardListItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { item.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
-            cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+            cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -799,14 +797,8 @@ fun JxglstuTodayCourseItem(
                 }
 
             },
-            modifier = Modifier.clickable {
-                navController.push(
-                    CourseDetailDestination(
-                        name,
-                        CourseDetailOrigin.FOCUS_TODAY.t + "$index"
-                    )
-                )
-            },
+            modifier = Modifier.clickable { navController.push(dest) },
+            shape = RectangleShape,
             color = cardNormalColor(),
             trailingContent = {
                 Text(
@@ -834,29 +826,24 @@ fun JxglstuTodayCourseItem(
 fun JxglstuTomorrowCourseItem(
     index : Int,
     item : JxglstuCourseSchedule,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val name = item.courseName
-    val route = AppNavRoute.CourseDetail.withArgs(name,CourseDetailOrigin.FOCUS_TOMORROW.t + "$index")
-
+    val dest = CourseDetailDestination(
+        name,
+        CourseDetailOrigin.FOCUS_TOMORROW.t + "$index"
+    )
     CardListItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { item.place?.let { Text(text = it) } },
-        cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
-        modifier = Modifier.clickable {
-            navController.push(
-                CourseDetailDestination(
-                    name,
-                    CourseDetailOrigin.FOCUS_TOMORROW.t + "$index"
-                )
-            )
-        },
+        modifier = Modifier.clickable { navController.push(dest) },
+        shape = RectangleShape,
         color = cardNormalColor(),
         trailingContent = { Text(text = "明日")}
     )

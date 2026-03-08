@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -32,6 +34,7 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -40,8 +43,8 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
+import com.xah.container.container.SharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
@@ -73,12 +76,26 @@ fun Washing(
             Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
         },
         trailingContent = {
-                FilledTonalIconButton(
-                    modifier = Modifier.size(30.dp).containerShare(route),
-                    onClick = {
-                        navController.push(HaiLeWashingDestination)
-                    },
-                ) { Icon( painterResource(R.drawable.search), contentDescription = null, modifier = Modifier.size(20.dp)) }
+            SharedContainer(
+                key = HaiLeWashingDestination.key,
+                shape = CircleShape
+            ) {
+                NoPadding {
+                    FilledTonalIconButton(
+                        shape = RectangleShape,
+                        modifier = Modifier.size(30.dp),
+                        onClick = {
+                            navController.push(HaiLeWashingDestination)
+                        },
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.search),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
         },
         modifier = Modifier.clickable {
             showBottomSheet = true

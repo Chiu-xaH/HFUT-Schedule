@@ -33,7 +33,7 @@
     <string name="appearance_settings_camera_render_real_time_description">将摄像头的画面实时渲染在UI图层上，以实现支持组件化的模糊效果，开启后将带来一些渲染压力</string>
     <string name="appearance_settings_dynamic_effect_half_title">动效</string>
     <string name="appearance_settings_transition_level_title">转场动画等级 | Level%1$s (%2$s)</string>
-    <string name="appearance_settings_transition_level_description">界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level3</string>
+    <string name="appearance_settings_transition_level_description">界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level2</string>
     <string name="appearance_settings_transition_bottom_bar_title">底栏转场动画</string>
     <string name="appearance_settings_transition_bottom_bar_description">底栏切换时进行转场的动画\n平衡性能与美观,推荐为向中心运动或淡入淡出</string>
     <string name="appearance_settings_calendar_half_title">课程表</string>

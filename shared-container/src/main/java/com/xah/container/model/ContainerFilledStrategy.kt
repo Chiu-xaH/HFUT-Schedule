@@ -19,9 +19,9 @@ sealed interface ContainerFilledStrategy {
      */
     data object Clip : ContainerFilledStrategy
 
-    fun getFinalStrategy() : ContainerFilledStrategy = when(this) {
+    fun getFinalStrategy(enableShader : Boolean) : ContainerFilledStrategy = when(this) {
         is Pixel -> {
-            if(CAN_USE_SHADER) {
+            if(enableShader && CAN_USE_SHADER) {
                 this
             } else {
                 this.spareStrategy

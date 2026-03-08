@@ -15,7 +15,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.SelectCoursesDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -30,7 +30,7 @@ fun SelectCourse(
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.SelectCourses.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.SelectCourses.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.SelectCourses.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             if(!ifSaved) navController.push(SelectCoursesDestination)

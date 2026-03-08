@@ -50,6 +50,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -62,6 +63,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.destination.HomeDestination
@@ -74,7 +76,7 @@ import com.xah.container.container.SharedContainer
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.color.ShimmerAngle
@@ -115,16 +117,14 @@ fun UpdateSuccessScreen() {
                 },
                 actions = {
                     val targetRoute = remember { AppNavRoute.VersionInfo.route }
-                    CompositionLocalProvider(
-                        LocalMinimumInteractiveComponentSize provides 0.dp
-                    ) {
+                    NoPadding {
                         SharedContainer(
                             modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
                             key = VersionInfoDestination.key,
-                            corner = CircleShape
+                            shape = CircleShape
                         ) {
                             FilledTonalIconButton (
-                                shape = RoundedCornerShape(0.dp),
+                                shape = RectangleShape,
                                 onClick = {
                                     navController.push(VersionInfoDestination)
 //                                    navController.push(VersionInfoDestination)
@@ -134,7 +134,6 @@ fun UpdateSuccessScreen() {
                                     painterResource(AppNavRoute.VersionInfo.icon),
                                     null,
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.iconElementShare(targetRoute)
                                 )
                             }
                         }
@@ -143,9 +142,7 @@ fun UpdateSuccessScreen() {
             )
         },
         bottomBar = {
-            CompositionLocalProvider(
-                LocalMinimumInteractiveComponentSize provides 0.dp
-            ) {
+            NoPadding {
                 Button(
                     onClick = {
                         scope.launch {
@@ -165,7 +162,7 @@ fun UpdateSuccessScreen() {
 //                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                         }
                     },
-                    shape = RoundedCornerShape(0.dp),
+//                    shape = RectangleShape,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(APP_HORIZONTAL_DP)

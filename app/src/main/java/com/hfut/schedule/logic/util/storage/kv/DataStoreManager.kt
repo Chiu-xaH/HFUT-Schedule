@@ -23,14 +23,12 @@ import com.hfut.schedule.ui.screen.home.cube.sub.getJxglstuDefaultPassword
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
-import com.xah.uicommon.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.navigation.anim.EffectLevel
-import com.xah.transition.style.TransitionLevel
 import com.xah.uicommon.util.language.BaseChoice
+import com.xah.uicommon.util.language.UiText
+import com.xah.uicommon.util.language.res
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -128,6 +126,7 @@ object DataStoreManager : IDataStore {
     private val USE_HEFEI_ELECTRIC = booleanPreferencesKey("use_hefei_electric")
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
+    private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
     private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
     private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
     private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
@@ -202,6 +201,7 @@ object DataStoreManager : IDataStore {
         }
     }
     suspend fun saveMergeSquare(value: Boolean) = saveValue(MERGE_SQUARE,value)
+    suspend fun saveUseDoubleExtension(value: Boolean) = saveValue(USE_DOUBLE_EXTENSION,value)
     suspend fun saveXwxPassword(value: String) = saveValue(XWX_PASSWORD,value)
     suspend fun saveJxglstuPassword(value: String) = saveValue(JXGLSTU_PASSWORD,value)
     suspend fun saveTermStartDate(value: String)  {
@@ -244,6 +244,7 @@ object DataStoreManager : IDataStore {
     val maxFlow = getFlow(MAX_FLOW, MyApplication.Companion.DEFAULT_MAX_FREE_FLOW)
     val showBottomBarLabel = getFlow(SHOW_BOTTOM_BAR_LABEL,true)
     val enableCameraDynamicRecord = getFlow(CAMERA_DYNAMIC_RECORD,false)
+    val useDoubleExtension = getFlow(USE_DOUBLE_EXTENSION,true)
     val enableCalendarShowTeacher = getFlow(CALENDAR_SHOW_TEACHER,ShowTeacherConfig.ONLY_MULTI.code)
     val enableLiquidGlass = getFlow(LIQUID_GLASS, AppVersion.CAN_SHADER)
     val hefeiElectricFee = getFlow(HEFEI_ELECTRIC_FEE,"0.0")

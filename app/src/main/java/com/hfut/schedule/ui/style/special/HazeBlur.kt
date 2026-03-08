@@ -57,7 +57,6 @@ import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.TransitionLevel
 import dev.chrisbanes.haze.HazeEffectScope
 import dev.chrisbanes.haze.HazeProgressive
 import dev.chrisbanes.haze.HazeState

@@ -64,8 +64,9 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.screen.SharedAppearanceSettingsScreen
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.layout.measureDpSize
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.ui.util.webview.isThemeDark
+import com.xah.navigation.controller.NavigationController
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.util.currentRouteWithArgWithoutValues
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -129,32 +130,18 @@ private const val TAB_SEARCH = 2
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun ControlCenterScreen(
-    navController: NavHostController,
+    navController: NavigationController,
     onExit : () -> Unit
 ) {
+    /**
     val globalColor = MaterialTheme.colorScheme.surface.copy(1- MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
     val state = rememberScrollState()
     // 项目到达底部
-//    val isAtStart by remember { derivedStateOf { state.value == 0 } }
-//    val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
-//    val hazeState = rememberHazeState(blurEnabled = blur && !isAtStart)
-//    val queue = GlobalUIStateHolder.routeQueue
-//    val currentStack by navController.currentBackStack.collectAsState()
-//    val stack = currentStack.reversed()
     val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
-//    var input by remember { mutableStateOf("") }
     var tab by remember { mutableIntStateOf(TAB_STACK) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val contentColor = MaterialTheme.colorScheme.onSurface
-//        Color.White
-
-
-//        if(isThemeDark()) {
-//        Color.White
-//    } else {
-//        Color.Black
-//    }
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -282,13 +269,10 @@ fun ControlCenterScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-//                .hazeSource(hazeState)
-//                .shaderSource(shaderState)
                 .padding(innerPadding)
                 .verticalScroll(state)
                 .fillMaxSize()
         ) {
-//            InnerPaddingHeight(innerPadding,true)
             Box() {
                 androidx.compose.animation.AnimatedVisibility(
                     visible = tab == TAB_SEARCH,
@@ -355,6 +339,7 @@ fun ControlCenterScreen(
 //            InnerPaddingHeight(innerPadding,false)
         }
     }
+    */
 }
 
 @Composable
@@ -364,6 +349,7 @@ fun RecentlyStackUI(
     globalColor : Color,
     onExit : () -> Unit
 ) {
+    /**
     val scope = rememberCoroutineScope()
     val queue = GlobalUIStateHolder.routeQueue
     val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
@@ -448,4 +434,5 @@ fun RecentlyStackUI(
             }
         }
     }
+    */
 }

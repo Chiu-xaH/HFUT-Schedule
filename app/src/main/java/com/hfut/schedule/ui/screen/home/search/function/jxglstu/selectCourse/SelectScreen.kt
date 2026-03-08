@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -60,6 +61,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -110,10 +112,10 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.SharedContainer
+import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.align.ColumnVertical
@@ -210,7 +212,6 @@ fun SelectCourseScreen(
                                     )
                                 }
                             },
-                            modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(url)),
                             backdrop = backDrop
                         ) {
                             Text(text = "冲突预览")
@@ -294,6 +295,10 @@ fun SelectCourseDetailScreen(
                         )
                     },
                     actions = {
+                        val dest = DropCoursesDestination(
+                            courseId,
+                            title
+                        )
                         Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
                             LiquidButton(
                                 onClick = {
@@ -306,19 +311,19 @@ fun SelectCourseDetailScreen(
                                 Icon(painterResource(R.drawable.rotate_right), null)
                             }
                             Spacer(Modifier.width(BUTTON_PADDING))
-                            LiquidButton(
-                                onClick = {
-                                    navController.push(
-                                        DropCoursesDestination(
-                                            courseId,
-                                            title
-                                        )
-                                    )
-                                },
-                                modifier = Modifier.containerShare(AppNavRoute.DropCourses.route),
-                                backdrop = backDrop
+                            SharedContainer(
+                                key = dest.key,
+                                shape = CircleShape
                             ) {
-                                Text(text = "退课", maxLines = 1)
+                                LiquidButton(
+                                    shape = RectangleShape,
+                                    onClick = {
+                                        navController.push(dest)
+                                    },
+                                    backdrop = backDrop
+                                ) {
+                                    Text(text = "退课", maxLines = 1)
+                                }
                             }
                         }
                     }
@@ -484,10 +489,12 @@ private fun SelectCourseList(
                 val data = list[item]
                 var expand by remember { mutableStateOf(false) }
                 with(data) {
-                    val route = AppNavRoute.SelectCoursesDetail.withArgs(id,name)
+                    val dest = SelectCoursesDetailDestination(
+                        id,
+                        name
+                    )
                     CustomCard (
                         modifier = Modifier
-                            .containerShare( route)
                             .clickable {
                                 navController.push(
                                     SelectCoursesDetailDestination(
@@ -495,7 +502,12 @@ private fun SelectCourseList(
                                         name
                                     )
                                 )
-                            },
+                            }
+                            .sharedContainer(
+                                dest,
+                                MaterialTheme.shapes.medium
+                            ),
+                        shape = RectangleShape,
                         color = cardNormalColor()
                     ) {
                         TransplantListItem(

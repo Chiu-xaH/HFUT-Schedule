@@ -67,12 +67,12 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
@@ -251,7 +251,6 @@ fun GradeScreen(
                 val route = AppNavRoute.AverageGrade.route
                 Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
                     LargeButton(
-                        iconModifier = Modifier.iconElementShare(route),
                         onClick = {
                             navTopController.push(
                                 AverageGradeDestination(

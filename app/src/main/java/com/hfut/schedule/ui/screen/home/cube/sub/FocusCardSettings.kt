@@ -87,11 +87,11 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
@@ -232,10 +232,11 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
 
 
     if(showBottomSheet && showShortCut) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -273,14 +274,14 @@ fun FocusCard(
     val showWeb = prefs.getBoolean("SWITCHWEB",true)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
-    val route = remember { AppNavRoute.Life.withArgs(true) }
+    val dest = LifeDestination(true)
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = cardNormalColor(),
             modifier = if(showWeather) {
-                Modifier.containerShare(
-                    route = route,
-                    roundShape = MaterialTheme.shapes.medium,
+                Modifier.sharedContainer(
+                    key = dest.key,
+                    MaterialTheme.shapes.medium
                 )
             } else Modifier,
         ) {
@@ -329,7 +330,7 @@ fun FocusCard(
                                     overlineContent = { Text(typeName)},
                                     leadingContent = { Icon(painterResource(R.drawable.warning),null)},
                                     modifier = Modifier.clickable {
-                                        navController.push(LifeDestination(true))
+                                        navController.push(dest)
                                     },
                                 )
                             }

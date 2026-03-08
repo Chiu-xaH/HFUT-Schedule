@@ -89,7 +89,6 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -109,11 +108,9 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.anim.EffectLevel
-import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
@@ -205,17 +202,15 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-        val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
+        val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
+        val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
 
-        LaunchedEffect(enableLiquidGlass) {
-            TransitionConfig.enableMirror = enableLiquidGlass
-        }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
 
@@ -612,6 +607,21 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                     steps = transitionLevels.size-2,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "容器填充方案") },
+                    supportingContent = {
+                        Text("动画过程中运动方向")
+                    },
+                    trailingContent = {
+                        Switch(checked = useDoubleExtension, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
+                            }
+                        })
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(

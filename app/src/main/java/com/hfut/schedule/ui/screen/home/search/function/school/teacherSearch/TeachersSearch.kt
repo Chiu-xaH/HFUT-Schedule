@@ -51,7 +51,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 import com.xah.mirror.shader.GlassStyle
@@ -59,7 +59,7 @@ import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -76,7 +76,7 @@ fun TeacherSearch() {
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.TeacherSearch.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TeacherSearch.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.TeacherSearch.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(TeacherSearchDestination)

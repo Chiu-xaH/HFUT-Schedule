@@ -48,11 +48,11 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -178,7 +178,7 @@ fun WorkAndRest() {
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WorkAndRest.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(WorkAndRestDestination(null))

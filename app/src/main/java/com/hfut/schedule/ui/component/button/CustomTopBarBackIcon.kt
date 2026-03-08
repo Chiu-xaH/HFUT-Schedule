@@ -46,13 +46,11 @@ import com.hfut.schedule.ui.component.text.DIVIDER_TEXT_VERTICAL_PADDING
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.animationOpen
 import com.hfut.schedule.ui.screen.util.getLabel
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.state.LocalAppNavController
 import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.currentRouteWithArgWithoutValues
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -66,7 +64,7 @@ import kotlinx.coroutines.launch
 fun TopBarNavigationIcon(
     route : String,
     icon :  Int,
-    restoreIcon : Boolean = TransitionConfig.transitionBackgroundStyle.level == TransitionLevel.NONE_ALL
+    restoreIcon : Boolean = false
 ) {
 //    val sharedTransitionScope = LocalSharedTransitionScope.current
 //    var displayRouteIcon by remember { mutableStateOf(true) }
@@ -127,10 +125,8 @@ private fun FakeBackButton(
     val queue = GlobalUIStateHolder.routeQueue
     var displayDialog by remember { mutableStateOf(false) }
 
+    /**
     if(displayDialog) {
-        val navController = LocalAppNavController.current
-        val currentRoute = navController.currentRouteWithArgWithoutValues()?.substringBefore("?")
-
         Dialog(
             onDismissRequest = { displayDialog = false }
         ) {
@@ -184,7 +180,7 @@ private fun FakeBackButton(
                                             displayDialog = false
                                         } else {
                                             scope.launch {
-                                                navController.navigateForTransition(item.app,item.route)
+                                                navController.push(item)
                                                 displayDialog = false
                                             }
                                         }
@@ -223,6 +219,7 @@ private fun FakeBackButton(
             }
         }
     }
+    */
 
     Box(
         modifier = Modifier

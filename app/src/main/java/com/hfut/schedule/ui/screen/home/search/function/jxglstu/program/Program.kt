@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -38,6 +40,7 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.button.LargeButton
 import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
@@ -50,11 +53,10 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.SharedContainer
+import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -68,24 +70,31 @@ fun Program(
     ifSaved : Boolean,
 ) {
     val navController = LocalNavController.current
-    val iconRoute = remember { AppNavRoute.AllPrograms.receiveRoute() }
-    val route = remember { AppNavRoute.Program.receiveRoute() }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val dest = AllProgramsDestination(ifSaved)
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Program.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.Program.icon), contentDescription = null)
         },
         trailingContent = {
-            FilledTonalIconButton(
-                onClick = {
-                    navController.push(AllProgramsDestination(ifSaved))
-                },
-                modifier = Modifier.size(30.dp).containerShare(iconRoute)
+            SharedContainer(
+                key = dest.key,
+                shape = CircleShape
             ) {
-                Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
+                NoPadding {
+                    FilledTonalIconButton(
+                        shape = RectangleShape,
+                        onClick = {
+                            navController.push(dest)
+                        },
+                        modifier = Modifier.size(30.dp)
+                    ) {
+                        Icon(painterResource(R.drawable.search),null, modifier = Modifier.size(20.dp))
+                    }
+                }
             }
         },
         modifier = Modifier.clickable {
@@ -131,35 +140,36 @@ fun ProgramScreen(
 //        route = route,
 //        navHostController = navController,
         bottomBar = {
+            val dest = ProgramCompetitionDestination(ifSaved)
             AnimatedVisibility(
                 visible = pageState.currentPage == PAGE_COMPETITION,
                 exit = AppAnimationManager.toBottomAnimation.exit,
                 enter = AppAnimationManager.toBottomAnimation.enter
             ) {
                 Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
-                    LargeButton(
-                        iconModifier = Modifier.iconElementShare( route = competitionRoute),
-                        onClick = {
-                            scope.launch {
-                                val json = LargeStringDataManager.read( LargeStringDataManager.PROGRAM_PERFORMANCE)
-                                if(json?.contains("children") == true || !ifSaved) navController.push(ProgramCompetitionDestination(ifSaved))
-                                else refreshLogin(context)
-                            }
-                        },
-                        icon = AppNavRoute.ProgramCompetition.icon,
-                        text = stringResource(AppNavRoute.ProgramCompetition.label),
-                        shape = MaterialTheme.shapes.large,
-                        modifier =
-                            Modifier
+                    NoPadding {
+                        LargeButton(
+                            modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(APP_HORIZONTAL_DP)
-                                .containerShare(
-                                    competitionRoute,
-                                    roundShape = MaterialTheme.shapes.large,
+                                .sharedContainer(
+                                    dest.key,
+                                    MaterialTheme.shapes.large
                                 ),
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(.75f),
-                        contentColor = MaterialTheme.colorScheme.secondary
-                    )
+                            onClick = {
+                                scope.launch {
+                                    val json = LargeStringDataManager.read(LargeStringDataManager.PROGRAM_PERFORMANCE)
+                                    if(json?.contains("children") == true || !ifSaved) navController.push(dest)
+                                    else refreshLogin(context)
+                                }
+                            },
+                            icon = AppNavRoute.ProgramCompetition.icon,
+                            text = stringResource(AppNavRoute.ProgramCompetition.label),
+                            shape = RectangleShape,
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.secondary
+                        )
+                    }
                 }
             }
         },
@@ -175,16 +185,21 @@ fun ProgramScreen(
                         TopBarNavigationIcon(route, AppNavRoute.Program.icon)
                     },
                     actions = {
-                        LiquidButton (
-                            onClick = {
-                                navController.push(AllProgramsDestination(ifSaved))
-                            },
-                            backdrop = backDrop,
-                            modifier = Modifier
-                                .padding(horizontal = APP_HORIZONTAL_DP)
-                                .containerShare(AppNavRoute.AllPrograms.receiveRoute(), MaterialTheme.shapes.large)
+                        val dest = AllProgramsDestination(ifSaved)
+                        SharedContainer(
+                            key = dest.key,
+                            shape = CircleShape,
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                         ) {
-                            Text("全校培养方案", maxLines = 1)
+                            LiquidButton (
+                                shape = RectangleShape,
+                                onClick = {
+                                    navController.push(dest)
+                                },
+                                backdrop = backDrop,
+                            ) {
+                                Text("全校培养方案")
+                            }
                         }
                     }
                 )

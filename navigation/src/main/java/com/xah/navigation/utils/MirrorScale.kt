@@ -11,6 +11,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -31,7 +32,7 @@ fun Modifier.scaleMirror(scale: Float): Modifier =
             this
                 .graphicsLayer {
                     clip = true
-                    shape = RoundedCornerShape(0.dp)
+                    shape = RectangleShape
                     rect?.let { r ->
                         val runtimeShader = RuntimeShader(SHADER_CODE.trimIndent())
                         runtimeShader.setFloatUniform("size", r.width, r.height)

@@ -372,11 +372,10 @@ fun LiquidButton(
     modifier: Modifier = Modifier,
     enabled : Boolean = true,
     isCircle : Boolean = false,
+    shape: Shape = CircleShape,
     content: @Composable () -> Unit
 ) {
-    CompositionLocalProvider(
-        LocalMinimumInteractiveComponentSize provides 0.dp
-    ) {
+    NoPadding {
         if(isCircle) {
             FilledTonalIconButton(
                 onClick = onClick,
@@ -386,6 +385,7 @@ fun LiquidButton(
             )
         } else {
             FilledTonalButton(
+                shape = shape,
                 onClick = onClick,
                 modifier = modifier,
                 enabled = enabled,
@@ -393,5 +393,14 @@ fun LiquidButton(
                 content()
             }
         }
+    }
+}
+
+@Composable
+fun NoPadding(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalMinimumInteractiveComponentSize provides 0.dp
+    ) {
+        content()
     }
 }

@@ -1,5 +1,6 @@
 package com.xah.container.controller
 
+import android.os.Build
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
@@ -9,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.xah.container.anim.LinearRectInterpolator
 import com.xah.container.anim.RectInterpolator
+import com.xah.container.model.ContainerFilledStrategy
 import com.xah.container.model.SharedContainerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.android.awaitFrame
@@ -47,6 +49,7 @@ class SharedRegistry(
 
     // 单边填充or双边填充
     var extensionDouble by mutableStateOf(false)
+    var enableShader by mutableStateOf(ContainerFilledStrategy.CAN_USE_SHADER)
 
     fun getOrCreate(
         key: Any,

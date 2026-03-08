@@ -95,18 +95,13 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -497,7 +492,7 @@ fun LibraryMineUI(
                             overlineContent = { Text("借阅") },
                             headlineContent = { Text("${response.borrowCount}本") },
                             leadingContent = {
-                                Icon(painterResource(R.drawable.book_5),null, modifier = Modifier.iconElementShare(AppNavRoute.LibraryBorrowed.route))
+                                Icon(painterResource(R.drawable.book_5),null)
                             },
                             modifier = Modifier
                                 .weight(0.5f)
@@ -588,21 +583,6 @@ fun LibraryMineUI(
                             libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH.name)
                         }
                     )
-//                    PaddingHorizontalDivider()
-//                    TransplantListItem(
-//                        headlineContent = {
-//                            Text("斛兵知搜")
-//                        },
-//                        supportingContent = {
-//                            Text("搜索电子图书馆中的所有资料")
-//                        },
-//                        leadingContent = {
-//                            Icon(painterResource(R.drawable.search),null)
-//                        },
-//                        modifier = Modifier.clickable {
-//                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH_ALL.name)
-//                        }
-//                    )
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
@@ -613,7 +593,7 @@ fun LibraryMineUI(
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         leadingContent = {
-                            Icon(painterResource(R.drawable.globe_book),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL)))
+                            Icon(painterResource(R.drawable.globe_book),null)
                         },
                         modifier = Modifier
                             .clickable {
@@ -626,7 +606,6 @@ fun LibraryMineUI(
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -637,7 +616,7 @@ fun LibraryMineUI(
                             Text("旧图书馆官网(需校园网)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.net),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.OLD_LIBRARY_URL)))
+                            Icon(painterResource(R.drawable.net),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
@@ -651,7 +630,6 @@ fun LibraryMineUI(
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.OLD_LIBRARY_URL))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -662,7 +640,7 @@ fun LibraryMineUI(
                             Text("合肥校区(需校园网)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.table_restaurant),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(seatUrl)))
+                            Icon(painterResource(R.drawable.table_restaurant),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
@@ -676,7 +654,6 @@ fun LibraryMineUI(
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(seatUrl))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -687,7 +664,7 @@ fun LibraryMineUI(
                             Text("合肥&宣城校区(需校园网)(应前往图书馆线下预约)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.meeting_room),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL)))
+                            Icon(painterResource(R.drawable.meeting_room),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
@@ -701,7 +678,6 @@ fun LibraryMineUI(
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL))
                     )
                 }
             }

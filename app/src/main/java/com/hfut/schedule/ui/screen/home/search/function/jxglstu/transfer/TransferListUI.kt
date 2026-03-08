@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -50,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -87,10 +89,10 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.SharedContainer
+import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
@@ -151,20 +153,23 @@ fun TransferScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.TransferMajor.label)) },
                 actions = {
-                    LiquidButton(
-                        onClick = {
-                            navController.push(
-                                NewsApiDestination(
-                                    AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword
-                                )
-                            )
-                        },
-                        backdrop = backDrop,
-                        modifier = Modifier
-                            .containerShare(toRoute, MaterialTheme.shapes.large)
-                            .padding(horizontal = APP_HORIZONTAL_DP)
+                    val dest = NewsApiDestination(
+                        AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword
+                    )
+                    SharedContainer(
+                        key = dest.key,
+                        shape = CircleShape,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
-                        Text("通知公告", maxLines = 1)
+                        LiquidButton(
+                            shape = RectangleShape,
+                            onClick = {
+                                navController.push(dest)
+                            },
+                            backdrop = backDrop,
+                        ) {
+                            Text("通知公告", maxLines = 1)
+                        }
                     }
                 },
                 navigationIcon = {
@@ -202,20 +207,22 @@ fun TransferScreen(
                             val data = transferList[index]
                             val batchId = data.batchId
                             val name = data.title
-                            val route = AppNavRoute.TransferMajorDetail.withArgs(false,batchId,name)
+                            val dest = TransferMajorDetailDestination(
+                                name,
+                                batchId,
+                                false,
+                            )
                             var expand by remember { mutableStateOf(false) }
                             CustomCard (
+                                shape = RectangleShape,
                                 modifier = Modifier
+                                    .sharedContainer(
+                                        dest.key,
+                                        MaterialTheme.shapes.medium
+                                    )
                                     .clickable {
-                                        navController.push(
-                                            TransferMajorDetailDestination(
-                                                name,
-                                                batchId,
-                                                false,
-                                            )
-                                        )
-                                    }
-                                    .containerShare(route),
+                                        navController.push(dest)
+                                    },
                                 color = cardNormalColor()
                             ) {
                                 TransplantListItem(

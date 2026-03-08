@@ -64,12 +64,12 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Tota
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.HazeState
@@ -175,7 +175,6 @@ fun CourseSearchScreen(
                             Icon(
                                 painterResource(R.drawable.calendar),
                                 null,
-                                modifier = Modifier.iconElementShare( route = AppNavRoute.CourseSearchTable.route)
                             )
                         }
 

@@ -66,8 +66,6 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
@@ -88,7 +86,7 @@ fun WebUI() {
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebFolder.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WebFolder.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.WebFolder.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(WebFolderDestination)
@@ -254,9 +252,7 @@ fun WebNavigationScreen(
         ) {
             InnerPaddingHeight(innerPadding,true)
             DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
-                Column(
-                    modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(input)),
-                ) {
+                Column() {
                     CustomTextField(
                         input = input,
                         label = { Text("输入合法链接") },

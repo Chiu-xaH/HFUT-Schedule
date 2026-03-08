@@ -121,12 +121,13 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
         val response = (uiState as UiState.Success).data
         val applyList = response.models
         if(showBottomSheet) {
-            ModalBottomSheet(
+            HazeBottomSheet(
                 onDismissRequest = {
                     showBottomSheet = false
                 },
-                sheetState = sheetState,
-                shape = bottomSheetRound(sheetState)
+                showBottomSheet = showBottomSheet,
+//                sheetState = sheetState,
+//                shape = bottomSheetRound(sheetState)
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),

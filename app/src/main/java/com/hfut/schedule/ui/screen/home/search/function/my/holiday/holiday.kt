@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,18 +44,17 @@ import com.hfut.schedule.ui.screen.home.getHolidays
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.destination.HolidayDestination
 import com.hfut.schedule.ui.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.SharedContainer
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -67,7 +68,7 @@ fun Holiday() {
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Holiday.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.Holiday.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(HolidayDestination)
@@ -99,26 +100,23 @@ fun HolidayScreen(
                     TopBarNavigationIcon(route,AppNavRoute.Holiday.icon)
                 },
                 actions = {
-                    val toRoute = remember { AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
-
-                    LiquidButton(
-                        backdrop = backdrop,
-                        modifier = Modifier
-                            .containerShare(
-                                toRoute,
-                                MaterialTheme.shapes.large
-                            )
-                            .padding(horizontal = APP_HORIZONTAL_DP)
-                        ,
-                        onClick = {
-                            navController.push(
-                                NewsApiDestination(
-                                    AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword
-                                )
-                            )
-                        },) {
-                        Text("调休通知", maxLines = 1)
+                    val dest = NewsApiDestination(
+                        AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword
+                    )
+                    SharedContainer(
+                        key = dest.key,
+                        shape = CircleShape,
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                    ) {
+                        LiquidButton(
+                            shape = RectangleShape,
+                            backdrop = backdrop,
+                            onClick = { navController.push(dest) }
+                        ) {
+                            Text("调休通知")
+                        }
                     }
+
                 },
                 modifier = Modifier.topBarBlur(hazeState)
             )

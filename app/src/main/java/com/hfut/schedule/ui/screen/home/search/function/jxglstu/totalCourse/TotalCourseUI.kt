@@ -298,10 +298,11 @@ fun DetailItems(
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
 
     if (showBottomSheet_FailRate) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_FailRate,
             onDismissRequest = { showBottomSheet_FailRate = false },
-            sheetState = sheetState_FailRate,
-            shape = bottomSheetRound(sheetState_FailRate)
+//            sheetState = sheetState_FailRate,
+//            shape = bottomSheetRound(sheetState_FailRate)
         ) {
 
             Scaffold(
@@ -333,10 +334,11 @@ fun DetailItems(
     var teacherTitle by remember { mutableStateOf("") }
 
     if (showBottomSheet_Teacher) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_Teacher,
             onDismissRequest = { showBottomSheet_Teacher = false },
-            sheetState = sheetState_Teacher,
-            shape = bottomSheetRound(sheetState_Teacher)
+//            sheetState = sheetState_Teacher,
+//            shape = bottomSheetRound(sheetState_Teacher)
         ) {
 
             Scaffold(

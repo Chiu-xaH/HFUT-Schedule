@@ -1,16 +1,11 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -26,27 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.TransplantListItem
-
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.TermCoursesDestination
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -62,7 +48,7 @@ fun CourseTotal(
     TransplantListItem(
         headlineContent = { ScrollText(text =stringResource(AppNavRoute.TermCourses.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(

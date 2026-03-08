@@ -10,7 +10,6 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.receiver.widget.focus.hasFocusWidget
 import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
 import com.hfut.schedule.ui.screen.MainHost
-import com.hfut.schedule.ui.util.navigation.AppTransitionInitializer
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder.postedUse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

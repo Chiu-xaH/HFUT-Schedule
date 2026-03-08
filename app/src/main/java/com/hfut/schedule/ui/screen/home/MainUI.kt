@@ -82,6 +82,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -125,6 +126,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.AnimatedIconButton
 import com.hfut.schedule.ui.component.button.BUTTON_PADDING
 import com.hfut.schedule.ui.component.button.HazeBottomBarDynamic
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.button.SpecialBottomBar
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -182,8 +184,7 @@ import com.xah.mirror.shader.smallStyle
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
+
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
@@ -382,30 +383,18 @@ fun MainScreen(
             ) {
                 SharedContainer(
                     key = dest.key,
-                    corner = FloatingActionButtonDefaults.shape
+                    shape = FloatingActionButtonDefaults.shape
                 ) {
                     FloatingActionButton(
-                        shape = RoundedCornerShape(0.dp),
-                        modifier = Modifier
-                            .containerShare(
-                                addRoute,
-                                FloatingActionButtonDefaults.shape
-                            ),
+                        shape = RectangleShape,
                         elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                         onClick = {
                             navHostTopController.push(dest)
-//                        navHostTopController.push(
-//                            AddEventDestination(
-//                                null,
-//                                AddEventOrigin.FOCUS_ADD.name
-//                            )
-//                        )
                         },
                     ) {
                         Icon(
                             painterResource(AppNavRoute.AddEvent.icon),
                             "Add Button",
-                            modifier = Modifier.iconElementShare(addRoute)
                         )
                     }
                 }
@@ -443,15 +432,20 @@ fun MainScreen(
                             when (targetPage) {
                                 SEARCH -> {
                                     val route = remember { AppNavRoute.FunctionsSort.route }
-                                    IconButton(onClick = {
-                                        navHostTopController.push(FunctionsSortDestination)
-                                    }) {
-                                        Icon(
-                                            painterResource(id = R.drawable.edit),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.iconElementShare(route = route)
-                                        )
+                                    SharedContainer(
+                                        key = FunctionsSortDestination.key,
+                                        shape = CircleShape,
+                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+                                    ) {
+                                        IconButton(onClick = {
+                                            navHostTopController.push(FunctionsSortDestination)
+                                        }) {
+                                            Icon(
+                                                painterResource(id = R.drawable.edit),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
+                                            )
+                                        }
                                     }
                                     IconButton(onClick = { showSearch = !showSearch }) {
                                         Icon(
@@ -468,11 +462,10 @@ fun MainScreen(
                                     SharedContainer(
                                         containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent),
                                         key = NotificationBoxDestination.key,
-                                        corner = CircleShape
+                                        shape = CircleShape
                                     ) {
                                         IconButton(onClick = {
                                             navHostTopController.push(NotificationBoxDestination)
-//                                        navHostTopController.push(NotificationBoxDestination)
                                         }) {
                                             BadgedBox(badge = {
                                                 if (count != 0) {
@@ -481,7 +474,7 @@ fun MainScreen(
                                                     }
                                                 }
                                             }) {
-                                                Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary,modifier = Modifier.iconElementShare(route = iconRoute))
+                                                Icon(painterResource(id = AppNavRoute.NotificationBox.icon), contentDescription = "", tint = MaterialTheme.colorScheme.primary)
                                             }
                                         }
                                     }
@@ -586,7 +579,6 @@ fun MainScreen(
                                             contentDescription = "",
                                             modifier = Modifier
                                                 .padding(CARD_NORMAL_DP * 3)
-                                                .iconElementShare(route)
                                         )
                                     }
                                 } else {
@@ -622,7 +614,6 @@ fun MainScreen(
                                             contentDescription = "",
                                             modifier = Modifier
                                                 .padding(CARD_NORMAL_DP * 3)
-                                                .iconElementShare(route)
                                         )
                                     }
                                 }
@@ -716,7 +707,6 @@ fun MainScreen(
                                             painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.iconElementShare(route)
                                         )
                                     }
                                 } else {
@@ -733,7 +723,6 @@ fun MainScreen(
                                             painter = painterResource(id = AppNavRoute.TermCourses.icon),
                                             contentDescription = "",
                                             tint = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.iconElementShare(route)
                                         )
                                     }
                                 }
@@ -1091,6 +1080,7 @@ fun SearchEditScreen() {
     }
     var show by remember { mutableStateOf(false) }
     Column (modifier = Modifier
+        .background(MaterialTheme.colorScheme.surface)
         .fillMaxSize()
         .hazeSource(hazeState)) {
         MediumTopAppBar(

@@ -265,11 +265,12 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     }
 
     if (showBottomSheet_Web) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Web = false
             },
-            sheetState = sheetState_Web,
+            showBottomSheet = showBottomSheet_Web
+//            sheetState = sheetState_Web,
 //            shape = Round(sheetState_Web)
         ) {
             LoginWebScaUI(vmUI, vm,hazeState)
@@ -277,22 +278,24 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     }
 
     if (showBottomSheet_Shower) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_Shower = false
             },
-            sheetState = sheetState_Shower,
+            showBottomSheet = showBottomSheet_Web,
+//            sheetState = sheetState_Shower,
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }
     }
 
     if (showBottomSheet_Washing) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_Web,
             onDismissRequest = {
                 showBottomSheet_Washing = false
             },
-            sheetState = sheetState_Washing,
+//            sheetState = sheetState_Washing,
         ) {
             WashingUI()
         }

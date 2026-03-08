@@ -16,9 +16,9 @@ import com.hfut.schedule.logic.util.sys.Starter.refreshLogin
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.TransferMajorDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 
 
@@ -34,7 +34,7 @@ fun Transfer(
     TransplantListItem(
         headlineContent = { ScrollText(text =stringResource(AppNavRoute.TransferMajor.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TransferMajor.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.TransferMajor.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             if(ifSaved) refreshLogin(context) else {

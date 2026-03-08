@@ -752,12 +752,13 @@ private fun CourseDetail(
 ) {
 
     var showBottomSheet_Teacher by remember { mutableStateOf(false) }
-    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     if (showBottomSheet_Teacher) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_Teacher,
             onDismissRequest = { showBottomSheet_Teacher = false },
-            sheetState = sheetState_Teacher,
-            shape = bottomSheetRound(sheetState_Teacher)
+//            sheetState = sheetState_Teacher,
+//            shape = bottomSheetRound(sheetState_Teacher)
         ) {
 
             Scaffold(
@@ -780,10 +781,11 @@ private fun CourseDetail(
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
 
     if (showBottomSheet_FailRate) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_FailRate,
             onDismissRequest = { showBottomSheet_FailRate = false },
-            sheetState = sheetState_FailRate,
-            shape = bottomSheetRound(sheetState_FailRate)
+//            sheetState = sheetState_FailRate,
+//            shape = bottomSheetRound(sheetState_FailRate)
         ) {
 
             Scaffold(

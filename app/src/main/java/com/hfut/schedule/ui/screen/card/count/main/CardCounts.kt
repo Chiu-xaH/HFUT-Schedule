@@ -62,6 +62,7 @@ import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 private fun withoutMonthBills(originalList : List<BillMonth>) : List<BillMonth> {
@@ -96,15 +97,16 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     LaunchedEffect(Unit,month,year) {
         refreshNetwork()
     }
-    val sheetState = rememberModalBottomSheetState()
+//    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val scrollstate = rememberLazyGridState()
     val shouldShowAddButton by remember { derivedStateOf{ scrollstate.firstVisibleItemScrollOffset == 0 } }
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
+            showBottomSheet = showBottomSheet,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

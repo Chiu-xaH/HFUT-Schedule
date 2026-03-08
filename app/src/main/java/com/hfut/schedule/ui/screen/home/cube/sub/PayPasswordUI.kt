@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -166,7 +167,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             TextButton(onClick = { /*TODO*/ }, modifier = Modifier
                 .weight(.33f)
                 .height(65.dp)
-                ,shape = RoundedCornerShape(0.dp)
+                ,shape = RectangleShape
             ) {
                 Text("", fontSize = 13.sp)
             }
@@ -176,7 +177,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             )
             TextButton(onClick =  onBackspaceClick , modifier = Modifier
                 .weight(.33f)
-                .height(65.dp),shape = RoundedCornerShape(0.dp)
+                .height(65.dp),shape = RectangleShape
             ) {
                 Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
             }
@@ -185,7 +186,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
 }
 @Composable
 fun Key(num : Int, modifier: Modifier = Modifier, onKeyClick: (Int) -> Unit) {
-    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RoundedCornerShape(0.dp)) {
+    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RectangleShape) {
         Text(num.toString(), fontSize = 28.sp)
     }
 }

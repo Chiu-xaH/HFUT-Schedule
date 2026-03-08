@@ -6,6 +6,4 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 @OptIn(ExperimentalSharedTransitionApi::class)
 data class TransitionCurveStyle(
     val speedMs : Int = 450,// 模拟动画时长 在初始化LocalShareScope前使用，初始化后 推荐使用其isTransitionActive控制动画
-    val dampingRatio : Float = 0.825f,
-    val stiffness : Int = 200,
 )

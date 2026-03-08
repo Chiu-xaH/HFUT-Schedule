@@ -25,9 +25,9 @@ import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.destination.TrackDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -48,7 +48,7 @@ fun Track() {
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Track.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Track.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.Track.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(TrackDestination)

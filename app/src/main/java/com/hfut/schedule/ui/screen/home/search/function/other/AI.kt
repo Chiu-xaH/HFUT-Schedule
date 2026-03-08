@@ -33,9 +33,9 @@ import com.hfut.schedule.ui.component.status.DevelopingIcon
 import com.hfut.schedule.ui.destination.AiDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -56,7 +56,7 @@ fun AI(
 //                RotatingRainbowGlow(
 //                    modifier = Modifier.size(24.dp)
 //                )
-                Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+                Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null)
 
             }
         },

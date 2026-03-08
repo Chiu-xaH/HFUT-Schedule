@@ -48,7 +48,7 @@ fun SharedContainerOverlay() {
             val contentAlpha = lerp(0f,1f,safelyProgress)
             val corner = lerp(state.containerCorner,state.contentCorner,safelyProgress)
 
-            val containerFilledStrategy = state.containerFilledStrategy.getFinalStrategy()
+            val containerFilledStrategy = state.containerFilledStrategy.getFinalStrategy(registry.enableShader)
 
             /**150,90 2340,1080
              * container.width/content.width 12

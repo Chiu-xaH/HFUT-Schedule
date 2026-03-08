@@ -35,7 +35,6 @@ import com.hfut.schedule.ui.screen.home.cube.sub.EditJxglstuPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusWidgetSettingsScreen
-import com.hfut.schedule.ui.screen.home.cube.sub.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
@@ -153,11 +152,6 @@ fun SettingsScreen(vm : NetWorkViewModel,
             composable(Screen.JxglstuPasswordScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     EditJxglstuPasswordScreen(innerPaddings,navController)
-                }
-            }
-            composable(Screen.GestureStudyScreen.route) {
-                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    GestureStudyScreen(hazeState,innerPaddings,navController)
                 }
             }
             composable(Screen.BackupScreen.route) {

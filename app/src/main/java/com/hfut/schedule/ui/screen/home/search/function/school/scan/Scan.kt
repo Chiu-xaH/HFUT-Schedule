@@ -18,9 +18,9 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.xah.uicommon.component.text.ScrollText
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.iconElementShare
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
@@ -34,7 +34,7 @@ fun Scan() {
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.ScanQrCode.label)) },
         overlineContent = { ScrollText(stringResource(R.string.navigation_label_scan_qr_code_description))},
         leadingContent = {
-            Icon(painterResource(AppNavRoute.ScanQrCode.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.ScanQrCode.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             navController.push(ScanQrCodeDestination)

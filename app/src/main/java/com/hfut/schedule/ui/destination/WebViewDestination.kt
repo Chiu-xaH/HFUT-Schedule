@@ -11,9 +11,14 @@ data class WebViewDestination(
     val name : String,
     val icon : Int?
 ) : NavDestination() {
-    override val key = "web"
+    override val key = getKey(url)
     override val title = res(R.string.navigation_label_web)
 
+    companion object {
+        fun getKey(url : String): String {
+            return "web_${url}"
+        }
+    }
     @Composable
     override fun Content() {
 //        val url = backStackEntry.arguments?.getString(AppNavRoute.WebView.Args.URL.argName) ?: return@transitionComposable

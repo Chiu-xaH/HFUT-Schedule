@@ -7,8 +7,8 @@ import com.hfut.schedule.ui.util.NavDestination
 import com.xah.uicommon.util.language.res
 
 object AlumniDestination : NavDestination() {
-    override val key = "library"
-    override val title = res(R.string.navigation_label_library)
+    override val key = "alumni"
+    override val title = res(R.string.navigation_label_alumni)
 
     @Composable
     override fun Content() {

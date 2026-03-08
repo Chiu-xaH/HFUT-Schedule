@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +33,9 @@ import androidx.compose.ui.unit.sp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
+import com.hfut.schedule.ui.destination.AddEventDestination
+import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.ExamDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -39,9 +44,10 @@ import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.DEFAULT_START_T
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableItem
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.TimeTableType
 import com.hfut.schedule.ui.screen.home.calendar.timetable.logic.parseTimeToFloat
+import com.xah.container.container.SharedContainer
+import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.ShaderState
 import com.xah.navigation.utils.LocalNavControllerSafely
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
 
@@ -136,7 +142,7 @@ fun TimeTable(
             }
             Surface(
                 color = if (!hasBackground) color.first else Color.Transparent,
-                shape = round,
+                shape = RectangleShape,
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
@@ -176,17 +182,15 @@ fun TimeTable(
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.containerShare(
-                                        AppNavRoute.CourseDetail.withArgs(item.name, origin), MaterialTheme.shapes.extraSmall
-                                    )
+                                    it.sharedContainer(CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, origin), MaterialTheme.shapes.extraSmall)
+                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
-                                    it.containerShare(AppNavRoute.Exam.withArgs(origin), MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall)
                                 }
                             }
                         } else {
@@ -337,7 +341,7 @@ fun TimeTable(
             }
             Surface(
                 color = if (!hasBackground) color.first else Color.Transparent,
-                shape = round,
+                shape = RectangleShape,
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
@@ -376,17 +380,17 @@ fun TimeTable(
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.containerShare(
-                                        AppNavRoute.CourseDetail.withArgs(item.name, origin), MaterialTheme.shapes.extraSmall
+                                    it.sharedContainer(
+                                        CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall
                                     )
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.containerShare(AppNavRoute.AddEvent.withArgs(id, origin), MaterialTheme.shapes.extraSmall)
+                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
-                                    it.containerShare(AppNavRoute.Exam.withArgs(origin), MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall)
                                 }
                             }
                         } else {

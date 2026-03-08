@@ -1,5 +1,6 @@
 package com.xah.navigation.controller
 
+import android.os.Build
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
@@ -37,6 +38,9 @@ class NavigationController(
         private set
 
     var transitionLevel by mutableStateOf(EffectLevel.FULL)
+
+    var enableBlur by mutableStateOf(Build.VERSION.SDK_INT >= 31)
+    var enableShader by mutableStateOf(Build.VERSION.SDK_INT >= 33)
 
     val transitionProgress = Animatable(0f)
 

@@ -1,13 +1,6 @@
 package com.hfut.schedule.ui.util.navigation
 
 import androidx.navigation.NavController
-import com.hfut.schedule.logic.util.development.getKeyStackTrace
-import com.hfut.schedule.logic.util.sys.showToast
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.transition.util.navigateAndSaveForTransition
-import com.xah.transition.util.navigateWithSave
-import com.xah.uicommon.util.LogUtil
 
 // 导航后 上一级永远是firstRoute
 fun NavController.navigateForBottomBar(route: String) {
@@ -28,18 +21,3 @@ fun NavController.navigateAndClear(route: String) {
     }
 }
 
-// 导航后 上一级永远是上个界面
-fun NavController.navigateForTransition(app : AppNavRoute,route: String,transplantBackground : Boolean = false) = try {
-    GlobalUIStateHolder.pushToFront(route,app)
-    navigateAndSaveForTransition(route,transplantBackground)
-} catch (e : Exception) {
-    LogUtil.error(e)
-    showToast(getKeyStackTrace(e))
-}
-
-fun NavController.navigateForTransition(route: String,transplantBackground : Boolean = false) = try {
-    navigateAndSaveForTransition(route,transplantBackground)
-} catch (e : Exception) {
-    LogUtil.error(e)
-    showToast(getKeyStackTrace(e))
-}

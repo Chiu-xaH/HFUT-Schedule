@@ -106,6 +106,8 @@ fun NavHost(
         }
 
         val level = navController.transitionLevel
+        val enableBlur = navController.enableBlur
+        val enableShader = navController.enableShader
 
         Box(modifier = modifier.fillMaxSize()) {
             visibleEntries.forEach { entry ->
@@ -115,8 +117,8 @@ fun NavHost(
                         val isTo = transition?.to == entry
 
                         val animatedProgress = progress.value
-                        val underEffect = remember(animatedProgress,level) { BackgroundEffect(animatedProgress,level) }
-                        val upEffect = remember(animatedProgress,level) { ForegroundEffect(animatedProgress,level) }
+                        val underEffect = remember(animatedProgress,level,enableBlur,enableShader) { BackgroundEffect(animatedProgress,level,enableBlur,enableShader) }
+                        val upEffect = remember(animatedProgress,level,enableBlur) { ForegroundEffect(animatedProgress,level,enableBlur) }
 
                         Box(
                             Modifier
@@ -212,7 +214,7 @@ fun DefaultBackHandler() {
 }
 
 // scaleRadio放慢scale的速度
-private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel) {
+private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel,val enableBlur : Boolean,val enableShader : Boolean) {
     private val effect = PageEffect(
         scale = lerp(
             PageEffect.Full.scale,
@@ -255,11 +257,22 @@ private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel) 
     }
 
     private fun Modifier.blur() : Modifier {
-        return this.blur(effect.blur)
+        return if(enableBlur) {
+            this.blur(effect.blur)
+        } else {
+            this
+        }
     }
 
     private fun Modifier.scale() : Modifier {
-        return this.scaleMirror(effect.scale)
+        return if(enableShader) {
+            this.scaleMirror(effect.scale)
+        } else {
+            this.graphicsLayer {
+                scaleX = effect.scale
+                scaleY = effect.scale
+            }
+        }
     }
 
     fun Modifier.effect() : Modifier {
@@ -280,7 +293,7 @@ private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel) 
     }
 }
 
-private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel)  {
+private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel,val enableBlur : Boolean)  {
 
     private val effect = PageEffect(
         scale = lerp(
@@ -306,13 +319,17 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel) 
         corner = lerp(
             ScreenCornerHelper.shape,
             ScreenCornerHelper.shape,
-            0f
+            animatedProgress
         )
     )
 
 
     private fun Modifier.blur() : Modifier {
-        return this.blur(effect.blur)
+        return if(enableBlur) {
+            this.blur(effect.blur)
+        } else {
+            this
+        }
     }
     private fun Modifier.corner() : Modifier {
         return this.clip(effect.corner)

@@ -22,7 +22,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import kotlinx.coroutines.launch
 
@@ -39,7 +39,7 @@ fun LePaoYun() {
     TransplantListItem(
         headlineContent = { ScrollText(text = title) },
         leadingContent = {
-            Icon(painterResource(icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(icon), contentDescription = null)
         },
         trailingContent = {
             FilledTonalIconButton(

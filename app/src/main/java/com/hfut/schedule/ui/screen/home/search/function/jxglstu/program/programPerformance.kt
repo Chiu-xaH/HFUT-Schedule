@@ -33,12 +33,12 @@ import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.jxglstu.CourseItem
@@ -58,7 +58,6 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.network.onListenStateHolder
-
 import com.hfut.schedule.ui.component.text.DividerText
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
@@ -66,17 +65,13 @@ import com.hfut.schedule.ui.destination.ProgramCompetitionDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
-import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.uicommon.component.status.LoadingScreen
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -190,25 +185,22 @@ private fun ProgramPerformance(
                     val item = it[index]
                     val requireInfo = item.requireInfo
                     val summary = item.completionSummary
-                    val route = AppNavRoute.ProgramCompetitionDetail.withArgs(item.nameZh,index)
+                    val dest = ProgramCompetitionDetailDestination(
+                        index,
+                        item.nameZh,
+                    )
                     DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
                         CustomCard(
+                            shape = RectangleShape,
                             color = cardNormalColor(),
                             modifier = Modifier
                                 .clickableWithScale() {
-                                    navController.push(
-                                        ProgramCompetitionDetailDestination(
-                                            index,
-                                            item.nameZh,
-                                        )
-                                    )
+                                    navController.push(dest)
                                 }
-                                .containerShare(
-//                                sharedTransitionScope,
-//                                animatedContentScope=animatedContentScope,
-                                route=route,
-                                roundShape = MaterialTheme.shapes.medium,
-                            )
+                                .sharedContainer(
+                                    key = dest.key,
+                                    MaterialTheme.shapes.medium
+                                )
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -236,12 +228,7 @@ private fun ProgramPerformance(
                                     trailingContent = {
                                         Button(
                                             onClick = {
-                                                navController.push(
-                                                    ProgramCompetitionDetailDestination(
-                                                        index,
-                                                        item.nameZh,
-                                                    )
-                                                )
+                                                navController.push(dest)
                                             },
                                         ) {
                                             Text(text = "查看详情")
@@ -257,22 +244,21 @@ private fun ProgramPerformance(
                 val summary = data!!.outerCompletionSummary
                 item { DividerText(text = "培养方案外课程 (包含转专业废弃课程)") }
                 item {
-                    val route = AppNavRoute.ProgramCompetitionDetail.withArgs("培养方案外课程",999)
+                    val dest = ProgramCompetitionDetailDestination(
+                        999,
+                        "培养方案外课程",
+                    )
                     CustomCard(
+                        shape = RectangleShape,
                         color = cardNormalColor(),
                         modifier = Modifier
                             .clickableWithScale() {
-                                navController.push(
-                                    ProgramCompetitionDetailDestination(
-                                        999,
-                                        "培养方案外课程",
-                                    )
-                                )
+                                navController.push(dest)
                             }
-                            .containerShare(
-                            route=route,
-                            roundShape = MaterialTheme.shapes.medium,
-                        )
+                            .sharedContainer(
+                                key = dest.key,
+                                MaterialTheme.shapes.medium
+                            )
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -300,12 +286,7 @@ private fun ProgramPerformance(
                                 trailingContent = {
                                     Button(
                                         onClick = {
-                                            navController.push(
-                                                ProgramCompetitionDetailDestination(
-                                                    999,
-                                                    "培养方案外课程",
-                                                )
-                                            )
+                                            navController.push(dest)
                                         },
                                     ) {
                                         Text(text = "查看详情")

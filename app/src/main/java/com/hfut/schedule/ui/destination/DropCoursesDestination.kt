@@ -12,7 +12,7 @@ data class DropCoursesDestination(
     val index : Int,
     val name : String,
 ) : NavDestination() {
-    override val key = "drop_courses"
+    override val key = "drop_courses_${index}_$name"
     override val title = res(R.string.navigation_label_drop_courses)
 
     @Composable

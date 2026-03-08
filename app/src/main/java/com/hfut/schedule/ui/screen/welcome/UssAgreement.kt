@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
@@ -38,6 +39,7 @@ import com.hfut.schedule.logic.util.storage.file.killAppUnSafely
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
@@ -109,9 +111,7 @@ fun UseAgreementScreen() {
         bottomBar = {
 //            val route = remember { AppNavRoute.Empty.withArgs(AppNavRoute.Home.route) }
             Column () {
-                CompositionLocalProvider(
-                    LocalMinimumInteractiveComponentSize provides 0.dp
-                ) {
+                NoPadding {
                     Box(Modifier.bottomBarBlur(hazeState)) {
                         Row(modifier = Modifier
                             .padding(APP_HORIZONTAL_DP)
@@ -130,12 +130,11 @@ fun UseAgreementScreen() {
 //                                    navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                                     }
                                 },
-                                shape = RoundedCornerShape(0.dp),
+//                                shape = RectangleShape,
                                 modifier = Modifier
 //                                    .sharedContainer(HomeDestination.key,MaterialTheme.shapes.extraLarge)
                                     .fillMaxWidth()
                                     .weight(.5f)
-//                                .containerShare(route, MaterialTheme.shapes.extraLarge)
                             ) {
                                 Text("同意")
                             }
