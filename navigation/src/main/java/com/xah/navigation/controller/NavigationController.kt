@@ -6,14 +6,18 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.xah.container.controller.SharedRegistry
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.anim.NavTransition
-import com.xah.navigation.model.ActionType
-import com.xah.navigation.model.Destination
-import com.xah.navigation.model.LaunchMode
-import com.xah.navigation.model.StackEntry
+import com.xah.navigation.model.action.ActionType
+import com.xah.navigation.model.dest.Destination
+import com.xah.navigation.model.action.LaunchMode
+import com.xah.navigation.model.dest.StackEntry
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -21,7 +25,8 @@ import java.util.UUID
 class NavigationController(
     private val scope: CoroutineScope,
     private val startDestination: Destination,
-    private val _stack: SnapshotStateList<StackEntry>
+    private val _stack: SnapshotStateList<StackEntry>,
+    val sharedRegistry : SharedRegistry? = null,
 ) {
     val stack: List<StackEntry> get() = _stack
 
@@ -40,7 +45,6 @@ class NavigationController(
     val defaultSpecWithShared = tween<Float>(animationSpecSharedTween*8/5)
     val defaultSpec = tween<Float>(animationSpecSharedTween*13/10)
 
-
     private fun createAndPush(
         destination : Destination
     ) {
@@ -51,60 +55,63 @@ class NavigationController(
         _stack += newEntry
     }
 
-    fun push(
+
+    private fun pushInternal(
         destination: Destination,
-        launchMode: LaunchMode = LaunchMode.SINGLE_TOP
+        launchMode: LaunchMode = LaunchMode.Push(true),
     ) {
         scope.launch {
             val from = _stack.last()
 
             when (launchMode) {
-                LaunchMode.STANDARD -> {
-                    // 默认模式，每次都创建新的 Entry 并加入栈
-                    createAndPush(destination)
-                }
-                LaunchMode.SINGLE_TOP -> {
-                    // 如果栈顶是目标项目，则复用
-                    if (_stack.isNotEmpty() && _stack.last().destination == destination) {
-                        // 如果栈顶就是目标，保持栈顶不变
-                        return@launch
+                is LaunchMode.Push -> {
+                    if(launchMode.reuse) {
+                        // 如果栈顶是目标项目，则复用
+                        if (_stack.isNotEmpty() && _stack.last().destination == destination) {
+                            // 如果栈顶就是目标，保持栈顶不变
+                            return@launch
+                        } else {
+                            createAndPush(destination)
+                        }
                     } else {
+                        // 每次都创建新的并加入栈
                         createAndPush(destination)
                     }
                 }
-                LaunchMode.SINGLE_TASK -> {
+                is LaunchMode.Single -> {
+                    if(launchMode.reuse) {
+                        // 栈内存在则复用并清空其余项，没有则直接CLEAR_STACK
+                        // 从栈底（索引0）开始寻找
+                        val existingIndex = _stack.indexOfFirst { it.destination == destination }
+                        if (existingIndex != -1) {
+                            // 目标项已经存在，复用
+                            val item = _stack[existingIndex]
+                            _stack.clear()
+                            _stack.add(item)
+                        } else {
+                            // 如果栈中没有该目标，直接清空栈并压入
+                            _stack.clear()
+                            createAndPush(destination)
+                        }
+                    } else {
+                        // 清空栈并压入
+                        _stack.clear()
+                        createAndPush(destination)
+                    }
+                }
+                is LaunchMode.PopToExisting -> {
                     // 如果栈中已经有该目标，则清除其之上的所有栈并复用它
                     val existingIndex = _stack.indexOfFirst { it.destination == destination }
                     if (existingIndex != -1) {
                         _stack.subList(existingIndex + 1, _stack.size).clear() // 清除目标 Activity 之上的所有元素
-                    }
-                    createAndPush(destination)
-                }
-                LaunchMode.CLEAR_STACK -> {
-                    // 清空栈并压入
-                    _stack.clear()
-                    createAndPush(destination)
-                }
-                LaunchMode.SINGLE_INSTANCE -> {
-                    // 栈内存在则复用并清空其余项，没有则直接CLEAR_STACK
-                    // 从栈底（索引0）开始寻找
-                    val existingIndex = _stack.indexOfFirst { it.destination == destination }
-                    if (existingIndex != -1) {
-                        // 目标项已经存在，清除栈中目标项两边的项
-                        _stack.subList(0, existingIndex).clear() // 清除目标项之前的所有项
-                        _stack.subList(existingIndex + 1, _stack.size).clear() // 清除目标项之后的所有项
                     } else {
-                        // 如果栈中没有该目标，直接清空栈并按标准模式压入
-                        push(destination, LaunchMode.CLEAR_STACK)
+                        launchMode.actionType = ActionType.PUSH
+                        createAndPush(destination)
                     }
                 }
             }
             // 动画未进行时归位，不影响打断动画
-            val type = if(launchMode == LaunchMode.CLEAR_STACK || launchMode == LaunchMode.SINGLE_INSTANCE) {
-                ActionType.POP
-            } else {
-                ActionType.PUSH
-            }
+            val type = launchMode.actionType
             snap(type)
             // 添加过渡动画
             navTransition = NavTransition(
@@ -115,16 +122,17 @@ class NavigationController(
         }
     }
 
-    fun pop() {
+    private fun popInternal() {
         scope.launch {
             if (_stack.size <= 1) return@launch
 
             val from = _stack.last()
             val to = _stack[_stack.lastIndex - 1]
             // 动画未进行时归位，不影响打断动画
-            snap(ActionType.POP)
+            val type = ActionType.POP
+            snap(type)
             navTransition = NavTransition(
-                type = ActionType.POP,
+                type = type,
                 from = from,
                 to = to,
             )
@@ -145,10 +153,6 @@ class NavigationController(
         }
     }
 
-    /**
-     * 回到startDestination（栈中有则复用，无则清空栈再push）
-     */
-    fun home() = push(startDestination, LaunchMode.SINGLE_INSTANCE)
 
     fun animate(
         animationSpec: AnimationSpec<Float> = defaultSpec
@@ -185,6 +189,45 @@ class NavigationController(
         }
         navTransition = null
         isTransitioning = false
+    }
+
+    fun push(
+        destination: Destination,
+        launchMode: LaunchMode = LaunchMode.Push(reuse = true),
+    ) {
+        val registry = this.sharedRegistry
+        if(this.transitionLevel == EffectLevel.NONE || registry == null) {
+            this.pushInternal(destination,launchMode)
+        } else {
+            registry.push(
+                destination.key,
+                onAnimatedFinished = {
+                    snapshotFlow { this.isTransitioning }
+                        .filter { !it }
+                        .first()
+                }
+            ) {
+                this.pushInternal(destination,launchMode)
+            }
+        }
+    }
+
+    fun pop() {
+        val registry = this.sharedRegistry
+        if(this.transitionLevel == EffectLevel.NONE || registry == null) {
+            this.popInternal()
+        } else {
+            registry.pop(
+                this.stack.last().destination.key,
+                onAnimatedFinished = {
+                    snapshotFlow { this.isTransitioning }
+                        .filter { !it }
+                        .first()
+                }
+            ) {
+                this.popInternal()
+            }
+        }
     }
 
     init {

@@ -328,7 +328,7 @@ fun TransferDetailScreen(
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },
             hazeState = hazeState,
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet_apply
         ) {
             Scaffold(
@@ -461,22 +461,14 @@ private fun TransferUI(
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            isFullExpand = false
+//            expandFully = false
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    TransferStatusUI(vm,batchId,id,telephone)
-                }
+            Column(
+                modifier = Modifier
+            ) {
+                HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
+                TransferStatusUI(vm,batchId,id,telephone)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }
@@ -487,95 +479,89 @@ private fun TransferUI(
                 showBottomSheet_select = false
             },
             hazeState = hazeState,
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet_select
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("手机号 (教务要求)", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                ) {
-                    val personInfo = getPersonInfo()
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+            ) {
+                HazeBottomSheetTopBar("手机号 (教务要求)", isPaddingStatusBar = false)
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        TextField(
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(horizontal = APP_HORIZONTAL_DP),
-                            value = telephone,
-                            onValueChange = {
-                                telephone = it
-                            },
-                            label = { Text("自行输入手机号" ) },
-                            singleLine = true,
-                            trailingIcon = {
-                               IconButton(
-                                   onClick = {
-                                       showBottomSheet_select = false
-                                       showBottomSheet = true
-                                   }
-                               ) {
-                                   Icon(painterResource(R.drawable.check), null)
-                               }
-                            },
-                            shape = MaterialTheme.shapes.medium,
-                            colors = textFiledTransplant(),
-                        )
-                    }
-                    Spacer(Modifier.height(5.dp))
-                    prefs.getString("PHONENUM","")?.let {
-                        if(it.isNotEmpty()) {
-                            CardListItem(
-                                headlineContent = { Text(it) },
-                                overlineContent = { Text("呱呱物联登录手机号") },
-                                modifier = Modifier.clickable {
-                                    telephone = it
+                val personInfo = getPersonInfo()
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TextField(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(horizontal = APP_HORIZONTAL_DP),
+                        value = telephone,
+                        onValueChange = {
+                            telephone = it
+                        },
+                        label = { Text("自行输入手机号" ) },
+                        singleLine = true,
+                        trailingIcon = {
+                            IconButton(
+                                onClick = {
                                     showBottomSheet_select = false
                                     showBottomSheet = true
                                 }
-                            )
-                        }
-                    }
-                    personInfo.mobile?.let {
-                        if(it.isNotEmpty()) {
-                            CardListItem(
-                                    headlineContent = { Text(it) },
-                                    overlineContent = { Text("教务系统预留手机号") },
-                                    modifier = Modifier.clickable {
-                                        telephone = it
-                                        showBottomSheet_select = false
-                                        showBottomSheet = true
-                                    }
-                                )
-                        }
-                    }
-                    personInfo.phone?.let {
-                        if(it.isNotEmpty()) {
-                                CardListItem(
-                                    headlineContent = { Text(it) },
-                                    overlineContent = { Text("教务系统预留电话号") },
-                                    modifier = Modifier.clickable {
-                                        telephone = it
-                                        showBottomSheet_select = false
-                                        showBottomSheet = true
-                                    }
-                                )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
+                            ) {
+                                Icon(painterResource(R.drawable.check), null)
+                            }
+                        },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = textFiledTransplant(),
+                    )
                 }
+                Spacer(Modifier.height(5.dp))
+                prefs.getString("PHONENUM","")?.let {
+                    if(it.isNotEmpty()) {
+                        CardListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("呱呱物联登录手机号") },
+                            modifier = Modifier.clickable {
+                                telephone = it
+                                showBottomSheet_select = false
+                                showBottomSheet = true
+                            }
+                        )
+                    }
+                }
+                personInfo.mobile?.let {
+                    if(it.isNotEmpty()) {
+                        CardListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("教务系统预留手机号") },
+                            modifier = Modifier.clickable {
+                                telephone = it
+                                showBottomSheet_select = false
+                                showBottomSheet = true
+                            }
+                        )
+                    }
+                }
+                personInfo.phone?.let {
+                    if(it.isNotEmpty()) {
+                        CardListItem(
+                            headlineContent = { Text(it) },
+                            overlineContent = { Text("教务系统预留电话号") },
+                            modifier = Modifier.clickable {
+                                telephone = it
+                                showBottomSheet_select = false
+                                showBottomSheet = true
+                            }
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

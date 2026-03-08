@@ -158,12 +158,14 @@ class MyApplication : Application() {
         const val GITHUB_REPO_NAME = "HFUT-Schedule"
         // 贡献者
         val contributors by lazy {
+            // https://api.github.com/users/${key}
             mapOf(
                 GITHUB_DEVELOPER_NAME to 116127902,
                 "tinyvan" to 27542299,
                 "linsui" to 36977733,
                 "James-Zhang2" to 175417444,
                 "Today1337" to 110648923,
+                "zxbmmmmmmmmm" to 96322503
             )
         }
         // App名称

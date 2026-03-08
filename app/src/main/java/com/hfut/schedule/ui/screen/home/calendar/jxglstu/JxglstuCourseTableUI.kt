@@ -175,7 +175,7 @@ fun JxglstuCourseTableUI(
             onDismissRequest = {
                 showBottomSheetDetail = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheetDetail,
             hazeState = hazeState
         ) {

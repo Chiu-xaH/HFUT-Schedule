@@ -242,7 +242,7 @@ fun JxglstuCourseTableSearch(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
             MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState, list = list)

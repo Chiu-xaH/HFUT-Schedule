@@ -3,6 +3,7 @@ package com.xah.navigation.component
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -25,26 +26,26 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.xah.common.ScreenCornerHelper
 import com.xah.navigation.utils.touchEvent
 import com.xah.container.overlay.SharedContainerRoot
-import com.xah.container.utils.LocalSharedContainerRegistry
+import com.xah.container.utils.LocalSharedRegistry
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.anim.PageEffect
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.controller.NavigationViewModel
-import com.xah.navigation.model.ActionType
-import com.xah.navigation.model.Destination
+import com.xah.navigation.model.action.ActionType
+import com.xah.navigation.model.dest.Destination
 import com.xah.navigation.model.Dependencies
-import com.xah.navigation.shared.SharedNavHelper
 import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.navigation.utils.scaleMirror
+
 
 @Composable
 fun SharedNavHost(
     startDestination: Destination,
     modifier: Modifier = Modifier,
     dependencies: Dependencies = Dependencies(),
-    customBackHandler: (@Composable () -> Unit)? = null,
+    customBackHandler: (@Composable () -> Unit) = { DefaultBackHandler() },
 ) {
     SharedContainerRoot {
         NavHost(
@@ -57,18 +58,18 @@ fun SharedNavHost(
 }
 
 @Composable
-private fun NavHost(
+fun NavHost(
     startDestination: Destination,
     modifier: Modifier = Modifier,
     dependencies: Dependencies = Dependencies(),
-    customBackHandler: (@Composable () -> Unit)? = null,
+    customBackHandler: (@Composable () -> Unit) = { DefaultBackHandler() },
 ) {
-    val registry = LocalSharedContainerRegistry.current
+    val registry = LocalSharedRegistry.current
     val scope = rememberCoroutineScope()
     val saveableStateHolder = rememberSaveableStateHolder()
     val navViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory())
     val navController = remember(navViewModel) {
-        NavigationController(scope, startDestination, navViewModel.stack)
+        NavigationController(scope, startDestination, navViewModel.stack,registry)
     }
 
     CompositionLocalProvider(
@@ -76,14 +77,7 @@ private fun NavHost(
         LocalNavController provides navController,
         LocalNavDependencies provides dependencies
     ) {
-        if (customBackHandler == null) {
-            BackHandler(enabled = navController.stack.size > 1) {
-                SharedNavHelper.pop(navController,registry)
-            }
-            // TODO 预测式返回
-        } else {
-            customBackHandler()
-        }
+        customBackHandler()
 
         val transition = navController.navTransition
         val progress = navController.transitionProgress
@@ -208,6 +202,15 @@ private fun NavHost(
     }
 }
 
+@Composable
+fun DefaultBackHandler() {
+    // TODO 预测式返回
+    val navController = LocalNavController.current
+    BackHandler(enabled = navController.stack.size > 1) {
+        navController.pop()
+    }
+}
+
 // scaleRadio放慢scale的速度
 private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel) {
     private val effect = PageEffect(
@@ -301,9 +304,9 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel) 
             animatedProgress
         ),
         corner = lerp(
-            ScreenCornerHelper.corner*2,
-            ScreenCornerHelper.corner,
-            animatedProgress
+            ScreenCornerHelper.shape,
+            ScreenCornerHelper.shape,
+            0f
         )
     )
 
@@ -312,7 +315,7 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel) 
         return this.blur(effect.blur)
     }
     private fun Modifier.corner() : Modifier {
-        return this.clip(RoundedCornerShape(effect.corner))
+        return this.clip(effect.corner)
     }
 
     private fun Modifier.scale() : Modifier {
@@ -333,7 +336,7 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel) 
     }
 
     private fun Modifier.tinyCorner() : Modifier {
-        return this.clip(RoundedCornerShape(ScreenCornerHelper.corner))
+        return this.clip(ScreenCornerHelper.shape)
     }
 
     fun Modifier.effect() : Modifier {
@@ -431,8 +434,8 @@ private class ForegroundEffectWithSharedElement(animatedProgress : Float,val lev
             animatedProgress
         ),
         corner = lerp(
-            if(level != EffectLevel.NONE) ScreenCornerHelper.corner else 0.dp,
-            if(level != EffectLevel.NONE) ScreenCornerHelper.corner else 0.dp,
+            if(level != EffectLevel.NONE) ScreenCornerHelper.shape else RoundedCornerShape(0.dp),
+            if(level != EffectLevel.NONE) ScreenCornerHelper.shape else RoundedCornerShape(0.dp),
             animatedProgress
         )
     )
@@ -443,7 +446,7 @@ private class ForegroundEffectWithSharedElement(animatedProgress : Float,val lev
     }
 
     private fun Modifier.corner() : Modifier {
-        return this.clip(RoundedCornerShape(effect.corner))
+        return this.clip(effect.corner)
     }
 
     private fun Modifier.alpha() : Modifier {
@@ -471,6 +474,7 @@ private class ForegroundEffectWithSharedElement(animatedProgress : Float,val lev
 }
 
 
+fun lerp(start: CornerBasedShape, stop: CornerBasedShape, fraction: Float): CornerBasedShape = start.lerp(stop,fraction) as CornerBasedShape
 
 //abstract class OnTransition(
 //    private val animatedProgress: Float

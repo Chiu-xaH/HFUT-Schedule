@@ -100,7 +100,7 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
                 hazeState = hazeState,
-                autoShape = false
+//                isFullScreen = false
             ) {
                 Column {
                     Row(modifier = Modifier

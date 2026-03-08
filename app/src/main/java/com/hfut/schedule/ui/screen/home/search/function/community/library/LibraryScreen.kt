@@ -307,7 +307,7 @@ private fun SearchScreenCommunity(
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
@@ -739,7 +739,7 @@ private fun SearchScreenLibrary(
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)

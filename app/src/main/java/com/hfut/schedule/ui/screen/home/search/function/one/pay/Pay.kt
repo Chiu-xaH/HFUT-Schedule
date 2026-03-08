@@ -161,7 +161,7 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
             onDismissRequest = { showBottomSheetQRCode = false },
             showBottomSheet = showBottomSheetQRCode,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 Row(modifier = Modifier

@@ -20,16 +20,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -51,28 +55,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
-import com.hfut.schedule.logic.util.storage.file.cleanCache
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-
 import com.hfut.schedule.ui.component.text.AnimatedTextCarousel
 import com.hfut.schedule.ui.destination.HomeDestination
 import com.hfut.schedule.ui.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
-import com.hfut.schedule.ui.util.navigation.navigateAndClear
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.navigation.model.LaunchMode
+import com.xah.container.container.SharedContainer
+import com.xah.navigation.model.action.ActionType
+import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
@@ -114,55 +115,72 @@ fun UpdateSuccessScreen() {
                 },
                 actions = {
                     val targetRoute = remember { AppNavRoute.VersionInfo.route }
-
-                    FilledTonalIconButton (
-                        modifier = Modifier
-                            .padding(end = APP_HORIZONTAL_DP)
-                        ,
-                        shape = MaterialTheme.shapes.extraLarge,
-                        onClick = {
-                            navController.push(VersionInfoDestination)
-                        }
+                    CompositionLocalProvider(
+                        LocalMinimumInteractiveComponentSize provides 0.dp
                     ) {
-                        Icon(
-                            painterResource(AppNavRoute.VersionInfo.icon),
-                            null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.iconElementShare(targetRoute)
-                        )
+                        SharedContainer(
+                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                            key = VersionInfoDestination.key,
+                            corner = CircleShape
+                        ) {
+                            FilledTonalIconButton (
+                                shape = RoundedCornerShape(0.dp),
+                                onClick = {
+                                    navController.push(VersionInfoDestination)
+//                                    navController.push(VersionInfoDestination)
+                                }
+                            ) {
+                                Icon(
+                                    painterResource(AppNavRoute.VersionInfo.icon),
+                                    null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.iconElementShare(targetRoute)
+                                )
+                            }
+                        }
                     }
                 },
             )
         },
         bottomBar = {
-            Button(
-                onClick = {
-                    scope.launch {
-                        val result = async { cleanCache(context ) }.await()
-                        showToast("已清理缓存 $result MB")
-                        async {
-                            SharedPrefs.saveString(
-                                "versionName",
-                                AppVersion.getVersionName()
-                            )
-                        }.await()
-                        GlobalUIStateHolder.useEnterAnimation = true
-                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
-                    }
-                },
-                shape = MaterialTheme.shapes.extraLarge,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(APP_HORIZONTAL_DP)
-                    .navigationBarsPadding()
-                    .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
+            CompositionLocalProvider(
+                LocalMinimumInteractiveComponentSize provides 0.dp
             ) {
-                Text(
-                    "开始使用",
-                    modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 2),
-                    style = MaterialTheme.typography.titleMedium,
-                )
+                Button(
+                    onClick = {
+                        scope.launch {
+                            val result = async { cleanCache(context ) }.await()
+                            showToast("已清理缓存 $result MB")
+                            async {
+                                SharedPrefs.saveString(
+                                    "versionName",
+                                    AppVersion.getVersionName()
+                                )
+                            }.await()
+                            GlobalUIStateHolder.useEnterAnimation = true
+                            navController.push(
+                                HomeDestination,
+                                LaunchMode.Single(reuse = true, actionType = ActionType.POP)
+                            )
+//                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
+                        }
+                    },
+                    shape = RoundedCornerShape(0.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(APP_HORIZONTAL_DP)
+                        .navigationBarsPadding()
+                        .shimmerEffect(ShimmerAngle.START_TO_END, alpha = 0.25f)
+//                        .sharedContainer(HomeDestination.key,MaterialTheme.shapes.extraLarge)
+                ) {
+                    Text(
+                        "开始使用",
+                        modifier = Modifier.padding(vertical = CARD_NORMAL_DP * 2),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
             }
+
         },
         modifier = Modifier.hazeSource(hazeState)
     ) { innerPadding ->

@@ -223,4 +223,5 @@ dependencies {
     baselineProfile project(":baselineProfile")
 
     implementation(project(":navigation"))
+    implementation(project(":shared-container"))
 }

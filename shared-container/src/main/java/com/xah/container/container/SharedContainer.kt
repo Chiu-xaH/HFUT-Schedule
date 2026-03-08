@@ -21,15 +21,26 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.xah.common.ScreenCornerHelper
 import com.xah.container.model.ContainerFilledStrategy
-import com.xah.container.utils.LocalSharedContainerRegistry
+import com.xah.container.utils.LocalSharedRegistry
 
+fun Modifier.sharedContainer(
+    key : Any,
+    corner : Shape,
+    shadow : Dp = 0.dp,
+    containerFilledStrategy : ContainerFilledStrategy = ContainerFilledStrategy.Pixel(),
+): Modifier {
+    return this
+        .shadow(shadow,corner)
+        .clip(corner)
+        .sharedContainer(key,containerFilledStrategy,corner as CornerBasedShape)
+}
 
 private fun Modifier.sharedContainer(
     key : Any,
     containerFilledStrategy : ContainerFilledStrategy,
     corner : CornerBasedShape,
 ): Modifier = composed {
-    val registry = LocalSharedContainerRegistry.current
+    val registry = LocalSharedRegistry.current
     if(!registry.enabled) {
         return@composed this
     }
@@ -77,16 +88,19 @@ private fun Modifier.sharedContainer(
         }
 }
 
-private fun Modifier.sharedContent(
+fun Modifier.sharedContent(
     key : Any,
     corner : CornerBasedShape,
 ): Modifier = composed {
-    val registry = LocalSharedContainerRegistry.current
+    val registry = LocalSharedRegistry.current
     if(!registry.enabled) {
         return@composed this
     }
 
-    val state = remember { registry.getOrCreate(key) }
+    val state = remember { registry.get(key) }
+    if(state == null) {
+        return@composed this
+    }
     val graphicsLayer = rememberGraphicsLayer()
 
     LaunchedEffect(Unit) {
@@ -129,7 +143,7 @@ private fun Modifier.sharedContent(
 fun SharedContent(
     key : Any,
     modifier : Modifier = Modifier,
-    corner : Shape = RoundedCornerShape(ScreenCornerHelper.corner),
+    corner : Shape = ScreenCornerHelper.shape,
     content : @Composable () -> Unit
 )  {
     Box(modifier = modifier) {

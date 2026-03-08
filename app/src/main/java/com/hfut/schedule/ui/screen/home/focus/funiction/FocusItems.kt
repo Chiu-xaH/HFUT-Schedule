@@ -8,8 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.FilledTonalIconButton
@@ -290,7 +294,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
             DetailInfos(list,vm = vm, hazeState = hazeState)
@@ -364,7 +368,7 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
             DetailInfos(list,vm = vm, hazeState = hazeState)
@@ -669,24 +673,19 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
         if (showBottomSheet ) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
-                isFullExpand = false,
+//                expandFully = false,
                 showBottomSheet = showBottomSheet,
                 hazeState = hazeState
             ) {
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar("聚焦通知", isPaddingStatusBar = false)
-                    },) {innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ){
-                        TodayInfo(data!!)
-                    }
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                ){
+                    HazeBottomSheetTopBar("聚焦通知", isPaddingStatusBar = false)
+                    TodayInfo(data!!)
+                    Spacer(modifier = Modifier.height(20.dp))
+
                 }
             }
         }

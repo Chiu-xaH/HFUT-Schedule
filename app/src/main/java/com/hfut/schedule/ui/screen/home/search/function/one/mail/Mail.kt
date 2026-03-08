@@ -69,8 +69,8 @@ fun Mail(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
-            autoShape = false,
-            isFullExpand = true,
+//            isFullScreen = false,
+//            expandFully = true,
             showBottomSheet = showBottomSheet
         ) {
             Column{

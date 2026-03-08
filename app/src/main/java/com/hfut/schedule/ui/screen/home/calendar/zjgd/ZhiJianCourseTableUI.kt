@@ -207,7 +207,7 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
             MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
@@ -220,7 +220,7 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetCourse = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
             CourseDetail(vm,hazeState,selectedItem[0])
@@ -709,7 +709,7 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
                 showBottomSheetTotalCourse = false
             },
             hazeState = hazeState,
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheetTotalCourse
         ) {
             CourseDetail(vm,hazeState,courses[selectedIndex])

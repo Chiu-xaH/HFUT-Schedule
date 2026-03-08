@@ -30,29 +30,17 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         lifecycleScope.launch {
             launch {
-                // 初始化转场动画配置
-                AppTransitionInitializer.init()
-            }
-            launch {
                 if(hasFocusWidget(this@MainActivity) > 0) {
                     // 立刻刷新小组件
-//                    launch {
-//                        RefreshWidgetWorker.startPeriodicWork(this@MainActivity)
-//                    }
-//                    launch {
-                        refreshFocusWidget(this@MainActivity)
-//                    }
-                } else {
-//                    RefreshWidgetWorker.stopPeriodicWork(this@MainActivity)
+                    refreshFocusWidget(this@MainActivity)
                 }
-//                RefreshWidgetWorker.getStatus(this@MainActivity)
             }
             launch {
                 // 大文本迁移
                 LargeStringDataManager.moveLargeJson()
             }
             launch(Dispatchers.IO) {
-                //上传用户统计数据
+                // 埋点，上传用户统计数据
                 val switchUpload = prefs.getBoolean("SWITCHUPLOAD",true)
                 if(
                     switchUpload && // 用户决定

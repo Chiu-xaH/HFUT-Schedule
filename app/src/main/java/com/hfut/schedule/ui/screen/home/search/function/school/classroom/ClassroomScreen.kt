@@ -459,8 +459,8 @@ private fun EmptyClassroomScreen(
         HazeBottomSheet (
             hazeState = hazeState,
             showBottomSheet = showDialog,
-            isFullExpand = true,
-            autoShape = false,
+//            expandFully = true,
+//            isFullScreen = false,
             onDismissRequest = { showDialog = false },
         ) {
             val cause = occupyList.find { it.activityType == info!!.activityType }
@@ -880,7 +880,7 @@ fun ClassroomLessonsScreen(
                         onDismissRequest = {
                             showBottomSheetDetail = false
                         },
-                        autoShape = false,
+//                        isFullScreen = false,
                         showBottomSheet = showBottomSheetDetail,
                         hazeState = hazeState
                     ) {

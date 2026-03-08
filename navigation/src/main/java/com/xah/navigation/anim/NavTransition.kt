@@ -1,7 +1,7 @@
 package com.xah.navigation.anim
 
-import com.xah.navigation.model.StackEntry
-import com.xah.navigation.model.ActionType
+import com.xah.navigation.model.dest.StackEntry
+import com.xah.navigation.model.action.ActionType
 
 data class NavTransition(
     val type: ActionType,

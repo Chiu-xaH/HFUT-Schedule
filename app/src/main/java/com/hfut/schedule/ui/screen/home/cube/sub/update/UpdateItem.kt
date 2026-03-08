@@ -57,6 +57,8 @@ fun VersionInfo() {
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
         // TODO 新增培养方案已修学分计算功能
+            // 液态玻璃
+            // Drawer回弹
             UpdateItems("重构 自研第二代全局转场动效体系")
 //            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -61,17 +62,14 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.UpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
+import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.component.containerShare
 import com.xah.transition.component.iconElementShare
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
 
 /* 本kt文件已完成多语言文案适配 */
@@ -316,38 +314,44 @@ fun AlwaysItem(
     val isPreview = AppVersion.isPreview()
     val route = remember { AppNavRoute.VersionInfo.route }
     val show = !showBadge || isPreview
-    CustomCard(
-        color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.let{ if(show) it.containerShare(route) else it }
-    ) {
-        TransplantListItem(
-            headlineContent = { Text(text = stringResource(R.string.network_settings_refresh_login_title)) },
-            supportingContent = { Text(text = stringResource(R.string.network_settings_refresh_login_description)) },
-            leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
-            modifier = Modifier.clickable { refreshLogin(context) },
-        )
-        if (show) {
-            PaddingHorizontalDivider()
+//    SharedContainer(
+//        key = VersionInfoDestination.key,
+//        corner = MaterialTheme.shapes.medium
+//    ) {
+        CustomCard(
+            color = MaterialTheme.colorScheme.surface,
+            shape = RoundedCornerShape(0.dp),
+            modifier = Modifier.let{ if(show) it.sharedContainer(VersionInfoDestination.key, MaterialTheme.shapes.medium) else it }
+        ) {
             TransplantListItem(
-                headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
-                supportingContent = { Text(text = if(isPreview) stringResource(R.string.settings_version_info_description_preview) else stringResource(
-                    R.string.settings_version_info_description, currentVersion
-                )) },
-                leadingContent = {
-                    Icon(
-                        painterResource(AppNavRoute.VersionInfo.icon),
-                        contentDescription = "Localized description",
-                        modifier = Modifier.iconElementShare(route)
-                    )
-                },
-                colors = MaterialTheme.colorScheme.surface,
+                headlineContent = { Text(text = stringResource(R.string.network_settings_refresh_login_title)) },
+                supportingContent = { Text(text = stringResource(R.string.network_settings_refresh_login_description)) },
+                leadingContent = { Icon(painterResource(R.drawable.rotate_right), contentDescription = "Localized description",) },
+                modifier = Modifier.clickable { refreshLogin(context) },
+            )
+            if (show) {
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = stringResource(AppNavRoute.VersionInfo.label)) },
+                    supportingContent = { Text(text = if(isPreview) stringResource(R.string.settings_version_info_description_preview) else stringResource(
+                        R.string.settings_version_info_description, currentVersion
+                    )) },
+                    leadingContent = {
+                        Icon(
+                            painterResource(AppNavRoute.VersionInfo.icon),
+                            contentDescription = "Localized description",
+                            modifier = Modifier.iconElementShare(route)
+                        )
+                    },
+                    colors = MaterialTheme.colorScheme.surface,
 //                modifier =
 //                    Modifier.let{ if(show) it.containerShare(route) else it }
-                modifier = Modifier
-                    .clickable{
-                    navHostTopController.push(VersionInfoDestination)
-                }
-            )
+                    modifier = Modifier.clickable {
+                        navHostTopController.push(VersionInfoDestination)
+//                    navHostTopController.push(VersionInfoDestination)
+                    }
+                )
+            }
         }
-    }
+//    }
 }

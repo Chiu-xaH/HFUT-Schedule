@@ -2,6 +2,7 @@ package com.hfut.schedule.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
@@ -67,7 +69,10 @@ import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.shader.scaleMirror
+import com.xah.navigation.anim.EffectLevel
+import com.xah.navigation.component.DefaultBackHandler
 import com.xah.navigation.component.SharedNavHost
+import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.rememberNavDependencies
 import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.util.LogUtil
@@ -278,7 +283,7 @@ fun MainHost(
         put(isSuccessActivity,"isSuccessActivity")
     }
 
-    ModalNavigationDrawer  (
+    ModalNavigationDrawer (
         scrimColor = backgroundColor,
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
@@ -338,7 +343,17 @@ fun MainHost(
                                 }
                             }
                         }
-                )
+                ) {
+                    val navController = LocalNavController.current
+                    val transitionLevels = remember { EffectLevel.entries }
+                    val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
+
+                    LaunchedEffect(transition) {
+                        navController.transitionLevel = transitionLevels.find { it.levelNum == transition } ?: EffectLevel.NO_BLUR
+                    }
+
+                    DefaultBackHandler()
+                }
             }
         }
     }

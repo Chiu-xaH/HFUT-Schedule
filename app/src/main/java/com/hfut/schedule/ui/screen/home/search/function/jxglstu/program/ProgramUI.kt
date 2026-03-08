@@ -401,8 +401,8 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
     }
     HazeBottomSheet(
         showBottomSheet = true,
-        isFullExpand = true,
-        autoShape = false,
+//        expandFully = true,
+//        isFullScreen = false,
         hazeState = hazeState,
         onDismissRequest = onDismissRequest
     ){

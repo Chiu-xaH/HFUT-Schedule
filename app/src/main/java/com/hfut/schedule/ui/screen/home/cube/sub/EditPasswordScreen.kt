@@ -76,7 +76,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     if (showDialog) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState,
             showBottomSheet = showDialog
         ) {

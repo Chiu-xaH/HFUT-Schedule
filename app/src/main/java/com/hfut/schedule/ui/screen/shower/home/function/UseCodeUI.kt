@@ -90,7 +90,7 @@ fun UseCodeUI(vm: GuaGuaViewModel, hazeState: HazeState, navController: NavHostC
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) { ReSetUseCodeUI(vm,navController) }
     }
 

@@ -120,7 +120,7 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
             if(showBottomSheet && infoNum != null) {
                 HazeBottomSheet (
                     onDismissRequest = { showBottomSheet = false },
-                    autoShape = false,
+//                    isFullScreen = false,
                     showBottomSheet = showBottomSheet,
                     hazeState = hazeState
                 ){

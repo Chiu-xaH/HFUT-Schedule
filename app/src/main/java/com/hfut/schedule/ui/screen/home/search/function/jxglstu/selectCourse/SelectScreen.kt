@@ -593,8 +593,8 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
-            isFullExpand = false,
+//            isFullScreen = false,
+//            expandFully = false,
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
@@ -611,7 +611,7 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
             onDismissRequest = { showBottomSheet_info = false },
             showBottomSheet = showBottomSheet_info,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(name, isPaddingStatusBar = false) {
@@ -903,7 +903,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
     if (showBottomSheet) {
         HazeBottomSheet (
             showBottomSheet = showBottomSheet,
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState,
             onDismissRequest = { showBottomSheet = false },
         ) {
@@ -936,7 +936,7 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
         if (showBottomSheet_info) {
             HazeBottomSheet (
                 showBottomSheet = showBottomSheet_info,
-                autoShape = false,
+//                isFullScreen = false,
                 hazeState = hazeState,
                 onDismissRequest = { showBottomSheet_info = false },
             ) {

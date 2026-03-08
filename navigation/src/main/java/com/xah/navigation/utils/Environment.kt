@@ -5,7 +5,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.xah.navigation.controller.NavigationController
-import com.xah.navigation.model.Destination
+import com.xah.navigation.model.dest.Destination
 import com.xah.navigation.model.Dependencies
 
 // 根导航
@@ -15,10 +15,6 @@ val LocalNavControllerSafely = staticCompositionLocalOf<NavigationController?> {
 
 val LocalNavController = staticCompositionLocalOf<NavigationController> {
     error("未提供根NavController")
-}
-
-val LocalNavDestination = staticCompositionLocalOf<Destination> {
-    error("未提供根Destination")
 }
 
 val LocalNavDependencies = compositionLocalOf {

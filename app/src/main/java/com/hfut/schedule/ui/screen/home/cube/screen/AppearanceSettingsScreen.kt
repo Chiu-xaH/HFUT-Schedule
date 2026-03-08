@@ -108,6 +108,8 @@ import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
+import com.xah.navigation.anim.EffectLevel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.state.TransitionConfig
 import com.xah.transition.style.TransitionLevel
 import com.xah.transition.util.TransitionBackHandler
@@ -217,7 +219,6 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
 
-
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
         ) { uri ->
@@ -229,13 +230,11 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
-        val transitionLevels = remember { TransitionLevel.entries }
 
-        LaunchedEffect(transition) {
-            TransitionConfig.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
-        }
+        val transitionLevels = remember { EffectLevel.entries }
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
+
         LaunchedEffect(customColor) {
             hue = customColor.let {
                 if(useDynamicColor) {
@@ -245,6 +244,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
+
         var showColorDialog by remember { mutableStateOf(false) }
         if(showColorDialog) {
             Dialog(
@@ -594,7 +594,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                             Text(text = stringResource(
                                 R.string.appearance_settings_transition_level_title,
                                 transition,
-                                transitionLevels.find { it.code == transition }?.title ?: ""
+                                ""
                             ))
                         }
                     },
@@ -606,7 +606,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 CustomSlider(
                     value = transition.toFloat(),
                     onValueChange = { value ->
-                        val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
+                        val level = transitionLevels.find { it.levelNum == value.toInt() } ?: return@CustomSlider
                         scope.launch { DataStoreManager.saveTransition(level) }
                     },
                     steps = transitionLevels.size-2,

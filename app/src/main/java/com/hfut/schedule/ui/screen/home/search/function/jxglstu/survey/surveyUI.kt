@@ -128,8 +128,8 @@ private fun CourseSurveyListUI(
                 onDismissRequest = { showBottomSheet = false },
                 hazeState = hazeState,
                 showBottomSheet = showBottomSheet,
-                isFullExpand = true,
-                autoShape = false
+//                expandFully = true,
+//                isFullScreen = false
             ) {
                 Column {
                     HazeBottomSheetTopBar(course.nameZh, isPaddingStatusBar = false)
@@ -154,8 +154,8 @@ private fun CourseSurveyListUI(
             onDismissRequest = { showBottomSheet_start = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_start,
-            isFullExpand = true,
-            autoShape = false
+//            expandFully = true,
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar("评教 $name", isPaddingStatusBar = false)
@@ -263,8 +263,8 @@ private fun TeacherSurveyListUI(data : forStdLessonSurveySearchVms,vm : NetWorkV
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            isFullExpand = true,
-            autoShape = false
+//            expandFully = true,
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar("评教 $name", isPaddingStatusBar = false)

@@ -190,7 +190,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Fee,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column(
             ) {
@@ -256,7 +256,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             showBottomSheet = showBottomSheet_ELectric,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
 //            sheetState = sheetState_ELectric,
 //            shape = Round(sheetState_ELectric)
         ) {
@@ -327,7 +327,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Settings,
-            isFullExpand = false
+//            expandFully = false
 //            sheetState = sheetState_Settings,
 //            shape = bottomSheetRound(sheetState_Settings)
         ) { CardLimit(vm,vmUI) }
@@ -338,7 +338,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = { showBottomSheet_Toady = false },
 //            sheetState = sheetState_Today,
 //            shape = bottomSheetRound(sheetState_Today),
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet_Toady,
             hazeState = hazeState
         ){

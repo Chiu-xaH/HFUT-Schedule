@@ -3,7 +3,7 @@ package com.xah.navigation.controller
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.xah.navigation.model.StackEntry
+import com.xah.navigation.model.dest.StackEntry
 
 class NavigationViewModel() : ViewModel() {
     val stack = mutableStateListOf<StackEntry>()

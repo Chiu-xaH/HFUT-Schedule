@@ -72,7 +72,7 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.transition.state.TransitionConfig
@@ -151,10 +151,10 @@ fun WebViewTools(
                 }
                 click = !click
             }
-            CustomBottomSheet (
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
-                autoShape = false
+//                isFullScreen = false
             ) {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
@@ -195,10 +195,10 @@ fun WebViewTools(
             if(currentUrl == url) {
                 on(url)
             } else {
-                CustomBottomSheet (
+                HazeBottomSheet (
                     onDismissRequest = { showBottomSheet = false },
                     showBottomSheet = showBottomSheet,
-                    autoShape = false
+//                    isFullScreen = false
                 ) {
                     Column {
                         HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)

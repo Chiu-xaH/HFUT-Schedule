@@ -82,7 +82,7 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {

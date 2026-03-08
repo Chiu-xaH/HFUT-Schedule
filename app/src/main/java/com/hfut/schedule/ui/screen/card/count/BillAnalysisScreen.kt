@@ -96,7 +96,7 @@ private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,haz
         if(showBottomSheet && infoNum != null) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
-                autoShape = false,
+//                isFullScreen = false,
                 showBottomSheet = showBottomSheet,
                 hazeState = hazeState
             ){

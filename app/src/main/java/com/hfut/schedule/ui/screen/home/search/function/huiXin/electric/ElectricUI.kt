@@ -160,7 +160,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
                 Column(

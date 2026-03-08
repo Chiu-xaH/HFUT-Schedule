@@ -1,4 +1,4 @@
-package com.xah.navigation.model
+package com.xah.navigation.model.dest
 
 class StackEntry(
     val id: String,

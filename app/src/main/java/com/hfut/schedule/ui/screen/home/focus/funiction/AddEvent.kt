@@ -128,8 +128,8 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.container.container.SharedContent
 import com.xah.mirror.util.rememberShaderState
-
 import com.xah.navigation.utils.LocalNavController
 import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.component.status.LoadingUI

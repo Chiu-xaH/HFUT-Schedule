@@ -8,7 +8,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemGestures
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -17,12 +23,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.layout.positionOnScreen
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
@@ -33,6 +50,7 @@ import com.hfut.schedule.logic.util.other.AppVersion.HAZE_BLUR_FOR_S
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.hfut.schedule.ui.component.container.largeCardColor
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.xah.mirror.util.ShaderState
@@ -206,45 +224,37 @@ fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeSt
 fun HazeBottomSheet(
     showBottomSheet : Boolean,
     onDismissRequest : () -> Unit,
-    isFullExpand : Boolean = true,
-    hazeState: HazeState,
-    autoShape : Boolean = true,
+    hazeState: HazeState = HazeState(),
     content : @Composable () -> Unit
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = isFullExpand)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var height by remember { mutableStateOf<Int?>(null) }
+    val density = LocalDensity.current
+    val statusBarHeight = WindowInsets.statusBars.getTop(density)
+    val navigationBarHeight = WindowInsets.navigationBars.getBottom(density)
+    val screenHeight = with(density) { LocalConfiguration.current.screenHeightDp.dp.roundToPx() }
+    val finalScreenHeight = screenHeight - statusBarHeight - navigationBarHeight
+    val isFullScreen = height != null && height!! >= finalScreenHeight
+//    com.xah.uicommon.util.LogUtil.debug("$height ~ $finalScreenHeight $isFullScreen")
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
         dragHandle = null,
         containerColor = MaterialTheme.colorScheme.surface,
-        shape = bottomSheetRound(sheetState, autoShape)
+        shape = bottomSheetRound(sheetState, isFullScreen)
     ) {
         Column(modifier = Modifier
+            .onGloballyPositioned { coordinates ->
+                height = coordinates.size.height
+            }
+
 //            .bottomSheetBlur(hazeState)
         ){
-            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
+            if(!isFullScreen) {
+                Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
+            }
             content()
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CustomBottomSheet(
-    showBottomSheet : Boolean,
-    onDismissRequest : () -> Unit,
-    isFullExpand : Boolean = true,
-    autoShape : Boolean = true,
-    content : @Composable () -> Unit
-) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = isFullExpand)
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        sheetState = sheetState,
-        containerColor = MaterialTheme.colorScheme.surface,
-        shape = bottomSheetRound(sheetState, autoShape)
-    ) {
-        content()
     }
 }
 

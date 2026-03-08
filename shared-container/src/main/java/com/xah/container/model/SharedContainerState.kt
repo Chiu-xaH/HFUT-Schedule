@@ -25,7 +25,7 @@ class SharedContainerState() {
 
     // 容器圆角
     var containerCorner: CornerBasedShape = RoundedCornerShape(0.dp)
-    var contentCorner: CornerBasedShape = RoundedCornerShape(ScreenCornerHelper.corner)
+    var contentCorner: CornerBasedShape = ScreenCornerHelper.shape
     // 容器填充策略
     var containerFilledStrategy : ContainerFilledStrategy = ContainerFilledStrategy.Pixel()
 

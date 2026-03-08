@@ -98,7 +98,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavH
     if (showDialog) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState,
             showBottomSheet = showDialog
         ) {

@@ -158,7 +158,7 @@ fun GestureStudyScreen(
             onDismissRequest = { showBottomSheetHalf = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheetHalf,
-            autoShape = false,
+//            isFullScreen = false,
         ) {
             Column {
                 HazeBottomSheetTopBar("标题", isPaddingStatusBar = false)

@@ -73,17 +73,17 @@ private val openSourceProjects = listOf(
     OpenSource("Gson", "JSON解析","${MyApplication.GITHUB_URL}google/gson"),
     OpenSource("Jsoup", "XML/HTML解析","${MyApplication.GITHUB_URL}jhy/jsoup"),
     OpenSource("Zxing", "二维码","${MyApplication.GITHUB_URL}zxing/zxing"),
-    OpenSource("Haze" ,"层级模糊","${MyApplication.GITHUB_URL}chrisbanes/haze"),
+    OpenSource("Haze" ,"渐进式模糊","${MyApplication.GITHUB_URL}chrisbanes/haze"),
     OpenSource("Accompanist" ,"扩展工具包","${MyApplication.GITHUB_URL}google/accompanist"),
     OpenSource("Glide", "图片","${MyApplication.GITHUB_URL}bumptech/glide"),
     OpenSource("EdDSA Java" ,"供和风天气Api加密","${MyApplication.GITHUB_URL}str4d/ed25519-java"),
     OpenSource("Konfetti" ,"礼花动画","${MyApplication.GITHUB_URL}DanielMartinus/Konfetti"),
     OpenSource("Tesseract4Android" ,"Tesseract4(供图片验证码识别)","${MyApplication.GITHUB_URL}adaptech-cz/Tesseract4Android"),
-    OpenSource("Bsdiff-Lib" , "增量更新","${MyApplication.GITHUB_URL}Chiu-xaH/Bsdiff-Android-Library"),
+    OpenSource("DiffUpdater" , "增量更新","${MyApplication.GITHUB_URL}Chiu-xaH/DiffUpdater"),
     OpenSource("MaterialKolor" , "取色","${MyApplication.GITHUB_URL}jordond/MaterialKolor"),
-    OpenSource("LeakCanary" , "内存泄漏工具","${MyApplication.GITHUB_URL}square/leakcanary"),
+    OpenSource("LeakCanary" , "内存泄漏检查工具","${MyApplication.GITHUB_URL}square/leakcanary"),
     OpenSource("Reorderable" , "列表拖拽","${MyApplication.GITHUB_URL}Calvin-LL/Reorderable"),
-    OpenSource("Transition" , "转场动画","${MyApplication.GITHUB_URL}Chiu-xaH/Navigation-Transition-Share"),
+    OpenSource("SharedNav" , "全局转场动效","${MyApplication.GITHUB_URL}Chiu-xaH/SharedNav"),
     OpenSource("AndroidLiquidGlass" , "液态玻璃","${MyApplication.GITHUB_URL}Kyant0/AndroidLiquidGlass"),
     OpenSource("Mirror-Android" , "镜面效果","${MyApplication.GITHUB_URL}Chiu-xaH/Mirror-Android"),
 )
@@ -209,7 +209,7 @@ fun About(vm : NetWorkViewModel) {
                             },
                             overlineContent = { Text("贡献者(按时间顺序)") },
                             headlineContent = {
-                                Text(MyApplication.contributors.map { it.key }.drop(1).joinToString(" "))
+                                Text(MyApplication.contributors.map { it.key }.drop(1).joinToString(", "))
                             },
                         )
                         PaddingHorizontalDivider()

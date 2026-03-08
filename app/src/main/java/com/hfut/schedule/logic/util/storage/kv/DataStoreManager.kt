@@ -28,6 +28,7 @@ import com.xah.uicommon.util.language.res
 import com.xah.uicommon.util.language.text
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.xah.navigation.anim.EffectLevel
 import com.xah.transition.style.TransitionLevel
 import com.xah.uicommon.util.language.BaseChoice
 import kotlinx.coroutines.Dispatchers
@@ -93,7 +94,7 @@ object DataStoreManager : IDataStore {
     private val COLOR_MODE = intPreferencesKey("color_mode")
     private val MOTION_BLUR = booleanPreferencesKey("motion_blur_2")
     private val HAZE_BLUR = booleanPreferencesKey("haze_blur_4")
-    private val TRANSITION = intPreferencesKey("transitions_2")
+    private val TRANSITION = intPreferencesKey("transitions_3")
     private val SUPABASE_JWT = stringPreferencesKey("supabase_jwt")
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
@@ -149,7 +150,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
     suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR, value)
-    suspend fun saveTransition(value: TransitionLevel) = saveValue(TRANSITION,value.code)
+    suspend fun saveTransition(value: EffectLevel) = saveValue(TRANSITION,value.levelNum)
     suspend fun saveSupabaseJwt(value: String) = saveValue(SUPABASE_JWT,value)
     suspend fun saveSupabaseRefreshToken(value: String) = saveValue(SUPABASE_REFRESH_TOKEN,value)
     suspend fun saveSupabaseFilterEvent(value: Boolean) = saveValue(SUPABASE_FILTER_EVENT,value)
@@ -215,7 +216,7 @@ object DataStoreManager : IDataStore {
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, true)
-    val transitionLevel = getFlow(TRANSITION, TransitionLevel.MEDIUM.code)
+    val transitionLevel = getFlow(TRANSITION, EffectLevel.NO_BLUR.levelNum)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,false)

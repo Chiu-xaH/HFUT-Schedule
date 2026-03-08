@@ -1,5 +1,7 @@
 package com.xah.navigation.anim
 
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,7 +25,7 @@ data class PageEffect(
     val scale: Float,
     val blur: Dp,
     val mask: Float,
-    val corner : Dp,
+    val corner : CornerBasedShape,
     val alpha : Float
 ) {
     companion object {
@@ -32,7 +34,7 @@ data class PageEffect(
             scale = 1f,
             blur = 0.dp,
             mask = 0f,
-            corner = ScreenCornerHelper.corner,
+            corner = ScreenCornerHelper.shape,
             alpha = 1f,
         )
         // 上层页面回缩
@@ -40,7 +42,7 @@ data class PageEffect(
             scale = 0f,
             blur = 20.dp,
             mask = 0f,
-            corner = ScreenCornerHelper.corner*2,
+            corner = ScreenCornerHelper.shape,
             alpha = 1f
         )
         // 背景 下层页面
@@ -48,21 +50,21 @@ data class PageEffect(
             scale = 0.875f,
             blur = 25.dp,
             mask = 0.25f,
-            corner = 0.dp,
+            corner = RoundedCornerShape(0.dp),
             alpha = 1f
         )
         val BackgroundWithoutBlur = PageEffect(
             scale = 0.875f,
             blur = 0.dp,
             mask = 0.25f,
-            corner = 0.dp,
+            corner = RoundedCornerShape(0.dp),
             alpha = 1f
         )
         val BackgroundWithoutScale = PageEffect(
             scale = 1f,
             blur = 0.dp,
             mask = 0.25f,
-            corner = 0.dp,
+            corner = RoundedCornerShape(0.dp),
             alpha = 1f
         )
         // 预测式时的背景 不完全清晰 从 Background->PredictiveBackground scale、blur、dim略减小
@@ -70,7 +72,7 @@ data class PageEffect(
             scale = 0.875f,
             blur = 12.5.dp,
             mask = 0.1f,
-            corner = 0.dp,
+            corner = RoundedCornerShape(0.dp),
             alpha = 1f
         )
         // 预测式时的前景 不完全变小，露出下层一些背景即可
@@ -78,7 +80,7 @@ data class PageEffect(
             scale = 0.875f,
             blur = 0.dp,
             mask = 0f,
-            corner = 25.dp,
+            corner = RoundedCornerShape(25.dp),
             alpha = 1f
         )
     }

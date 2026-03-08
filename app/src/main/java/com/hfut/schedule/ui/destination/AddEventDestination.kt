@@ -5,6 +5,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.screen.home.focus.funiction.AddEventScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.container.container.SharedContent
 import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.uicommon.util.language.UiText
 import com.xah.uicommon.util.language.res
@@ -13,7 +14,7 @@ data class AddEventDestination(
     val id : Int?,
     val origin : String
 ) : NavDestination() {
-    override val key: String = "library_borrowed"
+    override val key: String = "library_borrowed_${origin}_$id"
     override val title: UiText = res(R.string.navigation_label_library_borrowed)
 
     @Composable

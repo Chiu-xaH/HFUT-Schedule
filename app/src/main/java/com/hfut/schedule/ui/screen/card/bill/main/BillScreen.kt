@@ -91,7 +91,7 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
     if(showBottomSheet && infoNum != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ){

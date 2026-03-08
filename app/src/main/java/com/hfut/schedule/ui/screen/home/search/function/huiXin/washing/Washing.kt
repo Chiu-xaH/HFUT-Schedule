@@ -59,7 +59,7 @@ fun Washing(
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ) {
