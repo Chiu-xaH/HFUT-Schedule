@@ -9,7 +9,7 @@ import com.xah.uicommon.util.language.res
 data class WorkAndRestDestination(
     val name : String?
 ) : NavDestination() {
-    override val key = "work_and_rest"
+    override val key = "work_and_rest_$name"
     override val title = res(R.string.navigation_label_work_and_rest)
 
     @Composable

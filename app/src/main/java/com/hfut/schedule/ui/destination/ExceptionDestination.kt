@@ -10,7 +10,7 @@ import com.xah.uicommon.util.language.res
 data class ExceptionDestination(
     val exception : String
 ) : NavDestination() {
-    override val key = "exception"
+    override val key = "exception_$exception"
     override val title = res(R.string.navigation_label_exception)
 
     @Composable

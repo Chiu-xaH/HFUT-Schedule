@@ -12,7 +12,7 @@ data class TermCoursesDestination(
     val ifSaved : Boolean,
     val origin : String,
 ) : NavDestination() {
-    override val key = "term_courses"
+    override val key = "term_courses_${ifSaved}_$origin"
     override val title = res(R.string.navigation_label_term_courses)
 
     @Composable

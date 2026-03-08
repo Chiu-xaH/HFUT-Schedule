@@ -11,7 +11,7 @@ import com.xah.uicommon.util.language.res
 data class NewsApiDestination(
     val keyword : String
 ) : NavDestination() {
-    override val key = "news_api"
+    override val key = "news_api_$keyword"
     override val title = res(R.string.navigation_label_news)
 
     @Composable

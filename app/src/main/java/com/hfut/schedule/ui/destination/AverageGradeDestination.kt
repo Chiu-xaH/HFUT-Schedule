@@ -11,7 +11,7 @@ import com.xah.uicommon.util.language.res
 data class AverageGradeDestination(
     val useUniAppData : Boolean
 ) : NavDestination() {
-    override val key = "average_grade"
+    override val key = "average_grade_$useUniAppData"
     override val title = res(R.string.navigation_label_average_grade)
 
     @Composable

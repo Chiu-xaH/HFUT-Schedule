@@ -11,7 +11,7 @@ import com.xah.uicommon.util.language.res
 data class SurveyDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
-    override val key = "survey"
+    override val key = "survey_$ifSaved"
     override val title = res(R.string.navigation_label_survey)
 
     @Composable

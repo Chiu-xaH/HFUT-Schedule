@@ -11,7 +11,7 @@ import com.xah.uicommon.util.language.res
 data class GradeDestination(
     val ifSaved : Boolean
 ) : NavDestination() {
-    override val key = "grade"
+    override val key = "grade_$ifSaved"
     override val title = res(R.string.navigation_label_grade)
 
     @Composable

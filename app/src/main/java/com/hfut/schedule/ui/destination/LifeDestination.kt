@@ -11,7 +11,7 @@ import com.xah.uicommon.util.language.res
 data class LifeDestination(
     val inFocus: Boolean
 ) : NavDestination() {
-    override val key = "life"
+    override val key = "life_$inFocus"
     override val title = res(R.string.navigation_label_life)
 
     @Composable

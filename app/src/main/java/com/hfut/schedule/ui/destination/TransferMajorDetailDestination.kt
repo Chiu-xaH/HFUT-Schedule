@@ -13,7 +13,7 @@ data class TransferMajorDetailDestination(
     val batchId : String,
     val isHidden : Boolean
 ) : NavDestination() {
-    override val key = "transfer_major_detail"
+    override val key = "transfer_major_detail_${name}_${batchId}_${isHidden}"
     override val title = res(R.string.navigation_label_transfer_major_detail)
 
     @Composable
