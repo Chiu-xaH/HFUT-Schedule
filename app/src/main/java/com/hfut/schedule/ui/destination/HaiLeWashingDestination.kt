@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object HaiLeWashingDestination : NavDestination() {
     override val key = "washing"
     override val title = res(R.string.navigation_label_washing)
+    override val icon = R.drawable.local_laundry_service
 
     @Composable
     override fun Content() {

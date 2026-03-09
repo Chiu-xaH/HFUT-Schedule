@@ -32,6 +32,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -72,9 +73,8 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
             }
         }
     }
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.VersionInfo.route }
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -84,7 +84,7 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.VersionInfo.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.VersionInfo.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton (

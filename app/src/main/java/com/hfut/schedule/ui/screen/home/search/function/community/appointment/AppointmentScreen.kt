@@ -31,18 +31,13 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentScreen(
-//    vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.CommunityAppointment.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -52,10 +47,7 @@ fun AppointmentScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.CommunityAppointment.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.CommunityAppointment.icon
-                        )
+                        TopBarNavigationIcon()
                     }
                 )
             }

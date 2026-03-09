@@ -36,6 +36,7 @@ import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.util.webview.isThemeDark
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.mirror.util.rememberShaderState
@@ -97,7 +98,7 @@ fun SimpleVideo(
         }
     }
 
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Box(
         modifier = modifier.clickable {
             showButton = !showButton

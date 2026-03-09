@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun IETP() {
     val context = LocalContext.current
-    val route = remember { AppNavRoute.WebView.shareRoute(MyApplication.IETP_URL) }
     val icon = remember { R.drawable.groups }
     val title = stringResource(R.string.navigation_label_ietp)
     val scope = rememberCoroutineScope()

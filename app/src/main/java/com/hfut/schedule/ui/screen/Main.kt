@@ -39,7 +39,6 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -56,6 +55,8 @@ import com.hfut.schedule.ui.destination.AgreementDestination
 import com.hfut.schedule.ui.destination.HomeDestination
 import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.hfut.schedule.ui.destination.UpdateSuccessfullyDestination
+import com.hfut.schedule.ui.destination.WebViewDestination
+import com.hfut.schedule.ui.screen.util.ControlCenterScreen
 import com.hfut.schedule.ui.screen.util.limitDrawerSwipeArea
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
@@ -69,6 +70,7 @@ import com.xah.mirror.shader.scaleMirror
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.component.DefaultBackHandler
 import com.xah.navigation.component.SharedNavHost
+import com.xah.navigation.component.rememberNavController
 import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.rememberNavDependencies
 import com.xah.uicommon.util.LogUtil
@@ -156,7 +158,6 @@ fun MainHost(
     startRoute : String? = null
 ) {
     val celebration = remember { getCelebration() }
-    val navController = rememberNavController()
     // 初始化网络请求
     if(!isSuccessActivity) {
         LaunchedEffect(Unit) {
@@ -187,20 +188,21 @@ fun MainHost(
         }
     }
 
+    val navigationController = rememberNavController(firstPage(startRoute))
     val configuration = LocalConfiguration.current
     var screenWidth by remember { mutableIntStateOf(0) }
     val drawerState =  rememberDrawerState(DrawerValue.Closed)
     var maxOffset by rememberSaveable { mutableFloatStateOf(prefs.getFloat(OFFSET_KEY,0f)) }
     val enableControlCenterGesture by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
-    val currentRoute = navController.currentRouteWithoutArgs()
-    val disabledGesture = currentRoute == AppNavRoute.WebView.route || currentRoute == AppNavRoute.Agreement.route
+    val currentRoute = navigationController.current()?.destination
+    val disabledGesture = currentRoute is WebViewDestination || currentRoute is AgreementDestination
 
     val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
     val disabledBlur = if(enableCameraDynamicRecord) {
         false
     } else {
-        currentRoute == AppNavRoute.ScanQrCode.route
+        currentRoute is ScanQrCodeDestination
     }
 
     val enableGesture = enableControlCenterGesture && !disabledGesture
@@ -284,11 +286,11 @@ fun MainHost(
         drawerState = drawerState,
         gesturesEnabled = enableGesture,
         drawerContent = {
-//            ControlCenterScreen(navController) {
-//                scope.launch {
-//                    drawerState.animationClose()
-//                }
-//            }
+            ControlCenterScreen(navigationController) {
+                scope.launch {
+                    drawerState.animationClose()
+                }
+            }
         },
     ) {
         CompositionLocalProvider(
@@ -303,8 +305,9 @@ fun MainHost(
                 Party(show = celebration.use && celebration.time != 0L, timeSecond = celebration.time*500)
                 // 磁钉体系
                 SharedNavHost(
+                    navController = navigationController,
                     dependencies = dependencies,
-                    startDestination = firstPage(startRoute),
+//                    startDestination = firstPage(startRoute),
                     modifier = Modifier
                         // 启动台背景
                         .background(
@@ -345,8 +348,6 @@ fun MainHost(
                     val transitionLevels = remember { EffectLevel.entries }
                     val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
                     val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
-                    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
-                    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
 
                     LaunchedEffect(transition) {
                         navController.transitionLevel = transitionLevels.find { it.levelNum == transition } ?: EffectLevel.NO_BLUR

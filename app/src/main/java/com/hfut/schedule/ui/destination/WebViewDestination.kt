@@ -9,7 +9,7 @@ data class WebViewDestination(
     val url : String,
     val cookies : String?,
     val name : String,
-    val icon : Int?
+    override val icon : Int = R.drawable.net
 ) : NavDestination() {
     override val key = getKey(url)
     override val title = res(R.string.navigation_label_web)

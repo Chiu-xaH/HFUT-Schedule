@@ -22,7 +22,6 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun DormitoryScoreXuanCheng() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Dormitory.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(stringResource(AppNavRoute.Dormitory.label)) },

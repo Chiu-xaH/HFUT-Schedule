@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -82,21 +83,17 @@ private enum class BusDate(val type : String,val description: String) {
 @Composable
 fun BusScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Bus.route }
     val dates = remember { BusDate.entries }
     var startInput by remember { mutableStateOf("") }
     var endInput by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -106,10 +103,7 @@ fun BusScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Bus.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.Bus.icon
-                        )
+                        TopBarNavigationIcon()
                     }
                 )
                 Row(

@@ -14,12 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.logic.util.sys.Starter
+import com.kyant.backdrop.Backdrop
 import com.xah.mirror.util.ShaderState
 
 
 @Composable
 fun StartAppIconButton(
-    backdrop: ShaderState,
+    backdrop: Backdrop,
     app : Starter.AppPackages,
     modifier: Modifier = Modifier
 ) {

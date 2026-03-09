@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object OfficeHallDestination : NavDestination() {
     override val key = "office_hall"
     override val title = res(R.string.navigation_label_office_hall)
+    override val icon = R.drawable.person_play
 
     @Composable
     override fun Content() {

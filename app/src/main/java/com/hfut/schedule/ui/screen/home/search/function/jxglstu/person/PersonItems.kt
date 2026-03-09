@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.coverBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
@@ -85,11 +86,9 @@ import org.jsoup.Jsoup
 @Composable
 fun PersonScreen(
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.PersonInfo.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -109,11 +108,9 @@ fun PersonScreen(
         }
     }
 
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -121,7 +118,7 @@ fun PersonScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.PersonInfo.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.PersonInfo.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(

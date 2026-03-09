@@ -9,6 +9,7 @@ import com.xah.uicommon.util.language.res
 object NotificationBoxDestination : NavDestination() {
     override val key = "notification_box"
     override val title = res(R.string.navigation_label_notification_box)
+    override val icon = R.drawable.notifications
 
     @Composable
     override fun Content() {

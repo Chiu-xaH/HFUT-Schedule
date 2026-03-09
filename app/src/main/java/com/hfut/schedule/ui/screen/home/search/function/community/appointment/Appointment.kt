@@ -22,7 +22,6 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun Appointment() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.CommunityAppointment.route }
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.CommunityAppointment.label)) },
         leadingContent = {

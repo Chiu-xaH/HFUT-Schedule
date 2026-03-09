@@ -53,6 +53,9 @@ import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.LayerBackdrop
+import com.kyant.backdrop.backdrops.layerBackdrop
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.shaderSource
 import com.xah.navigation.utils.LocalNavControllerSafely
@@ -164,6 +167,19 @@ fun Modifier.backDropSource(
         this
     }
 }
+@Composable
+fun Modifier.backDropSource(
+    backdrop : LayerBackdrop
+): Modifier {
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    return if(enableLiquidGlass && !isTransitioning) {
+        this.layerBackdrop(backdrop)
+    } else {
+        this
+    }
+}
+
 
 
 @Composable

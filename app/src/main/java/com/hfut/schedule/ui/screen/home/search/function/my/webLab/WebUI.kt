@@ -81,8 +81,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun WebUI() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.WebFolder.route }
-
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebFolder.label)) },
         leadingContent = {
@@ -143,12 +141,9 @@ fun isValidWebUrl(url: String, strict : Boolean = false): Boolean {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun WebNavigationScreen(
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.WebFolder.route }
     var showBottomSheet_Add by remember { mutableStateOf(false) }
 
     if(showBottomSheet_Add) {
@@ -222,9 +217,7 @@ fun WebNavigationScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -232,7 +225,7 @@ fun WebNavigationScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.WebFolder.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.WebFolder.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },
@@ -302,11 +295,9 @@ fun WebNavigationScreen(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationBoxScreen(
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.NotificationBox.route }
 
     LaunchedEffect(Unit) {
         saveString("Notifications", getNotifications().size.toString())
@@ -314,9 +305,7 @@ fun NotificationBoxScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -324,7 +313,7 @@ fun NotificationBoxScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.NotificationBox.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.NotificationBox.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

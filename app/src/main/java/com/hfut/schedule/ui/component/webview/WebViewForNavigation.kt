@@ -125,7 +125,7 @@ fun WebViewScreenForNavigation(
                 visible,
                 { visible = it },
                 {
-                    WebViewBackIcon(webView,icon,topBarTitleColor,route){
+                    WebViewBackIcon(webView,topBarTitleColor){
                         navController.popBackStack()
                     }
                 },

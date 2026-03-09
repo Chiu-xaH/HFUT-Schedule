@@ -109,7 +109,6 @@ fun UseAgreementScreen() {
             )
         },
         bottomBar = {
-//            val route = remember { AppNavRoute.Empty.withArgs(AppNavRoute.Home.route) }
             Column () {
                 NoPadding {
                     Box(Modifier.bottomBarBlur(hazeState)) {

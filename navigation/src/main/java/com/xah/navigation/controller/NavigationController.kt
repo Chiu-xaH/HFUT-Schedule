@@ -17,6 +17,7 @@ import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.dest.Destination
 import com.xah.navigation.model.action.LaunchMode
 import com.xah.navigation.model.dest.StackEntry
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -26,9 +27,9 @@ import java.util.UUID
 
 class NavigationController(
     private val scope: CoroutineScope,
-    private val startDestination: Destination,
+    val startDestination: Destination,
     private val _stack: SnapshotStateList<StackEntry>,
-    val sharedRegistry : SharedRegistry? = null,
+    var sharedRegistry : SharedRegistry? = null,
 ) {
     val stack: List<StackEntry> get() = _stack
 
@@ -54,7 +55,7 @@ class NavigationController(
     private val pushAnimation = tween<Float>(animationSpecSharedTween*6/5, easing = CubicBezierEasing(0.4f, 0.65f, 0.25f, 1.0f))
 
     fun getAnimation() =
-        if (sharedRegistry != null && sharedRegistry.isRunning) {
+        if (sharedRegistry?.isRunning == true) {
             when(navTransition?.type) {
                 ActionType.POP -> popAnimationWithShared
                 ActionType.PUSH -> pushAnimationWithShared
@@ -80,6 +81,12 @@ class NavigationController(
             destination = destination
         )
         _stack += newEntry
+    }
+
+    private fun removeAndPop() {
+        if(canPop()) {
+            _stack.removeAt(_stack.size-1)
+        }
     }
 
 
@@ -127,10 +134,16 @@ class NavigationController(
                     }
                 }
                 is LaunchMode.PopToExisting -> {
+                    // 如果栈顶就是目标，保持栈顶不变
+                    if(_stack.last().destination == destination) {
+                        return@launch
+                    }
                     // 如果栈中已经有该目标，则清除其之上的所有栈并复用它
                     val existingIndex = _stack.indexOfFirst { it.destination == destination }
                     if (existingIndex != -1) {
-                        _stack.subList(existingIndex + 1, _stack.size).clear() // 清除目标 Activity 之上的所有元素
+                        _stack.subList(existingIndex + 1, _stack.size-1).clear() // 清除中间元素
+                        pop()
+                        return@launch
                     } else {
                         launchMode.actionType = ActionType.PUSH
                         createAndPush(destination)
@@ -205,14 +218,8 @@ class NavigationController(
         transitionProgress.animateTo(targetValue = target, animationSpec = animationSpec)
 
         // 移除栈，置状态
-        when (navTransition?.type) {
-            ActionType.PUSH -> Unit
-            ActionType.POP -> {
-                if(_stack.size > 1) {
-                    _stack.removeAt(_stack.size-1)
-                }
-            }
-            null -> Unit
+        if (navTransition?.type == ActionType.POP) {
+            removeAndPop()
         }
         navTransition = null
         isTransitioning = false
@@ -223,7 +230,7 @@ class NavigationController(
         launchMode: LaunchMode = LaunchMode.Push(reuse = true),
     ) {
         val registry = this.sharedRegistry
-        if(this.transitionLevel == EffectLevel.NONE || registry == null) {
+        if(this.transitionLevel == EffectLevel.NONE || registry == null || launchMode.actionType == ActionType.POP) {
             this.pushInternal(destination,launchMode)
         } else {
             registry.push(
@@ -255,6 +262,14 @@ class NavigationController(
                 this.popInternal()
             }
         }
+    }
+
+    fun current() : StackEntry? {
+        return _stack.lastOrNull()
+    }
+
+    fun canPop() : Boolean {
+        return _stack.size > 1
     }
 
     init {

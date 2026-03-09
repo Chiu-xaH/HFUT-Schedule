@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object FeeDestination : NavDestination() {
     override val key = "fee"
     override val title = res(R.string.navigation_label_fee)
+    override val icon = R.drawable.paid
 
     @Composable
     override fun Content() {

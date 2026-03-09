@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object CourseSearchDestination : NavDestination() {
     override val key = "course_search"
     override val title = res(R.string.navigation_label_course_search)
+    override val icon = R.drawable.search
 
     @Composable
     override fun Content() {

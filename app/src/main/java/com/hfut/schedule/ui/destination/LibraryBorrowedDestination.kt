@@ -12,6 +12,7 @@ import com.xah.uicommon.util.language.res
 object LibraryBorrowedDestination : NavDestination() {
     override val key: String = "library_borrowed"
     override val title: UiText = res(R.string.navigation_label_library_borrowed)
+    override val icon = R.drawable.book_5
 
     @Composable
     override fun Content() {

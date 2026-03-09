@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object DormitoryDestination : NavDestination() {
     override val key = "dormitory"
     override val title = res(R.string.navigation_label_dormitory)
+    override val icon = R.drawable.bed
 
     @Composable
     override fun Content() {

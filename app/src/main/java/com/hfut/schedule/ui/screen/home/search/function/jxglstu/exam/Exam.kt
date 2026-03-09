@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -34,6 +35,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.addToCalendars
@@ -50,6 +52,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
@@ -89,13 +92,10 @@ fun ExamScreen(
     val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Exam.withArgs(origin) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -120,7 +120,7 @@ fun ExamScreen(
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Exam.icon)
+                    TopBarNavigationIcon()
                 }
             )
         },

@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object SelectCoursesDestination : NavDestination() {
     override val key = "select_courses"
     override val title = res(R.string.navigation_label_select_courses)
+    override val icon = R.drawable.ads_click
 
     @Composable
     override fun Content() {

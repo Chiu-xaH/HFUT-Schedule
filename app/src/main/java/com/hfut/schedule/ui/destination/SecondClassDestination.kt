@@ -9,6 +9,7 @@ import com.xah.uicommon.util.language.res
 object SecondClassDestination : NavDestination() {
     override val key = "second_class"
     override val title = res(R.string.navigation_label_second_class)
+    override val icon = R.drawable.kid_star
 
     @Composable
     override fun Content() {

@@ -13,6 +13,7 @@ data class AverageGradeDestination(
 ) : NavDestination() {
     override val key = "average_grade_$useUniAppData"
     override val title = res(R.string.navigation_label_average_grade)
+    override val icon = R.drawable.leaderboard
 
     @Composable
     override fun Content() {

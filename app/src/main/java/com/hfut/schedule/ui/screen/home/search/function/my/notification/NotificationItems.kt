@@ -145,16 +145,12 @@ fun NotificationItems() {
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationsScreen(
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Notifications.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -162,7 +158,7 @@ fun NotificationsScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.Notifications.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Notifications.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

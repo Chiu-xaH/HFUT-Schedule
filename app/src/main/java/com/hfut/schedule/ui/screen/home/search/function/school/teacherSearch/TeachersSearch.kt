@@ -53,6 +53,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
 import com.xah.mirror.shader.GlassStyle
 import com.xah.mirror.shader.glassLayer
@@ -71,7 +72,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun TeacherSearch() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.TeacherSearch.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.TeacherSearch.label)) },
@@ -88,11 +88,9 @@ fun TeacherSearch() {
 @Composable
 fun TeacherSearchScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.TeacherSearch.route }
 
     var name by remember { mutableStateOf("") }
     var direction by remember { mutableStateOf("") }
@@ -107,13 +105,10 @@ fun TeacherSearchScreen(
     LaunchedEffect(Unit) {
         vm.teacherSearchData.emitPrepare()
     }
-    val shaderState = rememberShaderState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
@@ -124,7 +119,7 @@ fun TeacherSearchScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.TeacherSearch.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.TeacherSearch.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         LiquidButton(
@@ -181,7 +176,6 @@ fun TeacherSearchScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .shaderSource(shaderState)
                 .backDropSource(backDrop)
                 .hazeSource(hazeState)
                 .fillMaxSize()

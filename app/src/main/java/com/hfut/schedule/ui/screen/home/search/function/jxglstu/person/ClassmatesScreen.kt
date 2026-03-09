@@ -36,6 +36,7 @@ import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -48,20 +49,15 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun ClassmatesScreen(
     vm: NetWorkViewModel,
-//    navTopController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Classmates.route }
     var nameSort by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        roundShape = MaterialTheme.shapes.medium,
-//        route = route,
-//        navHostController = navTopController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -69,10 +65,7 @@ fun ClassmatesScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(getPersonInfo().className ?: stringResource(AppNavRoute.Classmates.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(
-                        route,
-                        AppNavRoute.Classmates.icon
-                    )
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(

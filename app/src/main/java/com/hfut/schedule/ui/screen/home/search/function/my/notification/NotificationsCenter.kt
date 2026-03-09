@@ -27,7 +27,6 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun NotificationsCenter() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Notifications.route }
 
     val count by produceState(initialValue = 0) {
         value = calculatedReadNotificationCount()

@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object TransferMajorDestination : NavDestination() {
     override val key = "transfer_major"
     override val title = res(R.string.navigation_label_transfer_major)
+    override val icon = R.drawable.compare_arrows
 
     @Composable
     override fun Content() {

@@ -28,7 +28,6 @@ import com.xah.navigation.utils.LocalNavController
 @Composable
 fun Scan() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.ScanQrCode.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.ScanQrCode.label)) },

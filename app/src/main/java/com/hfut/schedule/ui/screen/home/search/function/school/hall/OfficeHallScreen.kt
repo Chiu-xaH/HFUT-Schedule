@@ -59,6 +59,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -89,12 +90,9 @@ private suspend fun openDetail(context: Context,bean : OfficeHallSearchBean,need
 @Composable
 fun OfficeHallScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.OfficeHall.route }
     var input by remember { mutableStateOf("") }
     var page by remember { mutableIntStateOf(1) }
     val refreshNetwork : suspend () -> Unit =  {
@@ -104,11 +102,9 @@ fun OfficeHallScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
     val imageSize = remember { 25.dp }
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -118,10 +114,7 @@ fun OfficeHallScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.OfficeHall.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.OfficeHall.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                 )
                 CustomTextField(

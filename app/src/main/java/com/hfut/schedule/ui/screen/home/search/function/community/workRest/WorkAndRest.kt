@@ -48,6 +48,7 @@ import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 
 import com.xah.mirror.util.rememberShaderState
 
@@ -173,7 +174,6 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
 @Composable
 fun WorkAndRest() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.WorkAndRest.withArgs() }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WorkAndRest.label)) },
@@ -204,13 +204,10 @@ fun TimeTableScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.WorkAndRest.withArgs(friendId) }
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -218,7 +215,7 @@ fun TimeTableScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.WorkAndRest.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route,AppNavRoute.WorkAndRest.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(

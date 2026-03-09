@@ -756,10 +756,8 @@ fun GradeDetailScreen(
     allTotalCredits : Float,
 //    navController: NavHostController
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.GradeDetail.shareRoute(bean) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var party by remember { mutableStateOf(false) }
     val isFailed = remember { bean.gpa.toFloatOrNull() == 0f }
@@ -825,9 +823,7 @@ fun GradeDetailScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Party(show = party)
         Scaffold (
-//            route = route,
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//            navHostController = navController,
             topBar = {
                 Column(modifier = Modifier.topBarBlur(hazeState)) {
                     MediumTopAppBar(

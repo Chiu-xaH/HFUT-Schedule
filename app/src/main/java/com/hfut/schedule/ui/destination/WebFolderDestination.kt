@@ -9,6 +9,7 @@ import com.xah.uicommon.util.language.res
 object WebFolderDestination : NavDestination() {
     override val key = "web_folder"
     override val title = res(R.string.navigation_label_web_folder)
+    override val icon = R.drawable.explore
 
     @Composable
     override fun Content() {

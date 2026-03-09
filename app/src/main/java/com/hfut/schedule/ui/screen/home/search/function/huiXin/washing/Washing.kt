@@ -57,7 +57,6 @@ fun Washing(
 ) {
     val navController = LocalNavController.current
     var showBottomSheet by remember { mutableStateOf(false) }
-    val route = remember { AppNavRoute.HaiLeWashing.route }
 
     if (showBottomSheet) {
         HazeBottomSheet (

@@ -24,7 +24,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun XueXin() {
     val context = LocalContext.current
-    val route = remember { AppNavRoute.WebView.shareRoute(MyApplication.XUE_XIN_URL) }
     val icon = remember { R.drawable.school }
     val title = stringResource(R.string.navigation_label_chsi)
     val scope = rememberCoroutineScope()

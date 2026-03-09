@@ -14,6 +14,7 @@ data class TermCoursesDestination(
 ) : NavDestination() {
     override val key = "term_courses_${ifSaved}_$origin"
     override val title = res(R.string.navigation_label_term_courses)
+    override val icon = R.drawable.category
 
     @Composable
     override fun Content() {

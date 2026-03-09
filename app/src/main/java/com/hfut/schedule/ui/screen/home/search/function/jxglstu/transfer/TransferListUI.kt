@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -89,6 +90,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
@@ -116,9 +118,8 @@ fun TransferScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TransferMajor.route }
     val scope = rememberCoroutineScope()
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     val uiState by vm.transferListData.state.collectAsState()
     val refreshing = uiState is UiState.Loading
 
@@ -139,12 +140,7 @@ fun TransferScreen(
             refreshNetwork(false)
         }
     })
-    val toRoute = remember {
-        AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.TRANSFER_MAJOR.keyword)
-    }
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -163,17 +159,17 @@ fun TransferScreen(
                     ) {
                         LiquidButton(
                             shape = RectangleShape,
+                            backdrop = backDrop,
                             onClick = {
                                 navController.push(dest)
                             },
-                            backdrop = backDrop,
                         ) {
                             Text("通知公告", maxLines = 1)
                         }
                     }
                 },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.TransferMajor.icon)
+                    TopBarNavigationIcon()
                 }
             )
         },
@@ -322,20 +318,16 @@ fun TransferDetailScreen(
     batchId: String,
     title : String,
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TransferMajorDetail.withArgs(isHidden,batchId,title) }
     var showBottomSheet_apply by remember { mutableStateOf(false) }
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     if (showBottomSheet_apply) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },
             hazeState = hazeState,
-//            expandFully = false,
             showBottomSheet = showBottomSheet_apply
         ) {
             Scaffold(
@@ -358,8 +350,6 @@ fun TransferDetailScreen(
     var input by remember { mutableStateOf("") }
 
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column (modifier = Modifier.topBarBlur(hazeState),){
@@ -368,10 +358,7 @@ fun TransferDetailScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(title) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.TransferMajorDetail.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {

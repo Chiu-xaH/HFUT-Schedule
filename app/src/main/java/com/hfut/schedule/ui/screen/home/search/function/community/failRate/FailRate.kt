@@ -46,6 +46,7 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
@@ -59,7 +60,6 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun FailRate() {
-    val route = remember { AppNavRoute.FailRate.route }
     val navController = LocalNavController.current
 
     TransplantListItem(
@@ -77,11 +77,9 @@ fun FailRate() {
 @Composable
 fun FailRateScreen(
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.FailRate.route }
     var input by remember { mutableStateOf( "") }
 
 
@@ -106,11 +104,9 @@ fun FailRateScreen(
     }
     val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column (
                 modifier = Modifier.topBarBlur(hazeState),
@@ -120,7 +116,7 @@ fun FailRateScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.FailRate.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.FailRate.icon)
+                        TopBarNavigationIcon()
                     }
                 )
                 Row(

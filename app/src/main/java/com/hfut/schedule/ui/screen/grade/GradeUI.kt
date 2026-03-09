@@ -70,6 +70,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.network.XwxViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 
@@ -91,10 +92,8 @@ enum class GradeDataOrigin(val title : String) {
 fun GradeScreen(
     ifSaved : Boolean,
     vm : NetWorkViewModel,
-//    navTopController : NavHostController,
 ) {
     val navTopController = LocalNavController.current
-    val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -129,7 +128,7 @@ fun GradeScreen(
     var input by remember { mutableStateOf("") }
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     var displayCompactly by rememberSaveable { mutableStateOf(false) }
 
     var isNavigationIconVisible by rememberSaveable { mutableStateOf(true) }
@@ -141,9 +140,7 @@ fun GradeScreen(
     var buttonText by rememberSaveable { mutableStateOf<String>(context.getString(AppNavRoute.AverageGrade.label)) }
 
     Scaffold (
-//        route = targetRoute,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navTopController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -153,7 +150,7 @@ fun GradeScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Grade.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(targetRoute,AppNavRoute.Grade.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -248,7 +245,6 @@ fun GradeScreen(
                 exit = AppAnimationManager.toBottomAnimation.exit,
                 enter = AppAnimationManager.toBottomAnimation.enter
             ) {
-                val route = AppNavRoute.AverageGrade.route
                 Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
                     LargeButton(
                         onClick = {

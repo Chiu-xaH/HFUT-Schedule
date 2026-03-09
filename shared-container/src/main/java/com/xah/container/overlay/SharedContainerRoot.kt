@@ -27,12 +27,10 @@ fun SharedContainerRoot(
     val view = LocalView.current
     val density = LocalDensity.current
     val configuration = LocalConfiguration.current
-    val defaultCorner = MaterialTheme.shapes.medium
-    val defaultCornerDouble = MaterialTheme.shapes.large
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(view) {
-        ScreenCornerHelper(view,defaultCorner,defaultCornerDouble)
+        ScreenCornerHelper(view)
     }
 
     val registry = remember { SharedRegistry(scope) }

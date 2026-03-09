@@ -55,6 +55,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.mirror.util.rememberShaderState
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
@@ -143,7 +144,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
     }
     var sorted by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     val context = LocalActivity.current
     Scaffold(
 //        modifier = Modifier.fillMaxSize(),

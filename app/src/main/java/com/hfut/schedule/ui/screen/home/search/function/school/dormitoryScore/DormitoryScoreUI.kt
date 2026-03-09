@@ -64,11 +64,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun DormitoryScoreScreen(
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Dormitory.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val dormitoryUiState by vm.dormitoryFromCommunityResp.state.collectAsState()
     val dormitoryInfoUiState by vm.dormitoryInfoFromCommunityResp.state.collectAsState()
@@ -122,8 +120,6 @@ fun DormitoryScoreScreen(
         }
     }
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column {
@@ -133,7 +129,7 @@ fun DormitoryScoreScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Dormitory.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Dormitory.icon)
+                        TopBarNavigationIcon()
                     },
                 )
             }

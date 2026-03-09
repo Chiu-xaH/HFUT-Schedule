@@ -30,35 +30,30 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun NavigationExceptionScreen(
     exception: String,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Exception.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        Scaffold (
-//            route = route,
-//            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Exception.label)) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Exception.icon)
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()).hazeSource(hazeState).fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                Text(exception)
-                InnerPaddingHeight(innerPadding,false)
-            }
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(stringResource(AppNavRoute.Exception.label)) },
+                navigationIcon = {
+                    TopBarNavigationIcon()
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()).hazeSource(hazeState).fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            Text(exception)
+            InnerPaddingHeight(innerPadding,false)
         }
-//    }
+    }
 }

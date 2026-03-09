@@ -15,6 +15,7 @@ data class GradeDetailDestination(
 ) : NavDestination() {
     override val key = "grade_detail_${bean.hashCode()}"
     override val title = res(R.string.navigation_label_grade_detail)
+    override val icon = R.drawable.article
 
     @Composable
     override fun Content() {

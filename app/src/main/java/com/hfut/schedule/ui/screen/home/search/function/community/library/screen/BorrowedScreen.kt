@@ -68,11 +68,9 @@ import dev.chrisbanes.haze.rememberHazeState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LibraryBorrowedScreen(vm: NetWorkViewModel) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.LibraryBorrowed.route }
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -82,7 +80,7 @@ fun LibraryBorrowedScreen(vm: NetWorkViewModel) {
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.LibraryBorrowed.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.LibraryBorrowed.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

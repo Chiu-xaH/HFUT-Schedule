@@ -18,7 +18,6 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun News() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.News.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.News.label)) },

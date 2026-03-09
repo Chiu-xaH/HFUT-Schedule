@@ -12,6 +12,7 @@ data class ExceptionDestination(
 ) : NavDestination() {
     override val key = "exception_$exception"
     override val title = res(R.string.navigation_label_exception)
+    override val icon = R.drawable.error
 
     @Composable
     override fun Content() {

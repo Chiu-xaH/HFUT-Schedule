@@ -90,6 +90,7 @@ import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -114,12 +115,9 @@ private val items = listOf(
 @Composable
 fun NewsScreen(
     vm: NetWorkViewModel,
-//    navTopController : NavHostController,
 ) {
-    val navTopController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.News.route }
 
     val navController = rememberNavController()
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
@@ -178,13 +176,11 @@ fun NewsScreen(
             }
         }
     }
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword) }
 
     Scaffold (
-//        route = route,
-//        navHostController = navTopController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(
@@ -195,10 +191,7 @@ fun NewsScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.News.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.News.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

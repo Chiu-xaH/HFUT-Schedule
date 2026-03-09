@@ -9,6 +9,7 @@ import com.xah.uicommon.util.language.res
 object CommunityAppointmentDestination : NavDestination() {
     override val key = "community_appointment"
     override val title = res(R.string.navigation_label_community_appointment)
+    override val icon = R.drawable.table_restaurant
 
     @Composable
     override fun Content() {

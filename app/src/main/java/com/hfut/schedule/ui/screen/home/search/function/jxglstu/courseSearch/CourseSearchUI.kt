@@ -66,6 +66,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
@@ -81,12 +82,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun CourseSearchScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.CourseSearch.route }
 
     var showSearch by rememberSaveable() { mutableStateOf(true) }
     var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: "") }
@@ -136,18 +135,16 @@ fun CourseSearchScreen(
     val listState = rememberLazyListState()
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.CourseSearch.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.CourseSearch.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {

@@ -116,7 +116,6 @@ fun UpdateSuccessScreen() {
                     }
                 },
                 actions = {
-                    val targetRoute = remember { AppNavRoute.VersionInfo.route }
                     NoPadding {
                         SharedContainer(
                             modifier = Modifier.padding(end = APP_HORIZONTAL_DP),

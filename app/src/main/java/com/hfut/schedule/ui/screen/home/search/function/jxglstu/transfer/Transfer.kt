@@ -28,7 +28,6 @@ fun Transfer(
     ifSaved : Boolean,
 ){
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.TransferMajor.route }
     val context = LocalContext.current
 
     TransplantListItem(

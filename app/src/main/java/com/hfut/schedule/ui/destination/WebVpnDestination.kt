@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object WebVpnDestination : NavDestination() {
     override val key = "webvpn"
     override val title = res(R.string.navigation_label_webvpn)
+    override val icon = R.drawable.vpn_key
 
     @Composable
     override fun Content() {

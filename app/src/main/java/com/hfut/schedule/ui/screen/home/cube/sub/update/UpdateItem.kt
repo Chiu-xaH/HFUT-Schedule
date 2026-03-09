@@ -56,10 +56,8 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-            // TODO AndroidLiquidGlass冲突依赖 [P0]
 
             // TODO WebView适配新库 [P1]
-            // TODO 启动台&长按back重适配 [P1]
             // TODO 课程表界面动效掉帧率较高走查 [P1]
 
             // TODO 课程详情页面优化 +空教室入口  [P2]

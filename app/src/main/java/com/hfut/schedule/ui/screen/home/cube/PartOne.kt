@@ -310,7 +310,6 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
     val showBadge = update != null && update.assets.isNotEmpty()
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     val isPreview = AppVersion.isPreview()
-    val route = remember { AppNavRoute.VersionInfo.route }
     val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,

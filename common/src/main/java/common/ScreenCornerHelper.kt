@@ -4,28 +4,22 @@ import android.os.Build
 import android.view.RoundedCorner
 import android.view.View
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 class ScreenCornerHelper(
-    private val view: View,
-    private val defaultCorner : CornerBasedShape,
-    private val defaultCornerDouble : CornerBasedShape
+    private val view: View
 ) {
     companion object {
-        var shape : CornerBasedShape = RoundedCornerShape(0.dp)
-        var shapeDouble : CornerBasedShape = RoundedCornerShape(0.dp)
+        var corner : Dp = 0.dp
         val CAN_GET = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     }
 
     init {
-        shape = getCornerShape()
-        shapeDouble = getCornerShapeDouble()
+        corner = getCornerDp()
     }
 
-    private fun getCornerDp(): Dp {
+    fun getCornerDp(): Dp {
         return if(CAN_GET) {
             val radiusPx = view.getScreenRoundCornerPx()
             with(view.resources.displayMetrics) {
@@ -36,22 +30,6 @@ class ScreenCornerHelper(
         }
     }
 
-
-    private fun getCornerShape() : CornerBasedShape {
-        return if(CAN_GET) {
-            RoundedCornerShape(getCornerDp())
-        } else {
-            defaultCorner
-        }
-    }
-
-    private fun getCornerShapeDouble() : CornerBasedShape {
-        return if(CAN_GET) {
-            RoundedCornerShape(getCornerDp()*2)
-        } else {
-            defaultCornerDouble
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun View.getScreenRoundCornerPx(): Int {

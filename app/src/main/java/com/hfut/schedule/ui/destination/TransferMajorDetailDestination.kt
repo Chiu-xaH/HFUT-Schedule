@@ -15,6 +15,7 @@ data class TransferMajorDetailDestination(
 ) : NavDestination() {
     override val key = "transfer_major_detail_${name}_${batchId}_${isHidden}"
     override val title = res(R.string.navigation_label_transfer_major_detail)
+    override val icon = R.drawable.compare_arrows
 
     @Composable
     override fun Content() {

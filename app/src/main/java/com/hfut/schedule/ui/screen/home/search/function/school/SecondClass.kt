@@ -36,7 +36,6 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun SecondClass() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.SecondClass.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.SecondClass.label)) },
@@ -57,10 +56,7 @@ fun SecondClassScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.SecondClass.route }
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -69,7 +65,7 @@ fun SecondClassScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.SecondClass.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.SecondClass.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

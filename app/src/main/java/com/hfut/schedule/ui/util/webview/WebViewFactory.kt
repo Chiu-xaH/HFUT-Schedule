@@ -81,6 +81,7 @@ import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
 
 fun getWebView(
     context : Context,
@@ -396,6 +397,7 @@ fun WebViewContent(
     }
 }
 
+@Language("css")
 private const val FORCE_DARK_CSS = """
                                 html, body {
                                     background-color: #121212 !important;
@@ -409,6 +411,7 @@ private const val FORCE_DARK_CSS = """
                                 a { color: #8ab4f8 !important; }
                             """
 
+@Language("javascript")
 const val FORCE_DARK_JS = """
                                 (function() {
                                     let style = document.createElement('style');
@@ -418,6 +421,7 @@ const val FORCE_DARK_JS = """
                                 })();
                             """
 
+@Language("javascript")
 fun getPaddingPxJs(top : Int?,bottom : Int?) : String = """
         (function() {
             ${top?.let { "document.body.style.paddingTop = '${it}px';" }}
@@ -486,72 +490,35 @@ fun getPureUrl(url : String): String {
 @Composable
 fun WebViewBackIcon(
     webView: WebView?,
-    icon : Int? = null,
     color : Color,
-    route : String?,
     onExit : () -> Unit
 ) {
-//    val back : () -> Unit = {
-//        if(webView?.canGoBack() == true) {
-//            webView.goBack()
-//        } else {
-//            onExit()
-//        }
-//    }
-//    val cIcon = if(webView?.canGoBack() == true) {
-//        painterResource(R.drawable.arrow_back)
-//    } else {
-//        painterResource(R.drawable.close)
-//    }
-//    val button = @Composable { content  : @Composable () -> Unit ->
-//        Box(
-//            modifier = Modifier
-//                .combinedClickable(
-//                    onClick = back,
-//                    onLongClick = onExit
-//                )
-//        ) {
-//            content()
-//        }
-//    }
-//    if(icon == null) {
-//        button {
-//            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-//        }
-//    } else {
-//        var show by remember { mutableStateOf(true) }
-//        LaunchedEffect(Unit) {
-//            show = true
-////            delay(TransitionConfig.curveStyle.speedMs*1L)
-//            delay(1500L)
-//            show = false
-//            if(route != null) {
-//                val enablePredictive = DataStoreManager.enablePredictive.first()
-//                if(!enablePredictive || TransitionConfig.transplantBackground) {
-//                    delay(3000L)
-//                    show = true
-//                }
-//            }
-//        }
-//        button {
-//            Box() {
-//                AnimatedVisibility(
-//                    visible = show,
-//                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-//                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-//                ) {
-//                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-//                }
-//                AnimatedVisibility(
-//                    visible = !show,
-//                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-//                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-//                ) {
-//                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-//                }
-//            }
-//        }
-//    }
+    val back : () -> Unit = {
+        if(webView?.canGoBack() == true) {
+            webView.goBack()
+        } else {
+            onExit()
+        }
+    }
+    val cIcon = if(webView?.canGoBack() == true) {
+        painterResource(R.drawable.arrow_back)
+    } else {
+        painterResource(R.drawable.close)
+    }
+    val button = @Composable { content  : @Composable () -> Unit ->
+        Box(
+            modifier = Modifier
+                .combinedClickable(
+                    onClick = back,
+                    onLongClick = onExit
+                )
+        ) {
+            content()
+        }
+    }
+    button {
+        Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+    }
 }
 
 // 监听 WebView 滚动事件

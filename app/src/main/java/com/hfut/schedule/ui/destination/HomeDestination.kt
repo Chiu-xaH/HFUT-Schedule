@@ -18,6 +18,7 @@ import com.xah.uicommon.util.language.res
 object HomeDestination : NavDestination() {
     override val key: String = "home"
     override val title: UiText = res(R.string.navigation_label_home)
+    override val icon = R.drawable.home
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Composable

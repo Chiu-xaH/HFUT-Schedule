@@ -16,6 +16,7 @@ data class AddEventDestination(
 ) : NavDestination() {
     override val key: String = "library_borrowed_${origin}_$id"
     override val title: UiText = res(R.string.navigation_label_library_borrowed)
+    override val icon = R.drawable.add
 
     @Composable
     override fun Content() {

@@ -132,6 +132,7 @@ import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -162,10 +163,7 @@ private val items = listOf(
 @Composable
 fun ClassroomScreen(
     vm : NetWorkViewModel,
-//    navTopController : NavHostController,
 ) {
-    val navTopController = LocalNavController.current
-    val route = remember { AppNavRoute.Classroom.route }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
@@ -184,7 +182,7 @@ fun ClassroomScreen(
     }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
 
     val chipsUiState by vm.uniAppBuildingsResp.state.collectAsState()
 
@@ -212,9 +210,7 @@ fun ClassroomScreen(
         DateRangePickerModal(text = "",onSelected = { date = it.second },allowSelectPrevious = true) { showSelectDateDialog = false }
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navTopController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -224,7 +220,7 @@ fun ClassroomScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Classroom.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Classroom.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         if(targetPage == ClassroomBarItems.EMPTY_CLASSROOM) {
@@ -792,7 +788,6 @@ fun ClassroomLessonsScreen(
     var showAll by remember { mutableStateOf(false) }
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ClassroomCourseTable.withArgs(roomId,name) }
     val semester by produceState<Int?>(initialValue = null) {
         value = SemesterParser.getSemester()
     }
@@ -822,9 +817,7 @@ fun ClassroomLessonsScreen(
     var today by rememberSaveable() { mutableStateOf(DateTimeManager.getToday()) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 MediumTopAppBar(

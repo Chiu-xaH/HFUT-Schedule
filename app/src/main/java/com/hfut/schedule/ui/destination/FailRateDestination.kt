@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object FailRateDestination : NavDestination() {
     override val key = "fail_rate"
     override val title = res(R.string.navigation_label_fail_rate)
+    override val icon = R.drawable.radio_button_partial
 
     @Composable
     override fun Content() {

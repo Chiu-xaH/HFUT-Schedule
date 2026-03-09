@@ -31,6 +31,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -112,6 +113,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
@@ -134,13 +136,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun SelectCourseScreen(
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val context = LocalContext.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.SelectCourses.route }
     val scope = rememberCoroutineScope()
     val cookie by produceState(initialValue = "") {
         value = getJxglstuCookie() ?: ""
@@ -167,16 +166,11 @@ fun SelectCourseScreen(
             refreshNetwork(false)
         }
     })
-    val toRoute = remember {
-        AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.SELECT_COURSE.keyword)
-    }
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val url = if(GlobalUIStateHolder.webVpn) MyApplication.JXGLSTU_WEBVPN_URL else MyApplication.JXGLSTU_URL + "for-std/course-table"
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -184,7 +178,7 @@ fun SelectCourseScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.SelectCourses.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.SelectCourses.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     Row(modifier = Modifier.padding(end = APP_HORIZONTAL_DP)) {
@@ -258,14 +252,12 @@ fun SelectCourseDetailScreen(
     vm: NetWorkViewModel,
     courseId : Int,
     title : String,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.SelectCoursesDetail.withArgs(courseId,title) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     var input by rememberSaveable { mutableStateOf("") }
     val refreshNetwork: suspend () -> Unit = {
         val cookie = getJxglstuCookie()
@@ -277,9 +269,7 @@ fun SelectCourseDetailScreen(
     var refreshCount by remember { mutableIntStateOf(0) }
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -289,10 +279,7 @@ fun SelectCourseDetailScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(title) },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.SelectCoursesDetail.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         val dest = DropCoursesDestination(
@@ -317,10 +304,10 @@ fun SelectCourseDetailScreen(
                             ) {
                                 LiquidButton(
                                     shape = RectangleShape,
+                                    backdrop = backDrop,
                                     onClick = {
                                         navController.push(dest)
                                     },
-                                    backdrop = backDrop
                                 ) {
                                     Text(text = "退课", maxLines = 1)
                                 }
@@ -388,18 +375,13 @@ fun DropCourseScreen(
     vm: NetWorkViewModel,
     courseId : Int,
     title : String,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.DropCourses.route }
-    val scope = rememberCoroutineScope()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -411,10 +393,7 @@ fun DropCourseScreen(
                         Text("$title : 退课")
                     },
                     navigationIcon = {
-                        TopBarNavigationIcon(
-                            route,
-                            AppNavRoute.DropCourses.icon
-                        )
+                        TopBarNavigationIcon()
                     },
                 )
             }

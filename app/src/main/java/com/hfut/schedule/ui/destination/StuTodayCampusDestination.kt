@@ -12,6 +12,7 @@ import com.xah.uicommon.util.language.res
 object StuTodayCampusDestination : NavDestination() {
     override val key = "stu"
     override val title = res(R.string.navigation_label_stu)
+    override val icon = R.drawable.handshake
 
     @Composable
     override fun Content() {

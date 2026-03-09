@@ -13,6 +13,7 @@ data class LifeDestination(
 ) : NavDestination() {
     override val key = "life_$inFocus"
     override val title = res(R.string.navigation_label_life)
+    override val icon = R.drawable.near_me
 
     @Composable
     override fun Content() {

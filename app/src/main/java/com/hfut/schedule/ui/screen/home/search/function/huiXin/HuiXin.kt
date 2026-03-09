@@ -28,7 +28,6 @@ fun HuiXin() {
     val icon = remember { R.drawable.corporate_fare }
     val title = stringResource(R.string.navigation_label_hui_xin)
     val url = remember { getHuiXinURL() }
-    val route = AppNavRoute.WebView.shareRoute(url)
     val scope = rememberCoroutineScope()
     TransplantListItem(
         headlineContent = { ScrollText(text = title) },

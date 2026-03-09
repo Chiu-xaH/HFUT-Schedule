@@ -128,6 +128,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.status.LoadingUI
@@ -232,8 +233,6 @@ fun AddEventScreen(
     origin : String
 ) {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.AddEvent.withArgs(eventId,origin) }
-
     val isSupabase = false
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
@@ -242,7 +241,7 @@ fun AddEventScreen(
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
 
 
     if(showDialog) {
@@ -273,7 +272,7 @@ fun AddEventScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(if(eventId <= 0) "添加" else "修改") },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.AddEvent.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     if(eventId <= 0) {

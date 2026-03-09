@@ -68,11 +68,9 @@ fun ClassroomScreen2(
     vm : NetWorkViewModel,
 //    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.Classroom.route }
     val pagerState = rememberPagerState(initialPage =
         when(getCampus()) {
             Campus.XC -> 2
@@ -103,8 +101,6 @@ fun ClassroomScreen2(
     })
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -114,7 +110,7 @@ fun ClassroomScreen2(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Classroom.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Classroom.icon)
+                        TopBarNavigationIcon()
                     }
                 )
                 CustomTabRow(pagerState,campusList.map { it.description })
@@ -133,7 +129,6 @@ fun ClassroomScreen2(
                         items(2) {  InnerPaddingHeight(innerPadding,true) }
                         items(list.size) { index ->
                             val item = list[index]
-                            val pRoute = AppNavRoute.ClassroomDetail.withArgs(item)
                             SmallCard (
                                 color = cardNormalColor(),
                                 modifier = Modifier
@@ -164,10 +159,8 @@ fun ClassroomDetailScreen(
     code : String,
     name: String
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ClassroomDetail.withArgs(BuildingBean(name,code)) }
 
     val uiState by vm.classroomResponse.state.collectAsState()
     val refreshNetwork : suspend () -> Unit = {
@@ -182,9 +175,7 @@ fun ClassroomDetailScreen(
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 MediumTopAppBar(

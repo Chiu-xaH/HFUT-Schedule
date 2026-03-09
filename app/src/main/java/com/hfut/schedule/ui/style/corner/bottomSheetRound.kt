@@ -1,7 +1,6 @@
 package com.hfut.schedule.ui.style.corner
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -13,11 +12,8 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.common.ScreenCornerHelper
-import com.xah.uicommon.util.LogUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

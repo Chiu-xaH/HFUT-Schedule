@@ -43,7 +43,6 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun Track() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Track.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Track.label)) },
@@ -65,10 +64,7 @@ fun TrackScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.Track.route }
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -77,7 +73,7 @@ fun TrackScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.Track.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Track.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

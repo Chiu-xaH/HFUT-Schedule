@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object AdmissionDestination : NavDestination() {
     override val key = "admission"
     override val title = res(R.string.navigation_label_admission)
+    override val icon = R.drawable.publics
 
     @Composable
     override fun Content() {

@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object ClassmatesDestination : NavDestination() {
     override val key = "classmates"
     override val title = res(R.string.navigation_label_classmates)
+    override val icon = R.drawable.sensor_door
 
     @Composable
     override fun Content() {

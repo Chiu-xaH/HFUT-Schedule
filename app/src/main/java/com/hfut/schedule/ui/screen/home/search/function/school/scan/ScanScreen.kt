@@ -59,6 +59,7 @@ import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.navigation.utils.LocalNavController
@@ -71,12 +72,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun ScanScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val color = MaterialTheme.colorScheme.surface
     var resultText by remember { mutableStateOf("") }
-    val route = remember { AppNavRoute.ScanQrCode.route }
     val context = LocalContext.current
     val activity = LocalActivity.current
     val showTip = resultText.isEmpty() || resultText.isBlank()
@@ -92,12 +91,10 @@ fun ScanScreen(
             }
         }
     }
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
-//        route = route,
         containerColor = Color.Black,
-//        navHostController = navController,
         bottomBar = {
             val auth by produceState<String?>(initialValue = null) {
                 value = getWxAuth()

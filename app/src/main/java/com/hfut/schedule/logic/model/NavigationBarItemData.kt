@@ -1,11 +1,9 @@
 package com.hfut.schedule.logic.model
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
-import com.hfut.schedule.R
 
 data class NavigationBarItemData(
     val route: String,

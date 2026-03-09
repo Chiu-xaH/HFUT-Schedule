@@ -9,6 +9,7 @@ import com.xah.uicommon.util.language.res
 object HolidayDestination : NavDestination() {
     override val key = "holiday"
     override val title = res(R.string.navigation_label_holiday)
+    override val icon = R.drawable.beach_access
 
     @Composable
     override fun Content() {

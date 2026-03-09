@@ -47,17 +47,12 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun AI(
 ) {
-    val route = remember { AppNavRoute.AI.route }
     val navController = LocalNavController.current
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.AI.label)) },
         leadingContent = {
             Box() {
-//                RotatingRainbowGlow(
-//                    modifier = Modifier.size(24.dp)
-//                )
                 Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null)
-
             }
         },
         modifier = Modifier.clickable {
@@ -122,10 +117,7 @@ fun AIScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.AI.route }
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -134,7 +126,7 @@ fun AIScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.AI.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.AI.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

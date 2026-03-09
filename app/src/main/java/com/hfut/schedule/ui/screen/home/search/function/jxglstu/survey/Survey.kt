@@ -46,6 +46,8 @@ import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.ShaderState
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
@@ -64,7 +66,6 @@ fun Survey(
     ifSaved : Boolean,
 ) {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Survey.route }
     val context = LocalContext.current
 
     TransplantListItem(
@@ -88,20 +89,16 @@ private const val PAGE_JXGLSTU = 1
 fun SurveyScreen(
     ifSaved: Boolean,
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Survey.route }
     var refresh by rememberSaveable { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberShaderState()
-    val pagerState = rememberPagerState(initialPage = if(ifSaved) PAGE_UNI_APP else PAGE_JXGLSTU) { 2 }
+    val backDrop = rememberLayerBackdrop()
+//    val pagerState = rememberPagerState(initialPage = if(ifSaved) PAGE_UNI_APP else PAGE_JXGLSTU) { 2 }
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -111,7 +108,7 @@ fun SurveyScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Survey.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Survey.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Box(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -151,7 +148,7 @@ fun SurveyScreen(
 @Composable
 private fun SurveyAllButton(
     vm: NetWorkViewModel,
-    backDrop : ShaderState,
+    backDrop : Backdrop,
     refresh : suspend () -> Unit
 ) {
     val surveyListData by vm.surveyListData.state.collectAsState()

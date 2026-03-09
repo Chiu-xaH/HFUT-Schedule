@@ -28,12 +28,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun UniApp(
-    navController : NavHostController,
 ) {
     val icon = remember { R.drawable.wechat }
     val title = remember { "合工大教务" }
     val url = remember { "https://jwglapp.hfut.edu.cn/uniapp/#/pages/tab/main/main"}
-    val route = AppNavRoute.WebView.shareRoute(url)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)

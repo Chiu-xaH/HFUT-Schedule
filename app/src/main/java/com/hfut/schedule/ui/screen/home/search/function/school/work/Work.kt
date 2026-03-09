@@ -71,6 +71,7 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
@@ -85,7 +86,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun Work() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Work.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Work.label)) },
@@ -102,13 +102,10 @@ fun Work() {
 @Composable
 fun WorkScreen(
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Work.route }
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
     val types = remember { WorkSearchType.entries }
     val pagerState = rememberPagerState(pageCount = { types.size })
@@ -121,8 +118,6 @@ fun WorkScreen(
     }
     val context = LocalContext.current
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column (
@@ -133,7 +128,7 @@ fun WorkScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Work.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Work.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -141,7 +136,6 @@ fun WorkScreen(
                                 CampusRegion.HEFEI -> MyApplication.WORK_URL
                                 CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
                             }
-                            val iconRoute =  AppNavRoute.WebView.shareRoute(url)
                             LiquidButton(
                                 backdrop = backDrop,
                                 onClick = {

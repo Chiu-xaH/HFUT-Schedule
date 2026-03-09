@@ -63,6 +63,7 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
@@ -78,7 +79,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun ToadyCampus() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.StuTodayCampus.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.StuTodayCampus.label)) },
@@ -95,20 +95,16 @@ fun ToadyCampus() {
 @Composable
 fun StuTodayCampusScreen(
     vm: NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.StuTodayCampus.route }
     val context = LocalContext.current
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     var input by remember { mutableStateOf("") }
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column (
                 modifier = Modifier.topBarBlur(hazeState),
@@ -118,7 +114,7 @@ fun StuTodayCampusScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.StuTodayCampus.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.StuTodayCampus.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

@@ -34,7 +34,7 @@ data class PageEffect(
             scale = 1f,
             blur = 0.dp,
             mask = 0f,
-            corner = ScreenCornerHelper.shape,
+            corner = RoundedCornerShape(ScreenCornerHelper.corner),
             alpha = 1f,
         )
         // 上层页面回缩
@@ -42,7 +42,7 @@ data class PageEffect(
             scale = 0f,
             blur = 20.dp,
             mask = 0f,
-            corner = ScreenCornerHelper.shape,
+            corner = RoundedCornerShape(ScreenCornerHelper.corner),
             alpha = 1f
         )
         // 背景 下层页面

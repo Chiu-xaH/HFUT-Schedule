@@ -69,6 +69,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
@@ -88,19 +89,13 @@ import dev.chrisbanes.haze.rememberHazeState
 fun ProgramCompetitionScreen(
     vm: NetWorkViewModel,
     ifSaved: Boolean,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-//        roundShape = MaterialTheme.shapes.large,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -108,7 +103,7 @@ fun ProgramCompetitionScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.ProgramCompetition.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.ProgramCompetition.icon)
+                    TopBarNavigationIcon()
                 }
             )
         },
@@ -310,20 +305,14 @@ fun ProgramCompetitionDetailScreen(
     vm: NetWorkViewModel,
     title : String,
     moduleIndex : Int,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var input by remember { mutableStateOf("") }
-    val route = remember { AppNavRoute.ProgramCompetitionDetail.withArgs(title,moduleIndex) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
 
     Scaffold (
-//        roundShape = MaterialTheme.shapes.medium,
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(

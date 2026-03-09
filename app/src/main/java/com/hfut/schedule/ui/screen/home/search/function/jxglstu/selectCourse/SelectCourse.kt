@@ -24,7 +24,6 @@ fun SelectCourse(
     ifSaved : Boolean,
 ) {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.SelectCourses.route }
     val context = LocalContext.current
 
     TransplantListItem(

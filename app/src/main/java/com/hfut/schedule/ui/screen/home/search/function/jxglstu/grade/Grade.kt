@@ -42,7 +42,6 @@ fun Grade(
     var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val route = remember { AppNavRoute.Grade.receiveRoute() }
     TransplantListItem(
         headlineContent = {
             ScrollText(text =stringResource(AppNavRoute.Grade.label))

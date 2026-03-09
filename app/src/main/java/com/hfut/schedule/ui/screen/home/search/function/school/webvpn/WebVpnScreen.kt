@@ -59,6 +59,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -72,25 +73,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun WebVpnScreen(
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.WebVpn.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val backdrop = rememberShaderState()
-
-//    val providerState = rememberLiquidGlassProviderState(
-        // if the providing content has any transparent area and there is a background behind the content, set the
-        // background color here, or set it to null
-//        backgroundColor = Color.White
-//    )
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -98,7 +89,7 @@ fun WebVpnScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.WebVpn.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.WebVpn.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(
@@ -107,23 +98,12 @@ fun WebVpnScreen(
                                 Starter.refreshLogin(context)
                             }
                         },
-//                        isCircle = true,
                         backdrop = backdrop,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {
 //                        Icon(painterResource(R.drawable.search),null)
                         Text("${if(GlobalUIStateHolder.webVpn) "已" else "未"}登录WebVpn")
                     }
-//                        FilledTonalButton(
-//                            onClick = {
-//                                if(!GlobalUIStateHolder.webVpn) {
-//                                    Starter.refreshLogin(context)
-//                                }
-//                            },
-//                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
-//                        ) {
-//                            Text("${if(GlobalUIStateHolder.webVpn) "已" else "未"}登录WebVpn")
-//                        }
                 }
             )
         },
@@ -140,7 +120,6 @@ fun WebVpnScreen(
             InnerPaddingHeight(innerPadding,false)
         }
     }
-//    }
 }
 
 suspend fun getWebVpnCookie() : String? {

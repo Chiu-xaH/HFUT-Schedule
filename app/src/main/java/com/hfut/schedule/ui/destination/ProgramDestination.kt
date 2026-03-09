@@ -13,6 +13,7 @@ data class ProgramDestination(
 ) : NavDestination() {
     override val key = "program_$ifSaved"
     override val title = res(R.string.navigation_label_program)
+    override val icon = R.drawable.conversion_path
 
     @Composable
     override fun Content() {

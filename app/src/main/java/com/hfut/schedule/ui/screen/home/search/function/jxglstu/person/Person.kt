@@ -19,7 +19,6 @@ import com.xah.uicommon.component.text.ScrollText
 @Composable
 fun PersonUI() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.PersonInfo.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text =stringResource(AppNavRoute.PersonInfo.label)) },

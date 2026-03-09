@@ -67,10 +67,7 @@ fun AlumniScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.Alumni.route }
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -79,7 +76,7 @@ fun AlumniScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.Alumni.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Alumni.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

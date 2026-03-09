@@ -14,6 +14,7 @@ data class DropCoursesDestination(
 ) : NavDestination() {
     override val key = "drop_courses_${index}_$name"
     override val title = res(R.string.navigation_label_drop_courses)
+    override val icon = R.drawable.ads_click
 
     @Composable
     override fun Content() {

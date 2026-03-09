@@ -105,7 +105,7 @@ fun WebViewScreenForActivity(
                 visible,
                 { visible = it },
                 {
-                    WebViewBackIcon(webView = webView, color = topBarTitleColor, icon = icon, route = null) {
+                    WebViewBackIcon(webView = webView, color = topBarTitleColor) {
                         activity?.finish()
                     }
                 },

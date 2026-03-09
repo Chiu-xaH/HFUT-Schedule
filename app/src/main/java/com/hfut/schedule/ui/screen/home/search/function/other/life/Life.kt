@@ -38,7 +38,6 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun Life() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Life.withArgs(false) }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Life.label)) },
@@ -56,18 +55,13 @@ fun Life() {
 fun LifeScreen(
     inFocus : Boolean,
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Life.withArgs(inFocus) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -75,7 +69,7 @@ fun LifeScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.Life.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.Life.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

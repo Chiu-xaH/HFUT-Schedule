@@ -76,7 +76,6 @@ fun AdmissionScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Admission.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
@@ -89,7 +88,7 @@ fun AdmissionScreen(
                     colors = topBarTransplantColor(),
                     title = { Text("本科招生") },
                     navigationIcon = {
-                        TopBarNavigationIcon(route,R.drawable.publics)
+                        TopBarNavigationIcon()
                     },
                 )
             }
@@ -199,9 +198,7 @@ fun AdmissionRegionScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-//        route = route,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(modifier = Modifier.topBarBlur(hazeState)) {
                 MediumTopAppBar(

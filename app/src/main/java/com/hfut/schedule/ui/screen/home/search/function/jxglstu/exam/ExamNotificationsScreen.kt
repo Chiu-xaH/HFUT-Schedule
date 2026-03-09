@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -69,9 +70,8 @@ fun ExamNotificationsScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.ExamNews.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     val campusList = remember { CampusRegion.entries }
     val titles = remember { campusList.map { it.description } }
     val pagerState = rememberPagerState(
@@ -87,10 +87,7 @@ fun ExamNotificationsScreen(
     val scope = rememberCoroutineScope()
 
     Scaffold (
-//        route = route,
-//        roundShape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -100,7 +97,7 @@ fun ExamNotificationsScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.ExamNews.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.ExamNews.icon)
+                        TopBarNavigationIcon()
                     }
                 )
                 CustomTabRow(pagerState,titles)

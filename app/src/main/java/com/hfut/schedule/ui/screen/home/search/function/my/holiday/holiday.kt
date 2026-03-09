@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -51,6 +52,7 @@ import com.hfut.schedule.ui.destination.NewsApiDestination
 import com.hfut.schedule.ui.screen.news.home.TotalNewsScreen
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.SharedContainer
 import com.xah.mirror.util.rememberShaderState
 
@@ -63,7 +65,6 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun Holiday() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Holiday.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Holiday.label)) },
@@ -85,19 +86,16 @@ fun HolidayScreen(
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Holiday.route }
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = { Text("${DateTimeManager.Date_yyyy}年 ${stringResource(AppNavRoute.Holiday.label)}") },
                 navigationIcon = {
-                    TopBarNavigationIcon(route,AppNavRoute.Holiday.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     val dest = NewsApiDestination(
@@ -109,8 +107,8 @@ fun HolidayScreen(
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
                     ) {
                         LiquidButton(
-                            shape = RectangleShape,
                             backdrop = backdrop,
+                            shape = RectangleShape,
                             onClick = { navController.push(dest) }
                         ) {
                             Text("调休通知")
@@ -169,14 +167,10 @@ fun NewsApiScreen(
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.NewsApi.withArgs(keyword) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold (
-//        route = route,
-//        roundShape = MaterialTheme.shapes.extraLarge,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -186,7 +180,7 @@ fun NewsApiScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(keyword) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.NewsApi.icon)
+                        TopBarNavigationIcon()
                     }
                 )
             }

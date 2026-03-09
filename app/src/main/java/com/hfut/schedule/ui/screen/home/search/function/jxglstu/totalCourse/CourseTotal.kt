@@ -28,6 +28,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.destination.TermCoursesDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
@@ -43,7 +44,6 @@ fun CourseTotal(
     ifSaved : Boolean,
 ) {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.TermCourses.withArgs(ifSaved,"SEARCH") }
 
     TransplantListItem(
         headlineContent = { ScrollText(text =stringResource(AppNavRoute.TermCourses.label)) },
@@ -75,27 +75,23 @@ fun TotalCourseScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TermCourses.receiveRoute() }
 
     Scaffold (
-//        route = route,
-//        navHostController = navController,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
-//                    modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.TermCourses.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon( AppNavRoute.TermCourses.withArgs(ifSaved,origin), AppNavRoute.TermCourses.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(
                         onClick = {
                             sortType = !sortType
                         },
-                        backdrop = rememberShaderState(),
+                        backdrop = rememberLayerBackdrop(),
                         isCircle = false,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
                     ) {

@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object BusDestination : NavDestination() {
     override val key = "bus"
     override val title = res(R.string.navigation_label_bus)
+    override val icon = R.drawable.directions_bus
 
     @Composable
     override fun Content() {

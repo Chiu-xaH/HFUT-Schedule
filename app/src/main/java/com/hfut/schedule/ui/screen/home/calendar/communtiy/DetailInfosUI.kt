@@ -174,7 +174,6 @@ fun CourseDetailApiScreen(
         value = JxglstuRepository.parseCourseBook(json)
     }
 
-    val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,id) }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {

@@ -1,7 +1,6 @@
 package com.xah.navigation.component
 
 import android.os.Build
-import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,17 +42,29 @@ import com.xah.navigation.utils.touchEvent
 import com.xah.uicommon.util.LogUtil
 
 
+@Composable
+fun rememberNavController(
+    startDestination : Destination,
+): NavigationController {
+    val scope = rememberCoroutineScope()
+    val navViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory())
+    val navController = remember(navViewModel) {
+        NavigationController(scope, startDestination, navViewModel.stack,null)
+    }
+    return navController
+}
+
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SharedNavHost(
-    startDestination: Destination,
+    navController: NavigationController,
     modifier: Modifier = Modifier,
     dependencies: Dependencies = Dependencies(),
     customBackHandler: (@Composable () -> Unit) = { DefaultBackHandler() },
 ) {
     SharedContainerRoot {
         NavHost(
-            startDestination,
+            navController,
             modifier,
             dependencies,
             customBackHandler
@@ -63,18 +74,28 @@ fun SharedNavHost(
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun NavHost(
+fun SharedNavHost(
     startDestination: Destination,
     modifier: Modifier = Modifier,
     dependencies: Dependencies = Dependencies(),
     customBackHandler: (@Composable () -> Unit) = { DefaultBackHandler() },
 ) {
+    val navController = rememberNavController(startDestination)
+    SharedNavHost(navController, modifier, dependencies, customBackHandler)
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun NavHost(
+    navController: NavigationController,
+    modifier: Modifier = Modifier,
+    dependencies: Dependencies = Dependencies(),
+    customBackHandler: (@Composable () -> Unit) = { DefaultBackHandler() },
+) {
     val registry = LocalSharedRegistry.current
-    val scope = rememberCoroutineScope()
     val saveableStateHolder = rememberSaveableStateHolder()
-    val navViewModel: NavigationViewModel = viewModel(factory = NavigationViewModel.Factory())
-    val navController = remember(navViewModel) {
-        NavigationController(scope, startDestination, navViewModel.stack,registry)
+    LaunchedEffect(registry) {
+        navController.sharedRegistry = registry
     }
 
     CompositionLocalProvider(
@@ -199,6 +220,24 @@ fun NavHost(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@Composable
+fun NavHost(
+    startDestination: Destination,
+    modifier: Modifier = Modifier,
+    dependencies: Dependencies = Dependencies(),
+    customBackHandler: (@Composable () -> Unit) = { DefaultBackHandler() },
+) {
+    val navController = rememberNavController(startDestination)
+
+    NavHost(
+        navController,
+        modifier,
+        dependencies,
+        customBackHandler
+    )
+}
+
 
 // scaleRadio放慢scale的速度
 private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel,val enableBlur : Boolean,val enableShader : Boolean) {
@@ -306,8 +345,8 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel,v
             animatedProgress
         ),
         corner = lerp(
-            ScreenCornerHelper.shapeDouble,
-            ScreenCornerHelper.shape,
+            if(level == EffectLevel.NONE) RoundedCornerShape(ScreenCornerHelper.corner) else RoundedCornerShape(ScreenCornerHelper.corner*2),
+            RoundedCornerShape(ScreenCornerHelper.corner),
             animatedProgress
         )
     )
@@ -329,7 +368,7 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel,v
             scaleX = effect.scale
             scaleY = effect.scale
             alpha = effect.alpha
-            transformOrigin = TransformOrigin(0.5f,0.25f)
+            transformOrigin = TransformOrigin(0.5f,0.275f)
         }
     }
 
@@ -342,7 +381,7 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel,v
     }
 
     private fun Modifier.tinyCorner() : Modifier {
-        return this.clip(ScreenCornerHelper.shape)
+        return this.clip(RoundedCornerShape(ScreenCornerHelper.corner))
     }
 
     fun Modifier.effect() : Modifier {
@@ -440,8 +479,8 @@ private class ForegroundEffectWithSharedElement(animatedProgress : Float,val lev
             animatedProgress
         ),
         corner = lerp(
-            if(level != EffectLevel.NONE) ScreenCornerHelper.shape else RoundedCornerShape(0.dp),
-            if(level != EffectLevel.NONE) ScreenCornerHelper.shape else RoundedCornerShape(0.dp),
+            if(level != EffectLevel.NONE) RoundedCornerShape(ScreenCornerHelper.corner) else RoundedCornerShape(0.dp),
+            if(level != EffectLevel.NONE) RoundedCornerShape(ScreenCornerHelper.corner) else RoundedCornerShape(0.dp),
             animatedProgress
         )
     )
@@ -478,6 +517,7 @@ private class ForegroundEffectWithSharedElement(animatedProgress : Float,val lev
         }
     }
 }
+
 
 fun lerp(start: CornerBasedShape, stop: CornerBasedShape, fraction: Float): CornerBasedShape = start.lerp(stop,fraction) as CornerBasedShape
 

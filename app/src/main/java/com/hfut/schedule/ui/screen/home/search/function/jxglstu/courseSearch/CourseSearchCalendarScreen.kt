@@ -42,6 +42,7 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -57,21 +58,15 @@ fun CourseSearchCalendarScreen(
     courseCode : String?,
     classes : String?,
     vm : NetWorkViewModel,
-//    vmUI : UIViewModel,
-//    navController : NavHostController,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.CourseSearchTable.route }
     var showAll by remember { mutableStateOf(false) }
-    val backdrop = rememberShaderState()
+    val backdrop = rememberLayerBackdrop()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        roundShape = MaterialTheme.shapes.medium,
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -111,7 +106,7 @@ fun CourseSearchCalendarScreen(
                         }
                     },
                     navigationIcon = {
-                        TopBarNavigationIcon(route,AppNavRoute.CourseSearchTable.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row() {

@@ -103,6 +103,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -139,17 +140,14 @@ private const val TAB_PAGE_LIBRARY = 1
 fun LibraryScreen(
     vm: NetWorkViewModel,
 ) {
-    val navController = LocalNavController.current
     val libraryNavController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Library.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(libraryNavController.currentRouteWithoutArgs()) {
         LibraryBarItems.SEARCH.name ->LibraryBarItems.SEARCH
-//        LibraryBarItems.SEARCH_BOOK.name -> LibraryBarItems.SEARCH_BOOK
         else -> LibraryBarItems.MINE
     }
     // 保存上一页页码 用于决定左右动画
@@ -159,7 +157,7 @@ fun LibraryScreen(
         }
     }
     var inputKeyword by remember { mutableStateOf("") }
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
     var pageState = rememberPagerState { 2 }
     val titles = remember { listOf("智慧社区","斛兵知搜") }
@@ -175,8 +173,6 @@ fun LibraryScreen(
     }
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -186,7 +182,7 @@ fun LibraryScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Library.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Library.icon)
+                        TopBarNavigationIcon()
                     },
                 )
                 if(targetPage != LibraryBarItems.MINE) {

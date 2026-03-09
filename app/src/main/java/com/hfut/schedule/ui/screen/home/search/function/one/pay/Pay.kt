@@ -57,6 +57,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.mirror.util.rememberShaderState
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
@@ -71,7 +72,6 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun Pay() {
     val navController = LocalNavController.current
-    val route = remember { AppNavRoute.Fee.route }
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Fee.label)) },
@@ -94,13 +94,10 @@ fun FeeScreen(
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.Fee.route }
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        route = route,
-//        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -108,7 +105,7 @@ fun FeeScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.Fee.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route,AppNavRoute.Fee.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(

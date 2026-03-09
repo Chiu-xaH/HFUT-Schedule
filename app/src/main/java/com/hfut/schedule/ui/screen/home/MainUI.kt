@@ -374,7 +374,6 @@ fun MainScreen(
             }
         },
         floatingActionButton = {
-            val addRoute = remember { AppNavRoute.AddEvent.withArgs(origin = AddEventOrigin.FOCUS_ADD.name) }
             val dest = AddEventDestination(
                 null,
                 AddEventOrigin.FOCUS_ADD.name
@@ -434,7 +433,6 @@ fun MainScreen(
                         actions = {
                             when (targetPage) {
                                 SEARCH -> {
-                                    val route = remember { AppNavRoute.FunctionsSort.route }
                                     SharedContainer(
                                         key = FunctionsSortDestination.key,
                                         shape = CircleShape,
@@ -461,7 +459,6 @@ fun MainScreen(
 
                                 FOCUS -> {
                                     ApiToSupabase(vm)
-                                    val iconRoute = remember { AppNavRoute.NotificationBox.route }
                                     SharedContainer(
                                         containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent),
                                         key = NotificationBoxDestination.key,
@@ -552,7 +549,6 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
                                     Surface(
                                         shape = CircleShape,
                                         modifier = Modifier
@@ -585,7 +581,6 @@ fun MainScreen(
                                         )
                                     }
                                 } else {
-                                    val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
                                     Surface(
                                         shape = CircleShape,
                                         modifier = Modifier
@@ -696,40 +691,45 @@ fun MainScreen(
                             actions = {
                                 val isFriend = CourseType.entries.all { swapUI > it.code }
                                 if (isFriend) {
-                                    val route = AppNavRoute.WorkAndRest.withArgs(swapUI.toString())
-                                    IconButton(
-                                        onClick = {
-                                            navHostTopController.push(
-                                                WorkAndRestDestination(
-                                                    swapUI.toString()
-                                                )
+                                    val dest = WorkAndRestDestination(swapUI.toString())
+                                    SharedContainer(
+                                        key = dest.key,
+                                        shape = CircleShape,
+                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                navHostTopController.push(dest)
+                                            }
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
                                             )
                                         }
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = AppNavRoute.WorkAndRest.icon),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                        )
                                     }
                                 } else {
-                                    val route = AppNavRoute.TermCourses.withArgs(ifSaved,COURSES.name)
-                                    IconButton(onClick = {
-                                        navHostTopController.push(
-                                            TermCoursesDestination(
-                                                ifSaved,
-                                                COURSES.name
+                                    val dest = TermCoursesDestination(
+                                        ifSaved,
+                                        COURSES.name
+                                    )
+                                    SharedContainer(
+                                        key = dest.key,
+                                        shape = CircleShape,
+                                        containerFilledStrategy = ContainerFilledStrategy.Color(Color.Transparent)
+                                    ) {
+                                        IconButton(onClick = {
+                                            navHostTopController.push(dest)
+                                        }) {
+                                            Icon(
+                                                painter = painterResource(id = AppNavRoute.TermCourses.icon),
+                                                contentDescription = "",
+                                                tint = MaterialTheme.colorScheme.primary,
                                             )
-                                        )
-                                    }) {
-                                        Icon(
-                                            painter = painterResource(id = AppNavRoute.TermCourses.icon),
-                                            contentDescription = "",
-                                            tint = MaterialTheme.colorScheme.primary,
-                                        )
+                                        }
                                     }
                                 }
-
                                 IconButton(onClick = {
                                     showBottomSheet_multi = true
                                 }) {
@@ -1043,7 +1043,6 @@ fun MutableList<SearchAppBeanLite>.reorderByIdsStr(idOrder: String): MutableList
 fun SearchEditScreen() {
     val searchSort by DataStoreManager.searchSort.collectAsState(initial = SEARCH_DEFAULT_STR)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.FunctionsSort.route }
     val funcMaps by produceState(initialValue = GlobalUIStateHolder.funcMaps, key1 = searchSort, key2 = GlobalUIStateHolder.funcMaps) {
         if(searchSort.isNotEmpty() && searchSort.isNotBlank()) {
             value = GlobalUIStateHolder.funcMaps.reorderByIdsStr(searchSort) as SnapshotStateList<SearchAppBeanLite>
@@ -1109,7 +1108,7 @@ fun SearchEditScreen() {
             colors = topBarTransplantColor(),
             title = { Text(stringResource(AppNavRoute.FunctionsSort.label)) },
             navigationIcon = {
-                TopBarNavigationIcon(route, AppNavRoute.FunctionsSort.icon)
+                TopBarNavigationIcon()
             },
             actions = {
                 Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

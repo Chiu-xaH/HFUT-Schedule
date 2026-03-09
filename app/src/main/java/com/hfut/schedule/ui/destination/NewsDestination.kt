@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object NewsDestination : NavDestination() {
     override val key = "news"
     override val title = res(R.string.navigation_label_news)
+    override val icon = R.drawable.stream
 
     @Composable
     override fun Content() {

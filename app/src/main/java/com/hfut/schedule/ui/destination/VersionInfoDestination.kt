@@ -11,6 +11,7 @@ import com.xah.uicommon.util.language.res
 object VersionInfoDestination : NavDestination() {
     override val key = "version_info"
     override val title = res(R.string.navigation_label_version_info)
+    override val icon = R.drawable.info
 
     @Composable
     override fun Content() {

@@ -13,6 +13,7 @@ data class NewsApiDestination(
 ) : NavDestination() {
     override val key = "news_api_$keyword"
     override val title = res(R.string.navigation_label_news)
+    override val icon = R.drawable.stream
 
     @Composable
     override fun Content() {

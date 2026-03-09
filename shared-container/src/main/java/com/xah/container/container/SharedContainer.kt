@@ -2,6 +2,7 @@ package com.xah.container.container
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -162,7 +163,7 @@ fun Modifier.sharedContent(
 fun SharedContent(
     key : Any,
     modifier : Modifier = Modifier,
-    shape: Shape = ScreenCornerHelper.shape,
+    shape: Shape = RoundedCornerShape(ScreenCornerHelper.corner),
     content : @Composable () -> Unit
 )  {
     Box(modifier = modifier) {

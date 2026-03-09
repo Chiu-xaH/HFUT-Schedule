@@ -15,6 +15,7 @@ import com.xah.uicommon.util.language.res
 object LoginDestination : NavDestination() {
     override val key: String = "login"
     override val title: UiText = res(R.string.navigation_label_login)
+    override val icon = R.drawable.login
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @Composable

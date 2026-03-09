@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
@@ -53,9 +56,18 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.kyant.backdrop.Backdrop
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.kyant.backdrop.drawBackdrop
+import com.kyant.backdrop.effects.blur
+import com.kyant.backdrop.effects.lens
+import com.kyant.backdrop.effects.vibrancy
+import com.kyant.backdrop.highlight.Highlight
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -80,270 +92,273 @@ half4 main(float2 coord) {
 val BUTTON_PADDING = 6.25.dp
 
 
-//@Composable
-//fun LiquidButton(
-//    onClick: () -> Unit,
-//    backdrop: Backdrop,
-//    modifier: Modifier = Modifier,
-//    enabled : Boolean = true,
-//    isCircle : Boolean = false,
-//    innerPadding : Dp = if(!isCircle) 20.dp else 9.5.dp,
-//    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).5f else .9f),
-//    content: @Composable RowScope.() -> Unit
-//) {
-//    val textStyle = LocalTextStyle.current.copy(
-//        fontSize = 14.5.sp,
-//        color = if(!enabled) Color.Gray else Color.Unspecified
-//    )
-//    val tint = Color.Unspecified
-//    val animationScope = rememberCoroutineScope()
-//    val progressAnimation = remember { Animatable(0f) }
-//    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
-//    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-//
-//    val interactiveHighlightShader = remember {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            RuntimeShader(SHADER)
-//        } else {
-//            Unit
-//        }
-//    }
-//    Row(
-//        modifier
-//            .drawBackdrop(
-//                highlight = {
-//                    Highlight.Default.copy(width = 0.25.dp)
-//                },
-//                backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
-//                shape = { CircleShape },
-//                effects =  {
-//                    vibrancy()
-//                    blur(2f.dp.toPx())
-//                    refraction(12f.dp.toPx(), 24f.dp.toPx())
-//                },
-//                shadow = null,
-//                layerBlock = if (enabled) {
-//                    {
-//                        val width = size.width
-//                        val height = size.height
-//
-//                        val progress = progressAnimation.value
-//                        val maxScale = 0.1f
-//                        val scale = lerp(1f, 1f + maxScale, progress)
-//
-//                        val maxOffset = size.minDimension
-//                        val initialDerivative = 0.05f
-//                        val offset = offsetAnimation.value
-//                        translationX = maxOffset * tanh(initialDerivative * offset.x safeDiv maxOffset)
-//                        translationY = maxOffset * tanh(initialDerivative * offset.y safeDiv maxOffset)
-//
-//                        val maxDragScale = 0.1f
-//                        val offsetAngle = atan2(offset.y, offset.x)
-//                        scaleX =
-//                            scale +
-//                                    maxDragScale * abs(cos(offsetAngle) * offset.x safeDiv size.maxDimension) *
-//                                    (width safeDiv height).fastCoerceAtMost(1f)
-//                        scaleY =
-//                            scale +
-//                                    maxDragScale * abs(sin(offsetAngle) * offset.y safeDiv size.maxDimension) *
-//                                    (height safeDiv width).fastCoerceAtMost(1f)
-//                    }
-//                } else {
-//                    null
-//                },
-//                onDrawSurface = {
-//                    if (tint.isSpecified) {
-//                        drawRect(tint, blendMode = BlendMode.Hue)
-//                        drawRect(tint.copy(alpha = 0.75f))
-//                    }
-//                    if (surfaceColor.isSpecified) {
-//                        drawRect(surfaceColor)
-//                    }
-//                    if (enabled) {
-//                        val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
-//                        if (progress > 0f) {
-//                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
-//                                drawRect(
-//                                    Color.White.copy(0.1f * progress),
-//                                    blendMode = BlendMode.Plus
-//                                )
-//                                interactiveHighlightShader.apply {
-//                                    val offset = pressStartPosition + offsetAnimation.value
-//                                    setFloatUniform("size", size.width, size.height)
-//                                    setColorUniform(
-//                                        "color",
-//                                        Color.White.copy(0.15f * progress).toArgb()
-//                                    )
-//                                    setFloatUniform("radius", size.maxDimension)
-//                                    setFloatUniform(
-//                                        "offset",
-//                                        offset.x.fastCoerceIn(0f, size.width),
-//                                        offset.y.fastCoerceIn(0f, size.height)
-//                                    )
-//                                }
-//                                drawRect(
-//                                    ShaderBrush(interactiveHighlightShader),
-//                                    blendMode = BlendMode.Plus
-//                                )
-//                            } else {
-//                                drawRect(
-//                                    Color.White.copy(0.25f * progress),
-//                                    blendMode = BlendMode.Plus
-//                                )
-//                            }
-//                        }
-//                    }
-//                }
-//            )
-//            .let {
-//                if (enabled) {
-//                    it.clickable(
-//                        interactionSource = null,
-//                        indication = null,
-//                        role = Role.Button,
-//                        onClick = onClick
-//                    )
-//                } else {
-//                    it
-//                }
-//            }
-//            .then(
-//                if (enabled) {
-//                    Modifier.pointerInput(animationScope) {
-//                        val progressAnimationSpec = spring(0.5f, 300f, 0.001f)
-//                        val offsetAnimationSpec = spring(1f, 300f, Offset.VisibilityThreshold)
-//                        val onDragStop: () -> Unit = {
-//                            animationScope.launch {
-//                                launch { progressAnimation.animateTo(0f, progressAnimationSpec) }
-//                                launch {
-//                                    offsetAnimation.animateTo(
-//                                        Offset.Zero,
-//                                        offsetAnimationSpec
-//                                    )
-//                                }
-//                            }
-//                        }
-//                        inspectDragGestures(
-//                            onDragStart = { down ->
-//                                pressStartPosition = down.position
-//                                animationScope.launch {
-//                                    launch {
-//                                        progressAnimation.animateTo(
-//                                            1f,
-//                                            progressAnimationSpec
-//                                        )
-//                                    }
-//                                    launch { offsetAnimation.snapTo(Offset.Zero) }
-//                                }
-//                            },
-//                            onDragEnd = { onDragStop() },
-//                            onDragCancel = onDragStop
-//                        ) { _, dragAmount ->
-//                            animationScope.launch {
-//                                offsetAnimation.snapTo(offsetAnimation.value + dragAmount)
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    Modifier
-//                }
-//            )
-//            .height(42f.dp)
-//            .padding(horizontal = innerPadding),
-//        horizontalArrangement = Arrangement.spacedBy(8f.dp, Alignment.CenterHorizontally),
-//        verticalAlignment = Alignment.CenterVertically,
-//    ) {
-//        val c = LocalContentColor.current
-//        CompositionLocalProvider(
-//            LocalTextStyle provides textStyle,
-//            if(!enabled) {
-//                LocalContentColor provides Color.Gray.copy(.75f)
-//            } else {
-//                LocalContentColor provides c
-//            }
-//        ) {
-//            content()
-//        }
-//    }
-//}
+@Composable
+fun LiquidButton(
+    onClick: () -> Unit,
+    backdrop: Backdrop,
+    modifier: Modifier = Modifier,
+    enabled : Boolean = true,
+    isCircle : Boolean = false,
+    innerPadding : Dp = if(!isCircle) 20.dp else 9.5.dp,
+    content: @Composable RowScope.() -> Unit
+) {
+    val surfaceColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+        if(enabled).5f else .9f
+    )
+    val textStyle = LocalTextStyle.current.copy(
+        fontSize = 14.5.sp,
+        color = if(!enabled) Color.Gray else Color.Unspecified
+    )
+    val tint = Color.Unspecified
+    val animationScope = rememberCoroutineScope()
+    val progressAnimation = remember { Animatable(0f) }
+    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
+    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
 
-//
-//@Composable
-//fun Modifier.containerBackDrop(
-//    backdrop: Backdrop,
-//    shape: Shape,
-//    enabled : Boolean = true,
-//    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
-//) : Modifier {
-//    val progressAnimation = remember { Animatable(0f) }
-//    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-//    val tint = Color.Unspecified
-//    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
-//    val interactiveHighlightShader = remember {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-//            RuntimeShader(SHADER)
-//        } else {
-//            Unit
-//        }
-//    }
-//
-//    return this.drawBackdrop(
-//        highlight = {
-//            Highlight.Default.copy(width = 0.25.dp)
-//        },
-//        backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
-//        shape = { shape },
-//        effects = {
-//            vibrancy()
-//            blur(7.5f.dp.toPx())
-//            refraction(15f.dp.toPx(), 25f.dp.toPx())
-//        },
-//        shadow = null,
-//        onDrawSurface = {
-//            if (tint.isSpecified) {
-//                drawRect(tint, blendMode = BlendMode.Hue)
-//                drawRect(tint.copy(alpha = 0.75f))
-//            }
-//            if (surfaceColor.isSpecified) {
-//                drawRect(surfaceColor)
-//            }
-//            if (enabled) {
-//                val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
-//                if (progress > 0f) {
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
-//                        drawRect(
-//                            Color.White.copy(0.1f * progress),
-//                            blendMode = BlendMode.Plus
-//                        )
-//                        interactiveHighlightShader.apply {
-//                            val offset = pressStartPosition + offsetAnimation.value
-//                            setFloatUniform("size", size.width, size.height)
-//                            setColorUniform(
-//                                "color",
-//                                Color.White.copy(0.15f * progress).toArgb()
-//                            )
-//                            setFloatUniform("radius", size.maxDimension)
-//                            setFloatUniform(
-//                                "offset",
-//                                offset.x.fastCoerceIn(0f, size.width),
-//                                offset.y.fastCoerceIn(0f, size.height)
-//                            )
-//                        }
-//                        drawRect(
-//                            ShaderBrush(interactiveHighlightShader),
-//                            blendMode = BlendMode.Plus
-//                        )
-//                    } else {
-//                        drawRect(
-//                            Color.White.copy(0.25f * progress),
-//                            blendMode = BlendMode.Plus
-//                        )
-//                    }
-//                }
-//            }
-//        }
-//    )
-//}
+    val interactiveHighlightShader = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RuntimeShader(SHADER)
+        } else {
+            Unit
+        }
+    }
+    Row(
+        modifier
+            .drawBackdrop(
+                highlight = {
+                    Highlight.Default.copy(width = 0.25.dp)
+                },
+                backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
+                shape = { CircleShape },
+                effects =  {
+                    vibrancy()
+                    blur(2f.dp.toPx())
+                    lens(12f.dp.toPx(), 24f.dp.toPx())
+                },
+                shadow = null,
+                layerBlock = if (enabled) {
+                    {
+                        val width = size.width
+                        val height = size.height
+
+                        val progress = progressAnimation.value
+                        val maxScale = 0.1f
+                        val scale = lerp(1f, 1f + maxScale, progress)
+
+                        val maxOffset = size.minDimension
+                        val initialDerivative = 0.05f
+                        val offset = offsetAnimation.value
+                        translationX = maxOffset * tanh(initialDerivative * offset.x safeDiv maxOffset)
+                        translationY = maxOffset * tanh(initialDerivative * offset.y safeDiv maxOffset)
+
+                        val maxDragScale = 0.1f
+                        val offsetAngle = atan2(offset.y, offset.x)
+                        scaleX =
+                            scale +
+                                    maxDragScale * abs(cos(offsetAngle) * offset.x safeDiv size.maxDimension) *
+                                    (width safeDiv height).fastCoerceAtMost(1f)
+                        scaleY =
+                            scale +
+                                    maxDragScale * abs(sin(offsetAngle) * offset.y safeDiv size.maxDimension) *
+                                    (height safeDiv width).fastCoerceAtMost(1f)
+                    }
+                } else {
+                    null
+                },
+                onDrawSurface = {
+                    if (tint.isSpecified) {
+                        drawRect(tint, blendMode = BlendMode.Hue)
+                        drawRect(tint.copy(alpha = 0.75f))
+                    }
+                    if (surfaceColor.isSpecified) {
+                        drawRect(surfaceColor)
+                    }
+                    if (enabled) {
+                        val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
+                        if (progress > 0f) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
+                                drawRect(
+                                    Color.White.copy(0.1f * progress),
+                                    blendMode = BlendMode.Plus
+                                )
+                                interactiveHighlightShader.apply {
+                                    val offset = pressStartPosition + offsetAnimation.value
+                                    setFloatUniform("size", size.width, size.height)
+                                    setColorUniform(
+                                        "color",
+                                        Color.White.copy(0.15f * progress).toArgb()
+                                    )
+                                    setFloatUniform("radius", size.maxDimension)
+                                    setFloatUniform(
+                                        "offset",
+                                        offset.x.fastCoerceIn(0f, size.width),
+                                        offset.y.fastCoerceIn(0f, size.height)
+                                    )
+                                }
+                                drawRect(
+                                    ShaderBrush(interactiveHighlightShader),
+                                    blendMode = BlendMode.Plus
+                                )
+                            } else {
+                                drawRect(
+                                    Color.White.copy(0.25f * progress),
+                                    blendMode = BlendMode.Plus
+                                )
+                            }
+                        }
+                    }
+                }
+            )
+            .let {
+                if (enabled) {
+                    it.clickable(
+                        interactionSource = null,
+                        indication = null,
+                        role = Role.Button,
+                        onClick = onClick
+                    )
+                } else {
+                    it
+                }
+            }
+            .then(
+                if (enabled) {
+                    Modifier.pointerInput(animationScope) {
+                        val progressAnimationSpec = spring(0.5f, 300f, 0.001f)
+                        val offsetAnimationSpec = spring(1f, 300f, Offset.VisibilityThreshold)
+                        val onDragStop: () -> Unit = {
+                            animationScope.launch {
+                                launch { progressAnimation.animateTo(0f, progressAnimationSpec) }
+                                launch {
+                                    offsetAnimation.animateTo(
+                                        Offset.Zero,
+                                        offsetAnimationSpec
+                                    )
+                                }
+                            }
+                        }
+                        inspectDragGestures(
+                            onDragStart = { down ->
+                                pressStartPosition = down.position
+                                animationScope.launch {
+                                    launch {
+                                        progressAnimation.animateTo(
+                                            1f,
+                                            progressAnimationSpec
+                                        )
+                                    }
+                                    launch { offsetAnimation.snapTo(Offset.Zero) }
+                                }
+                            },
+                            onDragEnd = { onDragStop() },
+                            onDragCancel = onDragStop
+                        ) { _, dragAmount ->
+                            animationScope.launch {
+                                offsetAnimation.snapTo(offsetAnimation.value + dragAmount)
+                            }
+                        }
+                    }
+                } else {
+                    Modifier
+                }
+            )
+            .height(42f.dp)
+            .padding(horizontal = innerPadding),
+        horizontalArrangement = Arrangement.spacedBy(8f.dp, Alignment.CenterHorizontally),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val c = LocalContentColor.current
+        CompositionLocalProvider(
+            LocalTextStyle provides textStyle,
+            if(!enabled) {
+                LocalContentColor provides Color.Gray.copy(.75f)
+            } else {
+                LocalContentColor provides c
+            }
+        ) {
+            content()
+        }
+    }
+}
+
+
+@Composable
+fun Modifier.containerBackDrop(
+    backdrop: Backdrop,
+    shape: Shape,
+    enabled : Boolean = true,
+    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).3f else .7f),
+) : Modifier {
+    val progressAnimation = remember { Animatable(0f) }
+    val offsetAnimation = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val tint = Color.Unspecified
+    var pressStartPosition by remember { mutableStateOf(Offset.Zero) }
+    val interactiveHighlightShader = remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RuntimeShader(SHADER)
+        } else {
+            Unit
+        }
+    }
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+
+    return this.drawBackdrop(
+        highlight = {
+            Highlight.Default.copy(width = 0.25.dp)
+        },
+        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
+        shape = { shape },
+        effects = {
+            vibrancy()
+            blur(7.5f.dp.toPx())
+            lens(15f.dp.toPx(), 25f.dp.toPx())
+        },
+        shadow = null,
+        onDrawSurface = {
+            if (tint.isSpecified) {
+                drawRect(tint, blendMode = BlendMode.Hue)
+                drawRect(tint.copy(alpha = 0.75f))
+            }
+            if (surfaceColor.isSpecified) {
+                drawRect(surfaceColor)
+            }
+            if (enabled) {
+                val progress = progressAnimation.value.fastCoerceIn(0f, 1f)
+                if (progress > 0f) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && interactiveHighlightShader is RuntimeShader) {
+                        drawRect(
+                            Color.White.copy(0.1f * progress),
+                            blendMode = BlendMode.Plus
+                        )
+                        interactiveHighlightShader.apply {
+                            val offset = pressStartPosition + offsetAnimation.value
+                            setFloatUniform("size", size.width, size.height)
+                            setColorUniform(
+                                "color",
+                                Color.White.copy(0.15f * progress).toArgb()
+                            )
+                            setFloatUniform("radius", size.maxDimension)
+                            setFloatUniform(
+                                "offset",
+                                offset.x.fastCoerceIn(0f, size.width),
+                                offset.y.fastCoerceIn(0f, size.height)
+                            )
+                        }
+                        drawRect(
+                            ShaderBrush(interactiveHighlightShader),
+                            blendMode = BlendMode.Plus
+                        )
+                    } else {
+                        drawRect(
+                            Color.White.copy(0.25f * progress),
+                            blendMode = BlendMode.Plus
+                        )
+                    }
+                }
+            }
+        }
+    )
+}
 
 
 @Composable
@@ -352,48 +367,74 @@ fun Modifier.containerBackDrop(
     shape: Shape,
     surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(.7f),
 ) : Modifier {
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
     return this
         .clip(shape)
-        .glassLayer(
-            backdrop,
-            style = largeStyle.copy(
-                overlayColor = surfaceColor
-            ),
-            enableLiquidGlass
-        )
+        .let {
+            if(isTransiting) {
+                it.glassLayer(
+                    backdrop,
+                    style = largeStyle.copy(
+                        overlayColor = surfaceColor
+                    ),
+                    enableLiquidGlass
+                )
+            } else {
+                it
+            }
+        }
 }
 
 @Composable
 fun LiquidButton(
-    backdrop: ShaderState,
     onClick: () -> Unit,
+    backdrop: Backdrop,
     modifier: Modifier = Modifier,
     enabled : Boolean = true,
     isCircle : Boolean = false,
-    shape: Shape = CircleShape,
+    shape: Shape,
     content: @Composable () -> Unit
 ) {
-    NoPadding {
-        if(isCircle) {
-            FilledTonalIconButton(
-                onClick = onClick,
-                modifier = modifier,
-                enabled = enabled,
-                content = content
-            )
-        } else {
-            FilledTonalButton(
-                shape = shape,
-                onClick = onClick,
-                modifier = modifier,
-                enabled = enabled,
-            ) {
-                content()
+    val isRunning = LocalNavControllerSafely.current?.isTransitioning ?: false
+
+//    if(!isRunning) {
+//        LiquidButton(
+//            onClick = onClick,
+//            backdrop = backdrop,
+//            modifier = modifier,
+//            enabled = enabled,
+//            isCircle = isCircle,
+//        ) {
+//            content()
+//        }
+//    } else {
+        val color = MaterialTheme.colorScheme.surfaceVariant.copy(
+            if(!isRunning) 0.65f else 1f
+        )
+        NoPadding {
+            if(isCircle) {
+                FilledTonalIconButton(
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = color,),
+                    onClick = onClick,
+                    modifier = modifier,
+                    enabled = enabled,
+                    content = content
+                )
+            } else {
+                FilledTonalButton(
+                    colors = ButtonDefaults.filledTonalButtonColors(containerColor = color),
+                    shape = shape,
+                    onClick = onClick,
+                    modifier = modifier,
+                    enabled = enabled,
+                ) {
+                    content()
+                }
             }
         }
-    }
+//    }
 }
 
 @Composable

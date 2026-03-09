@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -53,6 +54,7 @@ import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
 import com.xah.mirror.util.rememberShaderState
@@ -119,26 +121,20 @@ private const val PAGE_PROGRAM = 1
 fun ProgramScreen(
     vm: NetWorkViewModel,
     ifSaved: Boolean,
-//    navController : NavHostController,
 ) {
     val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Program.receiveRoute() }
     val titles = remember { listOf("完成情况","教学计划") }
     val pageState = rememberPagerState(
         initialPage = if(prefs.getString("PROGRAM_COMPETITION","") != null) PAGE_COMPETITION else PAGE_PROGRAM
     ) { titles.size }
-    val competitionRoute = remember { AppNavRoute.ProgramCompetition.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val context = LocalContext.current
-    val backDrop = rememberShaderState()
+    val backDrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        roundShape = MaterialTheme.shapes.extraExtraLarge,
-//        route = route,
-//        navHostController = navController,
         bottomBar = {
             val dest = ProgramCompetitionDestination(ifSaved)
             AnimatedVisibility(
@@ -182,7 +178,7 @@ fun ProgramScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Program.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Program.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         val dest = AllProgramsDestination(ifSaved)
@@ -193,10 +189,10 @@ fun ProgramScreen(
                         ) {
                             LiquidButton (
                                 shape = RectangleShape,
+                                backdrop = backDrop,
                                 onClick = {
                                     navController.push(dest)
                                 },
-                                backdrop = backDrop,
                             ) {
                                 Text("全校培养方案")
                             }

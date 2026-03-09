@@ -13,6 +13,7 @@ data class GradeDestination(
 ) : NavDestination() {
     override val key = "grade_$ifSaved"
     override val title = res(R.string.navigation_label_grade)
+    override val icon = R.drawable.article
 
     @Composable
     override fun Content() {

@@ -79,11 +79,9 @@ fun HaiLeWashingScreen(
     vm : NetWorkViewModel,
 //    navController : NavHostController,
 ) {
-    val navController = LocalNavDependencies.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.HaiLeWashing.route }
 
     val t = remember { Campus.entries }
     val titles = remember { t.map { it.description } }
@@ -157,9 +155,6 @@ fun HaiLeWashingScreen(
 
     Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-//        roundShape = MaterialTheme.shapes.extraExtraLarge,
-//        route = route,
-//        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
