@@ -58,7 +58,7 @@ fun VersionInfo() {
         CustomCard (color = cardNormalColor()) {
 
             // TODO WebView适配新库 [P1]
-            // TODO 课程表界面动效掉帧率较高走查 [P1]
+            // TODO WebVpn、课程表界面动效掉帧率较高走查 [P1]
 
             // TODO 课程详情页面优化 +空教室入口  [P2]
             // TODO 设置适配新库 [P2]

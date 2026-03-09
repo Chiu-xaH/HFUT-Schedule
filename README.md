@@ -13,11 +13,11 @@
 ## ✨ 亮点
 界面: 使用现代化技术栈开发；将实时模糊元素与Material Design 3融合，既有统一的风格、规范，又有独特的设计
 
-动效：构建[全局转场动画体系](https://github.com/Chiu-xaH/Compose-Transition-Sample)，遵循一镜到底、收放自如的原则
+动效：自研[第二代全局转场动画体系](https://github.com/Chiu-xaH/SharedNav)，遵循一镜到底、收放自如的原则
 
-更新：200+版本迭代，平均每周都有新更新，带来新的功能、重构及优化
+更新：250+版本迭代，平均每周都有新更新，带来新的功能、重构及优化
 
-性能：冷启动迅速，开屏即展示关键信息(聚焦)；内存与存储占用适中
+性能：冷启动迅速，开屏即展示关键信息；内存与存储占用适中
 
 ## 🔶 简介
 适用于合肥工业大学(HFUT)本科生的校园服务聚合Android App，采用现代化技术栈开发，内含查询教务、校园卡、网电费等40+功能
@@ -72,9 +72,9 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 [AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) 液态玻璃
 
-[Bsdiff-Lib](https://github.com/Chiu-xaH/Bsdiff-Android-Library) 增量更新(自己)
+[DiffUpdater](https://github.com/Chiu-xaH/DiffUpdater) 增量更新(自己)
 
-[Navigation-Transition-Share](https://github.com/Chiu-xaH/Compose-Transition-Sample) 转场动画(自己)
+[SharedNav](https://github.com/Chiu-xaH/SharedNav) 转场动画(自己)
 
 [Mirror-Android](https://github.com/Chiu-xaH/Mirror-Android) 镜面效果(自己)
 
@@ -93,9 +93,10 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 linsui帮助上架F-Droid
 
 若干用户的帮助
-- James-Zhang2提供GPA评定数据源
-- tinyvan提交RR修复Bug
-- Today1337提交PR优化界面
+- James-Zhang2 提供GPA评定数据源
+- tinyvan 提交RR修复Bug
+- Today1337 提交PR优化界面
+- zxbmmmmmmmmm 提交PR修复Bug
 - 其他用户帮助推广、通过邮件、issue等提供反馈和建议等，在此不一一列举了
 
 ## 📑 [更新日志](docs/update)
