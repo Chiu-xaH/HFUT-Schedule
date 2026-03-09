@@ -48,8 +48,6 @@ import com.hfut.schedule.ui.util.webview.sharedInterceptRequest
 import com.hfut.schedule.ui.util.webview.sharedOverrideUrlLoading
 import com.hfut.schedule.ui.util.webview.updateTitle
 import com.hfut.schedule.ui.util.webview.updateUrl
-import com.xah.transition.component.TransitionScaffold
-import com.xah.transition.util.popBackStackForTransition
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
@@ -128,7 +126,7 @@ fun WebViewScreenForNavigation(
                 { visible = it },
                 {
                     WebViewBackIcon(webView,icon,topBarTitleColor,route){
-                        navController.popBackStackForTransition()
+                        navController.popBackStack()
                     }
                 },
                 currentTitle,

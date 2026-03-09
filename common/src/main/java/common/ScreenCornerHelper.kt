@@ -11,15 +11,18 @@ import androidx.compose.ui.unit.dp
 
 class ScreenCornerHelper(
     private val view: View,
-    private val defaultCorner : CornerBasedShape
+    private val defaultCorner : CornerBasedShape,
+    private val defaultCornerDouble : CornerBasedShape
 ) {
     companion object {
         var shape : CornerBasedShape = RoundedCornerShape(0.dp)
+        var shapeDouble : CornerBasedShape = RoundedCornerShape(0.dp)
         val CAN_GET = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     }
 
     init {
         shape = getCornerShape()
+        shapeDouble = getCornerShapeDouble()
     }
 
     private fun getCornerDp(): Dp {
@@ -39,6 +42,14 @@ class ScreenCornerHelper(
             RoundedCornerShape(getCornerDp())
         } else {
             defaultCorner
+        }
+    }
+
+    private fun getCornerShapeDouble() : CornerBasedShape {
+        return if(CAN_GET) {
+            RoundedCornerShape(getCornerDp()*2)
+        } else {
+            defaultCornerDouble
         }
     }
 

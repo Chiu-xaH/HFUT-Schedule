@@ -46,15 +46,15 @@ import com.hfut.schedule.ui.screen.home.getStorageJxglstuCookie
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionBackHandler
+
 
 @Composable
-fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navController : NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     var showEditDialog by remember { mutableStateOf(false) }
     val cookie by produceState(initialValue = "", key1 = showEditDialog) {
         getStorageJxglstuCookie(isWebVpn = false)?.let {
@@ -106,7 +106,7 @@ fun DeveloperScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,navContro
         }
     }
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("Cookies & Authorization") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

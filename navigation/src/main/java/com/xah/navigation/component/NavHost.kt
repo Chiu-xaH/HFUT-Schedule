@@ -1,6 +1,8 @@
 package com.xah.navigation.component
 
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.shape.CornerBasedShape
@@ -24,22 +26,24 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.lerp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.xah.common.ScreenCornerHelper
-import com.xah.navigation.utils.touchEvent
 import com.xah.container.overlay.SharedContainerRoot
 import com.xah.container.utils.LocalSharedRegistry
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.anim.PageEffect
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.controller.NavigationViewModel
+import com.xah.navigation.model.Dependencies
 import com.xah.navigation.model.action.ActionType
 import com.xah.navigation.model.dest.Destination
-import com.xah.navigation.model.Dependencies
-import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.LocalNavControllerSafely
+import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.navigation.utils.scaleMirror
+import com.xah.navigation.utils.touchEvent
+import com.xah.uicommon.util.LogUtil
 
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SharedNavHost(
     startDestination: Destination,
@@ -57,6 +61,7 @@ fun SharedNavHost(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun NavHost(
     startDestination: Destination,
@@ -83,18 +88,8 @@ fun NavHost(
         val progress = navController.transitionProgress
 
         // 当 transition 变化时启动动画
-        LaunchedEffect(transition) {
-            navController.animate(
-                if (registry.isRunning) {
-                    navController.defaultSpecWithShared
-                } else {
-                    if(navController.transitionLevel == EffectLevel.NONE) {
-                        navController.defaultSpecWithTinyScale
-                    } else {
-                        navController.defaultSpec
-                    }
-                }
-            )
+        LaunchedEffect(transition,registry.isRunning) {
+            navController.animate()
         }
 
         val visibleEntries = remember(transition) {
@@ -204,14 +199,6 @@ fun NavHost(
     }
 }
 
-@Composable
-fun DefaultBackHandler() {
-    // TODO 预测式返回
-    val navController = LocalNavController.current
-    BackHandler(enabled = navController.stack.size > 1) {
-        navController.pop()
-    }
-}
 
 // scaleRadio放慢scale的速度
 private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel,val enableBlur : Boolean,val enableShader : Boolean) {
@@ -264,6 +251,7 @@ private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel,v
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun Modifier.scale() : Modifier {
         return if(enableShader) {
             this.scaleMirror(effect.scale)
@@ -275,6 +263,7 @@ private class BackgroundEffect(animatedProgress : Float,val level: EffectLevel,v
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     fun Modifier.effect() : Modifier {
         return when(level) {
             EffectLevel.FULL -> {
@@ -317,7 +306,7 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel,v
             animatedProgress
         ),
         corner = lerp(
-            ScreenCornerHelper.shape,
+            ScreenCornerHelper.shapeDouble,
             ScreenCornerHelper.shape,
             animatedProgress
         )
@@ -357,21 +346,21 @@ private class ForegroundEffect(animatedProgress : Float,val level: EffectLevel,v
     }
 
     fun Modifier.effect() : Modifier {
-         return when(level) {
-             EffectLevel.FULL -> {
-                 this.blur().scale().corner()
-             }
-             EffectLevel.NO_BLUR -> {
-                 this.scale().corner()
-             }
-             EffectLevel.NO_SCALE -> {
-                 this.scale().corner()
-             }
-             EffectLevel.NONE -> {
-                 this.tinyScale().tinyCorner()
-             }
-         }
-     }
+        return when(level) {
+            EffectLevel.FULL -> {
+                this.blur().scale().corner()
+            }
+            EffectLevel.NO_BLUR -> {
+                this.scale().corner()
+            }
+            EffectLevel.NO_SCALE -> {
+                this.scale().corner()
+            }
+            EffectLevel.NONE -> {
+                this.tinyScale().tinyCorner()
+            }
+        }
+    }
 }
 
 // TODO 共享元素过渡时，背景模糊
@@ -489,7 +478,6 @@ private class ForegroundEffectWithSharedElement(animatedProgress : Float,val lev
         }
     }
 }
-
 
 fun lerp(start: CornerBasedShape, stop: CornerBasedShape, fraction: Float): CornerBasedShape = start.lerp(stop,fraction) as CornerBasedShape
 

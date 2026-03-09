@@ -656,7 +656,7 @@ private fun TwoTextField(
                 topBar = {
                     BottomSheetTopBar("图片验证码自动填充")
                 },) {innerPadding ->
-                DownloadMLUI(innerPadding,null)
+                DownloadMLUI(innerPadding)
                 Spacer(modifier = Modifier.height(20.dp))
             }
         }

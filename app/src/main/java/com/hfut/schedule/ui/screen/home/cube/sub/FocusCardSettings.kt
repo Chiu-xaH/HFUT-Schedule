@@ -92,7 +92,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-import com.xah.transition.util.TransitionBackHandler
+
 import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -105,14 +105,14 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun FocusCardSettings(innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     var showBottomSheet by remember { mutableStateOf(false) }
-    var sheetState = rememberModalBottomSheetState()
+//    var sheetState = rememberModalBottomSheetState()
 
     val switch_ele = prefs.getBoolean("SWITCHELE", true)
     var showEle by remember { mutableStateOf(switch_ele) }
@@ -143,7 +143,7 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     var showShortCut by remember { mutableStateOf(switch_shortCut) }
     SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
-    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
+//    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
 //    val showSpecial by DataStoreManager.showFocusSpecial.collectAsState(initial = true)
 
@@ -151,7 +151,7 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
             headlineContent = { Text(text = "打开开关则会在APP冷启动或刷新时自动获取数据,并显示在聚焦首页第一张卡片内") },

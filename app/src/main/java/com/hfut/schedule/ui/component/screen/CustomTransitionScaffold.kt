@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,7 +15,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.xah.transition.component.TransitionScaffold
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -33,20 +33,15 @@ fun CustomTransitionScaffold(
     content: @Composable ((PaddingValues) -> Unit)
 ) {
     val predictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    TransitionScaffold (
-        route = route,
-        roundShape = roundShape,
-        navHostController = navHostController,
+    Scaffold(
+        modifier = modifier,
+        containerColor = containerColor ?:  MaterialTheme.colorScheme.surface,
         topBar = topBar,
-        modifier = modifier
-        ,
-        enablePredictive = predictive && enablePredictive,
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,
         floatingActionButtonPosition = floatingActionButtonPosition,
-        containerColor = containerColor,
-        content = content,
-        backHandler = backHandler
-    )
+    ) { innerPadding ->
+        content(innerPadding)
+    }
 }
 

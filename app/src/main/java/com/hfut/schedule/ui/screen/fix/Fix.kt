@@ -32,7 +32,7 @@ import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.currentRouteWithoutArgs
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -103,7 +103,7 @@ fun Fix(vm : NetWorkViewModel) {
         ) {
             composable(FixBarItems.Fix.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    FixUI(innerPadding = innerPadding,vm,navController)
+                    FixUI(innerPadding = innerPadding,vm)
                 }
 
             }

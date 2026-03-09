@@ -214,7 +214,6 @@ dependencies {
     // 镜面效果
     implementation(libs.mirror)
     // 转场动画模块
-    implementation(project(":transition"))
     // 可单独使用的UI模块
     implementation implementation(project(':common'))
     // 消费预测及共用代码模块

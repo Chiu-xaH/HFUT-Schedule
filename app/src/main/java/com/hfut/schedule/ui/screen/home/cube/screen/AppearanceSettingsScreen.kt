@@ -108,7 +108,7 @@ import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.anim.EffectLevel
-import com.xah.transition.util.TransitionBackHandler
+
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -127,17 +127,17 @@ import java.io.FileOutputStream
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun AppearanceSettingsScreen(innerPaddings : PaddingValues, navController : NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+fun AppearanceSettingsScreen(innerPaddings : PaddingValues,) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     SharedAppearanceSettingsScreen(
         Modifier
-            .verticalScroll(rememberScrollState())
-            .scale(scale),
+            .verticalScroll(rememberScrollState()),
+//            .scale(scale),
         innerPaddings,
         false
     )

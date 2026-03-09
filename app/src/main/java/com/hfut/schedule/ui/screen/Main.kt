@@ -2,7 +2,6 @@ package com.hfut.schedule.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -11,11 +10,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
@@ -60,10 +56,10 @@ import com.hfut.schedule.ui.destination.AgreementDestination
 import com.hfut.schedule.ui.destination.HomeDestination
 import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.hfut.schedule.ui.destination.UpdateSuccessfullyDestination
-import com.hfut.schedule.ui.screen.util.ControlCenterScreen
 import com.hfut.schedule.ui.screen.util.limitDrawerSwipeArea
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.CONTROL_CENTER_ANIMATION_SPEED
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -75,7 +71,6 @@ import com.xah.navigation.component.DefaultBackHandler
 import com.xah.navigation.component.SharedNavHost
 import com.xah.navigation.utils.LocalNavController
 import com.xah.navigation.utils.rememberNavDependencies
-import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.util.LogUtil
 import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.Dispatchers

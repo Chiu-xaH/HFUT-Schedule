@@ -3,6 +3,7 @@ package com.xah.navigation.utils
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,9 +18,11 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.unit.dp
+import com.xah.container.model.ContainerFilledStrategy
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 fun Modifier.scaleMirror(scale: Float): Modifier =
-    if(Build.VERSION.SDK_INT < 33) {
+    if(!ContainerFilledStrategy.CAN_USE_SHADER) {
         this.graphicsLayer {
             scaleX = scale
             scaleY = scale

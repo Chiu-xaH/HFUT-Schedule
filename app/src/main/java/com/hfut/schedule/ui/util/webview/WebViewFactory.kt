@@ -75,8 +75,6 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.util.LogUtil
@@ -493,67 +491,67 @@ fun WebViewBackIcon(
     route : String?,
     onExit : () -> Unit
 ) {
-    val back : () -> Unit = {
-        if(webView?.canGoBack() == true) {
-            webView.goBack()
-        } else {
-            onExit()
-        }
-    }
-    val cIcon = if(webView?.canGoBack() == true) {
-        painterResource(R.drawable.arrow_back)
-    } else {
-        painterResource(R.drawable.close)
-    }
-    val button = @Composable { content  : @Composable () -> Unit ->
-        Box(
-            modifier = Modifier
-                .combinedClickable(
-                    onClick = back,
-                    onLongClick = onExit
-                )
-        ) {
-            content()
-        }
-    }
-    if(icon == null) {
-        button {
-            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-        }
-    } else {
-        var show by remember { mutableStateOf(true) }
-        LaunchedEffect(Unit) {
-            show = true
-            delay(TransitionConfig.curveStyle.speedMs*1L)
-            delay(1500L)
-            show = false
-            if(route != null) {
-                val enablePredictive = DataStoreManager.enablePredictive.first()
-                if(!enablePredictive || TransitionConfig.transplantBackground) {
-                    delay(3000L)
-                    show = true
-                }
-            }
-        }
-        button {
-            Box() {
-                AnimatedVisibility(
-                    visible = show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-                AnimatedVisibility(
-                    visible = !show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-            }
-        }
-    }
+//    val back : () -> Unit = {
+//        if(webView?.canGoBack() == true) {
+//            webView.goBack()
+//        } else {
+//            onExit()
+//        }
+//    }
+//    val cIcon = if(webView?.canGoBack() == true) {
+//        painterResource(R.drawable.arrow_back)
+//    } else {
+//        painterResource(R.drawable.close)
+//    }
+//    val button = @Composable { content  : @Composable () -> Unit ->
+//        Box(
+//            modifier = Modifier
+//                .combinedClickable(
+//                    onClick = back,
+//                    onLongClick = onExit
+//                )
+//        ) {
+//            content()
+//        }
+//    }
+//    if(icon == null) {
+//        button {
+//            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+//        }
+//    } else {
+//        var show by remember { mutableStateOf(true) }
+//        LaunchedEffect(Unit) {
+//            show = true
+////            delay(TransitionConfig.curveStyle.speedMs*1L)
+//            delay(1500L)
+//            show = false
+//            if(route != null) {
+//                val enablePredictive = DataStoreManager.enablePredictive.first()
+//                if(!enablePredictive || TransitionConfig.transplantBackground) {
+//                    delay(3000L)
+//                    show = true
+//                }
+//            }
+//        }
+//        button {
+//            Box() {
+//                AnimatedVisibility(
+//                    visible = show,
+//                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
+//                    exit = DefaultTransitionStyle.centerAllAnimation.exit
+//                ) {
+//                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+//                }
+//                AnimatedVisibility(
+//                    visible = !show,
+//                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
+//                    exit = DefaultTransitionStyle.centerAllAnimation.exit
+//                ) {
+//                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
+//                }
+//            }
+//        }
+//    }
 }
 
 // 监听 WebView 滚动事件

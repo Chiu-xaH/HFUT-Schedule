@@ -31,7 +31,7 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.transition.util.TransitionBackHandler
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
@@ -39,14 +39,14 @@ import kotlinx.coroutines.launch
 @Composable
 fun ApiKeyScreen(
     innerPadding : PaddingValues,
-    navController: NavHostController
+//    navController: NavHostController
 ) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
 
     val pwd by DataStoreManager.apiKey.collectAsState(initial = "")
     var inputApiKey by remember { mutableStateOf("") }
@@ -55,7 +55,7 @@ fun ApiKeyScreen(
     }
     val scope = rememberCoroutineScope()
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("配置ApiKey") {
             CustomCard(

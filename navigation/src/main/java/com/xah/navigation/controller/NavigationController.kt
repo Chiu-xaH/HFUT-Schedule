@@ -3,6 +3,7 @@ package com.xah.navigation.controller
 import android.os.Build
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,8 +47,30 @@ class NavigationController(
 
     private val animationSpecSharedTween = 500
     val defaultSpecWithTinyScale = tween<Float>(250)
-    val defaultSpecWithShared = tween<Float>(animationSpecSharedTween*8/5)
-    val defaultSpec = tween<Float>(animationSpecSharedTween*13/10)
+    private val defaultSpec = tween<Float>(animationSpecSharedTween*13/10)
+    private val popAnimationWithShared = tween<Float>(animationSpecSharedTween*7/5)
+    private val pushAnimationWithShared = tween<Float>(animationSpecSharedTween)
+    private val popAnimation = tween<Float>(animationSpecSharedTween*6/5, easing = CubicBezierEasing(0.4f, 0.65f, 0.25f, 1.0f))
+    private val pushAnimation = tween<Float>(animationSpecSharedTween*6/5, easing = CubicBezierEasing(0.4f, 0.65f, 0.25f, 1.0f))
+
+    fun getAnimation() =
+        if (sharedRegistry != null && sharedRegistry.isRunning) {
+            when(navTransition?.type) {
+                ActionType.POP -> popAnimationWithShared
+                ActionType.PUSH -> pushAnimationWithShared
+                else -> defaultSpec
+            }
+        } else {
+            if(transitionLevel == EffectLevel.NONE) {
+                defaultSpecWithTinyScale
+            } else {
+                when(navTransition?.type) {
+                    ActionType.POP -> popAnimation
+                    ActionType.PUSH -> pushAnimation
+                    else -> defaultSpec
+                }
+            }
+        }
 
     private fun createAndPush(
         destination : Destination
@@ -159,7 +182,7 @@ class NavigationController(
 
 
     fun animate(
-        animationSpec: AnimationSpec<Float> = defaultSpec
+        animationSpec: AnimationSpec<Float> = getAnimation()
     ) {
         scope.launch {
             internalAnimate(animationSpec)

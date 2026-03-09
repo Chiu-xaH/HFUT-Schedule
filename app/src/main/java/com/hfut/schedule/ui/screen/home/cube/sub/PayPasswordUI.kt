@@ -47,17 +47,17 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.transition.util.TransitionBackHandler
+
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)
     var pin by remember { mutableStateOf(switch_pin) }
     saveBoolean("SWITCHPIN", false,pin)
@@ -69,7 +69,8 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavH
     Column(
         modifier = Modifier
             .padding(innerPadding)
-            .fillMaxSize().scale(scale)
+            .fillMaxSize()
+//            .scale(scale)
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "需要密码") },

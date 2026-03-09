@@ -47,7 +47,7 @@ import com.hfut.schedule.receiver.widget.focus.refreshFocusWidget
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.xah.transition.util.TransitionBackHandler
+
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
@@ -59,16 +59,16 @@ import kotlin.math.sin
 @Composable
 fun FocusWidgetSettingsScreen(
    innerPadding : PaddingValues,
-   navController : NavHostController
+//   navController : NavHostController
 ) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     FocusWidgetSettingsUI(
         innerPadding,
-        modifier = Modifier.scale(scale)
+//        modifier = Modifier.scale(scale)
     )
 }
 

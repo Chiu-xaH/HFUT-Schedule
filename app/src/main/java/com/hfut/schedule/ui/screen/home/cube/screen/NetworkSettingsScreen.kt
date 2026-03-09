@@ -49,7 +49,7 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.screen.home.cube.sub.ArrangeItem
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.TransitionBackHandler
+
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -61,18 +61,18 @@ fun NetworkSettingsScreen(
     innerPaddings : PaddingValues,
     ifSaved : Boolean,
 ) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val context = LocalContext.current
 
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
         .padding(innerPaddings)
-        .scale(scale))
+    )
     {
         Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2))
         val switch_upload = SharedPrefs.prefs.getBoolean("SWITCHUPLOAD",true )

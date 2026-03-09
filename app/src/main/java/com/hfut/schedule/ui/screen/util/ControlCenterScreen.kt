@@ -67,8 +67,6 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 
 import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.xah.navigation.controller.NavigationController
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.util.currentRouteWithArgWithoutValues
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.rememberHazeState

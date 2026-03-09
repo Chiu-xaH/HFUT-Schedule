@@ -71,7 +71,7 @@ import com.hfut.schedule.ui.screen.home.cube.UpdateContents
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionBackHandler
+
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -82,16 +82,16 @@ import androidx.core.graphics.createBitmap
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Boolean, navController : NavHostController, hazeState: HazeState) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
     val context = LocalContext.current
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     Column (modifier = Modifier
         .verticalScroll(rememberScrollState())
         .padding(innerPadding)
-        .scale(scale)){
+    ){
         Spacer(modifier = Modifier.height(5.dp))
 
         var showBottomSheet by remember { mutableStateOf(false) }

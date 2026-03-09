@@ -48,19 +48,19 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.transition.util.TransitionBackHandler
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
-fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?) {
-    var scale by remember { mutableFloatStateOf(1f) }
-    navController?.let {
-        val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-        TransitionBackHandler(it,enablePredictive) {
-            scale = it
-        }
-    }
+fun DownloadMLUI(innerPadding : PaddingValues) {
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    navController?.let {
+//        val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//        TransitionBackHandler(it,enablePredictive) {
+//            scale = it
+//        }
+//    }
     val activity = LocalActivity.current
     LaunchedEffect(activity) {
         activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
@@ -95,7 +95,7 @@ fun DownloadMLUI(innerPadding : PaddingValues,navController : NavHostController?
         }
     }
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CustomCard(color = MaterialTheme.colorScheme.surface) {
             TransplantListItem(
