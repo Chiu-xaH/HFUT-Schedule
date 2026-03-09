@@ -35,11 +35,11 @@ import com.hfut.schedule.ui.screen.home.cube.sub.EditJxglstuPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.EditPasswordScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusCardSettings
 import com.hfut.schedule.ui.screen.home.cube.sub.FocusWidgetSettingsScreen
-import com.hfut.schedule.ui.screen.home.cube.sub.GestureStudyScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.LockUI
 import com.hfut.schedule.ui.screen.home.cube.sub.TEST
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
@@ -63,8 +63,9 @@ fun SettingsScreen(vm : NetWorkViewModel,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
                    hazeState: HazeState,
-                   navHostTopController : NavController,
+//                   navHostTopController : NavController,
 ) {
+    val navHostTopController = LocalNavController.current
     val navController = rememberNavController()
     Scaffold() { _ ->
         NavHost(
@@ -80,12 +81,12 @@ fun SettingsScreen(vm : NetWorkViewModel,
 
             composable(Screen.HomeScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    HomeSettingScreen(navController, innerPaddings,vm,navHostTopController)
+                    HomeSettingScreen(navController, innerPaddings,vm)
                 }
             }
             composable(Screen.UIScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    AppearanceSettingsScreen(innerPaddings,navController)
+                    AppearanceSettingsScreen(innerPaddings)
                 }
             }
             composable(Screen.APPScreen.route) {
@@ -105,7 +106,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             composable(FixBarItems.Fix.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    FixUI(innerPadding = innerPaddings,vm,navController)
+                    FixUI(innerPadding = innerPaddings,vm)
                 }
             }
             composable(Screen.DebugScreen.route) {
@@ -115,57 +116,52 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             composable(Screen.FocusWidgetSettingsScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    FocusWidgetSettingsScreen(innerPaddings,navController)
+                    FocusWidgetSettingsScreen(innerPaddings)
                 }
             }
             composable(Screen.DownloadScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    DownloadMLUI(innerPaddings,navController)
+                    DownloadMLUI(innerPaddings)
                 }
             }
             composable(Screen.DeveloperScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    DeveloperScreen(vm,innerPaddings,navController)
+                    DeveloperScreen(vm,innerPaddings)
                 }
             }
             composable(Screen.CalendarScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    CalendarSettingsScreen(innerPaddings,navController)
+                    CalendarSettingsScreen(innerPaddings)
                 }
             }
             composable(Screen.LockScreen.route) {
                 Scaffold {
-                    LockUI(innerPaddings,hazeState,navController)
+                    LockUI(innerPaddings,hazeState)
                 }
             }
             composable(Screen.FocusCardScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
-                    FocusCardSettings(innerPaddings,navController)
+                    FocusCardSettings(innerPaddings)
                 }
             }
             composable(Screen.HuiXinPasswordScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    EditPasswordScreen(hazeState,innerPaddings,navController)
+                    EditPasswordScreen(hazeState,innerPaddings)
                 }
             }
             composable(Screen.JxglstuPasswordScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    EditJxglstuPasswordScreen(innerPaddings,navController)
-                }
-            }
-            composable(Screen.GestureStudyScreen.route) {
-                Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    GestureStudyScreen(hazeState,innerPaddings,navController)
+                    EditJxglstuPasswordScreen(innerPaddings)
                 }
             }
             composable(Screen.BackupScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    BackupScreen(innerPaddings,navController)
+                    BackupScreen(innerPaddings)
                 }
             }
             composable(Screen.ApiKeyScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    ApiKeyScreen(innerPaddings,navController)
+                    ApiKeyScreen(innerPaddings)
                 }
             }
         }

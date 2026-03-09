@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
@@ -31,7 +29,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.model.community.courseDetailDTOList
 import com.hfut.schedule.logic.model.jxglstu.CourseBookBean
@@ -44,7 +41,6 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.AppNavRoute
@@ -52,7 +48,7 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Deta
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getTotalCourse
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.TopBarNavigateIcon
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.HazeState
@@ -135,7 +131,7 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                             headlineContent = { Text( "更多信息") },
                             leadingContent = {
                                 Icon(
-                                    Icons.Filled.ArrowForward,
+                                    painterResource(R.drawable.arrow_forward),
                                     contentDescription = "Localized description",
                                 )
                             },
@@ -157,8 +153,9 @@ fun CourseDetailApiScreen(
     courseName : String,
     id : String,
     vm : NetWorkViewModel,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val hazeState = remember { HazeState() }
     val numItem by produceState<lessons?>(initialValue = null) {
@@ -177,12 +174,8 @@ fun CourseDetailApiScreen(
         value = JxglstuRepository.parseCourseBook(json)
     }
 
-    val route = remember { AppNavRoute.CourseDetail.withArgs(courseName,id) }
-    CustomTransitionScaffold(
+    Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
-        route = route,
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -198,7 +191,7 @@ fun CourseDetailApiScreen(
             CenterScreen {
                 EmptyIcon("未找到本门课的信息(尝试切换到这门课所在的学期后再刷新登陆状态)")
             }
-            return@CustomTransitionScaffold
+            return@Scaffold
         }
         Column(
             modifier = Modifier

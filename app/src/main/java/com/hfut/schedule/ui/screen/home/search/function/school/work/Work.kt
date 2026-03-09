@@ -1,9 +1,8 @@
 package com.hfut.schedule.ui.screen.home.search.function.school.work
 
+
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,15 +19,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -46,69 +43,57 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastMap
-import androidx.navigation.NavHostController
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
+import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.WorkSearchType
+import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-
+import com.hfut.schedule.ui.component.button.BUTTON_PADDING
+import com.hfut.schedule.ui.component.button.LiquidButton
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
 import com.hfut.schedule.ui.component.screen.pager.PageController
-   
+import com.hfut.schedule.ui.destination.WorkDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.enumeration.CampusRegion
-import com.hfut.schedule.logic.enumeration.getCampusRegion
-import com.hfut.schedule.ui.component.button.BUTTON_PADDING
-import com.hfut.schedule.ui.component.button.LiquidButton
-
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.button.containerBackDrop
-import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.backDropSource
-
+import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Work(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.Work.route }
+fun Work() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.Work.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Work.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.Work.icon),null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Work,route)
+            navController.push(WorkDestination)
         }
     )
 }
@@ -117,11 +102,9 @@ fun Work(
 @Composable
 fun WorkScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Work.route }
     val backDrop = rememberLayerBackdrop()
     var campus by rememberSaveable { mutableStateOf(getCampusRegion()) }
     val types = remember { WorkSearchType.entries }
@@ -133,10 +116,8 @@ fun WorkScreen(
         vm.workSearchResult.clear()
         vm.searchWorks(keyword = input.let { if(it.isBlank() || it.isEmpty()) null else it }, page = currentPage, type = page,campus)
     }
-
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    val context = LocalContext.current
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column (
@@ -147,7 +128,7 @@ fun WorkScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Work.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Work.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -155,17 +136,12 @@ fun WorkScreen(
                                 CampusRegion.HEFEI -> MyApplication.WORK_URL
                                 CampusRegion.XUANCHENG -> MyApplication.WORK_XC_URL
                             }
-                            val iconRoute =  AppNavRoute.WebView.shareRoute(url)
                             LiquidButton(
                                 backdrop = backDrop,
-                                modifier = Modifier.containerShare(
-                                    AppNavRoute.WebView.shareRoute(url),
-                                    CircleShape
-                                ),
                                 onClick = {
                                     scope.launch {
                                         Starter.startWebView(
-                                            navController,
+                                            context,
                                             url = url,
                                             title = "就业网(${campus.description})",
                                             icon = R.drawable.net,
@@ -174,7 +150,7 @@ fun WorkScreen(
                                 },
                                 isCircle = true
                             ) {
-                                Icon(painterResource(R.drawable.net), contentDescription = null,modifier = Modifier.iconElementShare( route = iconRoute))
+                                Icon(painterResource(R.drawable.net), contentDescription = null)
                             }
                             Spacer(Modifier.width(BUTTON_PADDING))
                             LiquidButton(

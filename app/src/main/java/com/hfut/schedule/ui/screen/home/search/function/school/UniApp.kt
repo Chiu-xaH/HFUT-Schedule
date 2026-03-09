@@ -21,19 +21,17 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun UniApp(
-    navController : NavHostController,
 ) {
     val icon = remember { R.drawable.wechat }
     val title = remember { "合工大教务" }
     val url = remember { "https://jwglapp.hfut.edu.cn/uniapp/#/pages/tab/main/main"}
-    val route = AppNavRoute.WebView.shareRoute(url)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val jwt by DataStoreManager.uniAppJwt.collectAsState(initial = null)
@@ -41,7 +39,6 @@ fun UniApp(
         headlineContent = { ScrollText(text = title) },
         leadingContent = {
             Icon(painterResource(icon), contentDescription = null,
-//                modifier = Modifier.iconElementShare(route = route)
             )
         },
         modifier = Modifier.clickable {

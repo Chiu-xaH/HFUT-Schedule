@@ -73,6 +73,7 @@ import com.hfut.schedule.ui.style.CalendarStyle
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
@@ -241,7 +242,7 @@ fun JxglstuCourseTableSearch(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
             MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState, list = list)
@@ -578,6 +579,7 @@ fun JxglstuCourseTableSearch(
         }
     }
     val calendarSquareHeight by DataStoreManager.calendarSquareHeight.collectAsState(initial = MyApplication.CALENDAR_SQUARE_HEIGHT)
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     var totalDragX by remember { mutableFloatStateOf(0f) }
 
@@ -648,7 +650,7 @@ fun JxglstuCourseTableSearch(
                                                 it.calendarSquareGlass(
                                                     backGroundHaze,
                                                     squareColor,
-                                                    enableLiquidGlass,
+                                                    enableLiquidGlass && !isTransitioning,
                                                 )
                                             } else {
                                                 it

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,6 +55,7 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.destination.VersionInfoDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.cube.sub.PersonPart
@@ -60,16 +63,14 @@ import com.hfut.schedule.ui.screen.home.cube.sub.update.PatchUpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.UpdateUI
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getPatchVersions
 import com.hfut.schedule.ui.screen.home.cube.sub.update.getUpdates
-import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
+import com.xah.container.container.sharedContainer
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
 
 /* 本kt文件已完成多语言文案适配 */
@@ -151,8 +152,9 @@ sealed class Screen(val route: String) {
 fun HomeSettingScreen(navController: NavController,
                       innerPaddings : PaddingValues,
                       vm : NetWorkViewModel,
-                      navHostTopController : NavController,
+//                      navHostTopController : NavController,
 ) {
+    val navHostTopController = LocalNavController.current
     val currentVersion = AppVersion.getVersionName()
     var hasCleaned by remember { mutableStateOf(false) }
     val refreshNetwork = suspend {
@@ -218,7 +220,7 @@ fun HomeSettingScreen(navController: NavController,
         }
 
         DividerTextExpandedWith(text = stringResource(R.string.settings_always_display_half_title)) {
-            AlwaysItem(navHostTopController,update)
+            AlwaysItem(update)
         }
 
 
@@ -303,18 +305,16 @@ fun UpdateContents(vm : NetWorkViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun AlwaysItem(
-    navHostTopController : NavController,
-    update : GiteeReleaseResponse?
-) {
+fun AlwaysItem(update : GiteeReleaseResponse?) {
+    val navHostTopController = LocalNavController.current
     val showBadge = update != null && update.assets.isNotEmpty()
     val currentVersion by remember { mutableStateOf(AppVersion.getVersionName()) }
     val isPreview = AppVersion.isPreview()
-    val route = remember { AppNavRoute.VersionInfo.route }
     val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.let{ if(show) it.containerShare(route) else it }
+        shape = RectangleShape,
+        modifier = Modifier.let{ if(show) it.sharedContainer(VersionInfoDestination.key, MaterialTheme.shapes.medium) else it }
     ) {
         TransplantListItem(
             headlineContent = { Text(text = stringResource(R.string.network_settings_refresh_login_title)) },
@@ -333,15 +333,11 @@ fun AlwaysItem(
                     Icon(
                         painterResource(AppNavRoute.VersionInfo.icon),
                         contentDescription = "Localized description",
-                        modifier = Modifier.iconElementShare(route)
                     )
                 },
                 colors = MaterialTheme.colorScheme.surface,
-//                modifier =
-//                    Modifier.let{ if(show) it.containerShare(route) else it }
-                modifier = Modifier
-                    .clickable{
-                    navHostTopController.navigateForTransition(AppNavRoute.VersionInfo,route)
+                modifier = Modifier.clickable {
+                    navHostTopController.push(VersionInfoDestination)
                 }
             )
         }

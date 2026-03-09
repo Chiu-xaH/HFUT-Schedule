@@ -48,9 +48,7 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.color.textFiledTransplant
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
 fun getFriendsList() : List<FriendsList?> {
@@ -78,7 +76,7 @@ fun getFriendsCourse(studentId : String,vm : NetWorkViewModel) {
 fun AddCourseUI(vm: NetWorkViewModel) {
     var showBottomSheet by remember { mutableStateOf(false) }
     if (showBottomSheet) {
-        CustomBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet
         ) {

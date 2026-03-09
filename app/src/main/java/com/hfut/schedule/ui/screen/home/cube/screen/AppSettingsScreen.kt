@@ -12,9 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
@@ -33,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,7 +51,6 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveBoolean
 import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager
 import com.hfut.schedule.logic.util.sys.showDevelopingToast
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
@@ -68,8 +63,8 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.cube.Screen
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getDefaultStartTerm
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.transition.util.TransitionBackHandler
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
@@ -86,10 +81,10 @@ fun AppSettingsScreen(
     innerPaddings: PaddingValues,
 ) {
     val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
@@ -97,7 +92,7 @@ fun AppSettingsScreen(
         .verticalScroll(rememberScrollState())
         .fillMaxSize()
         .padding(innerPaddings)
-        .scale(scale)) {
+    ) {
         Spacer(modifier = Modifier.height(5.dp))
 
         val controlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
@@ -484,7 +479,7 @@ fun CalendarSettingsUI(
                         }
                     } }
                 ) {
-                    Icon(Icons.Filled.KeyboardArrowLeft,null)
+                    Icon(painterResource(R.drawable.keyboard_arrow_left),null)
                 }
                 Spacer(Modifier.width(APP_HORIZONTAL_DP))
                 FilledTonalButton(
@@ -500,7 +495,7 @@ fun CalendarSettingsUI(
                         DataStoreManager.saveAutoTermValue(autoTermValue+20)
                     } }
                 ) {
-                    Icon(Icons.Filled.KeyboardArrowRight,null)
+                    Icon(painterResource(R.drawable.keyboard_arrow_right),null)
                 }
             }
             Spacer(Modifier.height(APP_HORIZONTAL_DP))

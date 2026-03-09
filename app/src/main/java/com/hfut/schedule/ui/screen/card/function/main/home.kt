@@ -17,8 +17,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.Card
@@ -192,7 +190,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Fee,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column(
             ) {
@@ -238,7 +236,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 CardListItem(
                     headlineContent = { Text("慧新易校平台") },
                     leadingContent = {
-                        Icon(Icons.Default.ArrowForward, contentDescription = "")
+                        Icon(painterResource(R.drawable.arrow_forward), contentDescription = "")
                     },
                     modifier = Modifier.clickable {
                         scope.launch {
@@ -258,7 +256,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             showBottomSheet = showBottomSheet_ELectric,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
 //            sheetState = sheetState_ELectric,
 //            shape = Round(sheetState_ELectric)
         ) {
@@ -267,11 +265,12 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     }
 
     if (showBottomSheet_Web) {
-        ModalBottomSheet(
+        HazeBottomSheet (
             onDismissRequest = {
                 showBottomSheet_Web = false
             },
-            sheetState = sheetState_Web,
+            showBottomSheet = showBottomSheet_Web
+//            sheetState = sheetState_Web,
 //            shape = Round(sheetState_Web)
         ) {
             LoginWebScaUI(vmUI, vm,hazeState)
@@ -279,24 +278,26 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
     }
 
     if (showBottomSheet_Shower) {
-        ModalBottomSheet(
+        HazeBottomSheet(
             onDismissRequest = {
                 showBottomSheet_Shower = false
             },
-            sheetState = sheetState_Shower,
+            showBottomSheet = showBottomSheet_Web,
+//            sheetState = sheetState_Shower,
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }
     }
 
     if (showBottomSheet_Washing) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_Web,
             onDismissRequest = {
                 showBottomSheet_Washing = false
             },
-            sheetState = sheetState_Washing,
+//            sheetState = sheetState_Washing,
         ) {
-            WashingUI(navController)
+            WashingUI()
         }
     }
 
@@ -329,7 +330,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet_Settings,
-            isFullExpand = false
+//            expandFully = false
 //            sheetState = sheetState_Settings,
 //            shape = bottomSheetRound(sheetState_Settings)
         ) { CardLimit(vm,vmUI) }
@@ -340,7 +341,7 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = { showBottomSheet_Toady = false },
 //            sheetState = sheetState_Today,
 //            shape = bottomSheetRound(sheetState_Today),
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet_Toady,
             hazeState = hazeState
         ){

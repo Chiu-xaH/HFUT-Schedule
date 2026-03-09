@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -40,15 +41,19 @@ import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.LargeCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
+import com.hfut.schedule.ui.destination.WorkAndRestDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getFormCommunity
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
+
+import com.xah.mirror.util.rememberShaderState
+
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -167,18 +172,16 @@ private fun WorkAndRestUI(friendUserName : String? = null) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun WorkAndRest(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.WorkAndRest.withArgs() }
+fun WorkAndRest() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WorkAndRest.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.WorkAndRest.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.WorkAndRest,route)
+            navController.push(WorkAndRestDestination(null))
         }
     )
 }
@@ -186,7 +189,7 @@ fun WorkAndRest(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TimeTableScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
     friendId : String?
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
@@ -201,13 +204,10 @@ fun TimeTableScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.WorkAndRest.withArgs(friendId) }
     val backdrop = rememberLayerBackdrop()
 
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -215,7 +215,7 @@ fun TimeTableScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.WorkAndRest.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route,AppNavRoute.WorkAndRest.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(

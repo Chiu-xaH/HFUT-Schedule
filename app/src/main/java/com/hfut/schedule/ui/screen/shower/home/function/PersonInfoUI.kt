@@ -36,7 +36,7 @@ fun GuaGuaPersonInfoUI(vm: NetWorkViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
 //            sheetState = sheetState
 //            , shape = Round(sheetState)
         ) {

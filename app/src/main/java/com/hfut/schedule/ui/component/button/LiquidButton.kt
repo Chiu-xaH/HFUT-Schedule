@@ -14,13 +14,20 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
@@ -45,14 +53,21 @@ import androidx.compose.ui.util.fastCoerceAtMost
 import androidx.compose.ui.util.fastCoerceIn
 import androidx.compose.ui.util.lerp
 import com.hfut.schedule.R
+import com.hfut.schedule.logic.util.other.AppVersion
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
-import com.kyant.backdrop.effects.refraction
+import com.kyant.backdrop.effects.lens
 import com.kyant.backdrop.effects.vibrancy
 import com.kyant.backdrop.highlight.Highlight
+import com.xah.mirror.shader.glassLayer
+import com.xah.mirror.shader.largeStyle
+import com.xah.mirror.util.ShaderState
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.uicommon.util.safeDiv
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -85,9 +100,11 @@ fun LiquidButton(
     enabled : Boolean = true,
     isCircle : Boolean = false,
     innerPadding : Dp = if(!isCircle) 20.dp else 9.5.dp,
-    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(if(enabled).5f else .9f),
     content: @Composable RowScope.() -> Unit
 ) {
+    val surfaceColor = MaterialTheme.colorScheme.surfaceVariant.copy(
+        if(enabled).5f else .9f
+    )
     val textStyle = LocalTextStyle.current.copy(
         fontSize = 14.5.sp,
         color = if(!enabled) Color.Gray else Color.Unspecified
@@ -116,7 +133,7 @@ fun LiquidButton(
                 effects =  {
                     vibrancy()
                     blur(2f.dp.toPx())
-                    refraction(12f.dp.toPx(), 24f.dp.toPx())
+                    lens(12f.dp.toPx(), 24f.dp.toPx())
                 },
                 shadow = null,
                 layerBlock = if (enabled) {
@@ -283,17 +300,18 @@ fun Modifier.containerBackDrop(
             Unit
         }
     }
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     return this.drawBackdrop(
         highlight = {
             Highlight.Default.copy(width = 0.25.dp)
         },
-        backdrop = if (!GlobalUIStateHolder.isTransiting) backdrop else rememberLayerBackdrop(),
+        backdrop = if (!isTransiting) backdrop else rememberLayerBackdrop(),
         shape = { shape },
         effects = {
             vibrancy()
             blur(7.5f.dp.toPx())
-            refraction(15f.dp.toPx(), 25f.dp.toPx())
+            lens(15f.dp.toPx(), 25f.dp.toPx())
         },
         shadow = null,
         onDrawSurface = {
@@ -340,4 +358,90 @@ fun Modifier.containerBackDrop(
             }
         }
     )
+}
+
+
+@Composable
+fun Modifier.containerBackDrop(
+    backdrop: ShaderState,
+    shape: Shape,
+    surfaceColor: Color = MaterialTheme.colorScheme.surfaceVariant.copy(.7f),
+) : Modifier {
+    val isTransiting = LocalNavControllerSafely.current?.isTransitioning ?: false
+
+    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    return this
+        .clip(shape)
+        .let {
+            if(isTransiting) {
+                it.glassLayer(
+                    backdrop,
+                    style = largeStyle.copy(
+                        overlayColor = surfaceColor
+                    ),
+                    enableLiquidGlass
+                )
+            } else {
+                it
+            }
+        }
+}
+
+@Composable
+fun LiquidButton(
+    onClick: () -> Unit,
+    backdrop: Backdrop,
+    modifier: Modifier = Modifier,
+    enabled : Boolean = true,
+    isCircle : Boolean = false,
+    shape: Shape,
+    content: @Composable () -> Unit
+) {
+    val isRunning = LocalNavControllerSafely.current?.isTransitioning ?: false
+
+//    if(!isRunning) {
+//        LiquidButton(
+//            onClick = onClick,
+//            backdrop = backdrop,
+//            modifier = modifier,
+//            enabled = enabled,
+//            isCircle = isCircle,
+//        ) {
+//            content()
+//        }
+//    } else {
+        val color = MaterialTheme.colorScheme.surfaceVariant.copy(
+            if(!isRunning) 0.65f else 1f
+        )
+        NoPadding {
+            if(isCircle) {
+                FilledTonalIconButton(
+                    colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = color,),
+                    onClick = onClick,
+                    modifier = modifier,
+                    enabled = enabled,
+                    content = content
+                )
+            } else {
+                FilledTonalButton(
+                    colors = ButtonDefaults.filledTonalButtonColors(containerColor = color),
+                    shape = shape,
+                    onClick = onClick,
+                    modifier = modifier,
+                    enabled = enabled,
+                ) {
+                    content()
+                }
+            }
+        }
+//    }
+}
+
+@Composable
+fun NoPadding(content: @Composable () -> Unit) {
+    CompositionLocalProvider(
+        LocalMinimumInteractiveComponentSize provides 0.dp
+    ) {
+        content()
+    }
 }

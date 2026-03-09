@@ -40,7 +40,7 @@ import com.hfut.schedule.ui.component.dialog.LittleDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.util.picker.copyUriToCacheFile
-import com.xah.transition.util.TransitionBackHandler
+
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 import java.io.File
@@ -50,19 +50,19 @@ private const val error = "发生逻辑错误"
 @Composable
 fun BackupScreen(
     innerPadding : PaddingValues,
-    navController: NavHostController
+//    navController: NavHostController
 ) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
     val activity = LocalActivity.current
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     var file by remember { mutableStateOf<File?>(null) }
 
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
 
     LaunchedEffect(activity) {
         activity?.let { PermissionSet.checkAndRequestStoragePermission(it) }
@@ -103,7 +103,7 @@ fun BackupScreen(
     }
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         DividerTextExpandedWith("备份/导出") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

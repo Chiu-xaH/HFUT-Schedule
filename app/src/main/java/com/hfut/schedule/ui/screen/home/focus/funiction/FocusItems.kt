@@ -8,10 +8,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.FilledTonalIconButton
@@ -31,12 +33,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.CustomEventDTO
@@ -71,7 +73,8 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.destination.AddEventDestination
+import com.hfut.schedule.ui.destination.CourseDetailDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -79,9 +82,9 @@ import com.hfut.schedule.ui.screen.home.calendar.multi.CourseType
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.card.TodayInfo
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.getCourseInfoFromCommunity
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.containerShare
+import com.xah.container.container.sharedContainer
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.ColumnVertical
@@ -291,7 +294,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
             DetailInfos(list,vm = vm, hazeState = hazeState)
@@ -316,7 +319,7 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
                     }
                     ENDED -> {
                         Icon(
-                            Icons.Filled.Check,
+                            painterResource(R.drawable.check),
                             contentDescription = "Localized description",
                         )
                     }
@@ -365,7 +368,7 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            autoShape = false
+//            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
             DetailInfos(list,vm = vm, hazeState = hazeState)
@@ -391,10 +394,11 @@ fun CustomItem(
     isFuture: Boolean,
     activity: Activity,
     showTomorrow : Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
     showOutOfDateItems : Boolean = true,
     refresh : () -> Unit
 ) {
+    val navController = LocalNavController.current
     val dateTime = item.dateTime
     val nowTimeNum = (DateTimeManager.Date_yyyy_MM_dd.replace("-","") + DateTimeManager.Time_HH_MM.replace(":","")).toLong()
     val endNum = with(dateTime.end) { "$year${parseTimeItem(month)}${parseTimeItem(day)}${parseTimeItem(hour)}${parseTimeItem(minute)}" }.toLong()
@@ -407,14 +411,14 @@ fun CustomItem(
             // 显示在首页
             // 显示在首页有三种情况1.日期等于明天（isTomorrow）并且showTomorrow；2.在进行中（nowTimeNum in start .. end）3.未开始但是今天即将开始（startNumSummary==Date.Today）
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh,navController = navController)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = isTomorrow && showTomorrow, refresh = refresh)
         } else {
             // 显示在第二页
             if(isFuture) {
                 // 判断是否过期
                 val isOutOfDate = nowTimeNum > endNum
                 if(!showOutOfDateItems && isOutOfDate) { } else {
-                    CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh,navController = navController)
+                    CustomItemUI(item, isFuture, activity, hazeState, isOutOfDate = nowTimeNum > endNum,isTomorrow = false, refresh = refresh)
                 }
             }
         }
@@ -423,14 +427,14 @@ fun CustomItem(
         if((endNum / 10000 == nowTimeNum  / 10000) && (endNum % 10000 >= nowTimeNum % 10000)) {
             // 显示在首页
             if(!isFuture)
-                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh,navController = navController)
+                CustomItemUI(item, isFuture, activity, hazeState,isTomorrow = false, refresh = refresh)
         } else {
             // 显示在第二页
             if(isFuture) {
                 // 判断是否过期
                 val isOutOfDate = nowTimeNum > endNum
                 if(!showOutOfDateItems && isOutOfDate) { } else {
-                    CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh,navController = navController)
+                    CustomItemUI(item, isFuture, activity, hazeState, isTomorrow = false,isOutOfDate = nowTimeNum > endNum, refresh = refresh)
                 }
             }
         }
@@ -445,9 +449,9 @@ fun CustomItemUI(
     activity: Activity,
     hazeState: HazeState,
     isOutOfDate : Boolean = false,
-    navController: NavHostController,
     isTomorrow : Boolean,refresh: () -> Unit
 ) {
+    val navController = LocalNavController.current
     val title = item.title
     val description = item.description
     val dateTime = item.dateTime
@@ -473,11 +477,15 @@ fun CustomItemUI(
             hazeState = hazeState
         )
 
-    val route = remember { AppNavRoute.AddEvent.withArgs(item.id) }
+    val dest = AddEventDestination(
+        item.id,
+        AddEventOrigin.FOCUS_EDITED.name
+    )
 
     CardListItem(
         color = cardNormalColor(),
-        cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+        shape = RectangleShape,
+        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
@@ -539,12 +547,11 @@ fun CustomItemUI(
                 if(isTomorrow) {
                     Text("明日")
                 }
-//                Text(if(isOutOfDate) "过期" else if(item.supabaseId == null)"本地" else "导入")
             }
         },
         modifier = Modifier.combinedClickable(
             onClick = {
-                navController.navigateForTransition(AppNavRoute.AddEvent,route)
+                navController.push(dest)
             },
             onDoubleClick = {
                 showToast("长按删除，单击编辑")
@@ -663,24 +670,18 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
         if (showBottomSheet ) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
-                isFullExpand = false,
                 showBottomSheet = showBottomSheet,
                 hazeState = hazeState
             ) {
 
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        HazeBottomSheetTopBar("聚焦通知", isPaddingStatusBar = false)
-                    },) {innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ){
-                        TodayInfo(data!!)
-                    }
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                ){
+                    HazeBottomSheetTopBar("聚焦通知", isPaddingStatusBar = false)
+                    TodayInfo(data!!)
+                    Spacer(modifier = Modifier.height(20.dp))
+
                 }
             }
         }
@@ -758,21 +759,24 @@ fun JxglstuTodayCourseItem(
     item : JxglstuCourseSchedule,
     switchShowEnded: Boolean,
     timeNow : String,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
     val name = item.courseName
-    val route = AppNavRoute.CourseDetail.withArgs(name,CourseDetailOrigin.FOCUS_TODAY.t + "$index")
+    val dest = CourseDetailDestination(
+        name,
+        CourseDetailOrigin.FOCUS_TODAY.t + "$index"
+    )
 
     val itemUI = @Composable {
         CardListItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { item.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
-            cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+            cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -786,16 +790,15 @@ fun JxglstuTodayCourseItem(
                     }
                     ENDED -> {
                         Icon(
-                            Icons.Filled.Check,
+                            painterResource(R.drawable.check),
                             contentDescription = "Localized description",
                         )
                     }
                 }
 
             },
-            modifier = Modifier.clickable {
-                navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
-            },
+            modifier = Modifier.clickable { navController.push(dest) },
+            shape = RectangleShape,
             color = cardNormalColor(),
             trailingContent = {
                 Text(
@@ -823,23 +826,24 @@ fun JxglstuTodayCourseItem(
 fun JxglstuTomorrowCourseItem(
     index : Int,
     item : JxglstuCourseSchedule,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val time = item.time
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val name = item.courseName
-    val route = AppNavRoute.CourseDetail.withArgs(name,CourseDetailOrigin.FOCUS_TOMORROW.t + "$index")
-
+    val dest = CourseDetailDestination(
+        name,
+        CourseDetailOrigin.FOCUS_TOMORROW.t + "$index"
+    )
     CardListItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { item.place?.let { Text(text = it) } },
-        cardModifier = Modifier.containerShare(route, MaterialTheme.shapes.medium),
+        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
-        modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.CourseDetail, route,)
-        },
+        modifier = Modifier.clickable { navController.push(dest) },
+        shape = RectangleShape,
         color = cardNormalColor(),
         trailingContent = { Text(text = "明日")}
     )

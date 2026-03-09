@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,7 +20,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavHostController
+import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.PermissionSet
@@ -31,16 +31,16 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
-import com.xah.transition.util.TransitionBackHandler
+
 import kotlinx.coroutines.launch
 
 @Composable
-fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun CalendarSettingsScreen(innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val activity = LocalActivity.current
     LaunchedEffect(activity) {
         activity?.let {
@@ -53,7 +53,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostC
         value = queryCalendars()
     }
     val scope = rememberCoroutineScope()
-    Column(modifier = Modifier.padding(innerPadding).scale(scale)) {
+    Column(modifier = Modifier.padding(innerPadding)) {
         DividerTextExpandedWith("日历账户") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {
                 LazyColumn() {
@@ -71,7 +71,7 @@ fun CalendarSettingsScreen(innerPadding : PaddingValues,navController : NavHostC
 //                            },
                             trailingContent = {
                                 if(isSelected) {
-                                    Icon(Icons.Filled.Check,null)
+                                    Icon(painterResource(R.drawable.check),null)
                                 }
                             },
                             modifier = Modifier.clickable {

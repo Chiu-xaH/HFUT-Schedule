@@ -73,11 +73,12 @@ fun SmallCard(
     modifier: Modifier = Modifier.fillMaxSize(),
     color : Color? = null,
     shadow : Dp = 0.dp,
+    shape : Shape = MaterialTheme.shapes.small,
     content: @Composable () -> Unit
 ) {
     Card(
         modifier = modifier,
-        shape = MaterialTheme.shapes.small,
+        shape = shape,
         elevation = CardDefaults.cardElevation(shadow),
         colors = CardDefaults.cardColors(containerColor = color ?: cardNormalColor())
     ) {

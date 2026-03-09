@@ -50,10 +50,11 @@ import com.hfut.schedule.ui.component.button.LiquidButton
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.CourseSearchTableDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -63,10 +64,13 @@ import com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse.Tota
 import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
+import com.xah.mirror.util.rememberShaderState
+
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.HazeState
@@ -78,11 +82,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun CourseSearchScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.CourseSearch.route }
 
     var showSearch by rememberSaveable() { mutableStateOf(true) }
     var className by rememberSaveable { mutableStateOf( getPersonInfo().className ?: "") }
@@ -133,17 +136,15 @@ fun CourseSearchScreen(
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.CourseSearch.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.CourseSearch.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP).animateContentSize()) {
@@ -153,7 +154,16 @@ fun CourseSearchScreen(
                         val canNotUse = courseNameNil == null && courseCodeNil == null && classNameNil == null
                         LiquidButton(
                             onClick = {
-                                navController.navigateForTransition(AppNavRoute.CourseSearchTable,AppNavRoute.CourseSearchTable.withArgs(classNameNil,courseCodeNil,courseNameNil,semester),transplantBackground = true)
+                                semester?.let {
+                                    navController.push(
+                                        CourseSearchTableDestination(
+                                            it,
+                                            classNameNil,
+                                            courseCodeNil,
+                                            courseNameNil,
+                                        )
+                                    )
+                                }
                             },
                             isCircle = true,
                             enabled = uiState is UiState.Success && !canNotUse,
@@ -162,7 +172,6 @@ fun CourseSearchScreen(
                             Icon(
                                 painterResource(R.drawable.calendar),
                                 null,
-                                modifier = Modifier.iconElementShare( route = AppNavRoute.CourseSearchTable.route)
                             )
                         }
 

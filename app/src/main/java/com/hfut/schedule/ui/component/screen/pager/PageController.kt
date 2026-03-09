@@ -9,9 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -31,11 +28,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.R
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.launch
 
@@ -184,7 +182,7 @@ private fun BoxScope.BasePageController(
                     previousPage(terminalPage)
                 }
             },
-        ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+        ) { Icon(painterResource(R.drawable.arrow_back), "Add Button") }
 
     }
     AnimatedVisibility(
@@ -217,7 +215,7 @@ private fun BoxScope.BasePageController(
         },
         modifier = paddingModifier.align(Alignment.BottomEnd),
     ) {
-        Icon(Icons.Filled.ArrowForward, "Add Button", modifier = Modifier.rotate(angle))
+        Icon(painterResource(R.drawable.arrow_forward), "Add Button", modifier = Modifier.rotate(angle))
     }
 }
 

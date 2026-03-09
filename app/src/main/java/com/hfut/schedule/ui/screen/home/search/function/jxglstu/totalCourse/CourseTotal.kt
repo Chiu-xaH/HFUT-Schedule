@@ -1,18 +1,14 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -25,24 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
-import com.hfut.schedule.logic.network.util.MyApiParse.isNextOpen
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
-import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.ui.component.button.LiquidButton
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.TermCoursesDestination
+import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 
@@ -51,20 +42,23 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun CourseTotal(
     ifSaved : Boolean,
-    navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.TermCourses.withArgs(ifSaved,"SEARCH") }
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text =stringResource(AppNavRoute.TermCourses.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.TermCourses.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.TermCourses,route)
+            navController.push(
+                TermCoursesDestination(
+                    ifSaved,
+                    "SEARCH"
+                )
+            )
         }
     )
-
 }
 
 
@@ -74,27 +68,23 @@ fun TotalCourseScreen(
     vm : NetWorkViewModel,
     origin : String,
     ifSaved : Boolean,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     var sortType by remember { mutableStateOf(true) }
 
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.TermCourses.receiveRoute() }
 
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
-//                    modifier = Modifier.topBarBlur(hazeState, ),
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.TermCourses.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon( AppNavRoute.TermCourses.withArgs(ifSaved,origin), AppNavRoute.TermCourses.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     LiquidButton(

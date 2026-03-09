@@ -29,8 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -162,7 +160,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
                 Column(
@@ -260,7 +258,7 @@ fun EleUI(vm : NetWorkViewModel, hazeState: HazeState) {
                         },
                         modifier = Modifier.padding(horizontal = 5.dp)
                     ) {
-                        Icon(Icons.Filled.Check, contentDescription = "description")
+                        Icon(painterResource(R.drawable.check), contentDescription = "description")
                     }
 
                     FilledTonalButton(

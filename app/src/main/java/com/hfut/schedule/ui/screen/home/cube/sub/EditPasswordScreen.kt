@@ -45,7 +45,7 @@ import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardPsk
 import com.hfut.schedule.ui.screen.home.search.function.jxglstu.person.getPersonInfo
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.transition.util.TransitionBackHandler
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
@@ -55,12 +55,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultCardPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     var input by remember { mutableStateOf("") }
@@ -76,7 +76,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
     if (showDialog) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState,
             showBottomSheet = showDialog
         ) {
@@ -129,7 +129,7 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues,navCon
             showDialog = true
         }
     }
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
             headlineContent = { Text("初始密码为身份证后6位(若以X结尾则为X前6位)")},
@@ -201,12 +201,12 @@ suspend fun getJxglstuPassword() : String? = withContext(Dispatchers.IO) {
 }
 
 @Composable
-fun EditJxglstuPasswordScreen(innerPadding : PaddingValues,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun EditJxglstuPasswordScreen(innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val useDefaultCardPassword by DataStoreManager.enableUseDefaultJxglstuPassword.collectAsState(initial = true)
     val useEditedPwd = !useDefaultCardPassword
     val originPwd = remember { getJxglstuDefaultPassword() }
@@ -216,7 +216,7 @@ fun EditJxglstuPasswordScreen(innerPadding : PaddingValues,navController: NavHos
     val pwd by DataStoreManager.jxglstuPassword.collectAsState(initial = originPwd ?: "")
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
             headlineContent = { Text("初始密码为 ${originPwd}")},

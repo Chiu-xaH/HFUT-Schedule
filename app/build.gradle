@@ -93,10 +93,6 @@ android {
         aidl true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.2'
-    }
-
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -113,11 +109,11 @@ android {
 dependencies {
     implementation platform(libs.kotlin.bom)
     implementation(libs.androidx.core.ktx)
-    // Compose
     implementation(libs.androidx.activity.compose)
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    implementation(platform(libs.androidx.compose.bom))
     // Appcompat
     implementation(libs.androidx.appcompat)
     // 测试
@@ -163,10 +159,10 @@ dependencies {
     implementation(libs.androidx.material)
     // Material Design 3
     implementation(libs.androidx.material3) {
-        version {
+//        version {
             // 锁死版本 新版本Drawer回弹被砍、BottomSheet状态栏填充无法关掉
-            strictly(libs.versions.material3.get())
-        }
+//            strictly(libs.versions.material3.get())
+//        }
     }
     // 透明状态栏
     implementation(libs.accompanist.systemuicontroller)
@@ -218,11 +214,13 @@ dependencies {
     // 镜面效果
     implementation(libs.mirror)
     // 转场动画模块
-    implementation(project(":transition"))
     // 可单独使用的UI模块
     implementation implementation(project(':common'))
     // 消费预测及共用代码模块
     implementation(project(":shared"))
     // 基准文件模块
     baselineProfile project(":baselineProfile")
+
+    implementation(project(":navigation"))
+    implementation(project(":shared-container"))
 }

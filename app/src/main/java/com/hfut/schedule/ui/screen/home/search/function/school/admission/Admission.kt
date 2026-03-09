@@ -16,24 +16,24 @@ import com.hfut.schedule.R
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.hfut.schedule.ui.destination.AdmissionDestination
+
+import com.xah.navigation.utils.LocalNavController
+
+
 import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun Admission(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.Admission.route }
+fun Admission() {
+    val navController = LocalNavController.current
     TransplantListItem(
         headlineContent = { ScrollText(stringResource(AppNavRoute.Admission.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Admission.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.Admission.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Admission,route)
+            navController.push(AdmissionDestination)
         }
     )
 }

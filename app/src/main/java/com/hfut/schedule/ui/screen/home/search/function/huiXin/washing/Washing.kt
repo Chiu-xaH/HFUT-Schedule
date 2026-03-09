@@ -4,83 +4,68 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.model.huixin.FeeType
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.prefs
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
+import com.hfut.schedule.ui.component.button.NoPadding
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.status.EmptyIcon
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.HaiLeWashingDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.containerShare
+import com.xah.container.container.SharedContainer
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun Washing(
     hazeState: HazeState,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     var showBottomSheet by remember { mutableStateOf(false) }
-    val route = remember { AppNavRoute.HaiLeWashing.route }
 
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ) {
-            WashingUI(navController)
+            WashingUI()
         }
     }
 
@@ -90,12 +75,26 @@ fun Washing(
             Icon(painterResource(id = R.drawable.local_laundry_service), contentDescription = "")
         },
         trailingContent = {
-                FilledTonalIconButton(
-                    modifier = Modifier.size(30.dp).containerShare(route),
-                    onClick = {
-                        navController.navigateForTransition(AppNavRoute.HaiLeWashing,route)
-                    },
-                ) { Icon( painterResource(R.drawable.search), contentDescription = null, modifier = Modifier.size(20.dp)) }
+            SharedContainer(
+                key = HaiLeWashingDestination.key,
+                shape = CircleShape
+            ) {
+                NoPadding {
+                    FilledTonalIconButton(
+                        shape = RectangleShape,
+                        modifier = Modifier.size(30.dp),
+                        onClick = {
+                            navController.push(HaiLeWashingDestination)
+                        },
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.search),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+            }
         },
         modifier = Modifier.clickable {
             showBottomSheet = true
@@ -108,9 +107,7 @@ private const val HEFEI_TAB = 0
 private const val XUANCHENG_TAB = 1
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WashingUI(
-    navController: NavHostController
-) {
+fun WashingUI() {
     val titles = remember { listOf("合肥","宣城") }
     val pagerState = rememberPagerState(pageCount = { titles.size }, initialPage =
         when(getCampusRegion()) {
@@ -121,13 +118,14 @@ fun WashingUI(
     val auth = prefs.getString("auth","")
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val navController = LocalNavController.current
 
 
     //布局///////////////////////////////////////////////////////////////////////////
     Column() {
         HazeBottomSheetTopBar("洗衣机", isPaddingStatusBar = false) {
             FilledTonalButton(onClick = {
-                navController.navigateForTransition(AppNavRoute.HaiLeWashing, AppNavRoute.HaiLeWashing.route)
+                navController.push(HaiLeWashingDestination)
             }) {
                 Text(stringResource(AppNavRoute.HaiLeWashing.label))
             }
@@ -145,7 +143,7 @@ fun WashingUI(
                                }
                             },
                             trailingContent = {
-                                Icon(Icons.Default.ArrowForward,null)
+                                Icon(painterResource(R.drawable.arrow_forward),null)
                             },
                             leadingContent = {
                                 Icon(painterResource(R.drawable.search),null)

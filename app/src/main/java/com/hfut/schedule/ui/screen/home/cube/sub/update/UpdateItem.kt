@@ -56,10 +56,18 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
-        // TODO 新增培养方案已修学分计算功能
 
-        //            UpdateItems("新增 培养方案完成情况统计")
+            // TODO WebView适配新库 [P1]
+            // TODO 课程表界面动效掉帧率较高走查 [P1]
 
+            // TODO 课程详情页面优化 +空教室入口  [P2]
+            // TODO 设置适配新库 [P2]
+            // TODO 一卡通适配新库 [P2]
+            // TODO Drawer回弹  [P2]
+            UpdateItems("重构 自研第二代全局转场动效体系")
+
+
+//            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
 //            UpdateItems("新增 启动台与聚焦支持固定项目")
@@ -92,7 +100,6 @@ fun VersionInfo() {
 //            UpdateItems("新增 崩溃的自动处理")
 //            UpdateItems("新增 为低版本Android用户的开屏显示")
 //            UpdateItems("新增 单独登录教务系统")
-//            UpdateItems("新增 为选项适配了新的转场动画")
 //            UpdateItems("新增 教务成绩计算每学期的平均绩点与均分，以及可以自定义排除的课程")
 //            UpdateItems("新增 共建平台忘记密码、修改密码、注销")
 //            UpdateItems("新增 教务课程表导出为ics文件", "位于 课程表-多课表-写入日历日程",UpdateType.ADD)

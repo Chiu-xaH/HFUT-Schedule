@@ -38,10 +38,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -117,7 +113,7 @@ import com.hfut.schedule.ui.component.dialog.TimeRangePickerDialog
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.dateToWeek
@@ -133,7 +129,8 @@ import com.hfut.schedule.ui.util.layout.measureDpSize
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.util.popBackStackForTransition
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -232,12 +229,10 @@ enum class AddEventOrigin {
 @Composable
 fun AddEventScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
     eventId : Int = -1,
     origin : String
 ) {
-    val route = remember { AppNavRoute.AddEvent.withArgs(eventId,origin) }
-
+    val navController = LocalNavController.current
     val isSupabase = false
     val jwt by DataStoreManager.supabaseJwt.collectAsState(initial = "")
     val refreshToken by DataStoreManager.supabaseRefreshToken.collectAsState(initial = "")
@@ -258,7 +253,7 @@ fun AddEventScreen(
                         async { DataBaseManager.customEventDao.del(eventId) }.await()
                         launch { showDialog = false }
                         launch(Dispatchers.Main) {
-                            navController.popBackStackForTransition()
+                            navController.pop()
                         }
                     }
                 } else {
@@ -269,14 +264,7 @@ fun AddEventScreen(
         )
     }
 
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
-        roundShape = when(origin) {
-            AddEventOrigin.FOCUS_EDITED.name -> MaterialTheme.shapes.medium
-            AddEventOrigin.FOCUS_ADD.name -> FloatingActionButtonDefaults.shape
-            else -> MaterialTheme.shapes.extraSmall
-        },
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -284,7 +272,7 @@ fun AddEventScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(if(eventId <= 0) "添加" else "修改") },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.AddEvent.icon)
+                    TopBarNavigationIcon()
                 },
                 actions = {
                     if(eventId <= 0) {
@@ -340,7 +328,7 @@ fun AddEventScreen(
                 }
                 true -> {
                     AddEventUI(vm,isSupabase,eventId) {
-                        navController.popBackStack()
+                        navController.pop()
                     }
                 }
                 false -> {
@@ -384,7 +372,7 @@ private fun SharedTransitionScope.ButtonUI(
                 ),
             elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
             onClick = { showChange(true) },
-        ) { Icon(Icons.Filled.Add, "Add Button") }
+        ) { Icon(painterResource(R.drawable.add), "Add Button") }
     }
 }
 
@@ -477,7 +465,7 @@ private fun SharedTransitionScope.SurfaceUI(
                         IconButton(
                             onClick = { showChange(false) }
                         ) {
-                            Icon(Icons.Filled.ArrowBack,null,tint = MaterialTheme.colorScheme.primary)
+                            Icon(painterResource(R.drawable.arrow_back),null,tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 )
@@ -950,7 +938,7 @@ fun AddEventUI(
                                                         showDelDialog = true
                                                     },
                                                     label = { Text(classList[index]) },
-                                                    leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                    leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                 )
 
                                                 if(index+1 != classList.size) {
@@ -961,7 +949,7 @@ fun AddEventUI(
                                                             showDelDialog = true
                                                         },
                                                         label = { Text(classList[index+1]) },
-                                                        leadingIcon = if(isEditMode) { { Icon(Icons.Filled.Close, null) } } else null
+                                                        leadingIcon = if(isEditMode) { { Icon(painterResource(R.drawable.close), null) } } else null
                                                     )
                                                 }
                                             }

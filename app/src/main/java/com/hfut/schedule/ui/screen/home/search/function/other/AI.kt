@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -27,12 +28,14 @@ import androidx.navigation.NavHostController
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.status.DevelopingIcon
+import com.hfut.schedule.ui.destination.AiDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.xah.transition.component.iconElementShare
+
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -43,23 +46,17 @@ import dev.chrisbanes.haze.rememberHazeState
 )
 @Composable
 fun AI(
-    navController : NavHostController,
 ) {
-    val route = remember { AppNavRoute.AI.route }
-
+    val navController = LocalNavController.current
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.AI.label)) },
         leadingContent = {
             Box() {
-//                RotatingRainbowGlow(
-//                    modifier = Modifier.size(24.dp)
-//                )
-                Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
-
+                Icon(painterResource(AppNavRoute.AI.icon), contentDescription = null)
             }
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.AI,route)
+            navController.push(AiDestination)
         }
     )
 }
@@ -114,16 +111,13 @@ fun RotatingRainbowGlow(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun AIScreen(
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val route = remember { AppNavRoute.AI.route }
-    CustomTransitionScaffold (
-        route = route,
-        navHostController = navController,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
@@ -132,7 +126,7 @@ fun AIScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.AI.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.AI.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

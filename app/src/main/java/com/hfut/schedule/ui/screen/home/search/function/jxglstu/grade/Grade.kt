@@ -2,14 +2,11 @@ package com.hfut.schedule.ui.screen.home.search.function.jxglstu.grade
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,23 +19,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.logic.util.sys.Starter
-import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.screen.MainHost
-import com.hfut.schedule.ui.screen.home.search.function.huiXin.shower.getInGuaGua
+import com.hfut.schedule.ui.destination.GradeDestination
+import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.xwx.checkXwxLogin
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.XwxViewModel
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.component.titleElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
-import com.xah.transition.util.navigateAndSaveForTransition
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
 import kotlinx.coroutines.launch
 
@@ -48,19 +36,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun Grade(
     ifSaved : Boolean,
-    navController : NavHostController,
 )  {
+    val navController = LocalNavController.current
     val viewModel = viewModel { XwxViewModel() }
     var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val route = remember { AppNavRoute.Grade.receiveRoute() }
     TransplantListItem(
         headlineContent = {
             ScrollText(text =stringResource(AppNavRoute.Grade.label))
         },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.Grade.icon), contentDescription = null)
         },
         trailingContent = {
             FilledTonalIconButton(
@@ -77,7 +64,7 @@ fun Grade(
                 Modifier.size(21.dp)) }
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Grade,AppNavRoute.Grade.withArgs(ifSaved))
+            navController.push(GradeDestination(ifSaved))
         }
     )
 }

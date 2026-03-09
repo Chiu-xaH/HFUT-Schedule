@@ -96,7 +96,7 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
                 },
                 showBottomSheet = showBottomSheet_pin,
                 hazeState = hazeState,
-                autoShape = false
+//                isFullScreen = false
             ) {
                 Column {
                     Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
@@ -132,27 +132,17 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
     if (showBottomSheet) {
 
         HazeBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-                               },
+            onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            isFullExpand = false
+//            expandFully = false
         ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("支付结果", isPaddingStatusBar = false)
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize()
-                ) {
-                    PayStatusUI(vm,payNumber,json,type)
-                }
+            Column(
+                modifier = Modifier
+            ) {
+                HazeBottomSheetTopBar("支付结果", isPaddingStatusBar = false)
+                PayStatusUI(vm,payNumber,json,type)
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
     }

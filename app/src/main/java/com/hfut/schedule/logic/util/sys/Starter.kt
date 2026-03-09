@@ -25,11 +25,13 @@ import com.hfut.schedule.logic.enumeration.ShowerScreen
 import com.hfut.schedule.logic.enumeration.SupabaseScreen
 import com.hfut.schedule.logic.enumeration.XwxScreen
 import com.hfut.schedule.logic.util.network.WebVpnUtil
+import com.hfut.schedule.ui.destination.WebViewDestination
 import com.hfut.schedule.ui.util.webview.getPureUrl
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.search.function.school.webvpn.getWebVpnCookie
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+import com.xah.navigation.controller.NavigationController
+
 
 object Starter {
     enum class AppPackages(
@@ -194,42 +196,38 @@ object Starter {
     }
     @JvmStatic
     suspend fun startWebView(
-        navController: NavController,
+        navController: NavigationController,
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
         icon : Int = R.drawable.net,
-        transplantBackground: Boolean = false
     ) {
         if(GlobalUIStateHolder.globalWebVpn) {
             val cookieWebVpn = getWebVpnCookie()
             if(url.contains(MyApplication.WEBVPN_URL)) {
-                goToWebViewNavigation(navController, url, title, cookieWebVpn,icon,transplantBackground)
+                goToWebViewNavigation(navController, url, title, cookieWebVpn,icon)
             } else {
-                goToWebViewNavigation(navController, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon,transplantBackground)
+                goToWebViewNavigation(navController, WebVpnUtil.getWebVpnUrl(url), title, cookieWebVpn,icon)
             }
         } else {
-            goToWebViewNavigation(navController,url, title, cookie,icon,transplantBackground)
+            goToWebViewNavigation(navController,url, title, cookie,icon)
         }
     }
     @JvmStatic
     private fun goToWebViewNavigation(
-        navController: NavController,
+        navController: NavigationController,
         url : String,
         title : String = getPureUrl(url),
         cookie :String? = null,
         icon : Int = R.drawable.net,
-        transplantBackground: Boolean = false
     ) {
-        navController.navigateForTransition(
-            AppNavRoute.WebView,
-            AppNavRoute.WebView.withArgs(
+        navController.push(
+            WebViewDestination(
                 url = url,
-                title = title,
+                name = title,
                 cookies = cookie,
                 icon = icon,
-            ),
-            transplantBackground
+            )
         )
     }
     @JvmStatic

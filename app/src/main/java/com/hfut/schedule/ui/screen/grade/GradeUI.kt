@@ -50,10 +50,11 @@ import com.hfut.schedule.ui.component.button.containerBackDrop
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.AverageGradeDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.grade.grade.community.GradeItemUI
 import com.hfut.schedule.ui.screen.grade.grade.jxglstu.GPAWithScore
@@ -66,11 +67,13 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.bottomBarBlur
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.network.XwxViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.iconElementShare
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import dev.chrisbanes.haze.hazeSource
@@ -89,9 +92,8 @@ enum class GradeDataOrigin(val title : String) {
 fun GradeScreen(
     ifSaved : Boolean,
     vm : NetWorkViewModel,
-    navTopController : NavHostController,
 ) {
-    val targetRoute = remember { AppNavRoute.Grade.receiveRoute() }
+    val navTopController = LocalNavController.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -137,10 +139,8 @@ fun GradeScreen(
     }
     var buttonText by rememberSaveable { mutableStateOf<String>(context.getString(AppNavRoute.AverageGrade.label)) }
 
-    CustomTransitionScaffold (
-        route = targetRoute,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        navHostController = navTopController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -150,7 +150,7 @@ fun GradeScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Grade.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(targetRoute,AppNavRoute.Grade.icon)
+                        TopBarNavigationIcon()
                     },
                     actions = {
                         Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {
@@ -245,24 +245,24 @@ fun GradeScreen(
                 exit = AppAnimationManager.toBottomAnimation.exit,
                 enter = AppAnimationManager.toBottomAnimation.enter
             ) {
-                val route = AppNavRoute.AverageGrade.route
                 Column (modifier = Modifier.bottomBarBlur(hazeState).navigationBarsPadding()) {
                     LargeButton(
-                        iconModifier = Modifier.iconElementShare(route),
                         onClick = {
-                            navTopController.navigateForTransition(AppNavRoute.AverageGrade,AppNavRoute.AverageGrade.withArgs(
-                                when(gradeOriginList[pageState.currentPage]) {
-                                    GradeDataOrigin.JXGLSTU -> {
-                                        false
+                            navTopController.push(
+                                AverageGradeDestination(
+                                    when(gradeOriginList[pageState.currentPage]) {
+                                        GradeDataOrigin.JXGLSTU -> {
+                                            false
+                                        }
+                                        GradeDataOrigin.COMMUNITY -> {
+                                            false
+                                        }
+                                        GradeDataOrigin.UNI_APP -> {
+                                            true
+                                        }
                                     }
-                                    GradeDataOrigin.COMMUNITY -> {
-                                        false
-                                    }
-                                    GradeDataOrigin.UNI_APP -> {
-                                        true
-                                    }
-                                }
-                            ),true)
+                                )
+                            )
                         },
                         icon = AppNavRoute.AverageGrade.icon,
                         text = buttonText,
@@ -293,8 +293,8 @@ fun GradeScreen(
             ) { page ->
                 val currentPage = gradeOriginList[page]
                 when(currentPage) {
-                    GradeDataOrigin.JXGLSTU -> GradeItemJxglstuUI(navTopController,innerPadding,vm,input,hazeState,ifSaved,displayCompactly) { buttonText = it }
-                    GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(navTopController,innerPadding,vm,input,displayCompactly) { buttonText = it }
+                    GradeDataOrigin.JXGLSTU -> GradeItemJxglstuUI(innerPadding,vm,input,hazeState,ifSaved,displayCompactly) { buttonText = it }
+                    GradeDataOrigin.UNI_APP -> GradeItemUIUniApp(innerPadding,vm,input,displayCompactly) { buttonText = it }
                     GradeDataOrigin.COMMUNITY -> GradeItemUI(vm,innerPadding)
                 }
             }

@@ -63,16 +63,14 @@ import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.screen.home.cube.screen.CalendarSettingsUI
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
-import com.xah.uicommon.util.language.PlainText
-import com.xah.uicommon.util.language.UiText
-import com.xah.uicommon.util.language.res
-import com.xah.uicommon.util.language.text
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.util.language.BaseChoice
+import com.xah.uicommon.util.language.UiText
+import com.xah.uicommon.util.language.res
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.io.File
@@ -101,21 +99,16 @@ fun MultiScheduleSettings(
     val scope = rememberCoroutineScope()
 
     if (showBottomSheet_add) {
-        CustomBottomSheet (onDismissRequest = { showBottomSheet_add = false },
+        HazeBottomSheet (onDismissRequest = { showBottomSheet_add = false },
             showBottomSheet = showBottomSheet_add,
-            isFullExpand = false
+//            expandFully = false,
+//            isFullScreen = false
         ) {
-            Scaffold(
-                containerColor = Color.Transparent,
-                topBar = {
-                    HazeBottomSheetTopBar("添加课程表", isPaddingStatusBar = false)
-                }
-            ) {innerPadding->
-                Column(modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()) {
-                    AddCourseUI(vm)
-                }
+            Column(modifier = Modifier) {
+                HazeBottomSheetTopBar("添加课程表", isPaddingStatusBar = false)
+                AddCourseUI(vm)
+                Spacer(modifier = Modifier.height(20.dp))
+
             }
         }
     }
@@ -124,10 +117,10 @@ fun MultiScheduleSettings(
     var showBottomSheet_settings by remember { mutableStateOf(false) }
 
     if (showBottomSheet_loading) {
-        CustomBottomSheet (
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_loading = false },
             showBottomSheet = showBottomSheet_loading,
-            autoShape = false
+//            isFullScreen = false,
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
@@ -139,10 +132,10 @@ fun MultiScheduleSettings(
         }
     }
     if (showBottomSheet_settings) {
-        CustomBottomSheet (
+        HazeBottomSheet (
             onDismissRequest = { showBottomSheet_settings = false },
             showBottomSheet = showBottomSheet_settings,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())

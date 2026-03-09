@@ -27,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -48,6 +49,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -80,7 +82,7 @@ import com.hfut.schedule.ui.component.container.cardNormalColor
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.network.CommonNetworkScreen
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.component.screen.RefreshIndicator
 import com.hfut.schedule.ui.component.screen.pager.CustomTabRow
 import com.hfut.schedule.ui.component.screen.pager.PaddingForPageControllerButton
@@ -88,21 +90,20 @@ import com.hfut.schedule.ui.component.screen.pager.PageController
 import com.hfut.schedule.ui.component.status.PrepareSearchIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
+import com.hfut.schedule.ui.destination.LibraryBorrowedDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
-
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
+import com.xah.mirror.util.rememberShaderState
+import com.xah.navigation.utils.LocalNavController
+import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.currentRouteWithoutArgs
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
@@ -138,18 +139,15 @@ private const val TAB_PAGE_LIBRARY = 1
 @Composable
 fun LibraryScreen(
     vm: NetWorkViewModel,
-    navController : NavHostController,
 ) {
     val libraryNavController = rememberNavController()
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Library.route }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(libraryNavController.currentRouteWithoutArgs()) {
         LibraryBarItems.SEARCH.name ->LibraryBarItems.SEARCH
-//        LibraryBarItems.SEARCH_BOOK.name -> LibraryBarItems.SEARCH_BOOK
         else -> LibraryBarItems.MINE
     }
     // 保存上一页页码 用于决定左右动画
@@ -173,10 +171,8 @@ fun LibraryScreen(
         vm.librarySearchResp.clear()
         vm.searchLibrary(inputKeyword,page)
     }
-    CustomTransitionScaffold (
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        route = route,
-        navHostController = navController,
         topBar = {
             Column(
                 modifier = Modifier.topBarBlur(hazeState),
@@ -186,7 +182,7 @@ fun LibraryScreen(
                     colors = topBarTransplantColor(),
                     title = { Text(stringResource(AppNavRoute.Library.label)) },
                     navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Library.icon)
+                        TopBarNavigationIcon()
                     },
                 )
                 if(targetPage != LibraryBarItems.MINE) {
@@ -264,7 +260,7 @@ fun LibraryScreen(
                         vm,
                         innerPadding,
                         libraryNavController,
-                        navController
+//                        navController
                     )
                 }
             }
@@ -302,7 +298,7 @@ private fun SearchScreenCommunity(
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)
@@ -406,8 +402,10 @@ fun LibraryMineUI(
     vm: NetWorkViewModel,
     innerPadding: PaddingValues,
     libraryNavController : NavHostController,
-    navController: NavHostController,
+//    navController: NavHostController,
 ) {
+    val context = LocalContext.current
+    val navController = LocalNavController.current
     val scrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
     var libraryStatusCode by rememberSaveable { mutableStateOf<Int?>(null) }
@@ -490,17 +488,13 @@ fun LibraryMineUI(
                             overlineContent = { Text("借阅") },
                             headlineContent = { Text("${response.borrowCount}本") },
                             leadingContent = {
-                                Icon(painterResource(R.drawable.book_5),null, modifier = Modifier.iconElementShare(AppNavRoute.LibraryBorrowed.route))
+                                Icon(painterResource(R.drawable.book_5),null)
                             },
                             modifier = Modifier
                                 .weight(0.5f)
                                 .clickable {
                                     if (!loading) {
-                                        navController.navigateForTransition(
-                                            AppNavRoute.LibraryBorrowed,
-                                            AppNavRoute.LibraryBorrowed.route,
-                                            transplantBackground = true
-                                        )
+                                        navController.push(LibraryBorrowedDestination)
                                     }
                                 }
                         )
@@ -515,11 +509,7 @@ fun LibraryMineUI(
                                     .weight(0.5f)
                                     .clickable {
                                         if (!loading) {
-                                            navController.navigateForTransition(
-                                                AppNavRoute.LibraryBorrowed,
-                                                AppNavRoute.LibraryBorrowed.route,
-                                                transplantBackground = true
-                                            )
+                                            navController.push(LibraryBorrowedDestination)
                                         }
                                     }
                             )
@@ -589,21 +579,6 @@ fun LibraryMineUI(
                             libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH.name)
                         }
                     )
-//                    PaddingHorizontalDivider()
-//                    TransplantListItem(
-//                        headlineContent = {
-//                            Text("斛兵知搜")
-//                        },
-//                        supportingContent = {
-//                            Text("搜索电子图书馆中的所有资料")
-//                        },
-//                        leadingContent = {
-//                            Icon(painterResource(R.drawable.search),null)
-//                        },
-//                        modifier = Modifier.clickable {
-//                            libraryNavController.navigateForBottomBar(LibraryBarItems.SEARCH_ALL.name)
-//                        }
-//                    )
                     PaddingHorizontalDivider()
                     TransplantListItem(
                         headlineContent = {
@@ -614,20 +589,19 @@ fun LibraryMineUI(
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         leadingContent = {
-                            Icon(painterResource(R.drawable.globe_book),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL)))
+                            Icon(painterResource(R.drawable.globe_book),null)
                         },
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = MyApplication.NEW_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.globe_book,
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.NEW_LIBRARY_URL))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -638,21 +612,20 @@ fun LibraryMineUI(
                             Text("旧图书馆官网(需校园网)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.net),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.OLD_LIBRARY_URL)))
+                            Icon(painterResource(R.drawable.net),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = MyApplication.OLD_LIBRARY_URL,
                                         title = "图书馆",
                                         icon = R.drawable.net,
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.OLD_LIBRARY_URL))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -663,21 +636,20 @@ fun LibraryMineUI(
                             Text("合肥校区(需校园网)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.table_restaurant),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(seatUrl)))
+                            Icon(painterResource(R.drawable.table_restaurant),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = seatUrl,
                                         title = "座位预约",
                                         icon = R.drawable.table_restaurant
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(seatUrl))
                     )
                     PaddingHorizontalDivider()
                     TransplantListItem(
@@ -688,21 +660,20 @@ fun LibraryMineUI(
                             Text("合肥&宣城校区(需校园网)(应前往图书馆线下预约)")
                         },
                         leadingContent = {
-                            Icon(painterResource(R.drawable.meeting_room),null, modifier = Modifier.iconElementShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL)))
+                            Icon(painterResource(R.drawable.meeting_room),null)
                         },
                         colors = MaterialTheme.colorScheme.surface,
                         modifier = Modifier
                             .clickable {
                                 scope.launch {
                                     Starter.startWebView(
-                                        navController,
+                                        context,
                                         url = MyApplication.MEETING_ROOM_URL,
                                         title = "研讨间预约",
                                         icon = R.drawable.meeting_room
                                     )
                                 }
                             }
-                            .containerShare(AppNavRoute.WebView.shareRoute(MyApplication.MEETING_ROOM_URL))
                     )
                 }
             }
@@ -740,7 +711,7 @@ private fun SearchScreenLibrary(
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-            autoShape = false
+//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(title, isPaddingStatusBar = false)

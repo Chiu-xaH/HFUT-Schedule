@@ -22,7 +22,7 @@ import com.hfut.schedule.logic.util.sys.Starter
 
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import kotlinx.coroutines.launch
 
@@ -30,18 +30,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun LePaoYun(
-    navController : NavHostController,
-) {
+fun LePaoYun() {
     val context = LocalContext.current
     val icon = remember { R.drawable.sports_volleyball }
     val title = stringResource(R.string.navigation_label_physical_fitness_test)
-    val route = AppNavRoute.WebView.shareRoute(MyApplication.PE_HOME_URL)
     val scope = rememberCoroutineScope()
     TransplantListItem(
         headlineContent = { ScrollText(text = title) },
         leadingContent = {
-            Icon(painterResource(icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(icon), contentDescription = null)
         },
         trailingContent = {
             FilledTonalIconButton(
@@ -54,7 +51,7 @@ fun LePaoYun(
         modifier = Modifier.clickable {
             scope.launch {
                 Starter.startWebView(
-                    navController,
+                    context,
                     url = MyApplication.PE_HOME_URL,
                     title = title,
                     icon = icon,

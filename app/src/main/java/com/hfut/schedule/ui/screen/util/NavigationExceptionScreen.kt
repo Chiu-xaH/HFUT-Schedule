@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -16,15 +17,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavHostController
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.hazeSource
@@ -34,36 +30,30 @@ import dev.chrisbanes.haze.rememberHazeState
 @Composable
 fun NavigationExceptionScreen(
     exception: String,
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.Exception.receiveRoute() }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-        CustomTransitionScaffold (
-            route = route,
-            
-            navHostController = navController,
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-            topBar = {
-                MediumTopAppBar(
-                    scrollBehavior = scrollBehavior,
-                    modifier = Modifier.topBarBlur(hazeState),
-                    colors = topBarTransplantColor(),
-                    title = { Text(stringResource(AppNavRoute.Exception.label)) },
-                    navigationIcon = {
-                        TopBarNavigationIcon(route, AppNavRoute.Exception.icon)
-                    }
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()).hazeSource(hazeState).fillMaxSize()
-            ) {
-                InnerPaddingHeight(innerPadding,true)
-                Text(exception)
-                InnerPaddingHeight(innerPadding,false)
-            }
+    Scaffold (
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            MediumTopAppBar(
+                scrollBehavior = scrollBehavior,
+                modifier = Modifier.topBarBlur(hazeState),
+                colors = topBarTransplantColor(),
+                title = { Text(stringResource(AppNavRoute.Exception.label)) },
+                navigationIcon = {
+                    TopBarNavigationIcon()
+                }
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()).hazeSource(hazeState).fillMaxSize()
+        ) {
+            InnerPaddingHeight(innerPadding,true)
+            Text(exception)
+            InnerPaddingHeight(innerPadding,false)
         }
-//    }
+    }
 }

@@ -19,10 +19,12 @@ dependencyResolutionManagement {
             allowInsecureProtocol = true }
     }
 }
+
 rootProject.name = "肥工课程表"
 include ':app'
-include ':transition'
 include ':common'
 include ':shared'
 include ':lite'
 include ':baselineProfile'
+include ':navigation'
+include ':shared-container'

@@ -23,9 +23,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -96,6 +93,7 @@ import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.mirror.util.ShaderState
+import com.xah.navigation.utils.LocalNavControllerSafely
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.ClickScale
 import com.xah.uicommon.style.clickableWithScale
@@ -209,7 +207,7 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetMultiCourse = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
             MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
@@ -222,7 +220,7 @@ fun ZhiJianCourseTableUI(
             onDismissRequest = {
                 showBottomSheetCourse = false
             },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState
         ) {
             CourseDetail(vm,hazeState,selectedItem[0])
@@ -234,6 +232,7 @@ fun ZhiJianCourseTableUI(
     val customBackgroundAlpha by DataStoreManager.customCalendarSquareAlpha.collectAsState(initial = MyApplication.CALENDAR_SQUARE_ALPHA)
     val enableTransition = !(backGroundHaze != null && AppVersion.CAN_SHADER)
     val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+    val isTransitioning = LocalNavControllerSafely.current?.isTransitioning ?: false
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
         val list = (uiState as UiState.Success).data
@@ -523,7 +522,7 @@ fun ZhiJianCourseTableUI(
                                                     it.calendarSquareGlass(
                                                         backGroundHaze,
                                                         squareColor,
-                                                        enableLiquidGlass,
+                                                        enableLiquidGlass && !isTransitioning,
                                                     )
                                                 } else {
                                                     it
@@ -648,7 +647,7 @@ fun ZhiJianCourseTableUI(
                     onClick = {
                         weekSwap.previousWeek()
                     },
-                ) { Icon(Icons.Filled.ArrowBack, "Add Button") }
+                ) { Icon(painterResource(R.drawable.arrow_back), "Add Button") }
             }
             // 中间
             AnimatedVisibility(
@@ -693,7 +692,7 @@ fun ZhiJianCourseTableUI(
                     onClick = {
                         weekSwap.nextWeek()
                     },
-                ) { Icon(Icons.Filled.ArrowForward, "Add Button") }
+                ) { Icon(painterResource(R.drawable.arrow_forward), "Add Button") }
             }
         }
     }
@@ -710,7 +709,7 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
                 showBottomSheetTotalCourse = false
             },
             hazeState = hazeState,
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheetTotalCourse
         ) {
             CourseDetail(vm,hazeState,courses[selectedIndex])
@@ -753,12 +752,13 @@ private fun CourseDetail(
 ) {
 
     var showBottomSheet_Teacher by remember { mutableStateOf(false) }
-    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+//    val sheetState_Teacher = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     if (showBottomSheet_Teacher) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_Teacher,
             onDismissRequest = { showBottomSheet_Teacher = false },
-            sheetState = sheetState_Teacher,
-            shape = bottomSheetRound(sheetState_Teacher)
+//            sheetState = sheetState_Teacher,
+//            shape = bottomSheetRound(sheetState_Teacher)
         ) {
 
             Scaffold(
@@ -781,10 +781,11 @@ private fun CourseDetail(
     var showBottomSheet_FailRate by remember { mutableStateOf(false) }
 
     if (showBottomSheet_FailRate) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet_FailRate,
             onDismissRequest = { showBottomSheet_FailRate = false },
-            sheetState = sheetState_FailRate,
-            shape = bottomSheetRound(sheetState_FailRate)
+//            sheetState = sheetState_FailRate,
+//            shape = bottomSheetRound(sheetState_FailRate)
         ) {
 
             Scaffold(
@@ -919,7 +920,7 @@ private fun CourseDetail(
                 showBottomSheet_Search = true
             },
             trailingContent = {
-                Icon(Icons.Default.ArrowForward,null)
+                Icon(painterResource(R.drawable.arrow_forward),null)
             }
         )
         Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())

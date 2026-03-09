@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
@@ -16,29 +17,27 @@ import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.xah.transition.component.iconElementShare
+
 import com.xah.uicommon.component.text.ScrollText
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun HuiXin(
-    navController : NavHostController,
-) {
+fun HuiXin() {
+    val context = LocalContext.current
     val icon = remember { R.drawable.corporate_fare }
     val title = stringResource(R.string.navigation_label_hui_xin)
     val url = remember { getHuiXinURL() }
-    val route = AppNavRoute.WebView.shareRoute(url)
     val scope = rememberCoroutineScope()
     TransplantListItem(
         headlineContent = { ScrollText(text = title) },
         leadingContent = {
-            Icon(painterResource(icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
             scope.launch {
                 Starter.startWebView(
-                    navController,
+                    context,
                     url = url,
                     title = title,
                     icon = icon,

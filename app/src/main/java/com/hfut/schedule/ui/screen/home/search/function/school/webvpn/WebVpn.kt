@@ -15,28 +15,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.WebVpnDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.util.navigateAndSaveForTransition
+
+import com.xah.navigation.utils.LocalNavController
+
+
 import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class,
     ExperimentalSharedTransitionApi::class
 )
 @Composable
-fun WebVpn(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.WebVpn.route }
+fun WebVpn() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebVpn.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.WebVpn.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.WebVpn,route)
+            navController.push(WebVpnDestination)
         }
     )
 }

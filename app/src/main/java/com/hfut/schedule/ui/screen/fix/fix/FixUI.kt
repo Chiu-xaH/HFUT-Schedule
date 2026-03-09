@@ -49,25 +49,25 @@ import com.hfut.schedule.ui.component.icon.LoadingIcon
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.util.TransitionBackHandler
+
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FixUI(innerPadding : PaddingValues, vm : NetWorkViewModel,navController: NavHostController) {
+fun FixUI(innerPadding : PaddingValues, vm : NetWorkViewModel) {
     val context = LocalContext.current
 //    val switch_api = prefs.getBoolean("SWITCHMYAPI", apiCheck())
 //    var showapi by remember { mutableStateOf(switch_api) }
 //    SharedPrefs.saveBoolean("SWITCHMYAPI", false, showapi)
-    val scope = rememberCoroutineScope()
+//    val scope = rememberCoroutineScope()
 
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     LaunchedEffect(Unit) {
         launch(Dispatchers.IO) {
             vm.getMyApi()
@@ -75,7 +75,8 @@ fun FixUI(innerPadding : PaddingValues, vm : NetWorkViewModel,navController: Nav
     }
     Column(modifier = Modifier
         .verticalScroll(rememberScrollState())
-        .padding(innerPadding).scale(scale)) {
+        .padding(innerPadding)
+    ) {
         Spacer(modifier = Modifier.height(5.dp))
         DividerTextExpandedWith("操作") {
             CustomCard(color = MaterialTheme.colorScheme.surface) {

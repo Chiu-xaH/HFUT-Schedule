@@ -62,7 +62,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
     if(showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-            isFullExpand = false,
+//            expandFully = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ){
@@ -106,7 +106,7 @@ fun TodayBills(vm: NetWorkViewModel,hazeState : HazeState) {
     if(showBottomSheet && infoNum != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            autoShape = false,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet,
             hazeState = hazeState
         ){

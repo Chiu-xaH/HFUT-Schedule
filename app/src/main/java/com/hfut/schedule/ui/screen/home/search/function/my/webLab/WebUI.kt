@@ -1,9 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.my.webLab
 
 import android.util.Patterns
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,8 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -42,44 +38,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.logic.database.DataBaseManager
 import com.hfut.schedule.logic.database.entity.WebURLType
 import com.hfut.schedule.logic.database.entity.WebUrlDTO
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
+import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.util.webview.getPureUrl
+import com.hfut.schedule.ui.destination.WebFolderDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.logic.enumeration.HazeBlurLevel
-import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.screen.home.cube.sub.MyAPIItem
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.NotificationItems
 import com.hfut.schedule.ui.screen.home.search.function.my.notification.getNotifications
 import com.hfut.schedule.ui.screen.news.department.SchoolsUI
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.uicommon.style.padding.InnerPaddingHeight
-import com.xah.uicommon.style.align.RowHorizontal
 import com.hfut.schedule.ui.style.special.topBarBlur
-import com.xah.uicommon.style.color.topBarTransplantColor
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.hfut.schedule.ui.component.button.TopBarNavigationIcon
-import com.xah.transition.component.containerShare
-import com.xah.transition.component.iconElementShare
-import com.xah.transition.state.LocalAnimatedContentScope
-import com.xah.transition.state.LocalSharedTransitionScope
+import com.hfut.schedule.ui.util.webview.getPureUrl
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.style.color.topBarTransplantColor
+import com.xah.uicommon.style.padding.InnerPaddingHeight
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -88,18 +79,15 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun WebUI(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.WebFolder.route }
-
+fun WebUI() {
+    val navController = LocalNavController.current
     TransplantListItem(
         headlineContent = { ScrollText(text = stringResource(AppNavRoute.WebFolder.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.WebFolder.icon), contentDescription = null,modifier = Modifier.iconElementShare(route = route))
+            Icon(painterResource(AppNavRoute.WebFolder.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.WebFolder,route)
+            navController.push(WebFolderDestination)
         }
     )
 }
@@ -153,11 +141,9 @@ fun isValidWebUrl(url: String, strict : Boolean = false): Boolean {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun WebNavigationScreen(
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.WebFolder.route }
     var showBottomSheet_Add by remember { mutableStateOf(false) }
 
     if(showBottomSheet_Add) {
@@ -224,16 +210,14 @@ fun WebNavigationScreen(
             }
         }
     }
+    val context = LocalContext.current
     var input by rememberSaveable { mutableStateOf("https://") }
     var inputCookies by remember { mutableStateOf("") }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val scope = rememberCoroutineScope()
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -241,7 +225,7 @@ fun WebNavigationScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.WebFolder.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.WebFolder.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },
@@ -250,7 +234,7 @@ fun WebNavigationScreen(
                 elevation =  FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                 onClick = { showBottomSheet_Add = true }
             ) {
-                Icon(painterResource(R.drawable.add_2),null)
+                Icon(painterResource(R.drawable.add),null)
             }
         }
     ) { innerPadding ->
@@ -261,9 +245,7 @@ fun WebNavigationScreen(
         ) {
             InnerPaddingHeight(innerPadding,true)
             DividerTextExpandedWith(text = "简易浏览器(一些网页可能未适配)") {
-                Column(
-                    modifier = Modifier.containerShare(route = AppNavRoute.WebView.shareRoute(input)),
-                ) {
+                Column() {
                     CustomTextField(
                         input = input,
                         label = { Text("输入合法链接") },
@@ -274,7 +256,7 @@ fun WebNavigationScreen(
                                 onClick = {
                                     scope.launch {
                                         Starter.startWebView(
-                                            navController=navController,
+                                            context,
                                             url = input,
                                             title = getPureUrl(input),
                                             cookie = inputCookies.let { if(it.isEmpty() || it.isBlank()) null else it }
@@ -282,7 +264,7 @@ fun WebNavigationScreen(
                                     }
                                 },
                             ) {
-                                Icon(Icons.Default.ArrowForward,null)
+                                Icon(painterResource(R.drawable.arrow_forward),null)
                             }
                         }
                     ) { input = it }
@@ -313,22 +295,17 @@ fun WebNavigationScreen(
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun NotificationBoxScreen(
-    navController : NavHostController,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val route = remember { AppNavRoute.NotificationBox.route }
 
     LaunchedEffect(Unit) {
         saveString("Notifications", getNotifications().size.toString())
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-
-        navHostController = navController,
         topBar = {
             MediumTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -336,7 +313,7 @@ fun NotificationBoxScreen(
                 colors = topBarTransplantColor(),
                 title = { Text(stringResource(AppNavRoute.NotificationBox.label)) },
                 navigationIcon = {
-                    TopBarNavigationIcon(route, AppNavRoute.NotificationBox.icon)
+                    TopBarNavigationIcon()
                 },
             )
         },

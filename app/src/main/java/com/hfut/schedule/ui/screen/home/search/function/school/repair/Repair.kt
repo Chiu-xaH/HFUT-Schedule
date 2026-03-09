@@ -43,8 +43,8 @@ fun Repair(hazeState : HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
-            isFullExpand = true,
-            autoShape = false,
+//            expandFully = true,
+//            isFullScreen = false,
             showBottomSheet = showBottomSheet
         ) {
             Column(){

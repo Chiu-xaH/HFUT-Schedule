@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -71,8 +69,8 @@ fun Mail(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             hazeState = hazeState,
-            autoShape = false,
-            isFullExpand = true,
+//            isFullScreen = false,
+//            expandFully = true,
             showBottomSheet = showBottomSheet
         ) {
             Column{
@@ -163,7 +161,7 @@ fun MailUI(vm: NetWorkViewModel) {
                 Starter.startWebUrl(context,MyApplication.ONE_URL)
             },
             leadingContent = {
-                Icon(Icons.Default.ArrowForward,null)
+                Icon(painterResource(R.drawable.arrow_forward),null)
             }
         )
         if(isSupabaseRegistering.value) {

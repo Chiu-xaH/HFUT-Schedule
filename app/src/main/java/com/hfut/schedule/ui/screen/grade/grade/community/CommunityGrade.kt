@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -167,7 +165,7 @@ fun GradeItemUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                         CardListItem(
                             headlineContent = { Text("查看分数详细请点击此处进入教务数据") },
                             supportingContent = { Text(text = "您现在使用的是智慧社区接口,使用教务系统数据可查看详细成绩") },
-                            trailingContent = { Icon(Icons.Filled.ArrowForward, contentDescription = "") },
+                            trailingContent = { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "") },
                             modifier = Modifier.clickable {
                                 refreshLogin(context)
                             },

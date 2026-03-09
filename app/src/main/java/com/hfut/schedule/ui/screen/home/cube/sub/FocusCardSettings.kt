@@ -81,16 +81,18 @@ import com.hfut.schedule.logic.enumeration.getCampusRegion
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.cardNormalColor
+import com.hfut.schedule.ui.destination.LifeDestination
+import com.hfut.schedule.ui.destination.NewsApiDestination
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
+
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAppNavController
-import com.xah.transition.util.TransitionBackHandler
+import com.xah.container.container.sharedContainer
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.util.LogUtil
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.CoroutineScope
@@ -103,14 +105,14 @@ import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun FocusCardSettings(innerPadding : PaddingValues) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     var showBottomSheet by remember { mutableStateOf(false) }
-    var sheetState = rememberModalBottomSheetState()
+//    var sheetState = rememberModalBottomSheetState()
 
     val switch_ele = prefs.getBoolean("SWITCHELE", true)
     var showEle by remember { mutableStateOf(switch_ele) }
@@ -141,7 +143,7 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     var showShortCut by remember { mutableStateOf(switch_shortCut) }
     SharedPrefs.saveBoolean("SWITCHSHORTCUT", false, showShortCut)
 
-    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
+//    val showShower by DataStoreManager.enableShowFocusShower.collectAsState(initial = true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
 //    val showSpecial by DataStoreManager.showFocusSpecial.collectAsState(initial = true)
 
@@ -149,7 +151,7 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
     val useHefei by DataStoreManager.useHefeiElectric.collectAsState(initial = getCampusRegion() == CampusRegion.HEFEI)
 
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState()).scale(scale)) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         InnerPaddingHeight(innerPadding,true)
         CardListItem(
             headlineContent = { Text(text = "打开开关则会在APP冷启动或刷新时自动获取数据,并显示在聚焦首页第一张卡片内") },
@@ -230,10 +232,11 @@ fun FocusCardSettings(innerPadding : PaddingValues,navController: NavHostControl
 
 
     if(showBottomSheet && showShortCut) {
-        ModalBottomSheet(
+        HazeBottomSheet(
+            showBottomSheet = showBottomSheet,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -263,21 +266,22 @@ fun FocusCard(
     vmUI : UIViewModel,
     vm : NetWorkViewModel,
     hazeState: HazeState,
-    navController : NavHostController,
+//    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val showEle = prefs.getBoolean("SWITCHELE",true)
     val showToday = prefs.getBoolean("SWITCHTODAY",true)
     val showWeb = prefs.getBoolean("SWITCHWEB",true)
     val showCard = prefs.getBoolean("SWITCHCARD",true)
     val showWeather by DataStoreManager.enableShowFocusWeatherWarn.collectAsState(initial = false)
-    val route = remember { AppNavRoute.Life.withArgs(true) }
+    val dest = LifeDestination(true)
     if(showCard || showEle || showToday || showWeb)
         CustomCard(
             color = cardNormalColor(),
             modifier = if(showWeather) {
-                Modifier.containerShare(
-                    route = route,
-                    roundShape = MaterialTheme.shapes.medium,
+                Modifier.sharedContainer(
+                    key = dest.key,
+                    MaterialTheme.shapes.medium
                 )
             } else Modifier,
         ) {
@@ -326,14 +330,14 @@ fun FocusCard(
                                     overlineContent = { Text(typeName)},
                                     leadingContent = { Icon(painterResource(R.drawable.warning),null)},
                                     modifier = Modifier.clickable {
-                                        navController.navigateForTransition(AppNavRoute.Life,route)
+                                        navController.push(dest)
                                     },
                                 )
                             }
                         }
                     }
                 }
-                Special(navController,vmUI,hazeState)
+                Special(vmUI,hazeState)
             }
         }
 }
@@ -413,10 +417,11 @@ suspend fun getElectricFromHuiXin(vm : NetWorkViewModel, vmUI : UIViewModel) = w
 
 @Composable
 fun Special(
-    navController : NavHostController,
+//    navController : NavHostController,
     vmUI: UIViewModel,
     hazeState : HazeState
 ) {
+    val navController = LocalNavController.current
     var showBottomSheet by remember { mutableStateOf(false) }
     val isSpecificWorkDay = remember { isSpecificWorkDay() }
     val isSpecificWorkDayTomorrow = remember { isSpecificWorkDayTomorrow() }
@@ -430,9 +435,9 @@ fun Special(
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
             hazeState = hazeState,
-            isFullExpand = true
+//            expandFully = true
         ) {
-            ChangeCourseUI(navController,isTomorrow) {
+            ChangeCourseUI(isTomorrow) {
                 showBottomSheet = it
             }
         }
@@ -514,10 +519,11 @@ fun Special(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChangeCourseUI(
-    navController: NavHostController,
+//    navController: NavHostController,
     isTomorrow : Boolean,
     onDismiss : (Boolean) -> Unit
 ) {
+    val navController = LocalNavController.current
     val date = remember { if(isTomorrow) DateTimeManager.tomorrow_YYYY_MM_DD else DateTimeManager.Date_yyyy_MM_dd }
     var targetDate by remember { mutableStateOf<String?>(null) }
 
@@ -587,7 +593,11 @@ fun ChangeCourseUI(
             CardListItem(
                 headlineContent = { Text("查询学校调休安排")},
                 modifier = Modifier.clickable {
-                    navController.navigateForTransition(AppNavRoute.NewsApi, AppNavRoute.NewsApi.withArgs(AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword))
+                    navController.push(
+                        NewsApiDestination(
+                            AppNavRoute.NewsApi.Keyword.HOLIDAY_SCHEDULE.keyword
+                        )
+                    )
                 },
                 leadingContent = { Icon(painterResource(AppNavRoute.NewsApi.icon),null)}
             )

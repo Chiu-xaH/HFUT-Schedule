@@ -5,15 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -31,33 +23,24 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
-import com.hfut.schedule.logic.model.QWeatherNowBean
-import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-import com.xah.uicommon.component.text.BottomTip
-import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
-import com.hfut.schedule.ui.component.container.LoadingLargeCard
-import com.hfut.schedule.ui.component.container.CardListItem
-import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.enumeration.getCampusRegion
+import com.hfut.schedule.logic.model.QWeatherNowBean
 import com.hfut.schedule.logic.util.network.state.UiState
+import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.sys.Starter
 import com.hfut.schedule.ui.component.button.StartAppIcon
-import com.hfut.schedule.ui.component.button.StartAppIconButton
-import com.hfut.schedule.ui.component.button.StartAppIconShare
-import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
-import com.hfut.schedule.ui.component.container.cardNormalColor
-import com.hfut.schedule.ui.screen.AppNavRoute
+import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.container.LoadingLargeCard
+import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.DEFAULT
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.HIGH
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.LOW
 import com.hfut.schedule.ui.screen.home.search.function.other.life.QWeatherLevel.MID
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.transition.component.containerShare
-import com.xah.transition.state.LocalAppNavController
-import com.xah.uicommon.style.align.ColumnVertical
+import com.xah.uicommon.component.text.BottomTip
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 fun getLocation(campus : CampusRegion = getCampusRegion()) : String = when(campus) {
     CampusRegion.XUANCHENG -> "101221401"
@@ -187,7 +170,7 @@ private fun WeatherScreen(vm: NetWorkViewModel) {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.KeyboardArrowLeft,
+                                         painterResource(R.drawable.keyboard_arrow_left),
                                         contentDescription = null,
                                         modifier = Modifier.size(24.dp)
                                     )
@@ -196,7 +179,7 @@ private fun WeatherScreen(vm: NetWorkViewModel) {
                                         style = MaterialTheme.typography.bodyLarge,
                                     )
                                     Icon(
-                                        imageVector = Icons.Default.KeyboardArrowRight,
+                                         painterResource(R.drawable.keyboard_arrow_right),
                                         contentDescription = null,
                                         modifier = Modifier.size(24.dp)
                                     )

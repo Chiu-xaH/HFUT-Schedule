@@ -27,9 +27,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -75,17 +72,16 @@ import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.input.CustomTextField
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
-import com.hfut.schedule.ui.style.special.CustomBottomSheet
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.DefaultTransitionStyle
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
 
 fun getWebView(
     context : Context,
@@ -154,10 +150,10 @@ fun WebViewTools(
                 }
                 click = !click
             }
-            CustomBottomSheet (
+            HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
-                autoShape = false
+//                isFullScreen = false
             ) {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
@@ -198,10 +194,10 @@ fun WebViewTools(
             if(currentUrl == url) {
                 on(url)
             } else {
-                CustomBottomSheet (
+                HazeBottomSheet (
                     onDismissRequest = { showBottomSheet = false },
                     showBottomSheet = showBottomSheet,
-                    autoShape = false
+//                    isFullScreen = false
                 ) {
                     Column {
                         HazeBottomSheetTopBar("选择链接", isPaddingStatusBar = false)
@@ -233,9 +229,9 @@ fun WebViewTools(
     if(webView?.canGoBack() == true) {
         IconButton(onClick = {
             webView.goBack()
-        }) { Icon(Icons.Default.ArrowBack, contentDescription = "") }
+        }) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
     } else {
-        IconButton(onClick = onExit) { Icon(Icons.Default.Close, contentDescription = "") }
+        IconButton(onClick = onExit) { Icon(painterResource(R.drawable.close), contentDescription = "") }
     }
 
     IconButton(onClick = { webView?.reload() }) { Icon(
@@ -401,6 +397,7 @@ fun WebViewContent(
     }
 }
 
+@Language("css")
 private const val FORCE_DARK_CSS = """
                                 html, body {
                                     background-color: #121212 !important;
@@ -414,6 +411,7 @@ private const val FORCE_DARK_CSS = """
                                 a { color: #8ab4f8 !important; }
                             """
 
+@Language("javascript")
 const val FORCE_DARK_JS = """
                                 (function() {
                                     let style = document.createElement('style');
@@ -423,6 +421,7 @@ const val FORCE_DARK_JS = """
                                 })();
                             """
 
+@Language("javascript")
 fun getPaddingPxJs(top : Int?,bottom : Int?) : String = """
         (function() {
             ${top?.let { "document.body.style.paddingTop = '${it}px';" }}
@@ -491,9 +490,7 @@ fun getPureUrl(url : String): String {
 @Composable
 fun WebViewBackIcon(
     webView: WebView?,
-    icon : Int? = null,
     color : Color,
-    route : String?,
     onExit : () -> Unit
 ) {
     val back : () -> Unit = {
@@ -504,9 +501,9 @@ fun WebViewBackIcon(
         }
     }
     val cIcon = if(webView?.canGoBack() == true) {
-        Icons.Default.ArrowBack
+        painterResource(R.drawable.arrow_back)
     } else {
-        Icons.Default.Close
+        painterResource(R.drawable.close)
     }
     val button = @Composable { content  : @Composable () -> Unit ->
         Box(
@@ -519,43 +516,8 @@ fun WebViewBackIcon(
             content()
         }
     }
-    if(icon == null) {
-        button {
-            Icon(cIcon, contentDescription = "",tint = color, modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-        }
-    } else {
-        var show by remember { mutableStateOf(true) }
-        LaunchedEffect(Unit) {
-            show = true
-            delay(TransitionConfig.curveStyle.speedMs*1L)
-            delay(1500L)
-            show = false
-            if(route != null) {
-                val enablePredictive = DataStoreManager.enablePredictive.first()
-                if(!enablePredictive || TransitionConfig.transplantBackground) {
-                    delay(3000L)
-                    show = true
-                }
-            }
-        }
-        button {
-            Box() {
-                AnimatedVisibility(
-                    visible = show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(painterResource(icon), contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-                AnimatedVisibility(
-                    visible = !show,
-                    enter = DefaultTransitionStyle.centerAllAnimation.enter,
-                    exit = DefaultTransitionStyle.centerAllAnimation.exit
-                ) {
-                    Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
-                }
-            }
-        }
+    button {
+        Icon(cIcon, contentDescription = null, tint = color,modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP))
     }
 }
 

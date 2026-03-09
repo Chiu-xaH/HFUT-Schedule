@@ -17,9 +17,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -65,6 +62,7 @@ import com.hfut.schedule.ui.screen.card.count.drawLineChart
 import com.hfut.schedule.ui.screen.home.focus.funiction.parseTimeItem
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import com.hfut.schedule.ui.style.corner.bottomSheetRound
+import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 
 private fun withoutMonthBills(originalList : List<BillMonth>) : List<BillMonth> {
@@ -99,15 +97,16 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
     LaunchedEffect(Unit,month,year) {
         refreshNetwork()
     }
-    val sheetState = rememberModalBottomSheetState()
+//    val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
     val scrollstate = rememberLazyGridState()
     val shouldShowAddButton by remember { derivedStateOf{ scrollstate.firstVisibleItemScrollOffset == 0 } }
     if (showBottomSheet) {
-        ModalBottomSheet(
+        HazeBottomSheet (
+            showBottomSheet = showBottomSheet,
             onDismissRequest = { showBottomSheet = false },
-            sheetState = sheetState,
-            shape = bottomSheetRound(sheetState)
+//            sheetState = sheetState,
+//            shape = bottomSheetRound(sheetState)
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -239,14 +238,14 @@ fun MonthBillUI(vm : NetWorkViewModel, innerPadding : PaddingValues) {
                                 month--
                             else showToast("请切换年份")
                         },
-                    ) { Icon(Icons.Filled.ArrowBack, contentDescription = "") }
+                    ) { Icon(painterResource(R.drawable.arrow_back), contentDescription = "") }
                     Spacer(modifier = Modifier.padding(horizontal =APP_HORIZONTAL_DP))
                     FloatingActionButton(
                         onClick = {
                             if(month.toInt() <= 11)
                                 month++
                         },
-                    ) { Icon(Icons.Filled.ArrowForward, contentDescription = "")}
+                    ) { Icon(painterResource(R.drawable.arrow_forward), contentDescription = "")}
                 }
             }
         }

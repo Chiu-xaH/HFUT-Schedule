@@ -17,6 +17,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -52,13 +53,16 @@ import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.component.container.TransplantListItem
-import com.hfut.schedule.ui.component.screen.CustomTransitionScaffold
+
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getWxAuth
 import com.hfut.schedule.ui.screen.home.search.function.my.webLab.isValidWebUrl
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.mirror.util.rememberShaderState
+
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.util.LogUtil
@@ -68,11 +72,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun ScanScreen(
     vm : NetWorkViewModel,
-    navController : NavHostController,
 ) {
+    val navController = LocalNavController.current
     val color = MaterialTheme.colorScheme.surface
     var resultText by remember { mutableStateOf("") }
-    val route = remember { AppNavRoute.ScanQrCode.route }
     val context = LocalContext.current
     val activity = LocalActivity.current
     val showTip = resultText.isEmpty() || resultText.isBlank()
@@ -90,10 +93,8 @@ fun ScanScreen(
     }
     val backdrop = rememberLayerBackdrop()
 
-    CustomTransitionScaffold (
-        route = route,
+    Scaffold (
         containerColor = Color.Black,
-        navHostController = navController,
         bottomBar = {
             val auth by produceState<String?>(initialValue = null) {
                 value = getWxAuth()
@@ -150,7 +151,7 @@ fun ScanScreen(
                                                     resultText = ""
                                                 } else {
                                                     showToast(confirmResult)
-                                                    navController.popBackStack()
+                                                    navController.pop()
                                                 }
                                             }
                                         } else {
@@ -257,7 +258,7 @@ fun ScanScreen(
                 colors = topBarTransplantColor(),
                 title = { Text("") },
                 navigationIcon = {
-                    LiquidTopBarNavigateIcon(backdrop,navController,route, AppNavRoute.ScanQrCode.icon,)
+                    LiquidTopBarNavigateIcon(backdrop)
                 },
                 actions = {
                     Row(modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)) {

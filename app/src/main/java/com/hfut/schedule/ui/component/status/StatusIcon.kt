@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,9 +27,9 @@ fun EmptyIcon(text: String = "结果为空") = StatusIcon(R.drawable.upcoming,te
 @Composable
 fun DevelopingIcon() = StatusIcon(R.drawable.sdk,"正在开发")
 @Composable
-fun SuccessfulIcon() = StatusIcon(Icons.Filled.Check,"成功")
+fun SuccessfulIcon() = StatusIcon(R.drawable.check,"成功")
 @Composable
-fun ErrorIcon(string: String) = StatusIcon(Icons.Filled.Close,string)
+fun ErrorIcon(string: String) = StatusIcon(R.drawable.close,string)
 @Composable
 fun PrepareSearchIcon() = StatusIcon(R.drawable.search,"开始搜索")
 

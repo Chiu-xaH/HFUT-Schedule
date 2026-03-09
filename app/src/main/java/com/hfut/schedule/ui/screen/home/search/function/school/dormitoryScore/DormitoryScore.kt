@@ -11,25 +11,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.hfut.schedule.ui.component.container.TransplantListItem
+import com.hfut.schedule.ui.destination.DormitoryDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
-import com.hfut.schedule.ui.util.navigation.navigateForTransition
-import com.xah.transition.component.iconElementShare
+
+import com.xah.navigation.utils.LocalNavController
+
 import com.xah.uicommon.component.text.ScrollText
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun DormitoryScoreXuanCheng(
-    navController : NavHostController,
-) {
-    val route = remember { AppNavRoute.Dormitory.route }
+fun DormitoryScoreXuanCheng() {
+    val navController = LocalNavController.current
 
     TransplantListItem(
         headlineContent = { ScrollText(stringResource(AppNavRoute.Dormitory.label)) },
         leadingContent = {
-            Icon(painterResource(AppNavRoute.Dormitory.icon), contentDescription = null,modifier = Modifier.iconElementShare( route = route))
+            Icon(painterResource(AppNavRoute.Dormitory.icon), contentDescription = null)
         },
         modifier = Modifier.clickable {
-            navController.navigateForTransition(AppNavRoute.Dormitory,route)
+            navController.push(DormitoryDestination)
         }
     )
 }

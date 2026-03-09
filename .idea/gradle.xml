@@ -14,7 +14,9 @@
             <option value="$PROJECT_DIR$/baselineProfile" />
             <option value="$PROJECT_DIR$/common" />
             <option value="$PROJECT_DIR$/lite" />
+            <option value="$PROJECT_DIR$/navigation" />
             <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/shared-container" />
             <option value="$PROJECT_DIR$/transition" />
           </set>
         </option>

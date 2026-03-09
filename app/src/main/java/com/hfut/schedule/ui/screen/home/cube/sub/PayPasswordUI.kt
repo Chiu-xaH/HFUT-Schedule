@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,17 +47,17 @@ import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
 import com.hfut.schedule.ui.component.status.CustomSwitch
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
-import com.xah.transition.util.TransitionBackHandler
+
 import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+fun LockUI(innerPadding : PaddingValues,hazeState: HazeState) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     val switch_pin = SharedPrefs.prefs.getBoolean("SWITCHPIN",false)
     var pin by remember { mutableStateOf(switch_pin) }
     saveBoolean("SWITCHPIN", false,pin)
@@ -68,7 +69,8 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavH
     Column(
         modifier = Modifier
             .padding(innerPadding)
-            .fillMaxSize().scale(scale)
+            .fillMaxSize()
+//            .scale(scale)
     ) {
         TransplantListItem(
             headlineContent = { Text(text = "需要密码") },
@@ -98,7 +100,7 @@ fun LockUI(innerPadding : PaddingValues,hazeState: HazeState,navController: NavH
     if (showDialog) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
-            autoShape = false,
+//            isFullScreen = false,
             hazeState = hazeState,
             showBottomSheet = showDialog
         ) {
@@ -166,7 +168,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             TextButton(onClick = { /*TODO*/ }, modifier = Modifier
                 .weight(.33f)
                 .height(65.dp)
-                ,shape = RoundedCornerShape(0.dp)
+                ,shape = RectangleShape
             ) {
                 Text("", fontSize = 13.sp)
             }
@@ -176,7 +178,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             )
             TextButton(onClick =  onBackspaceClick , modifier = Modifier
                 .weight(.33f)
-                .height(65.dp),shape = RoundedCornerShape(0.dp)
+                .height(65.dp),shape = RectangleShape
             ) {
                 Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
             }
@@ -185,7 +187,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
 }
 @Composable
 fun Key(num : Int, modifier: Modifier = Modifier, onKeyClick: (Int) -> Unit) {
-    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RoundedCornerShape(0.dp)) {
+    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RectangleShape) {
         Text(num.toString(), fontSize = 28.sp)
     }
 }

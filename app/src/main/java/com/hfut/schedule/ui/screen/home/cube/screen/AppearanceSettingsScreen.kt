@@ -89,7 +89,6 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager.ShowTeacherConfig
 import com.hfut.schedule.logic.util.sys.ClipBoardHelper
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.hfut.schedule.ui.component.container.CustomCard
 import com.hfut.schedule.ui.component.container.TransplantListItem
 import com.hfut.schedule.ui.component.divider.PaddingHorizontalDivider
@@ -108,10 +107,10 @@ import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
-import com.xah.transition.state.TransitionConfig
-import com.xah.transition.style.TransitionLevel
-import com.xah.transition.util.TransitionBackHandler
+import com.xah.navigation.anim.EffectLevel
+
 import com.xah.uicommon.component.slider.CustomSlider
+import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
@@ -128,17 +127,17 @@ import java.io.FileOutputStream
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresApi(Build.VERSION_CODES.VANILLA_ICE_CREAM)
 @Composable
-fun AppearanceSettingsScreen(innerPaddings : PaddingValues, navController : NavHostController) {
-    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
+fun AppearanceSettingsScreen(innerPaddings : PaddingValues,) {
+//    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 
-    var scale by remember { mutableFloatStateOf(1f) }
-    TransitionBackHandler(navController,enablePredictive) {
-        scale = it
-    }
+//    var scale by remember { mutableFloatStateOf(1f) }
+//    TransitionBackHandler(navController,enablePredictive) {
+//        scale = it
+//    }
     SharedAppearanceSettingsScreen(
         Modifier
-            .verticalScroll(rememberScrollState())
-            .scale(scale),
+            .verticalScroll(rememberScrollState()),
+//            .scale(scale),
         innerPaddings,
         false
     )
@@ -203,20 +202,17 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
         val webViewDark by DataStoreManager.enableForceWebViewDark.collectAsState(initial = true)
         val currentPureDark by DataStoreManager.enablePureDark.collectAsState(initial = false)
         val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-        val transition by DataStoreManager.transitionLevel.collectAsState(initial = TransitionLevel.MEDIUM.code)
+        val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
         val currentColorModeIndex by DataStoreManager.colorMode.collectAsState(initial = ColorMode.AUTO.code)
         val customColor by DataStoreManager.customColor.collectAsState(initial = -1L)
         val customColorStyle by DataStoreManager.customColorStyle.collectAsState(initial = ColorStyle.DEFAULT.code)
         val showBottomBarLabel by DataStoreManager.showBottomBarLabel.collectAsState(initial = true)
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
+        val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
 
-        LaunchedEffect(enableLiquidGlass) {
-            TransitionConfig.enableMirror = enableLiquidGlass
-        }
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
-
 
         val pickMultipleMediaForColor = rememberLauncherForActivityResult(
             ActivityResultContracts.PickVisualMedia()
@@ -229,13 +225,11 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
-        val transitionLevels = remember { TransitionLevel.entries }
 
-        LaunchedEffect(transition) {
-            TransitionConfig.transitionBackgroundStyle.level = transitionLevels.find { it.code == transition } ?: TransitionLevel.NONE
-        }
+        val transitionLevels = remember { EffectLevel.entries }
         val useDynamicColor = customColor == -1L
         var hue by remember { mutableFloatStateOf(180f) }
+
         LaunchedEffect(customColor) {
             hue = customColor.let {
                 if(useDynamicColor) {
@@ -245,6 +239,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 }
             }
         }
+
         var showColorDialog by remember { mutableStateOf(false) }
         if(showColorDialog) {
             Dialog(
@@ -594,7 +589,7 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                             Text(text = stringResource(
                                 R.string.appearance_settings_transition_level_title,
                                 transition,
-                                transitionLevels.find { it.code == transition }?.title ?: ""
+                                ""
                             ))
                         }
                     },
@@ -606,12 +601,27 @@ fun SharedAppearanceSettingsScreen(modifier : Modifier = Modifier, innerPaddings
                 CustomSlider(
                     value = transition.toFloat(),
                     onValueChange = { value ->
-                        val level = transitionLevels.find { it.code == value.toInt() } ?: return@CustomSlider
+                        val level = transitionLevels.find { it.levelNum == value.toInt() } ?: return@CustomSlider
                         scope.launch { DataStoreManager.saveTransition(level) }
                     },
                     steps = transitionLevels.size-2,
                     modifier = Modifier.padding(bottom = APP_HORIZONTAL_DP),
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
+                )
+                PaddingHorizontalDivider()
+                TransplantListItem(
+                    headlineContent = { Text(text = "容器填充方案") },
+                    supportingContent = {
+                        Text("动画过程中运动方向")
+                    },
+                    trailingContent = {
+                        Switch(checked = useDoubleExtension, onCheckedChange = {
+                            scope.launch {
+                                DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
+                            }
+                        })
+                    },
+                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(

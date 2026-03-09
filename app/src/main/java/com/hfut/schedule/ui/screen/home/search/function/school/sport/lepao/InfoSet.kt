@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -32,14 +30,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.R
+import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
-import com.xah.uicommon.style.APP_HORIZONTAL_DP
-
-import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.component.container.CardListItem
+import com.hfut.schedule.ui.component.text.BottomSheetTopBar
 import com.hfut.schedule.ui.style.color.textFiledTransplant
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +68,7 @@ fun InfoSet() {
                                 SharedPrefs.saveString("Yuntoken",inputToken)
                                 Toast.makeText(MyApplication.context,"已保存",Toast.LENGTH_SHORT).show()
                             }
-                        ) { Icon(Icons.Filled.Check, contentDescription = "") }
+                        ) { Icon(painterResource(R.drawable.check), contentDescription = "") }
                     }
                 },
             ) { innerPadding ->

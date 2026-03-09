@@ -46,7 +46,7 @@ import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
 import com.xah.mirror.shader.glassLayer
 import com.xah.mirror.shader.largeStyle
 import com.xah.mirror.util.ShaderState
-import com.xah.transition.util.isCurrentRouteWithoutArgs
+import com.hfut.schedule.ui.util.navigation.isCurrentRouteWithoutArgs
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.padding.NavigationBarSpacer
 import dev.chrisbanes.haze.HazeState
