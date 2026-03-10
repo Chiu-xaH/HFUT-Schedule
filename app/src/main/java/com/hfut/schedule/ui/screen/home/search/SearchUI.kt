@@ -286,7 +286,7 @@ fun SearchScreen(
             }
             SmallCard(
                 shape = RectangleShape,
-                modifier = (item.route?.let { paddingModifier.sharedContainer(it, MaterialTheme.shapes.small) } ?: paddingModifier.clip(MaterialTheme.shapes.small)),
+                modifier = (item.route?.let { paddingModifier.sharedContainer(it, MaterialTheme.shapes.small,cardNormalColor()) } ?: paddingModifier.clip(MaterialTheme.shapes.small)),
                 color = cardNormalColor()
             ) {
                 if(index % 2 == 0) {

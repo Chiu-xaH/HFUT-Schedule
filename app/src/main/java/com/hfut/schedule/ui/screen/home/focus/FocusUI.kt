@@ -94,16 +94,20 @@ fun TodayScreen(
     ifSaved : Boolean,
     state: PagerState,
     hazeState: HazeState,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val context = LocalContext.current
-    var scheduleList by remember { mutableStateOf(getSchedule()) }
-    var netCourseList by remember { mutableStateOf(getNetCourse()) }
-    var refreshing by rememberSaveable { mutableStateOf(true) }
-    var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
+    val scrollState = rememberLazyListState()
+
+    var refreshDB by remember { mutableStateOf(false) }
+    var refreshing by rememberSaveable { mutableStateOf(true) }
+    var timeNow by remember { mutableStateOf(DateTimeManager.Time_HH_MM) }
+    val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
+    val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
+
+    var scheduleList by remember { mutableStateOf(getSchedule()) }
+    var netCourseList by remember { mutableStateOf(getNetCourse()) }
     val states = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
         scope.launch {
             refreshing = true
@@ -116,10 +120,6 @@ fun TodayScreen(
             refreshing = false
         }
     })
-
-    var refreshDB by remember { mutableStateOf(false) }
-
-    val scrollState = rememberLazyListState()
     val courseDataSource by DataStoreManager.defaultCalendar.collectAsState(initial = CourseType.JXGLSTU.code)
     var lastTime by remember { mutableStateOf("00:00") }
     var tomorrowCourseList by remember { mutableStateOf<List<courseDetailDTOList>>(emptyList()) }
@@ -142,6 +142,7 @@ fun TodayScreen(
     val exams by produceState(initialValue = emptyList()) {
         value = getExamFromCache()
     }
+
     // 加载数据库
     LaunchedEffect(refreshDB) {
         launch {
@@ -193,6 +194,7 @@ fun TodayScreen(
             }
         }
     }
+
     LaunchedEffect(Unit) {
         // 冷启动
         launch {
@@ -213,9 +215,6 @@ fun TodayScreen(
             }
         }
     }
-    val enableShowOutOfDateEvent by DataStoreManager.enableShowOutOfDateEvent.collectAsState(initial = false)
-
-    val switchShowEnded = remember { prefs.getBoolean("SWITCHSHOWENDED", true) }
 
     Box(modifier = Modifier
         .fillMaxSize()

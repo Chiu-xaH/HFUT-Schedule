@@ -485,7 +485,7 @@ fun CustomItemUI(
     CardListItem(
         color = cardNormalColor(),
         shape = RectangleShape,
-        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
+        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         supportingContent = { description?.let { Text(text = it,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) } },
@@ -776,7 +776,7 @@ fun JxglstuTodayCourseItem(
             headlineContent = { Text(text = name, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) },
             overlineContent = { Text(text = "$startTime-$endTime", textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None)},
             supportingContent = { item.place?.let { Text(text = it, textDecoration = if(state == ENDED) TextDecoration.LineThrough else TextDecoration.None) } },
-            cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
+            cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
             leadingContent = {
                 when(state) {
                     NOT_STARTED -> {
@@ -840,7 +840,7 @@ fun JxglstuTomorrowCourseItem(
         headlineContent = { Text(text = name) },
         overlineContent = {Text(text = "$startTime-$endTime")},
         supportingContent = { item.place?.let { Text(text = it) } },
-        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium),
+        cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable { navController.push(dest) },
         shape = RectangleShape,

@@ -107,6 +107,7 @@ fun ExamScreen(
                         key = ExamNewsDestination.key,
                         shape = CircleShape,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         NoPadding {
                             LiquidButton(
@@ -268,7 +269,8 @@ fun JxglstuExamUI(item : JxglstuExam,status : Boolean) {
                     },
                     cardModifier = Modifier.sharedContainer(
                         dest,
-                        MaterialTheme.shapes.medium
+                        MaterialTheme.shapes.medium,
+                        MaterialTheme.colorScheme.errorContainer
                     ),
                     modifier = Modifier.clickable {
                         navController.push(dest)

@@ -25,6 +25,7 @@ import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
+import com.xah.common.ScreenCornerHelper
 import com.xah.navigation.anim.EffectLevel
 import com.xah.uicommon.util.language.BaseChoice
 import com.xah.uicommon.util.language.UiText
@@ -135,6 +136,7 @@ object DataStoreManager : IDataStore {
     private val CALENDAR_SQUARE_TEXT_SIZE = floatPreferencesKey("calendar_square_test_size")
     private val CALENDAR_SQUARE_TEXT_PADDING = floatPreferencesKey("calendar_square_test_padding_2")
     private val FOCUS_WIDGET_TEXT_SIZE = floatPreferencesKey("focus_widget_test_size")
+    private val SCREEN_CORNER = floatPreferencesKey("screen_corner")
     private val XWX_PASSWORD = stringPreferencesKey("xwx_password")
     private val JXGLSTU_PASSWORD = stringPreferencesKey("jxglstu_password")
     private val UNI_APP_JWT = stringPreferencesKey("uni_app_jwt")
@@ -172,6 +174,7 @@ object DataStoreManager : IDataStore {
     suspend fun saveCustomColor(value: Long) = saveValue(CUSTOM_COLOR, value)
     suspend fun saveCustomBackground(value: String?) = saveValue(CUSTOM_BACKGROUND, value ?: EMPTY_STRING)
     suspend fun saveCustomSquareAlpha(value: Float) = saveValue(CUSTOM_CALENDAR_SQUARE_ALPHA,value)
+    suspend fun saveScreenCorner(value: Float) = saveValue(SCREEN_CORNER,value)
     suspend fun saveSearchSort(value: List<Int>) = saveValue(SEARCH_SORT, value.joinToString(","))
     suspend fun saveReadNotifications(value: List<Int>) = saveValue(READ_NOTIFICATIONS, value.joinToString(","))
     suspend fun saveMaxFlow(value: Int) = saveValue(MAX_FLOW, value)
@@ -254,6 +257,7 @@ object DataStoreManager : IDataStore {
     val calendarSquareHeightNew = getFlow(CALENDAR_SQUARE_HEIGHT_NEW, MyApplication.CALENDAR_SQUARE_HEIGHT_NEW)
     val calendarSquareTextSize = getFlow(CALENDAR_SQUARE_TEXT_SIZE, 1f)
     val focusWidgetTextSize = getFlow(FOCUS_WIDGET_TEXT_SIZE, 1f)
+    val screenCorner = getFlow(SCREEN_CORNER, -1f)
     val language = getFlow(LANGUAGE, Language.AUTO.code)
     val calendarSquareTextPadding = getFlow(CALENDAR_SQUARE_TEXT_PADDING, MyApplication.CALENDAR_SQUARE_TEXT_PADDING)
     val xwxPassword = getFlow(XWX_PASSWORD, EMPTY_STRING)

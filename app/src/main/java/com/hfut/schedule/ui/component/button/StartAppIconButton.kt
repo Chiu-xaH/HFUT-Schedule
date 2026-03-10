@@ -30,7 +30,7 @@ fun StartAppIconButton(
         backdrop = backdrop,
         onClick = { Starter.startAppLaunch(app,context) },
         modifier = modifier,
-//        innerPadding = 6.5.dp
+        innerPadding = 6.5.dp
     ) {
         Image(
             painterResource(app.icon),

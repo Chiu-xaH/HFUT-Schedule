@@ -194,7 +194,8 @@ private fun ProgramPerformance(
                                 }
                                 .sharedContainer(
                                     key = dest.key,
-                                    MaterialTheme.shapes.medium
+                                    MaterialTheme.shapes.medium,
+                                    cardNormalColor()
                                 )
                         ) {
                             Row(
@@ -252,7 +253,8 @@ private fun ProgramPerformance(
                             }
                             .sharedContainer(
                                 key = dest.key,
-                                MaterialTheme.shapes.medium
+                                MaterialTheme.shapes.medium,
+                                cardNormalColor()
                             )
                     ) {
                         Row(

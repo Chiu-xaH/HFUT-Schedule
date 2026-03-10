@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
@@ -117,16 +118,16 @@ fun UpdateSuccessScreen() {
                 },
                 actions = {
                     NoPadding {
-                        SharedContainer(
-                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
-                            key = VersionInfoDestination.key,
-                            shape = CircleShape
-                        ) {
+//                        SharedContainer(
+//                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+//                            key = VersionInfoDestination.key,
+//                            shape = CircleShape,
+//                            containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor,
+//                        ) {
                             FilledTonalIconButton (
                                 shape = RectangleShape,
                                 onClick = {
                                     navController.push(VersionInfoDestination)
-//                                    navController.push(VersionInfoDestination)
                                 }
                             ) {
                                 Icon(
@@ -135,7 +136,7 @@ fun UpdateSuccessScreen() {
                                     tint = MaterialTheme.colorScheme.primary,
                                 )
                             }
-                        }
+//                        }
                     }
                 },
             )

@@ -329,7 +329,11 @@ fun ControlCenterScreen(
                     exit = fadeOut()
                 ){
                     Column {
-                        SharedAppearanceSettingsScreen(innerPaddings = innerPadding, isControlCenter = true)
+                        SharedAppearanceSettingsScreen(
+                            innerPaddings = innerPadding,
+                            isControlCenter = true,
+                            navController = navController
+                        )
                     }
                 }
                 androidx.compose.animation.AnimatedVisibility(

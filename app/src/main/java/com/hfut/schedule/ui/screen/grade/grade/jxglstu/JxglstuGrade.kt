@@ -345,9 +345,10 @@ fun GradeItemJxglstuUI(
                                     allAvgScore,
                                     allTotalCredits
                                 )
+                                val color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor()
                                 CustomCard(
                                     shape = RectangleShape,
-                                    color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor(),
+                                    color = color,
                                     modifier = Modifier
                                         .clickable {
                                             if (needSurvey) {
@@ -365,7 +366,8 @@ fun GradeItemJxglstuUI(
                                         }
                                         .sharedContainer(
                                             dest.key,
-                                            MaterialTheme.shapes.medium
+                                            MaterialTheme.shapes.medium,
+                                            color
                                         )
                                 ) {
                                     TransplantListItem(
@@ -656,7 +658,8 @@ fun GradeItemUIUniApp(
                                             }
                                             .sharedContainer(
                                                 dest.key,
-                                                MaterialTheme.shapes.medium
+                                                MaterialTheme.shapes.medium,
+                                                cardNormalColor()
                                             )
                                     ) {
                                         TransplantListItem(

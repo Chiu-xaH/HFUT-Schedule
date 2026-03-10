@@ -96,6 +96,7 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.navigateForBottomBar
@@ -242,7 +243,7 @@ fun LibraryScreen(
                 .hazeSource(state = hazeState)
                 .backDropSource(backDrop)
         ) {
-            composable(LibraryBarItems.SEARCH.name) {
+            nav2Composable(LibraryBarItems.SEARCH.name, libraryNavController) {
                 Column (modifier = Modifier.fillMaxSize()) {
                     HorizontalPager(pageState) { pager ->
                         when(pager) {
@@ -252,7 +253,7 @@ fun LibraryScreen(
                     }
                 }
             }
-            composable(LibraryBarItems.MINE.name) {
+            nav2Composable(LibraryBarItems.MINE.name,libraryNavController) {
                 Column (modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceContainer)) {

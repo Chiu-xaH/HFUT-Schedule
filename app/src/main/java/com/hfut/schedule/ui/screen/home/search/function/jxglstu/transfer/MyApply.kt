@@ -5,7 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
@@ -54,6 +57,8 @@ import com.hfut.schedule.ui.style.corner.bottomSheetRound
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
+import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.CenterScreen
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -117,7 +122,6 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
     }
 
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        val sheetState = rememberModalBottomSheetState()
         val response = (uiState as UiState.Success).data
         val applyList = response.models
         if(showBottomSheet) {
@@ -126,23 +130,11 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                     showBottomSheet = false
                 },
                 showBottomSheet = showBottomSheet,
-//                sheetState = sheetState,
-//                shape = bottomSheetRound(sheetState)
             ) {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    containerColor = Color.Transparent,
-                    topBar = {
-                        BottomSheetTopBar("结果")
-                    },
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .fillMaxSize()
-                    ) {
-                        TransferCancelStatusUI(vm,batchId, applyList[idx].id)
-                    }
+                Column {
+                    HazeBottomSheetTopBar("结果", isPaddingStatusBar = false)
+                    TransferCancelStatusUI(vm,batchId, applyList[idx].id)
+                    Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding())
                 }
             }
         }
@@ -173,7 +165,9 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
                 }
             }
         } else {
-            EmptyIcon()
+            CenterScreen {
+                EmptyIcon()
+            }
         }
     }
 }

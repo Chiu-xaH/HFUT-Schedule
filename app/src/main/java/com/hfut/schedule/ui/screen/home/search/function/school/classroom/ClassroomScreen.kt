@@ -125,6 +125,7 @@ import com.hfut.schedule.ui.style.color.textFiledAllTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -362,10 +363,10 @@ fun ClassroomScreen(
                 .backDropSource(backDrop)
                 .hazeSource(state = hazeState)
         ) {
-            composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
+            nav2Composable(ClassroomBarItems.EMPTY_CLASSROOM.name,navController) {
                 EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors,hazeState)
             }
-            composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
+            nav2Composable(ClassroomBarItems.CLASSROOM_LESSONS.name,navController) {
                 SearchClassroomScreen(vm,innerPadding) {
                     scope.launch {
                         refreshNetworkSearch()

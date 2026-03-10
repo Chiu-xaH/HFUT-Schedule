@@ -120,7 +120,6 @@ fun MultiScheduleSettings(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_loading = false },
             showBottomSheet = showBottomSheet_loading,
-//            isFullScreen = false,
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
@@ -135,7 +134,6 @@ fun MultiScheduleSettings(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_settings = false },
             showBottomSheet = showBottomSheet_settings,
-//            isFullScreen = false
         ) {
             Column(
                 modifier = Modifier.verticalScroll(rememberScrollState())
@@ -355,7 +353,6 @@ fun shareTextFile(fileName: String) {
 @Composable
 private fun EventUI() {
     val activity = LocalActivity.current
-    val context = LocalContext.current
     var time by remember { mutableIntStateOf(20) }
     val scope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }

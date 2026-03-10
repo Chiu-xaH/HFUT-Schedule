@@ -300,7 +300,8 @@ fun SelectCourseDetailScreen(
                             Spacer(Modifier.width(BUTTON_PADDING))
                             SharedContainer(
                                 key = dest.key,
-                                shape = CircleShape
+                                shape = CircleShape,
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 LiquidButton(
                                     shape = RectangleShape,
@@ -484,7 +485,8 @@ private fun SelectCourseList(
                             }
                             .sharedContainer(
                                 dest,
-                                MaterialTheme.shapes.medium
+                                MaterialTheme.shapes.medium,
+                                cardNormalColor()
                             ),
                         shape = RectangleShape,
                         color = cardNormalColor()

@@ -105,6 +105,7 @@ fun HolidayScreen(
                         key = dest.key,
                         shape = CircleShape,
                         modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         LiquidButton(
                             backdrop = backdrop,

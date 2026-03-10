@@ -131,8 +131,9 @@ fun TimeTable(
                     MaterialTheme.colorScheme.onSurface.copy(.6f)
                 )
             }
+            val containerColor = if (!hasBackground) color.first else Color.Transparent
             Surface(
-                color = if (!hasBackground) color.first else Color.Transparent,
+                color = containerColor,
                 shape = RectangleShape,
                 modifier = squareModifier
                     .let {
@@ -173,15 +174,15 @@ fun TimeTable(
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.sharedContainer(CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall)
+                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
-                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                             }
                         } else {
@@ -330,8 +331,9 @@ fun TimeTable(
                     MaterialTheme.colorScheme.onSurface.copy(.6f)
                 )
             }
+            val containerColor = if (!hasBackground) color.first else Color.Transparent
             Surface(
-                color = if (!hasBackground) color.first else Color.Transparent,
+                color = containerColor,
                 shape = RectangleShape,
                 modifier = squareModifier
                     .let {
@@ -371,17 +373,15 @@ fun TimeTable(
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.sharedContainer(
-                                        CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall
-                                    )
+                                    it.sharedContainer(CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
-                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall)
+                                        it.sharedContainer(AddEventDestination(id, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                     } ?: it
                                 }
                                 TimeTableType.EXAM -> {
-                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall)
+                                    it.sharedContainer(ExamDestination(origin).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                             }
                         } else {

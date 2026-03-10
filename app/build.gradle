@@ -213,14 +213,14 @@ dependencies {
     // implementation(libs.androidx.biometric)
     // 镜面效果
     implementation(libs.mirror)
-    // 转场动画模块
     // 可单独使用的UI模块
     implementation implementation(project(':common'))
     // 消费预测及共用代码模块
     implementation(project(":shared"))
     // 基准文件模块
     baselineProfile project(":baselineProfile")
-
-    implementation(project(":navigation"))
-    implementation(project(":shared-container"))
+    // 导航&转场动画模块
+    implementation files("libs/common-release.aar")
+    implementation files("libs/shared-container-release.aar")
+    implementation files("libs/navigation-release.aar")
 }

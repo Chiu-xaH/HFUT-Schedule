@@ -60,13 +60,12 @@ fun VersionInfo() {
             // TODO WebView适配新库 [P1]
             // TODO WebVpn、课程表界面动效掉帧率较高走查 [P1]
 
-            // TODO 课程详情页面优化 +空教室入口  [P2]
+            // TODO 课程详情页面重做  [P2]
             // TODO 设置适配新库 [P2]
             // TODO 一卡通适配新库 [P2]
             // TODO Drawer回弹  [P2]
-            UpdateItems("重构 自研第二代全局转场动效体系")
-
-
+            UpdateItems("重构 第二代全局转场动效体系","新增贝塞尔曲线、1像素提取填充、同步渲染等新特性，并重写了导航框架，简化开发流程、提升可定制性、视觉体验与流畅度")
+            // TODO 添加日历日程多来源适配
 //            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")

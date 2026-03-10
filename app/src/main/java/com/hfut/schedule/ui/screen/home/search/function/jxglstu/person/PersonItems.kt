@@ -258,7 +258,8 @@ private fun PersonItems(
                 color = cardNormalColor(),
                 modifier = Modifier.sharedContainer(
                     ClassmatesDestination.key,
-                    MaterialTheme.shapes.medium
+                    MaterialTheme.shapes.medium,
+                    cardNormalColor()
                 )
             ) {
                 TransplantListItem(

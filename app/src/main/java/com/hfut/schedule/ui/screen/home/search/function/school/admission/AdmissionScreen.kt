@@ -149,7 +149,8 @@ fun AdmissionListUI(
                                     .padding(CARD_NORMAL_DP)
                                     .sharedContainer(
                                         dest.key,
-                                        MaterialTheme.shapes.small
+                                        MaterialTheme.shapes.small,
+                                        cardNormalColor()
                                     )
                                     .clickableWithScale(ClickScale.SMALL.scale) {
                                         navController.push(dest)

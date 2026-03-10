@@ -171,6 +171,7 @@ import com.hfut.schedule.ui.style.color.textFiledTransplant
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.ui.util.navigation.canPopBack
@@ -385,7 +386,8 @@ fun MainScreen(
             ) {
                 SharedContainer(
                     key = dest.key,
-                    shape = FloatingActionButtonDefaults.shape
+                    shape = FloatingActionButtonDefaults.shape,
+                    containerColor = FloatingActionButtonDefaults.containerColor,
                 ) {
                     FloatingActionButton(
                         shape = RectangleShape,
@@ -814,9 +816,7 @@ fun MainScreen(
             exitTransition = { animation.exit },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
-            composable(COURSES.name) {
-                Nav2BackHandler(navController)
-
+            nav2Composable(COURSES.name,navController) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
                     if (useCustomBackground) {
@@ -933,9 +933,7 @@ fun MainScreen(
                     }
                 }
             }
-            composable(FOCUS.name) {
-                Nav2BackHandler(navController)
-
+            nav2Composable(FOCUS.name,navController) {
                 Scaffold {
                     TodayScreen(
                         vm,
@@ -947,9 +945,7 @@ fun MainScreen(
                     )
                 }
             }
-            composable(SEARCH.name) {
-                Nav2BackHandler(navController)
-
+            nav2Composable(SEARCH.name,navController) {
                 Scaffold {
                     SearchScreen(
                         vm,
@@ -961,9 +957,7 @@ fun MainScreen(
                     )
                 }
             }
-            composable(SETTINGS.name) {
-                Nav2BackHandler(navController)
-
+            nav2Composable(SETTINGS.name,navController) {
                 Scaffold {
                     SettingsScreen(
                         vm,
@@ -1450,15 +1444,3 @@ private fun ZhiJianSearchBar(
     }
 }
 
-@Composable
-fun Nav2BackHandler(navController : NavHostController) {
-    val navHostTopController = LocalNavControllerSafely.current ?: return
-    BackHandler(navController.canPopBack()) {
-        LogUtil.debug("navHostTopController.isTransitioning=${navHostTopController.isTransitioning}")
-        if(!navHostTopController.isTransitioning) {
-            navController.popBackStack()
-        } else {
-            navHostTopController.pop()
-        }
-    }
-}

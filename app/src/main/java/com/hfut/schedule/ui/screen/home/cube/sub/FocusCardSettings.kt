@@ -281,7 +281,8 @@ fun FocusCard(
             modifier = if(showWeather) {
                 Modifier.sharedContainer(
                     key = dest.key,
-                    MaterialTheme.shapes.medium
+                    MaterialTheme.shapes.medium,
+                    cardNormalColor()
                 )
             } else Modifier,
         ) {

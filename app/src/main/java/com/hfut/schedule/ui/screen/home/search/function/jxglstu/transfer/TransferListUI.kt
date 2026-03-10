@@ -155,7 +155,8 @@ fun TransferScreen(
                     SharedContainer(
                         key = dest.key,
                         shape = CircleShape,
-                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         LiquidButton(
                             shape = RectangleShape,
@@ -214,7 +215,8 @@ fun TransferScreen(
                                 modifier = Modifier
                                     .sharedContainer(
                                         dest.key,
-                                        MaterialTheme.shapes.medium
+                                        MaterialTheme.shapes.medium,
+                                        cardNormalColor()
                                     )
                                     .clickable {
                                         navController.push(dest)
@@ -334,7 +336,7 @@ fun TransferDetailScreen(
                 modifier = Modifier.fillMaxSize(),
                 containerColor = Color.Transparent,
                 topBar = {
-                    HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = false)
+                    HazeBottomSheetTopBar("我的申请", isPaddingStatusBar = true)
                 },
             ) { innerPadding ->
                 Column(
@@ -476,12 +478,7 @@ private fun TransferUI(
 //            expandFully = false,
             showBottomSheet = showBottomSheet_select
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-            ) {
+            Column {
                 HazeBottomSheetTopBar("手机号 (教务要求)", isPaddingStatusBar = false)
 
                 val personInfo = getPersonInfo()

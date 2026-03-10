@@ -68,7 +68,6 @@ import com.xah.bsdiffs.model.Patch
 import com.xah.bsdiffs.util.BsdiffUpdate
 import com.xah.container.container.sharedContainer
 import com.xah.navigation.utils.LocalNavController
-
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import kotlinx.coroutines.launch
@@ -314,7 +313,7 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
     CustomCard(
         color = MaterialTheme.colorScheme.surface,
         shape = RectangleShape,
-        modifier = Modifier.let{ if(show) it.sharedContainer(VersionInfoDestination.key, MaterialTheme.shapes.medium) else it }
+        modifier = Modifier.let{ if(show) it.sharedContainer(VersionInfoDestination.key, MaterialTheme.shapes.medium,MaterialTheme.colorScheme.surface) else it }
     ) {
         TransplantListItem(
             headlineContent = { Text(text = stringResource(R.string.network_settings_refresh_login_title)) },

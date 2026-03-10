@@ -65,6 +65,7 @@ import com.hfut.schedule.ui.util.webview.isThemeDark
 import com.hfut.schedule.viewmodel.network.LoginViewModel
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.viewmodel.ui.UIViewModel
+import com.xah.common.ScreenCornerHelper
 import com.xah.container.utils.LocalSharedRegistry
 import com.xah.mirror.shader.scaleMirror
 import com.xah.navigation.anim.EffectLevel
@@ -348,6 +349,13 @@ fun MainHost(
                     val transitionLevels = remember { EffectLevel.entries }
                     val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
                     val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
+                    val corner by DataStoreManager.screenCorner.collectAsState(-1f)
+
+                    LaunchedEffect(corner) {
+                        if(corner >= 0f) {
+                            ScreenCornerHelper.corner = corner.dp
+                        }
+                    }
 
                     LaunchedEffect(transition) {
                         navController.transitionLevel = transitionLevels.find { it.levelNum == transition } ?: EffectLevel.NO_BLUR

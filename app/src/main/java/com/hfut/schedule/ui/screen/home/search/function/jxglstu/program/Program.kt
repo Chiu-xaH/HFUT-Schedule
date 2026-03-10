@@ -17,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
@@ -84,7 +85,8 @@ fun Program(
         trailingContent = {
             SharedContainer(
                 key = dest.key,
-                shape = CircleShape
+                shape = CircleShape,
+                containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor
             ) {
                 NoPadding {
                     FilledTonalIconButton(
@@ -150,7 +152,8 @@ fun ProgramScreen(
                                 .padding(APP_HORIZONTAL_DP)
                                 .sharedContainer(
                                     dest.key,
-                                    MaterialTheme.shapes.large
+                                    MaterialTheme.shapes.large,
+                                    MaterialTheme.colorScheme.surfaceVariant
                                 ),
                             onClick = {
                                 scope.launch {
@@ -185,7 +188,8 @@ fun ProgramScreen(
                         SharedContainer(
                             key = dest.key,
                             shape = CircleShape,
-                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP)
+                            modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
                         ) {
                             LiquidButton (
                                 shape = RectangleShape,

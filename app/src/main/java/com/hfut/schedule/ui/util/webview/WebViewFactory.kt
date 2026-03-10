@@ -289,8 +289,7 @@ fun WebViewTopBar(
                     containerColor = topColor ?: MaterialTheme.colorScheme.surface,
                     titleContentColor = topBarTitleColor,
                     scrolledContainerColor = Color.Transparent,
-
-                    ),
+                ),
                 actions = {
                     Row {
                         if (!visible) {

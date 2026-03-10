@@ -211,7 +211,8 @@ fun StuAppsScreen(
                             modifier = Modifier
                                 .sharedContainer(
                                     route,
-                                    MaterialTheme.shapes.small
+                                    MaterialTheme.shapes.small,
+                                    cardNormalColor()
                                 )
                                 .padding(horizontal = 3.dp, vertical = 3.dp)
                         ) {
@@ -240,7 +241,7 @@ fun StuAppsScreen(
                             SmallCard(
                                 color = cardNormalColor(),
                                 modifier = Modifier
-                                    .sharedContainer(route, MaterialTheme.shapes.small)
+                                    .sharedContainer(route, MaterialTheme.shapes.small,cardNormalColor())
                                     .padding(horizontal = 3.dp, vertical = 3.dp)
                             ) {
                                 TransplantListItem(
@@ -275,7 +276,7 @@ fun StuAppsScreen(
                                         SmallCard(
                                             color = cardNormalColor(),
                                             modifier = Modifier
-                                                .sharedContainer(route, MaterialTheme.shapes.small)
+                                                .sharedContainer(route, MaterialTheme.shapes.small,cardNormalColor())
                                                 .padding(horizontal = 3.dp, vertical = 3.dp)
                                                 .weight(.5f)
 
@@ -300,7 +301,7 @@ fun StuAppsScreen(
                                             SmallCard(
                                                 color = cardNormalColor(),
                                                 modifier = Modifier
-                                                    .sharedContainer(route, MaterialTheme.shapes.small)
+                                                    .sharedContainer(route, MaterialTheme.shapes.small,cardNormalColor())
                                                     .padding(horizontal = 3.dp, vertical = 3.dp)
                                                     .weight(.5f)
                                             ) {
@@ -339,7 +340,7 @@ fun StuAppsScreen(
                                     SmallCard(
                                         color = cardNormalColor(),
                                         modifier = Modifier
-                                            .sharedContainer(route, MaterialTheme.shapes.small)
+                                            .sharedContainer(route, MaterialTheme.shapes.small,cardNormalColor())
                                             .padding(horizontal = 3.dp, vertical = 3.dp)
                                             .weight(.5f)
                                     ) {
@@ -366,7 +367,7 @@ fun StuAppsScreen(
                                         SmallCard(
                                             color = cardNormalColor(),
                                             modifier = Modifier
-                                                .sharedContainer(route, MaterialTheme.shapes.small)
+                                                .sharedContainer(route, MaterialTheme.shapes.small,cardNormalColor())
                                                 .padding(horizontal = 3.dp, vertical = 3.dp)
                                                 .weight(.5f)
                                         ) {

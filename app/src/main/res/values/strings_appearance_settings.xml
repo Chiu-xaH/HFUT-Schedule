@@ -32,7 +32,7 @@
     <string name="appearance_settings_camera_render_real_time_title">Real-time rendering in camera.</string>
     <string name="appearance_settings_camera_render_real_time_description">Render the camera\'s image in real time on the UI layer to achieve a componentized blur effect. Once enabled, it will bring some rendering pressure.</string>
     <string name="appearance_settings_dynamic_effect_half_title">Dynamic effect</string>
-    <string name="appearance_settings_transition_level_title">Transition | Level%1$s (%2$s)</string>
+    <string name="appearance_settings_transition_level_title">Transition | Level%1$s</string>
     <string name="appearance_settings_transition_level_description">When the interface is opened or closed, the background is accompanied by special effects and shared with the container.\nTo balance performance and aesthetics, it is recommended to be Level2</string>
     <string name="appearance_settings_transition_bottom_bar_title">Transition in bottom bar</string>
     <string name="appearance_settings_transition_bottom_bar_description">When the bottom bar is switched, the transition is performed.\nTo balance performance and aesthetics, it is recommended to move Towards the center or Fade in and out.</string>
@@ -63,4 +63,8 @@
     <string name="appearance_settings_choice_bright_tinge">Tinge</string>
     <string name="appearance_settings_choice_bright_heavy">Heavy</string>
     <string name="appearance_settings_choice_bright_monochrome">Monochrome</string>
+    <string name="appearance_settings_transition_extension_title">Double extension</string>
+    <string name="appearance_settings_transition_extension_description">The inside of the animation process is filled up and down or left, and the bottom or the right side is filled when the end is closed.</string>
+    <string name="appearance_settings_transition_screen_corner_description">The screen rounded corner value for rounded corner interpolation during the animation process (automatically calculated in high versions of Android, no manual calibration required)</string>
+    <string name="appearance_settings_transition_screen_corner_title">Screen corner</string>
 </resources>

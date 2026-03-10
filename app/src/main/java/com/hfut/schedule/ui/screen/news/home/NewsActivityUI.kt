@@ -83,6 +83,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 
 import com.hfut.schedule.ui.style.special.topBarBlur
+import com.hfut.schedule.ui.util.nav2Composable
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
@@ -262,13 +263,13 @@ fun NewsScreen(
                 .backDropSource(backdrop)
                 .hazeSource(state = hazeState)
         ) {
-            composable(NewsBarItems.News.name) {
+            nav2Composable(NewsBarItems.News.name,navController) {
                 NewsScreenMini(innerPadding,vm,newsPagerState,input)
             }
-            composable(NewsBarItems.Academic.name) {
+            nav2Composable(NewsBarItems.Academic.name,navController) {
                 AcademicScreen(innerPadding,vm,newsPagerState)
             }
-            composable(NewsBarItems.School.name) {
+            nav2Composable(NewsBarItems.School.name,navController) {
                 SchoolsUI(innerPadding)
             }
         }
