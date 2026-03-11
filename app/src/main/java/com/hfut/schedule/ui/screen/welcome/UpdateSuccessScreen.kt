@@ -118,12 +118,12 @@ fun UpdateSuccessScreen() {
                 },
                 actions = {
                     NoPadding {
-//                        SharedContainer(
-//                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
-//                            key = VersionInfoDestination.key,
-//                            shape = CircleShape,
-//                            containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor,
-//                        ) {
+                        SharedContainer(
+                            modifier = Modifier.padding(end = APP_HORIZONTAL_DP),
+                            key = VersionInfoDestination.key,
+                            shape = CircleShape,
+                            containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor,
+                        ) {
                             FilledTonalIconButton (
                                 shape = RectangleShape,
                                 onClick = {
@@ -136,7 +136,7 @@ fun UpdateSuccessScreen() {
                                     tint = MaterialTheme.colorScheme.primary,
                                 )
                             }
-//                        }
+                        }
                     }
                 },
             )

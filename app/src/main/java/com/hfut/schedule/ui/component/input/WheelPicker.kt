@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.xah.uicommon.util.safeDiv
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 //滚轮 组件
@@ -64,15 +65,22 @@ fun <T> WheelPicker(
                 val currIndex = (index - startIndex).floorMod(size)
                 val item = layoutInfo.visibleItemsInfo.find { it.index == index }
                 var currentsAdjust = 1f
-                var itemCenterY = 0   // 提前声明，保证 graphicsLayer 可见
+                var itemCenterY = 0f   // 提前声明，保证 graphicsLayer 可见
 
                 if (item != null) {
-                    itemCenterY = item.offset + item.size / 2
-                    currentsAdjust = 0.75f + 0.25f * if (itemCenterY < pickerCenterLinePx) {
-                        itemCenterY / pickerCenterLinePx
-                    } else {
-                        1 - (itemCenterY - pickerCenterLinePx) safeDiv pickerCenterLinePx
-                    }
+//                    itemCenterY = item.offset + item.size / 2
+//                    currentsAdjust = 0.75f + 0.25f * if (itemCenterY < pickerCenterLinePx) {
+//                        itemCenterY / pickerCenterLinePx
+//                    } else {
+//                        1 - (itemCenterY - pickerCenterLinePx) safeDiv pickerCenterLinePx
+//                    }
+                    val viewportStart = layoutInfo.viewportStartOffset
+                    itemCenterY = item.offset - viewportStart + item.size / 2f
+
+                    val distance = abs(itemCenterY - pickerCenterLinePx)
+                    val fraction = 1f - (distance / pickerCenterLinePx).coerceIn(0f, 1f)
+
+                    currentsAdjust = 0.75f + 0.25f * fraction
                     if (!listState.isScrollInProgress
                         && item.offset < pickerCenterLinePx
                         && item.offset + item.size > pickerCenterLinePx
@@ -80,7 +88,8 @@ fun <T> WheelPicker(
                         onSelect(currIndex, data[currIndex])
                     }
                 }
-                val selected = itemCenterY == pickerCenterLinePx.toInt()
+                val selected = abs(itemCenterY - pickerCenterLinePx) < itemHeightPx / 2
+//                val selected = itemCenterY == pickerCenterLinePx.toInt()
                 val colorAlpha = if(selected) 1f else 0f
 
                 Box(

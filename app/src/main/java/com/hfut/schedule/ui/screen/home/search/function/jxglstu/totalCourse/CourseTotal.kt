@@ -66,9 +66,7 @@ fun CourseTotal(
 @Composable
 fun TotalCourseScreen(
     vm : NetWorkViewModel,
-    origin : String,
     ifSaved : Boolean,
-//    navController : NavHostController,
 ) {
     var sortType by remember { mutableStateOf(true) }
 

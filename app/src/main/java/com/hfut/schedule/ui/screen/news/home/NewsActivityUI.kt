@@ -121,25 +121,18 @@ fun NewsScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
 
     val navController = rememberNavController()
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         NewsBarItems.News.name -> NewsBarItems.News
         NewsBarItems.Academic.name -> NewsBarItems.Academic
         NewsBarItems.School.name -> NewsBarItems.School
         else -> NewsBarItems.News
     }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val newsTitles = listOf("总","宣城校区")
     val newsPagerState = rememberPagerState(pageCount = { newsTitles.size })
     var showBottomSheet by remember { mutableStateOf(false) }
-    if (showBottomSheet ) {
+    if (showBottomSheet) {
         val cookies by produceState<String?>(initialValue = null) {
             value = getWebVpnCookie(vm)
         }
@@ -253,12 +246,14 @@ fun NewsScreen(
             HazeBottomBar(hazeState,items,navController)
         }
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(navController = navController,
             startDestination = NewsBarItems.News.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .backDropSource(backdrop)
                 .hazeSource(state = hazeState)

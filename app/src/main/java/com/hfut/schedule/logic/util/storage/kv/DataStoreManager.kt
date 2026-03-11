@@ -25,7 +25,6 @@ import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.hfut.schedule.ui.util.state.GlobalUIStateHolder
-import com.xah.common.ScreenCornerHelper
 import com.xah.navigation.anim.EffectLevel
 import com.xah.uicommon.util.language.BaseChoice
 import com.xah.uicommon.util.language.UiText
@@ -98,7 +97,6 @@ object DataStoreManager : IDataStore {
     private val SUPABASE_REFRESH_TOKEN = stringPreferencesKey("supabase_refresh_token")
     private val SUPABASE_FILTER_EVENT = booleanPreferencesKey("supabase_filter_event")
     private val SUPABASE_AUTO_CHECK = booleanPreferencesKey("supabase_auto_check")
-    private val FOCUS_SHOW_SHOWER = booleanPreferencesKey("focus_show_shower")
     private val FOCUS_SHOW_WEATHER_WARN = booleanPreferencesKey("focus_show_weather_warn")
     private val CARD_PASSWORD = stringPreferencesKey("card_password")
     private val USE_DEFAULT_CARD_PASSWORD = booleanPreferencesKey("use_default_card_password")
@@ -128,6 +126,7 @@ object DataStoreManager : IDataStore {
     private val LIQUID_GLASS = booleanPreferencesKey("liquid_glass")
     private val CAMERA_DYNAMIC_RECORD = booleanPreferencesKey("camera_dynamic_record_2")
     private val USE_DOUBLE_EXTENSION = booleanPreferencesKey("use_double_extension")
+    private val NAV_SPLASH_SCREEN = booleanPreferencesKey("nav_splash_screen")
     private val SHOW_OUT_OF_DATE_EVENT = booleanPreferencesKey("show_out_of_date_event")
     private val CALENDAR_SHOW_TEACHER = intPreferencesKey("calendar_show_teacher_2")
     private val CALENDAR_SQUARE_HEIGHT = floatPreferencesKey("calendar_square_height")
@@ -148,6 +147,7 @@ object DataStoreManager : IDataStore {
 
     suspend fun saveAnimationType(value: Int) = saveValue(ANIMATION_TYPE,value)
     suspend fun savePureDark(value: Boolean) = saveValue(PURE_DARK,value)
+    suspend fun saveNavSplashScreen(value: Boolean) = saveValue(NAV_SPLASH_SCREEN,value)
     suspend fun saveColorMode(mode: ColorMode) = saveValue(COLOR_MODE,mode.code)
     suspend fun saveMotionBlur(value: Boolean) = saveValue(MOTION_BLUR,value)
     suspend fun saveHazeBlur(value: Boolean) = saveValue(HAZE_BLUR, value)
@@ -219,12 +219,11 @@ object DataStoreManager : IDataStore {
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, true)
-    val transitionLevel = getFlow(TRANSITION, EffectLevel.NO_BLUR.levelNum)
+    val transitionLevel = getFlow(TRANSITION, EffectLevel.NONE.levelNum)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,false)
     val enableSupabaseAutoCheck = getFlow(SUPABASE_AUTO_CHECK,true)
-    val enableShowFocusShower = getFlow(FOCUS_SHOW_SHOWER,true)
     val enableShowFocusWeatherWarn = getFlow(FOCUS_SHOW_WEATHER_WARN,false)
     val customCardPassword = getFlow(CARD_PASSWORD,EMPTY_STRING)
     val enableUseDefaultCardPassword = getFlow(USE_DEFAULT_CARD_PASSWORD,true)
@@ -232,6 +231,7 @@ object DataStoreManager : IDataStore {
     val defaultCalendarAccountId = getFlow(DEFAULT_CALENDAR_ACCOUNT,1)
     val webVpnCookies = getFlow(WEBVPN_COOKIE,EMPTY_STRING)
     val enableAutoTerm = getFlow(AUTO_TERM,true)
+    val enableNavSplashScreen = getFlow(NAV_SPLASH_SCREEN,false)
     val enablePredictive = getFlow(PREDICTIVE, AppVersion.CAN_PREDICTIVE)
     val enableForceWebViewDark = getFlow(WEB_VIEW_DARK,true)
     val enableControlCenterGesture = getFlow(CONTROL_CENTER,false)

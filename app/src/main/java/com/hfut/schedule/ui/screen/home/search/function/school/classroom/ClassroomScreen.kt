@@ -169,19 +169,11 @@ fun ClassroomScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
     val scope = rememberCoroutineScope()
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(navController.currentRouteWithoutArgs()) {
         ClassroomBarItems.EMPTY_CLASSROOM.name -> ClassroomBarItems.EMPTY_CLASSROOM
         ClassroomBarItems.CLASSROOM_LESSONS.name -> ClassroomBarItems.CLASSROOM_LESSONS
         else -> ClassroomBarItems.EMPTY_CLASSROOM
     }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backDrop = rememberLayerBackdrop()
 
@@ -352,13 +344,9 @@ fun ClassroomScreen(
             HazeBottomBar(hazeState, items,navController)
         }
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(
             navController = navController,
             startDestination = ClassroomBarItems.EMPTY_CLASSROOM.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
             modifier = Modifier
                 .backDropSource(backDrop)
                 .hazeSource(state = hazeState)

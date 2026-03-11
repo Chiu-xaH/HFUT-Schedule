@@ -62,20 +62,6 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
     val context = LocalActivity.current
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-    val targetPage = when(navController.currentRouteWithoutArgs()) {
-        ShowerBarItems.HOME.name -> ShowerBarItems.HOME
-        ShowerBarItems.BILLS.name -> ShowerBarItems.BILLS
-        ShowerBarItems.FUNCTION.name -> ShowerBarItems.FUNCTION
-        else -> ShowerBarItems.HOME
-    }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
@@ -101,12 +87,14 @@ fun ShowerGuaGua(vm: GuaGuaViewModel, netVm : NetWorkViewModel, navHostControlle
             HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(navController = navController,
             startDestination = ShowerBarItems.HOME.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .hazeSource(
                     state = hazeState

@@ -19,6 +19,6 @@ data class TermCoursesDestination(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        TotalCourseScreen(vm,origin,ifSaved)
+        TotalCourseScreen(vm,ifSaved)
     }
 }

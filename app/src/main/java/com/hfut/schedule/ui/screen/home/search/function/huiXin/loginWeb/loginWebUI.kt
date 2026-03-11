@@ -363,14 +363,6 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
                 }
             }
             Spacer(Modifier.height(APP_HORIZONTAL_DP/2- CARD_NORMAL_DP*(if(textLogin == "已登录")2 else 1)))
-            CardListItem(
-                headlineContent = {
-                    Text("一键校园网登录已支持磁贴，可在系统控制中心添加")
-                },
-                leadingContent = {
-                    Icon(painterResource(R.drawable.keyboard_command_key),null)
-                }
-            )
         }
     }
 //////////////////////////////布局区///////////////////////////////////

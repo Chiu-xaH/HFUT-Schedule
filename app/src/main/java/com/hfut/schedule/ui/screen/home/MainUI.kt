@@ -272,8 +272,6 @@ fun MainScreen(
 
     var showBottomSheet_multi by remember { mutableStateOf(false) }
 
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-
     var showUiSettings by remember { mutableStateOf(false) }
     if (showUiSettings) {
         Dialog(
@@ -331,12 +329,6 @@ fun MainScreen(
         // 等待加载完毕可切换标签
         if(isLogin) {
             if(!GlobalUIStateHolder.webVpn) ifSaved = false
-        }
-    }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
         }
     }
 
@@ -807,13 +799,15 @@ fun MainScreen(
             }
         },
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex, targetPage.page)
-
         NavHost(
             navController = navController,
             startDestination = first.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
             nav2Composable(COURSES.name,navController) {

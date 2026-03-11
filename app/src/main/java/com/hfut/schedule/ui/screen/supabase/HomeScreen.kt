@@ -88,27 +88,10 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
         else -> SupabaseScreen.HOME
     }
     val titles = listOf("日程","网址导航")
-
     val pagerState = rememberPagerState(pageCount = { titles.size })
-
-    val isAddUIExpanded by remember { derivedStateOf { vmUI.isAddUIExpandedSupabase } }
-    val isAddUIExpandedS by remember { derivedStateOf { vmUI.isAddUIExpanded } }
-
-
-
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(bottomBarItems) {
-            currentPage = bottomBarItems.page
-        }
-    }
-
     val context = LocalActivity.current
-
     var sortType by remember { mutableStateOf(SortType.TIME_LINE) }
     var sortReversed by remember { mutableStateOf(false) }
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Box(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -178,12 +161,14 @@ fun SupabaseHome(vm : NetWorkViewModel,navHostController: NavHostController,vmUI
             }
         ) { innerPadding ->
             innerPaddingValues = innerPadding
-            val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
-
             NavHost(navController = navController,
                 startDestination = CardBarItems.HOME.name,
-                enterTransition = { animation.enter },
-                exitTransition = { animation.exit },
+                enterTransition = {
+                    AppAnimationManager.centerAnimation.enter
+                },
+                exitTransition = {
+                    AppAnimationManager.centerAnimation.exit
+                },
                 modifier = Modifier.hazeSource(state = hazeState)
             ) {
                 composable(SupabaseScreen.HOME.name) {

@@ -52,22 +52,9 @@ fun Fix(vm : NetWorkViewModel) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)
     val hazeState = rememberHazeState(blurEnabled = blur)
     val navController = rememberNavController()
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-    val targetPage = when(navController.currentRouteWithoutArgs()) {
-        FixBarItems.Fix.name -> FixBarItems.Fix
-        FixBarItems.About.name -> FixBarItems.About
-        else -> FixBarItems.Fix
-    }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
-
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
     val context = LocalActivity.current
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -93,12 +80,14 @@ fun Fix(vm : NetWorkViewModel) {
             HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(navController = navController,
             startDestination = FixBarItems.Fix.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
             composable(FixBarItems.Fix.name) {

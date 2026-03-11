@@ -32,8 +32,8 @@
     <string name="appearance_settings_camera_render_real_time_title">相机实时渲染</string>
     <string name="appearance_settings_camera_render_real_time_description">将摄像头的画面实时渲染在UI图层上，以实现支持组件化的模糊效果，开启后将带来一些渲染压力</string>
     <string name="appearance_settings_dynamic_effect_half_title">动效</string>
-    <string name="appearance_settings_transition_level_title">特效等级 | Level%1$s</string>
-    <string name="appearance_settings_transition_level_description">界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level2</string>
+    <string name="appearance_settings_transition_level_title">特效等级 | Level %1$s</string>
+    <string name="appearance_settings_transition_level_description">界面打开关闭时背景伴随特效与容器共享\n平衡性能与美观,推荐为Level 3</string>
     <string name="appearance_settings_transition_bottom_bar_title">底栏转场动画</string>
     <string name="appearance_settings_transition_bottom_bar_description">底栏切换时进行转场的动画\n平衡性能与美观,推荐为向中心运动或淡入淡出</string>
     <string name="appearance_settings_calendar_half_title">课程表</string>
@@ -63,8 +63,10 @@
     <string name="appearance_settings_choice_bright_tinge">淡雅</string>
     <string name="appearance_settings_choice_bright_heavy">艳丽</string>
     <string name="appearance_settings_choice_bright_monochrome">黑白</string>
-    <string name="appearance_settings_transition_extension_title">内容双向填充</string>
+    <string name="appearance_settings_transition_extension_title">双向填充</string>
     <string name="appearance_settings_transition_extension_description">动画过程中对内容的填充为上下或左右，关闭时只填充底部或右侧</string>
-    <string name="appearance_settings_transition_screen_corner_description">动画过程中进行圆角插值的屏幕圆角值(高版本Android自动计算，无需手动校准)</string>
+    <string name="appearance_settings_transition_screen_corner_description">动画过程中进行圆角插值的屏幕圆角值(Android 13+自动计算，无需手动校准)</string>
     <string name="appearance_settings_transition_screen_corner_title">屏幕圆角校准</string>
+    <string name="appearance_settings_transition_splash_description">在动画过程中使用虚假的遮罩代替渲染页面，可提高动画的流畅度</string>
+    <string name="appearance_settings_transition_splash_title">懒加载</string>
 </resources>

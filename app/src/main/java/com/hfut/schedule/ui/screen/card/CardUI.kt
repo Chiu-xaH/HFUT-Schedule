@@ -135,13 +135,7 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
         ) { SearchBillsUI(vm,hazeState) }
     }
 
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
-// 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(bottomBarItems) {
-            currentPage = bottomBarItems.page
-        }
-    }
+
     var sorted by remember { mutableStateOf(true) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val backdrop = rememberLayerBackdrop()
@@ -198,12 +192,14 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             HazeBottomBar(hazeState,items,navController)
         }
     ) {innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,bottomBarItems.page)
-
         NavHost(navController = navController,
             startDestination = CardBarItems.HOME.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .backDropSource(backdrop)
                 .hazeSource(

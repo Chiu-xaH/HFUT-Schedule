@@ -72,7 +72,7 @@ private fun FakeBackButton(
     content : @Composable () -> Unit,
 ) {
     val navController = LocalNavController.current
-    val drawerState = LocalAppControlCenter.current
+//    val drawerState = LocalAppControlCenter.current
     val enableControlCenter by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
     val queue = navController.stack.reversed()
@@ -180,13 +180,13 @@ private fun FakeBackButton(
                 // TODO 预留唤出启动台
                 onDoubleClick = null,
                 onLongClick = {
-                    if(!enableControlCenter) {
+//                    if(!enableControlCenter) {
                         displayDialog = true
-                    } else {
-                        scope.launch {
-                            drawerState.animationOpen()
-                        }
-                    }
+//                    } else {
+//                        scope.launch {
+//                            drawerState.animationOpen()
+//                        }
+//                    }
                 }
             )
     ) {

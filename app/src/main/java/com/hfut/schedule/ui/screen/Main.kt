@@ -52,6 +52,7 @@ import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.button.LocalAppControlCenter
 import com.hfut.schedule.ui.component.screen.Party
 import com.hfut.schedule.ui.destination.AgreementDestination
+import com.hfut.schedule.ui.destination.ExceptionDestination
 import com.hfut.schedule.ui.destination.HomeDestination
 import com.hfut.schedule.ui.destination.ScanQrCodeDestination
 import com.hfut.schedule.ui.destination.UpdateSuccessfullyDestination
@@ -134,7 +135,13 @@ private fun firstPage(
 ) : NavDestination {
     return if(prefs.getBoolean("canUse",false)) {
         if(startRoute != null) {
-            ScanQrCodeDestination
+            try {
+                val clazz = Class.forName("com.hfut.schedule.ui.destination.$startRoute")
+                clazz.getField("INSTANCE").get(null) as NavDestination
+            } catch (e : Exception) {
+                LogUtil.error(e)
+                ExceptionDestination(e)
+            }
         } else {
             if(!haveImportantUpdate()) {
                 HomeDestination
@@ -190,88 +197,88 @@ fun MainHost(
     }
 
     val navigationController = rememberNavController(firstPage(startRoute))
-    val configuration = LocalConfiguration.current
-    var screenWidth by remember { mutableIntStateOf(0) }
-    val drawerState =  rememberDrawerState(DrawerValue.Closed)
-    var maxOffset by rememberSaveable { mutableFloatStateOf(prefs.getFloat(OFFSET_KEY,0f)) }
-    val enableControlCenterGesture by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
+//    val configuration = LocalConfiguration.current
+//    var screenWidth by remember { mutableIntStateOf(0) }
+//    val drawerState =  rememberDrawerState(DrawerValue.Closed)
+//    var maxOffset by rememberSaveable { mutableFloatStateOf(prefs.getFloat(OFFSET_KEY,0f)) }
+//    val enableControlCenterGesture by DataStoreManager.enableControlCenterGesture.collectAsState(initial = false)
     val scope = rememberCoroutineScope()
-    val currentRoute = navigationController.current()?.destination
-    val disabledGesture = currentRoute is WebViewDestination || currentRoute is AgreementDestination
+//    val currentRoute = navigationController.current()?.destination
+//    val disabledGesture = currentRoute is WebViewDestination || currentRoute is AgreementDestination
 
-    val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
-    val disabledBlur = if(enableCameraDynamicRecord) {
-        false
-    } else {
-        currentRoute is ScanQrCodeDestination
-    }
+//    val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
+//    val disabledBlur = if(enableCameraDynamicRecord) {
+//        false
+//    } else {
+//        currentRoute is ScanQrCodeDestination
+//    }
 
-    val enableGesture = enableControlCenterGesture && !disabledGesture
-    var containerColor by remember { mutableStateOf<Color?>(null) }
-    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+//    val enableGesture = enableControlCenterGesture && !disabledGesture
+//    var containerColor by remember { mutableStateOf<Color?>(null) }
+//    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
 
-    LaunchedEffect(configuration,enableControlCenterGesture) {
-        if(enableControlCenterGesture) {
-            snapshotFlow { configuration.screenWidthDp }
-                .collect {
-                    screenWidth = it
+//    LaunchedEffect(configuration,enableControlCenterGesture) {
+//        if(enableControlCenterGesture) {
+//            snapshotFlow { configuration.screenWidthDp }
+//                .collect {
+//                    screenWidth = it
                     // 你可以在这里更新 maxOffset
-                    maxOffset = getDrawOpenOffset(drawerState)
-                }
-        }
-    }
-    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
-    val blurDp by remember {
-        derivedStateOf {
-            if (maxOffset == 0f) {
-                0.dp // 未校准前不模糊
-            } else {
-                val fraction = 1 - (drawerState.currentOffset safeDiv maxOffset).coerceIn(0f, 1f)
-                (fraction * 42.5).dp//42.5 0.85f 0.4f
-            }
-        }
-    }
-    val scale by remember {
-        derivedStateOf {
-            if (maxOffset == 0f) {
-                1f
-            } else {
-                val fraction =  (drawerState.currentOffset safeDiv maxOffset).coerceIn(0f, 1f)
-                (0.85f) * (1 - fraction) + fraction
-            }
-        }
-    }
+//                    maxOffset = getDrawOpenOffset(drawerState)
+//                }
+//        }
+//    }
+//    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+//    val blurDp by remember {
+//        derivedStateOf {
+//            if (maxOffset == 0f) {
+//                0.dp // 未校准前不模糊
+//            } else {
+//                val fraction = 1 - (drawerState.currentOffset safeDiv maxOffset).coerceIn(0f, 1f)
+//                (fraction * 42.5).dp//42.5 0.85f 0.4f
+//            }
+//        }
+//    }
+//    val scale by remember {
+//        derivedStateOf {
+//            if (maxOffset == 0f) {
+//                1f
+//            } else {
+//                val fraction =  (drawerState.currentOffset safeDiv maxOffset).coerceIn(0f, 1f)
+//                (0.85f) * (1 - fraction) + fraction
+//            }
+//        }
+//    }
 
     // 返回拦截
-    if (enableControlCenterGesture) {
-        val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-        val callback = remember {
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    scope.launch { drawerState.animationClose() }
-                }
-            }
-        }
-        DisposableEffect(drawerState.currentOffset) {
-            if(drawerState.currentOffset != maxOffset) {
-                dispatcher?.addCallback(callback)
-            }
-            onDispose {
-                callback.remove()
-            }
-        }
-    }
-    val backgroundColor = if(isThemeDark()) {
-        Color.White.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
-    } else {
-        Color.Black.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
-    }.let {
-        if(motionBlur && !disabledBlur) {
-            it
-        } else {
-            it.compositeOver(MaterialTheme.colorScheme.surface)
-        }
-    }
+//    if (enableControlCenterGesture) {
+//        val dispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+//        val callback = remember {
+//            object : OnBackPressedCallback(true) {
+//                override fun handleOnBackPressed() {
+//                    scope.launch { drawerState.animationClose() }
+//                }
+//            }
+//        }
+//        DisposableEffect(drawerState.currentOffset) {
+//            if(drawerState.currentOffset != maxOffset) {
+//                dispatcher?.addCallback(callback)
+//            }
+//            onDispose {
+//                callback.remove()
+//            }
+//        }
+//    }
+//    val backgroundColor = if(isThemeDark()) {
+//        Color.White.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+//    } else {
+//        Color.Black.copy(MyApplication.CONTROL_CENTER_BACKGROUND_MASK_ALPHA)
+//    }.let {
+//        if(motionBlur && !disabledBlur) {
+//            it
+//        } else {
+//            it.compositeOver(MaterialTheme.colorScheme.surface)
+//        }
+//    }
 
     val dependencies = rememberNavDependencies(networkVm,uiVm,login,login,celebration,isSuccessActivity) {
         put(networkVm)
@@ -282,26 +289,26 @@ fun MainHost(
         put(isSuccessActivity,"isSuccessActivity")
     }
 
-    ModalNavigationDrawer (
-        scrimColor = backgroundColor,
-        drawerState = drawerState,
-        gesturesEnabled = enableGesture,
-        drawerContent = {
-            ControlCenterScreen(navigationController) {
-                scope.launch {
-                    drawerState.animationClose()
-                }
-            }
-        },
-    ) {
+//    ModalNavigationDrawer (
+//        scrimColor = backgroundColor,
+//        drawerState = drawerState,
+//        gesturesEnabled = enableGesture,
+//        drawerContent = {
+//            ControlCenterScreen(navigationController) {
+//                scope.launch {
+//                    drawerState.animationClose()
+//                }
+//            }
+//        },
+//    ) {
         CompositionLocalProvider(
-            LocalAppControlCenter provides drawerState
+//            LocalAppControlCenter provides drawerState
         ) {
             Box(modifier = Modifier.fillMaxSize()
-                .let {
-                    if(enableGesture) it.limitDrawerSwipeArea(allowedArea = with(LocalDensity.current) { Rect(0f,0f, screenWidth.dp.toPx(),150.dp.toPx()) })
-                    else it
-                }
+//                .let {
+//                    if(enableGesture) it.limitDrawerSwipeArea(allowedArea = with(LocalDensity.current) { Rect(0f,0f, screenWidth.dp.toPx(),150.dp.toPx()) })
+//                    else it
+//                }
             ) {
                 Party(show = celebration.use && celebration.time != 0L, timeSecond = celebration.time*500)
                 // 磁钉体系
@@ -311,45 +318,48 @@ fun MainHost(
 //                    startDestination = firstPage(startRoute),
                     modifier = Modifier
                         // 启动台背景
-                        .background(
-                            if(enableLiquidGlass) {
-                                MaterialTheme.colorScheme.surface
-                            } else {
-                                if(disabledGesture) {
+//                        .background(
+//                            if(enableLiquidGlass) {
+//                                MaterialTheme.colorScheme.surface
+//                            } else {
+//                                if(disabledGesture) {
                                     // 网页
-                                    containerColor ?: MaterialTheme.colorScheme.surface
-                                } else {
-                                    MaterialTheme.colorScheme.surface
-                                }
-                            }
-                        )
+//                                    containerColor ?: MaterialTheme.colorScheme.surface
+//                                } else {
+//                                    MaterialTheme.colorScheme.surface
+//                                }
+//                            }
+//                        )
                         // 启动台模糊
-                        .let {
-                            if(motionBlur && enableControlCenterGesture && !disabledBlur)
-                                it.blur(blurDp)
-                            else it
-                        }
+//                        .let {
+//                            if(motionBlur && enableControlCenterGesture && !disabledBlur)
+//                                it.blur(blurDp)
+//                            else it
+//                        }
                         // 启动台缩放
-                        .let {
+//                        .let {
                             // 转场动画时必须关闭 否则打开动画会闪烁
-                            if(enableLiquidGlass) {
-                                it.scaleMirror(scale)
-                            } else {
-                                it.let {
-                                    if(enableControlCenterGesture) {
-                                        it.scale(scale)
-                                    } else
-                                        it
-                                }
-                            }
-                        }
+//                            if(enableLiquidGlass) {
+//                                it.scaleMirror(scale)
+//                            } else {
+//                                it.let {
+//                                    if(enableControlCenterGesture) {
+//                                        it.scale(scale)
+//                                    } else
+//                                        it
+//                                }
+//                            }
+//                        }
                 ) {
                     val navController = LocalNavController.current
                     val registry = LocalSharedRegistry.current
                     val transitionLevels = remember { EffectLevel.entries }
-                    val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NO_BLUR.levelNum)
+                    val transition by DataStoreManager.transitionLevel.collectAsState(initial = EffectLevel.NONE.levelNum)
                     val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
                     val corner by DataStoreManager.screenCorner.collectAsState(-1f)
+                    val motionBlur by DataStoreManager.enableMotionBlur.collectAsState(initial = AppVersion.CAN_MOTION_BLUR)
+                    val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
+                    val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
 
                     LaunchedEffect(corner) {
                         if(corner >= 0f) {
@@ -374,9 +384,13 @@ fun MainHost(
                         navController.enableBlur = motionBlur
                     }
 
+                    LaunchedEffect(enableNavSplashScreen) {
+                        navController.enableSplashScreen = enableNavSplashScreen
+                    }
+
                     DefaultBackHandler()
                 }
             }
         }
-    }
+//    }
 }

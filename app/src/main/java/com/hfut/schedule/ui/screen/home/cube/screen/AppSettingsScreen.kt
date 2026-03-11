@@ -140,49 +140,53 @@ fun AppSettingsScreen(
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.app_settings_predictive_back_gesture_title)) },
                     supportingContent = {
-                        if(AppVersion.CAN_PREDICTIVE) {
-                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_supported))
-                        } else {
-                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_unsupported))
-                        }
+                        Text("整改升级中，敬请期待")
+
+//                        if(AppVersion.CAN_PREDICTIVE) {
+//                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_supported))
+//                        } else {
+//                            Text(text = stringResource(R.string.app_settings_predictive_back_gesture_description_unsupported))
+//                        }
                     },
                     leadingContent = { Icon(painterResource(R.drawable.swipe_left), contentDescription = "Localized description",) },
                     trailingContent = {
-                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
+//                        Switch(enabled = AppVersion.CAN_PREDICTIVE,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
+                        Switch(enabled = false,checked = enablePredictive, onCheckedChange = { scope.launch { DataStoreManager.savePredict(!enablePredictive) }})
                     },
                     modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
+//                        scope.launch { DataStoreManager.savePredict(!enablePredictive) }
                     }
                 )
                 PaddingHorizontalDivider()
                 TransplantListItem(
                     headlineContent = { Text(stringResource(R.string.app_settings_control_center_title)) },
                     supportingContent = {
-                        Text(stringResource(R.string.app_settings_control_center_description))
+                        Text("整改升级中，敬请期待")
+//                        Text(stringResource(R.string.app_settings_control_center_description))
                     },
                     leadingContent = {
                         Icon(painterResource(R.drawable.flash_on),null)
                     },
                     trailingContent = {
-                        Switch(checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
+                        Switch(enabled = false, checked = controlCenter, onCheckedChange = { scope.launch { DataStoreManager.saveControlCenter(!controlCenter) } })
                     },
                     modifier = Modifier.clickable {
-                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
+//                        scope.launch { DataStoreManager.saveControlCenter(!controlCenter) }
                     }
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(stringResource(R.string.app_settings_study_interaction_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.app_settings_study_interaction_description))
-                    },
-                    leadingContent = {
-                        Icon(painterResource(R.drawable.gesture),null)
-                    },
-                    modifier = Modifier.clickable {
-                        navController.navigate(Screen.GestureStudyScreen.route)
-                    }
-                )
+//                PaddingHorizontalDivider()
+//                TransplantListItem(
+//                    headlineContent = { Text(stringResource(R.string.app_settings_study_interaction_title)) },
+//                    supportingContent = {
+//                        Text(stringResource(R.string.app_settings_study_interaction_description))
+//                    },
+//                    leadingContent = {
+//                        Icon(painterResource(R.drawable.gesture),null)
+//                    },
+//                    modifier = Modifier.clickable {
+//                        navController.navigate(Screen.GestureStudyScreen.route)
+//                    }
+//                )
             }
         }
         DividerTextExpandedWith(stringResource(R.string.app_settings_calendar_half_title)) {

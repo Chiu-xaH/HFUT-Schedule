@@ -73,7 +73,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.layer.GraphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -86,8 +85,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
@@ -105,8 +102,6 @@ import com.hfut.schedule.ui.component.media.SimpleVideo
 import com.hfut.schedule.ui.component.media.checkOrDownloadVideo
 import com.hfut.schedule.ui.component.text.DividerTextExpandedWith
 import com.hfut.schedule.ui.destination.CornerSettingsDestination
-import com.hfut.schedule.ui.screen.home.cube.sub.AnimationSetting
-import com.hfut.schedule.ui.screen.home.cube.sub.CornerSettingsScreen
 import com.hfut.schedule.ui.util.color.ColorMode
 import com.hfut.schedule.ui.util.color.ColorStyle
 import com.hfut.schedule.ui.util.color.extractColor
@@ -116,13 +111,11 @@ import com.hfut.schedule.ui.util.color.longToHue
 import com.hfut.schedule.ui.util.color.parseColor
 import com.hfut.schedule.ui.util.navigation.AppAnimationManager
 import com.xah.container.container.pixelExtension
-import com.xah.container.model.ExtensionDirection
 import com.xah.mirror.shader.scaleMirror
 import com.xah.mirror.style.mask
 import com.xah.navigation.anim.EffectLevel
 import com.xah.navigation.controller.NavigationController
 import com.xah.navigation.utils.LocalNavController
-
 import com.xah.uicommon.component.slider.CustomSlider
 import com.xah.uicommon.component.status.CustomSingleChoiceRow
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -231,6 +224,7 @@ fun SharedAppearanceSettingsScreen(
         val enableLiquidGlass by DataStoreManager.enableLiquidGlass.collectAsState(initial = AppVersion.CAN_SHADER)
         val enableCameraDynamicRecord by DataStoreManager.enableCameraDynamicRecord.collectAsState(initial = false)
         val useDoubleExtension by DataStoreManager.useDoubleExtension.collectAsState(initial = false)
+        val enableNavSplashScreen by DataStoreManager.enableNavSplashScreen.collectAsState(initial = false)
 
         val scope = rememberCoroutineScope()
         val context = LocalContext.current
@@ -609,7 +603,7 @@ fun SharedAppearanceSettingsScreen(
                         Column {
                             Text(text = stringResource(
                                 R.string.appearance_settings_transition_level_title,
-                                transition,
+                                transition+1,
                             ))
                         }
                     },
@@ -629,23 +623,39 @@ fun SharedAppearanceSettingsScreen(
                     valueRange = 0f..(transitionLevels.size-1).toFloat(),
                 )
                 PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_extension_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.appearance_settings_transition_extension_description))
-                    },
-                    trailingContent = {
-                        Switch(checked = useDoubleExtension, onCheckedChange = {
-                            scope.launch {
-                                DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
-                            }
-                        })
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.arrow_range), contentDescription = "Localized description") },
-                )
-                // TODO 动画预览
-                ExtensionSample()
-                PaddingHorizontalDivider()
+                if(transition != EffectLevel.NONE.levelNum) {
+                    TransplantListItem(
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_splash_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.appearance_settings_transition_splash_description))
+                        },
+                        trailingContent = {
+                            Switch(checked = enableNavSplashScreen, onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveNavSplashScreen(!enableNavSplashScreen)
+                                }
+                            })
+                        },
+                        leadingContent = { Icon(painterResource(R.drawable.resize), contentDescription = "Localized description") },
+                    )
+                    PaddingHorizontalDivider()
+                    TransplantListItem(
+                        headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_extension_title)) },
+                        supportingContent = {
+                            Text(stringResource(R.string.appearance_settings_transition_extension_description))
+                        },
+                        trailingContent = {
+                            Switch(checked = useDoubleExtension, onCheckedChange = {
+                                scope.launch {
+                                    DataStoreManager.saveUseDoubleExtension(!useDoubleExtension)
+                                }
+                            })
+                        },
+                        leadingContent = { Icon(painterResource(R.drawable.responsive_layout), contentDescription = "Localized description") },
+                    )
+                    ExtensionSample()
+                    PaddingHorizontalDivider()
+                }
                 TransplantListItem(
                     headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_screen_corner_title)) },
                     supportingContent = {
@@ -656,16 +666,16 @@ fun SharedAppearanceSettingsScreen(
                     },
                     leadingContent = { Icon(painterResource(CornerSettingsDestination.icon), contentDescription = "Localized description") },
                 )
-                PaddingHorizontalDivider()
-                TransplantListItem(
-                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_bottom_bar_title)) },
-                    supportingContent = {
-                        Text(stringResource(R.string.appearance_settings_transition_bottom_bar_description))
-                    },
-                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
-                )
-                AnimationSetting()
-                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
+//                PaddingHorizontalDivider()
+//                TransplantListItem(
+//                    headlineContent = { Text(text = stringResource(R.string.appearance_settings_transition_bottom_bar_title)) },
+//                    supportingContent = {
+//                        Text(stringResource(R.string.appearance_settings_transition_bottom_bar_description))
+//                    },
+//                    leadingContent = { Icon(painterResource(R.drawable.animation), contentDescription = "Localized description") },
+//                )
+//                AnimationSetting()
+//                Spacer(modifier = Modifier.height(APP_HORIZONTAL_DP))
             }
         }
         DividerTextExpandedWith(stringResource(R.string.appearance_settings_calendar_half_title),contentColor=contentColor) {
@@ -708,53 +718,71 @@ private fun ExtensionSample() {
     if(enableLiquidGlass) {
         val graphicsLayer = rememberGraphicsLayer()
         var rect by remember { mutableStateOf<Rect?>(null) }
+//        var index by remember { mutableStateOf(0) }
+//        val icons = remember { listOf(
+//            R.drawable.wechat_icon,
+//            R.drawable.amap_icon,
+//            R.drawable.chao_xing_icon,
+//            R.drawable.alipay_icon,
+//            R.drawable.anhui_hall_icon,
+//            R.drawable.hfut_schedule_icon,
+//            R.drawable.le_pao_icon,
+//            R.drawable.today_campus_icon,
+//            R.drawable.mooc_icon,
+//            R.drawable.rain_classroom_icon
+//        ) }
+//
+//        LaunchedEffect(Unit) {
+//            while(true) {
+//                delay(5000L)
+//                index = (index + 1) % icons.size
+//            }
+//        }
 
         val ui = @Composable {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = APP_HORIZONTAL_DP)
-                    .height(150.dp)
+                    .height(100.dp)
                     .padding(bottom = APP_HORIZONTAL_DP)
                     .clip(MaterialTheme.shapes.large)
+                    .background(MaterialTheme.colorScheme.primaryContainer)
             ) {
                 Box(
-                    modifier = Modifier.align(
-                        if(useDoubleExtension) {
-                            Alignment.Center
-                        } else {
-                            Alignment.TopCenter
-                        }
-                    )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .onGloballyPositioned { coordinates ->
-                                val position = coordinates.positionInRoot()
-                                val size = coordinates.size
+                    modifier = Modifier
+                        .align(
+                            if(useDoubleExtension) {
+                                Alignment.Center
+                            } else {
+                                Alignment.CenterStart
+                            }
+                        )
+                        .onGloballyPositioned { coordinates ->
+                            val position = coordinates.positionInRoot()
+                            val size = coordinates.size
 
-                                rect = Rect(
-                                    left = position.x,
-                                    top = position.y,
-                                    right = position.x + size.width,
-                                    bottom = position.y + size.height
-                                )
+                            rect = Rect(
+                                left = position.x,
+                                top = position.y,
+                                right = position.x + size.width,
+                                bottom = position.y + size.height
+                            )
+                        }
+                        .drawWithContent {
+                            drawContent()
+                            graphicsLayer.record {
+                                this@drawWithContent.drawContent()
                             }
-                            .drawWithContent {
-                                drawContent()
-                                graphicsLayer.record {
-                                    this@drawWithContent.drawContent()
-                                }
-                            }
-                    ) {
-                        Image(painterResource(R.drawable.amap_icon),null, modifier = Modifier.size(100.dp))
-                    }
-                    Box(
-                        modifier = Modifier
-                            .zIndex(-1f)
-                            .pixelExtension(graphicsLayer,rect,false,useDoubleExtension)
-                    )
+                        }
+                ) {
+                    Image(painterResource(R.drawable.alipay_icon),null)
                 }
+                Box(
+                    modifier = Modifier
+                        .zIndex(-1f)
+                        .pixelExtension(graphicsLayer,rect,true,useDoubleExtension)
+                )
             }
         }
         if(useDoubleExtension) {

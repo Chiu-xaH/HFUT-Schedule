@@ -98,17 +98,12 @@ object SemesterParser {
 
     @JvmStatic
     suspend fun getSemester() : Int {
-        try {
-            val autoTerm = DataStoreManager.enableAutoTerm.first()
-            if(autoTerm) {
-                return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
-            } else {
-                val autoTermValue = DataStoreManager.customTermValue.first()
-                return autoTermValue
-            }
-        } catch (e : Exception) {
-            LogUtil.error(e)
-            return getMy()!!.semesterId.toInt()
+        val autoTerm = DataStoreManager.enableAutoTerm.first()
+        if(autoTerm) {
+            return reverseGetSemester(DateTimeManager.Date_yyyy_MM) ?: 0
+        } else {
+            val autoTermValue = DataStoreManager.customTermValue.first()
+            return autoTermValue
         }
     }
     @JvmStatic

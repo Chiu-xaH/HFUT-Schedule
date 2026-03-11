@@ -146,17 +146,11 @@ fun LibraryScreen(
     val hazeState = rememberHazeState(blurEnabled = blur)
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val currentAnimationIndex by DataStoreManager.animationType.collectAsState(initial = 0)
     val targetPage = when(libraryNavController.currentRouteWithoutArgs()) {
         LibraryBarItems.SEARCH.name ->LibraryBarItems.SEARCH
         else -> LibraryBarItems.MINE
     }
-    // 保存上一页页码 用于决定左右动画
-    if(currentAnimationIndex == 2) {
-        LaunchedEffect(targetPage) {
-            currentPage = targetPage.page
-        }
-    }
+
     var inputKeyword by remember { mutableStateOf("") }
     val backDrop = rememberLayerBackdrop()
     val scope = rememberCoroutineScope()
@@ -233,12 +227,14 @@ fun LibraryScreen(
             HazeBottomBar(hazeState, items,libraryNavController)
         }
     ) { innerPadding ->
-        val animation = AppAnimationManager.getAnimationType(currentAnimationIndex,targetPage.page)
-
         NavHost(navController = libraryNavController,
             startDestination = LibraryBarItems.MINE.name,
-            enterTransition = { animation.enter },
-            exitTransition = { animation.exit },
+            enterTransition = {
+                AppAnimationManager.centerAnimation.enter
+            },
+            exitTransition = {
+                AppAnimationManager.centerAnimation.exit
+            },
             modifier = Modifier
                 .hazeSource(state = hazeState)
                 .backDropSource(backDrop)

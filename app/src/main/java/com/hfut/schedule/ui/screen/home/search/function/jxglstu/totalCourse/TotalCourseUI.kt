@@ -86,6 +86,7 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
+import com.xah.uicommon.style.align.CenterScreen
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
 import dev.chrisbanes.haze.HazeState
@@ -248,7 +249,11 @@ fun CourseTotalUI(
             if(isSearch)
                 item { PaddingForPageControllerButton() }
         }
-    } else { EmptyIcon() }
+    } else {
+        CenterScreen {
+            EmptyIcon()
+        }
+    }
 }
 
 

@@ -43,9 +43,7 @@ import kotlinx.coroutines.launch
 fun AnimationSetting(speed : Int = AppAnimationManager.ANIMATION_SPEED) {
     if(speed == 0) return
     val lists = listOf(
-        AppAnimationManager.upDownAnimation,
         AppAnimationManager.centerAnimation,
-        AppAnimationManager.getLeftRightAnimation(0),
         AppAnimationManager.fadeAnimation,
         AppAnimationManager.nullAnimation
     )

@@ -277,7 +277,6 @@ fun ScanScreen(
         },
     ) { innerPadding ->
         LaunchedEffect(activity) {
-            AppShortcutManager.createScanShortcut(context)
             activity?.let { PermissionSet.checkAndRequestCameraPermission(it) }
         }
         Box(
