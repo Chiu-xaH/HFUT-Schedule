@@ -69,6 +69,7 @@ import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.util.language.text
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -95,7 +96,7 @@ fun ShowerStatusUI(vm : GuaGuaViewModel,input : String) {
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
         val response = (uiState as UiState.Success).data
-        StatusIcon(if(response.contains("成功")) R.drawable.check else R.drawable.close, text = response)
+        StatusIcon(if(response.contains("成功")) R.drawable.check else R.drawable.close,text(response))
     }
 }
 

@@ -139,6 +139,7 @@ import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.align.RowHorizontal
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.navigationBarHeightPadding
+import com.xah.uicommon.util.language.text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -334,7 +335,7 @@ fun AddEventScreen(
                 false -> {
                     CenterScreen {
                         ColumnVertical {
-                            StatusIcon(R.drawable.login,"未登录或状态失效")
+                            StatusIcon(R.drawable.login,text("未登录或状态失效"))
                             Spacer(Modifier.height(APP_HORIZONTAL_DP))
                             Button(onClick = { Starter.loginSupabase(context)}) {
                                 Text("刷新登录状态")
@@ -499,7 +500,7 @@ private fun SharedTransitionScope.SurfaceUI(
                     false -> {
                         CenterScreen {
                             ColumnVertical {
-                                StatusIcon(R.drawable.login,"未登录或状态失效")
+                                StatusIcon(R.drawable.login,text("未登录或状态失效"))
                                 Spacer(Modifier.height(APP_HORIZONTAL_DP))
                                 Button(onClick = { Starter.loginSupabase(context)}) {
                                     Text("刷新登录状态")

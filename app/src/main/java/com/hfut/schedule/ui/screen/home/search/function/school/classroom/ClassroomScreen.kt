@@ -351,10 +351,10 @@ fun ClassroomScreen(
                 .backDropSource(backDrop)
                 .hazeSource(state = hazeState)
         ) {
-            nav2Composable(ClassroomBarItems.EMPTY_CLASSROOM.name,navController) {
+            nav2Composable(ClassroomBarItems.EMPTY_CLASSROOM.name) {
                 EmptyClassroomScreen(vm,innerPadding,date,campus,selectedBuildings,selectedFloors,hazeState)
             }
-            nav2Composable(ClassroomBarItems.CLASSROOM_LESSONS.name,navController) {
+            nav2Composable(ClassroomBarItems.CLASSROOM_LESSONS.name) {
                 SearchClassroomScreen(vm,innerPadding) {
                     scope.launch {
                         refreshNetworkSearch()

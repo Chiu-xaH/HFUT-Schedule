@@ -810,7 +810,7 @@ fun MainScreen(
             },
             modifier = Modifier.hazeSource(state = hazeState)
         ) {
-            nav2Composable(COURSES.name,navController) {
+            nav2Composable(COURSES.name) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     // 背景图层
                     if (useCustomBackground) {
@@ -927,7 +927,7 @@ fun MainScreen(
                     }
                 }
             }
-            nav2Composable(FOCUS.name,navController) {
+            nav2Composable(FOCUS.name) {
                 Scaffold {
                     TodayScreen(
                         vm,
@@ -939,7 +939,7 @@ fun MainScreen(
                     )
                 }
             }
-            nav2Composable(SEARCH.name,navController) {
+            nav2Composable(SEARCH.name) {
                 Scaffold {
                     SearchScreen(
                         vm,
@@ -951,7 +951,7 @@ fun MainScreen(
                     )
                 }
             }
-            nav2Composable(SETTINGS.name,navController) {
+            nav2Composable(SETTINGS.name) {
                 Scaffold {
                     SettingsScreen(
                         vm,

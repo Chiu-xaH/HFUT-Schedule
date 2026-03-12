@@ -60,6 +60,7 @@ import com.hfut.schedule.viewmodel.network.GuaGuaViewModel
 import com.xah.uicommon.component.text.BottomTip
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.RowHorizontal
+import com.xah.uicommon.util.language.text
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -226,9 +227,9 @@ fun ReSetUseCodeUI(vm: GuaGuaViewModel,navController: NavHostController) {
             CommonNetworkScreen(uiState,isFullScreen = false, onReload = refreshNetwork) {
                 val msg = (uiState as UiState.Success).data
                 if(msg.contains("成功") == true) {
-                    StatusIcon(R.drawable.check,"成功修改为 $password")
+                    StatusIcon(R.drawable.check,text("成功修改为 $password"))
                 } else if(msg == "密码错误")  {
-                    StatusIcon(R.drawable.login,"您从未使用密码登录过 需要重新用密码登录")
+                    StatusIcon(R.drawable.login,text("您从未使用密码登录过 需要重新用密码登录"))
                     Spacer(Modifier.height(10.dp))
                     RowHorizontal {
                         Button(

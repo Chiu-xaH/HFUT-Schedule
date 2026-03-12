@@ -239,7 +239,7 @@ fun LibraryScreen(
                 .hazeSource(state = hazeState)
                 .backDropSource(backDrop)
         ) {
-            nav2Composable(LibraryBarItems.SEARCH.name, libraryNavController) {
+            nav2Composable(LibraryBarItems.SEARCH.name) {
                 Column (modifier = Modifier.fillMaxSize()) {
                     HorizontalPager(pageState) { pager ->
                         when(pager) {
@@ -249,7 +249,7 @@ fun LibraryScreen(
                     }
                 }
             }
-            nav2Composable(LibraryBarItems.MINE.name,libraryNavController) {
+            nav2Composable(LibraryBarItems.MINE.name) {
                 Column (modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.surfaceContainer)) {

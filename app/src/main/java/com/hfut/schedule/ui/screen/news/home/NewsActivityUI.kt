@@ -258,13 +258,13 @@ fun NewsScreen(
                 .backDropSource(backdrop)
                 .hazeSource(state = hazeState)
         ) {
-            nav2Composable(NewsBarItems.News.name,navController) {
+            nav2Composable(NewsBarItems.News.name) {
                 NewsScreenMini(innerPadding,vm,newsPagerState,input)
             }
-            nav2Composable(NewsBarItems.Academic.name,navController) {
+            nav2Composable(NewsBarItems.Academic.name) {
                 AcademicScreen(innerPadding,vm,newsPagerState)
             }
-            nav2Composable(NewsBarItems.School.name,navController) {
+            nav2Composable(NewsBarItems.School.name) {
                 SchoolsUI(innerPadding)
             }
         }

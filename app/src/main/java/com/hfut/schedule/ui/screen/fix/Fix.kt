@@ -94,7 +94,6 @@ fun Fix(vm : NetWorkViewModel) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {
                     FixUI(innerPadding = innerPadding,vm)
                 }
-
             }
             composable(FixBarItems.About.name) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer) {

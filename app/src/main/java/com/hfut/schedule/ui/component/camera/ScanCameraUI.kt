@@ -37,6 +37,7 @@ import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.uicommon.component.status.LoadingScreen
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.util.language.text
 
 
 @Composable
@@ -52,8 +53,7 @@ fun ScanQrCode(
         null -> CenterScreen {
             StatusIcon(
                 R.drawable.monochrome_photos,
-                text = "加载中",
-                tint = MaterialTheme.colorScheme.surface
+                text("加载中")
             )
         }
     }

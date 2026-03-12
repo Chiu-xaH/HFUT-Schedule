@@ -9,6 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,6 +37,7 @@ import com.hfut.schedule.ui.component.status.ErrorIcon
 import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.uicommon.component.status.LoadingUI
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.util.language.text
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -54,8 +56,7 @@ fun CommonNetworkScreen(
     val scope = rememberCoroutineScope()
     val refreshUI = @Composable {
         onReload?.let {
-            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
-            Button(onClick = { scope.launch { it.invoke() }}) {
+            TextButton(onClick = { scope.launch { it.invoke() }}) {
                 Text("重新加载")
             }
         }
@@ -91,15 +92,15 @@ fun CommonNetworkScreen(
 
                             // 解析出错
                             ErrorIcon(text)
-                            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
+//                            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
                             if(!showDetail)
-                                Button(onClick = {
+                                TextButton(onClick = {
                                     showDetail = true
                                 }) {
                                     Text("详细报错信息")
                                 }
                             else
-                                Button(onClick = {
+                                TextButton(onClick = {
                                     e?.let { ClipBoardHelper.copy(getExceptionDetail(it)) }
                                     showToast("请截图或粘贴详细错误信息，并注明功能，发送邮件")
                                     Starter.emailMe(context)
@@ -110,10 +111,10 @@ fun CommonNetworkScreen(
                         LISTEN_ERROR_CODE -> {
                             StatusIcon(
                                 R.drawable.arrow_split,
-                                e?.message ?: "网络请求顺序出错 请联系开发者"
+                                text(e?.message ?: "网络请求顺序出错 请联系开发者")
                             )
-                            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
-                            Button(onClick = {
+//                            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
+                            TextButton(onClick = {
                                 showToast("请截图并注明功能，发送邮件")
                                 Starter.emailMe(context)
                             }) {
@@ -121,18 +122,20 @@ fun CommonNetworkScreen(
                             }
                         }
                         StatusCode.UNAUTHORIZED.code -> {
-                            StatusIcon(R.drawable.login, "登录状态失效")
-                            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
-                            Button(onClick = {
+                            StatusIcon(R.drawable.login, text("登录状态失效"), onTextClick = {
                                 Starter.refreshLogin(context)
-                            }) {
-                                Text("刷新登陆状态")
-                            }
+                            })
+//                            Spacer(Modifier.height(APP_HORIZONTAL_DP *1.5f))
+//                            TextButton(onClick = {
+//                                Starter.refreshLogin(context)
+//                            }) {
+//                                Text("刷新登陆状态")
+//                            }
                         }
                         StatusCode.FORBIDDEN.code -> {
                             StatusIcon(
                                 R.drawable.lock,
-                                "禁止操作 可能原因: 密码不正确或无权利进行操作"
+                                text("禁止操作 可能原因: 密码不正确或无权利进行操作")
                             )
                         }
                         StatusCode.NOT_FOUND.code -> {
@@ -141,7 +144,7 @@ fun CommonNetworkScreen(
                         in StatusCode.INTERNAL_SERVER_ERROR.code..599 -> {
                             StatusIcon(
                                 R.drawable.net,
-                                "500错误 可能的原因: \n1.智慧社区(Community)接口登陆状态失效,需重新刷新登陆状态\n2.API发生变更，APP对接失败\n3.暂时关闭了API(如选课、转专业等周期性活动)"
+                                text("500错误 可能的原因: 服务端接口发生变更，对接失败")
                             )
                         }
                         else -> {
@@ -149,18 +152,27 @@ fun CommonNetworkScreen(
                             val code = codeInt?.toString() ?: ""
                             val eMsg = e?.message
                             if(eMsg?.contains("Unable to resolve host",ignoreCase = true) == true || eMsg?.contains("Failed to connect to",ignoreCase = true) == true ||  eMsg?.contains("Connection reset",ignoreCase = true) == true) {
-                                StatusIcon(R.drawable.link_off, "网络连接失败")
+                                StatusIcon(R.drawable.link_off, text("网络连接失败"), onTextClick = {
+                                    onReload?.let {
+                                        scope.launch { it.invoke() }
+                                    }
+                                })
                             } else if(eMsg?.contains("10000ms") == true) {
-                                StatusIcon(R.drawable.link_off, "网络连接超时")
+                                StatusIcon(R.drawable.link_off, text("网络连接超时"), onTextClick = {
+                                    onReload?.let {
+                                        scope.launch { it.invoke() }
+                                    }
+                                })
                             } else if(eMsg?.contains("The coroutine scope") == true) {
                                 StatusIcon(
                                     R.drawable.rotate_right,
-                                    "操作过快,前面的请求尚未完成\n(若为教务相关功能,请回到聚焦页面下拉刷新)"
+                                    text("操作过快,前面的请求尚未完成，尝试回到聚焦页面下拉刷新")
                                 )
+                                refreshUI()
                             } else {
                                 ErrorIcon("错误 $code $e")
+                                refreshUI()
                             }
-                            refreshUI()
                         }
                     }
                 }

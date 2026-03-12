@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
+import com.hfut.schedule.ui.component.status.StatusIcon
 import com.xah.navigation.model.dest.Destination
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.util.language.UiText
@@ -32,25 +33,7 @@ abstract class NavDestination : Destination() {
             Box(
                 modifier = Modifier.align(Alignment.Center)
             ) {
-                ColumnVertical {
-                    Surface(
-                        modifier = Modifier.size(100.dp),
-                        shape = MaterialTheme.shapes.largeIncreased,
-                        color = MaterialTheme.colorScheme.secondaryContainer
-                    ) {
-                        Icon(
-                            painterResource(icon),
-                            null,
-                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                            modifier = Modifier.fillMaxSize().padding(CARD_NORMAL_DP*3)
-                        )
-                    }
-                    Text(
-                        title.asString(),
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.padding(top = CARD_NORMAL_DP*3)
-                    )
-                }
+                StatusIcon(icon,title, textColor = MaterialTheme.colorScheme.secondary)
             }
         }
     }

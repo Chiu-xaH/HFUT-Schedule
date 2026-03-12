@@ -59,6 +59,7 @@ import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.CenterScreen
+import com.xah.uicommon.util.language.text
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -372,6 +373,6 @@ private fun TransferCancelStatusUI(vm : NetWorkViewModel, batchId: String, id: I
         val result = (uiState as UiState.Success).data
         var msg  by remember { mutableStateOf("结果") }
         msg = if(result) "成功"  else "未知错误"
-        StatusIcon(if(msg == "成功") R.drawable.check else R.drawable.close, text = msg)
+        StatusIcon(if(msg == "成功") R.drawable.check else R.drawable.close, text(msg))
     }
 }

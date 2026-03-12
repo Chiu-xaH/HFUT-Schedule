@@ -52,6 +52,7 @@ import com.hfut.schedule.ui.screen.home.search.function.huiXin.loginWeb.getCardP
 import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.uicommon.util.LogUtil
+import com.xah.uicommon.util.language.text
 import dev.chrisbanes.haze.HazeState
 import kotlin.collections.iterator
 
@@ -211,7 +212,7 @@ private fun PayStatusUI(vm : NetWorkViewModel, payNumber : Float, json: String, 
 
     CommonNetworkScreen(uiState,isFullScreen = false, onReload = { showToast("禁止刷新") }) {
         val msg = (uiState as UiState.Success).data
-        StatusIcon(iconId = R.drawable.send_money, text = msg)
+        StatusIcon(R.drawable.send_money, text(msg))
     }
 }
 

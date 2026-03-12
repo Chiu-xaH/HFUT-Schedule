@@ -100,6 +100,7 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.align.ColumnVertical
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
+import com.xah.uicommon.util.language.text
 import com.xah.uicommon.util.safeDiv
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -671,6 +672,6 @@ private fun TransferStatusUI(vm : NetWorkViewModel, batchId: String, id: Int, ph
 
     CommonNetworkScreen(uiState, isFullScreen = false , onReload = refreshNetwork) {
         val msg = (uiState as UiState.Success).data
-        StatusIcon(if(msg == "成功" ) R.drawable.check else R.drawable.close, text = msg)
+        StatusIcon(if(msg == "成功" ) R.drawable.check else R.drawable.close,text(msg))
     }
 }

@@ -16,7 +16,6 @@ import com.xah.uicommon.util.LogUtil
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.nav2Composable(
     route: String,
-    navController : NavHostController,
     arguments: List<NamedNavArgument> = emptyList(),
     content: @Composable AnimatedContentScope.(NavBackStackEntry) -> Unit
 ) {
@@ -24,21 +23,16 @@ fun NavGraphBuilder.nav2Composable(
         route = route,
         arguments = arguments,
     ) {
-        Nav2BackHandler(navController)
+        Nav2BackHandler()
         this.content(it)
     }
 }
 
 @Composable
-private fun Nav2BackHandler(navController : NavHostController) {
+private fun Nav2BackHandler() {
     val navHostTopController = LocalNavControllerSafely.current ?: return
-    BackHandler(navController.canPopBack()) {
-        LogUtil.debug("navHostTopController.isTransitioning=${navHostTopController.isTransitioning}")
-        if(!navHostTopController.isTransitioning) {
-            navController.popBackStack()
-        } else {
-            navHostTopController.pop()
-        }
+    BackHandler(navHostTopController.isTransitioning) {
+        navHostTopController.pop()
     }
 }
 

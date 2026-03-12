@@ -56,17 +56,18 @@ fun VersionInfo() {
     }
     DividerTextExpandedWith(text = "新特性") {
         CustomCard (color = cardNormalColor()) {
+            UpdateItems("新增 合工大教务课表支持写入到日历日程")
+//            UpdateItems("修复 打断动画与从App返回到桌面之间的手势冲突")
+            UpdateItems("优化 课程详情页面的界面与交互")
+            UpdateItems("优化 部分页面的显示")
 
-            // TODO WebView适配新库 [P1]
-            // TODO WebVpn、课程表界面动效掉帧率较高走查 [P1]
-
-            // 聚焦打断动画问题
-            // TODO 课程详情页面重做  [P2]
+            // TODO 大模型解析日程 [P1]
+            // TODO WebView适配新库 [P2]
+            // TODO WebVpn、课程表界面动效掉帧率较高走查 [P2]
             // TODO 设置适配新库 [P2]
             // TODO 一卡通适配新库 [P2]
             // TODO Drawer回弹  [P2]
 //            UpdateItems("移除 启动台、预测式返回手势","需跟随第二代全局转场动效体系重新进行适配后再上线")
-            // TODO 添加日历日程多来源适配
 //            UpdateItems("新增 培养方案完成情况统计")
 //            UpdateItems("翻页器底部自动展开、中间隐藏")
 //            UpdateItems("发生Crash后再次进入app进入专属界面")
