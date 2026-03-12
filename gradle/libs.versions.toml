@@ -43,6 +43,7 @@ palette = "1.0.0"
 profileinstaller = "1.4.1"
 reorderable = "3.0.0"
 roomRuntime = "2.8.3"
+sharednav = "1.0.0-dev01"
 tesseract4android = "4.8.0"
 uiautomator = "2.3.0"
 kotlin = "2.1.21"
@@ -110,6 +111,7 @@ bsdiff = { module = "com.github.Chiu-xaH:Bsdiff-Android-Library", version.ref = 
 glide = { module = "com.github.bumptech.glide:compose", version.ref = "glideCompose" }
 gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 scalars = { module = "com.squareup.retrofit2:converter-scalars", version.ref = "converterGson" }
+sharednav = { module = "com.github.Chiu-xaH:SharedNav", version.ref = "sharednav" }
 zxing = { module = "com.google.zxing:core", version.ref = "coreVersion" }
 eddsa = { module = "net.i2p.crypto:eddsa", version.ref = "eddsa" }
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "haze" }

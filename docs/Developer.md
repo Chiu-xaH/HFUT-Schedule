@@ -10,14 +10,12 @@ SDK: 目标36(Android 16.0) \ 最低26(Android 8.0)
 
 正在制作...
 
-## 新增全屏界面
-1. 新增一个新界面
-
+## 新增页面
 继承NavDestination
 ```Kotlin
 object NewPageDestination : NavDestination() {
     override val key = "new_page"
-    override val title = res(R.string.navigation_label_new_page)
+    override val title = text("新页面")
 
     @Composable
     override fun Content() {
@@ -41,27 +39,8 @@ fun FromScreen() {
 ```
 
 ## 引入容器共享动效
-用SharedContainer包裹，以Destination的key作为key传入，传入容器的Shape、ContainerColor，并将内容器形状置为Rectangle
-```Kotlin
-@Composable
-fun FromScreen() {
-    val navController = LocalNavController.current
-    val dest = NewPageDestination
-    
-    SharedContainer(
-        key = dest.key,
-        shape = Material.shapes.medium,
-        containerColor = Material.colorScheme.primaryContainer
-    ) {
-        ListItem(
-            onClick = {
-                navController.push(dest)
-            }
-        )
-    }
-}
-```
-写完后务必测试无问题
+见SharedNav仓库开发文档：[跳转](https://github.com/Chiu-xaH/SharedNav?tab=readme-ov-file#%E6%B7%BB%E5%8A%A0%E5%AE%B9%E5%99%A8%E5%85%B1%E4%BA%AB%E5%8A%A8%E6%95%88)，写完后务必测试无问题
+
 ## 新增网络API
 
 ## 新增持久化存储
@@ -90,7 +69,7 @@ fun FromScreen() {
 
 ## ...
 
-## 🫥 未来适配
+## 未来适配
 
 开发者将在2027年毕业，App大部分功能都是端侧处理，可以独立运行，如果学校抽风了换接口，可以联系我，应该可以修，或者有能力者提交PR
 

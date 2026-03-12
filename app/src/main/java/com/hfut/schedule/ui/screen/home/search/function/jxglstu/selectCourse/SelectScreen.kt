@@ -484,7 +484,7 @@ private fun SelectCourseList(
                                 )
                             }
                             .sharedContainer(
-                                dest,
+                                dest.key,
                                 MaterialTheme.shapes.medium,
                                 cardNormalColor()
                             ),

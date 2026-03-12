@@ -29,8 +29,8 @@ android {
         applicationId packageName
         minSdk Integer.parseInt(libs.versions.minAndroidVersion.get())
         targetSdk maxAndroidVersion
-        versionCode 250
-        versionName "4.20"
+        versionCode 251
+        versionName "4.20.1 Preview"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
@@ -213,14 +213,12 @@ dependencies {
     // implementation(libs.androidx.biometric)
     // 镜面效果
     implementation(libs.mirror)
+    // 导航&转场动画模块
+    implementation(libs.sharednav)
     // 可单独使用的UI模块
     implementation implementation(project(':common'))
     // 消费预测及共用代码模块
     implementation(project(":shared"))
     // 基准文件模块
     baselineProfile project(":baselineProfile")
-    // 导航&转场动画模块
-    implementation files("libs/common-release.aar")
-    implementation files("libs/shared-container-release.aar")
-    implementation files("libs/navigation-release.aar")
 }
