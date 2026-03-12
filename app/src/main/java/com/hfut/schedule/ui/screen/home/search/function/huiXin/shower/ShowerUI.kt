@@ -155,10 +155,6 @@ fun ShowerUI(vm : NetWorkViewModel, isInGuagua : Boolean = false, hazeState: Haz
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-//            isFullScreen = false
-//            sheetState = sheetState,
-            //    shape = sheetState
         ) {
             Column(
             ) {

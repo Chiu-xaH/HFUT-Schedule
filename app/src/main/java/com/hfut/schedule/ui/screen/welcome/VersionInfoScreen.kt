@@ -54,7 +54,6 @@ fun VersionInfoScreen(vm : NetWorkViewModel) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheetUpdate = false },
             showBottomSheet = showBottomSheetUpdate,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

@@ -53,7 +53,6 @@ fun Life() {
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun LifeScreen(
-    inFocus : Boolean,
     vm : NetWorkViewModel,
 ) {
     val blur by DataStoreManager.enableHazeBlur.collectAsState(initial = true)

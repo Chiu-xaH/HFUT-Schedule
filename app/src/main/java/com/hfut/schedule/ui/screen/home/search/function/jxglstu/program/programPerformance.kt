@@ -385,9 +385,7 @@ private fun PerformanceInfo(vm: NetWorkViewModel,moduleIndex : Int, hazeState: H
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
-//            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(itemForInfo.nameZh, isPaddingStatusBar = false)
             ProgramInfoItem(itemForInfo)

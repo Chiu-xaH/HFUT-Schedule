@@ -27,7 +27,7 @@ import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.other.AppVersion
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.destination.ExamDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.calendarSquareGlass
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -174,7 +174,7 @@ fun TimeTable(
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.sharedContainer(CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
+                                    it.sharedContainer(CourseApiDetailDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->
@@ -373,7 +373,7 @@ fun TimeTable(
                             val origin = CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             when (item.type) {
                                 TimeTableType.COURSE -> {
-                                    it.sharedContainer(CourseDetailDestination(item.name, origin).key, MaterialTheme.shapes.extraSmall,containerColor)
+                                    it.sharedContainer(CourseApiDetailDestination(item.name, origin,item.place).key, MaterialTheme.shapes.extraSmall,containerColor)
                                 }
                                 TimeTableType.FOCUS -> {
                                     item.id?.let { id ->

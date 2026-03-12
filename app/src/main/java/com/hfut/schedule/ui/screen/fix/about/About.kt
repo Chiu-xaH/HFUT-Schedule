@@ -99,7 +99,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
-                hazeState = hazeState,
 //                isFullScreen = false
             ) {
                 Column {
@@ -119,7 +118,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
             HazeBottomSheet(
                 onDismissRequest = { showBottomSheetUpdate = false },
                 showBottomSheet = showBottomSheetUpdate,
-                hazeState = hazeState
             ) {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -142,7 +140,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         if (showBottomSheet_version) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet_version = false },
-                hazeState = hazeState,
                 showBottomSheet = showBottomSheet_version
             ) {
                 Scaffold(
@@ -172,7 +169,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         if (showBottomSheet_info) {
             HazeBottomSheet(
                 onDismissRequest = { showBottomSheet_info = false },
-                hazeState = hazeState,
                 showBottomSheet = showBottomSheet_info,
             ) {
                 About(vm)
@@ -183,7 +179,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         if (showBottomSheet_icon) {
             HazeBottomSheet(
                 onDismissRequest = { showBottomSheet_icon = false },
-                hazeState = hazeState,
                 showBottomSheet = showBottomSheet_icon,
             ) {
                 Egg()
@@ -194,7 +189,6 @@ fun AboutUI(innerPadding : PaddingValues, vm : NetWorkViewModel, cubeShow : Bool
         if (showBottomSheet_support) {
             HazeBottomSheet(
                 onDismissRequest = { showBottomSheet_support = false },
-                hazeState = hazeState,
                 showBottomSheet = showBottomSheet_support,
             ) {
                 Scaffold(

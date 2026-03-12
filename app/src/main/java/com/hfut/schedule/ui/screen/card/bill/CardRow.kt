@@ -64,9 +64,8 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
 //            expandFully = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ){
-           TodayBills(vm,hazeState)
+           TodayBills(vm)
         }
     }
 
@@ -98,7 +97,7 @@ fun CardRow(vm : NetWorkViewModel, vmUI : UIViewModel, hazeState: HazeState) {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TodayBills(vm: NetWorkViewModel,hazeState : HazeState) {
+fun TodayBills(vm: NetWorkViewModel) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
     var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -108,7 +107,6 @@ fun TodayBills(vm: NetWorkViewModel,hazeState : HazeState) {
             onDismissRequest = { showBottomSheet = false },
 //            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ){
             BillsInfo(infoNum!!)
         }

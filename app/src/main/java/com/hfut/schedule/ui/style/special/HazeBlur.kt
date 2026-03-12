@@ -238,7 +238,6 @@ fun Modifier.bottomSheetBlur(hazeState: HazeState) : Modifier = blurStyle(hazeSt
 fun HazeBottomSheet(
     showBottomSheet : Boolean,
     onDismissRequest : () -> Unit,
-    hazeState: HazeState = HazeState(),
     content : @Composable () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

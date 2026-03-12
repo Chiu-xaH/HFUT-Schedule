@@ -143,7 +143,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             nav2Composable(Screen.HuiXinPasswordScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                    EditPasswordScreen(hazeState,innerPaddings)
+                    EditPasswordScreen(innerPaddings)
                 }
             }
             nav2Composable(Screen.JxglstuPasswordScreen.route) {

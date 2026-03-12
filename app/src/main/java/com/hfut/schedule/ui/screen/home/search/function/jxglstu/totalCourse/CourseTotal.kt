@@ -109,7 +109,6 @@ fun TotalCourseScreen(
                 TotalCourseDataSource.MINE,
                 sortType,
                 vm,
-                hazeState,
                 ifSaved
             )
         }

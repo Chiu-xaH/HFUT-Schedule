@@ -82,8 +82,6 @@ fun LoginWeb(vmUI : UIViewModel, card : Boolean, vm : NetWorkViewModel, hazeStat
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-//            isFullScreen = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
             LoginWebScaUI(vmUI, vm,hazeState)

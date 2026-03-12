@@ -96,8 +96,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
                     showBottomSheet_pin = false
                 },
                 showBottomSheet = showBottomSheet_pin,
-                hazeState = hazeState,
-//                isFullScreen = false
             ) {
                 Column {
                     Spacer(Modifier.height(APP_HORIZONTAL_DP*1.5f))
@@ -135,8 +133,6 @@ fun PayFor(vm : NetWorkViewModel, payNumber : Float, tipInfo : String, json : St
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-//            expandFully = false
         ) {
             Column(
                 modifier = Modifier

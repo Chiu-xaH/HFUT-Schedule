@@ -37,7 +37,6 @@ fun Shower(vm: NetWorkViewModel, hazeState: HazeState) {
             onDismissRequest = { showBottomSheet = false },
 //            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }

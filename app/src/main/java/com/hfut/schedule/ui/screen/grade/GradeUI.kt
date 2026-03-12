@@ -104,7 +104,6 @@ fun GradeScreen(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet= false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),

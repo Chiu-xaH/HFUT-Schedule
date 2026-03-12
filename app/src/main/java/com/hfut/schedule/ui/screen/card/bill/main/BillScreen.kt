@@ -93,7 +93,6 @@ fun BillScreen(vm : NetWorkViewModel, innerPaddings : PaddingValues, vmUI : UIVi
             onDismissRequest = { showBottomSheet = false },
 //            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ){
             BillsInfo(infoNum!!)
         }

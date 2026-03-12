@@ -241,7 +241,6 @@ fun ProgramChildrenUI(entity : ProgramResponse?, hazeState : HazeState,vm: NetWo
             if (showBottomSheet_Program) {
                 HazeBottomSheet (
                     onDismissRequest = { showBottomSheet_Program = false },
-                    hazeState = hazeState,
                     showBottomSheet = showBottomSheet_Program
                 ) {
                     Scaffold(
@@ -396,14 +395,11 @@ fun ProgramDetailInfo(courseInfo : ProgramPartThree, vm: NetWorkViewModel, hazeS
     var showBottomSheet_Search by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
-    ApiForCourseSearch(vm,null, courseInfo.code,showBottomSheet_Search, hazeState = hazeState) {
+    ApiForCourseSearch(vm,null, courseInfo.code,showBottomSheet_Search) {
         showBottomSheet_Search = false
     }
     HazeBottomSheet(
         showBottomSheet = true,
-//        expandFully = true,
-//        isFullScreen = false,
-        hazeState = hazeState,
         onDismissRequest = onDismissRequest
     ){
         Column(modifier = Modifier.navigationBarsPadding()) {

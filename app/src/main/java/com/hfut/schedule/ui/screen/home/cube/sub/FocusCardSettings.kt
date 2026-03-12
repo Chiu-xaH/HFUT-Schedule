@@ -435,8 +435,6 @@ fun Special(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-//            expandFully = true
         ) {
             ChangeCourseUI(isTomorrow) {
                 showBottomSheet = it

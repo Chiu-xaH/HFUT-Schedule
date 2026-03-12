@@ -288,11 +288,7 @@ fun LoginWebUI(vmUI : UIViewModel, vm : NetWorkViewModel, hazeState: HazeState) 
 
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-//            isFullScreen = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
-//            sheetState = sheetState,
-            //    shape = sheetState
         ) {
             Column(
             ) {

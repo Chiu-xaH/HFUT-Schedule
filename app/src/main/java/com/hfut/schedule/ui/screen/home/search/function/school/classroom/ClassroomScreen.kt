@@ -433,10 +433,7 @@ private fun EmptyClassroomScreen(
     var title by remember { mutableStateOf("占用详情") }
     if(showDialog && info != null) {
         HazeBottomSheet (
-            hazeState = hazeState,
             showBottomSheet = showDialog,
-//            expandFully = true,
-//            isFullScreen = false,
             onDismissRequest = { showDialog = false },
         ) {
             val cause = occupyList.find { it.activityType == info!!.activityType }
@@ -848,9 +845,7 @@ fun ClassroomLessonsScreen(
                         onDismissRequest = {
                             showBottomSheetDetail = false
                         },
-//                        isFullScreen = false,
                         showBottomSheet = showBottomSheetDetail,
-                        hazeState = hazeState
                     ) {
                         bean?.let { TimeTableDetail(it) }
                     }

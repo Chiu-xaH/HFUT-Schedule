@@ -32,7 +32,7 @@ fun Classroom() {
             )
         },
         modifier = Modifier.clickable {
-            navController.push(ClassroomDestination)
+            navController.push(ClassroomDestination())
         }
     )
 }

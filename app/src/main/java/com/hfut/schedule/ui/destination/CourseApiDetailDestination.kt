@@ -2,22 +2,24 @@ package com.hfut.schedule.ui.destination
 
 import androidx.compose.runtime.Composable
 import com.hfut.schedule.R
-import com.hfut.schedule.ui.screen.home.search.function.school.classroom.ClassroomScreen
+import com.hfut.schedule.ui.screen.home.calendar.communtiy.CourseDetailApiScreen
 import com.hfut.schedule.ui.util.NavDestination
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.xah.navigation.utils.LocalNavDependencies
 import com.xah.uicommon.util.language.res
 
-data class ClassroomDestination(
-    val origin : String = "Search"
+data class CourseApiDetailDestination(
+    val courseName : String,
+    val id : String,
+    val classroom : String?,
 ) : NavDestination() {
-    override val key = "classroom_$origin"
-    override val title = res(R.string.navigation_label_classroom)
-    override val icon = R.drawable.meeting_room
+    override val key = "course_api_detail_${courseName}_${id}_$classroom"
+    override val title = res(R.string.navigation_label_course_detail)
+    override val icon = R.drawable.category
 
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        ClassroomScreen(vm)
+        CourseDetailApiScreen(courseName,classroom,vm)
     }
 }

@@ -64,7 +64,6 @@ fun Washing(
             onDismissRequest = { showBottomSheet = false },
 //            isFullScreen = false,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             WashingUI()
         }

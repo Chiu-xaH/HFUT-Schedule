@@ -60,8 +60,6 @@ fun Electric(vm : NetWorkViewModel, card : Boolean, vmUI : UIViewModel, hazeStat
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
-//            isFullScreen = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
             EleUI(vm = vm,hazeState)

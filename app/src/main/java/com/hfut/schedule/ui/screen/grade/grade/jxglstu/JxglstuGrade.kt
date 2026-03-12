@@ -254,7 +254,6 @@ fun GradeItemJxglstuUI(
     if (showBottomSheet_Survey) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Survey = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Survey
         ) {
             Scaffold(

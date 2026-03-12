@@ -130,7 +130,6 @@ fun CardUI(vm : NetWorkViewModel, vmUI : UIViewModel) {
             onDismissRequest = {
                 showBottomSheet_Search = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Search
         ) { SearchBillsUI(vm,hazeState) }
     }

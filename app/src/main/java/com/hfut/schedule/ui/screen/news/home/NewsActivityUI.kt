@@ -138,9 +138,6 @@ fun NewsScreen(
         }
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
-//            expandFully = true,
-//            isFullScreen = false,
             showBottomSheet = showBottomSheet
         ) {
             Column(){

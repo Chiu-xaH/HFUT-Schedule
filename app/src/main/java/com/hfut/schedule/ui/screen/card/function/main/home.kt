@@ -188,7 +188,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Fee = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Fee,
 //            isFullScreen = false
         ) {
@@ -255,10 +254,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 showBottomSheet_ELectric = false
             },
             showBottomSheet = showBottomSheet_ELectric,
-            hazeState = hazeState,
-//            isFullScreen = false
-//            sheetState = sheetState_ELectric,
-//            shape = Round(sheetState_ELectric)
         ) {
             EleUI(vm = vm,hazeState)
         }
@@ -270,8 +265,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 showBottomSheet_Web = false
             },
             showBottomSheet = showBottomSheet_Web
-//            sheetState = sheetState_Web,
-//            shape = Round(sheetState_Web)
         ) {
             LoginWebScaUI(vmUI, vm,hazeState)
         }
@@ -283,7 +276,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
                 showBottomSheet_Shower = false
             },
             showBottomSheet = showBottomSheet_Web,
-//            sheetState = sheetState_Shower,
         ) {
             ShowerUI(vm,hazeState = hazeState)
         }
@@ -295,7 +287,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Washing = false
             },
-//            sheetState = sheetState_Washing,
         ) {
             WashingUI()
         }
@@ -306,7 +297,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Range = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Range
 //            sheetState = sheetState_Range,
 //            shape = bottomSheetRound(sheetState_Range)
@@ -318,7 +308,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Search = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Search
         ) { SearchBillsUI(vm,hazeState) }
     }
@@ -328,7 +317,6 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
             onDismissRequest = {
                 showBottomSheet_Settings = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Settings,
 //            expandFully = false
 //            sheetState = sheetState_Settings,
@@ -343,16 +331,14 @@ fun CardHomeScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, navContr
 //            shape = bottomSheetRound(sheetState_Today),
 //            expandFully = false,
             showBottomSheet = showBottomSheet_Toady,
-            hazeState = hazeState
         ){
-            TodayBills(vm,hazeState)
+            TodayBills(vm)
         }
     }
     if(showBottomSheet_Lost) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Lost = false },
             showBottomSheet = showBottomSheet_Lost,
-            hazeState = hazeState
         ){
             CardLostScreen(vm)
         }

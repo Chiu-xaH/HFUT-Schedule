@@ -28,17 +28,12 @@ import dev.chrisbanes.haze.HazeState
 @Composable
 fun GuaGuaPersonInfoUI(vm: NetWorkViewModel, hazeState: HazeState) {
 
-    val sheetState = rememberModalBottomSheetState(true)
     var showBottomSheet by remember { mutableStateOf(false) }
 
     if (showBottomSheet) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
-//            isFullScreen = false
-//            sheetState = sheetState
-//            , shape = Round(sheetState)
         ) {
             ShowerUI(vm,true, hazeState = hazeState)
         }

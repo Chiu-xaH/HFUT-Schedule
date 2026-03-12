@@ -100,7 +100,6 @@ private fun Schools(hazeState: HazeState) {
     if (showBottomSheet_School) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_School = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_School
         ) {
             Scaffold(

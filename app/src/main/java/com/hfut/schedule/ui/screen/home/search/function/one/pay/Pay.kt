@@ -145,7 +145,6 @@ fun PayUI(vm: NetWorkViewModel,hazeState : HazeState) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheetQRCode = false },
             showBottomSheet = showBottomSheetQRCode,
-            hazeState = hazeState,
 //            isFullScreen = false
         ) {
             Column {

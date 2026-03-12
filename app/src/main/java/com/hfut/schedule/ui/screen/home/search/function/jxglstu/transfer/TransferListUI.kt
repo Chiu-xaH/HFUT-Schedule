@@ -330,7 +330,6 @@ fun TransferDetailScreen(
     if (showBottomSheet_apply) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_apply = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_apply
         ) {
             Scaffold(
@@ -456,7 +455,6 @@ private fun TransferUI(
             onDismissRequest = {
                 showBottomSheet = false
             },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
 //            expandFully = false
         ) {
@@ -475,7 +473,6 @@ private fun TransferUI(
             onDismissRequest = {
                 showBottomSheet_select = false
             },
-            hazeState = hazeState,
 //            expandFully = false,
             showBottomSheet = showBottomSheet_select
         ) {

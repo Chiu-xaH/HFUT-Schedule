@@ -18,6 +18,6 @@ data class LifeDestination(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        LifeScreen(inFocus,vm)
+        LifeScreen(vm)
     }
 }

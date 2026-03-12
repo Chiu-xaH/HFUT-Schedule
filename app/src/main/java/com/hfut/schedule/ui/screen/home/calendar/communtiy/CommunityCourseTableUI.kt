@@ -33,7 +33,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.destination.ExamDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
@@ -164,7 +164,6 @@ fun CommunityCourseTableUI(
             },
 //            isFullScreen = false,
             showBottomSheet = showBottomSheetDetail,
-            hazeState = hazeState
         ) {
             bean?.let { TimeTableDetail(it) }
         }
@@ -243,9 +242,10 @@ fun CommunityCourseTableUI(
                     TimeTableType.COURSE -> {
                         if(!isFriend) {
                             navController.push(
-                                CourseDetailDestination(
+                                CourseApiDetailDestination(
                                     item.name,
-                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}" ,
+                                    item.place
                                 )
                             )
                         } else {
@@ -269,8 +269,6 @@ fun CommunityCourseTableUI(
                                 CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
                             )
                         )
-//                        bean = list
-//                        showBottomSheetDetail = true
                     }
                 }
             } else if (list.size > 1) {

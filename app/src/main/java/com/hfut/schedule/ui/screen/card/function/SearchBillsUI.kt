@@ -122,7 +122,6 @@ fun SearchBillsUI(vm : NetWorkViewModel,hazeState: HazeState) {
                     onDismissRequest = { showBottomSheet = false },
 //                    isFullScreen = false,
                     showBottomSheet = showBottomSheet,
-                    hazeState = hazeState
                 ){
                     BillsInfo(infoNum!!)
                 }

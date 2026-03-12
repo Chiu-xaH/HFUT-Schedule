@@ -310,7 +310,6 @@ fun CourseSearchScreen(
                         dataSource = TotalCourseDataSource.SEARCH,
                         sortType = true,
                         vm,
-                        hazeState = hazeState,
                         false,
                         listState
                     )
@@ -341,7 +340,7 @@ fun CourseSearchScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, hazeState: HazeState, onDismissRequest :  () -> Unit) {
+fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : String?, showBottomSheet : Boolean, onDismissRequest :  () -> Unit) {
     if(showBottomSheet) {
 
         var semester by remember { mutableStateOf<Int?>(null) }
@@ -370,7 +369,6 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheetSchedule = false },
                 showBottomSheet = showBottomSheetSchedule,
-                hazeState = hazeState
             ) {
                 val t = (courseName ?: "") + (courseId.let { if(it == null)"" else " $it" })
                 var showAll by remember { mutableStateOf(false) }
@@ -391,7 +389,7 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                     ) {
                         CommonNetworkScreen(uiState, onReload = refreshNetwork) {
                             val list = (uiState as UiState.Success).data
-                            JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,list) {
+                            JxglstuCourseTableSearch(showAll,vm,innerPadding,list) {
                                 showAll = it
                             }
                         }
@@ -402,7 +400,6 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
         HazeBottomSheet (
             onDismissRequest = onDismissRequest,
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -436,7 +433,6 @@ fun ApiForCourseSearch(vm: NetWorkViewModel, courseName : String?, courseId : St
                                 dataSource = TotalCourseDataSource.SEARCH,
                                 sortType = true,
                                 vm,
-                                hazeState = hazeState,
                                 false,
                                 listState
                             )

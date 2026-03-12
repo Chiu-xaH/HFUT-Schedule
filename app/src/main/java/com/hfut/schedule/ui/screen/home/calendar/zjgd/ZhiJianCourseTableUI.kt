@@ -208,7 +208,6 @@ fun ZhiJianCourseTableUI(
                 showBottomSheetMultiCourse = false
             },
 //            isFullScreen = false,
-            hazeState = hazeState
         ) {
             MultiCourseSheetUIForZhiJian(courses = selectedItem ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState)
         }
@@ -221,9 +220,8 @@ fun ZhiJianCourseTableUI(
                 showBottomSheetCourse = false
             },
 //            isFullScreen = false,
-            hazeState = hazeState
         ) {
-            CourseDetail(vm,hazeState,selectedItem[0])
+            CourseDetail(vm,selectedItem[0])
         }
     }
 
@@ -708,11 +706,10 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
             onDismissRequest = {
                 showBottomSheetTotalCourse = false
             },
-            hazeState = hazeState,
 //            isFullScreen = false,
             showBottomSheet = showBottomSheetTotalCourse
         ) {
-            CourseDetail(vm,hazeState,courses[selectedIndex])
+            CourseDetail(vm,courses[selectedIndex])
         }
     }
     Column {
@@ -747,7 +744,6 @@ fun MultiCourseSheetUIForZhiJian(week : Int, weekday : Int, courses : List<ZhiJi
 @Composable
 private fun CourseDetail(
     vm: NetWorkViewModel,
-    hazeState : HazeState,
     course : ZhiJianCourseItemDto
 ) {
 
@@ -799,7 +795,7 @@ private fun CourseDetail(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(course.courseName,vm, hazeState =hazeState ,innerPadding)
+                    ApiToFailRate(course.courseName,vm,innerPadding)
                 }
             }
         }
@@ -808,7 +804,7 @@ private fun CourseDetail(
     var showBottomSheet_Search by remember { mutableStateOf(false) }
 
     var searchAll by remember { mutableStateOf(false) }
-    ApiForCourseSearch(vm,null, course.code.let { if(searchAll) it.substringBefore("--") else it },showBottomSheet_Search, hazeState = hazeState) {
+    ApiForCourseSearch(vm,null, course.code.let { if(searchAll) it.substringBefore("--") else it },showBottomSheet_Search) {
         showBottomSheet_Search = false
     }
 

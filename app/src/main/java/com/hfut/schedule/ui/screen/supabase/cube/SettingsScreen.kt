@@ -54,7 +54,6 @@ fun SupabaseSettingsScreen(vm : NetWorkViewModel,innerPadding : PaddingValues,ha
     if(showBottomSheet)
         HazeBottomSheet(
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
             onDismissRequest = { showBottomSheet = false }
         ) {
             Scaffold(

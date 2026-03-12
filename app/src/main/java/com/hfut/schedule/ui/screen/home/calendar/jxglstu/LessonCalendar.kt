@@ -90,7 +90,6 @@ private fun MultiCourseSheetUIForSearch(
     weekday : Int,
     courses : List<CardBean>,
     vm: NetWorkViewModel,
-    hazeState: HazeState,
     list : List<lessons>
 ) {
     var numItem by remember { mutableIntStateOf(0) }
@@ -100,7 +99,6 @@ private fun MultiCourseSheetUIForSearch(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -114,7 +112,7 @@ private fun MultiCourseSheetUIForSearch(
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(list[numItem],vm,hazeState,mapOf(),)
+                    DetailItems(list[numItem],vm,mapOf(),)
                 }
             }
         }
@@ -184,7 +182,7 @@ fun JxglstuCourseTableTwo(
         }
     }
 
-    JxglstuCourseTableSearch(showAll,vm,hazeState,innerPadding,list,onDateChange,today,backGroundHaze,onSwapShowAll)
+    JxglstuCourseTableSearch(showAll,vm,innerPadding,list,onDateChange,today,backGroundHaze,onSwapShowAll)
 }
 
 
@@ -194,7 +192,6 @@ fun JxglstuCourseTableTwo(
 fun JxglstuCourseTableSearch(
     showAll: Boolean,
     vm: NetWorkViewModel,
-    hazeState: HazeState,
     innerPadding : PaddingValues,
     list : List<lessons>,
     onDateChange: ((LocalDate) ->Unit)? = null,
@@ -209,7 +206,6 @@ fun JxglstuCourseTableSearch(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -223,7 +219,7 @@ fun JxglstuCourseTableSearch(
                         .padding(innerPadding)
                         .fillMaxSize()
                 ) {
-                    DetailItems(list[numItem],vm,hazeState,mapOf())
+                    DetailItems(list[numItem],vm,mapOf())
                 }
             }
         }
@@ -243,9 +239,8 @@ fun JxglstuCourseTableSearch(
                 showBottomSheetMultiCourse = false
             },
 //            isFullScreen = false,
-            hazeState = hazeState
         ) {
-            MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm, hazeState = hazeState, list = list)
+            MultiCourseSheetUIForSearch(courses = courses ,weekday = multiWeekday,week = multiWeek,vm = vm,list = list)
         }
     }
 

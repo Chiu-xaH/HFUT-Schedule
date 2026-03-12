@@ -224,7 +224,7 @@ fun SearchScreen(
                 SearchAppBean(21,"${context.getString(R.string.navigation_label_repair)} 维修 后勤", { Repair(hazeState) }),
 //                SearchAppBean(22,"${AppNavRoute.NextCourse.label}", { NextCourse(ifSaved,navController ) },AppNavRoute.NextCourse.receiveRoute()),
                 SearchAppBean(23,"饮水机 ${context.getString(R.string.navigation_label_hot_water)}机 趣智校园", { HotWater() }),
-                SearchAppBean(24,"${context.getString(AppNavRoute.Classroom.label)} 空教室", { Classroom() }, ClassroomDestination.key),
+                SearchAppBean(24,"${context.getString(AppNavRoute.Classroom.label)} 空教室", { Classroom() }, ClassroomDestination().key),
                 SearchAppBean(25,"体育 云运动 乐跑 校园跑 ${context.getString(R.string.navigation_label_physical_fitness_test)} 体育测试 体检", { LePaoYun() }, WebViewDestination.getKey(MyApplication.PE_HOME_URL)),
                 SearchAppBean(26,"${context.getString(AppNavRoute.WorkAndRest.label)} 校历", { WorkAndRest() }, WorkAndRestDestination(null).key),
                 SearchAppBean(27,"${context.getString(R.string.navigation_label_chsi)}", { XueXin() }, WebViewDestination.getKey(MyApplication.XUE_XIN_URL)),

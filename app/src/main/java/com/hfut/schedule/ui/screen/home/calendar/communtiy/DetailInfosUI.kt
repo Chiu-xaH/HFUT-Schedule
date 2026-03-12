@@ -68,7 +68,6 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
                 showBottomSheet_totalCourse = false
             },
             showBottomSheet = showBottomSheet_totalCourse,
-            hazeState = hazeState
         ) {
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
@@ -151,11 +150,9 @@ fun DetailInfos(sheet : courseDetailDTOList, isFriend : Boolean = false, vm: Net
 @Composable
 fun CourseDetailApiScreen(
     courseName : String,
-    id : String,
+    classroom : String?,
     vm : NetWorkViewModel,
-//    navController : NavHostController,
 ) {
-    val navController = LocalNavController.current
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val hazeState = remember { HazeState() }
     val numItem by produceState<lessons?>(initialValue = null) {
@@ -169,9 +166,12 @@ fun CourseDetailApiScreen(
         }
         value = list.find { it.course.nameZh == courseName }
     }
+
     val courseBookData : Map<Long, CourseBookBean> by produceState(initialValue = emptyMap()) {
         val json = LargeStringDataManager.read(LargeStringDataManager.getBookKey(SemesterParser.getSemester())) ?: return@produceState
-        value = JxglstuRepository.parseCourseBook(json)
+        value = withContext(Dispatchers.Default) {
+            JxglstuRepository.parseCourseBook(json)
+        }
     }
 
     Scaffold(
@@ -198,7 +198,7 @@ fun CourseDetailApiScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            DetailItems(numItem!!, vm, hazeState =hazeState,courseBookData  )
+            DetailItems(numItem!!, vm,courseBookData ,classroom )
         }
     }
 }
@@ -240,7 +240,7 @@ fun CourseDetailApi(courseName : String, vm : NetWorkViewModel, hazeState: HazeS
                 .padding(innerPadding)
                 .fillMaxSize()
         ){
-            DetailItems(numItem!!, vm, hazeState =hazeState,courseBookData )
+            DetailItems(numItem!!, vm,courseBookData )
             Spacer(modifier = Modifier.height(20.dp))
         }
     }

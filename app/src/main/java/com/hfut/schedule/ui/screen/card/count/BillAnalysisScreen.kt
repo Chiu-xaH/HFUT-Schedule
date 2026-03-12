@@ -77,7 +77,7 @@ fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, page
         HorizontalPager(state = pagerState) { page ->
             Scaffold { it->
                 when(page) {
-                    TAB_DAY -> TodayBillScreen(vm,innerPadding, hazeState)
+                    TAB_DAY -> TodayBillScreen(vm,innerPadding)
                     TAB_MONTH -> MonthBillNewScreen(vm,innerPadding)
                     TAB_TERM -> YearBillNewScreen(vm,innerPadding)
                     TAB_ALL -> PredictedScreen(vm,innerPadding,pagerState)
@@ -87,7 +87,7 @@ fun BillAnalysisScreen(innerPadding : PaddingValues, vm : NetWorkViewModel, page
     }
 
 @Composable
-private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,hazeState : HazeState) {
+private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues) {
     val uiState by vm.huiXinBillResult.state.collectAsState()
     CommonNetworkScreen(uiState, onReload = null) {
         var infoNum by remember { mutableStateOf<BillRecordBean?>(null) }
@@ -98,7 +98,6 @@ private fun TodayBillScreen(vm: NetWorkViewModel,innerPadding: PaddingValues,haz
                 onDismissRequest = { showBottomSheet = false },
 //                isFullScreen = false,
                 showBottomSheet = showBottomSheet,
-                hazeState = hazeState
             ){
                 BillsInfo(infoNum!!)
             }

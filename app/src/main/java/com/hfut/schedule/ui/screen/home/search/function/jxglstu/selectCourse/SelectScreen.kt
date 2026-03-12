@@ -103,7 +103,6 @@ import com.hfut.schedule.ui.destination.SelectCoursesDetailDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
 import com.hfut.schedule.ui.screen.home.search.function.community.failRate.ApiToFailRate
-import com.hfut.schedule.ui.screen.home.search.function.community.failRate.permit
 import com.hfut.schedule.ui.screen.home.search.function.school.teacherSearch.ApiToTeacherSearch
 import com.hfut.schedule.ui.screen.home.updateCourses
 import com.hfut.schedule.ui.style.color.textFiledAllTransplant
@@ -586,9 +585,6 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-//            isFullScreen = false,
-//            expandFully = false,
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet
         ) {
             Column() {
@@ -603,8 +599,6 @@ private fun SelectCourseInfo(vm: NetWorkViewModel,courseId : Int, search : Strin
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_info = false },
             showBottomSheet = showBottomSheet_info,
-            hazeState = hazeState,
-//            isFullScreen = false
         ) {
             Column {
                 HazeBottomSheetTopBar(name, isPaddingStatusBar = false) {
@@ -729,7 +723,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
     if (showBottomSheet_FailRate) {
         HazeBottomSheet(
             onDismissRequest = { showBottomSheet_FailRate = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_FailRate
         ) {
 
@@ -744,7 +737,7 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(data.course.nameZh,vm, hazeState = hazeState,innerPadding)
+                    ApiToFailRate(data.course.nameZh,vm,innerPadding)
                 }
             }
         }
@@ -757,7 +750,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
     if (showBottomSheet_Teacher) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet_Teacher = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet_Teacher,
         ) {
 
@@ -805,7 +797,6 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
             leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },
             modifier = Modifier
                 .clickable {
-                    permit = 1
                     showBottomSheet_FailRate = true
                 }
                 .weight(.5f),
@@ -897,7 +888,6 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
         HazeBottomSheet (
             showBottomSheet = showBottomSheet,
 //            isFullScreen = false,
-            hazeState = hazeState,
             onDismissRequest = { showBottomSheet = false },
         ) {
             Column(modifier = Modifier) {
@@ -930,7 +920,6 @@ private fun HaveSelectedCourseLoad(vm: NetWorkViewModel, courseId: Int, hazeStat
             HazeBottomSheet (
                 showBottomSheet = showBottomSheet_info,
 //                isFullScreen = false,
-                hazeState = hazeState,
                 onDismissRequest = { showBottomSheet_info = false },
             ) {
                 Column(modifier = Modifier.verticalScroll(rememberScrollState())) {

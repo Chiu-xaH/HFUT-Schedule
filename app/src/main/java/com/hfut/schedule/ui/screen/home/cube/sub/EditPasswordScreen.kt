@@ -55,7 +55,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @Composable
-fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
+fun EditPasswordScreen(innerPadding : PaddingValues) {
 //    val enablePredictive by DataStoreManager.enablePredictive.collectAsState(initial = AppVersion.CAN_PREDICTIVE)
 //    var scale by remember { mutableFloatStateOf(1f) }
 //    TransitionBackHandler(navController,enablePredictive) {
@@ -77,7 +77,6 @@ fun EditPasswordScreen(hazeState : HazeState,innerPadding : PaddingValues) {
         HazeBottomSheet (
             onDismissRequest = { showDialog = false },
 //            isFullScreen = false,
-            hazeState = hazeState,
             showBottomSheet = showDialog
         ) {
             Column {

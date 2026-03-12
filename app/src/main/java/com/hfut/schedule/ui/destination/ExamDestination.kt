@@ -7,7 +7,7 @@ import com.hfut.schedule.ui.util.NavDestination
 import com.xah.uicommon.util.language.res
 
 data class ExamDestination(
-    val origin : String?
+    val origin : String?,
 ) : NavDestination() {
     override val key = "exam_$origin"
     override val title = res(R.string.navigation_label_exam)

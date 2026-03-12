@@ -68,7 +68,6 @@ fun Mail(
     if (showBottomSheet ) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
 //            isFullScreen = false,
 //            expandFully = true,
             showBottomSheet = showBottomSheet

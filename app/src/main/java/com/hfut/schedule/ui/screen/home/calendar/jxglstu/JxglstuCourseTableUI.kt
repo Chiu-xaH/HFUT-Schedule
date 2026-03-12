@@ -45,7 +45,7 @@ import com.hfut.schedule.logic.util.sys.datetime.DateTimeManager.currentWeek
 import com.hfut.schedule.logic.util.sys.showToast
 import com.hfut.schedule.ui.component.container.ShareTwoContainer2D
 import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.destination.ExamDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.common.DraggableWeekButton
@@ -164,7 +164,6 @@ fun JxglstuCourseTableUI(
                 showBottomSheetTotalCourse = false
             },
             showBottomSheet = showBottomSheetTotalCourse,
-            hazeState = hazeState
         ) {
             CourseDetailApi(courseName = courseName, vm = vm, hazeState = hazeState)
         }
@@ -177,7 +176,6 @@ fun JxglstuCourseTableUI(
             },
 //            isFullScreen = false,
             showBottomSheet = showBottomSheetDetail,
-            hazeState = hazeState
         ) {
             bean?.let { TimeTableDetail(it) }
         }
@@ -563,9 +561,10 @@ fun JxglstuCourseTableUI(
                     when(item.type) {
                         TimeTableType.COURSE -> {
                             navController.push(
-                                CourseDetailDestination(
+                                CourseApiDetailDestination(
                                     item.name,
-                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}"
+                                    CourseDetailOrigin.CALENDAR_JXGLSTU.t + "@${item.hashCode()}",
+                                    item.place
                                 )
                             )
                         }

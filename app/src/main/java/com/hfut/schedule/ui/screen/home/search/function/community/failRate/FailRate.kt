@@ -158,19 +158,16 @@ fun FailRateScreen(
                 .fillMaxSize()
         ) {
             CommonNetworkScreen(uiState, onReload = refreshNetwork, prepareContent = { PrepareSearchIcon() }) {
-                FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding,hazeState)
+                FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding)
             }
         }
     }
-//    }
 }
 
-var permit = 1
 @Composable
 fun ApiToFailRate(
     input : String,
     vm: NetWorkViewModel,
-    hazeState: HazeState,
     innerPadding : PaddingValues
 ) {
     val uiState by vm.failRateData.state.collectAsState()
@@ -185,6 +182,6 @@ fun ApiToFailRate(
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding,hazeState)
+        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding)
     }
 }

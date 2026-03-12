@@ -41,7 +41,7 @@ import dev.chrisbanes.haze.HazeState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previousPage : (Int) -> Unit,innerPadding : PaddingValues,hazeState: HazeState) {
+fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previousPage : (Int) -> Unit,innerPadding : PaddingValues) {
     val uiState by vm.failRateData.state.collectAsState()
     var showBottomSheet by remember { mutableStateOf(false) }
     var num by remember { mutableIntStateOf(0) }
@@ -75,7 +75,6 @@ fun FailRateUI(vm : NetWorkViewModel,page : Int,nextPage : (Int) -> Unit, previo
         HazeBottomSheet(
             showBottomSheet = showBottomSheet,
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState
         ) {
 
             Scaffold(

@@ -115,7 +115,6 @@ fun HaiLeWashingScreen(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             if(itemId < 0) return@HazeBottomSheet
             Scaffold(

@@ -73,7 +73,6 @@ fun MyApplyListUI(vm: NetWorkViewModel, batchId : String, hazeState: HazeState) 
     if (showBottomSheetApply) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheetApply = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheetApply,
         ) {
             Scaffold(

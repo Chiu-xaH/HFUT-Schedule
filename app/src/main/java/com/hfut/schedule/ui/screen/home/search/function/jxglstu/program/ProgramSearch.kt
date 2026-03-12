@@ -108,7 +108,6 @@ fun ProgramSearchScreen(
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
@@ -267,7 +266,6 @@ private fun ProgramSearchChildrenUI(entity : ProgramSearchBean?, hazeState : Haz
             if (showBottomSheet_Program) {
                 HazeBottomSheet (
                     onDismissRequest = { showBottomSheet_Program = false },
-                    hazeState = hazeState,
                     showBottomSheet = showBottomSheet_Program
                 ) {
                     Scaffold(

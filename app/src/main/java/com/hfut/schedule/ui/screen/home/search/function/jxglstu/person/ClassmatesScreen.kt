@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.MaterialTheme
@@ -79,14 +80,6 @@ fun ClassmatesScreen(
                             if(nameSort)"按姓名" else "按学号"
                         )
                     }
-//                    FilledTonalButton(
-//                        modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP),
-//                        onClick = {
-//                            nameSort = !nameSort
-//                        }
-//                    ) {
-//                        Text(if(nameSort)"按姓名" else "按学号")
-//                    }
                 }
             )
         },
@@ -142,7 +135,7 @@ fun ClassmatesScreen(
                                     leadingContent = {
                                         FilledTonalIconButton(
                                             onClick = {},
-                                            shape = MaterialTheme.shapes.small
+                                            shape = CircleShape
                                         ) {
                                             if(photoUrl != null && isValidWebUrl(photoUrl)) {
                                                 UrlImage(photoUrl)

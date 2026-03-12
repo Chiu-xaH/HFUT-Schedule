@@ -293,7 +293,6 @@ private fun SearchScreenCommunity(
     if (showBottomSheet) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
 //            isFullScreen = false
         ) {
@@ -706,7 +705,6 @@ private fun SearchScreenLibrary(
     if (showBottomSheet && detailBean != null) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
-            hazeState = hazeState,
             showBottomSheet = showBottomSheet,
 //            isFullScreen = false
         ) {

@@ -74,7 +74,7 @@ import com.hfut.schedule.ui.component.icon.ScheduleIcons
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.destination.AddEventDestination
-import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.CourseApiDetailDestination
 import com.hfut.schedule.ui.screen.home.calendar.common.simplifyPlace
 import com.hfut.schedule.ui.screen.home.calendar.communtiy.DetailInfos
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.CourseDetailOrigin
@@ -293,7 +293,6 @@ fun CommunityTodayCourseItem(list : courseDetailDTOList, vm : NetWorkViewModel, 
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
 //            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
@@ -367,7 +366,6 @@ fun CommunityTomorrowCourseItem(list: courseDetailDTOList , vm: NetWorkViewModel
         HazeBottomSheet (
             onDismissRequest = { showBottomSheet = false },
             showBottomSheet = showBottomSheet,
-            hazeState = hazeState,
 //            isFullScreen = false
         ) {
             HazeBottomSheetTopBar(list.name, isPaddingStatusBar = false)
@@ -671,7 +669,6 @@ fun TodayUI(hazeState: HazeState,vm: NetWorkViewModel) {
             HazeBottomSheet (
                 onDismissRequest = { showBottomSheet = false },
                 showBottomSheet = showBottomSheet,
-                hazeState = hazeState
             ) {
 
                 Column(
@@ -766,9 +763,10 @@ fun JxglstuTodayCourseItem(
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val state = DateTimeManager.getTimeState(startTime, endTime,timeNow)
     val name = item.courseName
-    val dest = CourseDetailDestination(
+    val dest = CourseApiDetailDestination(
         name,
-        CourseDetailOrigin.FOCUS_TODAY.t + "$index"
+        CourseDetailOrigin.FOCUS_TODAY.t + "$index",
+        item.place
     )
 
     val itemUI = @Composable {
@@ -832,9 +830,10 @@ fun JxglstuTomorrowCourseItem(
     val startTime = with(time.start) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val endTime = with(time.end) { parseTimeItem(hour) + ":" + parseTimeItem(minute) }
     val name = item.courseName
-    val dest = CourseDetailDestination(
+    val dest = CourseApiDetailDestination(
         name,
-        CourseDetailOrigin.FOCUS_TOMORROW.t + "$index"
+        CourseDetailOrigin.FOCUS_TOMORROW.t + "$index",
+        item.place
     )
     CardListItem(
         headlineContent = { Text(text = name) },
