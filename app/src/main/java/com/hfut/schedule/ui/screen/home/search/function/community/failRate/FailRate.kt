@@ -134,7 +134,7 @@ fun FailRateScreen(
                         onValueChange = {
                             input = it
                         },
-                        label = { Text("输入科目名称" ) },
+                        label = { Text("搜索课程" ) },
                         singleLine = true,
                         trailingIcon = {
                             IconButton(
@@ -145,7 +145,6 @@ fun FailRateScreen(
                             }
                         },
                         shape = MaterialTheme.shapes.medium,
-//                        colors = textFiledTransplant(),
                     )
                 }
             }
@@ -168,7 +167,8 @@ fun FailRateScreen(
 fun ApiToFailRate(
     input : String,
     vm: NetWorkViewModel,
-    innerPadding : PaddingValues
+    innerPadding : PaddingValues,
+    lessonCode : String?,
 ) {
     val uiState by vm.failRateData.state.collectAsState()
     var page by remember { mutableIntStateOf(1) }
@@ -182,6 +182,6 @@ fun ApiToFailRate(
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding)
+        FailRateUI(vm,page,nextPage = { page = it }, previousPage = { page = it },innerPadding,lessonCode)
     }
 }

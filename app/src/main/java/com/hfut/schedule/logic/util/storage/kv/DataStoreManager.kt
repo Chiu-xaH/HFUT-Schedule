@@ -219,7 +219,7 @@ object DataStoreManager : IDataStore {
     val colorMode = getFlow(COLOR_MODE,ColorMode.AUTO.code)
     val enableMotionBlur = getFlow(MOTION_BLUR, AppVersion.CAN_MOTION_BLUR)
     val enableHazeBlur = getFlow(HAZE_BLUR, true)
-    val transitionLevel = getFlow(TRANSITION, EffectLevel.NONE.levelNum)
+    val transitionLevel = getFlow(TRANSITION, EffectLevel.NO_SCALE.levelNum)
     val supabaseJwt = getFlow(SUPABASE_JWT,EMPTY_STRING)
     val supabaseRefreshToken = getFlow(SUPABASE_REFRESH_TOKEN,EMPTY_STRING)
     val enableSupabaseFilterEvent = getFlow(SUPABASE_FILTER_EVENT,false)

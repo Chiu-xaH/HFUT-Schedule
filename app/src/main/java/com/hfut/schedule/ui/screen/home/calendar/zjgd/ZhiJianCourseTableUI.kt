@@ -795,7 +795,7 @@ private fun CourseDetail(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(course.courseName,vm,innerPadding)
+                    ApiToFailRate(course.courseName,vm,innerPadding,course.code)
                 }
             }
         }

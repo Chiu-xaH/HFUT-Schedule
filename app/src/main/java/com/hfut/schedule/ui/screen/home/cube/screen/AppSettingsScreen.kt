@@ -76,7 +76,7 @@ import kotlinx.coroutines.launch
 /* 本kt文件已完成多语言文案适配 */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AppSettingsScreen(
+fun ConfigurationSettingsScreen(
     navController: NavHostController,
     innerPaddings: PaddingValues,
 ) {

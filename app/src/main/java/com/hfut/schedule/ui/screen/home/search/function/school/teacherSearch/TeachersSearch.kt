@@ -132,7 +132,6 @@ fun TeacherSearchScreen(
                         }
                     }
                 )
-                val s = MaterialTheme.shapes.medium
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -150,7 +149,6 @@ fun TeacherSearchScreen(
                         label = { Text("姓名" ) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-//                        colors = textFiledTransplant(),
                         colors = textFiledAllTransplant(),
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -165,7 +163,6 @@ fun TeacherSearchScreen(
                         label = { Text("研究方向" ) },
                         singleLine = true,
                         shape = MaterialTheme.shapes.medium,
-//                        colors = textFiledTransplant(),
                         colors = textFiledAllTransplant(),
                         
                     )
@@ -185,7 +182,6 @@ fun TeacherSearchScreen(
             }
         }
     }
-//    }
 }
 
 @Composable
@@ -200,6 +196,6 @@ fun ApiToTeacherSearch(input : String,vm: NetWorkViewModel,innerPadding : Paddin
         refreshNetwork()
     }
     CommonNetworkScreen(uiState, onReload = refreshNetwork) {
-        TeacherListUI(vm, innerPadding)
+        TeacherListUI(vm, innerPadding,input)
     }
 }

@@ -737,7 +737,7 @@ private fun CourseInfo(num : Int, lists : List<SelectCourseInfo>, vm: NetWorkVie
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    ApiToFailRate(data.course.nameZh,vm,innerPadding)
+                    ApiToFailRate(data.course.nameZh,vm,innerPadding,data.code)
                 }
             }
         }

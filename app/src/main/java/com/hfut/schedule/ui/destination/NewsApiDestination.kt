@@ -18,6 +18,6 @@ data class NewsApiDestination(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        NewsApiScreen(vm,keyword)
+        NewsApiScreen(vm, keyword)
     }
 }

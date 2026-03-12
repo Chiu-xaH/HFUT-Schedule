@@ -20,6 +20,6 @@ data class CourseApiDetailDestination(
     @Composable
     override fun Content() {
         val vm = LocalNavDependencies.current.get<NetWorkViewModel>()
-        CourseDetailApiScreen(courseName,classroom,vm)
+        CourseDetailApiScreen(courseName, classroom, vm)
     }
 }

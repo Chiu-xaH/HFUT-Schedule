@@ -20,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.logic.enumeration.FixBarItems
 import com.hfut.schedule.ui.screen.fix.about.AboutUI
 import com.hfut.schedule.ui.screen.fix.fix.FixUI
-import com.hfut.schedule.ui.screen.home.cube.screen.AppSettingsScreen
+import com.hfut.schedule.ui.screen.home.cube.screen.ConfigurationSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.AppearanceSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.screen.NetworkSettingsScreen
 import com.hfut.schedule.ui.screen.home.cube.sub.ApiKeyScreen
@@ -88,7 +88,7 @@ fun SettingsScreen(vm : NetWorkViewModel,
             }
             nav2Composable(Screen.APPScreen.route) {
                 Scaffold(containerColor = MaterialTheme.colorScheme.surfaceContainer)  {
-                    AppSettingsScreen(navController, innerPaddings)
+                    ConfigurationSettingsScreen(navController, innerPaddings)
                 }
             }
             nav2Composable(Screen.FIxAboutScreen.route) {
@@ -131,11 +131,11 @@ fun SettingsScreen(vm : NetWorkViewModel,
                     CalendarSettingsScreen(innerPaddings)
                 }
             }
-            nav2Composable(Screen.LockScreen.route) {
-                Scaffold {
-                    LockUI(innerPaddings,hazeState)
-                }
-            }
+//            nav2Composable(Screen.LockScreen.route) {
+//                Scaffold {
+//                    LockUI(innerPaddings,hazeState)
+//                }
+//            }
             nav2Composable(Screen.FocusCardScreen.route) {
                 Scaffold (containerColor = MaterialTheme.colorScheme.surfaceContainer){
                     FocusCardSettings(innerPaddings)

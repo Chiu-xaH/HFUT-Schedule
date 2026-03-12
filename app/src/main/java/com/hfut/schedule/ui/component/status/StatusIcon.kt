@@ -63,7 +63,7 @@ fun StatusIcon(
             color = textColor,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .padding(top = CARD_NORMAL_DP*3)
+                .padding(top = CARD_NORMAL_DP*3*3/2)
                 .padding(horizontal = APP_HORIZONTAL_DP)
                 .clickable(onTextClick != null) {
                     onTextClick?.let { it() }

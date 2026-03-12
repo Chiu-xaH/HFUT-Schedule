@@ -18,12 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.logic.util.sys.Starter
+import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
 import com.hfut.schedule.ui.component.container.CardListItem
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.hfut.schedule.ui.component.icon.DepartmentIcons
 import com.hfut.schedule.ui.component.icon.departmentIcon
 import com.hfut.schedule.ui.component.network.UrlImage
-   
+import com.hfut.schedule.ui.component.status.EmptyIcon
+import com.xah.uicommon.style.align.CenterScreen
+
 import com.xah.uicommon.style.padding.InnerPaddingHeight
 import kotlinx.coroutines.launch
 
@@ -32,45 +35,56 @@ import kotlinx.coroutines.launch
 fun TeacherListUI(
     vm: NetWorkViewModel,
     innerPadding : PaddingValues,
+    filterName : String? = null,
 ) {
     val uiState by vm.teacherSearchData.state.collectAsState()
-    val dataList = (uiState as UiState.Success).data.teacherData
+    val dataList = (uiState as UiState.Success).data.teacherData.let {
+        filterName?.let { t ->
+            it.filter { it.name == t }
+        } ?: it
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    LazyColumn() {
-        item { InnerPaddingHeight(innerPadding,true) }
-        item { Spacer(modifier = Modifier.height(4.dp)) }
-        items(dataList.size) { index->
-            val item = dataList[index]
-            item.let {
-                val department = it.department.replace("&nbsp;","").substringBefore("（")
-                val icon = departmentIcon(department)
-                val jobList = listOf(it.job,it.gtutor ,it.doctorTutor).filter { it.isNotEmpty() && it.isNotBlank() }
-                CardListItem(
-                    headlineContent = {
-                        Text(text = it.name, fontWeight = FontWeight.Bold)
-                    },
-                    trailingContent = {
-                        UrlImage(url = MyApplication.TEACHER_URL + it.picUrl, width = 100.dp, height = 120.dp)
-                    },
-                    overlineContent = {
-                        Text(department)
-                    },
-                    leadingContent = {
-                        DepartmentIcons(department)
-                    },
-                    supportingContent = {
-                        Text(jobList.toString().replace("[","").replace("]",""))
-                    },
-                    modifier = Modifier.clickable {
-                        scope.launch {
-                            Starter.startWebView(context,it.url,it.name, icon = icon)
-                        }
-                    }
-                )
-            }
+    if(dataList.isEmpty()) {
+        CenterScreen {
+            EmptyIcon("暂未收录")
         }
-        item { InnerPaddingHeight(innerPadding,false) }
+    } else {
+        LazyColumn {
+            item { InnerPaddingHeight(innerPadding,true) }
+            item { Spacer(modifier = Modifier.height(CARD_NORMAL_DP*2)) }
+            items(dataList.size) { index->
+                val item = dataList[index]
+                item.let {
+                    val department = it.department.replace("&nbsp;","").substringBefore("（")
+                    val icon = departmentIcon(department)
+                    val jobList = listOf(it.job,it.gtutor ,it.doctorTutor).filter { it.isNotEmpty() && it.isNotBlank() }
+                    CardListItem(
+                        headlineContent = {
+                            Text(text = it.name, fontWeight = FontWeight.Bold)
+                        },
+                        trailingContent = {
+                            UrlImage(url = MyApplication.TEACHER_URL + it.picUrl, width = 100.dp, height = 120.dp)
+                        },
+                        overlineContent = {
+                            Text(department)
+                        },
+                        leadingContent = {
+                            DepartmentIcons(department)
+                        },
+                        supportingContent = {
+                            Text(jobList.toString().replace("[","").replace("]",""))
+                        },
+                        modifier = Modifier.clickable {
+                            scope.launch {
+                                Starter.startWebView(context,it.url,it.name, icon = icon)
+                            }
+                        }
+                    )
+                }
+            }
+            item { InnerPaddingHeight(innerPadding,false) }
+        }
     }
 }
 

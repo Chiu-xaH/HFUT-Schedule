@@ -166,8 +166,8 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
         Row {
             TextButton(onClick = { /*TODO*/ }, modifier = Modifier
                 .weight(.33f)
-                .height(65.dp)
-                ,shape = RectangleShape
+                .height(65.dp),
+                shape = RectangleShape
             ) {
                 Text("", fontSize = 13.sp)
             }

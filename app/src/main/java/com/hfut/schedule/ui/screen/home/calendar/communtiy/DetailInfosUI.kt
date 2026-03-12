@@ -154,7 +154,6 @@ fun CourseDetailApiScreen(
     vm : NetWorkViewModel,
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val hazeState = remember { HazeState() }
     val numItem by produceState<lessons?>(initialValue = null) {
         val json = LargeStringDataManager.read(
             LargeStringDataManager.getTotalCoursesKey(

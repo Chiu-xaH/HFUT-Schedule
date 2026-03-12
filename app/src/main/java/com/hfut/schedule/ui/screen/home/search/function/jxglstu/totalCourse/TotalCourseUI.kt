@@ -1,6 +1,7 @@
 package com.hfut.schedule.ui.screen.home.search.function.jxglstu.totalCourse
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -33,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -80,6 +83,8 @@ import com.hfut.schedule.ui.component.text.HazeBottomSheetTopBar
 import com.hfut.schedule.ui.destination.ClassroomDestination
 import com.hfut.schedule.ui.destination.CourseClassmatesScreen
 import com.hfut.schedule.ui.destination.CourseDetailDestination
+import com.hfut.schedule.ui.destination.FailRateApiDestination
+import com.hfut.schedule.ui.destination.TeacherSearchApiDestination
 import com.hfut.schedule.ui.screen.AppNavRoute
 import com.hfut.schedule.ui.screen.home.calendar.jxglstu.JxglstuCourseTableSearch
 import com.hfut.schedule.ui.screen.home.getJxglstuCookie
@@ -92,7 +97,9 @@ import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.container.container.SharedContainer
 import com.xah.container.container.sharedContainer
+import com.xah.container.model.ContainerFilledStrategy
 import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.component.text.ScrollText
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
@@ -247,11 +254,8 @@ fun CourseTotalUI(
                     leadingContent = {
                         data.openDepartment.nameZh.let { DepartmentIcons(name = it) }
                     },
-//                    cardModifier = Modifier,
                     modifier = Modifier.clickable {
                         navController.push(dest)
-//                        showBottomSheet = true
-//                        numItem = item
                     },
                 )
             }
@@ -275,9 +279,9 @@ fun DetailItems(
     courseBookData : Map<Long, CourseBookBean>,
     classroom : String? = null,
 ) {
+    val navController = LocalNavController.current
 
     var showBottomSheetSchedule by remember { mutableStateOf(false) }
-
     if(showBottomSheetSchedule) {
         HazeBottomSheet (
             onDismissRequest = { showBottomSheetSchedule = false },
@@ -307,64 +311,10 @@ fun DetailItems(
         }
     }
 
-    var showBottomSheet_FailRate by remember { mutableStateOf(false) }
-
-    if (showBottomSheet_FailRate) {
-        HazeBottomSheet(
-            showBottomSheet = showBottomSheet_FailRate,
-            onDismissRequest = { showBottomSheet_FailRate = false },
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("挂科率 ${lessons.course.nameZh}")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                ) {
-                    ApiToFailRate(lessons.course.nameZh,vm ,innerPadding)
-                }
-            }
-        }
-    }
-
     var showBottomSheet_Search by remember { mutableStateOf(false) }
-
     ApiForCourseSearch(vm,null, lessons.code.substringBefore("--"),showBottomSheet_Search) {
         showBottomSheet_Search = false
     }
-
-    var showBottomSheet_Teacher by remember { mutableStateOf(false) }
-
-    var teacherTitle by remember { mutableStateOf("") }
-
-    if (showBottomSheet_Teacher) {
-        HazeBottomSheet(
-            showBottomSheet = showBottomSheet_Teacher,
-            onDismissRequest = { showBottomSheet_Teacher = false },
-        ) {
-
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                containerColor = Color.Transparent,
-                topBar = {
-                    BottomSheetTopBar("教师检索 $teacherTitle")
-                },
-            ) { innerPadding ->
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    ApiToTeacherSearch(teacherTitle,vm,innerPadding)
-                }
-            }
-        }
-    }
-    val navController = LocalNavController.current
-
 
     LazyColumn {
         item {
@@ -400,9 +350,14 @@ fun DetailItems(
             }
         }
         item {
+            val dest = CourseClassmatesScreen(
+                lessons.id,
+                lessons.course.nameZh
+            )
             Row {
                 lessons.stdCount?.let {
                     TransplantListItem(
+                        colors = MaterialTheme.colorScheme.surface,
                         overlineContent = { Text("同班同学" ) },
                         headlineContent = { Text(it.toString() + "人") },
                         leadingContent = {
@@ -412,13 +367,13 @@ fun DetailItems(
                             )
                         },
                         modifier = Modifier
+                            .sharedContainer(
+                                key = dest.key,
+                                shape = RoundedCornerShape(0.dp),
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
                             .clickable {
-                                navController.push(
-                                    CourseClassmatesScreen(
-                                        lessons.id,
-                                        lessons.course.nameZh
-                                    )
-                                )
+                                navController.push(dest)
                             }
                             .weight(.5f),
                     )
@@ -455,8 +410,10 @@ fun DetailItems(
                 if(onlyShowName) {
                     for (i in 0 until teacherNum step 2) {
                         val teacherList = lessons.teacherAssignmentList[i]
+                        val dest = TeacherSearchApiDestination(teacherList.person.nameZh)
                         Row  {
                             TransplantListItem(
+                                colors = MaterialTheme.colorScheme.surface,
                                 overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
                                 headlineContent = {
                                     Text( teacherList.person.nameZh )
@@ -468,15 +425,21 @@ fun DetailItems(
                                     )
                                 },
                                 modifier = Modifier
+                                    .sharedContainer(
+                                        key = dest.key,
+                                        shape = RoundedCornerShape(0.dp),
+                                        containerColor = MaterialTheme.colorScheme.surface
+                                    )
                                     .weight(.5f)
                                     .clickable {
-                                        teacherTitle = teacherList.person.nameZh
-                                        showBottomSheet_Teacher = true
+                                        navController.push(dest)
                                     }
                             )
                             if(i+1 < teacherNum) {
                                 val teacherList2 = lessons.teacherAssignmentList[i+1]
+                                val dest = TeacherSearchApiDestination(teacherList2.person.nameZh)
                                 TransplantListItem(
+                                    colors = MaterialTheme.colorScheme.surface,
                                     overlineContent = { Text("教师 " + (i+1+1).toString()) },
                                     headlineContent = {
                                         Text( teacherList2.person.nameZh )
@@ -488,10 +451,14 @@ fun DetailItems(
                                         )
                                     },
                                     modifier = Modifier
+                                        .sharedContainer(
+                                            key = dest.key,
+                                            shape = RoundedCornerShape(0.dp),
+                                            containerColor = MaterialTheme.colorScheme.surface
+                                        )
                                         .weight(.5f)
                                         .clickable {
-                                            teacherTitle = teacherList2.person.nameZh
-                                            showBottomSheet_Teacher = true
+                                            navController.push(dest)
                                         }
                                 )
                             }
@@ -500,51 +467,58 @@ fun DetailItems(
                 } else {
                     for (i in 0 until teacherNum) {
                         val teacherList = lessons.teacherAssignmentList[i]
+                        val dest = TeacherSearchApiDestination(teacherList.person.nameZh)
 
-                        Row(modifier = Modifier.clickable {
-                            teacherTitle = teacherList.person.nameZh
-                            showBottomSheet_Teacher = true
-                        }) {
-
-                            TransplantListItem(
-                                overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
-                                headlineContent = {
-                                    Text( teacherList.person.nameZh )
-                                },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.person),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
+                        SharedContainer(
+                            key = dest.key,
+                            shape = RectangleShape,
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ) {
+                            Row(
                                 modifier = Modifier
-                                    .weight(.5f),
-                            )
-                            TransplantListItem(
-                                headlineContent = {
-                                    val t = teacherList.teacher?.title?.nameZh ?: "未知"
-                                    ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
-                                },
-                                overlineContent = {
-                                    Text(text =
-                                        teacherList.age?.let { age ->
-                                            if(age < 100) {
-                                                "年龄 $age"
-                                            } else {
-                                                "年龄未知"
-                                            }
-                                        } ?: "年龄未知"
-                                    )
-                                },
-                                leadingContent = {
-                                    Icon(
-                                        painterResource(R.drawable.info),
-                                        contentDescription = "Localized description",
-                                    )
-                                },
-                                modifier = Modifier
-                                    .weight(.5f),
-                            )
+                                    .background(MaterialTheme.colorScheme.surface)
+                                    .clickable { navController.push(dest) }
+                            ) {
+                                TransplantListItem(
+                                    overlineContent = { Text("教师 " + if(teacherNum == 1) "" else (i+1).toString()) },
+                                    headlineContent = {
+                                        Text( teacherList.person.nameZh )
+                                    },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.person),
+                                            contentDescription = "Localized description",
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .weight(.5f),
+                                )
+                                TransplantListItem(
+                                    headlineContent = {
+                                        val t = teacherList.teacher?.title?.nameZh ?: "未知"
+                                        ScrollText( t  +" " + (teacherList.teacher?.type?.nameZh ?: ""))
+                                    },
+                                    overlineContent = {
+                                        Text(text =
+                                            teacherList.age?.let { age ->
+                                                if(age < 100) {
+                                                    "年龄 $age"
+                                                } else {
+                                                    "年龄未知"
+                                                }
+                                            } ?: "年龄未知"
+                                        )
+                                    },
+                                    leadingContent = {
+                                        Icon(
+                                            painterResource(R.drawable.info),
+                                            contentDescription = "Localized description",
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .weight(.5f),
+                                )
+                            }
                         }
                     }
                 }
@@ -704,42 +678,50 @@ fun DetailItems(
                             contentDescription = "Localized description",
                         )
                     },
-                    modifier = Modifier
-                        .clickable {
-                            showBottomSheet_Search = true
-                        }
+                    modifier = Modifier.clickable {
+                        showBottomSheet_Search = true
+                    }
                 )
-                classroom?.let {
+//                classroom?.let {
+//                    TransplantListItem(
+//                        supportingContent = {
+//                            Text(it)
+//                        },
+//                        headlineContent = { Text("教室状态查询") },
+//                        trailingContent = {
+//                        },
+//                        leadingContent = {
+//                            Icon(
+//                                painterResource(R.drawable.meeting_room),
+//                                contentDescription = "Localized description",
+//                            )
+//                        },
+//                        modifier = Modifier
+//                            .clickable {
+//                                navController.push(ClassroomDestination("CourseDetail"))
+//                            }
+//                    )
+//                }
+                val dest = FailRateApiDestination(lessons.course.nameZh,lessons.code.substringBefore("--"))
+                SharedContainer(
+                    key = dest.key,
+                    shape = MaterialTheme.shapes.medium,
+                    containerColor = cardNormalColor()
+                ) {
                     TransplantListItem(
-                        headlineContent = { Text("教室状态查询") },
-                        trailingContent = {
-                        },
+                        colors = cardNormalColor(),
+                        headlineContent = { Text(text =stringResource(AppNavRoute.FailRate.label) + "查询") },
                         leadingContent = {
                             Icon(
-                                painterResource(R.drawable.meeting_room),
+                                painterResource(AppNavRoute.FailRate.icon),
                                 contentDescription = "Localized description",
                             )
                         },
-                        modifier = Modifier
-                            .clickable {
-                                navController.push(ClassroomDestination("CourseDetail"))
-                            }
+                        modifier = Modifier.clickable {
+                            navController.push(dest)
+                        }
                     )
                 }
-                TransplantListItem(
-                    headlineContent = { Text(text =stringResource(AppNavRoute.FailRate.label) + "查询") },
-
-                    leadingContent = {
-                        Icon(
-                            painterResource(AppNavRoute.FailRate.icon),
-                            contentDescription = "Localized description",
-                        )
-                    },
-                    modifier = Modifier
-                        .clickable {
-                            showBottomSheet_FailRate = true
-                        }
-                )
             }
         }
         item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
