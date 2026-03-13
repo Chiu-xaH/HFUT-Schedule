@@ -10,14 +10,6 @@
 
 </div>
 
-## 亮点
-界面: 使用着色器、实时模糊等特效，与 Material Design 3 融合，简约高效
-
-动效：自研[第二代全局转场动画体系](https://github.com/Chiu-xaH/SharedNav)，一镜到底、收放自如
-
-更新：250+版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
-
-性能：冷启动迅速，开屏即展示关键信息；内存与存储占用适中
 
 ## 简介
 为合肥⼯业⼤学（HFUT）本科⽣开发的校园服务聚合类 Android 应⽤，覆盖了教学、⽣活、校内服务等 40+ 场景与功能，⽀持离⽹使⽤；使⽤现代的技术栈开发，提供全⾯、简洁、⾼效的使⽤体验。
@@ -25,6 +17,15 @@
 界面展示（v4.18.4.1,实际以最新版本为准）：
 
 ![截图](/src/img/ui.jpg)·
+
+## 亮点
+界面: 使用着色器、实时模糊等特效，与 Material Design 3 融合，简约高效
+
+动效：自研[第二代全局转场动画体系](https://github.com/Chiu-xaH/SharedNav)，丰富的转场动效，符合直觉
+
+更新：250+版本迭代，平均每周至少更新一次，带来新的功能、重构及优化
+
+性能：冷启动迅速，开屏即展示关键信息；内存与存储占用适中
 
 ## 开始使用
 ### 要求
@@ -37,7 +38,7 @@ Android 8.0及以上，接入互联网
 在启动时自动检查更新，如有更新会在首页底栏【选项】显示小红点，选项界面会有下载提示，下载完成后点击安装，授权安装未知应用权限即可
 
 ## 文档库
-### [开发文档](docs/Developer.md)
+### [开发文档](docs/Developer.md) (正在完善)
 
 如需修改页面导航管理、转场动效以及容器共享等功能，请查看开发文档，原有Navigation2已不再在本App使用，页面管理已解耦至SharedNav库
 
@@ -95,7 +96,7 @@ zsh0908@outlook.com
 
 [DiffUpdater](https://github.com/Chiu-xaH/DiffUpdater) 增量更新
 
-[SharedNav](https://github.com/Chiu-xaH/SharedNav) 容器共享&导航页面管理
+[SharedNav](https://github.com/Chiu-xaH/SharedNav) 容器共享与导航页面
 
 [Mirror-Android](https://github.com/Chiu-xaH/Mirror-Android) 镜面效果（着色器）
 
@@ -105,6 +106,8 @@ zsh0908@outlook.com
 [webvpn-dlut](https://github.com/ESWZY/webvpn-dlut) WebVpn转换
 
 [Tesseract](https://github.com/tesseract-ocr/tesseract) 用于训练OCR识别验证码的[基础模型](https://github.com/tesseract-ocr/tessdata)
+
+[Supabase](https://github.com/supabase/supabase) 托管供提供数据库
 
 ### 开源社区
 初期参考了Space课表(微信小程序)的一些功能设计，后期参考了若干开源App，还有对一些操作系统的借鉴，在此不一一列举了

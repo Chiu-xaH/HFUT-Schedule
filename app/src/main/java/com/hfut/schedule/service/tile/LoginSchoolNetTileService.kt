@@ -13,6 +13,7 @@ import com.hfut.schedule.logic.util.sys.AppNotificationManager
 import com.hfut.schedule.ui.component.network.onListenStateHolder
 import com.hfut.schedule.logic.enumeration.CampusRegion
 import com.hfut.schedule.logic.network.repo.hfut.LoginSchoolNetRepository
+import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -41,7 +42,7 @@ open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileSe
             intent = null
         )
     } catch (e : Exception) {
-
+        LogUtil.error(e)
     }
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)

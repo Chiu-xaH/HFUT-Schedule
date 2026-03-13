@@ -822,143 +822,149 @@ fun ClassmatesScreen(
             ) {
                 val list = (uiState as UiState.Success).data
 
-                // 初始化统计Map
-                val classCount = mutableMapOf<String, Int>()
-                val genderCount = mutableMapOf<String, Int>()
-                val yearCount = mutableMapOf<String, Int>()
-
-                // 一次遍历处理所有统计
-                for (item in list) {
-                    // 统计 className
-                    classCount[item.className] = classCount.getOrDefault(item.className, 0) + 1
-
-                    // 统计 gender
-                    genderCount[item.gender] = genderCount.getOrDefault(item.gender, 0) + 1
-
-                    // 统计年份（取code的前四位）
-                    val year = item.code.substring(0, 4)
-                    yearCount[year] = yearCount.getOrDefault(year, 0) + 1
-                }
-
-                // 将统计结果转换为 Pair 并排序
-                val classes = classCount.entries
-                    .map { it.value to it.key }
-                    .sortedByDescending { it.first }
-
-                val genders = genderCount.entries
-                    .map { it.value to it.key }
-                    .sortedByDescending { it.first }
-
-                val years = yearCount.entries
-                    .map { it.value to it.key }
-                    .sortedByDescending { it.first }
-
-                val filteredList = list.filter {
-                    it.code.startsWith(input) || it.nameZh.contains(input) || it.className.contains(input) || it.gender.contains(input)
-                }
-
-                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP)){
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        InnerPaddingHeight(innerPadding,true)
+                if(list.isEmpty()) {
+                    CenterScreen {
+                        EmptyIcon("未加入本班级")
                     }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Card(
-                            modifier = Modifier.padding(vertical = CARD_NORMAL_DP, horizontal = CARD_NORMAL_DP),
-                            shape = MaterialTheme.shapes.medium,
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-                        ) {
-                            Column {
-                                TransplantListItem(
-                                    headlineContent = {
-                                        Text(
-                                            text = "${list.size}人",
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            fontSize = 28.sp,
-                                            modifier = Modifier.padding(top = APP_HORIZONTAL_DP/6, bottom = 0.dp)
-                                        )
+                } else {
+                    // 初始化统计Map
+                    val classCount = mutableMapOf<String, Int>()
+                    val genderCount = mutableMapOf<String, Int>()
+                    val yearCount = mutableMapOf<String, Int>()
+
+                    // 一次遍历处理所有统计
+                    for (item in list) {
+                        // 统计 className
+                        classCount[item.className] = classCount.getOrDefault(item.className, 0) + 1
+
+                        // 统计 gender
+                        genderCount[item.gender] = genderCount.getOrDefault(item.gender, 0) + 1
+
+                        // 统计年份（取code的前四位）
+                        val year = item.code.substring(0, 4)
+                        yearCount[year] = yearCount.getOrDefault(year, 0) + 1
+                    }
+
+                    // 将统计结果转换为 Pair 并排序
+                    val classes = classCount.entries
+                        .map { it.value to it.key }
+                        .sortedByDescending { it.first }
+
+                    val genders = genderCount.entries
+                        .map { it.value to it.key }
+                        .sortedByDescending { it.first }
+
+                    val years = yearCount.entries
+                        .map { it.value to it.key }
+                        .sortedByDescending { it.first }
+
+                    val filteredList = list.filter {
+                        it.code.startsWith(input) || it.nameZh.contains(input) || it.className.contains(input) || it.gender.contains(input)
+                    }
+
+                    LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.padding(horizontal = APP_HORIZONTAL_DP - CARD_NORMAL_DP)){
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            InnerPaddingHeight(innerPadding,true)
+                        }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Card(
+                                modifier = Modifier.padding(vertical = CARD_NORMAL_DP, horizontal = CARD_NORMAL_DP),
+                                shape = MaterialTheme.shapes.medium,
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+                            ) {
+                                Column {
+                                    TransplantListItem(
+                                        headlineContent = {
+                                            Text(
+                                                text = "${list.size}人",
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis,
+                                                fontSize = 28.sp,
+                                                modifier = Modifier.padding(top = APP_HORIZONTAL_DP/6, bottom = 0.dp)
+                                            )
+                                        }
+                                    )
+                                    // 班级
+                                    LazyRow() {
+                                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                        items(classes.size) { index ->
+                                            val item = classes[index]
+                                            AssistChip(
+                                                onClick = { input = item.second },
+                                                border = null,
+                                                colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
+                                                label = { Text(item.second) },
+                                                trailingIcon = {
+                                                    Text("x" + item.first.toString() )
+                                                },
+                                                modifier = Modifier.padding(end = if(index == classes.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                            )
+                                        }
+                                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     }
-                                )
-                                // 班级
-                                LazyRow() {
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                    items(classes.size) { index ->
-                                        val item = classes[index]
-                                        AssistChip(
-                                            onClick = { input = item.second },
-                                            border = null,
-                                            colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
-                                            label = { Text(item.second) },
-                                            trailingIcon = {
-                                                Text("x" + item.first.toString() )
-                                            },
-                                            modifier = Modifier.padding(end = if(index == classes.size-1) 0.dp else CARD_NORMAL_DP*2)
-                                        )
+                                    // 男女
+                                    LazyRow() {
+                                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                        items(genders.size) { index ->
+                                            val item = genders[index]
+                                            AssistChip(
+                                                onClick = { input = item.second },
+                                                border = null,
+                                                colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
+                                                label = { Text(item.second) },
+                                                trailingIcon = {
+                                                    Text("x" + item.first.toString() )
+                                                },
+                                                modifier = Modifier.padding(end = if(index == genders.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                            )
+                                        }
+                                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     }
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                }
-                                // 男女
-                                LazyRow() {
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                    items(genders.size) { index ->
-                                        val item = genders[index]
-                                        AssistChip(
-                                            onClick = { input = item.second },
-                                            border = null,
-                                            colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
-                                            label = { Text(item.second) },
-                                            trailingIcon = {
-                                                Text("x" + item.first.toString() )
-                                            },
-                                            modifier = Modifier.padding(end = if(index == genders.size-1) 0.dp else CARD_NORMAL_DP*2)
-                                        )
+                                    // 学号前4位
+                                    LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
+                                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
+                                        items(years.size) { index ->
+                                            val item = years[index]
+                                            AssistChip(
+                                                onClick = { input = item.second },
+                                                border = null,
+                                                colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
+                                                label = { Text(item.second) },
+                                                trailingIcon = {
+                                                    Text("x" + item.first.toString() )
+                                                },
+                                                modifier = Modifier.padding(end = if(index == years.size-1) 0.dp else CARD_NORMAL_DP*2)
+                                            )
+                                        }
+                                        item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                     }
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                }
-                                // 学号前4位
-                                LazyRow(modifier = Modifier.padding(bottom = CARD_NORMAL_DP*3)) {
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
-                                    items(years.size) { index ->
-                                        val item = years[index]
-                                        AssistChip(
-                                            onClick = { input = item.second },
-                                            border = null,
-                                            colors = AssistChipDefaults.assistChipColors(containerColor = cardNormalColor()),
-                                            label = { Text(item.second) },
-                                            trailingIcon = {
-                                                Text("x" + item.first.toString() )
-                                            },
-                                            modifier = Modifier.padding(end = if(index == years.size-1) 0.dp else CARD_NORMAL_DP*2)
-                                        )
-                                    }
-                                    item { Spacer(Modifier.width(APP_HORIZONTAL_DP)) }
                                 }
                             }
                         }
-                    }
-                    items(filteredList.size,key = { filteredList[it].code }) { index ->
-                        val item = filteredList[index]
-                        SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
-                            TransplantListItem(
-                                headlineContent = {
-                                    ScrollText(item.nameZh)
-                                },
-                                overlineContent = {
-                                    ScrollText(item.code)
-                                },
-                                supportingContent = {
-                                    ScrollText(item.className)
-                                },
-                                trailingContent = {
-                                    ScrollText(item.gender)
-                                }
-                            )
+                        items(filteredList.size,key = { filteredList[it].code }) { index ->
+                            val item = filteredList[index]
+                            SmallCard(modifier = Modifier.padding(horizontal = CARD_NORMAL_DP, vertical = CARD_NORMAL_DP)) {
+                                TransplantListItem(
+                                    headlineContent = {
+                                        ScrollText(item.nameZh)
+                                    },
+                                    overlineContent = {
+                                        ScrollText(item.code)
+                                    },
+                                    supportingContent = {
+                                        ScrollText(item.className)
+                                    },
+                                    trailingContent = {
+                                        ScrollText(item.gender)
+                                    }
+                                )
+                            }
                         }
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            InnerPaddingHeight(innerPadding,false)
+                        }
+                        item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
                     }
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        InnerPaddingHeight(innerPadding,false)
-                    }
-                    item { Spacer(Modifier.height(APP_HORIZONTAL_DP).navigationBarsPadding()) }
                 }
             }
         }

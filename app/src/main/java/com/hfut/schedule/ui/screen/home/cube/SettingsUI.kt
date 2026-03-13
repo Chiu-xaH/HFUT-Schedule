@@ -61,7 +61,6 @@ fun SettingsScreen(vm : NetWorkViewModel,
                    ifSaved : Boolean,
                    innerPaddings : PaddingValues,
                    hazeState: HazeState,
-//                   navHostTopController : NavController,
 ) {
     val navHostTopController = LocalNavController.current
     val navController = rememberNavController()
