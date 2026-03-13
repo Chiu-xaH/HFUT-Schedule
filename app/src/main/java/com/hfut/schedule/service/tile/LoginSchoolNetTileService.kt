@@ -43,11 +43,13 @@ open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileSe
     } catch (e : Exception) {
 
     }
+
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     fun notice(text: String) {
         toast(text)
         sendNotice(text)
     }
+
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onClick() {
         super.onClick()
@@ -68,7 +70,6 @@ open class LoginSchoolNetTileService(private val campus : CampusRegion) : TileSe
                 notice(t)
             }) { data ->
                 if(data) {
-                    qsTile.state = Tile.STATE_ACTIVE
                     qsTile.updateTile()
                     notice("登陆成功")
                 } else {
