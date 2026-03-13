@@ -49,7 +49,7 @@ Android 8.0及以上，接入互联网
 用户量及日流量，通过Supabase平台托管，安全统计，无隐私数据，不定期更新
 
 ## [联系方式](zsh0908@outlook.com) 
-zsh0908@outlook.com
+开发者: zsh0908@outlook.com
 
 ## [其他工具](/tools)
 [图片验证码训练模型](/tools/Captcha-Ocr)
@@ -58,7 +58,7 @@ zsh0908@outlook.com
 
 [WebVpn](tools/WebVpn)
 
-[PC版(集成WebVpn、校园网等工具)(待开发)](/tools/Lite-For-PC)
+[PC版(集成WebVpn、校园网等工具)](/tools/Lite-For-PC) (待开发)
 
 ## 鸣谢
 ### 第三方库

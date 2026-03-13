@@ -90,7 +90,7 @@ fun Program(
             ) {
                 NoPadding {
                     FilledTonalIconButton(
-                        shape = RectangleShape,
+                        shape = RoundedCornerShape(0.dp),
                         onClick = {
                             navController.push(dest)
                         },
@@ -164,7 +164,7 @@ fun ProgramScreen(
                             },
                             icon = AppNavRoute.ProgramCompetition.icon,
                             text = stringResource(AppNavRoute.ProgramCompetition.label),
-                            shape = RectangleShape,
+                            shape = RoundedCornerShape(0.dp),
                             containerColor = MaterialTheme.colorScheme.secondaryContainer,
                             contentColor = MaterialTheme.colorScheme.secondary
                         )
@@ -192,7 +192,7 @@ fun ProgramScreen(
                             containerColor = MaterialTheme.colorScheme.surfaceVariant
                         ) {
                             LiquidButton (
-                                shape = RectangleShape,
+                                shape = RoundedCornerShape(0.dp),
                                 backdrop = backDrop,
                                 onClick = {
                                     navController.push(dest)

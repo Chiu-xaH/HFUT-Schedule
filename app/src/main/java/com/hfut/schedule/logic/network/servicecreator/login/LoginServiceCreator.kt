@@ -28,4 +28,3 @@ object LoginServiceCreator {
     inline fun <reified  T> create() : T = create(T::class.java)
 
 }
-object LoginWebVpnServiceCreator : BaseServiceCreator(MyApplication.WEBVPN_URL)

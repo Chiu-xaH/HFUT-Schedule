@@ -1,6 +1,5 @@
 package com.hfut.schedule.viewmodel.network
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.hfut.schedule.application.MyApplication
@@ -9,10 +8,10 @@ import com.hfut.schedule.logic.model.CasGetFlavorBean
 import com.hfut.schedule.logic.network.api.LoginService
 import com.hfut.schedule.logic.network.api.WebVpnService
 import com.hfut.schedule.logic.network.repo.hfut.CasLoginRepository
-import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.network.servicecreator.login.LoginServiceCreator
 import com.hfut.schedule.logic.network.servicecreator.login.LoginWebVpnServiceCreator
 import com.hfut.schedule.logic.network.util.CasInHFUT
+import com.hfut.schedule.logic.network.util.launchRequestState
 import com.hfut.schedule.logic.util.network.state.StateHolder
 import com.hfut.schedule.logic.util.storage.kv.DataStoreManager
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
@@ -24,7 +23,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.awaitResponse
 
 // 8个函数 这里是一切的地基：致敬传奇屎山 当时技术力不够，写的太耦合了，想最大程度保留原代码进行重构，根本无从下手...
 class LoginViewModel : ViewModel() {

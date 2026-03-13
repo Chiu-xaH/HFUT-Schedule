@@ -76,7 +76,4 @@ interface LoginService {
     ) : Call<ResponseBody> // Set-Cookie//TGC=
 
     // 用TGC=XX作为Cookie，发送loginGoTo或loginGoToOauth登录其他平台
-
-
-
 }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -146,13 +147,12 @@ data class SearchAppBean(
     val route : String? = null,
     val isHigh : Boolean = false,
 )
+
 data class SearchAppBeanLite(
     val id : Int,
     val name : Int,
     val icon : Int,
 )
-
-
 
 // 按 List<Int> 排序，并把未出现的新元素追加到末尾
 private fun MutableList<SearchAppBean>.reorderByIds(idOrder: List<Int>): MutableList<SearchAppBean> {
@@ -285,7 +285,7 @@ fun SearchScreen(
                 }
             }
             SmallCard(
-                shape = RectangleShape,
+                shape = RoundedCornerShape(0.dp),
                 modifier = (item.route?.let { paddingModifier.sharedContainer(it, MaterialTheme.shapes.small,cardNormalColor()) } ?: paddingModifier.clip(MaterialTheme.shapes.small)),
                 color = cardNormalColor()
             ) {

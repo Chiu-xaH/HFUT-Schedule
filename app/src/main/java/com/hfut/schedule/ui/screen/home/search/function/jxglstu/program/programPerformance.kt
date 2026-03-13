@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -186,7 +187,7 @@ private fun ProgramPerformance(
                     )
                     DividerTextExpandedWith(text = item.nameZh + " 要求 ${requireInfo.courseNum} 门 ${requireInfo.credits} 学分") {
                         CustomCard(
-                            shape = RectangleShape,
+                            shape = RoundedCornerShape(0.dp),
                             color = cardNormalColor(),
                             modifier = Modifier
                                 .clickableWithScale() {
@@ -245,7 +246,7 @@ private fun ProgramPerformance(
                         "培养方案外课程",
                     )
                     CustomCard(
-                        shape = RectangleShape,
+                        shape = RoundedCornerShape(0.dp),
                         color = cardNormalColor(),
                         modifier = Modifier
                             .clickableWithScale() {

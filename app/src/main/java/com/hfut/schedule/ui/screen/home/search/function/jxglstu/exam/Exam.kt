@@ -111,7 +111,7 @@ fun ExamScreen(
                     ) {
                         NoPadding {
                             LiquidButton(
-                                shape = RectangleShape,
+                                shape = RoundedCornerShape(0.dp),
                                 backdrop = backdrop,
                                 onClick = { navController.push(ExamNewsDestination) },
                             ) {

@@ -228,7 +228,7 @@ fun CourseTotalUI(
                             shape = MaterialTheme.shapes.medium,
                             containerColor = cardNormalColor()
                         ),
-                    shape = RectangleShape,
+                    shape = RoundedCornerShape(0.dp),
                     headlineContent = {  Text(data.course.nameZh) },
                     overlineContent = { ScrollText(text =
                         "学分 ${data.course.credits}" +
@@ -471,7 +471,7 @@ fun DetailItems(
 
                         SharedContainer(
                             key = dest.key,
-                            shape = RectangleShape,
+                            shape = RoundedCornerShape(0.dp),
                             containerColor = MaterialTheme.colorScheme.surface
                         ) {
                             Row(

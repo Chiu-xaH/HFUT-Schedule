@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -57,7 +58,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.input.pointer.pointerInput
@@ -69,7 +69,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
@@ -126,14 +125,11 @@ import com.hfut.schedule.ui.style.special.HazeBottomSheet
 import com.hfut.schedule.ui.style.special.backDropSource
 import com.hfut.schedule.ui.style.special.topBarBlur
 import com.hfut.schedule.ui.util.nav2Composable
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager
-import com.hfut.schedule.ui.util.navigation.AppAnimationManager.currentPage
-import com.hfut.schedule.viewmodel.network.NetWorkViewModel
-import com.xah.container.container.sharedContainer
-import com.xah.mirror.util.rememberShaderState
-import com.xah.navigation.utils.LocalNavController
 import com.hfut.schedule.ui.util.navigation.currentRouteWithoutArgs
+import com.hfut.schedule.viewmodel.network.NetWorkViewModel
 import com.kyant.backdrop.backdrops.rememberLayerBackdrop
+import com.xah.container.container.sharedContainer
+import com.xah.navigation.utils.LocalNavController
 import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import com.xah.uicommon.style.color.topBarTransplantColor
 import com.xah.uicommon.style.padding.InnerPaddingHeight
@@ -522,7 +518,7 @@ private fun EmptyClassroomScreen(
                         val isAllDayFree = activities.isEmpty()
                         val isOccupied = activities.find { DateTimeManager.getTimeState(it.startTimeString,it.endTimeString) == DateTimeManager.TimeState.ONGOING } != null
                         CustomCard(
-//                            shape = RectangleShape,
+//                            shape = RoundedCornerShape(0.dp),
                             color = cardNormalColor(),
                             modifier = Modifier
                                 .clickable { navTopController.push(dest) }
@@ -739,7 +735,7 @@ private fun SearchClassroomScreen(
                             item.nameZh
                         )
                         CardListItem(
-                            shape = RectangleShape,
+                            shape = RoundedCornerShape(0.dp),
                             leadingContent = {
                                 Icon(painterResource(R.drawable.meeting_room),null)
                             },

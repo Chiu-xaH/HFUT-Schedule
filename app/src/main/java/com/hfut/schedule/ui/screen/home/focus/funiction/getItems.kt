@@ -58,28 +58,3 @@ fun transferNum(num : Int) : Float {
     val settle = num_float
     return settle
 }
-
-
-//@SuppressLint("Range")
-//fun getCustomItems() : List<AddFocus> {
-//    val list = mutableListOf<AddFocus>()
-//    try {
-//        val dbwritableDatabase =  dataBase.writableDatabase
-//        val cursor = dbwritableDatabase.query("Book",null,null,null,null,null,null)
-//        if(cursor.moveToFirst()){
-//            do{
-//                val titles = cursor.getString(cursor.getColumnIndex("title"))
-//                val infos = cursor.getString(cursor.getColumnIndex("info"))
-//                val remarks = cursor.getString(cursor.getColumnIndex("remark"))
-//                val ids = cursor.getString(cursor.getColumnIndex("id")).toInt()
-//                val AddFocu = AddFocus(titles,infos,remarks,ids)
-//                list.add(AddFocu)
-//            } while (cursor.moveToNext())
-//        }
-//        cursor.close()
-//        return list
-//    } catch (e : Exception) {
-//        return emptyList()
-//    }
-//}
-

@@ -112,7 +112,7 @@ fun FakeButton(
     height: Dp = 48.dp
 ) {
     Card(
-        shape = RectangleShape,
+        shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(
             containerColor = containerColor,
             contentColor = contentColor

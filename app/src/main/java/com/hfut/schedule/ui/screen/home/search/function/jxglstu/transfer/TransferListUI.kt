@@ -160,7 +160,7 @@ fun TransferScreen(
                         containerColor = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         LiquidButton(
-                            shape = RectangleShape,
+                            shape = RoundedCornerShape(0.dp),
                             backdrop = backDrop,
                             onClick = {
                                 navController.push(dest)
@@ -212,7 +212,7 @@ fun TransferScreen(
                             )
                             var expand by remember { mutableStateOf(false) }
                             CustomCard (
-                                shape = RectangleShape,
+                                shape = RoundedCornerShape(0.dp),
                                 modifier = Modifier
                                     .sharedContainer(
                                         dest.key,

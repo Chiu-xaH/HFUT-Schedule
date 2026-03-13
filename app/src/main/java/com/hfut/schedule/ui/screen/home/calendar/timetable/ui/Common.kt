@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -134,7 +135,7 @@ fun TimeTable(
             val containerColor = if (!hasBackground) color.first else Color.Transparent
             Surface(
                 color = containerColor,
-                shape = RectangleShape,
+                shape = RoundedCornerShape(0.dp),
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {
@@ -334,7 +335,7 @@ fun TimeTable(
             val containerColor = if (!hasBackground) color.first else Color.Transparent
             Surface(
                 color = containerColor,
-                shape = RectangleShape,
+                shape = RoundedCornerShape(0.dp),
                 modifier = squareModifier
                     .let {
                         if (hasBackground) {

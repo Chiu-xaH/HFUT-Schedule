@@ -125,7 +125,7 @@ fun UpdateSuccessScreen() {
                             containerColor = IconButtonDefaults.filledTonalIconButtonColors().containerColor,
                         ) {
                             FilledTonalIconButton (
-                                shape = RectangleShape,
+                                shape = RoundedCornerShape(0.dp),
                                 onClick = {
                                     navController.push(VersionInfoDestination)
                                 }
@@ -162,7 +162,7 @@ fun UpdateSuccessScreen() {
 //                        navController.push(HomeDestination, LaunchMode.CLEAR_STACK)
                         }
                     },
-//                    shape = RectangleShape,
+//                    shape = RoundedCornerShape(0.dp),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(APP_HORIZONTAL_DP)

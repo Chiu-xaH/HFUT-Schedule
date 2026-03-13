@@ -1,11 +1,8 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import android.util.Log
 import com.hfut.schedule.application.MyApplication
-import com.hfut.schedule.logic.network.util.StatusCode
 import com.hfut.schedule.logic.network.util.isNotBadRequest
 import com.hfut.schedule.logic.util.network.encodeUrl
-import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.LIBRARY_TOKEN
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs.saveString
 import com.hfut.schedule.logic.util.sys.showToast
@@ -14,7 +11,6 @@ import com.xah.uicommon.util.LogUtil
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
-import kotlin.text.substringAfter
 
 class RedirectTicketInterceptor() : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

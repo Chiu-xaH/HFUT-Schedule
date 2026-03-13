@@ -3,6 +3,7 @@ package com.hfut.schedule.logic.util.network
 import android.util.Base64
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.logic.network.util.GenerateQWeather
+import com.xah.uicommon.util.LogUtil
 import java.security.MessageDigest
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -19,8 +20,9 @@ object Crypto {
             .map { chars[Random.nextInt(chars.length)] }
             .joinToString("")
     }
+
     @JvmStatic
-    fun encryptAES(input:String, password:String): String {
+    fun encryptAES(input:String, password:String): String? {
         return try {
             val cipher = Cipher.getInstance("AES")
             val keySpec = SecretKeySpec(password.toByteArray(),"AES")
@@ -28,11 +30,14 @@ object Crypto {
             val encrypt = cipher.doFinal(input.toByteArray())
             Base64.encodeToString(encrypt,Base64.NO_WRAP)
         } catch (e:Exception) {
-            "NULL"
+            LogUtil.error(e)
+            null
         }
     }
+
     @JvmStatic
     fun getHuiXinAuth() = "Basic " + encodeToBase64("mobile_service_platform:mobile_service_platform_secret")
+
     @JvmStatic
     fun encodeToBase64(input: String): String =java.util.Base64.getEncoder().encodeToString(input.toByteArray(Charsets.UTF_8))
 
@@ -85,6 +90,7 @@ object Crypto {
 
         return java.util.Base64.getEncoder().encodeToString(encryptedBytes)
     }
+
     @JvmStatic
     fun decryptXiaoWuXing(cipherText: String): String {
         val key = "JL$<&*l9~67?:#5p"
@@ -123,6 +129,7 @@ object Crypto {
         }
         return result.uppercase() // 转换为大写
     }
+
     @JvmStatic
     fun encryptTimestamp(): String {
         // 1. 密钥
@@ -153,13 +160,10 @@ object Crypto {
             "THB3UBK56Q"
         )
     }
+
     @JvmStatic
     fun getSupabasePublicKey() : String =
         encodeToBase64("{\"alg\":\"HS256\",\"typ\":\"JWT\"}").replace("=","") +
                 "." +encodeToBase64("{\"iss\":\"supabase\",\"ref\":\"uadgxvstybecnhqemxvj\",\"role\":\"anon\",\"iat\":1744637621,\"exp\":2060213621}").replace("=","") + "." +
                 decryptXiaoWuXing("KyeSUi9QTi1x6PYvq5W/kvSs6LWMdvq1/7cGFYlElE7ewQ7JMV1PjTZw+nfShdGb")
-}
-
-fun main() {
-    println(Crypto.uuid32())
 }

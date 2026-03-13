@@ -109,7 +109,7 @@ fun HolidayScreen(
                     ) {
                         LiquidButton(
                             backdrop = backdrop,
-                            shape = RectangleShape,
+                            shape = RoundedCornerShape(0.dp),
                             onClick = { navController.push(dest) }
                         ) {
                             Text("调休通知")

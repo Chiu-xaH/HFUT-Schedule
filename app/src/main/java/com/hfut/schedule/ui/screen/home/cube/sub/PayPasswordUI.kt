@@ -167,7 +167,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             TextButton(onClick = { /*TODO*/ }, modifier = Modifier
                 .weight(.33f)
                 .height(65.dp),
-                shape = RectangleShape
+                shape = RoundedCornerShape(0.dp)
             ) {
                 Text("", fontSize = 13.sp)
             }
@@ -177,7 +177,8 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
             )
             TextButton(onClick =  onBackspaceClick , modifier = Modifier
                 .weight(.33f)
-                .height(65.dp),shape = RectangleShape
+                .height(65.dp)
+                ,shape = RoundedCornerShape(0.dp)
             ) {
                 Icon(painter = painterResource(id = R.drawable.backspace), contentDescription = "", modifier = Modifier.size(30.dp))
             }
@@ -186,7 +187,7 @@ fun KeyBoard(modifier : Modifier = Modifier, onKeyClick: (Int) -> Unit, onBacksp
 }
 @Composable
 fun Key(num : Int, modifier: Modifier = Modifier, onKeyClick: (Int) -> Unit) {
-    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RectangleShape) {
+    TextButton(onClick = { onKeyClick(num) }, modifier = modifier, shape = RoundedCornerShape(0.dp)) {
         Text(num.toString(), fontSize = 28.sp)
     }
 }

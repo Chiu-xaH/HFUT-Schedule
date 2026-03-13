@@ -312,7 +312,7 @@ fun AlwaysItem(update : GiteeReleaseResponse?) {
     val show = !showBadge || isPreview
     CustomCard(
         color = MaterialTheme.colorScheme.surface,
-        shape = RectangleShape,
+        shape = RoundedCornerShape(0.dp),
         modifier = Modifier.let{ if(show) it.sharedContainer(VersionInfoDestination.key, MaterialTheme.shapes.medium,MaterialTheme.colorScheme.surface) else it }
     ) {
         TransplantListItem(

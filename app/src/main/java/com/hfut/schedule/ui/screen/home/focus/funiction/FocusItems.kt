@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -482,7 +483,7 @@ fun CustomItemUI(
 
     CardListItem(
         color = cardNormalColor(),
-        shape = RectangleShape,
+        shape = RoundedCornerShape(0.dp),
         cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
         headlineContent = { Text(text = title, textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
         overlineContent = { Text(text = item.remark,textDecoration = if(isOutOfDate) TextDecoration.LineThrough else TextDecoration.None) },
@@ -796,7 +797,7 @@ fun JxglstuTodayCourseItem(
 
             },
             modifier = Modifier.clickable { navController.push(dest) },
-            shape = RectangleShape,
+            shape = RoundedCornerShape(0.dp),
             color = cardNormalColor(),
             trailingContent = {
                 Text(
@@ -842,7 +843,7 @@ fun JxglstuTomorrowCourseItem(
         cardModifier = Modifier.sharedContainer(dest.key, MaterialTheme.shapes.medium,cardNormalColor()),
         leadingContent = { Icon(painterResource(R.drawable.exposure_plus_1), contentDescription = "Localized description") },
         modifier = Modifier.clickable { navController.push(dest) },
-        shape = RectangleShape,
+        shape = RoundedCornerShape(0.dp),
         color = cardNormalColor(),
         trailingContent = { Text(text = "明日")}
     )

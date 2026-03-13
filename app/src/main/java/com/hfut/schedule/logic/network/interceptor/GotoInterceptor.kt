@@ -1,12 +1,7 @@
 package com.hfut.schedule.logic.network.interceptor
 
-import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.hfut.schedule.logic.util.storage.kv.SharedPrefs
 import com.hfut.schedule.logic.util.sys.showToast
-import com.xah.uicommon.util.language.text
 import com.xah.uicommon.util.LogUtil
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.Interceptor

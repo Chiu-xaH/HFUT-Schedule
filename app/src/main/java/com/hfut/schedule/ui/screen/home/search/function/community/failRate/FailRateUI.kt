@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.hfut.schedule.logic.util.network.state.UiState
 import com.hfut.schedule.ui.component.container.CARD_NORMAL_DP
@@ -71,7 +73,7 @@ fun FailRateUI(
                             shape = MaterialTheme.shapes.medium,
                             containerColor = cardNormalColor()
                         ),
-                        shape = RectangleShape,
+                        shape = RoundedCornerShape(0.dp),
                         overlineContent = { Text(list[item].courseMetaId)},
                         headlineContent = {  Text(list[item].courseName) },
                         leadingContent = { Icon(painterResource(AppNavRoute.FailRate.icon), contentDescription = "Localized description",) },

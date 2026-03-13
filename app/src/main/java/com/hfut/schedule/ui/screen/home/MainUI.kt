@@ -43,6 +43,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
@@ -378,11 +379,11 @@ fun MainScreen(
             ) {
                 SharedContainer(
                     key = dest.key,
-                    shape = FloatingActionButtonDefaults.shape,
+                    shape = (FloatingActionButtonDefaults.shape as? CornerBasedShape) ?: MaterialTheme.shapes.large,
                     containerColor = FloatingActionButtonDefaults.containerColor,
                 ) {
                     FloatingActionButton(
-                        shape = RectangleShape,
+                        shape = RoundedCornerShape(0.dp),
                         elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
                         onClick = {
                             navHostTopController.push(dest)

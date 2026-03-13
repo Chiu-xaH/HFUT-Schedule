@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -346,7 +347,7 @@ fun GradeItemJxglstuUI(
                                 )
                                 val color = if(needSurvey) MaterialTheme.colorScheme.secondaryContainer  else cardNormalColor()
                                 CustomCard(
-                                    shape = RectangleShape,
+                                    shape = RoundedCornerShape(0.dp),
                                     color = color,
                                     modifier = Modifier
                                         .clickable {
@@ -649,7 +650,7 @@ fun GradeItemUIUniApp(
                                         allTotalCredits
                                     )
                                     CustomCard(
-                                        shape = RectangleShape,
+                                        shape = RoundedCornerShape(0.dp),
                                         color = cardNormalColor(),
                                         modifier = Modifier
                                             .clickable {

@@ -9,7 +9,7 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 import retrofit2.http.Url
 
-const val ROOT_NODE_ID = "-1"
+private const val ROOT_NODE_ID = "-1"
 
 interface WXService {
     @GET("api/auth/bsauth/getTgtWx")

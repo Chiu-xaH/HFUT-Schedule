@@ -42,17 +42,6 @@ import com.xah.uicommon.style.APP_HORIZONTAL_DP
 import dev.chrisbanes.haze.HazeState
 
 
-@Composable
-fun BackButton(onBack : () -> Unit) {
-    FilledTonalButton(
-        onClick = onBack,
-        shape = MaterialTheme.shapes.medium,
-        modifier = Modifier.fillMaxWidth().padding(APP_HORIZONTAL_DP),
-        colors = ButtonDefaults.filledTonalButtonColors()
-    ) {
-        Text("返回上一级", fontSize = 17.sp)
-    }
-}
 @OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("SuspiciousIndentation", "UnusedMaterial3ScaffoldPaddingParameter")

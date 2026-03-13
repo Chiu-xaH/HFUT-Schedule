@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import com.hfut.schedule.R
 import com.hfut.schedule.application.MyApplication
 import com.hfut.schedule.application.MyApplication.Companion.WEBVPN_URL
@@ -196,7 +198,7 @@ fun WebVpnScreen(
                                             },
                                             singleLine = false,
                                             modifier = Modifier.fillMaxWidth(),
-                                            shape = RectangleShape
+                                            shape = RoundedCornerShape(0.dp)
                                         ) { input = it }
                                         BottomButton(
                                             onClick = {
@@ -312,7 +314,7 @@ fun WebVpnScreen(
                                             },
                                             singleLine = false,
                                             modifier = Modifier.fillMaxWidth(),
-                                            shape = RectangleShape
+                                            shape = RoundedCornerShape(0.dp)
                                         ) { input = it }
                                         BottomButton(
                                             onClick = {

@@ -303,7 +303,7 @@ fun SelectCourseDetailScreen(
                                 containerColor = MaterialTheme.colorScheme.surfaceVariant
                             ) {
                                 LiquidButton(
-                                    shape = RectangleShape,
+                                    shape = RoundedCornerShape(0.dp),
                                     backdrop = backDrop,
                                     onClick = {
                                         navController.push(dest)
@@ -487,7 +487,7 @@ private fun SelectCourseList(
                                 MaterialTheme.shapes.medium,
                                 cardNormalColor()
                             ),
-                        shape = RectangleShape,
+                        shape = RoundedCornerShape(0.dp),
                         color = cardNormalColor()
                     ) {
                         TransplantListItem(
